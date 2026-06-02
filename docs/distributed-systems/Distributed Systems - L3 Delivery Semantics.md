@@ -106,7 +106,7 @@ POST /payments       → each call may charge the card
 APPEND to log        → each call adds a new entry
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Idempotency in Distributed Systems example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Idempotency key pattern:**
 
@@ -133,7 +133,7 @@ Result: second request returns same PaymentResult
 as the first, without charging the card again.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Idempotency in Distributed Systems example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Atomic check-and-insert (prevent race conditions):**
 
@@ -151,7 +151,7 @@ CREATE UNIQUE INDEX ON idempotency_keys(key);
 -- queries and returns the existing result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Idempotency in Distributed Systems example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **The key insight:**
 The check-and-insert must be atomic. A non-atomic check
@@ -190,6 +190,12 @@ reliable distributed communication."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // IDEMPOTENCY KEY PATTERN IN JAVA
@@ -246,7 +252,7 @@ public ResponseEntity<PaymentResult> processPayment(
 }
 ```
 
-> **Code walkthrough:** The BAD pattern processes every POST
+> **Code walkthrough:** The BAD pattern processes every POSTice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > without deduplication. The client retrying after a lost
 > response charges the card twice. The GOOD pattern uses an
 > idempotency key (UUID from the client). Before processing,
@@ -315,13 +321,13 @@ calls), the consumer must implement idempotency independently.
 
 ### ⚖️ Comparison Table
 
-| Approach | Atomicity | Complexity | TTL | Use When |
-|---|---|---|---|---|
-| Unique DB constraint | Database atomic | Low | Manual cleanup | Simple operations |
-| Redis SETNX + result | Redis atomic | Low | Redis TTL | High-throughput, no DB join |
-| Idempotency table | DB transaction | Medium | Scheduled cleanup | Payment, financial |
-| SQS FIFO dedup ID | Infrastructure | Minimal | 5 minutes (SQS) | SQS-based processing |
-| Kafka transactions | Broker-level | High | N/A | Kafka-to-Kafka pipelines |
+| Approach| Atomicity| Complexity| TTL| Use When|
+|-----|---------------|----------|-----------------|---------------------------|
+| Unique DB constraint| Database atomic| Low| Manual cleanup| Simple operations|
+| Redis SETNX + result| Redis atomic| Low| Redis TTL| High-throughput, no DB joi
+| Idempotency table| DB transaction| Medium| Scheduled cleanup| Payment, financi
+| SQS FIFO dedup ID| Infrastructure| Minimal| 5 minutes (SQS)| SQS-based process
+| Kafka transactions| Broker-level| High| N/A| Kafka-to-Kafka pipelines|
 
 **The deciding factor:** Is the operation financial or critical?
 Use an idempotency table with proper TTL and cleanup. For
@@ -330,14 +336,91 @@ queue's native deduplication (SQS FIFO, Kafka exactly-once).
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Idempotency table missing index, causing duplicate detection 
+
+**Symptom:** Double charges or duplicate order confirmations
+appear in production. The idempotency table exists, but lookups
+are slow under load (>100ms). Retries fire before the first
+request completes, bypassing the lock.
+
+**Root cause:** The idempotency key column lacks an index. Under
+load, the SELECT to check for a duplicate takes longer than the
+client retry timeout, so the retry fires while the first request
+is still executing. Both requests find no duplicate and both
+proceed.
+
+**Diagnosis:**
+```sql
+-- Check for missing index on idempotency table
+SHOW INDEX FROM idempotency_keys;
+-- Should show: key_id (UNIQUE INDEX)
+-- If missing: all duplicate checks do full table scan
+
+-- Check query plan
+EXPLAIN SELECT * FROM idempotency_keys
+WHERE key_id = 'some-key';
+-- 'type: ALL' = full table scan = problem
+-- 'type: const' or 'type: ref' = index hit = correct
+
+-- Check slow query log for idempotency table
+SELECT * FROM mysql.slow_log
+WHERE query_time > 0.1
+AND sql_text LIKE '%idempotency%'
+LIMIT 10;
+```
+
+> **Code walkthrough:** The EXPLAIN plan reveals whether the idempotency check uses an index. KEY MECHANISM: without an index, the duplicate check degrades from O(1) to O(n) as the table grows; at 10M rows, a lookup can take 5-10 seconds on a busy database, far exceeding the 500ms client timeout. WHY IT MATTERS: the race condition only closes when the duplicate check is fast enough to complete before the retry fires. WHAT BREAKS: payment double-charging is the most severe manifestation; also causes duplicate email sends, duplicate order creation. TAKEAWAY: the idempotency key column MUST have a UNIQUE index and UNIQUE constraint - the constraint prevents duplicates atomically even if the application check races.
+
+**Fix:** Add `UNIQUE INDEX idx_idempotency_key (key_id)` and use
+INSERT with ON DUPLICATE KEY or equivalent for atomic check-and-insert.
+
+---
+
+**Failure Mode 2 - Idempotency TTL shorter than retry window**
+
+**Symptom:** Operations that should be idempotent are executing
+twice, but only for old retries (hours or days later). The
+idempotency key exists in the table but the TTL cleanup job
+deleted it before the retry arrived.
+
+**Root cause:** Idempotency key TTL (e.g., 1 hour) is shorter
+than the maximum retry interval. A client queues a retry due to
+temporary error and replays it after the key has been cleaned up.
+
+**Diagnosis:**
+```sql
+-- Check minimum TTL vs maximum retry interval
+SELECT MIN(expires_at - created_at) AS min_ttl_seconds
+FROM idempotency_keys;
+-- Compare to your retry policy's maximum retry age
+
+-- Check for recently re-processed requests
+SELECT original_key_id, COUNT(*) AS reprocess_count
+FROM payment_events
+GROUP BY original_key_id
+HAVING reprocess_count > 1
+ORDER BY reprocess_count DESC;
+```
+
+> **Code walkthrough:** This query identifies idempotency key IDs that appear in the events table more than once - direct evidence of duplicate processing. KEY MECHANISM: idempotency only works if the key is retained for the entire maximum retry window; if a message queue has a 24h visibility timeout and your TTL is 1h, stale retries will bypass idempotency. WHY IT MATTERS: SQS messages can be delivered up to 4 days after initial submission in extreme cases; Kafka consumers can replay from any offset. TAKEAWAY: set idempotency TTL to max(message retention period, retry deadline) plus a safety margin of 2x.
+
+**Fix:** Set idempotency TTL to at least the longest possible
+retry interval - typically 24-48h for SQS, up to 7 days for
+Kafka topics with long retention.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: Users are reporting double charges on their credit cards.
-The payment service uses retries. How do you debug and fix?
+**[JUNIOR] Q1 - [DEBUGGING] Users are reporting double charges on their credit cards. The payment service uses retries. How do you debug and fix?**
 
-A: Double charges indicate non-idempotent payment processing
+Double charges indicate non-idempotent payment processing
 with retries. Diagnosis: check payment service logs for requests
 with the same order ID appearing twice within seconds (the retry
 window). Compare timestamps - if two identical payment requests
@@ -354,7 +437,7 @@ deduplication layer.
 
 #### Candidate Mistakes
 
-Q: How would you implement idempotency for an email notification service?
+**[JUNIOR] Q2 - [MECHANISM] How would you implement idempotency for an email notification service?**
 
 **What NOT to say:** "Check if the email was already sent before sending."
 
@@ -509,11 +592,11 @@ Exactly-once:
   Use: financial processing, stream-to-stream pipelines
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exactly-Once Delivery Semantics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Kafka exactly-once semantics (EOS):**
 
-```
+```plaintext
 Step 1: Idempotent producer
   - Producer gets a PID (Producer ID) from broker
   - Each message batch has a sequence number
@@ -545,7 +628,7 @@ Step 2: Transactions (read-process-write pattern)
   // do NOT see the aborted messages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exactly-Once Delivery Semantics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **End-to-end exactly-once:**
 
@@ -565,7 +648,7 @@ Full exactly-once end-to-end:
   + Idempotent external writes (consumer layer)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exactly-Once Delivery Semantics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 True end-to-end exactly-once for external side effects (database,
@@ -603,6 +686,18 @@ together give exactly-once."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // KAFKA EXACTLY-ONCE SEMANTICS
@@ -667,7 +762,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** The BAD at-most-once pattern commits
+> **Code walkthrough:** The BAD at-most-once pattern commitsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the offset before processing - a crash during processing loses
 > the event permanently. The BAD at-least-once pattern commits
 > after processing but without idempotency - a crash between
@@ -735,12 +830,12 @@ is mandatory regardless.
 
 ### ⚖️ Comparison Table
 
-| Semantics | Loss | Duplicates | Complexity | Throughput | Use When |
-|---|---|---|---|---|---|
-| At-most-once | Possible | Never | Lowest | Highest | Metrics, logs |
-| At-least-once | Never | Possible | Low | High | Default; add idempotency |
-| Exactly-once (Kafka) | Never | Never (Kafka) | High | ~20% lower | Stream aggregations |
-| Idempotent at-least-once | Never | Harmless | Medium | High | Most business operations |
+| Semantics| Loss| Duplicates| Complexity| Throughput| Use When|
+|--------|--------|-------------|----------|----------|------------------------|
+| At-most-once| Possible| Never| Lowest| Highest| Metrics, logs|
+| At-least-once| Never| Possible| Low| High| Default; add idempotency|
+| Exactly-once (Kafka)| Never| Never (Kafka)| High| ~20% lower| Stream aggregati
+| Idempotent at-least-once| Never| Harmless| Medium| High| Most business operati
 
 **The deciding factor:** Are duplicates harmful to your data?
 If duplicates are filtered out by unique constraints or
@@ -754,10 +849,9 @@ aggregation pipeline.
 
 #### Production Failures
 
-Q: A Kafka consumer is writing duplicate records to the database.
-The Kafka configuration uses at-least-once delivery. How do you fix?
+**[JUNIOR] Q1 - [DEBUGGING] A Kafka consumer is writing duplicate records to the database. The Kafka configuration uses at-least-once delivery. How do you fix?**
 
-A: The consumer is processing a message multiple times (after a
+The consumer is processing a message multiple times (after a
 crash or rebalance) and writing to the database each time.
 Fix: (1) Add an idempotency key column to the database table.
 Use the Kafka message key + partition + offset as the idempotency
@@ -771,7 +865,7 @@ necessary.
 
 #### Candidate Mistakes
 
-Q: How does Kafka achieve exactly-once delivery?
+**[JUNIOR] Q2 - [MECHANISM] How does Kafka achieve exactly-once delivery?**
 
 **What NOT to say:** "Kafka stores each message with a unique ID
 and checks for duplicates."
@@ -815,7 +909,7 @@ HAVING COUNT(*) > 1;
 -- Non-zero result: race condition hit
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add UNIQUE constraint on idempotency_key column. Handle
 `DuplicateKeyException` as an idempotency signal, not an error.
@@ -863,7 +957,7 @@ SELECT kafka_offset, COUNT(*) FROM events
 GROUP BY kafka_offset HAVING COUNT(*) > 1;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check DB for duplicate event IDs example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add unique constraint on (kafka_topic, kafka_partition,
 kafka_offset) in the events table. Treat unique constraint
@@ -885,10 +979,9 @@ violation as successful deduplication.
 
 ---
 
-**Q1 (Clarification) - Why is checking before inserting not
-sufficient for idempotency?**
+**[JUNIOR] Q1 - [MECHANISM] Why is checking before inserting not sufficient for idempotency?**
 
-A: A SELECT followed by INSERT is two separate operations - not
+A SELECT followed by INSERT is two separate operations - not
 atomic. Between the SELECT (returning "key not found") and the
 INSERT, another thread or process can also SELECT (also returning
 "key not found") and also INSERT. Both threads pass the check;
@@ -911,9 +1004,9 @@ the moment it completes. Database constraints are the correct tool.
 
 ---
 
-**Q2 (Mechanism) - How does Kafka's idempotent producer work?**
+**[JUNIOR] Q2 - [MECHANISM] How does Kafka's idempotent producer work?**
 
-A: When `enable.idempotence=true`, the Kafka producer receives a
+When `enable.idempotence=true`, the Kafka producer receives a
 Producer ID (PID) from the broker during initialization. Every
 message batch sent to a specific partition has a sequence number
 that starts at 0 and monotonically increases. The broker maintains
@@ -938,10 +1031,9 @@ idempotent producer guarantee to multiple partitions).
 
 ---
 
-**Q3 (Mechanism) - What is the difference between
-idempotency key TTL and natural idempotency?**
+**[JUNIOR] Q3 - [MECHANISM] What is the difference between idempotency key TTL and natural idempotency?**
 
-A: Natural idempotency is a property of the operation itself -
+Natural idempotency is a property of the operation itself -
 applying it multiple times produces the same result. `SET x = 100`
 is naturally idempotent: the 10th application still results in
 `x = 100`. For naturally idempotent operations, no tracking is
@@ -968,11 +1060,9 @@ systems. Design TTL based on observed retry patterns.
 
 ---
 
-**Q4 (Failure / Debugging) - A payment service has been running
-fine for months. Suddenly, users report double charges. What changed
-and how do you find it?**
+**[MID] Q4 - [DEBUGGING] A payment service has been running fine for months. Suddenly, users report double charges. What changed and how do you find it?**
 
-A: Double charges appearing suddenly (not from day one) indicate
+Double charges appearing suddenly (not from day one) indicate
 a behavior change, not a missing idempotency implementation.
 Investigation sequence:
 
@@ -1004,10 +1094,9 @@ log review is the fastest diagnostic path.
 
 ---
 
-**Q5 (Failure / Debugging) - How do you test that an operation is
-truly idempotent?**
+**[MID] Q5 - [DEBUGGING] How do you test that an operation is truly idempotent?**
 
-A: Three testing layers:
+Three testing layers:
 
 Layer 1 - Unit test: call the operation three times with the same
 input and idempotency key. Assert: (a) the operation's side effect
@@ -1040,10 +1129,9 @@ works under real failure conditions.
 
 ---
 
-**Q6 (Trade-off) - What are the trade-offs of using Redis for
-idempotency key storage vs. a relational database?**
+**[SENIOR] Q6 - [TRADE-OFF] What are the trade-offs of using Redis for idempotency key storage vs. a relational database?**
 
-A: Redis SETNX (set if not exists):
+Redis SETNX (set if not exists):
 - Pros: sub-millisecond lookups; TTL is native (Redis automatically
   expires keys); no schema change required; very high throughput.
 - Cons: if Redis fails and the key is lost, the next retry is
@@ -1076,10 +1164,9 @@ A key stuck in "processing" beyond a timeout is retried.
 
 ---
 
-**Q7 (Production) - At your scale (10,000 payments/second), how
-do you manage the idempotency key table?**
+**[SENIOR] Q7 - [SCENARIO] At your scale (10,000 payments/second), how do you manage the idempotency key table?**
 
-A: Three concerns at 10k/sec: write throughput, storage growth,
+Three concerns at 10k/sec: write throughput, storage growth,
 and lookup latency.
 
 Write throughput: the idempotency key check + insert adds one
@@ -1107,8 +1194,7 @@ solution for high-throughput idempotency tables.
 
 ---
 
-**Q8 (Code) - Implement an idempotency decorator in Java for
-Spring service methods.**
+**[SENIOR] Q8 - [SCENARIO] Implement an idempotency decorator in Java for Spring service methods.**
 
 A:
 ```java
@@ -1151,7 +1237,7 @@ public class IdempotencyAspect {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using Spring annotation. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* using an AOP aspect makes
 idempotency a cross-cutting concern - applied declaratively
@@ -1164,11 +1250,9 @@ document the contract on the return type.
 
 ---
 
-**Q9 (Behavioral) - Describe a time when a lack of idempotency
-caused a production incident. What was the impact and how did
-you resolve it?**
+**[SENIOR] Q9 - [BEHAVIORAL] Describe a time when a lack of idempotency caused a production incident. What was the impact and how did you resolve it?**
 
-A: Example structure:
+Example structure:
 
 "At [company], our order confirmation email service processed
 events from an SQS queue. During a deployment, the service
@@ -1230,7 +1314,7 @@ SELECT event_id, COUNT(*) FROM processed_events
 GROUP BY event_id HAVING COUNT(*) > 1;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check DB for duplicate event IDs example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: add unique constraint on event_id (Kafka key or message ID).
 Handle `DuplicateKeyException` as successful deduplication.
@@ -1282,7 +1366,7 @@ kafka-topics.sh --describe \
 # High abort count indicates frequent transaction timeouts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High abort count indicates frequent transaction timeouts example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Increase `transaction.timeout.ms` to match maximum expected
 processing latency (with margin). Reduce the number of records
@@ -1304,10 +1388,9 @@ processed per transaction batch to reduce per-transaction latency.
 
 ---
 
-**Q1 (Clarification) - What is the difference between at-least-once
-and exactly-once, and when does the difference matter?**
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between at-least-once and exactly-once, and when does the difference matter?**
 
-A: At-least-once: the broker guarantees delivery, but the consumer
+At-least-once: the broker guarantees delivery, but the consumer
 may see the same message more than once (after failures, retries,
 or rebalances). The consumer is responsible for deduplication.
 
@@ -1336,10 +1419,9 @@ for database writes - idempotent consumers are still required.
 
 ---
 
-**Q2 (Mechanism) - How do Kafka transactions work? Walk through
-a read-process-produce cycle.**
+**[JUNIOR] Q2 - [MECHANISM] How do Kafka transactions work? Walk through a read-process-produce cycle.**
 
-A: Kafka transactions use a transaction coordinator (a special
+Kafka transactions use a transaction coordinator (a special
 Kafka broker) and a two-phase protocol.
 
 Setup: `producer.initTransactions()` - the producer registers with
@@ -1374,10 +1456,9 @@ consumer isolation level to be set explicitly.
 
 ---
 
-**Q3 (Mechanism) - What is the "zombie producer" problem in Kafka
-EOS and how is it solved?**
+**[JUNIOR] Q3 - [MECHANISM] What is the "zombie producer" problem in Kafka EOS and how is it solved?**
 
-A: A zombie producer is a Streams application instance that the
+A zombie producer is a Streams application instance that the
 cluster considers dead (session timeout exceeded) but is still
 running and producing messages. When a rebalance occurs: the
 coordinator assigns the Streams task to a new instance (the
@@ -1408,11 +1489,9 @@ Mechanical knowledge of EOS v1 vs v2 demonstrates production depth.
 
 ---
 
-**Q4 (Failure / Debugging) - A Kafka Streams application produces
-duplicate records to an output topic despite EXACTLY_ONCE_V2.
-How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] A Kafka Streams application produces duplicate records to an output topic despite EXACTLY_ONCE_V2. How do you diagnose?**
 
-A: Diagnosis steps:
+Diagnosis steps:
 
 1. Check for zombie producers: look for `ProducerFencedException`
    in application logs. This confirms fencing is happening
@@ -1445,11 +1524,9 @@ know to check configuration first, then behavior.
 
 ---
 
-**Q5 (Failure / Debugging) - Users are receiving messages from a
-Kafka consumer application, but with a consistent ~30-second delay
-in bursts. What is the likely cause?**
+**[MID] Q5 - [DEBUGGING] Users are receiving messages from a Kafka consumer application, but with a consistent ~30-second delay in bursts. What is the likely cause?**
 
-A: Burst delay with at-least-once delivery often indicates
+Burst delay with at-least-once delivery often indicates
 transaction timeout and retry behavior.
 
 Hypothesis: the Kafka producer is using transactions with a short
@@ -1472,7 +1549,7 @@ kafka-configs.sh --describe --broker 0 \
 # If P95 is ~30s and P50 is ~2s: transaction retry pattern
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P95 is ~30s and P50 is ~2s: transaction retry paice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: increase `transaction.timeout.ms` beyond the maximum
 processing latency. Reduce the batch size to reduce per-transaction
@@ -1489,10 +1566,9 @@ that points to transaction timeouts.
 
 ---
 
-**Q6 (Trade-off) - When would you choose at-least-once + idempotent
-consumer over Kafka exactly-once transactions?**
+**[SENIOR] Q6 - [TRADE-OFF] When would you choose at-least-once + idempotent consumer over Kafka exactly-once transactions?**
 
-A: I choose at-least-once + idempotent consumer in the
+I choose at-least-once + idempotent consumer in the
 following situations:
 
 (1) External side effects are required: Kafka EOS covers the
@@ -1529,11 +1605,9 @@ to external systems. They address different scopes.
 
 ---
 
-**Q7 (Production) - How would you implement exactly-once processing
-for a payment service that consumes from Kafka and writes to
-PostgreSQL?**
+**[SENIOR] Q7 - [SCENARIO] How would you implement exactly-once processing for a payment service that consumes from Kafka and writes to PostgreSQL?**
 
-A: Kafka EOS does not cover PostgreSQL writes. The practical
+Kafka EOS does not cover PostgreSQL writes. The practical
 design for exactly-once payment processing:
 
 Pattern: outbox + at-least-once + idempotent consumer
@@ -1543,7 +1617,7 @@ Step 1 - Consumer reads Kafka message (at-least-once delivery):
 consumer.poll() → get payment event with unique event_id
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P95 is ~30s and P50 is ~2s: transaction retry paice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2 - Attempt INSERT with unique constraint:
 ```sql
@@ -1554,7 +1628,7 @@ ON CONFLICT (event_id) DO NOTHING;
 -- RETURNING 1 to check if row was actually inserted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P95 is ~30s and P50 is ~2s: transaction retry paice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3 - Process only if INSERT succeeded (new event):
 ```java
@@ -1568,14 +1642,14 @@ if (isNew) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P95 is ~30s and P50 is ~2s: transaction retry pattern example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 4 - Commit Kafka offset (standard manual commit):
 ```java
 consumer.commitSync();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P95 is ~30s and P50 is ~2s: transaction retry pattern example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Why this works: the `event_id` unique constraint on the payments
 table deduplicates at the database level. A redelivered Kafka
@@ -1592,8 +1666,7 @@ it, you call `paymentGateway.charge()` on every duplicate.
 
 ---
 
-**Q8 (Code) - Implement a Kafka Streams topology with exactly-once
-semantics for a payment aggregation pipeline.**
+**[SENIOR] Q8 - [SCENARIO] Implement a Kafka Streams topology with exactly-once semantics for a payment aggregation pipeline.**
 
 A:
 ```java
@@ -1647,7 +1720,7 @@ public class PaymentStreamConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P95 is ~30s and P50 is ~2s: transaction retry pattern example demonstrates Java Stream pipeline using Spring annotation. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* setting BOTH
 `PROCESSING_GUARANTEE_CONFIG=EXACTLY_ONCE_V2` AND
@@ -1661,10 +1734,9 @@ read and aggregate uncommitted messages from aborted transactions.
 
 ---
 
-**Q9 (Behavioral) - Describe a system design decision you made
-around delivery semantics. What trade-offs did you consider?**
+**[SENIOR] Q9 - [BEHAVIORAL] Describe a system design decision you made around delivery semantics. What trade-offs did you consider?**
 
-A: Example structure:
+Example structure:
 
 "At [company], we were designing a notification service that
 consumed from a Kafka topic and sent push notifications to mobile

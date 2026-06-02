@@ -68,6 +68,7 @@ components without triggering a full page reload.
 
 **How it works:**
 
+{% raw %}
 ```jsx
 // React Router v6 setup
 import {
@@ -157,8 +158,9 @@ function LoginForm() {
   return <form onSubmit={handleSubmit}>...</form>;
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Router and Client-side Routing example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -170,6 +172,18 @@ required for implementing layouts efficiently.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // Common v5 vs v6 gotchas:
@@ -209,7 +223,7 @@ navigate('/home', { replace: true }); // replace
 navigate(-1);                 // go back
 ```
 
-> **Code walkthrough:** The most common React Router bug after upgrading
+> **Code walkthrough:** The most common React Router bug after upgradingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from v5 to v6 is using old imports. `Switch` is replaced by `Routes`,
 > `component={MyComp}` is replaced by `element={<MyComp />}` (note JSX),
 > and `useHistory()` is replaced by `useNavigate()`. The `exact` prop is
@@ -293,8 +307,7 @@ Symptom: navigating to a child route shows the parent layout but the child route
 
 ---
 
-**Q1: How do you implement a redirect-after-login flow with React Router?**
-`[SENIOR]` DECISION
+**[SENIOR] Q1 - [TRADE-OFF] How do you implement a redirect-after-login flow with React Router?**
 
 > **Answer:**
 >
@@ -497,7 +510,7 @@ function NavBar() {
 // });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dynamic Routing and Code Splitting example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -508,6 +521,18 @@ splitting is the highest-ROI performance optimization for SPAs.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // BAD: eager import, entire app in one bundle
@@ -629,8 +654,7 @@ Symptom: Webpack/Vite cannot create named chunks; all dynamic imports result in 
 
 ---
 
-**Q1: How do you investigate and fix bundle size issues in a React app?**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q1 - [DEBUGGING] How do you investigate and fix bundle size issues in a React app?**
 
 > **Answer:**
 >
@@ -813,7 +837,7 @@ function PrivateRoute({ children }) {
 // <PrivateRoute><Dashboard /></PrivateRoute>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Higher-Order Components example demonstrates variable declaration using authentication. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -826,6 +850,7 @@ the modern hook-based alternatives shows pattern evolution awareness.
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // WRAPPER HELL (classic HOC problem):
 // Applying multiple HOCs creates DevTools nightmare
@@ -858,8 +883,9 @@ function MyComponent() {
 // 4. React.memo is technically a HOC:
 const MemoizedList = React.memo(ExpensiveList);
 ```
+{% endraw %}
 
-> **Code walkthrough:** The "wrapper hell" example shows why HOCs fell
+> **Code walkthrough:** The "wrapper hell" example shows why HOCs fellice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > out of favor - 6 levels of nesting in DevTools makes debugging painful.
 > The hook version is completely flat: all behavior is called at the top
 > of one function component. React Router v6 replaced `withRouter` (HOC)
@@ -944,6 +970,7 @@ components without touching their source, and (3) error boundaries
 `componentDidCatch`). Knowing when each pattern applies is the signal
 interviewers look for.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -984,6 +1011,7 @@ or `useEffect(()=>{...},[])` - if it fires on every parent update,
 the HOC is being recreated. Fix: always define HOC-wrapped components
 at module scope, never inside render functions.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -999,8 +1027,7 @@ at module scope, never inside render functions.
 
 ---
 
-**Q1: How do you migrate a withAuth HOC to the hooks pattern?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] How do you migrate a withAuth HOC to the hooks pattern?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -1137,6 +1164,7 @@ implicitly through React Context, providing a cohesive API.
 
 **How it works:**
 
+{% raw %}
 ```jsx
 // RENDER PROP PATTERN:
 function Toggle({ render }) {
@@ -1221,8 +1249,9 @@ Accordion.Item = AccordionItem;
   </Accordion.Item>
 </Accordion>
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Render Props and Compound Components example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -1295,7 +1324,7 @@ Tabs.Content = TabsContent;
 </Tabs>
 ```
 
-> **Code walkthrough:** The Tabs compound component shares `active` state
+> **Code walkthrough:** The Tabs compound component shares `active` stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and `setActive` via Context. `TabsTrigger` reads `active` (for styling)
 > and calls `setActive` (for navigation). `TabsContent` reads `active` to
 > decide whether to render. No prop drilling: each sub-component accesses
@@ -1377,6 +1406,7 @@ to memoize the render prop using `useCallback` when the child
 implements `React.memo`. This is a subtle issue because the child
 re-renders silently with no error or warning.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1416,6 +1446,7 @@ the context value in `useMemo`: `const value = useMemo(() =>
 ({ activeTab, setActiveTab }), [activeTab])`. This prevents
 unnecessary renders of all context consumers.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -1431,8 +1462,7 @@ unnecessary renders of all context consumers.
 
 ---
 
-**Q1: Design a Dropdown component using compound components pattern.**
-`[SENIOR]` LIVE CODING
+**[SENIOR] Q1 - [SCENARIO] Design a Dropdown component using compound components pattern.**
 
 > **Answer:**
 >

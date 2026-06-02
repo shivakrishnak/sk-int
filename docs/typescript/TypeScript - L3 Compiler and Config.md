@@ -97,7 +97,7 @@ target vs lib:
   ES2020 target + no DOM lib = fetch/document not recognized
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Compiler and tsconfig Options example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -157,7 +157,7 @@ npx tsc --showConfig
 npx tsc --noEmit --traceResolution 2>&1 | Select-String "=>"
 ```
 
-> **Code walkthrough:** Application uses `noEmit: true` because Vite
+> **Code walkthrough:** Application uses `noEmit: true` because Viteice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > handles transpilation. `isolatedModules: true` ensures each file can
 > be compiled independently by esbuild/SWC - required when the bundler
 > processes files individually. Library config emits `.d.ts` files so
@@ -194,7 +194,7 @@ const arr = [1, 2, 3];
 const first = arr[0] ?? 0; // handle undefined
 ```
 
-> **Code walkthrough:** Incremental strict migration prevents a "big
+> **Code walkthrough:** Incremental strict migration prevents a "bigice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > bang" of hundreds of errors. Each flag adds a specific category.
 > `strictNullChecks` is the highest-value flag - it prevents null/
 > undefined runtime errors. `noUncheckedIndexedAccess` is the most
@@ -297,7 +297,7 @@ const d = Direction.Up; // should inline to: const d = 1;
 // esbuild can't do this without full program analysis -> runtime bug
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Trace resolution (debug "cannot find module"): example demonstrates TypeScript pattern using enum. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 With `isolatedModules: true`, TypeScript reports an error when you use
 `const enum` across files - preventing the silent runtime bug.
@@ -413,7 +413,7 @@ Path aliases:
   jest.config: moduleNameMapper: { '^@/(.*)$': '<rootDir>/src/$1' }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Module Resolution Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -449,7 +449,7 @@ export default {
 import { Button } from '@/components/Button';
 ```
 
-> **Code walkthrough:** Path aliases are a common source of confusion
+> **Code walkthrough:** Path aliases are a common source of confusionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > because they must be configured in three independent places. TypeScript
 > `paths` only affects type checking. The bundler and jest each have
 > their own module resolution that must be separately configured.
@@ -477,7 +477,7 @@ npm install --save-dev @types/lodash
 # Fix: "forceConsistentCasingInFileNames": true
 ```
 
-> **Code walkthrough:** `--traceResolution` is verbose but shows
+> **Code walkthrough:** `--traceResolution` is verbose but showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > exactly what TypeScript tried. It reveals whether the issue is a
 > missing file, a wrong strategy, or a paths misconfiguration.
 

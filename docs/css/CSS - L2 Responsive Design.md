@@ -159,7 +159,7 @@ CSS CUSTOM MEDIA (Level 5 - proposal):
   @media (--tablet) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Media Queries example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -230,7 +230,7 @@ environment.
 /* Mobile loads ALL desktop CSS first */
 ```
 
-> **Code walkthrough:** Desktop-first requires increasingly
+> **Code walkthrough:** Desktop-first requires increasinglyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > specific overrides down the breakpoint chain. Mobile
 > loads all the expensive desktop CSS and overrides it.
 > The override cascade is fragile - adding a property at
@@ -258,7 +258,7 @@ environment.
 /* Each breakpoint adds, rarely overrides */
 ```
 
-> **Code walkthrough:** Mobile-first starts with the
+> **Code walkthrough:** Mobile-first starts with theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > simplest state. Each `min-width` query adds complexity
 > progressively. No override cascade - if a property isn't
 > in the base styles, it doesn't need overriding. The CSS
@@ -295,7 +295,7 @@ environment.
 }
 ```
 
-> **Code walkthrough:** The reduced-motion query uses
+> **Code walkthrough:** The reduced-motion query usesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `!important` as a deliberate override of all animations
 > and transitions site-wide. This is the rare legitimate
 > use of `!important` - a user accessibility preference
@@ -369,7 +369,7 @@ a separate request for print styles - not blocking prevention.
 **Symptom: styles don't apply at expected width**
 
 Diagnosis:
-```
+```plaintext
 # Check viewport meta tag (REQUIRED for responsive):
 <meta name="viewport"
   content="width=device-width, initial-scale=1">
@@ -377,7 +377,7 @@ Diagnosis:
 # Media query min-width sees the document width, not viewport
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Media query min-width sees the document width, not viewport example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -393,14 +393,14 @@ overrides.
 
 **Symptom: breakpoints appear at wrong widths**
 
-```
+```plaintext
 # Chrome DevTools > Device toolbar shows actual viewport
 # Check if scrollbar width affects layout:
 # On Windows, scrollbar (~17px) reduces viewport width
 # Use overflow-y: scroll on body to keep consistent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use overflow-y: scroll on body to keep consistent example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -420,7 +420,7 @@ overrides.
 
 ---
 
-**Q1: What is the difference between min-width and
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between min-width and**
 max-width media queries?** `[JUNIOR]` MECHANISM
 
 *Why they ask:* Core concept for every frontend role.
@@ -475,8 +475,7 @@ mobile-first development?"
 
 ---
 
-**Q2: How do you implement dark mode with CSS?**
-`[MID]` PRODUCTION
+**[MID] Q2 - [DEBUGGING] How do you implement dark mode with CSS?**
 
 *Why they ask:* Practical dark mode implementation is
 a real production skill.
@@ -549,7 +548,7 @@ toggle?"
 
 ---
 
-**Q3: Why is the viewport meta tag required for responsive
+**[JUNIOR] Q3 - [MECHANISM] Why is the viewport meta tag required for responsive**
 design?** `[MID]` MECHANISM
 
 *Why they ask:* A non-obvious but critical fact that
@@ -594,8 +593,7 @@ separates candidates who've actually done responsive work.
 
 ---
 
-**Q4: How does media query specificity work?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] How does media query specificity work?** `[SENIOR]`**
 
 *Why they ask:* A subtle cascade question that trips up
 experienced developers.
@@ -647,7 +645,7 @@ increase its specificity?"
 
 ---
 
-**Q5: What is `prefers-reduced-motion` and how do you
+**[MID] Q5 - [TRADE-OFF] What is `prefers-reduced-motion` and how do you**
 use it?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Required accessibility knowledge for
@@ -722,7 +720,7 @@ modern frontend roles.
 
 ---
 
-**Q6: How does `hover: none` differ from touch detection
+**[SENIOR] Q6 - [MECHANISM] How does `hover: none` differ from touch detection**
 in JavaScript?** `[SENIOR]` TRADE-OFF
 
 *Why they ask:* CSS-only touch detection pattern.
@@ -785,7 +783,7 @@ in JavaScript?** `[SENIOR]` TRADE-OFF
 
 ---
 
-**Q7: What are CSS Container Queries and why are they
+**[SENIOR] Q7 - [MECHANISM] What are CSS Container Queries and why are they**
 better than media queries for components?** `[SENIOR]`
 COMPARISON
 
@@ -848,7 +846,7 @@ and change the responsive design mental model.
 
 ---
 
-**Q8: Debug: your responsive layout breaks only in Chrome,
+**[SENIOR] Q8 - [DEBUGGING] Debug: your responsive layout breaks only in Chrome,**
 not Firefox.** `[SENIOR]` DEBUGGING
 
 *Why they ask:* Real cross-browser debugging skill.
@@ -901,8 +899,7 @@ not Firefox.** `[SENIOR]` DEBUGGING
 
 ---
 
-**Q9: How would you build a print stylesheet?** `[SENIOR]`
-PRODUCTION
+**[SENIOR] Q9 - [DEBUGGING] How would you build a print stylesheet?** `[SENIOR]`**
 
 *Why they ask:* Print is often overlooked but important
 for financial, legal, and content-heavy sites.
@@ -1175,7 +1172,7 @@ RESPONSIVE DESIGN TOOLKIT:
    /* Content never overflows at small sizes */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Responsive Design Patterns and Mobile-First exampleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1233,7 +1230,7 @@ values and conditional overrides.
 /* Still jumps: 320px → 32px, 481px → 64px (too big) */
 ```
 
-> **Code walkthrough:** Three discrete sizes create visible
+> **Code walkthrough:** Three discrete sizes create visibleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > jumps. A 481px screen gets the full 64px size which may
 > overflow. The gap between breakpoints is not handled.
 > This pattern requires maintaining many breakpoints.
@@ -1261,7 +1258,7 @@ body {
 }
 ```
 
-> **Code walkthrough:** `clamp(min, preferred, max)` creates
+> **Code walkthrough:** `clamp(min, preferred, max)` createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a continuously scaling value. At 320px viewport: 2rem +
 > 3*0.32rem = 2.96rem (below max, above min). At 1440px:
 > 2rem + 3*14.4px = ~5.5rem → clamped to 4rem. No breakpoints
@@ -1300,7 +1297,7 @@ body {
 img { max-width: 100%; height: auto; }
 ```
 
-> **Code walkthrough:** This layout uses one media query
+> **Code walkthrough:** This layout uses one media queryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for the column stack but fluid values for spacing and
 > sizing. `65ch` for article width is a typographic
 > constraint - it limits to 65 characters per line
@@ -1380,7 +1377,7 @@ bandwidth (image formats, lazy loading).
 # Or: BrowserStack / Sauce Labs for remote testing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: BrowserStack / Sauce Labs for remote testing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1406,7 +1403,7 @@ double-tap zoom that triggers the size adjustment.
 # pre/code blocks without overflow-x: auto
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pre/code blocks without overflow-x: auto example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1426,7 +1423,7 @@ double-tap zoom that triggers the size adjustment.
 
 ---
 
-**Q1: What is the difference between mobile-first and
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between mobile-first and**
 responsive design?** `[JUNIOR]` CONCEPTUAL
 
 *Why they ask:* Clarifies vocabulary that many candidates
@@ -1472,7 +1469,7 @@ mobile-first?"
 
 ---
 
-**Q2: What is `clamp()` and how do you use it for
+**[JUNIOR] Q2 - [MECHANISM] What is `clamp()` and how do you use it for**
 responsive typography?** `[MID]` MECHANISM
 
 *Why they ask:* `clamp()` is the modern fluid typography
@@ -1529,8 +1526,7 @@ value in clamp()?"
 
 ---
 
-**Q3: What are "intrinsic web design" patterns?** `[SENIOR]`
-ARCHITECTURE
+**[JUNIOR] Q3 - [ARCHITECTURE] What are "intrinsic web design" patterns?** `[SENIOR]`**
 
 *Why they ask:* Shows awareness of the evolution beyond
 breakpoint-heavy responsive design.
@@ -1594,7 +1590,7 @@ intrinsic design."
 
 ---
 
-**Q4: How do you make images responsive?** `[JUNIOR]`
+**[MID] Q4 - [MECHANISM] How do you make images responsive?** `[JUNIOR]`**
 HANDS-ON
 
 *Why they ask:* Images are one of the most common responsive
@@ -1662,7 +1658,7 @@ challenges and performance concerns.
 
 ---
 
-**Q5: What is the "hamburger menu" anti-pattern?** `[SENIOR]`
+**[MID] Q5 - [FAILURE] What is the "hamburger menu" anti-pattern?** `[SENIOR]`**
 TRADE-OFF
 
 *Why they ask:* Shows UX judgment beyond pure CSS knowledge.
@@ -1716,8 +1712,7 @@ TRADE-OFF
 
 ---
 
-**Q6: What are WCAG touch target size requirements?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q6 - [DEBUGGING] What are WCAG touch target size requirements?**
 
 *Why they ask:* Accessibility knowledge for interactive
 responsive elements.
@@ -1774,7 +1769,7 @@ responsive elements.
 
 ---
 
-**Q7: How does `aspect-ratio` replace the padding-top
+**[SENIOR] Q7 - [MECHANISM] How does `aspect-ratio` replace the padding-top**
 hack?** `[SENIOR]` MECHANISM
 
 *Why they ask:* A classic responsive technique replaced
@@ -1840,7 +1835,7 @@ by modern CSS.
 
 ---
 
-**Q8: How do you handle responsive design in a design
+**[SENIOR] Q8 - [DESIGN] How do you handle responsive design in a design**
 system?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Design system architecture at scale.
@@ -1903,7 +1898,7 @@ system?** `[STAFF]` ARCHITECTURE
 
 ---
 
-**Q9: A card grid is fine on desktop and mobile but
+**[SENIOR] Q9 - [MECHANISM] A card grid is fine on desktop and mobile but**
 broken at exactly 768px. How do you diagnose?** `[MID]`
 DEBUGGING
 

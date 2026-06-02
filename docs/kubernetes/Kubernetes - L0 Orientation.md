@@ -110,7 +110,7 @@ KUBERNETES CLUSTER
 |  Node 3: [Pod E] [Pod F]                 |
 +------------------------------------------+
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What Kubernetes Is and Why It Exists example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 You declare desired state via YAML manifests (e.g., "run 3 replicas of my-app").
 The API Server stores this in etcd. The Scheduler assigns pods to nodes. Controllers
@@ -157,7 +157,7 @@ Kubernetes solves them with a coherent, extensible design.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This shows the minimal Kubernetes YAML for deploying a
+> **Code walkthrough:** This shows the minimal Kubernetes YAML for deploying aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > containerized application - the two most common resource types you write every day.
 > The Deployment declares desired state (3 replicas, which image, resource limits).
 > The Service exposes it within the cluster. Together they are the foundation of
@@ -221,7 +221,7 @@ spec:
   type: ClusterIP                # internal-only; use LoadBalancer for external
 ```
 
-> **Code walkthrough:** The Deployment object manages pod lifecycle - Kubernetes
+> **Code walkthrough:** The Deployment object manages pod lifecycle - Kubernetesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > creates 3 pod replicas, monitors them, and replaces any that fail. Pinning the
 > image tag (not `:latest`) ensures reproducible deployments. Resource requests
 > allow the scheduler to make informed placement decisions; limits prevent one pod
@@ -725,7 +725,7 @@ Each tool addresses a different scope:
   in production, with HA, autoscaling, and zero-downtime deploys?"
 
 **How it works:**
-```
+```plaintext
 Docker (single-host):
   docker build -> image -> docker run -> container on THIS machine
 
@@ -739,7 +739,7 @@ Kubernetes (multi-host, cluster):
   Controllers maintain desired state across failures
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes vs Docker vs Docker Compose example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Docker Compose was NOT designed for production and does not provide high availability.
@@ -772,7 +772,7 @@ at distinct scales - which is exactly why they're separate tools.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Comparing equivalent configurations across Docker Compose
+> **Code walkthrough:** Comparing equivalent configurations across Docker Composeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and Kubernetes for the same 2-service application shows the conceptual mapping
 > and the critical differences. Compose is simpler but single-host. Kubernetes
 > adds replicas, resource management, and self-healing at the cost of more YAML.
@@ -842,12 +842,12 @@ spec:
     targetPort: 8080
 ```
 
-> **Code walkthrough:** The Compose version is minimal - services, env vars, volumes
+> **Code walkthrough:** The Compose version is minimal - services, env vars, volice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in 20 lines. No concept of replicas, resource limits, or secrets management.
-> The Kubernetes version adds three replicas for availability, uses a Secret for the
+> The Kubernetes version adds three replicas for availability, uses a Secret for
 > database URL (never put passwords in Deployment YAML), and specifies resource
-> requests/limits for scheduler placement. The Kubernetes version is more verbose
-> but provides HA, rollback, resource governance, and secrets security that Compose
+> requests/limits for scheduler placement. The Kubernetes version is more verbos
+> but provides HA, rollback, resource governance, and secrets security that Comp
 > cannot.
 
 ---
@@ -855,10 +855,10 @@ spec:
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Docker builds and runs containers. Docker Compose runs multiple containers together
+> Docker builds and runs containers. Docker Compose runs multiple containers tog
 > on one machine - great for local dev with a web app plus database plus cache.
-> Kubernetes orchestrates containers across multiple machines in production, handling
-> failures, scaling, and deployments. Most teams use all three: Docker for building
+> Kubernetes orchestrates containers across multiple machines in production, han
+> failures, scaling, and deployments. Most teams use all three: Docker for build
 > images, Compose for local dev, and Kubernetes for production.
 
 *Push deeper:* Explain that Docker Swarm was Docker's answer to Kubernetes but lost
@@ -867,17 +867,17 @@ the "container wars" - Kubernetes won and is now the standard.
 ---
 
 **Senior / Staff (5+ years):**
-> Docker and Compose were never designed for production multi-machine orchestration.
-> Docker Compose has no concept of node failure, cross-machine networking, or persistent
+> Docker and Compose were never designed for production multi-machine orchestrat
+> Docker Compose has no concept of node failure, cross-machine networking, or pe
 > storage that survives pod rescheduling. Kubernetes fills all these gaps but at
-> significant complexity cost. The architectural decision I make repeatedly: use managed
-> services (EKS, GKE) to absorb the control-plane complexity, leaving teams to manage
-> only workloads. One important nuance: Kubernetes removed Dockershim in 1.24 - it now
-> speaks CRI directly to containerd or CRI-O, so you can run K8s without Docker installed.
+> significant complexity cost. The architectural decision I make repeatedly: use
+> services (EKS, GKE) to absorb the control-plane complexity, leaving teams to m
+> only workloads. One important nuance: Kubernetes removed Dockershim in 1.24 - 
+> speaks CRI directly to containerd or CRI-O, so you can run K8s without Docker 
 > Docker is a build and development tool; containerd is the production runtime.
 
-*Push deeper:* Discuss the OCI (Open Container Initiative) standard - because Docker
-images are OCI-compliant, they run on containerd, podman, and CRI-O without Docker.
+*Push deeper:* Discuss the OCI (Open Container Initiative) standard - because Do
+images are OCI-compliant, they run on containerd, podman, and CRI-O without Dock
 
 ---
 
@@ -892,7 +892,7 @@ For production multi-service: use Kubernetes, ECS, or a managed alternative.
 **Misconception 2: "Kubernetes requires Docker."**
 Since Kubernetes 1.24, Dockershim was removed. Kubernetes uses the Container
 Runtime Interface (CRI) and works with containerd or CRI-O directly. Docker is
-still used to BUILD images (which are OCI-compatible and run on any CRI runtime),
+still used to BUILD images (which are OCI-compatible and run on any CRI runtime)
 but Docker is not required at runtime on Kubernetes nodes.
 
 **Misconception 3: "docker-compose.yml converts directly to Kubernetes YAML."**
@@ -941,15 +941,15 @@ Fix: use Kubernetes Service names for inter-service communication.
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 30-60 seconds |
-| Mechanism | 1-2 minutes |
-| Comparison | 1-2 minutes |
-| Scenario | 2-3 minutes |
-| Debugging | 1-2 minutes |
-| Trade-off | 1-2 minutes |
-| Advanced | 1-2 minutes |
+  | Question Category | Time to Answer |  
+|-----------------|--------------|
+  | Definition        | 30-60 seconds  |  
+  | Mechanism         | 1-2 minutes    |  
+  | Comparison        | 1-2 minutes    |  
+  | Scenario          | 2-3 minutes    |  
+  | Debugging         | 1-2 minutes    |  
+  | Trade-off         | 1-2 minutes    |  
+  | Advanced          | 1-2 minutes    |  
 
 ---
 
@@ -964,34 +964,34 @@ decides which machine to run each container on, restarts containers when they fa
 scales them up and down based on load, and routes traffic to healthy instances.
 
 The analogy: Docker is the shipping container standard - it defines a portable,
-standardized package. Kubernetes is the port authority - it decides where containers
+standardized package. Kubernetes is the port authority - it decides where contai
 are loaded, unloaded, and moved, and manages the whole logistics operation.
 
 In practice, Docker builds the image; Kubernetes runs it in production. They're
 complementary - not competing.
 
-*What separates good from great:* Knowing that Kubernetes 1.24+ doesn't use Docker
-as the runtime - it uses containerd directly via the CRI interface. Docker is still
-used to build OCI-compliant images, but the runtime on Kubernetes nodes is containerd.
+*What separates good from great:* Knowing that Kubernetes 1.24+ doesn't use Dock
+as the runtime - it uses containerd directly via the CRI interface. Docker is st
+used to build OCI-compliant images, but the runtime on Kubernetes nodes is conta
 
 ---
 
 **Q2 [MID] (Mechanism): How does Kubernetes handle a failing container differently than Docker Compose?**
 
-A: Docker Compose handles container failure with a restart policy (no, always, on-failure,
-unless-stopped). If configured with `restart: always`, Compose restarts the failed
-container on the same machine. That's it - same machine, same network, no rescheduling.
+A: Docker Compose handles container failure with a restart policy (no, always, o
+unless-stopped). If configured with `restart: always`, Compose restarts the fail
+container on the same machine. That's it - same machine, same network, no resche
 
 Kubernetes handles failure with multiple layers of recovery:
 
-Pod-level: kubelet restarts failed containers with exponential backoff (CrashLoopBackOff).
+Pod-level: kubelet restarts failed containers with exponential backoff (CrashLoo
 The container is restarted on the same node initially.
 
-Deployment-level: if the node itself fails, the Deployment controller detects that
+Deployment-level: if the node itself fails, the Deployment controller detects th
 replicas are missing (by watching the API Server) and creates replacement pods.
 The scheduler assigns them to healthy nodes.
 
-Self-healing: Kubernetes continuously reconciles. If a pod becomes unhealthy (fails
+Self-healing: Kubernetes continuously reconciles. If a pod becomes unhealthy (fa
 readiness probe), it's removed from Service endpoints so traffic stops hitting it.
 If it stays unhealthy, the controller may restart or reschedule it.
 
@@ -1001,13 +1001,13 @@ distributes replicas across nodes so a single node failure only affects a fracti
 of your pods, and the remaining replicas continue serving traffic while Kubernetes
 reschedules the lost ones.
 
-*What separates good from great:* Describing the readiness probe integration - Kubernetes
-not only restarts failed containers but also removes unhealthy-but-running containers
+*What separates good from great:* Describing the readiness probe integration - K
+not only restarts failed containers but also removes unhealthy-but-running conta
 from service endpoints, protecting users from requests to degraded pods.
 
 ---
 
-**Q3 [MID] (Trade-off): When is Docker Compose the better choice for production?**
+**Q3 [MID] (Trade-off): When is Docker Compose the better choice for production?
 
 A: Docker Compose is the right production choice when the workload is simple enough
 that its limitations don't matter:
@@ -1020,7 +1020,7 @@ Team without Kubernetes expertise: the operational cost of running Kubernetes
 correctly (upgrades, RBAC, monitoring, PVCs, network policies) requires dedicated
 expertise. For small teams, that cost exceeds the benefit for modest workloads.
 
-Cost sensitivity: a single VM running Docker Compose costs $20-50/month. A minimum
+Cost sensitivity: a single VM running Docker Compose costs $20-50/month. A minim
 viable Kubernetes cluster (3 nodes for HA control plane + workers) costs several
 hundred dollars per month.
 
@@ -1030,8 +1030,8 @@ A simple, well-understood system beats a complex, poorly-operated one. I've seen
 more production incidents caused by misconfigured Kubernetes than by the limitations
 of Docker Compose for small workloads.
 
-*What separates good from great:* Discussing managed alternatives - Google Cloud Run,
-Fly.io, Railway - that provide most of Kubernetes' production benefits (rolling deploys,
+*What separates good from great:* Discussing managed alternatives - Google Cloud
+Fly.io, Railway - that provide most of Kubernetes' production benefits (rolling 
 health checks, autoscaling) without the operational overhead. These are often the
 right choice between "Docker Compose" and "full Kubernetes".
 
@@ -1061,13 +1061,13 @@ If the cluster uses NetworkPolicies, the default behavior after migration may be
 that allows only specific egress/ingress patterns may be blocking the communication.
 
 Fourth check: Port mismatches.
-Compose uses `ports: [hostPort:containerPort]`. K8s Service `port` (service-facing)
-can differ from `targetPort` (container-facing). Verify: `kubectl describe service
-<service>` shows both ports and the targetPort matches the container's actual listening
+Compose uses `ports: [hostPort:containerPort]`. K8s Service `port` (service-faci
+can differ from `targetPort` (container-facing). Verify: `kubectl describe servi
+<service>` shows both ports and the targetPort matches the container's actual li
 port.
 
 *What separates good from great:* Using `kubectl exec` to debug directly: `kubectl
-exec -it <pod> -- curl http://service-name:port/health` lets you test connectivity
+exec -it <pod> -- curl http://service-name:port/health` lets you test connectivi
 from inside the cluster, ruling out external routing issues.
 
 ---
@@ -1077,23 +1077,23 @@ What's your migration plan?**
 
 A: Migration phases:
 
-Phase 1 - Containerization audit: ensure all services have Dockerfiles that produce
+Phase 1 - Containerization audit: ensure all services have Dockerfiles that prod
 OCI-compliant images (no host-path dependencies, no root requirement, proper
 health check endpoints). Run everything with `docker run` in isolation before
 involving Kubernetes.
 
-Phase 2 - Kubernetes manifests: for each Compose service, create Deployment + Service.
+Phase 2 - Kubernetes manifests: for each Compose service, create Deployment + Se
 Map Compose environment variables to K8s ConfigMaps (non-sensitive) and Secrets
 (sensitive). Map Compose volumes to PersistentVolumeClaims.
 
-Phase 3 - Local validation: use minikube or kind (Kubernetes in Docker) to validate
+Phase 3 - Local validation: use minikube or kind (Kubernetes in Docker) to valid
 manifests locally before touching production. Test probe behavior, service DNS,
 and rolling updates.
 
 Phase 4 - Staging environment: deploy to a staging K8s cluster. Run integration
-tests. Validate cross-service connectivity, secret injection, and scaling behavior.
+tests. Validate cross-service connectivity, secret injection, and scaling behavi
 
-Phase 5 - Production cutover: blue-green or canary deploy. Keep Compose running as
+Phase 5 - Production cutover: blue-green or canary deploy. Keep Compose running 
 fallback for 48h. Monitor error rates and latency.
 
 Phase 6 - Cleanup: remove Docker Compose setup, update runbooks, train team on
@@ -1109,7 +1109,7 @@ from day one rather than raw kubectl apply.
 
 ---
 
-**Q6 [STAFF] (Trade-off): What are the security implications of the Docker Compose
+**Q6 [STAFF] (Trade-off): What are the security implications of the Docker Compo
 to Kubernetes migration that teams often miss?**
 
 A: Three security gaps that commonly appear:
@@ -1121,7 +1121,7 @@ Audit Dockerfiles upfront: every container should have `USER nonroot` and a
 non-zero UID.
 
 Secret management: Compose uses `.env` files or inline env vars - both end up
-in compose files that get committed to git. Kubernetes Secrets are base64-encoded
+in compose files that get committed to git. Kubernetes Secrets are base64-encode
 (not encrypted) in etcd by default. Teams migrate secrets from .env to K8s Secrets
 without enabling etcd encryption at rest or using an external secret store (Vault,
 AWS Secrets Manager via External Secrets Operator). The migration should include
@@ -1139,7 +1139,7 @@ their namespace; CI/CD pipelines get deploy-only access to specific namespaces;
 ops get broader but audited access.
 
 *What separates good from great:* Recommending a security review before migration
-using tools like `kube-score`, `polaris`, or `kubesec` to validate manifests against
+using tools like `kube-score`, `polaris`, or `kubesec` to validate manifests aga
 security best practices before they ever reach production.
 
 ---
@@ -1147,15 +1147,15 @@ security best practices before they ever reach production.
 **Q7 [STAFF] (Deep Dive): Kubernetes 1.24 removed Dockershim. What changed
 and why does it matter?**
 
-A: Before K8s 1.24, Kubernetes used Docker as the container runtime via "Dockershim" -
+A: Before K8s 1.24, Kubernetes used Docker as the container runtime via "Dockers
 a shim layer in kubelet that translated between the Kubernetes Container Runtime
 Interface (CRI) and the Docker daemon API. Docker itself runs containerd internally.
 So the actual flow was: kubelet -> Dockershim -> Docker daemon -> containerd.
 
-Dockershim was removed because: (1) Maintaining a Docker-specific integration layer
+Dockershim was removed because: (1) Maintaining a Docker-specific integration la
 was costly and imposed the entire Docker daemon overhead on K8s nodes. (2) Docker is
-not CRI-compliant natively. (3) containerd and CRI-O are lighter, CRI-native runtimes
-that skip the intermediate Docker layer. The new flow: kubelet -> containerd (or CRI-O)
+not CRI-compliant natively. (3) containerd and CRI-O are lighter, CRI-native run
+that skip the intermediate Docker layer. The new flow: kubelet -> containerd (or
 directly - two steps, not four.
 
 What changed operationally: Docker doesn't need to be installed on K8s worker nodes
@@ -1168,12 +1168,12 @@ What didn't change: Docker-built images are OCI-compliant and run unchanged on
 containerd. You still use `docker build` locally; the images run fine in Kubernetes.
 The only change is the runtime on the K8s worker nodes.
 
-Why it matters: cluster operators need to update their tooling (`docker` -> `crictl`
-on nodes), update node setup scripts that install Docker, and ensure any in-cluster
+Why it matters: cluster operators need to update their tooling (`docker` -> `cri
+on nodes), update node setup scripts that install Docker, and ensure any in-clus
 build pipelines don't rely on the Docker socket.
 
 *What separates good from great:* Knowing that Docker Desktop still uses containerd
-internally and can be configured to use the Kubernetes-compatible containerd directly -
+internally and can be configured to use the Kubernetes-compatible containerd dir
 closing the gap between local development and cluster behavior.
 
 ---
@@ -1363,7 +1363,7 @@ Package/CD:   Helm | Kustomize | ArgoCD | Flux
 Registry:     Harbor | Docker Hub | AWS ECR | GCR
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes Ecosystem Map example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The CNCF ecosystem is composable - you pick the tools that fit your needs. There
@@ -1466,7 +1466,7 @@ helm upgrade ingress-nginx ingress-nginx/ingress-nginx \
 helm rollback ingress-nginx 1 --namespace ingress-nginx
 ```
 
-> **Code walkthrough:** Helm manages lifecycle: install, upgrade, rollback, and
+> **Code walkthrough:** Helm manages lifecycle: install, upgrade, rollback, andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > uninstall of complex multi-resource applications as a single unit (a "release").
 > The `values.yaml` override model means you track only your customizations, not the
 > entire chart. Pinning the version in CI prevents surprise upgrades during unrelated

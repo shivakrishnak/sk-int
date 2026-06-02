@@ -81,7 +81,7 @@ CROSS JOIN:    Cartesian product (every row x every row)
 SELF JOIN:     table joined to itself
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Combining Tables on Matching Rows example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Equi-join vs. non-equi-join:**
 
@@ -94,7 +94,7 @@ ON a.created_at BETWEEN b.starts_at AND b.ends_at
 ON a.price >= b.min_price AND a.price < b.max_price
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Combining Tables on Matching Rows example demonstrates join execution strategy. **KEY MECHANISM:** the planner chooses between nested loop, hash join, or merge join based on row count estimates. **WHY IT MATTERS:** joining unindexed columns forces a sequential scan on one side - O(n*m) complexity. **TAKEAWAY: ensure foreign keys and join columns are indexed; check EXPLAIN ANALYZE output.**
 
 ---
 
@@ -141,7 +141,7 @@ INNER JOIN products p   ON p.id = oi.product_id
 WHERE o.id = :order_id;
 ```
 
-> **Code walkthrough:** The BAD implicit join uses the old comma-separated
+> **Code walkthrough:** The BAD implicit join uses the old comma-separatedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > table list with join conditions in WHERE. This style mixes join logic
 > and filter logic, making it easy to accidentally write a Cartesian
 > product (forgetting the join condition). The GOOD explicit INNER JOIN
@@ -182,7 +182,7 @@ GROUP BY e.name;
 -- The CTE forces customers to be filtered first.
 ```
 
-> **Code walkthrough:** The optimizer estimates the best join order by
+> **Code walkthrough:** The optimizer estimates the best join order byice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > comparing row counts. Starting with `customers WHERE segment='ENTERPRISE'`
 > (perhaps 50 customers) and then looking up orders per customer via index
 > is much faster than starting with all orders and looking up their customers.
@@ -249,7 +249,7 @@ Fix: add the missing ON condition.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What are the three join algorithms and when does the optimizer choose each?**
+**[JUNIOR] Q1 - [MECHANISM] What are the three join algorithms and when does the optimizer choose each?**
 
 🗣️ "Nested loop join: iterate over the outer table; for each row, probe the
 inner table using an index. Best when: outer table is small (few rows after
@@ -261,7 +261,7 @@ Merge join: sort both sides on the join column, then merge. Best when: both
 sides are already sorted (via index) or when DISTINCT/ORDER BY is also needed.
 The optimizer chooses based on estimated row counts and available indexes."
 
-**Q2: How does join order affect query performance?**
+**[JUNIOR] Q2 - [MECHANISM] How does join order affect query performance?**
 
 🗣️ "Join order determines how many intermediate rows are passed to subsequent
 join steps. For N tables: there are N! possible join orders. The optimizer
@@ -273,7 +273,7 @@ doing that filter first means subsequent joins process 10 rows, not 10M.
 Bad estimates cause bad join orders: `ANALYZE table` refreshes statistics
 and gives the optimizer accurate row counts."
 
-**Q3: What is the difference between ON and WHERE for join filtering?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between ON and WHERE for join filtering?**
 
 🗣️ "For INNER JOIN: ON and WHERE produce the same result. Both filter rows.
 `INNER JOIN b ON b.id = a.b_id AND b.active = true` is equivalent to
@@ -286,7 +286,7 @@ is false (including rows where the right side was NULL). `LEFT JOIN ... ON ...
 WHERE b.col = 'x'` effectively becomes an INNER JOIN. Use ON conditions
 to filter the right side in a LEFT JOIN; use WHERE for final row filtering."
 
-**Q4: What is a self-join and give a practical use case?**
+**[MID] Q4 - [MECHANISM] What is a self-join and give a practical use case?**
 
 🗣️ "A self-join joins a table to itself - the table appears twice with
 different aliases. Use case: hierarchical data. An employees table where
@@ -298,7 +298,7 @@ as the manager. Other use cases: finding duplicate rows, finding rows
 that differ by one attribute (before/after comparison), adjacency list
 traversal (though recursive CTEs are usually better for deep hierarchies)."
 
-**Q5: How do you diagnose a slow join query?**
+**[MID] Q5 - [DEBUGGING] How do you diagnose a slow join query?**
 
 🗣️ "Step 1: `EXPLAIN ANALYZE` the query. Look for: (1) Seq Scan on large
 tables (missing index). (2) Rows estimate vs. actual rows - if actual is
@@ -310,7 +310,7 @@ result sets are huge (a join that multiplies rows before filtering).
 Restructure: add a tighter WHERE before the join, or use a CTE to filter
 first."
 
-**Q6: What is a covering index for a join and how does it help?**
+**[SENIOR] Q6 - [MECHANISM] What is a covering index for a join and how does it help?**
 
 🗣️ "A covering index for a join contains the join column plus all selected
 columns. For `SELECT o.id, o.status FROM orders o JOIN customers c ON c.id=o.customer_id WHERE c.segment='ENTERPRISE'`:
@@ -320,7 +320,7 @@ If the join also filters on an orders column: include that column in the
 index. The trade-off: wider indexes take more space and slow down writes.
 Use covering indexes for the highest-frequency join queries in your hot path."
 
-**Q7: When should you use a subquery instead of a JOIN?**
+**[SENIOR] Q7 - [SCENARIO] When should you use a subquery instead of a JOIN?**
 
 🗣️ "Subquery in WHERE (semi-join): `WHERE id IN (SELECT order_id FROM ...)`.
 Equivalent to INNER JOIN but can be more readable when you only care
@@ -427,7 +427,7 @@ RIGHT JOIN result: [2-B, 3-B, 5-null_A]
 FULL OUTER:        [1-null, 2-B, 3-B, 4-null, null-5]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Including Unmatched Rows example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Anti-join pattern:**
 
@@ -448,7 +448,7 @@ FROM a
 WHERE a.id NOT IN (SELECT a_id FROM b WHERE a_id IS NOT NULL);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Including Unmatched Rows example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -489,7 +489,7 @@ WHERE o.id IS NULL;
 -- = customers with no orders.
 ```
 
-> **Code walkthrough:** The INNER JOIN version excludes any customer who
+> **Code walkthrough:** The INNER JOIN version excludes any customer whoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > has never placed an order, producing an incomplete report. The LEFT JOIN
 > version includes every customer. `COALESCE(SUM(o.total_cents), 0)` handles
 > the case where a customer has no orders: `SUM(NULL)` returns NULL,
@@ -594,7 +594,7 @@ the one-to-many side before joining.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the anti-join pattern and when do you use it?**
+**[JUNIOR] Q1 - [MECHANISM] What is the anti-join pattern and when do you use it?**
 
 🗣️ "Anti-join: find rows in table A that have no matching row in table B.
 Three equivalent approaches: (1) LEFT JOIN + IS NULL: `LEFT JOIN b ON b.a_id = a.id WHERE b.id IS NULL`.
@@ -605,7 +605,7 @@ Use cases: find customers with no orders (targeting campaigns), find orders
 with no invoice (billing gap detection), find orphaned records (data quality).
 `NOT EXISTS` is generally safest and often fastest."
 
-**Q2: How does NULL propagation affect aggregation after a LEFT JOIN?**
+**[JUNIOR] Q2 - [MECHANISM] How does NULL propagation affect aggregation after a LEFT JOIN?**
 
 🗣️ "After a LEFT JOIN: unmatched right-side rows have NULL for all right-table
 columns. Aggregate functions treat NULLs differently: `COUNT(column)` ignores
@@ -617,7 +617,7 @@ NULL if all values are NULL. Use COALESCE to convert NULLs to defaults:
 This is why `COUNT(o.id)` not `COUNT(*)` is the correct pattern for counting
 related records in a LEFT JOIN."
 
-**Q3: How does the database optimize a LEFT JOIN?**
+**[JUNIOR] Q3 - [MECHANISM] How does the database optimize a LEFT JOIN?**
 
 🗣️ "The optimizer treats a LEFT JOIN like an INNER JOIN with the additional
 constraint that left-side rows are always returned. For the inner side:
@@ -630,7 +630,7 @@ work. Anti-join optimization: `NOT EXISTS` can be rewritten as a hash
 anti-join (build hash of B, scan A, exclude A rows found in hash) -
 often more efficient than LEFT JOIN + IS NULL."
 
-**Q4: What is a lateral join and when do you need one?**
+**[MID] Q4 - [MECHANISM] What is a lateral join and when do you need one?**
 
 🗣️ "LATERAL JOIN (PostgreSQL, also in MySQL 8.0+ as LATERAL) allows
 the subquery on the right side to reference columns from the left side.
@@ -644,7 +644,7 @@ With LATERAL: the subquery executes once per left-side row with the
 current row's values. Use for: top-N per group queries, row-by-row
 computations, function calls that take row values as input."
 
-**Q5: How does FULL OUTER JOIN work and when is it useful?**
+**[MID] Q5 - [MECHANISM] How does FULL OUTER JOIN work and when is it useful?**
 
 🗣️ "FULL OUTER JOIN returns: all INNER JOIN rows (matching on both sides),
 all left-side rows with no match (right side is NULL), all right-side
@@ -655,7 +655,7 @@ rows in B not in A, rows in both. Example: comparing yesterday's and today's
 product prices. FULL OUTER JOIN gives you the complete picture.
 Not commonly needed; use LEFT JOIN or NOT EXISTS for most practical cases."
 
-**Q6: What happens when you join on a column with NULLs?**
+**[SENIOR] Q6 - [FAILURE] What happens when you join on a column with NULLs?**
 
 🗣️ "NULL = NULL is UNKNOWN in SQL. A join condition `ON a.key = b.key`
 will never match NULL values on either side. Rows where the join column
@@ -668,7 +668,7 @@ in PostgreSQL to match NULLs: `ON a.key IS NOT DISTINCT FROM b.key`
 (NULL IS NOT DISTINCT FROM NULL is TRUE). Rarely needed in practice;
 FKs should generally be non-null."
 
-**Q7: When would you choose EXISTS over a JOIN for performance?**
+**[SENIOR] Q7 - [SCENARIO] When would you choose EXISTS over a JOIN for performance?**
 
 🗣️ "EXISTS is a semi-join: it returns rows from the outer query where
 the subquery returns at least one row. It short-circuits on the first match.
@@ -777,7 +777,7 @@ Key: WHERE runs BEFORE grouping (can't use aggregate results).
      HAVING runs AFTER grouping (can use aggregate results).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This COUNT, SUM, AVG, GROUP BY, HAVING example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Aggregate function behavior with NULLs:**
 
@@ -790,7 +790,7 @@ MIN(column)     - minimum non-NULL value
 MAX(column)     - maximum non-NULL value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This COUNT, SUM, AVG, GROUP BY, HAVING example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -828,7 +828,7 @@ LIMIT 100;
 -- COUNT(coupon_id): 2 (only rows where coupon_id is not NULL)
 ```
 
-> **Code walkthrough:** The BAD query includes `customer_id` in SELECT
+> **Code walkthrough:** The BAD query includes `customer_id` in SELECTice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > without either aggregating it or putting it in GROUP BY - this is a
 > SQL error in standard-compliant databases (PostgreSQL, SQL Server).
 > MySQL's `ONLY_FULL_GROUP_BY` mode makes it an error too. The GOOD query:
@@ -866,7 +866,7 @@ HAVING SUM(total_cents) > 100000 -- post-filter: high-value only
 ORDER BY total_cents DESC;
 ```
 
-> **Code walkthrough:** WHERE and HAVING serve different purposes: WHERE
+> **Code walkthrough:** WHERE and HAVING serve different purposes: WHEREice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > filters individual rows before grouping (efficient - fewer rows to
 > aggregate), HAVING filters groups after aggregation. `WHERE status = 'DELIVERED'`
 > runs first - only DELIVERED orders are included in the groups.
@@ -934,7 +934,7 @@ sorted input to avoid hash aggregation).
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between COUNT(*) and COUNT(column)?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between COUNT(*) and COUNT(column)?**
 
 🗣️ "COUNT(*): counts every row in the group, including rows with NULL
 values. COUNT(column): counts only rows where the column value is not NULL.
@@ -946,7 +946,7 @@ Common mistake: using COUNT(*) when you want to count related records
 in a LEFT JOIN (always use COUNT(right_table.id) to get 0 for unmatched
 rows, not 1)."
 
-**Q2: What are window functions and how do they differ from GROUP BY?**
+**[JUNIOR] Q2 - [MECHANISM] What are window functions and how do they differ from GROUP BY?**
 
 🗣️ "GROUP BY reduces many rows to fewer rows (one per group). Window functions
 compute aggregate values for each row without reducing the row count.
@@ -959,7 +959,7 @@ order (critical for running totals, LAG/LEAD). Window functions are ideal
 for: running totals, ranking within groups, comparing a row to its group
 aggregate, row-by-row calculations that need context."
 
-**Q3: How does the database implement GROUP BY internally?**
+**[JUNIOR] Q3 - [MECHANISM] How does the database implement GROUP BY internally?**
 
 🗣️ "Two strategies: (1) Hash aggregation: build a hash table keyed by
 GROUP BY columns, accumulate aggregate values. Final pass: iterate the
@@ -971,7 +971,7 @@ the group. Memory: only needs to hold the current group's accumulator.
 Best when the input is already sorted (via index). The optimizer chooses
 based on row count estimates and available indexes."
 
-**Q4: What is a ROLLUP and when would you use it?**
+**[MID] Q4 - [SCENARIO] What is a ROLLUP and when would you use it?**
 
 🗣️ "ROLLUP generates subtotals at multiple levels of aggregation.
 `GROUP BY ROLLUP(year, quarter, month)` produces: rows grouped by
@@ -984,7 +984,7 @@ All three are part of SQL standard and supported in PostgreSQL, SQL Server,
 Oracle. MySQL supports ROLLUP but not CUBE. Performance: equivalent to
 multiple GROUP BY queries combined with UNION ALL."
 
-**Q5: What is filter clause in aggregate functions?**
+**[MID] Q5 - [MECHANISM] What is filter clause in aggregate functions?**
 
 🗣️ "`FILTER (WHERE condition)` is a SQL standard syntax (PostgreSQL 9.4+)
 for applying a condition inside an aggregate function.
@@ -998,7 +998,7 @@ Use for: pivot-style aggregations (multiple filtered counts in one query),
 conditional summation. Alternative: `CASE WHEN ... THEN value END` inside
 aggregate works in all databases."
 
-**Q6: How does GROUP BY work with indexes?**
+**[SENIOR] Q6 - [MECHANISM] How does GROUP BY work with indexes?**
 
 🗣️ "If there is an index on the GROUP BY column(s): the optimizer may
 choose sort-based aggregation: scan the index in order, accumulate
@@ -1010,7 +1010,7 @@ the optimizer scans the index in customer_id order, groups are contiguous,
 no sort/hash needed. Result: GROUP BY becomes a streaming aggregation -
 very efficient for large tables."
 
-**Q7: What is the performance impact of DISTINCT vs GROUP BY?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the performance impact of DISTINCT vs GROUP BY?**
 
 🗣️ "DISTINCT and GROUP BY (without aggregates) are semantically equivalent
 for deduplication: `SELECT DISTINCT col FROM table` = `SELECT col FROM table GROUP BY col`.

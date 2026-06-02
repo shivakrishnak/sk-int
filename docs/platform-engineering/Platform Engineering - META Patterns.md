@@ -7,6 +7,18 @@ permalink: /platform-engineering/meta-patterns/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Platform Thinking as Product Thinking](#platform-thinking-as-product-thinking) | |
+| 2 | [The Cognitive Load Budget Mental Model](#the-cognitive-load-budget-mental-model) | |
+| 3 | [Paved Road vs Off-Road Decision Framework](#paved-road-vs-off-road-decision-framework) | |
+
+---
+
+
 # Platform Thinking as Product Thinking
 
 ---
@@ -200,7 +212,7 @@ target set before building.
 
 ---
 
-#### Q1 - What does it mean to treat the IDP as a product?
+**[JUNIOR] Q1 - [CONCEPTUAL] What does it mean to treat the IDP as a product?**
 
 Treating the IDP as a product means applying product management discipline
 to platform development: structured user research (who are the customers,
@@ -224,7 +236,7 @@ concrete example validates the mental model.
 
 ---
 
-#### Q2 - What is platform NPS and how do you use it?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is platform NPS and how do you use it?**
 
 Platform NPS (Net Promoter Score) adapted for internal platforms:
 "On a scale of 0-10, how likely are you to recommend the platform to
@@ -252,7 +264,7 @@ the qualitative responses are the leading indicator that drives action.
 
 ---
 
-#### Q3 - How do you run effective developer discovery interviews?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you run effective developer discovery interviews?**
 
 Discovery interview format (30 minutes, structured):
 
@@ -289,7 +301,7 @@ then fix the confusion.
 
 ---
 
-#### Q4 - How do you measure platform capability adoption?
+**[MID] Q4 - [CONCEPTUAL] How do you measure platform capability adoption?**
 
 Adoption measurement framework:
 
@@ -321,7 +333,7 @@ it. Active use in the regular workflow is the correct adoption metric.
 
 ---
 
-#### Q5 - How do you prioritize the platform roadmap using product thinking?
+**[MID] Q5 - [CONCEPTUAL] How do you prioritize the platform roadmap using product thinking?**
 
 Prioritization formula (product thinking for platforms):
 
@@ -355,7 +367,7 @@ needs a different incentive design.
 
 ---
 
-#### Q6 - What is "time to value" for a platform and how do you measure it?
+**[MID] Q6 - [CONCEPTUAL] What is "time to value" for a platform and how do you measure it?**
 
 Platform time to value: the time from a new team joining the organization
 to their first production deployment using the IDP.
@@ -389,7 +401,7 @@ scratch, timed end-to-end."
 
 ---
 
-#### Q7 - How does platform thinking as product thinking differ from "infrastructure as a service"?
+**[SENIOR] Q7 - [ARCHITECTURE] How does platform thinking as product thinking differ from "infrastructure as a service"?**
 
 Infrastructure as a service (IaaS): provide raw infrastructure capabilities
 (compute, storage, network). Customers compose these into systems.
@@ -647,7 +659,7 @@ improve the ESO golden path or provide a simpler abstraction layer.
 
 ---
 
-#### Q1 - What is the cognitive load budget and how does it apply to IDP design?
+**[JUNIOR] Q1 - [ARCHITECTURE] What is the cognitive load budget and how does it apply to IDP design?**
 
 Cognitive load budget (Team Topologies): every team has a finite mental
 capacity for understanding and operating their systems. When this budget
@@ -671,7 +683,7 @@ to learn than removed), the design needs simplification before building.
 
 ---
 
-#### Q2 - What are the three types of cognitive load and which does platform engineering target?
+**[JUNIOR] Q2 - [SYSTEM DESIGN] What are the three types of cognitive load and which does platform engineering target?**
 
 From John Sweller's Cognitive Load Theory (1988), adapted by Team Topologies:
 
@@ -704,7 +716,7 @@ load elimination."
 
 ---
 
-#### Q3 - How do you design a CLI or API to minimize cognitive load?
+**[JUNIOR] Q3 - [ARCHITECTURE] How do you design a CLI or API to minimize cognitive load?**
 
 Cognitive load-minimizing CLI/API design principles:
 
@@ -736,7 +748,7 @@ are all cognitive load investments with high ROI.
 
 ---
 
-#### Q4 - How does cognitive load explain the "platform adoption paradox"?
+**[MID] Q4 - [CONCEPTUAL] How does cognitive load explain the "platform adoption paradox"?**
 
 The platform adoption paradox: platforms that expose the most power
 and flexibility often have the lowest adoption; platforms that constrain
@@ -766,7 +778,7 @@ cognitive load issues that experts no longer notice.
 
 ---
 
-#### Q5 - How do you reduce cognitive load for on-call engineers using the platform?
+**[MID] Q5 - [SYSTEM DESIGN] How do you reduce cognitive load for on-call engineers using the platform?**
 
 On-call cognitive load is particularly damaging because it occurs at
 2 AM, under pressure, with reduced mental capacity.
@@ -799,7 +811,7 @@ the highest cognitive load reduction impact.
 
 ---
 
-#### Q6 - What is the team cognitive load limit and how does it apply to platform team scope?
+**[MID] Q6 - [CONCEPTUAL] What is the team cognitive load limit and how does it apply to platform team scope?**
 
 Team Topologies defines a soft cognitive load limit for any team: when
 a team's responsibilities exceed its collective cognitive capacity, the
@@ -839,7 +851,7 @@ for the platform team.
 
 ---
 
-#### Q7 - How do you audit a platform for cognitive load?
+**[SENIOR] Q7 - [SYSTEM DESIGN] How do you audit a platform for cognitive load?**
 
 A platform cognitive load audit assesses how much mental overhead the
 platform imposes on product engineers.
@@ -1097,7 +1109,7 @@ governance:
     off-road choices that create material security risk"
 ```
 
-> **Code walkthrough:** The GOOD example makes the paved road vs. off-road
+> **Code walkthrough:** The GOOD example makes the paved road vs. off-roadice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > policy explicit and operational: the paved road for messaging is Kafka,
 > with specific supported capabilities listed. The off-road policy allows
 > alternatives but requires an ADR (creating accountability and documentation)
@@ -1196,7 +1208,7 @@ Fix per diagnosis:
 
 ---
 
-#### Q1 - What is the paved road concept and where did it originate?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the paved road concept and where did it originate?**
 
 The paved road concept originated at Netflix. The Netflix platform team
 coined the term to describe their approach to standardization: the platform
@@ -1227,7 +1239,7 @@ all 100% of needs with equal quality.
 
 ---
 
-#### Q2 - How do you define what belongs on the paved road?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you define what belongs on the paved road?**
 
 Paved road inclusion criteria:
 
@@ -1264,7 +1276,7 @@ team innovation and platform standardization.
 
 ---
 
-#### Q3 - How do you handle the transition from mandate to paved road?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you handle the transition from mandate to paved road?**
 
 Many organizations start with mandates ("teams must use X") and want
 to transition to paved road ("teams should use X, but here is what it
@@ -1300,7 +1312,7 @@ now do whatever they want") preserves organizational clarity.
 
 ---
 
-#### Q4 - What is the governance process for off-road decisions?
+**[MID] Q4 - [CONCEPTUAL] What is the governance process for off-road decisions?**
 
 Off-road governance prevents off-road from becoming "anything goes"
 while allowing legitimate divergence:
@@ -1341,7 +1353,7 @@ instead of the platform's Y?", the ADR provides the answer.
 
 ---
 
-#### Q5 - How does the paved road framework apply to security baseline policies?
+**[MID] Q5 - [CONCEPTUAL] How does the paved road framework apply to security baseline policies?**
 
 The security baseline is a special category in the paved road framework:
 
@@ -1381,7 +1393,7 @@ enforces it.
 
 ---
 
-#### Q6 - How do you prevent the paved road from becoming stale?
+**[MID] Q6 - [CONCEPTUAL] How do you prevent the paved road from becoming stale?**
 
 Paved road staleness is when the standard path is no longer the best
 path, but teams continue using it because it is "the way we do it."
@@ -1427,7 +1439,7 @@ must go off-road to get them).
 
 ---
 
-#### Q7 - How does the paved road vs. off-road framework evolve as the organization grows?
+**[SENIOR] Q7 - [TRADE-OFF] How does the paved road vs. off-road framework evolve as the organization grows?**
 
 At startup scale (< 20 engineers): paved road is a README in a Git repo.
 "We use GitHub Actions for CI/CD and EKS for deployment. See the examples."

@@ -70,7 +70,7 @@ SEMANTIC VERSIONING FOR APIs:
   PATCH: bug fix (no API change)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Versioning and API Evolution example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Backward compatibility rules:**
 ```
@@ -93,7 +93,7 @@ BREAKING (requires new version):
   - Tighten validation (reject previously valid input)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Versioning and API Evolution example demonstrates a key concept in practice using enum. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Consumer-driven contract testing:**
 ```
@@ -115,7 +115,7 @@ PACT CONTRACT TESTING:
       environment to catch contract violations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Versioning and API Evolution example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The version number in a URL is not about the service version - it is about the API contract version. A service can be at version 15.2.3 internally but still support /v1/ and /v2/ API contracts. Keep old API versions running until all consumers have migrated, not until the service is upgraded.
@@ -228,63 +228,63 @@ Fix: Restore the old field name in the response (add it back alongside the new n
 | Anti-pattern | 2 min | 1 |
 | Scale | 2 min | 1 |
 
-#### Q1 - "What is consumer-driven contract testing and how does it prevent API breaks?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "What is consumer-driven contract testing and how does it prevent API breaks?"**
 > "Pact-based contract testing: the consumer (OrderService) defines its contract - what it calls, what request format, what response it expects. This contract (Pact file) is shared with the provider (InventoryService). In InventoryService's CI pipeline: run Pact verification. InventoryService starts a mock of itself based on the Pact, verifies its actual response matches the contract. If InventoryService removes a field the consumer expects: Pact verification fails and the deployment is blocked. Benefits: catches contract violations before they reach production, no dedicated integration test environment needed, consumers are self-documenting (their Pact files show exactly what they depend on), providers can see all consumers and their expectations before making any API change."
 
 *What separates good from great:* "Pact Broker is the infrastructure: a centralized service where consumers publish their Pact files and providers verify against them. Can-I-Deploy command: before any deployment, query 'can this service version deploy to production?' based on whether all consumer contracts pass. This makes contract testing a deployment gate, not just a CI check."
 
 ---
 
-#### Q2 - "How do you deprecate and remove an old API version?"
+**[JUNIOR] Q2 - [CONCEPTUAL] "How do you deprecate and remove an old API version?"**
 > "Deprecation lifecycle: (1) Publish new version (/v2/). (2) Announce deprecation of v1 with sunset date. (3) Add Deprecation and Sunset HTTP response headers to v1 responses. (4) Use API gateway analytics to monitor v1 usage. (5) Contact teams still using v1. (6) After sunset date, remove v1. Sunset header format: Sunset: Sat, 01 Jun 2025 00:00:00 GMT. Clients that handle this header can alert their developers. In practice: sunset dates are rarely enforced because unknown consumers appear. Enforcement: require consumers to register in a service catalog. Gate sunset removal on the registry showing zero registered consumers. For public APIs: longer deprecation periods (1-2 years). For internal APIs: 3-6 months."
 
 *What separates good from great:* "Hard enforcement: return HTTP 410 Gone instead of 200 after the sunset date. 410 is different from 404 (resource not found): 410 means 'permanently gone, stop calling.' Clients receive a clear error rather than silent degradation. This forces consumers to update because they get hard errors, not just deprecation warnings that can be ignored."
 
 ---
 
-#### Q3 - "How do you version event schemas (not just REST APIs)?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "How do you version event schemas (not just REST APIs)?"**
 > "Events in Kafka have the same versioning challenge as REST APIs: consumers may be running an old version when a new event format is deployed. Strategies: (1) Avro with Schema Registry (Confluent): schemas registered with compatibility mode. BACKWARD compatibility allows new consumers to read old events. FORWARD allows old consumers to read new events. FULL is both. The schema registry enforces this at publish time. (2) Version in event type: order.created.v1 vs order.created.v2. Different Kafka topics or same topic with type field routing. Consumers subscribe to specific versions. (3) Envelope pattern: events always have an envelope with version, eventType, timestamp, and data. Consumers route based on version in the envelope. (4) CloudEvents specification: standardized event envelope (type, source, time, data). Build version into the type field: com.company.order.created.v2."
 
 *What separates good from great:* "Event schema evolution is harder than REST API evolution because events are persisted. A REST API version is only active while the service is deployed. A Kafka event version lives in the log for the retention period (potentially forever). If you have 6 months of events in Kafka, a new consumer must be able to deserialize both v1 and v2 events. Schema Registry backward compatibility mode enforces that new schemas can always deserialize old events."
 
 ---
 
-#### Q4 - "A new team wants to integrate with your service but needs a slightly different API shape. What is your process?"
+**[MID] Q4 - [CONCEPTUAL] "A new team wants to integrate with your service but needs a slightly different API shape. What is your process?"**
 > "Evaluation: (1) Is the needed change backward compatible (add optional field)? Add it without versioning. (2) Is it a non-breaking addition that benefits other consumers too? Discuss and add to the current version. (3) Is it specific to this consumer only? Consider a BFF (Backend-for-Frontend) that adapts the response specifically for that consumer. (4) Is it a breaking change that other consumers would benefit from? Plan a v2 with a migration path. (5) Is it a fundamental architectural mismatch (they need a different data model entirely)? They may need to maintain their own read model (subscribing to your events and building their own projection). The key: the service API is for all consumers, not one consumer. Special-casing for one consumer creates N special cases over time."
 
 *What separates good from great:* "The BFF pattern (Backend-for-Frontend) is underused. A BFF owned by the consuming team means the consuming team can shape the API exactly as they need it, without coupling to the provider's API evolution cycle. The BFF calls the provider's stable API and transforms for its consumer. This creates clean separation: provider API evolves slowly for stability, BFF evolves as needed for the consumer."
 
 ---
 
-#### Q5 - "How do you handle API versioning when multiple microservices need to change their contracts simultaneously?"
+**[MID] Q5 - [CONCEPTUAL] "How do you handle API versioning when multiple microservices need to change their contracts simultaneously?"**
 > "Synchronized multi-service versioning: an order flow that requires OrderService, InventoryService, and PaymentService all changing their contracts simultaneously. Strategy: (1) Identify the dependency direction. Which service does the other depend on? (2) Deploy in reverse dependency order. Deploy provider before consumer. (3) Use feature flags: new code is deployed but not active. Enable the flag to activate the new behavior. (4) Use contract versioning: each service version is compatible with both the old and new contract. Service A v2 can work with Service B v1 and v2. Remove backward compatibility only after all services are on the new version. (5) Event versioning: if event-driven, publish both old and new event formats during the migration window."
 
 *What separates good from great:* "The hardest case: bidirectional dependency (A calls B, B calls A). This is a design smell (cyclic dependency between services), but if it exists: deploy with both old and new API support active simultaneously. The transition window where both services support both versions is the migration window. Keep it short."
 
 ---
 
-#### Q6 - "How does API versioning interact with database migrations?"
+**[MID] Q6 - [CONCEPTUAL] "How does API versioning interact with database migrations?"**
 > "Database migrations must be backward compatible with the previous API version still running. Expand-contract pattern: Phase 1 (expand): add new column, keep old column. API v1 still reads old column. API v2 reads new column. Phase 2 (migrate): fill new column with migrated data from old column. Phase 3 (contract): after v1 is deprecated and removed, drop old column. The database migration lifecycle is longer than the API versioning lifecycle: the old column cannot be dropped until v1 is fully decommissioned. This means database schemas may have deprecated columns for the entire duration of the API deprecation period. Track deprecated columns with comments or naming conventions (e.g., _deprecated_total_amount) to indicate they are kept only for old API version compatibility."
 
 *What separates good from great:* "Blue-green deployments + database migration compatibility: a blue-green deployment runs old and new code simultaneously. The database must be compatible with both during the transition. Flyway's migration scripts run once, not per deployment. Migrations must be idempotent and forward-only. Never write migrations that depend on the application version - the migration runs on the database, the application runs on the API."
 
 ---
 
-#### Q7 - "What is hypermedia (HATEOAS) and does it solve the versioning problem?"
+**[SENIOR] Q7 - [CONCEPTUAL] "What is hypermedia (HATEOAS) and does it solve the versioning problem?"**
 > "HATEOAS (Hypermedia as the Engine of Application State): API responses include links to related actions and resources. Clients follow links rather than hardcoding URLs. A response includes: { id: 123, status: 'pending', _links: { confirm: /api/orders/123/confirm, cancel: /api/orders/123/cancel } }. The client discovers available actions from the response rather than knowing URLs in advance. This theoretically allows server URL structure to change without breaking clients - they follow links, not hardcoded paths. In practice: HATEOAS rarely solves versioning because clients still depend on the structure of the response data (field names, types), not just URLs. HATEOAS prevents URL versioning from being needed but doesn't prevent field-level versioning. Most production microservices use URL versioning, not HATEOAS, due to the complexity of implementing a fully HATEOAS-compliant client."
 
 *What separates good from great:* "HATEOAS is theoretically elegant but rarely implemented correctly. The practical problems: clients still embed field name knowledge (reading order.status regardless of URL), link following adds latency (multiple round trips to discover actions), and no standard client libraries implement HATEOAS navigation. URL versioning + semantic versioning + contract testing is the pragmatic combination used in production."
 
 ---
 
-#### Q8 - "How do you communicate API changes to downstream teams?"
+**[SENIOR] Q8 - [CONCEPTUAL] "How do you communicate API changes to downstream teams?"**
 > "Change management strategy: (1) API changelog: maintain a CHANGELOG.md per service documenting all breaking and non-breaking changes per version. (2) Deprecation announcements: send to a #api-changes Slack channel with sunset date, affected endpoints, migration guide. (3) Deprecation headers: HTTP Deprecation and Sunset headers on deprecated endpoints - tools and monitoring pick these up. (4) Service catalog: list all deprecated endpoints and their sunset dates. (5) Consumer notification: if a consumer is registered in the service catalog, notify them directly before the sunset date. (6) Breaking change PR policy: all breaking API changes require an architecture review. The PR cannot be merged until a migration plan and consumer notification are in place."
 
 *What separates good from great:* "Automated deprecation notification: API gateway logs which client (API key, service name) is calling deprecated endpoints. Weekly automated email to the owning team: 'Your service X called deprecated endpoint Y 15,000 times this week. Sunset date: June 1, 2025.' This makes deprecation visible and actionable for the consuming team, rather than hoping they read Slack announcements."
 
 ---
 
-#### Q9 - "Design an API versioning strategy for a public-facing API with 10,000 external developers."
+**[SENIOR] Q9 - [ARCHITECTURE] "Design an API versioning strategy for a public-facing API with 10,000 external developers."**
 > "Public API versioning must be extremely conservative. Strategy: (1) URL versioning (/v1/, /v2/) for major versions. (2) Minimum 1-year deprecation period after a new version is released before removing v1. (3) Open beta for new versions: release v2 as /v2-beta/ for 3-6 months while collecting feedback. Promote to /v2/ when stable. (4) Change log on developer portal: detailed migration guide for every breaking change. (5) OpenAPI/Swagger spec: machine-readable contract that SDK generators and documentation tools consume. (6) SDKs: publish versioned SDKs in major languages. SDK deprecation follows API deprecation. (7) Webhooks versioning: event payload versioning (same breaking change rules as REST responses). (8) API keys: track per-developer which version they're using. Contact developers directly before their used version is sunset."
 
 *What separates good from great:* "For external developers, breaking changes have higher costs than internal API changes: external developers have no obligation to migrate on your timeline, their code may not be actively maintained, and breaking changes can cause developer churn. The discipline: additive-only changes as the default. Breaking changes are exceptional events requiring substantial justification and very long migration windows."
@@ -390,7 +390,7 @@ AUTHORIZATION OPTIONS:
   Service mesh: service-to-service allow/deny rules
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authentication and Authorization example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Zero-trust model:**
 ```
@@ -410,7 +410,7 @@ CORRECT (zero-trust):
        (mTLS + NetworkPolicy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authentication and Authorization example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Scopes and claims in JWT:**
 ```json
@@ -424,7 +424,7 @@ CORRECT (zero-trust):
   "iss": "https://auth.company.com"
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authentication and Authorization example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The service uses these claims for authorization: the user can read and write orders, is in tenant-456, and has the customer role.
 
@@ -543,63 +543,63 @@ Fix: Set JWKS cache TTL to 5-10 minutes (balance between security and performanc
 | Design | 3 min | 1 |
 | Anti-pattern | 2 min | 1 |
 
-#### Q1 - "How do you implement OAuth2 / OIDC in a microservices architecture?"
+**[JUNIOR] Q1 - [ARCHITECTURE] "How do you implement OAuth2 / OIDC in a microservices architecture?"**
 > "OAuth2/OIDC flow: client (mobile app, web app) redirects user to the Identity Provider (Keycloak, Auth0, Okta). User authenticates. IDP issues: ID token (identity claims, for the client), Access token (JWT, for calling APIs), Refresh token (for obtaining new access tokens). Client sends access token in Authorization: Bearer header to API gateway. Gateway validates the JWT: verify signature against IDP's JWKS endpoint, verify expiration, verify issuer (iss) and audience (aud). JWT is self-contained: services don't need to call the IDP on every request (stateless validation). Claims in the JWT (roles, scopes, tenant, user ID) are used for authorization downstream. Microservices receive the JWT from the gateway (forwarded or transformed into trusted headers) and use the claims for authorization."
 
 *What separates good from great:* "Access token lifespan is a security-performance tradeoff. Short access tokens (5-15 minutes) reduce the window of token misuse after revocation but require frequent refresh. Long tokens (1 hour+) reduce refresh overhead but extend the validity window for stolen tokens. Most production systems: 15-minute access tokens with 7-day refresh tokens. The refresh token is the long-lived credential; access tokens are short-lived capabilities."
 
 ---
 
-#### Q2 - "How do services verify they are talking to the correct upstream service (not an impersonator)?"
+**[JUNIOR] Q2 - [CONCEPTUAL] "How do services verify they are talking to the correct upstream service (not an impersonator)?"**
 > "mTLS (mutual TLS): both services present and verify X.509 certificates. The certificate is issued by the cluster CA (Istio, cert-manager). ServiceB verifies that the connecting client's certificate is issued by the trusted CA and has the expected SPIFFE identity (spiffe://cluster.local/ns/default/sa/order-service). An attacker cannot present a valid certificate for order-service without the CA's private key. Kubernetes NetworkPolicy: restricts which pods can connect to which services at the network level. Even without mTLS, NetworkPolicy prevents random pods from reaching protected services. Combined: NetworkPolicy limits which pods can try to connect; mTLS verifies the identity of those that do connect."
 
 *What separates good from great:* "SPIFFE (Secure Production Identity Framework for Everyone) provides a standardized identity format for services. SPIFFE ID: spiffe://trust-domain/path. Each workload has a unique SPIFFE identity based on its Kubernetes service account. This identity is cryptographically bound to the workload (not just an API key that can be copied). When a pod is killed and replaced, the new pod automatically gets the same SPIFFE identity - certificate rotation is automatic."
 
 ---
 
-#### Q3 - "How do you implement multi-tenancy security in microservices?"
+**[JUNIOR] Q3 - [HANDS-ON] "How do you implement multi-tenancy security in microservices?"**
 > "Multi-tenancy means multiple customers (tenants) share the same service infrastructure. Security requirement: tenantA cannot access tenantB's data under any circumstances. Implementation: (1) Tenant ID in JWT: IDP includes tenantId claim in the access token. Services extract tenantId from JWT. All database queries include WHERE tenant_id = ? from the JWT claim. (2) Row-level security (PostgreSQL RLS): the database enforces tenant isolation at the query level. Application sets SET app.tenant_id = ? before queries. RLS policy: USING (tenant_id = current_setting('app.tenant_id')). Any query forgetting to set tenant_id returns zero rows. (3) Schema per tenant: each tenant has a separate database schema. More isolation, more operational overhead. (4) Tenant validator middleware: a middleware in each service that extracts tenantId from JWT and injects it into all queries via a thread-local context."
 
 *What separates good from great:* "Row-level security at the database is defense in depth for multi-tenancy. If the application has a bug (forgot to filter by tenantId), the database RLS policy prevents data leakage. Application-level filtering + database RLS = two independent controls for the most critical multi-tenancy requirement. Regularly test this: attempt cross-tenant access in security test suites."
 
 ---
 
-#### Q4 - "Design the security architecture for a healthcare microservices platform."
+**[MID] Q4 - [ARCHITECTURE] "Design the security architecture for a healthcare microservices platform."**
 > "Healthcare: HIPAA compliance, PHI data, role-based access with audit log. Architecture: (1) Identity: identity provider with HIPAA-compliant MFA. JWT tokens with role (physician, nurse, patient, admin), organization (hospital ID), and user ID claims. Token TTL: 15 minutes (short for compliance). (2) Gateway: validates JWT, enforces rate limiting, logs all access attempts. Returns 401 for invalid tokens, 403 for insufficient scope. (3) Service-to-service: mTLS with SPIFFE identity. AuthorizationPolicy: only specific services can call PHI-bearing endpoints. (4) Data access: PHI queries filtered by organization (multi-tenant). Additional check: RBAC (physicians can read all patient data in their organization; patients can only read their own data). (5) Audit log: every PHI access logged with user ID, timestamp, patient ID, data type, purpose. Tamper-evident log to S3 Object Lock. (6) Encryption: PHI encrypted at rest (AES-256), in transit (TLS 1.3), and in Kafka events (field-level encryption for PHI fields)."
 
 *What separates good from great:* "HIPAA requires minimum necessary access principle: users should access only the minimum PHI necessary for their role. Implement this via scope: a nurse preparing medications needs medication data but not billing data. Scopes in JWT are fine-grained by data category. This is ABAC (Attribute-Based Access Control) where data category is an attribute."
 
 ---
 
-#### Q5 - "How do you prevent token hijacking and replay attacks?"
+**[MID] Q5 - [CONCEPTUAL] "How do you prevent token hijacking and replay attacks?"**
 > "Token hijacking: stealing a valid JWT and using it from a different location. Mitigations: (1) Short token TTL (15 minutes): stolen token has limited utility. (2) Token binding: bind the access token to the TLS connection (TLS 1.3 token binding). Not widely supported. (3) Audience claim: JWT aud must match the service receiving it. A token issued for the order service cannot be used for the user service. (4) HTTPS everywhere: token can only be stolen if TLS is compromised (rare). Replay attacks: using a captured valid request again. Mitigations: (1) JWT jti (JWT ID) claim: unique ID per token. Service tracks used JTI values and rejects replays. Effective for critical operations (payment, delete). (2) Nonce: include a one-time nonce in the request. Server validates nonce has not been used. (3) Timestamp: include request timestamp. Reject requests older than N seconds."
 
 *What separates good from great:* "Replay protection adds statefulness to token validation (tracking used JTI values in Redis). This is expensive and only warranted for high-risk operations. Most services rely on short TTL + HTTPS + audience binding as sufficient protection. Reserve replay protection for: financial transactions, one-time operations (password reset), and high-privilege administrative actions."
 
 ---
 
-#### Q6 - "What is the difference between RBAC and ABAC in microservices authorization?"
+**[MID] Q6 - [CONCEPTUAL] "What is the difference between RBAC and ABAC in microservices authorization?"**
 > "RBAC (Role-Based Access Control): permissions assigned to roles, roles assigned to users. User has role 'admin', admin role has permission to DELETE /users/{id}. Simple to implement and reason about. Limited expressiveness: cannot encode 'user can only edit their own profile' without a custom ownership check. ABAC (Attribute-Based Access Control): permissions based on attributes of the user, the resource, and the environment. Policy: user.department == resource.department AND action == 'read'. More expressive - can encode fine-grained access rules without code changes. More complex to implement (policy engine like Open Policy Agent). In microservices: gateway RBAC for coarse-grained endpoint access. Service-level ABAC (code-level or OPA policy) for fine-grained resource access."
 
 *What separates good from great:* "Open Policy Agent (OPA) externalizes authorization logic from service code. Service calls OPA with: {user: claims, resource: order_data, action: 'read'}. OPA evaluates the Rego policy and returns allow/deny. Benefits: authorization logic is testable independently, policy changes don't require service redeployment, policies are auditable. The OPA sidecar pattern: OPA runs as a sidecar next to each service (or shared per node). Low latency authorization decisions without external network calls."
 
 ---
 
-#### Q7 - "How do you handle secret management for microservices at scale?"
+**[SENIOR] Q7 - [ARCHITECTURE] "How do you handle secret management for microservices at scale?"**
 > "Secrets: database passwords, API keys, TLS certificates, JWT signing keys. Never store secrets in code, configuration files checked into Git, or environment variables in deployment YAMLs (leaked in Git history). Vault (HashiCorp Vault): centralized secrets management. Services authenticate to Vault using Kubernetes service accounts. Vault issues short-lived secrets (dynamic secrets: Vault generates a PostgreSQL user+password that expires in 1 hour, rotated automatically). AWS Secrets Manager / Azure Key Vault: cloud-native alternatives. Kubernetes Secrets: base64-encoded, not encrypted at rest by default. Acceptable if etcd encryption is enabled. External Secrets Operator: syncs secrets from Vault/AWS Secrets Manager into Kubernetes Secrets automatically. Services mount Kubernetes Secrets as environment variables or files."
 
 *What separates good from great:* "Dynamic secrets are the gold standard. Instead of a long-lived database password, Vault generates a unique database user with a 1-hour TTL for each service instance. When the TTL expires, the credential is revoked. Even if a credential is leaked, it's valid for at most 1 hour. The surface area for credential compromise is dramatically reduced compared to a shared long-lived password."
 
 ---
 
-#### Q8 - "How do you secure Kafka messages in a microservices architecture?"
+**[SENIOR] Q8 - [ARCHITECTURE] "How do you secure Kafka messages in a microservices architecture?"**
 > "Kafka security layers: (1) Transport: TLS between producers, consumers, and brokers. Encrypts data in transit. (2) Authentication: SASL/SCRAM (username/password), SASL/GSSAPI (Kerberos), mTLS (client certificates). mTLS preferred for service-to-service (same SPIFFE identity used for HTTP). (3) Authorization: Kafka ACLs. Allow/deny specific service accounts to read/write specific topics. InventoryService can only read order-events topic and write inventory-events topic. PaymentService cannot read inventory-events (no need). (4) Encryption at rest: Kafka stores messages on disk. Disk encryption (LUKS, EBS encryption) or application-level field encryption for sensitive fields. (5) Schema Registry: Avro/Protobuf schemas with compatibility enforcement prevent malformed messages."
 
 *What separates good from great:* "Field-level encryption for PII in Kafka events: encrypt specific fields (customer name, email) with a per-tenant key before publishing. Consumers that need the PII data must have access to the decryption key. Consumers that process the event for non-PII purposes (inventory, shipping) never see the PII fields. This implements minimum-necessary access at the event level."
 
 ---
 
-#### Q9 - "How do you audit all cross-service calls for compliance purposes?"
+**[SENIOR] Q9 - [CONCEPTUAL] "How do you audit all cross-service calls for compliance purposes?"**
 > "Cross-service audit requirements: who called what service, when, with what parameters, with what result. Implementation: (1) Service mesh audit log: Istio Envoy sidecar logs all service-to-service calls automatically. Logs include: source service (SPIFFE identity), destination service, timestamp, request method/path, response code. Published to a centralized logging system. (2) Application-level audit: services log business-meaningful audit events (user 123 viewed order 456) to a dedicated audit Kafka topic. Audit service subscribes and stores in an immutable log. (3) API gateway access logs: all external API calls logged at the gateway. (4) Database audit: PostgreSQL audit extension or Debezium CDC captures all data changes with timestamp. Combined: infrastructure-level audit (who called what) + application-level audit (what business action was taken). Both are needed for compliance: infrastructure for security review, application-level for business audit."
 
 *What separates good from great:* "Audit log integrity: audit logs must be tamper-evident for legal compliance. WORM storage (S3 Object Lock with Governance or Compliance mode) prevents deletion or modification. Signed audit entries (HMAC with a per-service key) detect whether an entry was modified after creation. Compliance auditors can verify the audit log hasn't been altered."

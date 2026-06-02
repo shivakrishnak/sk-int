@@ -182,7 +182,7 @@ N - NEUROTICISM (inverse: Emotional Stability)
     most important traits for senior engineers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Big Five Personality Model (OCEAN) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Conscientiousness is the single most valuable trait
@@ -698,7 +698,7 @@ VALIDITY THREATS IN BEHAVIORAL INTERVIEWS
     in interpreting candidate behavior
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Psychometric Validity and Interview Science example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The structured behavioral interview's validity

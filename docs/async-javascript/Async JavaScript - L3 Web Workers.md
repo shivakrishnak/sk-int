@@ -170,7 +170,7 @@ class WorkerPool {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Web Workers and Off-Main-Thread Processing example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **The key insight:**
 Spawning a Worker has overhead: it creates a new OS thread,
@@ -219,7 +219,7 @@ async function processLargeDataset(data) {
 // animations freeze, browser shows "Page Unresponsive"
 ```
 
-> **Code walkthrough:** Synchronous computation on the main
+> **Code walkthrough:** Synchronous computation on the mainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > thread blocks the browser's event loop entirely. The JS
 > engine cannot process events, reflow, or repaint while
 > this code runs. For large datasets, this causes visible
@@ -271,7 +271,7 @@ button.onclick = async () => {
 };
 ```
 
-> **Code walkthrough:** The Worker is spawned with `new URL(..., import.meta.url)`
+> **Code walkthrough:** The Worker is spawned with `new URL(..., import.meta.url)`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which is the ES module-safe way to reference worker files
 > relative to the current module. The Promise wrapper gives
 > callers a clean async API hiding the message-passing protocol.
@@ -340,7 +340,7 @@ worker.postMessage(user);
 // Fix: postMessage plain data objects, not class instances
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: Worker not terminated after use**
 ```javascript
@@ -354,7 +354,7 @@ function runOnce(data) {
 // Fix: always call worker.terminate() in success AND error path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -369,8 +369,7 @@ function runOnce(data) {
 | Design | 2 | Worker pool, image processing pipeline |
 | Behavioral | 1 | When to recommend Workers |
 
-**Q1. How does the structured clone algorithm differ from
-`JSON.stringify`/`JSON.parse` for postMessage?**
+**[JUNIOR] Q1 - [DESIGN] How does the structured clone algorithm differ from `JSON.stringify`/`JSON.parse` for postMessage?**
 
 `JSON.stringify`/parse: loses class instances (becomes plain
 objects), cannot handle `undefined`, circular references throw,
@@ -394,7 +393,7 @@ JSON.parse(JSON.stringify({
 // Clones: creates deep copies
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 For performance: both deep-copy data. Structured clone is
 faster than JSON for binary data (ArrayBuffers). For large
@@ -407,7 +406,7 @@ to use plain data objects, not rich domain objects.
 
 ---
 
-**Q2. When should you use a Worker Pool vs a single Worker?**
+**[JUNIOR] Q2 - [TRADE-OFF] When should you use a Worker Pool vs a single Worker?**
 
 Single Worker: appropriate for one-off or infrequent tasks.
 The Worker runs one task then is terminated.
@@ -425,7 +424,7 @@ const POOL_SIZE = Math.max(1, navigator.hardwareConcurrency - 1);
 // -1: keep one core for main thread
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 RxJS integration:
 ```javascript
@@ -438,7 +437,7 @@ items$.pipe(
 ).subscribe(result => handleResult(result));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Subtracting one from `hardwareConcurrency`
 to leave the main thread responsive. Saturating all cores
@@ -446,7 +445,7 @@ with Workers causes the main thread to compete for CPU time.
 
 ---
 
-**Q3. How do you debug a Web Worker?**
+**[JUNIOR] Q3 - [DEBUGGING] How do you debug a Web Worker?**
 
 In Chrome DevTools: Sources panel -> Threads section shows
 active Workers. You can set breakpoints in Worker scripts.
@@ -472,7 +471,7 @@ async function measureWorkerLatency() {
 // Typical: 0.1-5ms depending on data size and OS
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Main thread blocking diagnosis: Performance panel -> look for
 long tasks (marked in red, > 50ms) in the Main thread row.
@@ -483,7 +482,7 @@ detection of main thread blocking in production.
 
 ---
 
-**Q4. What is Comlink and what problem does it solve?**
+**[MID] Q4 - [MECHANISM] What is Comlink and what problem does it solve?**
 
 Comlink (by Google/Surma) provides an RPC abstraction over
 Web Worker `postMessage`. It exposes Worker functions as
@@ -513,7 +512,7 @@ const result = await api.multiply(5, 6); // 30
 const image = await api.processImage(buffer);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Comlink handles: serialization, message correlation, error
 propagation, Proxy objects, Transferables.
@@ -525,7 +524,7 @@ paths that need Transferables.
 
 ---
 
-**Q5. How does OffscreenCanvas work and when should you use it?**
+**[MID] Q5 - [SCENARIO] How does OffscreenCanvas work and when should you use it?**
 
 `OffscreenCanvas` moves canvas rendering to a Worker thread.
 The Worker can draw to the canvas without blocking the main
@@ -551,7 +550,7 @@ self.onmessage = ({ data: { canvas } }) => {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Use cases: particle systems, data visualizations with thousands
 of elements, game rendering, real-time charting.
@@ -562,7 +561,7 @@ is one-way. Plan the architecture before using it.
 
 ---
 
-**Q6. How do you handle errors that occur inside a Worker?**
+**[SENIOR] Q6 - [MECHANISM] How do you handle errors that occur inside a Worker?**
 
 Three channels for Worker errors:
 1. `worker.onerror`: fires when an uncaught exception escapes
@@ -607,7 +606,7 @@ class SafeWorker {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using SQL. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The ID-based request/response
 correlation for associating responses with specific pending
@@ -615,8 +614,7 @@ Promises, and rejecting all pending work on fatal Worker errors.
 
 ---
 
-**Q7. What is the difference between a Dedicated Worker,
-Shared Worker, and Service Worker?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between a Dedicated Worker, Shared Worker, and Service Worker?**
 
 Dedicated Worker: owned by one main thread context. Terminates
 when that page closes. Use for CPU work in a single tab.
@@ -633,7 +631,7 @@ shared.port.onmessage = e => handleData(e.data);
 shared.port.postMessage({ type: 'subscribe' });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Service Worker: network proxy layer. Intercepts fetch requests,
 manages cache, enables background sync and push notifications.
@@ -649,7 +647,7 @@ self.addEventListener('fetch', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The key difference: Dedicated/Shared Workers are for computation;
 Service Workers are for network and lifecycle management.
@@ -663,12 +661,12 @@ two use cases is a common interview misconception.
 
 ### ⚖️ Comparison Table
 
-| Worker Type | Purpose | Lifetime | DOM Access | Use Case |
-|---|---|---|---|---|
-| Dedicated Worker | CPU computation | Tab lifetime | No | Image processing, parsing |
-| Shared Worker | Cross-tab computation | Any tab connected | No | Cross-tab state, shared resources |
-| Service Worker | Network proxy | Browser-managed | No | Caching, offline, push |
-| OffscreenCanvas | Canvas rendering | Worker lifetime | No | 2D/WebGL off-thread |
+| Worker Type| Purpose| Lifetime| DOM Access| Use Case|
+|---|-----------|-----------------|----------|---------------------------------|
+| Dedicated Worker| CPU computation| Tab lifetime| No| Image processing, parsing
+| Shared Worker| Cross-tab computation| Any tab connected| No| Cross-tab state, 
+| Service Worker| Network proxy| Browser-managed| No| Caching, offline, push|
+| OffscreenCanvas| Canvas rendering| Worker lifetime| No| 2D/WebGL off-thread|
 
 **The deciding factor:**
 CPU-heavy computation in one tab: Dedicated Worker.
@@ -686,7 +684,7 @@ Canvas performance: OffscreenCanvas.
 
 ### 📊 Diagram
 
-```
+```plaintext
 MAIN THREAD vs WORKER THREADS
 ================================
 
@@ -887,7 +885,7 @@ class Mutex {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SharedArrayBuffer and Atomics example demonstrates variable declaration using Kafka messaging. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **The key insight:**
 `Atomics.wait()` blocks the calling thread. Calling it on
@@ -939,7 +937,7 @@ const shared = new Int32Array(new SharedArrayBuffer(4));
 // This is a data race - undefined behavior in low-level terms
 ```
 
-> **Code walkthrough:** `shared[0]++` is three operations:
+> **Code walkthrough:** `shared[0]++` is three operations:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > read current value, add 1, write new value. Without atomics,
 > two threads can both read 0 simultaneously, both compute 1,
 > and both write 1 - producing 1 instead of 2. This is the
@@ -993,7 +991,7 @@ self.onmessage = ({ data: { data, result, counter } }) => {
 };
 ```
 
-> **Code walkthrough:** `Atomics.add(cnt, 0, 1)` atomically
+> **Code walkthrough:** `Atomics.add(cnt, 0, 1)` atomicallyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reads the current counter and increments it. Each worker
 > gets a unique index from the counter - no two workers process
 > the same element. The result accumulation uses `Atomics.add`
@@ -1063,7 +1061,7 @@ if (!window.crossOriginIsolated) {
 // Cross-Origin-Embedder-Policy: require-corp
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: ABA problem in compare-and-swap**
 ```javascript
@@ -1074,7 +1072,7 @@ if (!window.crossOriginIsolated) {
 // Mitigation: tagged pointers (version counter in upper bits)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ---
 
@@ -1089,8 +1087,7 @@ if (!window.crossOriginIsolated) {
 | Design | 2 | Work queue, producer-consumer |
 | Behavioral | 1 | When SAB is justified |
 
-**Q1. Why was SharedArrayBuffer disabled in 2018 and why
-does it require COOP/COEP headers to re-enable?**
+**[JUNIOR] Q1 - [MECHANISM] Why was SharedArrayBuffer disabled in 2018 and why does it require COOP/COEP headers to re-enable?**
 
 The Spectre vulnerability (2018) demonstrated that precise
 high-resolution timers combined with cache side-channel attacks
@@ -1120,8 +1117,7 @@ the attacker from having a reference to the timing counter).
 
 ---
 
-**Q2. What is the difference between `Atomics.wait` and
-`Atomics.waitAsync`?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `Atomics.wait` and `Atomics.waitAsync`?**
 
 `Atomics.wait(view, index, value, timeout)`: synchronously
 blocks the current thread until `view[index] !== value` or
@@ -1150,7 +1146,7 @@ if (isAsync) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing `Atomics.waitAsync`
 is the correct API for the main thread and async Worker code,
@@ -1158,8 +1154,7 @@ avoiding the "cannot block main thread" error.
 
 ---
 
-**Q3. How do you implement a ring buffer using SharedArrayBuffer
-for Producer-Consumer between a Worker and the main thread?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement a ring buffer using SharedArrayBuffer for Producer-Consumer between a Worker and the main thread?**
 
 ```javascript
 class RingBuffer {
@@ -1209,7 +1204,7 @@ class RingBuffer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using `Atomics.load` and
 `Atomics.store` for the read/write pointers to prevent torn
@@ -1218,7 +1213,7 @@ reads (reading a partially updated pointer value), and the
 
 ---
 
-**Q4. What is the JavaScript memory model for SharedArrayBuffer?**
+**[MID] Q4 - [MECHANISM] What is the JavaScript memory model for SharedArrayBuffer?**
 
 JavaScript defines a memory model for concurrent access to
 `SharedArrayBuffer` based on the ECMAScript specification.
@@ -1248,7 +1243,7 @@ ordering guarantees relative to other threads.
 
 ---
 
-**Q5. How do you detect data races in SharedArrayBuffer code?**
+**[MID] Q5 - [SCENARIO] How do you detect data races in SharedArrayBuffer code?**
 
 Static analysis: TypeScript types help but don't catch runtime
 races.
@@ -1270,7 +1265,7 @@ function safeRead(view: Int32Array, idx: number) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 The most reliable approach: design to minimize shared mutable
 state. Prefer immutable shared data (write once, read many)
@@ -1283,8 +1278,7 @@ Only mutable shared state requires synchronization.
 
 ---
 
-**Q6. What is the use case for `Atomics.exchange` vs
-`Atomics.compareExchange`?**
+**[SENIOR] Q6 - [TRADE-OFF] What is the use case for `Atomics.exchange` vs `Atomics.compareExchange`?**
 
 `Atomics.exchange(view, index, value)`: atomically sets the
 value and returns the OLD value. Unconditional swap.
@@ -1307,7 +1301,7 @@ const acquired = Atomics.compareExchange(lock, 0, 0, 1) === 0;
 // If lock was 1 (locked):   unchanged, return 1 -> not acquired
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using authentication. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 CAS is used for lock-free algorithms because it atomically
 checks AND sets. Without CAS, two threads could both check
@@ -1319,7 +1313,7 @@ check-then-act operation being atomic is what prevents races.
 
 ---
 
-**Q7. How does WebAssembly pthreads relate to SharedArrayBuffer?**
+**[SENIOR] Q7 - [MECHANISM] How does WebAssembly pthreads relate to SharedArrayBuffer?**
 
 WebAssembly with the Threads proposal uses SharedArrayBuffer
 as its shared memory implementation. Emscripten-compiled C/C++
@@ -1345,7 +1339,7 @@ WebAssembly.instantiate(wasmBuffer, {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **
 
 *What separates good from great:* Understanding that when
 you use WASM pthreads for C++ CPU-parallel code on the web,
@@ -1356,12 +1350,12 @@ your WASM deployment as well.
 
 ### ⚖️ Comparison Table
 
-| Approach | Data Sharing | Copy Cost | Race Risk | Use Case |
-|---|---|---|---|---|
-| postMessage | Copied | O(size) per message | None | General Workers |
-| Transferable | Moved (zero-copy) | O(1) | None | Large one-time transfers |
-| SharedArrayBuffer | Shared memory | None | Yes (need Atomics) | High-freq shared state |
-| SharedArrayBuffer + Atomics | Shared memory | None | No | Concurrent read-modify-write |
+| Approach| Data Sharing| Copy Cost| Race Risk| Use Case|
+|---|------|-------------------|------------------|----------------------------|
+| postMessage| Copied| O(size) per message| None| General Workers|
+| Transferable| Moved (zero-copy)| O(1)| None| Large one-time transfers|
+| SharedArrayBuffer| Shared memory| None| Yes (need Atomics)| High-freq shared s
+| SharedArrayBuffer + Atomics| Shared memory| None| No| Concurrent read-modify-w
 
 **The deciding factor:**
 For most applications: postMessage. For large one-time data

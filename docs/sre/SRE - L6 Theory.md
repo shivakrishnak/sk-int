@@ -180,7 +180,7 @@ BATH FAILURE (compound category)
   Prevention: isolation (separate failure domains)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reliability Theory and Failure Taxonomy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The availability formula A = MTBF / (MTBF + MTTR) shows that both
@@ -195,6 +195,11 @@ engineering investment. MTBF improvements require architectural changes
 ### 💻 Code Example
 
 **Example 1: Reliability metric calculation**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: Availability measured as "we haven't had
@@ -304,7 +309,7 @@ mtbf_improvement = availability_with_improvement(
 # (diminishing returns when MTBF >> MTTR)
 ```
 
-> **Code walkthrough:** The BAD approach treats reliability as a
+> **Code walkthrough:** The BAD approach treats reliability as aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > subjective assessment. The GOOD approach computes MTBF, MTTR, and
 > availability as quantitative metrics from incident data. The ROI
 > analysis demonstrates the key insight: for high-MTBF, low-MTTR systems
@@ -1003,13 +1008,18 @@ KENDALL'S NOTATION
     When K is reached: new requests are rejected (503)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Queuing Theory and Workload Modeling in SRE example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example 1: Little's Law for latency prediction**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: Capacity planning based on CPU utilization alone.
@@ -1116,7 +1126,7 @@ result = max_utilization_for_slo(
 # capacity_headroom: 30%
 ```
 
-> **Code walkthrough:** The BAD approach uses CPU utilization as a
+> **Code walkthrough:** The BAD approach uses CPU utilization as aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > capacity proxy, missing the non-linear relationship between utilization
 > and latency. The GOOD approach uses the M/M/1 queueing model. The
 > `max_utilization_for_slo` function solves the availability constraint

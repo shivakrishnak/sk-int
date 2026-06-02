@@ -81,7 +81,7 @@ Production uses Rollup:
   asset fingerprinting, minification
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vite Development Server and ESM-native Dev example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -145,13 +145,18 @@ export default defineConfig({
 });
 ```
 
-> **Code walkthrough:** `react()` plugin handles JSX and React Fast
+> **Code walkthrough:** `react()` plugin handles JSX and React Fastice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Refresh automatically. `optimizeDeps.include` pre-bundles packages
 > at startup using esbuild - prevents hundreds of network requests
 > for package internals. `manualChunks` in the build config splits
 > vendor libraries for long-term caching in production.
 
 **Example 2: Vite environment variables**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: webpack-style process.env (undefined in Vite browser build)
@@ -176,7 +181,7 @@ const mode = import.meta.env.MODE;    // 'development' | 'production'
 // Vite HMR:      12 milliseconds
 ```
 
-> **Code walkthrough:** The most common Vite migration gotcha is the
+> **Code walkthrough:** The most common Vite migration gotcha is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > environment variable system. `process.env` is Node.js - browsers
 > don't have it. Vite replaces `import.meta.env.VITE_*` at build time
 > (like webpack's DefinePlugin). Variables without `VITE_` prefix are
@@ -363,7 +368,7 @@ Library mode:
     output.preserveModules: true  (one file per source module)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vite Build Configuration and Rollup Integration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -455,7 +460,7 @@ build: {
 },
 ```
 
-> **Code walkthrough:** React in its own chunk means consumers who
+> **Code walkthrough:** React in its own chunk means consumers whoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > haven't changed React dependencies keep a long-lived cached version.
 > Heavy third-party libs (charts, PDF, editors) in separate chunks
 > means users who never visit chart pages never download chart code.
@@ -543,7 +548,7 @@ becomes `dist/Button/index.mjs`. Consumers import:
 ```javascript
 import { Button } from 'my-lib/Button'; // only Button loaded
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 Tree shaking works at the file level. Without it, importing Button
 loads all components in the merged bundle.
@@ -560,7 +565,7 @@ The `package.json` `exports` field should match:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `preserveModules` generates many
 small files. Some bundlers (older webpack versions) struggle with

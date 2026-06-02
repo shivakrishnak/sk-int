@@ -96,7 +96,7 @@ Supplier<String> greeting = () -> "Hello!";
 Function<String, Integer> len = (String s) -> s.length();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Lambdas and Streams example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Method references (shorthand lambdas):**
 ```java
@@ -121,18 +121,29 @@ Function<Integer, ArrayList<String>> listWithCap = ArrayList::new;
 // Equivalent: cap -> new ArrayList<String>(cap)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Lambdas and Streams example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The variable capture example shows the critical
+> **Code walkthrough:** The variable capture example shows the criticalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > difference between capturing a reference vs a value. The `AtomicInteger`
 > workaround is idiomatic for counting in lambdas. The closure-vs-capture
 > distinction matters: lambdas capture the REFERENCE (must be effectively
 > final), not a copy of the value. Using mutable state in lambdas that
 > run concurrently causes race conditions.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // BAD: mutable variable capture (compile error):
@@ -170,7 +181,7 @@ List<String> filtered = names.stream()
     .collect(Collectors.toList());
 ```
 
-> **Code walkthrough:** `Function.andThen(f)` creates a composed function
+> **Code walkthrough:** `Function.andThen(f)` creates a composed functionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that applies `this`, then `f`. `Function.compose(f)` applies `f` first,
 > then `this`. Remember: `g.andThen(f) = f(g(x))`. This is function
 > composition. Predicate composition with `.and()`, `.or()`, `.negate()`
@@ -231,7 +242,7 @@ class Service {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: inconsistent log prefixes; use effectively-final local
 variable: `String p = this.prefix; return () -> System.out.println(p + msg);`
@@ -286,7 +297,7 @@ Supplier<String> s2 = () -> {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The checked exception limitation is
 a real friction point. Java's standard functional interfaces don't declare
@@ -333,7 +344,7 @@ IntBinaryOperator     // (int, int) -> int
 // Also: Long, Double variants
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Kafka messaging. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Choosing the right functional interface
 avoids unnecessary boxing. `mapToInt(Function<T, Integer>)` would box
@@ -356,7 +367,7 @@ A:
 Function<String, Integer> parse = Integer::parseInt;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Instance method on a specific instance: `instance::instanceMethod`**
 ```java
@@ -365,7 +376,7 @@ Predicate<String> starts = prefix::startsWith; // prefix bound at creation
 // s -> prefix.startsWith(s)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Instance method on any instance of the class: `ClassName::instanceMethod`**
 ```java
@@ -377,7 +388,7 @@ Comparator<String> comp = String::compareTo;
 // (s1, s2) -> s1.compareTo(s2)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **4. Constructor reference: `ClassName::new`**
 ```java
@@ -389,7 +400,7 @@ BiFunction<String, Integer, StringBuilder> sb = StringBuilder::new;
 // The matching depends on the functional interface's parameter count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Type 3 (unbound instance method) is
 the most confusing. `String::toUpperCase` has zero explicit parameters
@@ -421,7 +432,7 @@ Runnable r = () -> {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Why required?**
 Lambda runs in a different context (possibly different thread, certainly
@@ -474,7 +485,7 @@ class Outer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `this` difference is the practical
 one for real code. In event listener patterns (Swing, Android), an anonymous
@@ -511,7 +522,7 @@ A: Java 8 lambdas use the `invokedynamic` bytecode instruction
    - Capturing lambdas: new instance per call (stores captured values)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why invokedynamic instead of anonymous class at compile time?**
 - Forward compatibility: JVM is free to optimize lambda implementation
@@ -561,7 +572,7 @@ strings.stream()
     .collect(Collectors.toList()); // ["hello", "world"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Function composition is mathematical
 function composition: `f.andThen(g)` means `g(f(x))`. Use composition
@@ -615,7 +626,7 @@ processFiles(paths, (content, path) ->
     content.replace("deprecated_api", "new_api"));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The `@FunctionalInterface` annotation
 is documentation and a compile-time guard. Without it: if you accidentally
@@ -665,7 +676,7 @@ Map<String, Long> count = words.parallelStream()
         Collectors.counting()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* The `parallel()` + mutable collection
 pattern is one of the most common parallel stream bugs. `ArrayList`
@@ -774,10 +785,10 @@ List<String> seniorNames = employees.stream()    // SOURCE
     .collect(Collectors.toList());               // TERMINAL (triggers all)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Key intermediate operations:**
-```
+```plaintext
 filter(Predicate)   - keep elements matching predicate
 map(Function)       - transform each element
 flatMap(Function)   - map to Stream, flatten 1 level
@@ -789,7 +800,7 @@ skip(n)             - skip first n elements
 peek(Consumer)      - debug-only: see elements without consuming
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key terminal operations:**
 ```
@@ -808,18 +819,29 @@ noneMatch(Predicate)- true if none match
 toArray()           - to Object[]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD nested for-loop contrasted with GOOD
+> **Code walkthrough:** The BAD nested for-loop contrasted with GOODice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > stream pipeline shows the declarative vs imperative style. The
 > `flatMap` example is essential - it converts a `Stream<List<T>>` to
 > `Stream<T>` by flattening. The groupingBy example shows a complex
 > collector chain that replaces multiple lines of loop-based code with
 > a single expression.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // DOMAIN: employees with departments and salaries
@@ -873,7 +895,7 @@ int totalSalary = employees.stream()
 // mapToInt().sum() is cleaner and avoids boxing
 ```
 
-> **Code walkthrough:** `mapToInt(Employee::salary).sum()` is
+> **Code walkthrough:** `mapToInt(Employee::salary).sum()` isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > preferred over `reduce()` for numeric aggregation on streams of
 > objects because (1) it avoids boxing `int` to `Integer`, (2) `IntStream`
 > has specialized methods (`sum`, `average`, `min`, `max`,
@@ -935,7 +957,7 @@ stream.findFirst();              // IllegalStateException: stream closed!
 long count = list.stream().filter(s -> !s.isEmpty()).count();
 Optional<String> first = list.stream().filter(s -> !s.isEmpty()).findFirst();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Diagnosis: `java.lang.IllegalStateException: stream has already been
 operated upon or closed`. Always create a fresh stream from the source
@@ -988,7 +1010,7 @@ Optional<Integer> first = stream.findFirst();
 // Elements 3-10 are NEVER processed!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 The stream processed only 3 elements (1, 2 for filter; 2 for map) out of 10.
 Without laziness, all 10 would be filtered, then all matching mapped.
@@ -1040,7 +1062,7 @@ List<String> values = optionals.stream()
     .collect(Collectors.toList()); // ["a", "b"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `flatMap` is the functional equivalent
 of the monad bind operation. Understanding it deeply: `map` is 1-to-1,
@@ -1094,7 +1116,7 @@ Map<String, Integer> nameToSalary = employees.stream()
         (existing, replacement) -> existing)); // merge fn: handle duplicate keys
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `groupingBy` performs a single O(n)
 pass and builds the map incrementally - it does NOT sort first. The
@@ -1145,7 +1167,7 @@ List<String> names = employees.stream()
 names.get(0); // random access - needs Collection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Streams cannot be used as method
 arguments that are iterated multiple times. A common mistake: returning
@@ -1176,6 +1198,14 @@ and merge results. Beneficial when:
 - Poorly-splittable sources: LinkedList, IO streams
 - Operations with side effects on shared state
 
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
+
 ```java
 // BAD: parallel for small list (overhead dominates):
 List<Integer> small = List.of(1, 2, 3, 4, 5);
@@ -1196,7 +1226,7 @@ urls.parallelStream()
 // Use: CompletableFuture or virtual threads (Java 21) instead
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **WHAT BREAKS: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* The ForkJoinPool.commonPool() is
 shared across all parallel streams in the JVM, `CompletableFuture`
@@ -1239,7 +1269,7 @@ int sumParallel = employees.parallelStream()
     );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Rule:** use `reduce` for immutable accumulation into a single value
 (sum, product, max). Use `collect` for mutable container building
@@ -1291,7 +1321,7 @@ Stream.iterate(1, page -> page + 1)
     .collect(Collectors.toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The paginated API use case is a real
 production pattern for consuming paginated REST APIs. `takeWhile` (Java 9)
@@ -1336,7 +1366,7 @@ Optional<Integer> first = nums.parallelStream().findFirst(); // forces order
 Optional<Integer> any = nums.parallelStream().findAny(); // no order - faster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Maintaining encounter order in parallel
 streams requires coordination between threads (they must produce output
@@ -1393,7 +1423,7 @@ Collector<Integer, int[], IntSummaryStatistics> stats =
     );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using container. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* Custom collectors are rare but
 powerful for building domain-specific aggregations. The combiner is

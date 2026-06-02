@@ -73,7 +73,13 @@ The factory equipment stays inside. The customer only gets the car."
 ### 📘 Concept Explanation
 
 **Build stages, cache mounts, secrets, distroless:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 BASIC MULTI-STAGE BUILD:
 
   # Stage 1: builder (has Maven + JDK, large image)
@@ -186,14 +192,20 @@ DISTROLESS AND SCRATCH IMAGES:
   # Image size: ~10MB (just the binary + TLS certs). vs ~600MB with Go base.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Image size: ~10MB (just the binary + TLS certs). vs ~600MB with Go base. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Java multi-stage Dockerfile with BuildKit
+> **Code walkthrough:** A Java multi-stage Dockerfile with BuildKitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cache and distroless runtime shows the complete production pattern.
+
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```dockerfile
 # BAD: everything in one stage - build tools in production image:
@@ -233,7 +245,7 @@ CMD ["app.jar"]
 # Final image: ~180MB vs ~800MB. Only JRE + app JAR. No Maven. No JDK.
 ```
 
-> **Code walkthrough:** Three stages work together. The `builder`
+> **Code walkthrough:** Three stages work together. The `builder`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > stage downloads dependencies into a cache mount (`/root/.m2`)
 > that persists between Docker builds but is not in the image. The
 > `test` stage extends `builder` to run tests. The `runtime` stage
@@ -350,7 +362,7 @@ Fix:
   Or: docker scout in CI (Docker's own advisory scanning).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check ARG values (visible in BuildKit build logs): example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -587,15 +599,21 @@ USEFUL COMPOSE COMMANDS:
   docker compose config           # show merged compose config (with overrides)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This docker compose --profile admin --profile tools up -> all example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Node.js + PostgreSQL + Redis Compose setup
+> **Code walkthrough:** A Node.js + PostgreSQL + Redis Compose setupice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with health checks and override files shows production-like local
 > development configuration.
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: no healthchecks, hardcoded secrets, no volume persistence:
@@ -646,7 +664,7 @@ volumes:
   pgdata: {}
 ```
 
-> **Code walkthrough:** `${POSTGRES_USER:-myapp}` reads from the
+> **Code walkthrough:** `${POSTGRES_USER:-myapp}` reads from theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > environment or `.env` file, with `myapp` as a default if not set.
 > `${POSTGRES_PASSWORD}` (no default): will fail with an error if
 > not set, preventing accidental use of empty passwords. The
@@ -729,7 +747,7 @@ the DB becomes unavailable AFTER startup, not just at startup.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: App fails on startup because DB is not ready.**
-```
+```plaintext
 Symptom: app container exits with:
   "Error: connect ECONNREFUSED 127.0.0.1:5432"
   Or: "FATAL: database 'myapp' does not exist"
@@ -772,7 +790,7 @@ Fix:
     // Handles: startup race AND production DB restarts.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Less precise than healthcheck (port open != DB ready for queries). example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

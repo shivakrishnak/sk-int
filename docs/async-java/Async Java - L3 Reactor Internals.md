@@ -125,7 +125,7 @@ Project Reactor implementation:
       );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Backpressure in Reactive Streams example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Hot vs cold:**
 - **Cold** (Flux.just, Flux.fromIterable, HTTP response): starts emitting
@@ -154,7 +154,7 @@ onBackpressureLatest():
   - Ideal for UI refresh rate limiting or metrics
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Backpressure in Reactive Streams example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use each strategy:**
 - Buffer: audit logs, financial events where data loss is unacceptable
@@ -174,6 +174,12 @@ is this feedback. n represents B's available buffer capacity.
 ### 💻 Code Example
 
 **Backpressure strategies and hot source handling:**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // 1. Cold source - naturally respects backpressure
@@ -227,7 +233,7 @@ hotFlux.subscribe(new BaseSubscriber<Event>() {
 // ^ slowest but most precise: exactly one item at a time
 ```
 
-> **Code walkthrough:** Pattern 1 shows a cold source - Flux.range naturally
+> **Code walkthrough:** Pattern 1 shows a cold source - Flux.range naturallyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > respects backpressure because it only emits when the downstream requests items.
 > Pattern 2 shows the hot source problem and fix: without `onBackpressureBuffer`,
 > a 100k/s emitter overloads a 1k/s consumer. The overflow strategy with
@@ -326,7 +332,7 @@ hotFlux
     .subscribe(this::persist);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: add `log()` to the pipeline:
 ```java
@@ -336,7 +342,7 @@ hotFlux
     .onBackpressureBuffer(...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The log shows: `request(256)` then `onNext x 256`, then next `request(256)`.
 If requests are much smaller than onNext events, overflow is occurring.
@@ -351,7 +357,7 @@ sources to make the strategy explicit at creation time.
 
 ---
 
-#### Q1 - Describe the Reactive Streams backpressure protocol step by step.
+**[JUNIOR] Q1 - [CONCEPTUAL] Describe the Reactive Streams backpressure protocol step by step.**
 
 The Reactive Streams specification defines exactly four interfaces:
 `Publisher<T>`, `Subscriber<T>`, `Subscription`, and `Processor<T,R>`.
@@ -381,7 +387,7 @@ using them in production.
 
 ---
 
-#### Q2 - What is the difference between a hot and cold publisher?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between a hot and cold publisher?**
 
 **Cold publisher:**
 - Starts emitting ONLY when subscribed
@@ -416,7 +422,7 @@ sink.tryEmitNext(3); // Both Sub1 and Sub2 see 3
 // Sub2 missed 1 and 2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The Kafka-Reactor adapter (reactor-kafka)
 is a hot-to-cold bridge: it wraps Kafka's push model (hot) in a reactive
@@ -426,7 +432,7 @@ to cold at the boundary rather than adding overflow strategies downstream.
 
 ---
 
-#### Q3 - What are the four overflow strategies and when do you use each?
+**[JUNIOR] Q3 - [CONCEPTUAL] What are the four overflow strategies and when do you use each?**
 
 | Strategy | Behavior on overflow | Use case |
 |---|---|---|
@@ -460,7 +466,7 @@ userInputFlux
     .subscribe(this::updateUI);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Buffer sizing: `onBackpressureBuffer()`
 without a size limit is unbounded - it will OOM under sustained overflow.
@@ -471,7 +477,7 @@ heap percentage (e.g., 10%). A 1-second burst at 10k items/sec of 1KB items
 
 ---
 
-#### Q4 - How does flatMap handle backpressure and concurrency?
+**[MID] Q4 - [CONCEPTUAL] How does flatMap handle backpressure and concurrency?**
 
 `flatMap(fn, maxConcurrency, prefetch)` has three backpressure axes:
 
@@ -505,7 +511,7 @@ Flux.fromIterable(tenThousandIds)
     .subscribe(r -> process(r));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `concatMap` vs `flatMap(fn, 1)`:
 `concatMap` subscribes to the next inner publisher only when the previous
@@ -516,7 +522,7 @@ is equivalent but slightly more flexible.
 
 ---
 
-#### Q5 - How do you implement rate limiting with backpressure?
+**[MID] Q5 - [HANDS-ON] How do you implement rate limiting with backpressure?**
 
 Three patterns:
 
@@ -527,7 +533,7 @@ Flux.range(1, 1000)
     .subscribe(i -> process(i));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Pattern 2: limitRate - controlled batching**
 ```java
@@ -537,7 +543,7 @@ Flux.range(1, 10_000)
     .subscribe(i -> process(i));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Pattern 3: BaseSubscriber for exact control**
 ```java
@@ -560,7 +566,7 @@ source.subscribe(new BaseSubscriber<Item>() {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `limitRate(100)` internally uses a
 "replenishment threshold" of 75%: after consuming 75 items, it requests
@@ -571,7 +577,7 @@ one-item-at-a-time requests.
 
 ---
 
-#### Q6 - How do you debug backpressure problems in production?
+**[MID] Q6 - [DEBUGGING] How do you debug backpressure problems in production?**
 
 Diagnostic tools:
 
@@ -584,7 +590,7 @@ flux.log("MyFlux", Level.DEBUG,
 // Shows: request(256), onNext(item1), onNext(item2)...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **Micrometer metrics:**
 ```java
@@ -597,7 +603,7 @@ flux.metrics() // requires reactor-micrometer
 //          reactor.flow.received, reactor.flow.dropped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **Visual detection via dropped items:**
 ```java
@@ -606,7 +612,7 @@ flux.onBackpressureDrop(item ->
         "topic", item.topic()).increment())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 4. **Heap analysis:**
 Reactor internal queues (SpscArrayQueue) appear in heap dumps as
@@ -622,14 +628,14 @@ Hooks.onOperatorError("bp-debug", (ex, obj) -> {
     return ex;
 });
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This catches ALL OverflowExceptions with the item that caused the overflow,
 giving both the error location and the offending data.
 
 ---
 
-#### Q7 - How does backpressure work in Reactor with Kafka?
+**[SENIOR] Q7 - [CONCEPTUAL] How does backpressure work in Reactor with Kafka?**
 
 Kafka's consumer model is push-based (poll returns a batch regardless of
 downstream capacity). Integrating with Reactor requires bridging the
@@ -650,7 +656,7 @@ KafkaReceiver.create(options).receive()
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The backpressure mechanism: when downstream demand is zero (flatMap is
 processing its maxConcurrency limit), reactor-kafka PAUSES the Kafka consumer
@@ -671,7 +677,7 @@ the prefetch based on partition count and available memory:
 
 ---
 
-#### Q8 - What happens when you combine a bounded and unbounded source?
+**[SENIOR] Q8 - [CONCEPTUAL] What happens when you combine a bounded and unbounded source?**
 
 `merge(fastFlux, slowFlux)`:
 - merge subscribes to both sources simultaneously
@@ -694,7 +700,7 @@ Flux.merge(
 ).subscribe(this::process);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `zip` with speed mismatch:
 - `zip` requests from the slower source only when it has items from both
@@ -710,7 +716,7 @@ finishes initialization.
 
 ---
 
-#### Q9 - How does backpressure propagate through a multi-step pipeline?
+**[SENIOR] Q9 - [CONCEPTUAL] How does backpressure propagate through a multi-step pipeline?**
 
 Backpressure propagation is operator-dependent. Two categories:
 
@@ -731,7 +737,7 @@ Downstream request(10)
   (flatMap processes 8 items, emits up to 10 to downstream)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The actual upstream demand depends on the operator chain composition.
 `limitRate(n)` explicitly controls this: it caps upstream requests
@@ -745,7 +751,7 @@ Flux.range(1, 1000)
 // Upstream request is always <=10 even if flatMap wants more
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Operator fusion: Reactor's assembly-time
 optimization fuses adjacent compatible operators (like `map` + `filter`
@@ -761,12 +767,12 @@ additional fusion.
 
 **Overflow strategies for hot sources:**
 
-| Strategy | Data loss | Memory | Failure visible | Use case |
-|---|---|---|---|---|
-| `onBackpressureBuffer(n)` | None (up to n) | Bounded | On overflow only | Critical events, bursts |
-| `onBackpressureDrop()` | Yes (new items) | Constant | Via callback | Non-critical telemetry |
-| `onBackpressureError()` | Yes (pipeline fails) | Constant | Immediately | Fail-fast pipelines |
-| `onBackpressureLatest()` | Yes (intermediate) | O(1) | Via metrics | UI state, sensor sampling |
+| Strategy| Data loss| Memory| Failure visible| Use case|
+|-----|--------------------|--------|----------------|-------------------------|
+| `onBackpressureBuffer(n)`| None (up to n)| Bounded| On overflow only| Critical
+| `onBackpressureDrop()`| Yes (new items)| Constant| Via callback| Non-critical 
+| `onBackpressureError()`| Yes (pipeline fails)| Constant| Immediately| Fail-fas
+| `onBackpressureLatest()`| Yes (intermediate)| O(1)| Via metrics| UI state, sen
 
 ---
 
@@ -962,7 +968,7 @@ Multiple publishOn:
       .subscribe(::println)   // thread C
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Schedulers and Threading in Project Reactor example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Scheduler types and use cases:**
 
@@ -991,7 +997,7 @@ Schedulers.fromExecutor(executor):
   - For: custom thread pools with specific naming or sizing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Schedulers and Threading in Project Reactor example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **publishOn vs subscribeOn decision:**
 
@@ -1008,7 +1014,7 @@ Use publishOn when:
   - After receiving I/O result, hand off to parallel for transformation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Schedulers and Threading in Project Reactor example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **First-principles derivation:**
 A reactive pipeline is a DAG of operations. The execution model without
@@ -1075,7 +1081,7 @@ Flux<Event> orderedProcessing(Flux<Event> events) {
 }
 ```
 
-> **Code walkthrough:** Pattern 1 wraps a blocking JDBC call in
+> **Code walkthrough:** Pattern 1 wraps a blocking JDBC call inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Mono.fromCallable` and offloads it to `boundedElastic` - the blocking
 > thread does not occupy the subscribe/event-loop thread. Pattern 2 uses
 > `publishOn(parallel())` to move CPU-intensive transforms to the parallel
@@ -1164,7 +1170,7 @@ reactor-http-nio-2 - BLOCKED
   at com.example.UserService.getUser(UserService.java:42)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cause: blocking JDBC or HTTP call executed directly in a reactive pipeline
 without `subscribeOn(boundedElastic())`. The Netty NIO event loop thread
@@ -1188,7 +1194,7 @@ Mono<User> getUser(@PathVariable String id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 BlockHound detection (development):
 ```java
@@ -1197,7 +1203,7 @@ BlockHound.install(); // Add to application startup
 // on reactive threads at runtime
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 BlockHound should be enabled in test and staging environments to catch
 all blocking calls before they reach production.
@@ -1210,7 +1216,7 @@ all blocking calls before they reach production.
 
 ---
 
-#### Q1 - What is the difference between publishOn and subscribeOn?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between publishOn and subscribeOn?**
 
 `publishOn(scheduler)`:
 - Position-dependent: affects operators AFTER it in the chain
@@ -1235,7 +1241,7 @@ Flux.just(1, 2, 3)
 // C: parallel-1       (after publishOn switch)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The interaction: if you have BOTH
 `subscribeOn` and `publishOn`, the source runs on subscribeOn's scheduler,
@@ -1245,7 +1251,7 @@ a downstream boundary.
 
 ---
 
-#### Q2 - When do you use boundedElastic vs parallel Scheduler?
+**[JUNIOR] Q2 - [CONCEPTUAL] When do you use boundedElastic vs parallel Scheduler?**
 
 **Schedulers.boundedElastic():**
 - Backed by a growing thread pool, upper-bounded by `10 * CPU cores`
@@ -1265,7 +1271,7 @@ blocking?  -> boundedElastic
 CPU-bound? -> parallel
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Blocking JDBC: boundedElastic
@@ -1278,7 +1284,7 @@ Flux.fromIterable(rawData)
     .map(data -> encodeExpensive(data));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The maximum thread count for
 `boundedElastic` (10 * CPU cores) can be overridden:
@@ -1290,7 +1296,7 @@ metric.
 
 ---
 
-#### Q3 - How does thread context (MDC, SecurityContext) propagate in reactive pipelines?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does thread context (MDC, SecurityContext) propagate in reactive pipelines?**
 
 **Problem:** ThreadLocal-based context (MDC, Spring Security's
 SecurityContextHolder) is lost when operators switch threads via publishOn
@@ -1313,7 +1319,7 @@ Mono<User> result = Mono.deferContextual(ctx ->
 .contextWrite(Context.of("requestId", requestId));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Solution 2: Spring Security Reactive Integration**
 ```java
@@ -1324,7 +1330,7 @@ Mono<String> currentUser = ReactiveSecurityContextHolder
 // Automatically propagates through reactive pipeline
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Solution 3: Micrometer Observation (Spring Boot 3+)**
 ```java
@@ -1333,7 +1339,7 @@ Mono<String> currentUser = ReactiveSecurityContextHolder
 // Trace context automatically propagates across thread switches
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Hooks.enableAutomaticContextPropagation()`
 (Reactor 3.5+) automatically bridges Reactor Context with supported
@@ -1342,7 +1348,7 @@ This eliminates manual MDC management in reactive pipelines.
 
 ---
 
-#### Q4 - How does Schedulers.parallel() work under high concurrency?
+**[MID] Q4 - [CONCEPTUAL] How does Schedulers.parallel() work under high concurrency?**
 
 `Schedulers.parallel()` creates a fixed pool of `CPU` threads (default:
 number of CPU cores, configurable via `reactor.schedulers.defaultPoolSize`
@@ -1364,7 +1370,7 @@ Flux.range(1, 10_000)
 // No backpressure signal; downstream may buffer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 The queue is effectively the upstream buffer. Under sustained high load
 where CPU work exceeds CPU capacity, the queue grows without bound.
@@ -1378,7 +1384,7 @@ Flux.range(1, 10_000)
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Custom parallel Scheduler with bounded
 queue:
@@ -1393,11 +1399,11 @@ Scheduler bounded = Schedulers.newBoundedElastic(
 // Enables circuit-breaking behavior
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q5 - What is thread affinity and when is it important?
+**[MID] Q5 - [CONCEPTUAL] What is thread affinity and when is it important?**
 
 Thread affinity means certain operations must run on a specific thread.
 Relevant cases in reactive:
@@ -1425,7 +1431,7 @@ events
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Schedulers.single()` uses one shared
 daemon thread for ALL pipelines that use it. If one pipeline's operation
@@ -1435,7 +1441,7 @@ single-thread Scheduler not shared with other pipelines.
 
 ---
 
-#### Q6 - How does subscribeOn interact with flatMap?
+**[MID] Q6 - [CONCEPTUAL] How does subscribeOn interact with flatMap?**
 
 `subscribeOn` on the outer Flux affects the thread on which the outer
 subscription propagates to the source. Inside `flatMap`, each inner
@@ -1453,7 +1459,7 @@ Flux.fromIterable(ids)
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 If the inner `subscribeOn` is omitted, the inner Mono's callable runs on
 the same thread that triggered the inner subscription, which is the
@@ -1473,7 +1479,7 @@ Without it, `flatMap` serializes inner subscriptions on the calling thread.
 // ^ all 16 concurrent Monos on same thread -> not truly parallel
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `flatMap` with inner `subscribeOn` can
 create up to `maxConcurrency` threads simultaneously. With the default
@@ -1483,7 +1489,7 @@ queue. Always match maxConcurrency to pool capacity.
 
 ---
 
-#### Q7 - How do you identify threading issues with BlockHound?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you identify threading issues with BlockHound?**
 
 BlockHound is a runtime detector that throws `BlockingOperationError` when
 a blocking call is made on a thread that should not block.
@@ -1503,7 +1509,7 @@ BlockHound.install(builder -> builder
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 What it catches:
 - Thread.sleep() on event loop
@@ -1520,7 +1526,7 @@ reactor.blockhound.BlockingOperationError:
   on thread: parallel-1 [is single threaded]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* BlockHound is a JVM agent - install it
 via `-javaagent` in integration tests for maximum coverage, not just unit
@@ -1530,7 +1536,7 @@ blocking regressions before they reach production.
 
 ---
 
-#### Q8 - What happens to thread naming in production and how do you trace issues?
+**[SENIOR] Q8 - [DEBUGGING] What happens to thread naming in production and how do you trace issues?**
 
 Reactor Scheduler threads have default naming:
 - `parallel-1`, `parallel-2`, ... (Schedulers.parallel)
@@ -1545,7 +1551,7 @@ Scheduler customPool = Schedulers.newBoundedElastic(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Correlating thread names with logs:
 ```java
@@ -1556,7 +1562,7 @@ log.info("Processing on: {}",
 // Correlate with: which pipeline, which service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Thread dump analysis: if an application stalls, thread dump shows:
 - Many threads named `boundedElastic-*` WAITING: pool is idle (good)
@@ -1570,7 +1576,7 @@ interpretable by any team member, not just Reactor experts.
 
 ---
 
-#### Q9 - How do you test reactive pipelines with virtual time?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you test reactive pipelines with virtual time?**
 
 `StepVerifier.withVirtualTime()` allows time-based operators to be tested
 instantly without real delays:
@@ -1590,7 +1596,7 @@ StepVerifier.withVirtualTime(() ->
 // Completes instantly; virtual clock advanced, no real sleep
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Testing thread switches:
 ```java
@@ -1606,7 +1612,7 @@ StepVerifier.create(
 .verifyComplete();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 BlockHound in tests:
 ```java
@@ -1623,7 +1629,7 @@ void testNoBlocking() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `StepVerifier.withVirtualTime()` requires
 the Flux to be created inside the `Supplier<Publisher>` argument - creating
@@ -1636,13 +1642,13 @@ it outside means the Flux started before virtual time was set up, and
 
 **Reactor Scheduler types:**
 
-| Scheduler | Threads | Pool type | Best for | Avoid for |
-|---|---|---|---|---|
-| `parallel()` | CPU count | Fixed | CPU-bound computation | Blocking I/O |
-| `boundedElastic()` | 10 x CPU max | Dynamic | Blocking I/O, JDBC | CPU-intensive work |
-| `single()` | 1 (shared) | Fixed | Ordered/serialized ops | Long-running tasks |
-| `immediate()` | Current | None | Testing, no-op | Thread isolation |
-| `fromExecutor(ex)` | Custom | Custom | Custom pool naming | N/A |
+| Scheduler| Threads| Pool type| Best for| Avoid for|
+|-------------|------------|---------|----------------------|------------------|
+| `parallel()`| CPU count| Fixed| CPU-bound computation| Blocking I/O|
+| `boundedElastic()`| 10 x CPU max| Dynamic| Blocking I/O, JDBC| CPU-intensive w
+| `single()`| 1 (shared)| Fixed| Ordered/serialized ops| Long-running tasks|
+| `immediate()`| Current| None| Testing, no-op| Thread isolation|
+| `fromExecutor(ex)`| Custom| Custom| Custom pool naming| N/A|
 
 ---
 

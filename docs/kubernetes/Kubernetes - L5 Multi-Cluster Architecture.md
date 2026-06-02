@@ -118,7 +118,7 @@ Global Load Balancer:
   - Session affinity: keep user on same region for session consistency
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Cluster and Federation Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pros: lowest latency for all users; withstands full region failure.
 Cons: application state must be synchronized across regions; complex.
@@ -132,7 +132,7 @@ Users -> primary-cluster (active, all traffic)
          standby-cluster (passive, replicated state, no traffic)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Cluster and Federation Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pros: simpler (no cross-cluster state sync during operation).
 Cons: failover requires DNS change (minutes); standby capacity costs money while idle.
@@ -151,9 +151,11 @@ Central hub architecture:
    |-- Application: "staging" -> git/staging -> target: staging-cluster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Cluster and Federation Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ArgoCD ApplicationSet - templated multi-cluster deployment:
+
+{% raw %}
 ```yaml
 kind: ApplicationSet
 apiVersion: argoproj.io/v1alpha1
@@ -184,8 +186,9 @@ spec:
           prune: true
           selfHeal: true
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Cluster and Federation Strategy example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ApplicationSet creates one ArgoCD Application per cluster. Sync policy `selfHeal: true`
 means if anyone manually changes a cluster (kubectl edit), ArgoCD reconciles it back
@@ -208,7 +211,7 @@ metadata:
     # Requests can be load balanced across clusters
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Requests can be load balanced across clusters example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 With Cluster Mesh: a Service in cluster-A with `global: true` is reachable from cluster-B
 using DNS. Load balancing across clusters is handled by Cilium at the kernel level (eBPF).
@@ -240,7 +243,7 @@ spec:
   addresses: [240.0.0.5]  # VIP for cross-cluster routing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ServiceEntry for cross-cluster service example demonstrates YAML configuration pattern using generic type. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 mTLS works across clusters: both clusters trust the same SPIFFE CA. Certificates from
 cluster-A are valid for service calls to cluster-B.
@@ -249,7 +252,7 @@ cluster-A are valid for service calls to cluster-B.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** ArgoCD ApplicationSet for multi-cluster deployment and
+> **Code walkthrough:** ArgoCD ApplicationSet for multi-cluster deployment andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cross-cluster service exposure.
 
 ```yaml
@@ -264,6 +267,7 @@ cluster-A are valid for service calls to cluster-B.
 # - Rollback requires manual coordination across all clusters
 ```
 
+{% raw %}
 ```yaml
 # GOOD: ArgoCD ApplicationSet for consistent multi-cluster deployment
 
@@ -303,6 +307,13 @@ spec:
       - group: apps
         kind: Deployment
         jsonPointers: [/spec/replicas]  # HPA manages this, ignore in diff
+```
+{% endraw %}
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
 ```
 
 ```yaml
@@ -444,7 +455,7 @@ SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag;
 # If > 0ms: there is replication lag
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If > 0ms: there is replication lag example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: implement application-level conflict resolution (CRDTs, last-write-wins), or enforce
 session affinity at the global load balancer (pin user to one region for their session),
@@ -466,7 +477,7 @@ argocd app list | grep -v Synced
 argocd app diff my-app-cluster-b
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Show what's different example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: enable ArgoCD selfHeal; restrict direct kubectl access (require ArgoCD for all
 changes via RBAC: limit who has cluster-admin or namespace-admin ClusterRoleBindings);
@@ -488,7 +499,7 @@ cilium clustermesh status --context=cluster-b
 # If not: check connectivity between Cilium agents
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If not: check connectivity between Cilium agents example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: restart Cilium pods (`kubectl rollout restart daemonset/cilium -n kube-system`);
 check network connectivity between clusters (VPN/peering, security groups); verify
@@ -632,7 +643,7 @@ Generators:
        - {cluster: us-east, env: prod, region: us}
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If not: check connectivity between Cilium agents example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 2. Cluster generator: auto-discovers ArgoCD-registered clusters:
    ```yaml
@@ -641,7 +652,7 @@ Generators:
        selector:
          matchLabels: {tier: production}
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If not: check connectivity between Cilium agents example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
    New clusters registered with ArgoCD and labeled `tier: production` automatically
    get Applications created.
@@ -654,7 +665,7 @@ Generators:
        directories:
        - path: clusters/*
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If not: check connectivity between Cilium agents example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
    Adding `clusters/new-cluster/` to Git automatically creates a new Application.
 
@@ -668,7 +679,7 @@ Generators:
        - clusters: {selector: {matchLabels: {tier: production}}}
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If not: check connectivity between Cilium agents example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Promotion strategy via Git:
 - All clusters sync from `main` branch: change in `main` = instant deploy to all clusters
@@ -750,7 +761,7 @@ Cluster state (Kubernetes objects):
 # Time: 10-30 minutes for cluster restore
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Time: 10-30 minutes for cluster restore example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Application state (databases, PVCs):
 - Databases: point-in-time recovery (PITR) via database-native replication
@@ -810,7 +821,7 @@ spec:
   externalName: payments-lb.eu.example.com
   # Requires cluster-A's service to have an external load balancer
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Requires cluster-A's service to have an external load balancer example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Pros: simple, no mesh required. Cons: requires external load balancers; loses service
 mesh features; not DNS-consistent (different hostname per cluster).
@@ -824,7 +835,7 @@ metadata:
     service.cilium.io/global: "true"
 spec: ...  # normal ClusterIP service
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cluster-A service: annotate as global example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 cluster-B can now call `payments.payments.svc.cluster.local` and Cilium routes it
 to cluster-A's pods. DNS name is identical in both clusters.
@@ -840,7 +851,7 @@ spec:
   - address: payments.cluster-a.internal
     ports: {http: 8080}
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In cluster-B: define entry for cluster-A service example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Allows Istio traffic policies (retries, circuit breaker, mTLS) to apply to cross-cluster calls.
 
@@ -879,13 +890,13 @@ Cell properties:
 - Bounded blast radius: a bad deployment reaches N users (one cell's worth), not all users
 
 Deployment strategy with cells:
-```
+```plaintext
 Canary cell (1% users):    deploy first, monitor 15 min
 Early adopter cell (5%):   deploy if canary green, monitor 30 min
 Normal cells (94% users):  deploy progressively if early adopters green
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In cluster-B: define entry for cluster-A service example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cell routing: at the edge layer (CDN or global load balancer), users are assigned
 to cells based on a consistent hash of their user ID or region. The cell assignment
@@ -945,7 +956,7 @@ spec:
       property: password
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Installed on each cluster: ExternalSecret polls central Vault example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Each cluster has a SecretStore configured with its own identity (AWS IRSA, GCP Workload Identity,
 or Vault AppRole). The central secret store holds the canonical secret. ESO creates a
@@ -1005,7 +1016,7 @@ pluto detect-helm -o markdown
 kubectl get apiservice | grep -v True
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check what's using deprecated APIs: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Automation for fleet upgrades:
 - ArgoCD ApplicationSet: update the Kubernetes version parameter in Git -> all rings
@@ -1086,7 +1097,7 @@ Trust federation across clusters:
 # cluster-B's SPIRE Server registers cluster-A's CA as a trusted domain
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cluster-B's SPIRE Server registers cluster-A's CA as a trusted domain example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 How workloads use it (without Envoy):
 1. Your application calls the Workload API via gRPC (using SPIFFE SDKs for Java, Go, Python)
@@ -1210,15 +1221,15 @@ Architecture:
     (not in traffic path)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cluster-B's SPIRE Server registers cluster-A's CA aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key design decisions:
 
 1. Data residency: each cluster has its own dedicated database in the same region.
    EU customers: always written to and read from EU cluster + EU database.
-   No cross-region database calls. GDPR: EU data physically never leaves eu-west-1.
+   No cross-region database calls. GDPR: EU data physically never leaves eu-west
 
-2. Customer routing: Route53 latency-based routing with geolocation override for EU
+2. Customer routing: Route53 latency-based routing with geolocation override for
    customers (always to EU cluster regardless of latency).
 
 3. Stateless services: deploy to all 3 clusters via ArgoCD ApplicationSet.
@@ -1228,23 +1239,23 @@ Key design decisions:
    Exceptions to the "data residency" rule must be stateless.
 
 5. Secret management: External Secrets Operator on each cluster; pulls from regional
-   Secrets Manager (eu-west-1 Secrets Manager for EU cluster). Secrets never cross regions.
+   Secrets Manager (eu-west-1 Secrets Manager for EU cluster). Secrets never cro
 
 6. GitOps: ArgoCD ApplicationSet with Cluster generator. Promotion via Git: PR to merge
    staging -> main triggers production sync to all clusters.
 
-7. Observability: Prometheus per cluster + central Grafana (federated data). PagerDuty
-   alerts route to regional on-call teams. Jaeger traces sampled and sent to regional
+7. Observability: Prometheus per cluster + central Grafana (federated data). Pag
+   alerts route to regional on-call teams. Jaeger traces sampled and sent to reg
    Elasticsearch.
 
 HA within each cluster:
 - 3 availability zones per region
-- HPA min=3, maxReplicas scaled to handle 200% of normal traffic (if another region fails)
+- HPA min=3, maxReplicas scaled to handle 200% of normal traffic (if another reg
 - PodDisruptionBudget: minAvailable=80% for all critical services
 
 DR scenario: eu-west-1 full region failure:
 - Route53 health checks detect failure within 30 seconds
-- EU customers automatically routed to us-east-1 (GDPR exception: emergency failover)
+- EU customers automatically routed to us-east-1 (GDPR exception: emergency fail
 - Incident runbook documents the GDPR implications (DPA notification required)
 - RTO: 5 minutes (DNS propagation)
 - When EU region recovers: data sync and re-route EU customers back
@@ -1253,7 +1264,7 @@ DR scenario: eu-west-1 full region failure:
 decision. Pure GDPR compliance says "EU data stays in EU, always." But 99.99% availability
 requires failover. The resolution: document the GDPR emergency exception with your Data
 Protection Officer (DPO), notify affected EU customers within 72 hours as required by
-Article 33, keep cross-region failover temporary, restore EU residency when the EU
+Article 33, keep cross-region failover temporary, restore EU residency when the 
 region recovers. This is a documented, pre-approved governance decision, not an
 ad-hoc response during an incident.
 

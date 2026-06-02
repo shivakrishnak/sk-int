@@ -198,9 +198,10 @@ Full rules for each section are in the Condensed Generation Reference below.
 ## Jekyll / Liquid Safety
 
 **Rule:** Every content file frontmatter MUST contain
-`render_with_liquid: false`. This is belt-and-suspenders over the global
-`_config.yml` default. The global default alone is unreliable across
-Jekyll versions when `Gemfile.lock` is not committed to the repo.
+`render_with_liquid: false`. This flag is REQUIRED but INSUFFICIENT on
+its own - Jekyll's Liquid PARSER scans page content BEFORE checking the
+flag (confirmed with `error_mode: warn` in `_config.yml`), emitting
+Liquid Exceptions/warnings for `{{ }}` and `{% %}` inside code blocks.
 
 **Mandatory frontmatter field - REQUIRED in every content file:**
 ```yaml
@@ -208,20 +209,39 @@ render_with_liquid: false
 ```
 Place it as the last field before the closing `---`.
 
-**What this means for content generation:**
-- Code examples containing `{{ }}` or `{% %}` do NOT need `{% raw %}`
-  / `{% endraw %}` wrappers. Examples: GitHub Actions `${{ secrets.X }}`,
-  Docker `--format '{{.State.Pid}}'`, Prometheus `{{ $value | humanize }}`,
-  JSX `style={{ color: 'red' }}`, Angular `{{ count }}`,
-  CSS custom properties `style={{ '--progress': \`${value}%\` }}`.
-- Do NOT add `{% raw %}` / `{% endraw %}` tags - they add noise.
-- Write `{{ }}` and `{% %}` code as-is. The frontmatter flag handles it.
+**MANDATORY for code blocks containing `{{ }}` or `{% %}` patterns:**
+
+Any code fence with Liquid-like patterns MUST be wrapped with
+`{% raw %}` / `{% endraw %}` tags placed OUTSIDE the fence.
+
+```
+{% raw %}
+```yaml
+${{ secrets.TOKEN }}
+```
+{% endraw %}
+```
+
+- Place `{% raw %}` on the line IMMEDIATELY BEFORE the opening ` ``` `
+- Place `{% endraw %}` on the line IMMEDIATELY AFTER the closing ` ``` `
+- These tags are consumed by the Liquid parser; they do NOT appear in
+  rendered output
+- Patterns requiring protection: `{{ }}`, `{% %}` - includes GitHub
+  Actions (`${{ secrets.X }}`), Docker inspect (`{{.State.Pid}}`),
+  Prometheus (`{{ $value | humanize }}`), JSX (`style={{ color: 'red' }}`),
+  Angular (`{{ count }}`), CSS custom properties, Helm templates, etc.
+
+Validation rule R28 in `scripts/file_validation_rules.ps1` enforces this
+at pre-commit. R28 fails with an error if any code block contains
+unprotected Liquid patterns.
 
 **If a build breaks with a Liquid Exception in a docs file:**
-- Check that the failing file has `render_with_liquid: false` in its
-  frontmatter. Add it if missing.
-- Do NOT fix by adding `{% raw %}` to individual code blocks.
-- Run the frontmatter verification script to find other affected files.
+- Wrap the offending code fence with `{% raw %}` / `{% endraw %}`
+  (outside the fence, not inside)
+- Ensure `render_with_liquid: false` is in frontmatter
+- Run `scripts/validate.ps1` to check R28 across all files
+- Run `_fix_liquid_raw.ps1` (workspace root) to auto-fix all files
+
 
 ## Formatting Rules
 

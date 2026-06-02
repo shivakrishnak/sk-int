@@ -101,7 +101,7 @@ Query: WHERE customer_id = 1001
   Total: 3-4 I/O, not 10,000,000 row scan
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This How They Speed Up Queries example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Index types:**
 
@@ -156,7 +156,7 @@ CREATE INDEX CONCURRENTLY idx_orders_created
 -- ALWAYS use CONCURRENTLY in production.
 ```
 
-> **Code walkthrough:** `CREATE INDEX` (without CONCURRENTLY) acquires
+> **Code walkthrough:** `CREATE INDEX` (without CONCURRENTLY) acquiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a SHARE lock that blocks concurrent writes for the duration of the build.
 > For a 100M-row table this can take minutes - unacceptable in production.
 > `CREATE INDEX CONCURRENTLY` builds the index in the background: it takes
@@ -195,7 +195,7 @@ LIMIT 10;
 -- 4. Statistics are stale: run ANALYZE orders;
 ```
 
-> **Code walkthrough:** EXPLAIN ANALYZE is the diagnostic tool for index
+> **Code walkthrough:** EXPLAIN ANALYZE is the diagnostic tool for indexice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > usage. The GOOD output shows "Index Scan using idx_..." - the index was
 > used. The BAD output shows "Seq Scan" with "Rows Removed by Filter: 9,999,990"
 > meaning the database read 10 million rows to find 10. The execution times
@@ -297,13 +297,13 @@ EXPLAIN SELECT ... WHERE customer_id = 42;
 SET enable_seqscan = on;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How does a B-tree index handle range queries?**
+**[JUNIOR] Q1 - [MECHANISM] How does a B-tree index handle range queries?**
 
 🗣️ "A B-tree stores values in sorted order. Leaf nodes are linked as a
 doubly-linked list. For a range query `WHERE created_at BETWEEN '2024-01-01' AND '2024-01-31'`:
@@ -314,7 +314,7 @@ plus the range length in index pages. Much faster than a full table scan.
 Hash indexes do NOT support range queries (hash values are randomly
 distributed; you cannot find 'all values greater than X' efficiently)."
 
-**Q2: What is the leading column rule for composite indexes?**
+**[JUNIOR] Q2 - [MECHANISM] What is the leading column rule for composite indexes?**
 
 🗣️ "A composite index `(a, b, c)` stores rows sorted by a first, then b,
 then c. It can be used for: `WHERE a = ?`, `WHERE a = ? AND b = ?`,
@@ -325,7 +325,7 @@ prefix rule. Example: index `(customer_id, status)`. Works: `WHERE customer_id =
 `WHERE status = 'PLACED'` alone. Design composite indexes starting with
 the most frequently used equality column."
 
-**Q3: What is an index-only scan and how does it improve performance?**
+**[JUNIOR] Q3 - [MECHANISM] What is an index-only scan and how does it improve performance?**
 
 🗣️ "A regular index scan: (1) scan the index to find matching entries;
 (2) for each entry, fetch the heap page to read the full row. Index-only scan:
@@ -337,7 +337,7 @@ with wide rows (reading the heap would fetch a large page for 2 columns).
 Design: for your hottest SELECT queries, ensure the index covers all
 projected columns."
 
-**Q4: What is index bloat and how do you detect and fix it?**
+**[MID] Q4 - [MECHANISM] What is index bloat and how do you detect and fix it?**
 
 🗣️ "Index bloat: wasted space in an index due to dead tuples. In PostgreSQL
 MVCC: UPDATE creates a new row version. The old version becomes a dead tuple.
@@ -349,7 +349,7 @@ is running and keeping up; (2) for heavily updated tables: decrease
 `autovacuum_vacuum_scale_factor`; (3) for severe bloat: `REINDEX CONCURRENTLY index_name`
 rebuilds the index without bloat."
 
-**Q5: What is a covering index and how do you design one?**
+**[MID] Q5 - [DESIGN] What is a covering index and how do you design one?**
 
 🗣️ "A covering index contains all columns needed by a specific query:
 WHERE columns, JOIN columns, and SELECT columns. The index 'covers' the query.
@@ -362,7 +362,7 @@ Design process: start with the equality columns in WHERE, then the range/sort
 columns, then the selected columns. Keep the index focused on the most
 critical queries."
 
-**Q6: What happens to indexes during bulk INSERT operations?**
+**[SENIOR] Q6 - [FAILURE] What happens to indexes during bulk INSERT operations?**
 
 🗣️ "Every row inserted into a table must be added to every index on the table.
 For a table with 5 indexes and 10 million rows to insert: 10 million * 5
@@ -374,7 +374,7 @@ instead of INSERT loops - bulk load utilities bypass some overhead.
 (3) Set `maintenance_work_mem` high for index creation to allow larger
 sort batches. After bulk load: `ANALYZE tablename` to refresh statistics."
 
-**Q7: How do indexes work with NULL values?**
+**[SENIOR] Q7 - [MECHANISM] How do indexes work with NULL values?**
 
 🗣️ "B-tree indexes: PostgreSQL indexes NULL values. A query `WHERE col IS NULL`
 can use a B-tree index on `col` (NULLs are stored at the end of the index
@@ -471,7 +471,7 @@ find by name range. Hash bins (Hash): find by exact code. Multi-drawer cabinet
 
 **Index type - query operator mapping:**
 
-```
+```plaintext
 B-tree:
   Supported: =, <, >, <=, >=, BETWEEN, IS NULL,
              IN, LIKE 'prefix%', ORDER BY
@@ -499,7 +499,7 @@ BRIN (Block Range Index):
   Not: randomly ordered data.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This B-Tree, Hash, and Composite Indexes example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Composite index design pattern:**
 
@@ -518,7 +518,7 @@ Index: (created_at, tenant_id, status)
   - Cannot satisfy WHERE tenant_id = ? efficiently alone
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This B-Tree, Hash, and Composite Indexes example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -564,7 +564,7 @@ LIMIT 20;
 -- No "Sort" step in the plan.
 ```
 
-> **Code walkthrough:** The BAD index puts `created_at` first. The B-tree
+> **Code walkthrough:** The BAD index puts `created_at` first. The B-treeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is sorted by `created_at` first. To use it for `WHERE customer_id = 42`:
 > the database would need to scan the entire `created_at` range to find
 > customer 42's rows - not helpful. The GOOD index: `customer_id` first
@@ -604,7 +604,7 @@ LIMIT 50;
 --   (reads 50 entries from a 1% subset index)
 ```
 
-> **Code walkthrough:** The partial index contains only rows where
+> **Code walkthrough:** The partial index contains only rows whereice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `status = 'PENDING'`. For a 100M row table with 1M PENDING orders:
 > the partial index has 1 million entries vs. 100 million in a full index.
 > It is 100x smaller, fits in the buffer cache more easily, and is read
@@ -715,7 +715,7 @@ covering index that serves multiple queries).
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: When would you use a BRIN index over a B-tree?**
+**[JUNIOR] Q1 - [SCENARIO] When would you use a BRIN index over a B-tree?**
 
 🗣️ "BRIN (Block Range INdex) stores the minimum and maximum values for
 each range of physical pages. It is extremely small (a few KB for a table
@@ -728,7 +728,7 @@ distributed column: BRIN provides no benefit (every block has overlapping
 ranges). Use case: very large (100M+ row) append-only tables with time-based
 range queries."
 
-**Q2: How does PostgreSQL decide between index scan and bitmap index scan?**
+**[JUNIOR] Q2 - [MECHANISM] How does PostgreSQL decide between index scan and bitmap index scan?**
 
 🗣️ "Index scan: fetches heap pages one by one as it scans the index. Good
 for: small result sets where heap pages are fetched in near-index-order.
@@ -740,7 +740,7 @@ AND. The optimizer switches to bitmap when the estimated number of matching
 rows exceeds a threshold (related to `random_page_cost` vs `seq_page_cost`).
 Both are better than Seq Scan for selective queries."
 
-**Q3: How do partial indexes interact with query planning?**
+**[JUNIOR] Q3 - [MECHANISM] How do partial indexes interact with query planning?**
 
 🗣️ "The optimizer uses a partial index only if the query's WHERE clause
 implies the index's condition. `CREATE INDEX idx ON orders(created_at) WHERE status='PENDING'`.
@@ -752,7 +752,7 @@ the partial index might not be used (the OR branch doesn't guarantee PENDING).
 Partial index conditions must be simple enough for the optimizer to recognize
 the implication."
 
-**Q4: What is an expression index and when do you need one?**
+**[MID] Q4 - [MECHANISM] What is an expression index and when do you need one?**
 
 🗣️ "An expression index (also called functional index) stores the result
 of an expression. `CREATE INDEX ON customers (LOWER(email))`. This index
@@ -763,7 +763,7 @@ is not sargable (the function wraps the column). Other uses: `EXTRACT(YEAR FROM 
 the expression is evaluated at insert/update time and the result is stored.
 The index grows with the full expression result, not just the base column."
 
-**Q5: How do you find unused indexes in production PostgreSQL?**
+**[MID] Q5 - [MECHANISM] How do you find unused indexes in production PostgreSQL?**
 
 🗣️ "`pg_stat_user_indexes` tracks index scan counts since the last statistics
 reset. `SELECT indexrelname, idx_scan FROM pg_stat_user_indexes
@@ -775,7 +775,7 @@ an index scanned many times but with few tuples fetched per scan may be
 inefficient. Before dropping: check if the index serves a constraint (UNIQUE)
 or a foreign key (required for ON DELETE CASCADE efficiency)."
 
-**Q6: What is the difference between a unique index and a unique constraint?**
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between a unique index and a unique constraint?**
 
 🗣️ "A UNIQUE constraint is implemented as a unique index. `ALTER TABLE
 customers ADD CONSTRAINT uq_email UNIQUE (email)` creates a unique index
@@ -787,7 +787,7 @@ also enforces uniqueness. In practice: use `UNIQUE` in `CREATE TABLE` for
 natural unique constraints (email, SKU). Use `CREATE UNIQUE INDEX CONCURRENTLY`
 to add unique constraints to existing tables without locking writes."
 
-**Q7: How does the fill factor setting affect index performance?**
+**[SENIOR] Q7 - [MECHANISM] How does the fill factor setting affect index performance?**
 
 🗣️ "Fill factor controls how full each B-tree leaf page is when initially
 built or after VACUUM. Default: 90% for indexes (10% reserved for updates).

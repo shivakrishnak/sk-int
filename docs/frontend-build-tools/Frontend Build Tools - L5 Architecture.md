@@ -118,7 +118,7 @@ Runtime flow:
      e. React.lazy resolves, component renders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Module Federation and Micro-frontend Build Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -169,7 +169,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Module Federation and Micro-frontend Build Architecture example demonstrates variable declaration using container. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ```javascript
 // packages/shell-app/webpack.config.js (Host)
@@ -195,7 +195,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Module Federation and Micro-frontend Build Architecture example demonstrates JavaScript pattern using container. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```tsx
 // packages/shell-app/src/App.tsx
@@ -235,7 +235,7 @@ export function App() {
 }
 ```
 
-> **Code walkthrough:** The `remotes` configuration switches between
+> **Code walkthrough:** The `remotes` configuration switches betweenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > local dev URL and production CDN URL via `process.env.NODE_ENV`.
 > This is critical: in development, each team runs their own dev server;
 > in production, each app is on its own CDN path. The `ErrorBoundary`
@@ -278,7 +278,7 @@ eventBus.on('cart:updated', ({ itemCount }) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using SQL. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 ```typescript
 // Failure resilience pattern: remote loading with timeout
@@ -304,7 +304,7 @@ const ProductList = lazy(
 );
 ```
 
-> **Code walkthrough:** The event bus pattern solves the cross-team
+> **Code walkthrough:** The event bus pattern solves the cross-teamice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > communication problem without introducing a dependency between apps
 > at the module level. Each team owns their store; they communicate
 > via DOM CustomEvents which are inherently decoupled. The timeout
@@ -426,7 +426,7 @@ Architecture:
     - Separate error budgets per team
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -590,7 +590,7 @@ Centralized dependency registry: Platform team maintains a `federation-deps.json
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 All remote webpack configs import this file to ensure consistency.
 CI validates that each remote's shared config matches the registry.
@@ -611,7 +611,7 @@ exposes: {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Monitoring: alert on `console.warn` containing "Unsatisfied version"
 in production - this indicates a singleton conflict.

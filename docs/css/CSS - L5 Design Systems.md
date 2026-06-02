@@ -126,7 +126,7 @@ and code.
 
 **How it works:**
 
-```
+```plaintext
 THREE-TIER TOKEN ARCHITECTURE:
 
 TIER 1 - PRIMITIVE TOKENS (raw values):
@@ -225,7 +225,7 @@ MULTI-PLATFORM OUTPUT (Style Dictionary):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -296,7 +296,7 @@ cross-platform consistency.
 /* And 100+ other occurrences */
 ```
 
-> **Code walkthrough:** Hard-coded values have no semantic
+> **Code walkthrough:** Hard-coded values have no semanticice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > relationship. When the brand color changes, every file
 > must be updated individually. Blue-500 in a button and
 > blue-500 in a badge have no programmatic connection.
@@ -357,7 +357,7 @@ cross-platform consistency.
 }
 ```
 
-> **Code walkthrough:** Brand color change from blue to
+> **Code walkthrough:** Brand color change from blue toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > indigo: update ONLY the primitive tier (`--color-blue-500:
 > #6366f1`). Every semantic token that references this
 > primitive automatically updates. Every component that
@@ -415,7 +415,7 @@ const sd = new StyleDictionary({
 sd.buildAllPlatforms();
 ```
 
-> **Code walkthrough:** Style Dictionary reads JSON token
+> **Code walkthrough:** Style Dictionary reads JSON tokenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > files, resolves references (`{color.primitive.blue.500}`
 > becomes the actual value), and outputs CSS custom properties.
 > `outputReferences: true` preserves the `var()` chain in
@@ -502,7 +502,7 @@ Fix:
    rather than @media - faster to apply before render.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -523,25 +523,24 @@ references create potential cycles.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Three-tier token model | 4-5 min | Primitive/Semantic/Component |
-| Dark mode with tokens | 4 min | Semantic tier only changes |
-| Multi-platform distribution | 4 min | Style Dictionary |
-| @property for token animation | 3-4 min | Type registration |
-| Token naming conventions | 3-4 min | Role-based naming |
-| Figma tokens to code | 3-4 min | Token Studio / Tokens plugin |
-| Breaking changes in tokens | 3-4 min | Versioning strategies |
-| White-label theming | 4-5 min | Per-brand token overrides |
-| CSS custom property performance | 3-4 min | CSSOM lookups |
-| Token governance | 3-4 min | Decision process |
-| Token documentation | 3 min | Storybook integration |
-| Token testing | 3-4 min | Visual regression |
+| Scenario| Recommended Time| Key Signal|
+|--------|----------------------------------------|----------------------------|
+| Three-tier token model| 4-5 min| Primitive/Semantic/Component|
+| Dark mode with tokens| 4 min| Semantic tier only changes|
+| Multi-platform distribution| 4 min| Style Dictionary|
+| @property for token animation| 3-4 min| Type registration|
+| Token naming conventions| 3-4 min| Role-based naming|
+| Figma tokens to code| 3-4 min| Token Studio / Tokens plugin|
+| Breaking changes in tokens| 3-4 min| Versioning strategies|
+| White-label theming| 4-5 min| Per-brand token overrides|
+| CSS custom property performance| 3-4 min| CSSOM lookups|
+| Token governance| 3-4 min| Decision process|
+| Token documentation| 3 min| Storybook integration|
+| Token testing| 3-4 min| Visual regression|
 
 ---
 
-**Q1: Explain the three-tier design token model.** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] Explain the three-tier design token model.** `[SENIOR]`**
 
 *Why they ask:* Core design token knowledge separates
 practitioners from users.
@@ -614,8 +613,7 @@ practitioners from users.
 
 ---
 
-**Q2: How do you implement dark mode with design tokens?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q2 - [DEBUGGING] How do you implement dark mode with design tokens?**
 
 *Why they ask:* Dark mode is nearly universal; the
 implementation approach reveals architectural understanding.
@@ -683,7 +681,7 @@ wrong theme?"
 >     const stored = localStorage.getItem('theme');
 >     const system = window.matchMedia(
 >       '(prefers-color-scheme: dark)').matches;
->     const theme = stored || (system ? 'dark' : 'light');
+ >     const theme = stored|| (system ? 'dark' : 'light');
 >     document.documentElement.dataset.theme = theme;
 >   })();
 > </script>
@@ -705,14 +703,14 @@ wrong theme?"
 > CSS custom properties are strings - they can't be
 > interpolated. Register them:
 > ```css
-> @property --color-surface { syntax: '<color>'; inherits: true; initial-value: #f3f4f6; }
+> @property --color-surface { syntax: '<color>'; inherits: true; initial-value: 
 > ```
 > Now `transition: --color-surface 0.2s` correctly
 > interpolates between the two color values.
 
 ---
 
-**Q3: What is CSS `@property` and how does it enhance
+**[MID] Q3 - [MECHANISM] What is CSS `@property` and how does it enhance**
 design tokens?** `[SENIOR]` MECHANISM
 
 *Why they ask:* @property is a Houdini feature that
@@ -788,7 +786,7 @@ enables animated tokens.
 > `<percentage>`, `<angle>`, `<time>`, `<resolution>`,
 > `<integer>`, `<url>`, `<image>`, `<transform-list>`,
 > any of the above with `+` (space-separated list),
-> or combined with `|`: `<color> | <number>`.
+ > or combined with `| `: `<color>| <number>`.
 >
 > *What separates good from great:* `@property` with
 > `inherits: true` (default-like behavior) means the property
@@ -801,7 +799,7 @@ enables animated tokens.
 
 ---
 
-**Q4: How does Style Dictionary enable multi-platform
+**[MID] Q4 - [MECHANISM] How does Style Dictionary enable multi-platform**
 design token distribution?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Multi-platform token distribution is the
@@ -840,7 +838,7 @@ key architectural value of design tokens.
 >   name: 'name/prefix-brand',
 >   type: 'name',
 >   transformer: (token, options) => {
->     const brand = options.brand || 'ds'; // design-system
+ >     const brand = options.brand|| 'ds'; // design-system
 >     return `${brand}-${token.path.join('-')}`;
 >   },
 > });
@@ -883,7 +881,7 @@ key architectural value of design tokens.
 
 ---
 
-**Q5: How do you handle design token breaking changes
+**[MID] Q5 - [DESIGN] How do you handle design token breaking changes**
 and versioning?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Token governance at scale is a staff-level
@@ -951,7 +949,7 @@ breaking consumers?"
 
 ---
 
-**Q6: What are the CSS custom property performance
+**[SENIOR] Q6 - [MECHANISM] What are the CSS custom property performance**
 implications at design system scale?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Custom property performance is often overlooked.
@@ -1019,8 +1017,7 @@ become slow?"
 
 ---
 
-**Q7: How do you integrate design tokens with Figma?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q7 - [DEBUGGING] How do you integrate design tokens with Figma?**
 
 *Why they ask:* Figma-code synchronization is a design system
 operational concern.
@@ -1094,7 +1091,7 @@ operational concern.
 
 ---
 
-**Q8: How do you build a white-label theming system with
+**[SENIOR] Q8 - [MECHANISM] How do you build a white-label theming system with**
 design tokens?** `[STAFF]` SYSTEM DESIGN
 
 *Why they ask:* White-label theming is a common enterprise
@@ -1189,7 +1186,7 @@ components?"
 
 ---
 
-**Q9: What is the token governance process for a large
+**[SENIOR] Q9 - [MECHANISM] What is the token governance process for a large**
 organization?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Staff-level concern about design system
@@ -1252,8 +1249,7 @@ operational maturity.
 
 ---
 
-**Q10: How do you document and test design tokens?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q10 - [DEBUGGING] How do you document and test design tokens?**
 
 *Why they ask:* Undocumented tokens are unusable tokens.
 
@@ -1275,7 +1271,7 @@ operational maturity.
 >   "color-interactive": {
 >     "$value": "{color.blue-500}",
 >     "$type": "color",
->     "$description": "Primary interactive/action color. Use for buttons, links, and primary CTAs.",
+>     "$description": "Primary interactive/action color. Use for buttons, links,
 >     "deprecated": false,
 >     "since": "1.0.0"
 >   }
@@ -1336,7 +1332,7 @@ operational maturity.
 
 ---
 
-**Q11: What are the CSS performance implications of a
+**[STAFF] Q11 - [MECHANISM] What are the CSS performance implications of a**
 large token system?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Practical concern for large design systems.
@@ -1402,7 +1398,7 @@ large token system?** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q12: What will CSS Houdini Typed OM and CSS Custom
+**[STAFF] Q12 - [MECHANISM] What will CSS Houdini Typed OM and CSS Custom**
 Highlight API enable for design systems?** `[STAFF]`
 ARCHITECTURE
 
@@ -1417,7 +1413,7 @@ ARCHITECTURE
 > Current CSSOM returns all values as strings:
 > `getComputedStyle(el).paddingTop` → `"16px"` (string).
 > Typed OM returns typed values:
-> `el.computedStyleMap().get('padding-top')` → `CSSUnitValue { value: 16, unit: 'px' }`.
+> `el.computedStyleMap().get('padding-top')` → `CSSUnitValue { value: 16, unit: 
 >
 > For design systems:
 > - Reading token values returns typed objects (not strings)
@@ -1470,25 +1466,25 @@ ARCHITECTURE
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Three-tier model + Style Dictionary |
-| Hiring Manager | Multi-brand token governance |
-| Bar Raiser | @property + Typed OM + platform strategy |
-| Peer Engineer | Dark mode token implementation |
+| Interviewer Type| Emphasis|
+|-------------------------------|----------------------------------------|
+| Technical Panel| Three-tier model + Style Dictionary|
+| Hiring Manager| Multi-brand token governance|
+| Bar Raiser| @property + Typed OM + platform strategy|
+| Peer Engineer| Dark mode token implementation|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Token Tool | Source Format | Output Formats | Figma Sync |
-|---|---|---|---|
-| Style Dictionary | JSON/YAML | CSS/iOS/Android/Sass | Via plugin |
-| Theo (Salesforce) | JSON/YAML | CSS/Sass/Android/iOS | No |
-| Diez | TypeScript | Web/iOS/Android | No |
-| Tokens Studio | Figma Variables | JSON (+ Style Dict) | Yes (native) |
-| Tailwind theme | JS config | CSS utilities only | No |
-| vanilla-extract | TypeScript | CSS at build | No |
+| Token Tool| Source Format| Output Formats| Figma Sync|
+|---|--------------------------------|----------------------------|------------|
+| Style Dictionary| JSON/YAML| CSS/iOS/Android/Sass| Via plugin|
+| Theo (Salesforce)| JSON/YAML| CSS/Sass/Android/iOS| No|
+| Diez| TypeScript| Web/iOS/Android| No|
+| Tokens Studio| Figma Variables| JSON (+ Style Dict)| Yes (native)|
+| Tailwind theme| JS config| CSS utilities only| No|
+| vanilla-extract| TypeScript| CSS at build| No|
 
 ---
 
@@ -1535,7 +1531,7 @@ GOVERNANCE:
   - Visual regression: Chromatic on every PR
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1555,10 +1551,10 @@ Dark mode:     swap tier 2     cascade      all updates
 
 ```mermaid
 flowchart LR
-    A["Figma Variables\n(Designer updates)"] -->|Tokens Studio| B["tokens/*.json\n(Git source)"]
-    B -->|Style Dictionary build| C["dist/css/tokens.css\n:root { --color-... }"]
-    B -->|Style Dictionary build| D["dist/ios/Tokens.swift\nUIColor.interactive"]
-    B -->|Style Dictionary build| E["dist/android/colors.xml\n@color/interactive"]
+     A["Figma Variables\n(Designer updates)"] -->| Tokens Studio| B["tokens/*.js
+  B -->| Style Dictionary build| C["dist/css/tokens.css\n:root { --color-... }"]
+  B -->| Style Dictionary build| D["dist/ios/Tokens.swift\nUIColor.interactive"]
+ B -->| Style Dictionary build| E["dist/android/colors.xml\n@color/interactive"]
     C --> F["Component CSS\n.button { background: var(--button-bg); }"]
     F --> G["Browser renders\nwith brand-correct colors"]
     style A fill:#7c3aed,color:#fff

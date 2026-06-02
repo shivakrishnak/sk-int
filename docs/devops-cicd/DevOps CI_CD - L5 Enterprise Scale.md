@@ -150,7 +150,7 @@ annotations:
   itil.myorg.com/change-request: CHG0012345
   itil.myorg.com/approver: security@myorg.com
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Deployment annotation triggers ITSM check example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The admission webhook validates the change ticket exists, is in
 "Approved" state, and has the required approvals before allowing
@@ -203,7 +203,7 @@ Every deployment creates an append-only audit record:
   "signature": "cosign-verified"
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Deployment annotation triggers ITSM check example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This record satisfies SOC 2's evidence requirements for change
 management and access control.
@@ -286,7 +286,7 @@ jobs:
 # 5. Weekend night deploys possible (no change windows)
 ```
 
-> **Code walkthrough:** The zero-governance deployment has three
+> **Code walkthrough:** The zero-governance deployment has threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > compounding security failures. The `on: push: branches: [main]`
 > trigger means any merged PR (including automated dependency updates,
 > doc fixes, and experimental branches merged by mistake) triggers
@@ -298,6 +298,7 @@ jobs:
 
 **GOOD: Policy-governed deployment with compliance automation**
 
+{% raw %}
 ```yaml
 # Production deployment with policy enforcement + audit trail
 
@@ -404,8 +405,9 @@ jobs:
               "timestamp": "'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'"
             }'
 ```
+{% endraw %}
 
-> **Code walkthrough:** The governed pipeline has four enforcement
+> **Code walkthrough:** The governed pipeline has four enforcementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > points. The ITSM check ensures a human-approved change ticket
 > exists before any deployment proceeds - this is the change management
 > control required by SOC 2 CC7.2 and ITIL. The change freeze check
@@ -537,7 +539,7 @@ ORDER BY d.timestamp;
 -- Auditor receives this as a CSV/PDF report automatically
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Evidence query for SOC 2 auditor: CC6.8 (change management) example demonstrates context manager using SQL. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 **Scale requirements:**
 - 1,500 engineers × 5 PRs/day × 0.3 production deploy rate = 2,250 production deployments/day
@@ -786,7 +788,7 @@ is_signed(image) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check cosign signature exists in Rekor example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Kyverno: a Kubernetes-native policy engine. Policies are written
 as Kubernetes YAML. Lower learning curve than OPA for Kubernetes-
@@ -852,7 +854,7 @@ def check_deployment_window(environment: str, emergency: bool = False) -> tuple[
     return True, "Allowed"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rule 3: Production deployments only during business hours example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Layer 2: OPA admission webhook (hard gate, no override without
 explicit annotation):
@@ -881,7 +883,7 @@ has_emergency_annotation(pod) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query external change freeze API example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Change freeze management:
 The change freeze registry is a simple API backed by PostgreSQL:
@@ -898,7 +900,7 @@ CREATE TABLE change_freezes (
 -- Active freeze: WHERE start_time <= NOW() AND end_time > NOW()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query external change freeze API example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Recurring rules (weekends, business hours) are coded directly
 in the OPA policy. Exceptional freezes (Black Friday, audit period)
@@ -962,7 +964,7 @@ CREATE TABLE deployment_records (
 -- Auditor can verify hash against current record values
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query external change freeze API example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Evidence report generation:
 ```python
@@ -1011,7 +1013,7 @@ def generate_soc2_evidence(start_date: date, end_date: date) -> SOC2Evidence:
     return SOC2Evidence(deployments=deployments, stats=stats)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For each deployment, verify record integrity example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 The auditor receives: a PDF/Excel report with all deployments,
 the approval chains, and the policy adherence statistics. The
@@ -1161,7 +1163,7 @@ WHERE change_ticket_id IS NULL
 ORDER BY deployment_timestamp;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For each deployment, verify record integrity example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 2: Classify by root cause.
 - Deployments by service accounts without ITSM integration → ITSM integration gap
@@ -1222,7 +1224,7 @@ spec:
     - component:payment-service
     - resource:postgres-db
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This graph is queryable: "which services depend on payment-service?"
 returns the set of services that must be validated when payment-service
@@ -1348,7 +1350,7 @@ spec:
             subset: canary
           weight: 10
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Istio VirtualService: 10% canary traffic example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This enables controlled exposure: governance can require that a
 deployment spend a minimum time at each canary percentage (e.g.,
@@ -1418,7 +1420,7 @@ GROUP BY d.team, d.service_name
 ORDER BY monthly_cost_usd DESC;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Istio VirtualService: 10% canary traffic example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Tagging enforcement via CI/CD:
 The governance policy can enforce cost tagging as a deployment requirement:

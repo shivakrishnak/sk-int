@@ -115,7 +115,7 @@ Component c = new ConcreteDecorator(  // outer
                   new ConcreteComponent())); // inner
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Decorator Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Decorator implements the same interface as the object it wraps. This
@@ -168,7 +168,7 @@ public class CoffeeWithMilkAndSugar extends CoffeeWithMilk {
 // grows as 2^N combinations - 3 add-ons = 8 classes
 ```
 
-> **Code walkthrough:** Three add-ons require eight subclasses. Four
+> **Code walkthrough:** Three add-ons require eight subclasses. Fourice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > add-ons require sixteen. This is the class explosion problem. No
 > runtime combination is possible - a latte with milk and sugar is a
 > fixed class, not a composition.
@@ -223,7 +223,7 @@ Coffee doubleSugar = new SugarDecorator(
     new SugarDecorator(new SimpleCoffee()));
 ```
 
-> **Code walkthrough:** Three classes support all combinations: any
+> **Code walkthrough:** Three classes support all combinations: anyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > number of add-ons, in any order, applied at runtime. `SugarDecorator`
 > wraps any `Coffee` - including another `SugarDecorator` (double sugar).
 > Each decorator adds one responsibility cleanly. Adding a `VanillaDecorator`
@@ -531,7 +531,7 @@ Client:
                     // Adaptee is hidden inside Adapter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Adapter Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Adapter is a translation layer. It never adds new functionality;
@@ -604,7 +604,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Stripe-specific types (`StripeChargeRequest`,
+> **Code walkthrough:** Stripe-specific types (`StripeChargeRequest`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `StripeException`) are leaked into the business domain. Switching
 > to PayPal requires modifying `OrderService`. Testing requires a real
 > or mocked Stripe client.
@@ -653,7 +653,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** `StripePaymentAdapter` translates between
+> **Code walkthrough:** `StripePaymentAdapter` translates betweenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the Stripe API and our domain's `PaymentGateway` interface.
 > `OrderService` knows only `PaymentGateway` - it has zero Stripe
 > dependencies. Switching to PayPal: create `PayPalPaymentAdapter`,
@@ -944,7 +944,7 @@ Caller:
   // No knowledge of 5 subsystem classes needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Facade Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Facade does not prevent access to subsystem classes - it just provides
@@ -1010,7 +1010,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** The controller knows five subsystem classes
+> **Code walkthrough:** The controller knows five subsystem classesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and their interaction order. If the notification must now wait until
 > shipment confirmation, the controller changes. If a new step (fraud
 > check) is added, the controller changes. The controller has too many
@@ -1063,7 +1063,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** `OrderFacade` is the Facade: it provides a
+> **Code walkthrough:** `OrderFacade` is the Facade: it provides aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > simple `placeOrder` method and orchestrates five subsystem services.
 > `OrderController` has one dependency (`OrderFacade`) instead of five.
 > The controller handles HTTP concerns only. Testing `OrderFacade`:

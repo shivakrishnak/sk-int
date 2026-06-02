@@ -270,6 +270,12 @@ to this fundamental information question.
 
 **Example 1: catalog-info.yaml (BAD vs GOOD)**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```yaml
 # BAD: Minimal catalog-info.yaml
 # Registered in Backstage but provides no value
@@ -327,7 +333,7 @@ spec:
     - resource:default/payments-queue
 ```
 
-> **Code walkthrough:** The GOOD catalog-info.yaml
+> **Code walkthrough:** The GOOD catalog-info.yamlice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > transforms a service from a name in a registry to
 > an integrated hub for operational information.
 > The annotations section wires the catalog entity
@@ -377,7 +383,7 @@ spec:
     $text: ./openapi.yaml  # Points to OpenAPI spec
 ```
 
-> **Code walkthrough:** The System entity groups all
+> **Code walkthrough:** The System entity groups allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > payment-related Components, APIs, and Resources
 > into a navigable unit. Engineers new to the codebase
 > can navigate to the payment-platform system in
@@ -541,7 +547,7 @@ kubectl get meshpolicies -A -o json |
 # Cross-reference with catalog consumesApis
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cross-reference with catalog consumesApis example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* (1) Add catalog-info.yaml review to PR
 templates: "Did you update your catalog entity
@@ -668,7 +674,7 @@ catalog:
               - '.*'  # All repos
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This app-config.yaml example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Limitations: (1) Auto-discovery finds catalog-info.yaml
 files but does not validate them. Stale entities
@@ -716,7 +722,7 @@ Step 1 - Check the Location entity:
 # Error state shows the parse/fetch error
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error state shows the parse/fetch error example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2 - Validate the catalog-info.yaml syntax:
 
@@ -728,7 +734,7 @@ npx @backstage/cli catalog-info validate \
 # fields, missing required fields (name, spec.owner)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This fields, missing required fields (name, spec.owner) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Check GitHub App permissions:
 
@@ -740,7 +746,7 @@ Step 3 - Check GitHub App permissions:
 # to the repository in GitHub App settings?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This to the repository in GitHub App settings? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4 - Check catalog entity namespace:
 
@@ -754,7 +760,7 @@ spec:
   owner: group:payments/payments-team  # Correct
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This default/payments-team example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 5 - Force a catalog refresh:
 
@@ -763,7 +769,7 @@ Step 5 - Force a catalog refresh:
 # Or wait for the next polling interval (default: 60s)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or wait for the next polling interval (default: 60s) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The GitHub App
 permissions step. This is the root cause of 40%
@@ -863,7 +869,7 @@ const pagerdutyFact = createQueryBasedFactRetriever({
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This a PagerDuty annotation? example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Scorecard checks: every Component entity is evaluated
 against: (a) has a PagerDuty service ID annotation
@@ -972,7 +978,7 @@ curl -s \
     .metadata.name'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Using Backstage catalog API: example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 API version consumer tracking: for deprecated API
 versions, query which Components have
@@ -1385,6 +1391,13 @@ with a portal UI and audit logging built in.
 
 **Example 1: Complete Software Template YAML**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # BAD: No software template
 # Each team creates services by:
@@ -1514,8 +1527,9 @@ spec:
           3. First deployment to ${{ parameters.environment }}
              triggers on merge to main.
 ```
+{% endraw %}
 
-> **Code walkthrough:** The template has three sections:
+> **Code walkthrough:** The template has three sections:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > metadata (title, tags, description shown in the
 > catalog), parameters (a two-step form with JSON
 > Schema validation - `pattern: '^[a-z0-9-]+$'`
@@ -1552,6 +1566,7 @@ content/
   pom.xml.njk
 ```
 
+{% raw %}
 ```yaml
 # catalog-info.yaml.njk (excerpt)
 # Variables from parameters substituted by Nunjucks
@@ -1565,7 +1580,9 @@ spec:
   owner: "group:default/${{ values.team }}"
   lifecycle: experimental
 ```
+{% endraw %}
 
+{% raw %}
 ```yaml
 # k8s/deployment.yaml.njk
 apiVersion: apps/v1
@@ -1593,8 +1610,9 @@ spec:
               memory: "512Mi"
               cpu: "500m"
 ```
+{% endraw %}
 
-> **Code walkthrough:** The template content folder
+> **Code walkthrough:** The template content folderice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > contains the files that will become the new service's
 > repository. Files with `.njk` extension are Nunjucks
 > templates - they contain `${{ values.fieldName }}`
@@ -1756,6 +1774,7 @@ with GitHub Actions syntax).
 
 *Diagnosis:*
 
+{% raw %}
 ```yaml
 # Check the template content file syntax
 # WRONG (no $ prefix):
@@ -1768,8 +1787,9 @@ name: ${{ values.name }}
 # steps must match the parameters block field name:
 # parameters.name -> values.name in content files
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This parameters.name -> values.name in content files example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *Fix:* Update all content folder files to use
 `${{ values.fieldName }}` syntax. Test the template
@@ -1931,10 +1951,11 @@ export const createArgoCDAppAction = () =>
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This parameters.name -> values.name in content files example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Usage in a template:
 
+{% raw %}
 ```yaml
 steps:
   - id: create-argocd-app
@@ -1946,8 +1967,9 @@ steps:
         ${{ steps['publish'].output.remoteUrl }}
       namespace: ${{ parameters.team }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This parameters.name -> values.name in content files example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 When NOT to build a custom action: if the automation
 can be done via a GitHub Actions workflow triggered
@@ -2090,7 +2112,7 @@ Step 2 - Read the scaffolder task log:
 # Copy the exact error message
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Copy the exact error message example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Reproduce with minimal input: create a
 test task with the same parameters (team name,
@@ -2223,7 +2245,7 @@ npx @backstage/cli catalog-info validate \
 # valid step action names, valid parameter types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This valid step action names, valid parameter types example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Layer 2 - Dry-run execution: run the template in
 a non-production Backstage environment (a local

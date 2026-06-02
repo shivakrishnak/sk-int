@@ -142,7 +142,7 @@ Data Layer:
   Data masking in logs (no PII in log files)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threat Modeling and Defense in Depth example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Zero Trust Architecture:**
 
@@ -217,6 +217,12 @@ public class UserController {
 > (A01 again) - any client can set `X-Internal: true` and access
 > all user data. These are not edge cases; they are common patterns
 > in codebases without security-conscious architecture.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Security architecture with OWASP mitigations
@@ -297,7 +303,7 @@ public class UserAuthorizationService {
 }
 ```
 
-> **Code walkthrough:** The fixed version addresses each vulnerability
+> **Code walkthrough:** The fixed version addresses each vulnerabilityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > systematically. `@PreAuthorize("isAuthenticated()")` enforces
 > authentication at the class level (no unauthenticated access).
 > `authzService.assertCanRead()` implements resource-level authorization
@@ -376,7 +382,7 @@ curl -H "Authorization: Bearer <user-123-token>" \
 # 200 OK = IDOR vulnerability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 200 OK = IDOR vulnerability example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:* Add resource-level authorization to every endpoint that
 accesses user data. Verify requesting user ID matches resource
@@ -398,7 +404,7 @@ git log --all --full-history -- "*.yml" |
 gitleaks detect --source . --report-path gitleaks-report.json
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use truffleHog or gitleaks example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Rotate all exposed credentials immediately. Implement
 secrets management (Vault, AWS Secrets Manager). Remove secrets
@@ -654,7 +660,7 @@ Use credentials for DB/API access
 Auto-renew via Vault agent sidecar before expiry
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Dynamic secrets: Vault generates a unique DB credential per service
 instance on startup. TTL: 1 hour. Vault automatically rotates the
@@ -683,7 +689,7 @@ the architecture implications?**
 
 *Why they ask:* OAuth2 is the standard for API authentication.
 
-*Likely follow-up:* "When do you use client credentials vs authorization code flow?"
+*Likely follow-up:* "When do you use client credentials vs authorization code fl
 
 OAuth2 provides a framework for delegated authorization. Two main
 flows for API security:
@@ -948,25 +954,25 @@ champion model (distribute security), threat modeling in sprint 0
 (shift left), automated gates (fast feedback), and security
 acceptance criteria (make security requirements explicit and trackable).
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | STRIDE application, OWASP mitigations, Zero Trust implementation |
-| Hiring Manager | Security process (QAW, threat modeling, champion model) |
-| Bar Raiser | Defense in depth, PCI DSS scope reduction, blast radius |
-| Peer Engineer | Practical: JWT validation, secrets management, ArchUnit |
+| Interviewer Type| Emphasis|
+|-------------|----------------------------------------------------------------|
+| Technical Panel| STRIDE application, OWASP mitigations, Zero Trust implementat
+| Hiring Manager| Security process (QAW, threat modeling, champion model)|
+| Bar Raiser| Defense in depth, PCI DSS scope reduction, blast radius|
+| Peer Engineer| Practical: JWT validation, secrets management, ArchUnit|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Security Pattern | Purpose | Protection Against | Limitation |
-|---|---|---|---|
-| Defense in Depth | Multiple security layers | Single-point failures | Complexity increases |
-| Zero Trust | No implicit network trust | Lateral movement after breach | Requires mTLS infrastructure |
-| RBAC | Role-based access control | Unauthorized access | Role explosion if not governed |
-| Principle of Least Privilege | Minimal access per entity | Blast radius limitation | Overhead of access management |
-| OAuth2 / OIDC | Delegated authorization | Identity spoofing | Token management complexity |
-| STRIDE Threat Modeling | Design-time threat identification | Architectural security gaps | Requires security expertise |
+| Security Pattern| Purpose| Protection Against| Limitation|
+|---|-------------|-----------------------------|------------------------------|
+| Defense in Depth| Multiple security layers| Single-point failures| Complexity 
+| Zero Trust| No implicit network trust| Lateral movement after breach| Requires
+| RBAC| Role-based access control| Unauthorized access| Role explosion if not go
+| Principle of Least Privilege| Minimal access per entity| Blast radius limitati
+| OAuth2 / OIDC| Delegated authorization| Identity spoofing| Token management co
+| STRIDE Threat Modeling| Design-time threat identification| Architectural secur
 
 ---
 

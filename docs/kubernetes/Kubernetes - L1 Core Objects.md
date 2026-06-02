@@ -110,7 +110,7 @@ All containers: same IP, same hostname
 Container B reaches Container A via localhost:8080
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pod example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pod phases:
 - Pending: Pod accepted but containers not yet running (image pull, scheduling)
@@ -149,7 +149,7 @@ shared network identity and volume access, while keeping them independently rest
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example shows what not to do - creating a Pod
+> **Code walkthrough:** The BAD example shows what not to do - creating a Podice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly without a controller. The GOOD multi-container Pod shows the sidecar
 > pattern: app container plus a sidecar sharing a volume. The init container pattern
 > shows how to run setup logic before the main container starts. The key lesson:
@@ -382,7 +382,7 @@ spec:
     # starts only AFTER db-migrate exits 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This starts only AFTER db-migrate exits 0 example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Why init containers over alternatives: running migrations in the main container
 causes problems with multi-replica Deployments - all 3 replicas attempt migrations
@@ -509,22 +509,22 @@ spec:
       app: my-app
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This starts only AFTER db-migrate exits 0 example demonsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Or `maxUnavailable: 1` - at most 1 pod unavailable at once.
 
-When you need it: any service with 2+ replicas that cannot tolerate downtime during
+When you need it: any service with 2+ replicas that cannot tolerate downtime dur
 maintenance windows. PDBs apply only to VOLUNTARY disruptions (node drains, eviction
-API). They do NOT protect against node failures (involuntary) - a dying node takes
+API). They do NOT protect against node failures (involuntary) - a dying node tak
 its pods regardless.
 
-Critical trap: `minAvailable: replica_count` makes the cluster undrainable - node
+Critical trap: `minAvailable: replica_count` makes the cluster undrainable - nod
 drain blocks waiting for PDB compliance but can never satisfy it. Set minAvailable
 to at most replica_count - 1.
 
 *What separates good from great:* PDBs interact with PodDisruptionBudget-aware
 operators and cluster upgrade tools (e.g., kOps, Cluster API) that respect PDBs
-during rolling node upgrades. Without PDBs, even well-intentioned rolling upgrades
+during rolling node upgrades. Without PDBs, even well-intentioned rolling upgrad
 can cause service disruptions.
 
 ---
@@ -544,7 +544,7 @@ fundamental K8s unit. Controller comparison at L2 Workloads file.)*
 
 ### 📊 Diagram
 
-```
+```plaintext
 Pod Architecture:
 +---------------------------------------+
 | Pod (IP: 10.0.1.5)                    |
@@ -693,7 +693,7 @@ scales old RS down, alternating until complete.
 Old RS kept at 0 replicas for rollback history.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Deployment and ReplicaSet example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Rolling update parameters:
 - `maxSurge: 25%` - up to 1 extra Pod can exist (of 4 replicas)
@@ -825,7 +825,7 @@ kubectl rollout pause deployment/web-app
 kubectl rollout resume deployment/web-app
 ```
 
-> **Code walkthrough:** `maxUnavailable: 0` with `maxSurge: 1` maintains 100%
+> **Code walkthrough:** `maxUnavailable: 0` with `maxSurge: 1` maintains 100%ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > capacity throughout the rollout - creates one new pod, waits for readiness, then
 > terminates one old pod. Slower than default (25%/25%) but maintains full capacity.
 > `change-cause` annotation appears in `kubectl rollout history` for context.
@@ -1064,7 +1064,7 @@ lifecycle:
     exec:
       command: ["/bin/sh", "-c", "sleep 5"]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration patice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This delays SIGTERM, giving endpoint removal time to propagate.
 
@@ -1076,11 +1076,11 @@ to give enough time.
 Layer 4 - Connection draining: configure ingress controller's drain timeout to
 match terminationGracePeriodSeconds.
 
-Safe shutdown sequence: preStop sleep -> SIGTERM -> app finishes in-flight requests
+Safe shutdown sequence: preStop sleep -> SIGTERM -> app finishes in-flight reque
 -> app exits -> SIGKILL if grace period exceeded.
 
 *What separates good from great:* Without preStop sleep, there's a race condition:
-SIGTERM sent but kube-proxy hasn't updated iptables - new requests arrive at a pod
+SIGTERM sent but kube-proxy hasn't updated iptables - new requests arrive at a p
 that's shutting down and get connection refused.
 
 ---
@@ -1104,16 +1104,16 @@ A: The Deployment controller uses the Kubernetes watch API and implements reconc
    c. Update replica counts via API Server if current doesn't match desired
    d. If new template: create new ReplicaSet, begin rolling update
 
-5. All changes go through the API Server -> etcd -> notifications to other informers
+5. All changes go through the API Server -> etcd -> notifications to other infor
    -> kubelet triggers actual container start/stop.
 
-This is the controller pattern: watch -> enqueue -> reconcile -> act via API Server.
-If the controller crashes mid-rollout and restarts, it reconciles from current etcd
+This is the controller pattern: watch -> enqueue -> reconcile -> act via API Ser
+If the controller crashes mid-rollout and restarts, it reconciles from current e
 state and continues where it left off.
 
-*What separates good from great:* The controller doesn't use a polling sleep - it
+*What separates good from great:* The controller doesn't use a polling sleep - i
 uses the watch API (persistent HTTP/2 connection pushing events). This makes the
-controller event-driven with near-zero latency between a Pod dying and the controller
+controller event-driven with near-zero latency between a Pod dying and the contr
 creating a replacement.
 
 ---
@@ -1282,7 +1282,7 @@ Client Pod -> ClusterIP:80 -> kube-proxy (iptables/IPVS)
                    (ready)   (ready)   (NOT ready - removed)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service and Networking Basics example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 DNS: CoreDNS resolves `my-service.my-namespace.svc.cluster.local` to the ClusterIP.
 Within the same namespace, just `my-service` works.
@@ -1323,7 +1323,7 @@ This is the minimal architecture to solve pod IP ephemerality with zero runtime 
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The three main Service types and the production pattern
+> **Code walkthrough:** The three main Service types and the production patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (Ingress + ClusterIP). The Ingress pattern is what most production teams use
 > for external HTTP traffic - one cloud load balancer routes to many internal services.
 
@@ -1390,7 +1390,7 @@ spec:
               number: 80
 ```
 
-> **Code walkthrough:** ClusterIP is the workhorse - provides internal DNS and
+> **Code walkthrough:** ClusterIP is the workhorse - provides internal DNS andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > stable routing with zero cloud cost. The `port`/`targetPort` separation allows
 > the service API (port 80) to differ from the container's actual listen port
 > (8080). The Ingress pattern is the production standard: one cloud LB (ingress
@@ -1648,7 +1648,7 @@ spec:
   - port: 9092
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Use headless when: (1) StatefulSets with per-pod addressing, (2) client wants to do
 its own load balancing (not rely on iptables), (3) DNS-based discovery returning all IPs.

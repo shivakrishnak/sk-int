@@ -105,7 +105,7 @@ At runtime:
 Requirement: target object MUST implement at least one interface.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dynamic Proxy and AOP example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **How CGLIB works:**
 
@@ -125,7 +125,7 @@ Spring Boot 2+ preference: CGLIB for all Spring beans
 (even when interfaces exist) unless spring.aop.proxy-target-class=false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dynamic Proxy and AOP example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The proxy call path in Spring:**
 
@@ -149,7 +149,7 @@ Caller
 Caller receives result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dynamic Proxy and AOP example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The self-invocation problem:**
 
@@ -171,7 +171,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Dynamic Proxy and AOP example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **WHAT BREAKS: never self-invoke @Transactional methods; inject the bean instead.**
 
 **AOP concepts:**
 
@@ -234,7 +234,7 @@ OrderService proxy = (OrderService)
     );
 ```
 
-> **Code walkthrough:** `Proxy.newProxyInstance` creates a new class at
+> **Code walkthrough:** `Proxy.newProxyInstance` creates a new class atice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > runtime that implements `OrderService`. Every method call on `proxy`
 > routes through `InvocationHandler.invoke`. The handler records start
 > time, delegates to `target.method.invoke(target, args)`, records elapsed
@@ -346,7 +346,7 @@ public class UserService {
 }
 ```
 
-> **Code walkthrough:** Fix 1 (`@Lazy` self-injection) works but is
+> **Code walkthrough:** Fix 1 (`@Lazy` self-injection) works but isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > code smell - it reveals that the class should be split. Fix 2 is the
 > correct solution: extract the independently-transacted operation to
 > its own Spring bean. `auditService.createAudit(user)` now goes through
@@ -427,7 +427,7 @@ public ProductPage searchProducts(SearchRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The aspect intercept chain for one request:**
 
@@ -447,7 +447,7 @@ DispatcherServlet
 ProductService.searchProducts() (real logic)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Aspect ordering (important for correctness):**
 
@@ -465,7 +465,7 @@ public class RateLimitAspect { ... }
 public class CacheAspect { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Aspects wrap the method like nested functions. `@Order(1)` is the
 outermost wrapper. Security should run before rate limiting (no point
@@ -619,7 +619,7 @@ public void createAudit(User user) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Fix: Extract to a separate `@Service` bean. Or use `@Lazy` self-injection.
 
@@ -638,7 +638,7 @@ logging.level.org.springframework.transaction=DEBUG
 # If your method is not listed: AOP is not intercepting it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If your method is not listed: AOP is not intercepting it example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Failure 3: CGLIB fails on final class or final method**
 
@@ -673,7 +673,7 @@ Diagnosis: Check `@Order` values on aspects. Security must have lower
 @Aspect @Order(3) class CacheAspect {}     // innermost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If your method is not listed: AOP is not intercepting it example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -784,7 +784,7 @@ public void methodB() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If your method is not listed: AOP is not intercepting it example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 For general proxy detection:
 ```java
@@ -793,7 +793,7 @@ AopContext.currentProxy() // throws if called outside proxy
 // If throws: this call bypassed the proxy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If your method is not listed: AOP is not intercepting it example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing `AopContext.currentProxy()`
 exists (requires `@EnableAspectJAutoProxy(exposeProxy=true)`). This is
@@ -825,7 +825,7 @@ public void process(Order order) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If your method is not listed: AOP is not intercepting it example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Fix options: (1) Re-throw after logging:
 `throw new ProcessingException("Failed", e);`
@@ -938,7 +938,7 @@ public Product getProduct(Long id) { ... }
 # If key is wrong, cache misses every time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If key is wrong, cache misses every time example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Knowing that `@Cacheable` has the
 same proxy limitation as `@Transactional`. The fix is identical:
@@ -1049,7 +1049,7 @@ if (!securityContext.hasPermission(user, "WRITE_ORDER")) {
     throw new AccessDeniedException("Permission denied");
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If key is wrong, cache misses every time example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is explicit, testable, and not proxy-dependent.
 (4) Integrate security unit tests: test that the method rejects unauthorized

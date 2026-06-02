@@ -119,7 +119,7 @@ OBJECT POOLING PATTERNS:
   
   PATTERN 3: ThreadLocal pool (per-thread, no synchronization):
     Appropriate for objects used within a single thread's execution.
-    ThreadLocal<byte[]> bufPool = ThreadLocal.withInitial(() -> new byte[8192]);
+    ThreadLocal<byte[]> bufPool = ThreadLocal.withInitial(() -> new...
     No synchronization needed (each thread has its own copy).
     Risk: with virtual threads, one copy per virtual thread = many copies
     (virtual threads are cheap but plentiful)
@@ -149,7 +149,7 @@ MEASURING ALLOCATION REDUCTION:
     After: 0 B/op  (full elimination via escape analysis + pooling)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Code Patterns example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -159,6 +159,30 @@ MEASURING ALLOCATION REDUCTION:
 > use case: logging in a hot path. The first pattern (string concatenation) allocates on every
 > call even when logging is disabled. The second (parameterized) defers allocation to after the
 > level check. The third (full elimination via StringBuilder pre-check) shows the explicit form.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // ALLOCATION REDUCTION IN A HOT PATH:
@@ -304,7 +328,7 @@ rate is high enough to cause measurable GC pressure. Measure both before and aft
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Object pool depletes under load, causing thread stalls.**
-```
+```plaintext
 Symptom: Under high load, request latency spikes. Threads appear blocked.
   Pool metric: "waiting threads" > 0 for extended periods.
 
@@ -336,7 +360,7 @@ Fix:
      Caller handles: retry or fail-fast (better than blocking forever)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -462,7 +486,7 @@ ThreadLocal. This is cleaner, compatible with virtual threads, and avoids the li
 ### 📘 Concept Explanation
 
 **Collection performance dimensions: time, memory, and CPU cache:**
-```
+```plaintext
 PERFORMANCE COMPARISON TABLE:
 
   Operation         ArrayList   LinkedList   HashMap      ArrayDeque
@@ -551,7 +575,7 @@ ITERATION PERFORMANCE:
     (both O(n), but constant factors diverge dramatically)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -561,6 +585,42 @@ ITERATION PERFORMANCE:
 > and LinkedList concretely. The HashMap sizing example shows how pre-sizing avoids the hidden
 > resize cost. The EnumMap and primitive collection examples show how specialized collections
 > eliminate overhead for specific access patterns.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // COLLECTION CHOICE PATTERNS:
@@ -684,7 +744,7 @@ Diagnosis:
   Verify: hashCode distribution
     Map<Integer, Integer> bucketCount = new HashMap<>();
     for (UserId uid : allIds) {
-        int bucket = (uid.hashCode() ^ (uid.hashCode() >>> 16)) & (capacity - 1);
+        int bucket = (uid.hashCode() ^ (uid.hashCode() >>> 16)) & (capacity -...
         bucketCount.merge(bucket, 1, Integer::sum);
     }
     // Ideal: all buckets have ~1 entry. Spike: collision problem.
@@ -702,7 +762,7 @@ Fix:
      or TreeMap (sorted) if sorted access is needed - both avoid this.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

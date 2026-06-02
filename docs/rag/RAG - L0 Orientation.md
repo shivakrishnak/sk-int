@@ -120,7 +120,7 @@ USER QUERY
 ANSWER (with citations to retrieved docs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What is RAG example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **What RAG solves:**
 
@@ -143,7 +143,7 @@ Compliance/auditability   Every answer has source docs
                           that can be audited
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What is RAG example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **RAG vs. search:**
 
@@ -254,7 +254,7 @@ print(result["answer"])
 # must be unopened."
 ```
 
-> **Code walkthrough:** The RAG flow has three explicit
+> **Code walkthrough:** The RAG flow has three explicitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > steps. `retrieve_documents` simulates retrieval
 > (production: vector similarity search returns the
 > top-K semantically relevant documents). The context
@@ -841,7 +841,7 @@ Typical use case  Q&A over docs  Customer support Summarizing 1 book
                   Recent events  voice
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG vs Fine-Tuning vs Long Context example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The correct mental model:**
 
@@ -856,6 +856,11 @@ to your product documentation.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # Illustrating when to choose each approach
@@ -963,7 +968,7 @@ def medical_rag_answer(
     return resp.content[0].text
 ```
 
-> **Code walkthrough:** Four scenarios show the decision
+> **Code walkthrough:** Four scenarios show the decisionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > process. RAG is chosen for product support Q&A
 > because the knowledge is large and updated regularly.
 > Fine-tuning is chosen for law firm emails because
@@ -1525,7 +1530,7 @@ LAYER 5: FULL PLATFORMS
   (Managed RAG pipeline, less flexible)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Ecosystem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Framework vs. custom code trade-off:**
 
@@ -1542,7 +1547,7 @@ USE CUSTOM CODE WHEN:
   - Production optimization required
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Ecosystem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1664,7 +1669,7 @@ def query_rag(
     return resp.content[0].text
 ```
 
-> **Code walkthrough:** The custom RAG implementation
+> **Code walkthrough:** The custom RAG implementationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > shows what frameworks like LangChain and LlamaIndex
 > abstract. `SimpleVectorStore` implements: add (embed
 > + store), search (embed query + cosine similarity

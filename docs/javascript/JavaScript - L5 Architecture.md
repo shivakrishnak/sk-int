@@ -180,7 +180,7 @@ MICRO-FRONTEND PATTERNS:
   Composed at the edge before delivery
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Architecture at Scale example demonstrates a key concept in practice using React hook. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -213,6 +213,16 @@ shell + design system.
 ### 💻 Code Example
 
 **Code splitting, state architecture, and micro-frontend patterns**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // ======== ROUTE-BASED CODE SPLITTING ========
@@ -319,7 +329,7 @@ export { Modal } from './Modal';
 // Tree-shaker removes all other components
 ```
 
-> **Code walkthrough:** The code splitting example shows the fundamental
+> **Code walkthrough:** The code splitting example shows the fundamentalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > trade-off: eager imports include all code in the initial bundle
 > (increases parse time, delays Time to Interactive); `lazy()` with
 > `Suspense` defers loading until the route is needed (faster initial
@@ -423,7 +433,7 @@ LARGE-SCALE REACT ARCHITECTURE:
     Bundle size regression blocks PR merge (CI check)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -560,7 +570,7 @@ function RemoteProductList() {
 // Gradually shift traffic (canary deployment for micro-frontends)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -583,7 +593,7 @@ function RemoteProductList() {
 
 ---
 
-**Q1: When would you choose SSR over CSR, and when would you choose
+**[JUNIOR] Q1 - [SCENARIO] When would you choose SSR over CSR, and when would you choose**
 SSG?** `[STAFF]` DECISION
 
 > **Answer:**
@@ -640,7 +650,7 @@ SSG?** `[STAFF]` DECISION
 > JS bundle - they're the ultimate form of "CSR/SSR hybrid" where
 > static parts produce HTML + no JS, and interactive parts hydrate.
 
-**Q2: How do you architect state management for a large React
+**[JUNIOR] Q2 - [DESIGN] How do you architect state management for a large React**
 application?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -710,7 +720,7 @@ application?** `[STAFF]` SYSTEM-DESIGN
 > replace with React Query - this reduces code by 40-60% while
 > IMPROVING behavior (automatic cache invalidation, background sync).
 
-**Q3: What is Module Federation and what problems does it solve?**
+**[MID] Q3 - [MECHANISM] What is Module Federation and what problems does it solve?**
 `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -782,8 +792,7 @@ application?** `[STAFF]` SYSTEM-DESIGN
 > (not built-in). The ecosystem is maturing but Webpack 5 remains
 > the most stable implementation.
 
-**Q4: How do you analyze and optimize JavaScript bundle size?**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q4 - [DEBUGGING] How do you analyze and optimize JavaScript bundle size?**
 
 > **Answer:**
 >
@@ -854,7 +863,7 @@ application?** `[STAFF]` SYSTEM-DESIGN
 > and approval. This prevents the gradual drift where every new feature
 > adds "just a small dependency" until the bundle is 3x its original size.
 
-**Q5: What are React Server Components and how do they change
+**[MID] Q5 - [MECHANISM] What are React Server Components and how do they change**
 architecture?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -922,7 +931,7 @@ architecture?** `[STAFF]` MECHANISM
 > Server Component output as children. This "children" pattern is
 > how you mix server and client rendering in the same component tree.
 
-**Q6: What is the Islands Architecture and how does it relate to
+**[SENIOR] Q6 - [DESIGN] What is the Islands Architecture and how does it relate to**
 React Server Components?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -978,7 +987,7 @@ React Server Components?** `[STAFF]` MECHANISM
 > of page complexity. This is the frontier of JavaScript architecture
 > for content-heavy applications.
 
-**Q7: How do you design a monorepo for a large JavaScript application?**
+**[SENIOR] Q7 - [DESIGN] How do you design a monorepo for a large JavaScript application?**
 `[SENIOR]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -1052,7 +1061,7 @@ React Server Components?** `[STAFF]` MECHANISM
 > Without it, CI time scales linearly with repository size instead of
 > staying constant per-change.
 
-**Q8: What performance budget strategy do you implement for a
+**[SENIOR] Q8 - [MECHANISM] What performance budget strategy do you implement for a**
 large-scale JavaScript application?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -1138,7 +1147,7 @@ large-scale JavaScript application?** `[STAFF]` SYSTEM-DESIGN
 > performance have treated bundle size like a shared resource with
 > limited supply.
 
-**Q9: How do you handle cross-team communication in a
+**[SENIOR] Q9 - [MECHANISM] How do you handle cross-team communication in a**
 micro-frontend architecture?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -1206,7 +1215,7 @@ micro-frontend architecture?** `[STAFF]` SYSTEM-DESIGN
 > versioned contracts (events, URLs, or shared libraries) - never
 > through direct cross-bundle imports.
 
-**Q10: What is the Strangler Fig pattern and how does it apply to
+**[SENIOR] Q10 - [MECHANISM] What is the Strangler Fig pattern and how does it apply to**
 JavaScript frontend migration?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -1276,7 +1285,7 @@ JavaScript frontend migration?** `[STAFF]` SYSTEM-DESIGN
 > A/B testing: send 10% of /products traffic to React, monitor Core
 > Web Vitals + error rates, then gradually increase.
 
-**Q11: How do you manage JavaScript dependencies across a large
+**[STAFF] Q11 - [MECHANISM] How do you manage JavaScript dependencies across a large**
 frontend organization?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -1338,7 +1347,7 @@ frontend organization?** `[STAFF]` SYSTEM-DESIGN
 > these conventions early - retrofitting them onto diverged codebases
 > is 10x the work.
 
-**Q12: What architectural principles distinguish excellent JavaScript
+**[STAFF] Q12 - [DESIGN] What architectural principles distinguish excellent JavaScript**
 platforms from average ones?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**

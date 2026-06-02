@@ -121,7 +121,7 @@ while True:
     # Next iteration: LLM sees updated messages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Next iteration: LLM sees updated messages example demonstrates context manager using SQL. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 **Phases in detail:**
 
@@ -147,7 +147,7 @@ ACT (tool execution):
   - Append to messages for next observe
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Next iteration: LLM sees updated messages example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -241,7 +241,7 @@ def run_ota_loop(
     return "Agent reached iteration limit."
 ```
 
-> **Code walkthrough:** The loop structure matches
+> **Code walkthrough:** The loop structure matchesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the observe-think-act model precisely. The `messages`
 > list is the observation buffer - it accumulates
 > the full history of the task. The `client.messages.create`
@@ -386,7 +386,7 @@ if i == max_iter - 2:  # second-to-last iteration
     })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ---- OBSERVE: add tool results ---- example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* The second-to-last
 injection (not the last - the LLM needs one more
@@ -505,7 +505,7 @@ except Exception as e:
     result = f"Error: {str(e)}"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern using error handling. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 The LLM receives the error in the next observe phase
 and can adapt: retry with different arguments, try
@@ -757,7 +757,7 @@ web_search_tool = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tool Use in Agents example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 **How tool execution works:**
 
@@ -781,7 +781,7 @@ Application returns to LLM:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tool Use in Agents example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -794,6 +794,11 @@ independently of the LLM.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: poorly designed tool descriptions
@@ -881,7 +886,7 @@ GOOD_TOOLS = [
 ]
 ```
 
-> **Code walkthrough:** The BAD tools have minimal
+> **Code walkthrough:** The BAD tools have minimalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > descriptions and ambiguous parameter names. The LLM
 > cannot determine from the schema alone when to use
 > "db_query" or what to pass as "q". The GOOD tools
@@ -1099,7 +1104,7 @@ Example:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* The match between
 tool_use_id and the original request - if they don't
@@ -1198,7 +1203,7 @@ def execute_tool_safe(name, args):
     return call_actual_function(name, args)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Validate customer_id format example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 The LLM receives the error and can correct its
 arguments on the next iteration.
@@ -1352,7 +1357,7 @@ Procedural mem. | System prompt     | Per-agent type| Fast
 In-weights mem. | Model parameters  | Universal     | Instant
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Memory Types example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use each:**
 
@@ -1479,7 +1484,7 @@ class AgentWithMemory:
         return result
 ```
 
-> **Code walkthrough:** `AgentWithMemory` implements
+> **Code walkthrough:** `AgentWithMemory` implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > episodic memory using SQLite. On each run, it retrieves
 > the most recent related episodes and injects them
 > into the system prompt as context ("past similar
@@ -1794,7 +1799,7 @@ system = [
 ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 For agents with long system prompts (>1,000 tokens),
 prompt caching is a significant cost and latency

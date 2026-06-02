@@ -115,7 +115,7 @@ TIMELINE:
   2024: Jakarta EE 11 (in progress)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jakarta EE Specification Process example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **TCK (Technology Compatibility Kit):**
 
@@ -146,7 +146,7 @@ Application written to JAX-RS 3.1 spec:
   No code changes needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jakarta EE Specification Process example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -225,7 +225,7 @@ public class WildFlyModuleHelper {
 // jakarta.json.*      (JSON-P, JSON-B)
 ```
 
-> **Code walkthrough:** The portable OrderResource uses only
+> **Code walkthrough:** The portable OrderResource uses onlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > jakarta.ws.rs.* (JAX-RS) and jakarta.inject.Inject (CDI).
 > These are spec APIs - every certified Jakarta EE 10 server
 > implements them identically. The non-portable WildFlyModuleHelper
@@ -318,7 +318,7 @@ grep -rn "import org.jboss\|import com.ibm\
 # Any non-jakarta.*, non-java.* import is a portability risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any non-jakarta.*, non-java.* import is a portability risk example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Replace vendor-specific APIs with spec equivalents,
 or document the vendor dependency explicitly.
@@ -343,7 +343,7 @@ mvn dependency:tree | grep -E "javax.persistence|jakarta.persistence"
 # cannot be cast to jakarta.persistence.Entity
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cannot be cast to jakarta.persistence.Entity example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```xml
@@ -360,7 +360,7 @@ mvn dependency:tree | grep -E "javax.persistence|jakarta.persistence"
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cannot be cast to jakarta.persistence.Entity example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -374,8 +374,7 @@ mvn dependency:tree | grep -E "javax.persistence|jakarta.persistence"
 | Debugging | 1 | ClassCastException from namespace collision |
 | Behavioral | 1 | Leading a javax to jakarta migration |
 
-**Q1. How does the Jakarta EE specification process (EFSP) work
-and how does it differ from the old JCP process?**
+**[JUNIOR] Q1 - [MECHANISM] How does the Jakarta EE specification process (EFSP) work and how does it differ from the old JCP process?**
 
 The Eclipse Foundation Specification Process (EFSP) replaced the
 Java Community Process (JCP) for Jakarta EE after Oracle transferred
@@ -410,8 +409,7 @@ easily test specification compliance.
 
 ---
 
-**Q2. What is a Technology Compatibility Kit (TCK) and why does
-it matter for Java EE portability?**
+**[JUNIOR] Q2 - [MECHANISM] What is a Technology Compatibility Kit (TCK) and why does it matter for Java EE portability?**
 
 A TCK is a test suite that an implementation must pass to claim
 compatibility with a specification. For Jakarta EE:
@@ -444,8 +442,7 @@ undefined (e.g., order of CDI observer invocation across types).
 
 ---
 
-**Q3. Why did the jakarta.* namespace replace javax.* and what
-are the migration implications?**
+**[JUNIOR] Q3 - [MECHANISM] Why did the jakarta.* namespace replace javax.* and what are the migration implications?**
 
 Oracle owns the `javax.*` trademark. When Java EE transferred to
 the Eclipse Foundation as Jakarta EE, Oracle granted a one-time
@@ -478,8 +475,7 @@ Maven enforcer rules checking for duplicate packages catch this early.
 
 ---
 
-**Q4. How does Jakarta EE ensure vendor portability in practice and
-where does it break down?**
+**[MID] Q4 - [MECHANISM] How does Jakarta EE ensure vendor portability in practice and where does it break down?**
 
 Portability guarantees:
 - Code using only `jakarta.*` APIs compiles and runs on any certified
@@ -507,8 +503,7 @@ configuration layer or accept the port cost explicitly.
 
 ---
 
-**Q5. What is the TRADE-OFF between TCK compliance and using
-vendor-specific Jakarta EE extensions?**
+**[MID] Q5 - [TRADE-OFF] What is the TRADE-OFF between TCK compliance and using vendor-specific Jakarta EE extensions?**
 
 Vendor extensions give access to features not in the specification:
 - Hibernate: batch insert, fetch profiles, custom types, HQL extensions
@@ -539,9 +534,7 @@ gives you the performance benefit with a defined migration surface.
 
 ---
 
-**Q6. DEBUGGING: You have a ClassCastException: `javax.persistence.
-Entity cannot be cast to jakarta.persistence.Entity`. Walk through
-your diagnosis and fix.**
+**[SENIOR] Q6 - [DEBUGGING] DEBUGGING: You have a ClassCastException: `javax.persistence. Entity cannot be cast to jakarta.persistence.Entity`. Walk through your diagnosis and fix.**
 
 This is the classpath split problem.
 
@@ -563,7 +556,7 @@ mvn dependency:tree -Dincludes=javax.persistence
 #   "multiple versions of javax.persistence detected"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "multiple versions of javax.persistence detected" example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 ```xml
@@ -595,7 +588,7 @@ Fix:
 </plugin>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "multiple versions of javax.persistence detected" example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Adding the Maven Enforcer rule as
 a permanent guard. The ClassCastException can re-appear if a new
@@ -604,8 +597,7 @@ prevents this at build time.
 
 ---
 
-**Q7. What is the relationship between a Jakarta EE specification,
-a compatible implementation, and a certified application server?**
+**[SENIOR] Q7 - [SCENARIO] What is the relationship between a Jakarta EE specification, a compatible implementation, and a certified application server?**
 
 Three-layer model:
 
@@ -637,8 +629,7 @@ proxy generation which is incompatible with AOT native compilation.
 
 ---
 
-**Q8. How would you evaluate if a library is compatible with
-Jakarta EE 10 vs. Jakarta EE 9.1?**
+**[SENIOR] Q8 - [MECHANISM] How would you evaluate if a library is compatible with Jakarta EE 10 vs. Jakarta EE 9.1?**
 
 Compatibility checklist:
 
@@ -650,7 +641,7 @@ Compatibility checklist:
    javap -c -classpath library.jar some.Class | grep 'javax\|jakarta'
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or decompile a class: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 2. **Published artifact version**: check Maven Central metadata for
    `jakarta.*` vs `javax.*` in the artifact's `pom.xml` dependencies.
@@ -673,8 +664,7 @@ be wrong; the bytecode is the truth.
 
 ---
 
-**Q9. BEHAVIORAL: You are leading a migration from Java EE 8
-(javax.*) to Jakarta EE 10. What steps do you take?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: You are leading a migration from Java EE 8 (javax.*) to Jakarta EE 10. What steps do you take?**
 
 Migration plan (phased):
 
@@ -906,7 +896,7 @@ MICROPROFILE SUBSET:
   Startup: <100ms, Heap: 50MB (Quarkus native)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MicroProfile and Lean Enterprise Java example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Fault Tolerance in Practice:**
 
@@ -922,7 +912,7 @@ CLOSED (normal operation)
   -> CLOSED (if probe succeeds)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MicroProfile and Lean Enterprise Java example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1078,7 +1068,7 @@ public class OrderResource {
 // GET /q/dev-ui -> Swagger UI (Quarkus dev mode)
 ```
 
-> **Code walkthrough:** The MicroProfile Config example shows
+> **Code walkthrough:** The MicroProfile Config example showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the 12-factor app pattern in action: ORDER_MAX_QUANTITY
 > environment variable is automatically mapped to maxQuantity
 > by the Config API's key conversion rules. The Health examples
@@ -1173,7 +1163,7 @@ curl http://service/q/metrics | \
 # failure count, success count, times transitioned
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This failure count, success count, times transitioned example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:*
 ```java
@@ -1186,7 +1176,7 @@ curl http://service/q/metrics | \
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This failure count, success count, times transitioned example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1213,7 +1203,7 @@ curl http://localhost:8080/q/dev-ui/configuration
 # 5. META-INF/microprofile-config.properties
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. META-INF/microprofile-config.properties example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 ---
 
@@ -1227,8 +1217,7 @@ curl http://localhost:8080/q/dev-ui/configuration
 | Debugging | 1 | Circuit breaker state diagnosis |
 | Behavioral | 1 | Architecture decision for new microservice |
 
-**Q1. What problem does MicroProfile solve that the Jakarta EE
-core profile does not address?**
+**[JUNIOR] Q1 - [DEBUGGING] What problem does MicroProfile solve that the Jakarta EE core profile does not address?**
 
 MicroProfile addresses cloud-native microservice concerns not included
 in Jakarta EE core:
@@ -1260,8 +1249,7 @@ MicroProfile for config/health/fault tolerance.
 
 ---
 
-**Q2. Explain the MicroProfile Config source priority ordering
-and how it affects production configuration.**
+**[JUNIOR] Q2 - [DEBUGGING] Explain the MicroProfile Config source priority ordering and how it affects production configuration.**
 
 MP Config defines a default source priority:
 
@@ -1292,7 +1280,7 @@ public class VaultConfigSource implements ConfigSource {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. META-INF/microprofile-config.properties example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing the Kubernetes mapping.
 Env vars from ConfigMaps and Secrets become priority 400 sources
@@ -1302,8 +1290,7 @@ local dev (properties file), CI (env vars), and prod (Vault/secrets).
 
 ---
 
-**Q3. How does MP Fault Tolerance `@CircuitBreaker` work and when
-does it transition between states?**
+**[JUNIOR] Q3 - [MECHANISM] How does MP Fault Tolerance `@CircuitBreaker` work and when does it transition between states?**
 
 Circuit breaker states:
 - **CLOSED**: requests flow normally. Failure count tracked in a
@@ -1324,7 +1311,7 @@ State transitions:
 public Order processPayment(PaymentRequest req) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. META-INF/microprofile-config.properties example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Transition logic:
 - CLOSED -> OPEN: last 10 requests had >50% failures
@@ -1339,8 +1326,7 @@ statistically significant). This prevents premature tripping on startup.
 
 ---
 
-**Q4. What is the TRADE-OFF between MicroProfile and Spring Boot
-for a new microservice?**
+**[MID] Q4 - [DEBUGGING] What is the TRADE-OFF between MicroProfile and Spring Boot for a new microservice?**
 
 | Dimension | MicroProfile (Quarkus) | Spring Boot |
 |---|---|---|
@@ -1367,8 +1353,7 @@ human factor.
 
 ---
 
-**Q5. How does MP Health `/health/ready` and `/health/live` differ
-and how do they map to Kubernetes probes?**
+**[MID] Q5 - [MECHANISM] How does MP Health `/health/ready` and `/health/live` differ and how do they map to Kubernetes probes?**
 
 - **`/health/live` (liveness)**: is the application process alive?
   If DOWN: Kubernetes kills and restarts the pod.
@@ -1410,7 +1395,7 @@ public class DatabaseReadiness implements HealthCheck {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The common mistake of putting
 database connectivity in the liveness check. If the database is
@@ -1420,8 +1405,7 @@ in readiness only.
 
 ---
 
-**Q6. DEBUGGING: Your `@Retry` annotation is silently swallowing
-exceptions. How do you diagnose and fix?**
+**[SENIOR] Q6 - [DEBUGGING] DEBUGGING: Your `@Retry` annotation is silently swallowing exceptions. How do you diagnose and fix?**
 
 ```java
 // SYMPTOM: method retries 3x but caller gets null instead of exception
@@ -1434,7 +1418,7 @@ public Order loadOrder(String id) {
 // OrderNotFoundException is swallowed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Diagnosis:
 ```bash
@@ -1448,7 +1432,7 @@ quarkus.log.category."org.eclipse.microprofile.faulttolerance".level=DEBUG
 #   Exception not retryable: ... (type mismatch)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exception not retryable: ... (type mismatch) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 ```java
@@ -1469,7 +1453,7 @@ public Order loadOrderFallback(String id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exception not retryable: ... (type mismatch) example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Understanding that `@Retry` catches
 and re-throws after exhaustion - it does not swallow the exception.
@@ -1479,8 +1463,7 @@ does not match `retryOn`, causing immediate failure on first try.
 
 ---
 
-**Q7. How do you monitor circuit breaker state in production with
-MicroProfile Metrics?**
+**[SENIOR] Q7 - [DEBUGGING] How do you monitor circuit breaker state in production with MicroProfile Metrics?**
 
 ```bash
 # MP Metrics exposes circuit breaker state:
@@ -1501,7 +1484,7 @@ curl http://service:8080/metrics | grep circuitbreaker
 # expr: rate(application_ft_circuitbreaker_state_open_total[5m]) > 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This expr: rate(application_ft_circuitbreaker_state_open_total[5m]) > 0 example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 In Quarkus, the SmallRye Fault Tolerance extension emits these metrics
 automatically when `quarkus-smallrye-fault-tolerance` and
@@ -1514,8 +1497,7 @@ is OPEN and blocking all calls without even attempting them.
 
 ---
 
-**Q8. What are the limits of the "write once, run anywhere" claim
-for MicroProfile across different runtimes?**
+**[SENIOR] Q8 - [DEBUGGING] What are the limits of the "write once, run anywhere" claim for MicroProfile across different runtimes?**
 
 MicroProfile claims portability through specification. The limits:
 
@@ -1547,8 +1529,7 @@ runtime-specific config, container image builds that isolate runtime).
 
 ---
 
-**Q9. BEHAVIORAL: When would you choose Quarkus over Open Liberty
-or Helidon for a new greenfield microservice?**
+**[SENIOR] Q9 - [SCENARIO] BEHAVIORAL: When would you choose Quarkus over Open Liberty or Helidon for a new greenfield microservice?**
 
 Choose Quarkus when:
 - Native compilation is required (AWS Lambda, Knative, serverless)

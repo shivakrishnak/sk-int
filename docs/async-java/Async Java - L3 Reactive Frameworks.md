@@ -114,7 +114,7 @@ Spring WebFlux:
   Thread cost: N event loop threads for ALL requests (N = 2 * CPU)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring WebFlux Architecture example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Request lifecycle in WebFlux:**
 
@@ -135,7 +135,7 @@ Client HTTP request
   <- HTTP response written back to client
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring WebFlux Architecture example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **WebClient (non-blocking replacement for RestTemplate):**
 
@@ -155,7 +155,7 @@ Mono<UserResponse> response = client.get()
     .bodyToMono(UserResponse.class);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring WebFlux Architecture example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Functional routing (alternative to annotations):**
 
@@ -183,7 +183,7 @@ class UserHandler {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring WebFlux Architecture example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **When to use WebFlux:**
 - High concurrency, I/O-bound services (REST gateway, API proxy)
@@ -275,7 +275,7 @@ public class UserServiceClient {
 }
 ```
 
-> **Code walkthrough:** Pattern 1 shows the WebFlux annotation model:
+> **Code walkthrough:** Pattern 1 shows the WebFlux annotation model:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > controllers return `Mono<T>` or `Flux<T>` instead of plain objects.
 > `switchIfEmpty` provides 404 handling reactively. The SSE endpoint uses
 > `produces = TEXT_EVENT_STREAM_VALUE` with a Flux - WebFlux automatically
@@ -363,7 +363,7 @@ BlockHound.install();
 # at blocking call from nioEventLoopGroup thread
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates shell script pattern using Stream. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: all blocking calls must execute on `Schedulers.boundedElastic()`:
 ```java
@@ -381,7 +381,7 @@ public Mono<Data> getData() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -391,7 +391,7 @@ public Mono<Data> getData() {
 
 ---
 
-#### Q1 - How does WebFlux handle backpressure from HTTP clients?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does WebFlux handle backpressure from HTTP clients?**
 
 HTTP/1.1 does not have explicit backpressure at the protocol level. WebFlux
 handles it through Netty's write buffer and connection-level flow control:
@@ -413,7 +413,7 @@ public Flux<ServerSentEvent<Data>> stream() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 HTTP/2 adds explicit flow control at the stream level - WebFlux integrates
 with Reactor Netty's HTTP/2 backpressure automatically.
@@ -425,7 +425,7 @@ handles this automatically for `Resource` return types. For custom streams:
 
 ---
 
-#### Q2 - What is the difference between RouterFunction and @Controller in WebFlux?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between RouterFunction and @Controller in WebFlux?**
 
 Both register HTTP endpoints; they differ in style and composition:
 
@@ -451,7 +451,7 @@ RouterFunction<ServerResponse> all =
     v1Routes.and(v2Routes); // compose routes as values
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Both styles can coexist in one application.
 `DispatcherHandler` in WebFlux handles both `RequestMappingHandlerMapping`
@@ -461,7 +461,7 @@ testable; for migrating MVC code: annotation model reduces friction.
 
 ---
 
-#### Q3 - How do you handle exceptions globally in WebFlux?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you handle exceptions globally in WebFlux?**
 
 Two mechanisms:
 
@@ -478,7 +478,7 @@ class UserController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. `WebExceptionHandler` (global, reactive):**
 ```java
@@ -501,7 +501,7 @@ class GlobalErrorHandler implements WebExceptionHandler {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. `DefaultErrorWebExceptionHandler` (Spring Boot default):**
 Spring Boot auto-configures `DefaultErrorWebExceptionHandler` which
@@ -522,7 +522,7 @@ class CustomErrorHandler
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at blocking call from nioEventLoopGroup thread example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `@ControllerAdvice` works in WebFlux
 for annotation-based controllers. The key difference from MVC: in WebFlux,
@@ -531,7 +531,7 @@ or plain objects (automatically wrapped). Spring WebFlux handles the wrapping.
 
 ---
 
-#### Q4 - How does Spring Security integrate with WebFlux?
+**[MID] Q4 - [CONCEPTUAL] How does Spring Security integrate with WebFlux?**
 
 Spring Security 5+ has a dedicated reactive module: `spring-security-webflux`.
 It integrates with WebFlux's `WebFilter` chain instead of Servlet filters.
@@ -562,7 +562,7 @@ public Mono<Profile> getProfile(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Reactive security context:
 ```java
@@ -572,7 +572,7 @@ ReactiveSecurityContextHolder.getContext()
     .map(auth -> auth.getName());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Security context in WebFlux is stored in
 Reactor Context (not ThreadLocal). This means it propagates correctly
@@ -583,7 +583,7 @@ across reactive operator boundaries even when scheduler changes occur.
 
 ---
 
-#### Q5 - How do you test WebFlux controllers?
+**[MID] Q5 - [CONCEPTUAL] How do you test WebFlux controllers?**
 
 `WebTestClient` is the reactive testing tool:
 
@@ -637,7 +637,7 @@ class UserControllerTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Spring annotation. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `WebTestClient` can be configured to
 either mock the server (fast, no HTTP) or connect to a real running server:
@@ -651,14 +651,14 @@ WebTestClient.bindToServer()
     .baseUrl("http://localhost:" + port)
     .build();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For unit tests: `bindToController`. For integration tests: `bindToServer`
 with `@SpringBootTest(webEnvironment = RANDOM_PORT)`.
 
 ---
 
-#### Q6 - When should you use WebFlux vs Spring MVC + virtual threads?
+**[MID] Q6 - [CONCEPTUAL] When should you use WebFlux vs Spring MVC + virtual threads?**
 
 Decision matrix:
 
@@ -678,7 +678,7 @@ Use Spring WebFlux when:
   - Service needs backpressure propagation end-to-end
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Java 21 + virtual threads + Spring MVC: compelling alternative for most
 new services. `spring.threads.virtual.enabled=true` enables virtual threads
@@ -695,7 +695,7 @@ scaling benefit for your specific workload."
 
 ---
 
-#### Q7 - What is the codec pipeline in WebFlux and how do custom serializers work?
+**[SENIOR] Q7 - [HANDS-ON] What is the codec pipeline in WebFlux and how do custom serializers work?**
 
 WebFlux uses `HttpMessageReader` and `HttpMessageWriter` (reactive counterparts
 to MVC's `HttpMessageConverter`) for serializing/deserializing request/response
@@ -745,7 +745,7 @@ class MyCustomDecoder
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Spring annotation. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* DataBuffer memory management is a common
 source of leaks in WebFlux. DataBuffers are reference-counted (backed by
@@ -757,7 +757,7 @@ manage it explicitly. Reactor Netty's `LeakDetector` (activated with
 
 ---
 
-#### Q8 - How does WebFlux handle file uploads and downloads?
+**[SENIOR] Q8 - [CONCEPTUAL] How does WebFlux handle file uploads and downloads?**
 
 **File upload (multipart):**
 ```java
@@ -771,7 +771,7 @@ public Mono<String> upload(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **File download (streaming):**
 ```java
@@ -795,7 +795,7 @@ public Flux<DataBuffer> streamLargeFile(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* For large file streaming, avoid loading
 the entire file into memory. `DataBufferUtils.read(path, factory, bufferSize)`
@@ -805,7 +805,7 @@ from Netty's write buffer prevents reading faster than the client can receive.
 
 ---
 
-#### Q9 - How do you implement rate limiting in a WebFlux service?
+**[SENIOR] Q9 - [HANDS-ON] How do you implement rate limiting in a WebFlux service?**
 
 Using `WebFilter` with a reactive token bucket:
 
@@ -847,7 +847,7 @@ monoResponse.transform(rl)
             .body("Rate limited")));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Per-client rate limiting requires
 distributed state (all service instances share the same counter).
@@ -862,7 +862,7 @@ redisClient.reactive()
         : chain.filter(exchange));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1065,7 +1065,7 @@ Flowable<String> rxFlow = Flowable.just("x", "y");
 Flux<String> flux = Flux.from(rxFlow);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactor vs RxJava Comparison example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Type system comparison:**
 
@@ -1082,7 +1082,7 @@ RxJava 3:
   Completable  - 0 elements (just completion/error signal)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactor vs RxJava Comparison example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 RxJava has a richer type vocabulary because it predates the Reactive Streams
 spec. `Observable` exists for scenarios where backpressure is impossible or
@@ -1112,7 +1112,7 @@ Flowable.range(1, 5)
     .subscribe(System.out::println);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactor vs RxJava Comparison example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Notable differences:
 - RxJava uses `subscribeOn`/`observeOn` (Reactor uses `subscribeOn`/`publishOn`)
@@ -1140,7 +1140,7 @@ single.onErrorResumeNext(ex -> fallbackSingle)
       .onErrorReturn(ex -> mapError(ex));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactor vs RxJava Comparison example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1205,7 +1205,7 @@ Single<Data> withFallbackRxJava =
                 ? cachedFallback() : Single.error(ex));
 ```
 
-> **Code walkthrough:** The fan-out patterns show the most visible API difference:
+> **Code walkthrough:** The fan-out patterns show the most visible API difference:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Reactor's `Mono.zip` vs RxJava's `Single.zip` - both take parallel publishers
 > and combine results when all complete. The retry patterns reveal a larger
 > gap: Reactor has a dedicated `Retry` builder API (Retry.backoff, Retry.fixedDelay),
@@ -1288,7 +1288,7 @@ Flux.just("request")
 // Reactor Context does not propagate through RxJava internals
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: avoid mixing in the same pipeline, or extract the context value
 before the boundary and pass it explicitly:
@@ -1300,7 +1300,7 @@ before the boundary and pass it explicitly:
     }));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1310,7 +1310,7 @@ before the boundary and pass it explicitly:
 
 ---
 
-#### Q1 - What is the Reactive Streams specification?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the Reactive Streams specification?**
 
 Reactive Streams (https://www.reactive-streams.org/) is a standard for
 asynchronous stream processing with non-blocking backpressure. Published
@@ -1333,7 +1333,7 @@ The backpressure protocol:
 7. Publisher.Subscriber.onComplete() or onError()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The key property: the publisher NEVER emits more items than the subscriber
 has requested. This prevents buffer overflow.
@@ -1346,7 +1346,7 @@ Flux.
 
 ---
 
-#### Q2 - How does RxJava Observable differ from Flowable?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does RxJava Observable differ from Flowable?**
 
 Both emit 0 to N items, but differ in backpressure support:
 
@@ -1377,7 +1377,7 @@ Flowable.fromPublisher(databaseResultSet)
                err -> log.error("Error", err));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The choice between Observable and Flowable
 in RxJava mirrors the Reactor trade-off: Flux always supports backpressure
@@ -1389,7 +1389,7 @@ UI event streams: Observable is appropriate.
 
 ---
 
-#### Q3 - What are Reactor's context and how does it differ from RxJava's?
+**[JUNIOR] Q3 - [CONCEPTUAL] What are Reactor's context and how does it differ from RxJava's?**
 
 Reactor Context (`reactor.util.context.Context`) is an immutable key-value
 map that propagates downstream through a reactive pipeline via subscription.
@@ -1406,7 +1406,7 @@ Mono.just("data")
 // Output: data-value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 RxJava 3 does NOT have a built-in context mechanism equivalent to Reactor
 Context. For per-subscription context in RxJava, developers use:
@@ -1427,7 +1427,7 @@ even if they share pipeline segments.
 
 ---
 
-#### Q4 - How does scheduling differ between Reactor and RxJava?
+**[MID] Q4 - [CONCEPTUAL] How does scheduling differ between Reactor and RxJava?**
 
 Reactor: `subscribeOn(Scheduler)` and `publishOn(Scheduler)`
 RxJava: `subscribeOn(Scheduler)` and `observeOn(Scheduler)`
@@ -1451,7 +1451,7 @@ Schedulers.immediate()     | Schedulers.trampoline()
 custom ExecutorService     | Schedulers.from(executor)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Both `publishOn`/`observeOn` work by
 inserting a queue between the upstream and downstream. Items are pushed
@@ -1462,7 +1462,7 @@ buffer reduces backpressure signal frequency but uses more memory.
 
 ---
 
-#### Q5 - What is RxJava's Subject equivalent in Reactor?
+**[MID] Q5 - [CONCEPTUAL] What is RxJava's Subject equivalent in Reactor?**
 
 `Subject<T>` (RxJava) is both an Observer and an Observable - a hot source
 that can be pushed to programmatically. Common types: `PublishSubject`,
@@ -1492,7 +1492,7 @@ one.tryEmitValue("result");
 // Equivalent to Promise/CompletableFuture
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 RxJava `PublishSubject` equivalent pattern:
 ```java
@@ -1508,7 +1508,7 @@ sink.asFlux().subscribe(e -> process(e));
 sink.tryEmitNext(new Event("data"));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Reactor Sinks are thread-safe by design.
 `tryEmitNext` returns an `EmitResult` enum indicating whether the emit
@@ -1520,7 +1520,7 @@ for error handling.
 
 ---
 
-#### Q6 - How do you migrate a RxJava codebase to Reactor?
+**[MID] Q6 - [HANDS-ON] How do you migrate a RxJava codebase to Reactor?**
 
 Migration strategy (incremental, not big-bang):
 
@@ -1532,7 +1532,7 @@ Flux<Order> ordersFlux =
 // Reactor consumers can now use RxJava publishers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Phase 2: Convert leaf services first (no dependencies)**
 Services that call no other reactive services: convert RxJava return types
@@ -1546,7 +1546,7 @@ Single<Order> findOrder(String id);
 Mono<Order> findOrder(String id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Phase 3: Convert aggregators**
 Services that call other services: once dependencies are Reactor, remove
@@ -1567,7 +1567,7 @@ Maybe<T>          | Mono<T> (empty = Maybe.empty)
 Completable       | Mono<Void>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Test coverage is the migration safety net.
 Before migrating a service: write StepVerifier tests that capture the
@@ -1579,7 +1579,7 @@ after migration).
 
 ---
 
-#### Q7 - What are the concurrency safety guarantees of Reactor operators?
+**[SENIOR] Q7 - [CONCEPTUAL] What are the concurrency safety guarantees of Reactor operators?**
 
 Reactor operators are NOT thread-safe by default: a single-subscriber
 pipeline should be driven by a single subscriber. Attempting to drive
@@ -1610,7 +1610,7 @@ thread1.submit(() -> sink.tryEmitNext(event1));
 thread2.submit(() -> sink.tryEmitNext(event2));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Kafka messaging. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Reactor has "serialized sink" mode:
 ```java
@@ -1620,7 +1620,7 @@ Sinks.Many<Event> safeSink = Sinks.many()
     // No serialized() needed: tryEmitNext handles concurrent access
     ;
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 `tryEmitNext` returns `FAIL_NON_SERIALIZED` if another emit is in progress.
 Callers can retry using `emitNext(value, emitFailureHandler)` with a
@@ -1628,7 +1628,7 @@ failure handler that retries on `NON_SERIALIZED`.
 
 ---
 
-#### Q8 - How does error handling compare between Reactor and RxJava?
+**[SENIOR] Q8 - [TRADE-OFF] How does error handling compare between Reactor and RxJava?**
 
 Both follow the Reactive Streams contract: once `onError` is called,
 the sequence terminates. No further `onNext` calls occur after `onError`.
@@ -1670,7 +1670,7 @@ mono.doOnError(ex -> log.error("Failed", ex));
 single.doOnError(ex -> log.error("Failed", ex)); // identical!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `onErrorMap` is one of Reactor's more
 convenient operators: directly transforms the exception type without
@@ -1681,7 +1681,7 @@ reduces boilerplate significantly.
 
 ---
 
-#### Q9 - What is the ecosystem difference for Spring vs Android development?
+**[SENIOR] Q9 - [ARCHITECTURE] What is the ecosystem difference for Spring vs Android development?**
 
 **Spring ecosystem (Reactor):**
 - Spring WebFlux: `Mono`/`Flux` return types in controllers
@@ -1712,7 +1712,7 @@ interface ApiService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* In 2024, Kotlin Coroutines + Flow have
 largely displaced RxJava on Android. Many new Android projects use Coroutines

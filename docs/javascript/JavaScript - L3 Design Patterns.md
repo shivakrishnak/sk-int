@@ -140,7 +140,7 @@ STRATEGY (swappable algorithms):
   sort(array, (a, b) => a - b); // comparator = strategy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Design Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -238,7 +238,7 @@ eventBus.publish('user:logout', { userId: 42 });
 unsub(); // clean up subscription
 ```
 
-> **Code walkthrough:** The EventEmitter (Observer) keeps listeners
+> **Code walkthrough:** The EventEmitter (Observer) keeps listenersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > per-event in a Map using private fields. Each `on()` call returns
 > an unsubscribe function - a clean pattern that avoids forgetting
 > to clean up. The PubSub bus uses a closure for private state and
@@ -247,6 +247,16 @@ unsub(); // clean up subscription
 > dependency.
 
 **Example 2: Factory and Strategy patterns**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // Factory: creation logic varies by type
@@ -294,7 +304,7 @@ sort([3,1,2], ascending);  // [1, 2, 3]
 sort([3,1,2], descending); // [3, 2, 1]
 ```
 
-> **Code walkthrough:** The Factory centralizes the `validators`
+> **Code walkthrough:** The Factory centralizes the `validators`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > map, ensuring type-specific creation logic lives in one place.
 > New validator types are added by extending the map, not by editing
 > callers. The Strategy example shows JavaScript's first-class
@@ -350,7 +360,7 @@ history.undo(); // ['item1']
 history.redo(); // ['item1','item2']
 ```
 
-> **Code walkthrough:** Each command encapsulates an action and its
+> **Code walkthrough:** Each command encapsulates an action and itsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > inverse. `CommandHistory` maintains a cursor (`#position`) into
 > the history array, enabling undo by moving backward and redo by
 > moving forward. Executing a new command after undo truncates the
@@ -551,7 +561,7 @@ class EventEmitter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Slicing the listener array before
 calling `forEach` - if a listener calls `off` or `on` during emit,
@@ -573,21 +583,21 @@ before the once fires.
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Functional Programming Patterns in JavaScript
@@ -704,7 +714,7 @@ Function composition:
   process(3); // ((3*2)+1)^2 = 49
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Functional Programming Patterns in JavaScript exampice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -718,7 +728,7 @@ external services.
 
 - Business logic calculations: pure functions, easily tested
 - Data transformation pipelines: `map/filter/reduce` chains
-- State management reducers: pure function signature `(state, action) => newState`
+- State management reducers: pure function signature `(state, action) => newStat
 - Event handlers that should not have side effects
 
 **When NOT to use it:**
@@ -782,7 +792,7 @@ function updateUserAddress(user, newAddress) {
 // produce(user, draft => { draft.profile.address.city = 'NYC'; });
 ```
 
-> **Code walkthrough:** The impure version has two problems: it
+> **Code walkthrough:** The impure version has two problems: itice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mutates the `order` argument (the caller's object changes) and reads
 > `taxRate` from outer scope (hidden dependency). The pure version
 > takes all dependencies as arguments and returns a new object without
@@ -825,7 +835,7 @@ const handleInputChange = handleEvent(setState, v => v.trim());
 input.addEventListener('change', handleInputChange);
 ```
 
-> **Code walkthrough:** Currying transforms a multi-argument function
+> **Code walkthrough:** Currying transforms a multi-argument functionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > into a chain of single-argument functions. `curry(fn)` checks if
 > all arguments have been provided; if not, returns a new function
 > waiting for the rest. Partial application (fixing some arguments)
@@ -875,7 +885,7 @@ const getTop10ActiveUsers = pipe(
 );
 ```
 
-> **Code walkthrough:** `pipe` composes functions left-to-right using
+> **Code walkthrough:** `pipe` composes functions left-to-right usingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `reduce` - each function receives the output of the previous.
 > This produces readable transformation pipelines where each step
 > is a named, single-responsibility function. Compared to method

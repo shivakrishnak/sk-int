@@ -188,7 +188,7 @@ Monitoring the pipeline itself:
   Alert: pipeline_drop_rate > 0.01% for 5 minutes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log Pipeline Reliability example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The most dangerous log pipeline failure is not a noisy crash but a
@@ -300,6 +300,12 @@ a bound, drop when the buffer is full, count and alert on every drop.
 
 **Example 2: GOOD - Fluent Bit with disk buffering and explicit drop policy**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```yaml
 # GOOD: Fluent Bit configuration with disk buffer,
 # explicit drop policy, and metrics for visibility
@@ -366,7 +372,7 @@ a bound, drop when the buffer is full, count and alert on every drop.
 # fluentbit_input_storage_chunks_up > 90% of limit
 ```
 
-> **Code walkthrough:** The GOOD configuration uses `storage.type =
+> **Code walkthrough:** The GOOD configuration uses `storage.type =ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > filesystem` to write all buffered log events to disk, enabling WAL-
 > backed persistence and at-least-once delivery on restart.
 > `storage.pause_on_chunks_overlimit Off` is the critical setting that
@@ -379,6 +385,12 @@ a bound, drop when the buffer is full, count and alert on every drop.
 > server exposes drop counts for alerting.
 
 **Example 3: Kafka-based pipeline for high-volume log ingestion**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # GOOD: High-volume log pipeline with Kafka as buffer
@@ -464,7 +476,7 @@ kafka-consumer-groups.sh \
 # Alert threshold: lag > 50000 events (5 minutes)
 ```
 
-> **Code walkthrough:** The Kafka-based pipeline separates the agent
+> **Code walkthrough:** The Kafka-based pipeline separates the agentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tier (Fluent Bit producers to Kafka) from the aggregator tier
 > (Vector consumers from Kafka). The critical reliability benefit:
 > Kafka absorbs any rate mismatch between agent production and
@@ -478,6 +490,11 @@ kafka-consumer-groups.sh \
 > in Elasticsearch based on log severity.
 
 **Example 4: Graceful degradation - sampling under load**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # GOOD: Log sampling policy that activates under load
@@ -563,7 +580,7 @@ sampler.set_sample_rate(1.0)
 # Errors always flow regardless of pressure
 ```
 
-> **Code walkthrough:** The adaptive sampler implements the application-
+> **Code walkthrough:** The adaptive sampler implements the application-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > side component of graceful degradation. When the pipeline signals
 > overload (via Kafka lag alerting or Fluent Bit drop metrics), the
 > sample rate drops automatically - discarding INFO and DEBUG logs
@@ -756,7 +773,7 @@ kill -SIGQUIT <app-pid>  # prints goroutine dump
 # in os.File.Write or log.Printf
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This in os.File.Write or log.Printf example demonstrates HTTP request from shell using goroutine. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Set `storage.pause_on_chunks_overlimit Off` in all Fluent Bit
 configurations. This changes the behavior from "pause input when
@@ -809,7 +826,7 @@ kafka-consumer-groups.sh \
 # events expired from Kafka before consumption
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This events expired from Kafka before consumption example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add alerting on Fluent Bit drop counters (immediate). For
 Elasticsearch mapping conflicts: implement strict index templates
@@ -847,7 +864,7 @@ kafka-log-dirs.sh --bootstrap-server kafka-0:9092 \
 # high offset advancement rates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This high offset advancement rates example demonstrates HTTP request from shell using Kafka messaging. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix (immediate): add a rate limiting filter in Fluent Bit for
 the flooding service's log stream:
@@ -860,7 +877,7 @@ the flooding service's log stream:
     Action         drop    # drop excess events
     Print_Status   True    # log when throttling
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This high offset advancement rates example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This limits the flood to 1,000 events/second while the service
 is being fixed. Add this as a standard emergency filter in your
@@ -893,7 +910,7 @@ ls /var/fluent-bit/state/
 # If empty: memory storage, positions lost on restart
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If empty: memory storage, positions lost on restart example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Enable filesystem storage and mount a persistent volume
 for the Fluent Bit state directory:
@@ -916,7 +933,7 @@ volumeMounts:
 # (as long as the node is not replaced)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (as long as the node is not replaced) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -1032,7 +1049,7 @@ kubectl exec app-pod -- kill -SIGQUIT 1
 # in log-related frames
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This in log-related frames example demonstrates HTTP request from shell using goroutine. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *What separates good from great:* The complete propagation chain
 (ES down -> Fluent Bit pause -> Docker block -> app block) and the
@@ -1065,7 +1082,7 @@ kubectl exec -n logging fluent-bit-<node> -- \
 # fluentbit_output_dropped_records_total{node="the-node"}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This fluentbit_output_dropped_records_total{node="the-node"} example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 3: Check Fluent Bit's file position tracking. If Fluent Bit
 was restarted during the gap and has memory-backed storage, it may
@@ -1076,7 +1093,7 @@ kubectl get events -n logging | grep fluent-bit | grep "Killing\|Started"
 # If restart within the gap window: likely position loss
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If restart within the gap window: likely position loss example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Check Elasticsearch for rejected documents (mapping errors).
 A new log field with inconsistent type (once a string, once a
@@ -1088,7 +1105,7 @@ curl -s "http://elasticsearch:9200/logs-*/_stats/indexing" \
     {index: .key, failed: .value.total.indexing.index_failed}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If restart within the gap window: likely position loss example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 5: Check Kafka consumer lag during the gap (if Kafka is in
 the pipeline). If the aggregator fell behind during the gap,
@@ -1234,7 +1251,7 @@ affect other services:
     Print_Status True   # alert when throttling starts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If restart within the gap window: likely position loss example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 3: Apply this filter via Kubernetes ConfigMap update and
 restart the DaemonSet pods (rolling restart). Takes 2-3 minutes.
@@ -1606,7 +1623,7 @@ Step 3 DESIGN (~10 min)
   Log search and dashboards
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min)
 The critical design decision: dual Kafka topics for tiered retention.
@@ -1629,7 +1646,7 @@ consuming all Kafka capacity:
     Print_Status True
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This limit is configurable per service via annotation
 (`logging.example.com/max-events-per-second: "20000"` for high-traffic services).

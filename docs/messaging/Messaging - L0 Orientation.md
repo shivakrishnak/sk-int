@@ -104,7 +104,7 @@ Producer          Broker             Consumer
    |                |-- delete() ------>|
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What Is Message-Driven Architecture example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 1. Producer creates a message (payload + metadata headers) and sends to broker.
 2. Broker stores the message (durable disk or in-memory).
@@ -174,7 +174,7 @@ class OrderService {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern couples order creation to
+> **Code walkthrough:** The BAD pattern couples order creation toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > notification delivery. A slow notification service blocks the order
 > service thread. A crashed notification service fails order creation.
 > The order service now has two failure modes: its own and notification
@@ -217,7 +217,7 @@ class NotificationConsumer {
 }
 ```
 
-> **Code walkthrough:** The GOOD pattern publishes an event and returns
+> **Code walkthrough:** The GOOD pattern publishes an event and returnsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > immediately - order creation succeeds even if notifications are
 > temporarily down. The `NotificationConsumer` is a separate deployable
 > unit that can be scaled independently. If it crashes, the broker holds
@@ -308,7 +308,7 @@ curl -u guest:guest \
   | jq '.messages'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This check queue depth via management API example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add consumer instances (horizontal scale). Identify slow processing
 path. Consider partitioning to increase parallelism.
@@ -345,7 +345,7 @@ unique constraint. Check before processing: if ID exists, skip and ACK.
 | System design | 5m+ | Placing messaging in an architecture |
 | Staff-level | 10m+ | At-scale operations, decisions |
 
-**Q1 [JUNIOR]: What is the difference between a message queue and a topic?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between a message queue and a topic?**
 
 🗣️ "A message queue uses point-to-point routing: one producer sends a
 message and one consumer receives it. The message is consumed once and
@@ -360,7 +360,7 @@ exchange is publish-subscribe to all bound queues."
 *What separates good from great:* Explaining Kafka consumer groups
 implement both patterns simultaneously, not just the surface difference.
 
-**Q2 [JUNIOR]: Why use a message broker instead of direct HTTP calls?**
+**[JUNIOR] Q2 - [MECHANISM] Why use a message broker instead of direct HTTP calls?**
 
 🗣️ "Three main reasons. First, resilience: if the downstream service is
 down, messages queue up instead of failing immediately. The downstream
@@ -376,7 +376,7 @@ error handling and debugging."
 *What separates good from great:* Naming the trade-off explicitly -
 most candidates list benefits but skip the operational cost.
 
-**Q3 [MID]: What is consumer lag and why does it matter?**
+**[MID] Q3 - [DEBUGGING] What is consumer lag and why does it matter?**
 
 🗣️ "Consumer lag is the difference between the latest message published
 to a topic and the latest message the consumer has processed. A lag of
@@ -392,8 +392,7 @@ trend means under-capacity."
 (publish rate vs. consume rate), and connecting unbounded lag to
 eventual message loss.
 
-**Q4 [MID]: What is the difference between at-most-once, at-least-once,
-and exactly-once delivery?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between at-most-once, at-least-once, and exactly-once delivery?**
 
 🗣️ "At-most-once: broker delivers without waiting for ACK. If the
 consumer crashes, the message is lost. Use for non-critical events like
@@ -408,7 +407,7 @@ consumers is the correct choice for most systems."
 *What separates good from great:* Recommending at-least-once plus
 idempotent consumers as the practical engineering choice.
 
-**Q5 [SENIOR]: How do you make a consumer idempotent?**
+**[SENIOR] Q5 - [MECHANISM] How do you make a consumer idempotent?**
 
 🗣️ "Three techniques. Natural idempotency: setting a status to SHIPPED
 is safe to repeat - the result is the same. Deduplication table: store
@@ -423,8 +422,7 @@ result for duplicate requests with the same key."
 *What separates good from great:* Identifying the race condition in
 naive deduplication and how the unique constraint solves it atomically.
 
-**Q6 [SENIOR]: What is a dead-letter queue and when should a message
-go there?**
+**[SENIOR] Q6 - [MECHANISM] What is a dead-letter queue and when should a message go there?**
 
 🗣️ "A dead-letter queue (DLQ) is a separate queue where messages are
 moved after they cannot be processed after N retries or after exceeding
@@ -440,7 +438,7 @@ data, and replay the messages."
 messages from blocking the queue and that DLQ depth should trigger
 operational alerts.
 
-**Q7 [SENIOR]: When would you NOT use a message broker?**
+**[SENIOR] Q7 - [TRADE-OFF] When would you NOT use a message broker?**
 
 🗣️ "Three scenarios. Real-time user-facing APIs: when a user logs in
 and expects a session token in 200ms, you cannot queue that - the
@@ -625,7 +623,7 @@ Caller               Receiver
   |   (continues)        |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Synchronous vs Asynchronous Communication example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **How it works - Asynchronous:**
 
@@ -697,7 +695,7 @@ public OrderResult createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern blocks the calling thread twice
+> **Code walkthrough:** The BAD pattern blocks the calling thread twiceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in sequence. At 100 rps, you need 70 concurrent threads just to handle
 > the blocking. Under load spikes, the thread pool exhausts and requests
 > queue or fail with timeouts. The notification failure also fails the
@@ -728,7 +726,7 @@ public OrderResult createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** The GOOD pattern keeps payment synchronous (we
+> **Code walkthrough:** The GOOD pattern keeps payment synchronous (weice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > need the result) but publishes the notification as an async event. The
 > thread is only blocked for the payment duration. Notification failures
 > do not fail the order. The broker holds the event and retries if the
@@ -752,7 +750,7 @@ public CompletableFuture<OrderResult> createOrderAsync(
 }
 ```
 
-> **Code walkthrough:** The CompletableFuture pattern starts payment
+> **Code walkthrough:** The CompletableFuture pattern starts paymentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > asynchronously and chains the result handling. The caller thread is
 > freed immediately; the framework calls completion handlers when results
 > arrive. The `exceptionally()` handler is critical - without it,
@@ -843,7 +841,7 @@ GET /actuator/metrics/executor.pool.size
 GET /actuator/metrics/executor.queued
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This thread pool metrics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add circuit breaker with timeout. Move non-critical downstream
 calls to async. Increase thread pool size as short-term mitigation.
@@ -854,6 +852,12 @@ Symptom: Feature works at low load, fails silently in production.
 
 Root cause: CompletableFuture without `exceptionally()` handler. Unhandled
 exceptions disappear if the future is never explicitly observed.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: silently swallows exception
@@ -868,7 +872,7 @@ asyncOperation()
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This thread pool metrics example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Failure: Async ordering assumed but not guaranteed**
 
@@ -892,7 +896,7 @@ or design consumers to handle out-of-order delivery gracefully.
 | System design | 5m+ | Where to use each pattern |
 | Staff-level | 10m+ | Architectural implications |
 
-**Q1 [JUNIOR]: Give a real example of sync and async in a web application.**
+**[JUNIOR] Q1 - [MECHANISM] Give a real example of sync and async in a web application.**
 
 🗣️ "Synchronous example: user submits a login form. The browser sends
 an HTTP request, the server validates credentials, and the browser waits
@@ -907,7 +911,7 @@ email delivery. Email is async because the user does not need to wait."
 *What separates good from great:* Using concrete examples from a real
 application rather than generic descriptions.
 
-**Q2 [JUNIOR]: What happens when a synchronous downstream service is slow?**
+**[JUNIOR] Q2 - [MECHANISM] What happens when a synchronous downstream service is slow?**
 
 🗣️ "The calling thread blocks and waits. If 100 users hit the service
 simultaneously and the downstream takes 2 seconds per request, 100
@@ -921,7 +925,7 @@ the caller's thread is freed immediately and can handle other requests."
 *What separates good from great:* Connecting thread pool exhaustion
 to the user-visible symptom (timeouts, apparent outage).
 
-**Q3 [MID]: What is the request-reply pattern in messaging?**
+**[MID] Q3 - [MECHANISM] What is the request-reply pattern in messaging?**
 
 🗣️ "Request-reply simulates synchronous request-response over async
 messaging. The producer sends to a request queue with two metadata
@@ -936,8 +940,7 @@ resilience of async with the semantics of sync."
 *What separates good from great:* Explaining the correlation ID
 mechanism, which is the technical detail that makes this pattern work.
 
-**Q4 [MID]: When is non-blocking I/O different from asynchronous
-messaging?**
+**[MID] Q4 - [MECHANISM] When is non-blocking I/O different from asynchronous messaging?**
 
 🗣️ "Non-blocking I/O is an OS-level optimization: the thread is not
 blocked during I/O waits. Frameworks like Netty and WebFlux use this -
@@ -953,7 +956,7 @@ different concerns and can be used independently."
 *What separates good from great:* Clarifying that non-blocking and
 async operate at different abstraction levels, not conflating them.
 
-**Q5 [SENIOR]: How do you handle errors in async message processing?**
+**[SENIOR] Q5 - [MECHANISM] How do you handle errors in async message processing?**
 
 🗣️ "Three-layer strategy. First, retry with exponential backoff: when
 a consumer fails, retry with increasing delays - 1s, 2s, 4s, 8s. This
@@ -968,7 +971,7 @@ duplicate side effects from retried messages."
 *What separates good from great:* Providing a concrete three-layer
 strategy with the idempotency requirement, not just mentioning retries.
 
-**Q6 [SENIOR]: What is back-pressure in async systems?**
+**[SENIOR] Q6 - [MECHANISM] What is back-pressure in async systems?**
 
 🗣️ "Back-pressure is a mechanism for a consumer to signal to the
 producer that it cannot keep up. In synchronous systems, back-pressure
@@ -984,7 +987,7 @@ consumer, causing the broker's disk to fill and messages to be dropped."
 *What separates good from great:* Explaining that Kafka has no automatic
 back-pressure signal to producers - lag monitoring is the manual proxy.
 
-**Q7 [SENIOR]: How do you choose between sync and async for a new feature?**
+**[SENIOR] Q7 - [MECHANISM] How do you choose between sync and async for a new feature?**
 
 🗣️ "Three-question decision framework. First: does the caller need the
 result to continue? If yes: sync. User login, API data retrieval - these
@@ -1187,7 +1190,7 @@ CLOUD FAN-OUT (broadcast to many targets)
   Azure ServiceBus-> Queues + topics, enterprise
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Broker Ecosystem Overview example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The critical distinction is message lifecycle. In a queue, a message is
@@ -1344,7 +1347,7 @@ curl -u guest:guest \
   | jq '{messages:.messages,bytes:.message_bytes}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This queue depth and memory usage example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Root cause: consumers down or processing too slowly.
 Fix: Scale consumers. Configure queue length limits with overflow
@@ -1363,7 +1366,7 @@ kafka-consumer-groups.sh \
 # Look for frequent rebalance events in consumer logs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for frequent rebalance events in consumer logs example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Root cause: consumers crashing due to processing time exceeding
 `max.poll.interval.ms` (default 5 minutes). Kafka considers the
@@ -1385,7 +1388,7 @@ and commit offsets after async completion.
 | System design | 5m+ | Broker selection for a design |
 | Staff-level | 10m+ | Migration, multi-region, cost |
 
-**Q1 [JUNIOR]: What is the main difference between RabbitMQ and Kafka?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the main difference between RabbitMQ and Kafka?**
 
 🗣️ "The fundamental difference is the message lifecycle. RabbitMQ is a
 traditional message queue: a producer sends a message, a consumer picks
@@ -1400,7 +1403,7 @@ historical events from the beginning. RabbitMQ cannot do this."
 *What separates good from great:* Focusing on the message lifecycle
 difference (delete vs. retain) rather than just performance numbers.
 
-**Q2 [JUNIOR]: When would you use Amazon SQS instead of RabbitMQ?**
+**[JUNIOR] Q2 - [TRADE-OFF] When would you use Amazon SQS instead of RabbitMQ?**
 
 🗣️ "When you want zero infrastructure to manage. RabbitMQ requires
 you to run and operate broker nodes: configure replication, monitor
@@ -1414,7 +1417,7 @@ case is simple task distribution and your team is in the AWS ecosystem."
 *What separates good from great:* Framing the decision as operational
 simplicity vs. feature richness, not just recommending one.
 
-**Q3 [MID]: What is a Kafka consumer group and why does it matter?**
+**[MID] Q3 - [MECHANISM] What is a Kafka consumer group and why does it matter?**
 
 🗣️ "A Kafka consumer group is a set of consumers that cooperate to
 consume a topic. Each partition is assigned to exactly one consumer in
@@ -1430,8 +1433,7 @@ multiple systems need independent processing of the same event stream."
 *What separates good from great:* Explaining that consumer groups enable
 both patterns simultaneously, the key feature for fan-out architectures.
 
-**Q4 [MID]: What is the trade-off between Amazon SNS and a Kafka topic
-for fan-out?**
+**[MID] Q4 - [TRADE-OFF] What is the trade-off between Amazon SNS and a Kafka topic for fan-out?**
 
 🗣️ "SNS fan-out: one SNS topic delivers to multiple SQS queues. Simple
 to configure, no operational overhead, each SQS queue has independent
@@ -1447,7 +1449,7 @@ you need message retention, replay, or very high throughput."
 *What separates good from great:* Identifying SNS's key limitation -
 no historical replay - which is the decision-making differentiator.
 
-**Q5 [SENIOR]: How would you migrate from RabbitMQ to Kafka?**
+**[SENIOR] Q5 - [DESIGN] How would you migrate from RabbitMQ to Kafka?**
 
 🗣️ "A dual-write migration. Phase 1: add Kafka publishing alongside
 existing RabbitMQ publishing. Every event written to both brokers.
@@ -1466,7 +1468,7 @@ live because it cannot be easily changed."
 rather than a hard cutover, and identifying the partition count
 constraint.
 
-**Q6 [SENIOR]: What is the operational cost of self-hosted Kafka?**
+**[SENIOR] Q6 - [BEHAVIORAL] What is the operational cost of self-hosted Kafka?**
 
 🗣️ "Significant. ZooKeeper or KRaft for cluster metadata. Multiple
 broker nodes for replication (minimum 3 for production). Schema registry
@@ -1483,7 +1485,7 @@ Kafka is cheaper when engineer time is included."
 *What separates good from great:* Providing specific operational
 concerns with the disk math, not vague "complex to operate."
 
-**Q7 [STAFF]: How do you evaluate a broker for a new system at scale?**
+**[STAFF] Q7 - [DESIGN] How do you evaluate a broker for a new system at scale?**
 
 🗣️ "Five evaluation dimensions. First, message lifecycle: does the
 system need replayability, or is consume-once sufficient? If replay is

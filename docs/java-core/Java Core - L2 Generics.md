@@ -91,7 +91,7 @@ names.add(42);                    // COMPILE ERROR: int not String!
 String name = names.get(0);       // no cast needed, guaranteed String
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Generics example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Type erasure - what the compiler does:**
 ```java
@@ -106,7 +106,7 @@ list.add("hello");
 String s = (String) list.get(0);  // compiler inserts cast
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Generics example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Type erasure limitations:**
 ```java
@@ -132,13 +132,13 @@ try { } catch (T e) { }  // compile error
 <T extends Comparable<T>> T max(List<T> list) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Generics example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The generic stack example shows the typical
+> **Code walkthrough:** The generic stack example shows the typicalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > unchecked cast pattern that's safe in practice. The array `(T[]) new
 > Object[capacity]` is flagged by the compiler but correct: elements
 > are only added through the typed `push(T)` method, so all elements
@@ -200,7 +200,7 @@ class Stack<T> {
 }
 ```
 
-> **Code walkthrough:** The `elements[size] = null` after pop is an
+> **Code walkthrough:** The `elements[size] = null` after pop is anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > important detail: if you hold a reference to the Stack but all logical
 > items are popped, the backing array still holds references to the
 > popped objects, preventing GC. Setting to null allows GC to reclaim
@@ -262,7 +262,7 @@ static <T> List<T> asList(Object... items) {
 List<Integer> ints = asList("not", "an", "int"); // no error here!
 int x = ints.get(0); // ClassCastException here - far from cause!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: enable `-Xlint:unchecked` at compile time; all unchecked
 operations generate warnings that reveal the root cause. Stack traces
@@ -313,7 +313,7 @@ public double sum(List nums) {  // T replaced by upper bound: Number
 // The method's erasure signature: double sum(List)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Consequences:
 - Method overloading by generic type only is impossible:
@@ -321,7 +321,7 @@ Consequences:
   void process(List<String> s) {} // erasure: process(List)
   void process(List<Integer> i) {} // COMPILE ERROR: same erasure!
   ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 - Generic type info NOT in bytecode (no `T.class`)
 - `instanceof` cannot check parameterized type
@@ -361,7 +361,7 @@ String s = (String) legacy.get(0); // old-style cast - works!
 legacy.add(42); // compiles! unchecked warning - heap pollution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Alternative (reified generics) would have:**
 - Required JVM bytecode changes
@@ -411,7 +411,7 @@ T[] arr = (T[]) java.lang.reflect.Array.newInstance(clazz, n);
 T[] toArray(T[] arr) { ... } // caller provides typed array
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `ArrayList`'s internal `elementData`
 is `Object[]` (never `T[]`) for exactly this reason. The `toArray(T[])`
@@ -437,7 +437,7 @@ A: Bounded type parameters restrict what types can be used as the type argument.
 // Won't compile with List<String>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Multiple bounds:**
 ```java
@@ -450,7 +450,7 @@ A: Bounded type parameters restrict what types can be used as the type argument.
 // Won't work with AtomicInteger (extends Number, NOT Comparable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Recursive type bound (Comparable pattern):**
 ```java
@@ -460,7 +460,7 @@ A: Bounded type parameters restrict what types can be used as the type argument.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Multiple bounds have one important
 rule: at most ONE class bound (the first), rest must be interfaces.
@@ -493,7 +493,7 @@ List rawList2 = List.of("a", "b");
 String s2 = (String) rawList2.get(0); // requires cast
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Compile with `-Xlint:unchecked` to see all raw type usage warnings.
 The compiler generates warnings but still compiles (backward compat).
@@ -544,7 +544,7 @@ ResponseEntity<List<User>> resp = restTemplate.exchange(
 List<User> users = resp.getBody(); // typed! no cast needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The super type token is a clever workaround
 for type erasure. The anonymous subclass `new TypeRef<List<String>>() {}`
@@ -587,7 +587,7 @@ List<String> strings = CollectionUtils.repeat("hello", 3);
 Map<Integer, String> inverted = CollectionUtils.invertMap(codeToName);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Rule:** use generic class when the type parameter represents an
 "owned" concept (Repository<User>). Use generic method when the type
@@ -608,6 +608,18 @@ appropriate?**
 
 A: `@SuppressWarnings("unchecked")` is appropriate ONLY when you can
 verify the cast is safe through the program's invariants.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: documented safe cast in generic container:
@@ -635,7 +647,7 @@ List<String> risky = (List<String>) getRandomObject(); // could fail!
 T item = (T) storage[index];  // not the whole method
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Every `@SuppressWarnings("unchecked")
 ` should have a comment explaining WHY the cast is safe. Code review
@@ -675,7 +687,7 @@ static <T> List<T> listOf(T... items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using gice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `@SafeVarargs` is needed on generic
 varargs methods because `T...` (varargs) creates a `T[]` internally -
@@ -689,14 +701,14 @@ the varargs array (doesn't store non-T values into it). `Collections.addAll()`,
 
 ### ⚖️ Comparison Table
 
-| Aspect | Generics | Pre-Generics (raw types) |
-|---|---|---|
-| Type checking | Compile-time | Runtime (cast required) |
-| ClassCastException | Rare (caught at compile time) | Common |
-| Readability | `List<String>` is self-documenting | `List` requires Javadoc |
-| Collection API usage | No cast on get() | Explicit cast on get() |
-| Runtime type info | Erased | N/A |
-| Backward compat | Via raw types | Yes |
+| Aspect| Generics| Pre-Generics (raw types)|
+|------------------|----------------------------------|------------------------|
+| Type checking| Compile-time| Runtime (cast required)|
+| ClassCastException| Rare (caught at compile time)| Common|
+| Readability| `List<String>` is self-documenting| `List` requires Javadoc|
+| Collection API usage| No cast on get()| Explicit cast on get()|
+| Runtime type info| Erased| N/A|
+| Backward compat| Via raw types| Yes|
 
 ---
 
@@ -777,7 +789,7 @@ Optional<String> empty = Optional.empty();       // definitely empty
 Optional.of(null);  // throws NullPointerException!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 **Reading from Optionals:**
 ```java
@@ -794,18 +806,30 @@ opt.filter(s -> s.length() > 3)    // Optional<String> or empty
    .ifPresent(System.out::println); // "HELLO"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD pattern uses `get()` without checking
+> **Code walkthrough:** The BAD pattern uses `get()` without checkingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `isPresent()` - this defeats Optional's purpose and throws the same
 > kind of exception as NPE. The GOOD pattern uses `orElseThrow()` which
 > is explicit about the exceptional case, or `orElse()` for a default.
 > The `orElse` vs `orElseGet` distinction is subtle but important for
 > performance when the default is expensive to compute.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: using Optional like null check (defeats purpose):
@@ -841,7 +865,7 @@ Optional<String> city = user
 String cityName = city.orElse("Unknown");
 ```
 
-> **Code walkthrough:** `flatMap` is essential when the mapping function
+> **Code walkthrough:** `flatMap` is essential when the mapping functionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > itself returns Optional. Without `flatMap`, you'd have `Optional<Optional<String>>`
 > (double-wrapped). `flatMap` unwraps one level: it applies the function
 > and flattens the result. This mirrors `Stream.flatMap` which unwraps
@@ -903,7 +927,7 @@ Optional<UserPreferences> prefs = userPrefsRepo.findById(userId)
 Optional<UserPreferences> prefs = userPrefsRepo.findById(userId)
     .orElseGet(() -> userPrefsRepo.getDefaults()); // lazy
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 Diagnosis: unexpected DB queries in logs even when data exists.
 Profile method calls to see `getDefaults()` being called for cache hits.
@@ -976,7 +1000,7 @@ present.orElse(generateReport()); // generateReport() ALWAYS runs!
 present.orElseGet(this::generateReport); // only runs if empty
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* The `orElse` vs `orElseGet` mistake
 is common in production code and can cause significant performance
@@ -1018,7 +1042,7 @@ Optional<Optional<Address>> wrong = findUser(id)
                              // so map returns Optional<Optional<Address>>!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* The map/flatMap distinction directly
 mirrors the same distinction in streams and functional programming monads.
@@ -1035,6 +1059,12 @@ pattern appears in `CompletableFuture.thenApply(map)` vs
 A:
 
 **1. Using `get()` without `isPresent()` - same as NPE:**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD:
 String name = findUser(id).get(); // NoSuchElementException if empty!
@@ -1044,7 +1074,7 @@ String name = findUser(id).orElseThrow(
     () -> new UserNotFoundException(id));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **2. Optional as method parameter:**
 ```java
@@ -1055,7 +1085,7 @@ void save() { ... }
 void save(Attachment attachment) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 **3. Optional as field:**
 ```java
@@ -1065,7 +1095,7 @@ class User { private Optional<String> middleName; }
 class User { @Nullable private String middleName; }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 **4. isPresent + get instead of ifPresent/map:**
 ```java
@@ -1076,7 +1106,7 @@ opt.ifPresent(this::process);
 opt.map(this::transform).ifPresent(this::process);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 **5. Optional in collections:**
 ```java
@@ -1091,7 +1121,7 @@ List<User> users = optionals.stream()
 optionals.stream().flatMap(Optional::stream).collect(Collectors.toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The Optional anti-patterns reveal
 whether someone uses Optional idiomatically (as a functional container)
@@ -1139,7 +1169,7 @@ User loadUser(Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* The naming convention `find*` (returns
 Optional or null) vs `get*` (returns value or throws) is useful for
@@ -1189,7 +1219,7 @@ Optional<User> user = userFromCache
     .or(() -> dbRepo.findUser(id)); // try DB if not in cache
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `flatMap(Optional::stream)` is the
 idiomatic Java 9+ pattern for filtering out empty Optionals from a stream.
@@ -1214,7 +1244,7 @@ A: Yes, a small but measurable overhead in hot paths:
    Optional<String> opt = findName(); // may be optimized away by JIT
    return opt.orElse("default"); // JIT may inline and avoid allocation
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
    This optimization is not guaranteed.
 
@@ -1228,7 +1258,7 @@ A: Yes, a small but measurable overhead in hot paths:
       .max();                    // OptionalInt (no boxing)
   ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The Optional overhead is negligible
 for typical business logic (HTTP request handling, database queries).
@@ -1312,7 +1342,7 @@ List<User> users = ids.stream()
     .collect(Collectors.toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The `or()` method enables the "fallback chain"
 pattern cleanly - try source A, then B, then C. Before Java 9, this required

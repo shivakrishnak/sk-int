@@ -96,7 +96,7 @@ Turborepo (monorepo task caching):
   Result: 90%+ cache hit rate in CI for unchanged packages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Performance at Scale (esbuild, SWC, Turbopack) example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The production reality:**
 
@@ -176,7 +176,7 @@ module.exports = {
 // swc-loader:    6s  (87% faster)
 ```
 
-> **Code walkthrough:** SWC's configuration mirrors Babel's: `jsc.parser`
+> **Code walkthrough:** SWC's configuration mirrors Babel's: `jsc.parser`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > replaces `@babel/preset-typescript`, `jsc.transform.react` replaces
 > `@babel/preset-react`, and `env` replaces `@babel/preset-env`. The
 > key difference: SWC compiles to native Rust code that runs on all
@@ -207,8 +207,9 @@ module.exports = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Performance at Scale (esbuild, SWC, Turbopack) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
+{% raw %}
 ```yaml
 # GitHub Actions with Turborepo remote cache:
 - uses: actions/cache@v3
@@ -223,8 +224,9 @@ module.exports = {
   # cached packages: instant
   # changed packages: rebuild only
 ```
+{% endraw %}
 
-> **Code walkthrough:** The `^build` syntax means "all my dependencies
+> **Code walkthrough:** The `^build` syntax means "all my dependenciesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > must build first." Turborepo resolves this into a dependency graph
 > and runs tasks in parallel where possible. The `inputs` array is
 > the cache key: if nothing in `src/**` or `package.json` changed,
@@ -256,7 +258,7 @@ npm install --save-dev speed-measure-webpack-plugin
 npm install --save-dev lightningcss-loader
 ```
 
-> **Code walkthrough:** SpeedMeasurePlugin wraps each loader and
+> **Code walkthrough:** SpeedMeasurePlugin wraps each loader andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > records execution time. This reveals the actual bottleneck - which
 > is almost always the JS transform loader. After replacing babel-loader,
 > CSS processing becomes the next bottleneck; lightningcss (Rust-based
@@ -347,7 +349,7 @@ Results:
     (Still faster: each uses SWC, not babel)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Use lightningcss (Rust-based, replaces postcss for transforms) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

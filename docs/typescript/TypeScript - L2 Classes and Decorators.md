@@ -157,7 +157,7 @@ TYPESCRIPT CLASS FEATURES:
     }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Classes and Access Modifiers example demonstrates contract definition using async/await. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Why it matters:**
 
@@ -187,6 +187,11 @@ implementations.
 ### 💻 Code Example
 
 **Repository pattern with abstract class**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: duplicated logic in every repository
@@ -255,7 +260,7 @@ class UserService {
 }
 ```
 
-> **Code walkthrough:** The `BaseRepository<T, ID>` abstract class uses
+> **Code walkthrough:** The `BaseRepository<T, ID>` abstract class usesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > generics to work with any entity type. The `protected abstract entityName`
 > forces each subclass to name itself for error messages. The concrete
 > `findOrThrow` and `saveAll` methods are implemented once and inherited
@@ -420,7 +425,7 @@ class Dog extends Animal {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using SQL. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -440,8 +445,7 @@ class Dog extends Animal {
 
 ---
 
-**Q1: What is the difference between TypeScript private and JS #field?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] What is the difference between TypeScript private and JS #field?**
 
 > **Answer:**
 >
@@ -484,8 +488,7 @@ class Dog extends Animal {
 > WeakMap internally in some engines, which has different memory
 > characteristics than prototype properties.
 
-**Q2: When would you choose abstract class over interface?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q2 - [TRADE-OFF] When would you choose abstract class over interface?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -539,8 +542,7 @@ DECISION
 > class only when you have shared logic to extract (the rule of
 > three - when three implementations share the same code, abstract it).
 
-**Q3: How do parameter properties work and what are their limits?**
-`[MID]` MECHANISM
+**[MID] Q3 - [MECHANISM] How do parameter properties work and what are their limits?**
 
 > **Answer:**
 >
@@ -765,7 +767,7 @@ TC39 STAGE 3 (TypeScript 5.0+, no flag):
   // context.name, context.kind, context.addInitializer, context.metadata
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Decorators example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -794,6 +796,11 @@ than plain Zod schemas. Acceptable tradeoff for most CRUD applications.
 ### 💻 Code Example
 
 **Building a minimal DI container with decorators**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 import 'reflect-metadata';  // Required for Reflect.metadata
@@ -862,7 +869,7 @@ const ctrl = container.resolve(UserController);
 // UserController with UserService with UserRepository + Logger
 ```
 
-> **Code walkthrough:** The `@Injectable()` decorator stores metadata
+> **Code walkthrough:** The `@Injectable()` decorator stores metadataice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > using `Reflect.defineMetadata`. The critical piece is `design:paramtypes` -
 > TypeScript with `emitDecoratorMetadata: true` automatically calls
 > `Reflect.metadata('design:paramtypes', [UserRepository, Logger])`
@@ -969,7 +976,7 @@ console.log(
 // Should print [] or [dep types], not undefined
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type assertion using container. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **WHAT BREAKS: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 ---
 
@@ -989,8 +996,7 @@ console.log(
 
 ---
 
-**Q1: How would you implement a caching decorator?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] How would you implement a caching decorator?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -1043,8 +1049,7 @@ MECHANISM
 > to a configurable cache store (Redis, in-memory) with key-based
 > invalidation.
 
-**Q2: What is the difference between legacy and TC39 Stage 3 decorators?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] What is the difference between legacy and TC39 Stage 3 decorators?**
 
 > **Answer:**
 >
@@ -1095,8 +1100,7 @@ MECHANISM
 > possible with the legacy API. The `addInitializer` callback is the
 > Stage 3 replacement for returning a new class from a class decorator.
 
-**Q3: How does emitDecoratorMetadata enable dependency injection?**
-`[STAFF]` MECHANISM
+**[STAFF] Q3 - [MECHANISM] How does emitDecoratorMetadata enable dependency injection?**
 
 > **Answer:**
 >

@@ -73,7 +73,7 @@ completed transfers, not in-progress."
 ### 📘 Concept Explanation
 
 **Exactly-once semantics mechanics and transaction protocol:**
-```
+```plaintext
 EOS ARCHITECTURE:
 
   Producer -> Transaction Coordinator (Kafka broker)
@@ -98,7 +98,7 @@ TRANSACTION FLOW:
       producer.beginTransaction();
       
       producer.send(new ProducerRecord<>("orders", orderId, orderJson));
-      producer.send(new ProducerRecord<>("inventory", productId, inventoryJson));
+      producer.send(new ProducerRecord<>("inventory", productId,...
       // Both sends: part of the same transaction.
       // Consumers with read_committed: cannot see either until commit.
       
@@ -128,7 +128,7 @@ EPOCH FENCING (ZOMBIE PREVENTION):
     Order service pod A: transactional.id="order-service-0"
     Order service pod B: transactional.id="order-service-1"
     Both running: each has its own epoch. No conflict.
-    Pod A crashes and restarts: same transactional.id -> epoch incremented -> zombie A fenced.
+    Pod A crashes and restarts: same transactional.id -> epoch incremented ->...
 
 CONSUMER: read_committed vs read_uncommitted:
 
@@ -163,7 +163,7 @@ EOS IN KAFKA STREAMS:
   //   V2: more efficient. Recommended for Kafka 2.6+.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Delivery Guarantees example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -243,12 +243,12 @@ public class ExactlyOnceProcessor {
 }
 ```
 
-> **Code walkthrough:** `sendOffsetsToTransaction()` is the key method: it includes the consumer
-> offset commit as part of the producer transaction. This means: either the enriched records AND
-> the offset advance commit together, or neither does (on abort). If the producer crashes after
-> `sendOffsetsToTransaction()` but before `commitTransaction()`: the transaction coordinator
-> detects the incomplete transaction and aborts it. On restart: the consumer re-reads the same
-> input records (offset not advanced), produces the enriched records again in a new transaction.
+> **Code walkthrough:** `sendOffsetsToTransaction()` is the key method: it incluice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> offset commit as part of the producer transaction. This means: either the enri
+> the offset advance commit together, or neither does (on abort). If the produce
+> `sendOffsetsToTransaction()` but before `commitTransaction()`: the transaction
+> detects the incomplete transaction and aborts it. On restart: the consumer re-
+> input records (offset not advanced), produces the enriched records again in a 
 > Exactly-once: each input record produces exactly one output record.
 
 ---
@@ -256,33 +256,33 @@ public class ExactlyOnceProcessor {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> EOS: three components. (1) `enable.idempotence=true`: dedup retries within a producer session.
-> (2) `transactional.id`: enables Kafka transactions (atomic multi-partition writes). (3)
-> Consumer `isolation.level=read_committed`: only reads committed transaction data. Together:
-> exactly-once end-to-end. Kafka Streams: `processing.guarantee=exactly_once_v2` enables EOS
+> EOS: three components. (1) `enable.idempotence=true`: dedup retries within a p
+> (2) `transactional.id`: enables Kafka transactions (atomic multi-partition wri
+> Consumer `isolation.level=read_committed`: only reads committed transaction da
+> exactly-once end-to-end. Kafka Streams: `processing.guarantee=exactly_once_v2`
 > without manual transaction management.
 
 ---
 
 **Senior / Staff (5+ years):**
-> EOS throughput cost: ~5-20% reduction vs at-least-once. The transaction coordinator manages
-> epoch, fence old producers, and write commit markers. For every `commitTransaction()`: a
-> two-phase protocol runs. The last stable offset (LSO) concept: with open transactions, the
-> consumer cannot advance beyond the LSO. For monitoring: track `consumer-fetch-manager-metrics:
-> records-lag-max` vs normal lag. Unexplained high lag with no active consumer backlog:
-> a hanging transaction. Find it: `kafka-transactions.sh --bootstrap-server broker:9092 --list`.
-> Abort it: `kafka-transactions.sh --abort --transactional-id tx-id --producer-id pid --epoch epoch`.
+> EOS throughput cost: ~5-20% reduction vs at-least-once. The transaction coordi
+> epoch, fence old producers, and write commit markers. For every `commitTransac
+> two-phase protocol runs. The last stable offset (LSO) concept: with open trans
+> consumer cannot advance beyond the LSO. For monitoring: track `consumer-fetch-
+> records-lag-max` vs normal lag. Unexplained high lag with no active consumer b
+> a hanging transaction. Find it: `kafka-transactions.sh --bootstrap-server brok
+> Abort it: `kafka-transactions.sh --abort --transactional-id tx-id --producer-i
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-**Misconception: "Exactly-once in Kafka means no duplicate processing in my application."**
-Kafka EOS guarantees exactly-once delivery of records to Kafka partitions and exactly-once commit
+**Misconception: "Exactly-once in Kafka means no duplicate processing in my appl
+Kafka EOS guarantees exactly-once delivery of records to Kafka partitions and ex
 of offsets. It does NOT guarantee that your application code runs exactly once. If your consumer
 processes a record (calls an external API, writes to a database) and then the transaction commits,
 but the external API call was duplicated: that is a duplicate in the external system. EOS only
-covers Kafka-to-Kafka flows (consume from Kafka, produce to Kafka, commit offset atomically). For
+covers Kafka-to-Kafka flows (consume from Kafka, produce to Kafka, commit offset
 external systems: either (1) use idempotent API calls (same call twice = same result), (2) use
 the database's transactional semantics to include offset storage, or (3) implement deduplication
 in the external system. EOS is not a silver bullet; it is a precise guarantee within the Kafka
@@ -292,12 +292,12 @@ boundary.
 
 ### ⚖️ Comparison Table
 
-| Semantic | Configuration | Risk | Overhead |
-|---|---|---|---|
-| At-most-once | commit before process | Data loss on crash | None |
-| At-least-once | commitSync after process | Duplicates on crash | Minimal |
-| Exactly-once (producer only) | enable.idempotence=true | Duplicates across sessions | Minimal |
-| Exactly-once (full) | transactional.id + read_committed | None within Kafka | 5-20% |
+| Semantic| Configuration| Risk| Overhead|
+|--------|---------------------------------|--------------------------|--------|
+| At-most-once| commit before process| Data loss on crash| None|
+| At-least-once| commitSync after process| Duplicates on crash| Minimal|
+| Exactly-once (producer only)| enable.idempotence=true| Duplicates across sessi
+| Exactly-once (full)| transactional.id + read_committed| None within Kafka| 5-2
 
 ---
 
@@ -330,7 +330,7 @@ boundary.
     (3) all records now visible to read_committed consumers
   
   Consumer:                                           polls
-  Before step 3:                                      <- empty (LSO not advanced)
+  Before step 3:                                      <- empty (LSO not...
   After step 3:                                       <- records A, B visible
 ```
 
@@ -409,7 +409,7 @@ Fix:
   Alert on LSO vs LEO gap > threshold.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -514,7 +514,7 @@ transaction coordinator - not what Kafka provides natively)."
 ### 📘 Concept Explanation
 
 **Kafka transaction lifecycle, limitations, and patterns:**
-```
+```plaintext
 TRANSACTIONAL PRODUCER LIFECYCLE:
 
   State Machine:
@@ -610,7 +610,7 @@ OUTBOX PATTERN (DB + KAFKA ATOMICITY):
   No distributed transaction required.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -676,11 +676,11 @@ public void publishPendingEvents() {
 // Kafka producer: enable.idempotence=true. Duplicate events on retry: deduplicated.
 ```
 
-> **Code walkthrough:** The `createOrder` service writes both the `Order` and an `OutboxEvent`
-> in a single DB transaction. If the transaction commits: the outbox row is guaranteed to exist.
-> The publisher polls the outbox and sends to Kafka, then marks the row as published. On crash
-> between Kafka send and marking published: the event is re-published (at-least-once). The
-> idempotent producer deduplicates if the same event is sent twice to the same Kafka partition.
+> **Code walkthrough:** The `createOrder` service writes both the `Order` and anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> in a single DB transaction. If the transaction commits: the outbox row is guar
+> The publisher polls the outbox and sends to Kafka, then marks the row as publi
+> between Kafka send and marking published: the event is re-published (at-least-
+> idempotent producer deduplicates if the same event is sent twice to the same K
 > This achieves atomic DB + Kafka consistency without distributed transactions.
 
 ---
@@ -688,50 +688,50 @@ public void publishPendingEvents() {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Kafka transactions: atomic multi-partition writes. `beginTransaction()`, `send()`, then
-> `commitTransaction()` or `abortTransaction()`. Consumer `isolation.level=read_committed`:
-> only sees committed records. Use for consume-transform-produce patterns where exactly-once
+> Kafka transactions: atomic multi-partition writes. `beginTransaction()`, `send
+> `commitTransaction()` or `abortTransaction()`. Consumer `isolation.level=read_
+> only sees committed records. Use for consume-transform-produce patterns where 
 > matters. Overhead: 5-20%. Use at-least-once + idempotency for most cases.
 
 ---
 
 **Senior / Staff (5+ years):**
-> The outbox pattern is the production solution for DB + Kafka atomicity at most companies - not
-> Kafka transactions. Kafka transactions: Kafka-only scope. Outbox: DB-native atomicity (ACID) +
-> Kafka delivery (at-least-once + idempotent). Implemented with Debezium: instead of polling
-> the outbox table, Debezium reads the DB WAL and produces Kafka events as the table changes.
-> No polling delay. No extra scheduler. Debezium is the best outbox publisher for high-throughput
-> systems. The architectural trade-off: Debezium introduces an additional component. For simpler
-> systems: scheduled outbox polling (every 1-5 seconds) is sufficient and has no additional
+> The outbox pattern is the production solution for DB + Kafka atomicity at most
+> Kafka transactions. Kafka transactions: Kafka-only scope. Outbox: DB-native at
+> Kafka delivery (at-least-once + idempotent). Implemented with Debezium: instea
+> the outbox table, Debezium reads the DB WAL and produces Kafka events as the t
+> No polling delay. No extra scheduler. Debezium is the best outbox publisher fo
+> systems. The architectural trade-off: Debezium introduces an additional compon
+> systems: scheduled outbox polling (every 1-5 seconds) is sufficient and has no
 > infrastructure dependency.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-**Misconception: "Kafka transactions solve the dual-write problem between a database and Kafka."**
-Kafka transactions provide atomicity only within Kafka. A dual-write (write to DB AND send to
+**Misconception: "Kafka transactions solve the dual-write problem between a data
+Kafka transactions provide atomicity only within Kafka. A dual-write (write to D
 Kafka) is not made atomic by Kafka transactions. If the DB write is inside a Kafka transaction:
 the DB write is not rolled back when the Kafka transaction aborts (they are different systems with
-different transaction coordinators). Solutions to the dual-write problem: (1) Outbox pattern:
-DB write + Kafka event in the same DB transaction. Event published separately. (2) Debezium CDC:
+different transaction coordinators). Solutions to the dual-write problem: (1) Ou
+DB write + Kafka event in the same DB transaction. Event published separately. (
 DB write, Debezium reads WAL, produces Kafka event. Atomic from the DB's perspective. (3) Event
-sourcing: the Kafka topic IS the database (event log). No dual-write: Kafka is the single source
+sourcing: the Kafka topic IS the database (event log). No dual-write: Kafka is t
 of truth. (4) SAGA pattern: choreographed compensating transactions (not atomic, but eventually
-consistent). Kafka transactions: only for Kafka-to-Kafka flows (Kafka Streams being the primary
+consistent). Kafka transactions: only for Kafka-to-Kafka flows (Kafka Streams be
 use case).
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Approach | Atomicity | Scope | Complexity | Performance |
-|---|---|---|---|---|
-| Kafka transactions | Atomic | Kafka-only | Medium | 5-20% overhead |
-| Outbox pattern | Eventual | DB + Kafka | Medium | Near-zero overhead |
-| Debezium CDC | Eventual | DB + Kafka | Low (config) | WAL read overhead |
-| Event sourcing | N/A - Kafka IS DB | Kafka only | High | Optimal |
-| Saga / choreography | Eventual | Any systems | High | Application-level |
+| Approach| Atomicity| Scope| Complexity| Performance|
+|----------------|-----------------|-----------|------------|------------------|
+| Kafka transactions| Atomic| Kafka-only| Medium| 5-20% overhead|
+| Outbox pattern| Eventual| DB + Kafka| Medium| Near-zero overhead|
+| Debezium CDC| Eventual| DB + Kafka| Low (config)| WAL read overhead|
+| Event sourcing| N/A - Kafka IS DB| Kafka only| High| Optimal|
+| Saga / choreography| Eventual| Any systems| High| Application-level|
 
 ---
 
@@ -771,12 +771,12 @@ sequenceDiagram
 
     Service->>DB: BEGIN TRANSACTION
     Service->>DB: INSERT INTO orders (...)
-    Service->>DB: INSERT INTO outbox_events (aggregate_id, type, payload, published=false)
+    Service->>DB: INSERT INTO outbox_events (aggregate_id, type, payload, publis
     Service->>DB: COMMIT
     Note over DB: Both rows committed atomically
 
     loop Every 1s
-        Publisher->>DB: SELECT * FROM outbox_events WHERE published=false LIMIT 100
+  Publisher->>DB: SELECT * FROM outbox_events WHERE published=false LIMIT 100
         DB-->>Publisher: pending events
         Publisher->>Kafka: produce(event)
         Kafka-->>Publisher: ack
@@ -784,12 +784,12 @@ sequenceDiagram
     end
 ```
 
-> **Diagram walkthrough:** The Order Service writes both the business record and the outbox event
-> in a single DB transaction - atomicity guaranteed by the DB's ACID properties. The Outbox
-> Publisher (a separate process or Debezium) polls for unpublished events and sends them to Kafka.
-> After receiving a Kafka ack, it marks the event as published. If the publisher crashes between
-> the Kafka send and the DB update: the event is re-published on restart (at-least-once). The
-> idempotent Kafka producer handles the rare duplicate. This is the most common production pattern
+> **Diagram walkthrough:** The Order Service writes both the business record and
+> in a single DB transaction - atomicity guaranteed by the DB's ACID properties.
+> Publisher (a separate process or Debezium) polls for unpublished events and se
+> After receiving a Kafka ack, it marks the event as published. If the publisher
+> the Kafka send and the DB update: the event is re-published on restart (at-lea
+> idempotent Kafka producer handles the rare duplicate. This is the most common 
 > for reliable DB + Kafka integration.
 
 ---
@@ -833,7 +833,7 @@ Fix:
     }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

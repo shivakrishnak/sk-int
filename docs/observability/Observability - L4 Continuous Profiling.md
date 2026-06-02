@@ -166,7 +166,7 @@ Profiling Backend (Parca / Pyroscope):
     (green = less CPU, red = more CPU after change)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continuous Profiling with eBPF example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step-by-step: (1) Linux kernel fires a perf_event 97 times per
 second per CPU core. (2) The attached eBPF program reads the current
@@ -270,7 +270,7 @@ JAVA_PID=$(pgrep -f "checkout-service")
 # 7. Different commands for Java vs Go vs Python vs C++
 ```
 
-> **Code walkthrough:** The BAD pattern captures the anti-pattern
+> **Code walkthrough:** The BAD pattern captures the anti-patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that engineers fall into without continuous profiling: they start
 > the profiler only when the alert fires. The regression started 17
 > minutes earlier. The flame graph they produce shows the system
@@ -347,7 +347,7 @@ spec:
             path: /run
 ```
 
-> **Code walkthrough:** The Parca agent DaemonSet deploys one eBPF
+> **Code walkthrough:** The Parca agent DaemonSet deploys one eBPFice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > profiling agent per Kubernetes node, not per container. This is
 > the key efficiency advantage: one eBPF program in the kernel
 > profiles all 20-50 containers on the node simultaneously. The
@@ -359,6 +359,12 @@ spec:
 > to the Parca server over gRPC where they're stored and queryable.
 
 **Example 3: GOOD - Pyroscope Java agent + eBPF hybrid**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: Java service configured with Pyroscope agent
 // Combines eBPF system-level profiling with JVM-aware profiling
@@ -436,7 +442,7 @@ pprof -diff_base /tmp/profile_v2_3.pprof \
 # Green frames: LESS CPU in v2.4 vs v2.3 -> optimization
 ```
 
-> **Code walkthrough:** The hybrid approach deploys the eBPF system
+> **Code walkthrough:** The hybrid approach deploys the eBPF systemice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > profiler (one per node) for language-agnostic sampling AND the
 > Pyroscope Java agent for JVM-aware profiling with correct JIT
 > frame resolution. The Java agent uses ITIMER-based CPU profiling
@@ -632,7 +638,7 @@ cat /proc/<PID>/maps | grep -E "\.so|executable"
 # This allows eBPF to walk the stack through JIT code
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This allows eBPF to walk the stack through JIT code example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: For JVM: add `-XX:+PreserveFramePointer` to JVM startup args.
 For Go: ensure `go build` without `-ldflags="-w"` in production (Go
@@ -678,7 +684,7 @@ uname -r
 # Need 4.15+ for basic eBPF, 5.8+ for CAP_BPF + CAP_PERFMON split
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Need 4.15+ for basic eBPF, 5.8+ for CAP_BPF + CAP_PERFMON split example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Update the DaemonSet security context. Option A (privileged):
 `securityContext: privileged: true`. Option B (least privilege):
@@ -722,7 +728,7 @@ kubectl describe pod -n observability \
   | grep "NODE_NAME"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify node name is passed correctly example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Create a ClusterRole with `get/list/watch` on `nodes`, `pods`,
 and `namespaces` resources, bound to the parca-agent ServiceAccount.
@@ -1389,7 +1395,7 @@ eBPF Continuous Profiling Platform
   trace exemplar link
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Staff angle:**
 The platform cost model: 200 nodes * 1% CPU = 2 CPU cores reserved

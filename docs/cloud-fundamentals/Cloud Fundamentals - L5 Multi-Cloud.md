@@ -141,7 +141,7 @@ VALID LOCK-IN CONCERNS:
   container-based workloads.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Cloud Strategy example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Data Gravity:**
 
@@ -169,7 +169,7 @@ IMPLICATION FOR MULTI-CLOUD:
   Don't let service preference override data locality.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Cloud Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -231,7 +231,7 @@ resource "aws_dx_connection" "to_gcp" {
 # GCP Partner Interconnect on the other side
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GCP Partner Interconnect on the other side example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```python
 # CLOUD-AGNOSTIC STORAGE ABSTRACTION (Pattern 3 - Portable)
@@ -313,7 +313,7 @@ def create_storage(provider: str, bucket: str) -> ObjectStorage:
 # at the cost of features.
 ```
 
-> **Code walkthrough:** The Terraform shows the segmented
+> **Code walkthrough:** The Terraform shows the segmentedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > multi-cloud pattern: AWS handles operational workloads
 > (RDS, ECS, S3 events), GCP handles analytics (BigQuery).
 > The providers are aliased so the same Terraform codebase
@@ -533,7 +533,7 @@ flowchart TB
 
 ---
 
-#### CONCEPT 1: What are the three multi-cloud patterns and what are the realistic use cases for each?
+**[SENIOR] Q1 - [MECHANISM] What are the three multi-cloud patterns and what are the realistic use cases for each?**
 
 **Pattern 1 - Segmented (different workloads on different clouds):**
 
@@ -593,7 +593,7 @@ compelling one.
 
 ---
 
-#### CONCEPT 2: What is data gravity and how does it constrain multi-cloud architecture?
+**[SENIOR] Q2 - [MECHANISM] What is data gravity and how does it constrain multi-cloud architecture?**
 
 Data gravity is the concept that data attracts compute
 and processing: the more data you have in one location,
@@ -645,7 +645,7 @@ example shows how data gravity constrains the theoretical
 
 ---
 
-#### DEBUGGING 1: Your multi-cloud DR setup (AWS primary, GCP secondary) has a data lag of 4 hours between providers. Acceptable RPO is 1 hour. How do you fix this?
+**[SENIOR] Q3 - [DEBUGGING] Your multi-cloud DR setup (AWS primary, GCP secondary) has a data lag of 4 hours between providers. Acceptable RPO is 1 hour. How do you fix this?**
 
 **Step 1: Identify the replication bottleneck:**
 
@@ -667,7 +667,7 @@ kafka-consumer-groups.sh \
 # Look for lag column - if high: consumer is behind
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This if high: consumer is behind example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: CDC streaming approach:**
 
@@ -685,7 +685,7 @@ TARGET (streaming CDC, < 5 min lag):
   Lag: typically 1-5 minutes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This if high: consumer is behind example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Step 3: Network bandwidth constraint:**
 
@@ -705,7 +705,7 @@ aws dms describe-replication-tasks \
 # If public internet: check NAT Gateway BytesProcessed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If public internet: check NAT Gateway BytesProcessed example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 4: Target architecture for < 1 hour RPO:**
 
@@ -720,7 +720,7 @@ distinction between batch (4-hour lag) and CDC streaming
 
 ---
 
-#### DEBUGGING 2: Cross-cloud API calls from AWS Lambda to GCP are failing intermittently with timeout errors. How do you diagnose?
+**[SENIOR] Q1 - [DEBUGGING] Cross-cloud API calls from AWS Lambda to GCP are failing intermittently with timeout errors. How do you diagnose?**
 
 **Step 1: Determine the network path:**
 
@@ -757,7 +757,7 @@ def lambda_handler(event, context):
         }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GCP API call: example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Common causes:**
 
@@ -785,7 +785,7 @@ NAT Gateway state table limits.
 
 ---
 
-#### TRADE-OFF 1: Portability (cloud-agnostic architecture) vs performance (cloud-native services). How do you decide?
+**[SENIOR] Q2 - [TRADE-OFF] Portability (cloud-agnostic architecture) vs performance (cloud-native services). How do you decide?**
 
 **The core trade-off:**
 
@@ -844,7 +844,7 @@ technically accurate.
 
 ---
 
-#### TRADE-OFF 2: Multi-cloud redundancy vs multi-region single cloud. Which provides better resilience?
+**[SENIOR] Q3 - [TRADE-OFF] Multi-cloud redundancy vs multi-region single cloud. Which provides better resilience?**
 
 **Multi-region single cloud (e.g., AWS us-east-1 + eu-west-1):**
 
@@ -896,7 +896,7 @@ multi-cloud redundancy is genuinely justified.
 
 ---
 
-#### DESIGN 1: Design the integration architecture for a company that must use AWS (operations) and GCP (analytics/ML) with 50TB/month of data flowing between them.
+**[SENIOR] Q4 - [DESIGN] Design the integration architecture for a company that must use AWS (operations) and GCP (analytics/ML) with 50TB/month of data flowing between them.**
 
 **Architecture:**
 
@@ -916,7 +916,7 @@ App (ECS) -> Kinesis Data Streams
           -> BigQuery Streaming Inserts (< 5 min lag)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GCP API call: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Daily snapshots:
 ```
@@ -926,7 +926,7 @@ GCS -> BigQuery Data Transfer -> BigQuery tables
 (batch, acceptable 24hr lag for daily analytics)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GCP API call: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Network:
 ```
@@ -937,7 +937,7 @@ AWS Direct Connect (1Gbps) + GCP Partner Interconnect:
   ROI: Direct Connect cost (~$500/month) < savings ($3,500)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GCP API call: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Security:
 ```
@@ -949,7 +949,7 @@ AWS IAM role: assume role with conditions
     without static AWS access keys
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The three-tier data
 classification with different pipelines for each is
@@ -961,7 +961,7 @@ insight for cross-cloud integration.
 
 ---
 
-#### DESIGN 2: A SaaS company wants to expand to customers in China. Their primary infrastructure is AWS us-east-1. What multi-cloud considerations apply?
+**[SENIOR] Q5 - [DESIGN] A SaaS company wants to expand to customers in China. Their primary infrastructure is AWS us-east-1. What multi-cloud considerations apply?**
 
 **China cloud regulatory reality:**
 
@@ -1021,7 +1021,7 @@ required, not just a new region.
 
 ---
 
-#### BEHAVIORAL 1: Have you evaluated or implemented a multi-cloud strategy? What drove the decision and what would you do differently?
+**[SENIOR] Q6 - [BEHAVIORAL] Have you evaluated or implemented a multi-cloud strategy? What drove the decision and what would you do differently?**
 
 **Structured response:**
 
@@ -1063,7 +1063,7 @@ rather than all-or-nothing.
 
 ---
 
-#### BEHAVIORAL 2: How do you manage the organizational complexity of multi-cloud - different teams with different expertise?
+**[SENIOR] Q7 - [BEHAVIORAL] How do you manage the organizational complexity of multi-cloud - different teams with different expertise?**
 
 **Structured response:**
 
@@ -1110,7 +1110,7 @@ cross-cloud, product teams don't need to know).
 
 ---
 
-#### SCENARIO 1: Your company is acquiring a startup that runs entirely on GCP. How do you integrate their infrastructure?
+**[SENIOR] Q8 - [SCENARIO] Your company is acquiring a startup that runs entirely on GCP. How do you integrate their infrastructure?**
 
 **Integration options (from least to most effort):**
 
@@ -1164,7 +1164,7 @@ failure mode that delays product delivery.
 
 ---
 
-#### SCENARIO 2: The business wants to reduce AWS costs by moving specific workloads to a cheaper provider. How do you evaluate this?
+**[SENIOR] Q9 - [SCENARIO] The business wants to reduce AWS costs by moving specific workloads to a cheaper provider. How do you evaluate this?**
 
 **The evaluation framework:**
 
@@ -1177,7 +1177,7 @@ GCP Cloud Run + Cloud SQL = $10,000/month
 Gross savings: $5,000/month
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: Calculate the migration cost:
 
@@ -1188,7 +1188,7 @@ Dual-operation period: 1 month * both stacks = $15,000
 Total migration cost: $105,000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Calculate break-even:
 
@@ -1198,7 +1198,7 @@ After 21 months: net positive ROI
 Year 3 savings: $5,000 * 12 = $60,000/year
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4: Identify the ongoing operational tax:
 
@@ -1208,7 +1208,7 @@ Dual monitoring stack: +$500/month
 Migration risk: quantify P(migration failure) * cost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 5: Consider alternatives (stay on AWS):
 
@@ -1220,7 +1220,7 @@ AWS savings alternatives (no migration required):
 - RDS Reserved + Spot for non-critical = similar savings
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Often the conclusion:** AWS Reserved Instances + right-sizing
 saves as much or more as migrating to a cheaper provider,

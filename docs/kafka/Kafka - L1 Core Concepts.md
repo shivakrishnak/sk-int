@@ -114,7 +114,7 @@ Records within a partition: totally ordered by offset.
 Records ACROSS partitions: NO ordering guarantee.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Topic example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Partition count determines maximum consumer parallelism. A consumer group
@@ -178,6 +178,12 @@ try (AdminClient admin = AdminClient.create(adminProps)) {
 
 **Example 2: Partition count decision (BAD vs GOOD)**
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: single partition - one consumer max, write bottleneck
 NewTopic bad = new NewTopic("orders", 1, (short) 1);
@@ -190,7 +196,7 @@ NewTopic good = new NewTopic("orders", 6, (short) 3);
 // RF=3 = survives 2 concurrent broker failures
 ```
 
-> **Code walkthrough:** The BAD pattern creates a single-partition topic that
+> **Code walkthrough:** The BAD pattern creates a single-partition topic thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > limits the system to exactly one consumer and one write-path broker. This
 > becomes a bottleneck under any real load. The GOOD pattern uses 6 partitions
 > (2x expected consumer count of 3), providing room to scale. The RF=3 ensures
@@ -461,7 +467,7 @@ ROUTING:
   key=null        -> round-robin across all partitions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Partition example demonstrates a key concept in praice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 1. Producer sends a record with a key (e.g., order ID).
 2. Partition selected: `hash(key) % numPartitions` (default partitioner).
@@ -520,7 +526,7 @@ ProducerRecord<String, String> record2 =
 // no ordering guarantee relative to other null-key records
 ```
 
-> **Code walkthrough:** Key selection drives partition affinity. Using a
+> **Code walkthrough:** Key selection drives partition affinity. Using aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > business entity ID (customer ID, order ID) as the key means all events
 > for that entity are co-located in one partition and delivered in order.
 > A null key distributes load evenly but sacrifices any ordering guarantee.
@@ -528,6 +534,12 @@ ProducerRecord<String, String> record2 =
 > need per-entity sequential processing.
 
 **Example 2: Hot partition avoidance (BAD vs GOOD)**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: key="VIP" sends all VIP orders to one partition
@@ -544,7 +556,7 @@ ProducerRecord<String, String> good =
 // Trade-off: breaks total per-VIP ordering
 ```
 
-> **Code walkthrough:** The BAD pattern uses a low-cardinality key ("VIP")
+> **Code walkthrough:** The BAD pattern uses a low-cardinality key ("VIP")ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that maps all high-volume traffic to one partition. That partition's leader
 > becomes the bottleneck - no amount of consumer scaling helps because there
 > is only one partition to assign. The GOOD pattern adds a modular suffix to
@@ -808,7 +820,7 @@ Followers replicate from leader continuously
 ISR = set of replicas within replica.lag.time.max.ms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Broker example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 1. **Partition assignment:** When a topic is created, Kafka distributes
    partition leaders across brokers evenly to balance load.
@@ -870,7 +882,7 @@ kafka-topics.sh --describe \
   --bootstrap-server localhost:9092
 ```
 
-> **Code walkthrough:** `--describe` reveals the partition distribution and
+> **Code walkthrough:** `--describe` reveals the partition distribution andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > leader/follower assignments. The `--under-replicated-partitions` flag is the
 > most important health check - any result here means some replicas are falling
 > behind the leader. If the leader fails while replicas are behind, the cluster
@@ -895,7 +907,7 @@ kafka-leader-election.sh \
 # Reassigns leaders to their preferred broker without moving data
 ```
 
-> **Code walkthrough:** After broker restarts or failures, partition leaders
+> **Code walkthrough:** After broker restarts or failures, partition leadersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > can concentrate on fewer brokers - one broker ends up handling far more
 > traffic than others. The preferred leader election reassigns each partition's
 > leader back to its designated "preferred" broker (the first in the replica

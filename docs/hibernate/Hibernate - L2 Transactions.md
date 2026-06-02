@@ -146,7 +146,7 @@ Isolation Levels (DB enforces):
     (non-repeatable read: prevented)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Transaction Management and Isolation Levels example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 `@Transactional` is a method-level AOP interceptor. It works because
@@ -192,7 +192,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Spring `@Transactional` works via a proxy
+> **Code walkthrough:** Spring `@Transactional` works via a proxyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that wraps the bean. `this.processOrder()` calls the real object
 > method directly - the proxy is bypassed and no transaction is
 > started. This is one of the most common Spring @Transactional
@@ -232,13 +232,24 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** `@Transactional` at class level sets a default
+> **Code walkthrough:** `@Transactional` at class level sets a defaultice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for all methods. `readOnly = true` is a performance optimization:
 > Hibernate disables dirty checking on flush (no snapshot comparison)
 > and allows the JPA provider to use a read replica if configured.
 > The `placeOrder` method uses a single transaction for both order
 > creation and inventory reservation - if inventory throws, the entire
 > operation rolls back atomically.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // GOOD: Optimistic locking with @Version
@@ -372,7 +383,7 @@ public void process() throws BusinessException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *Fix:*
 ```java
@@ -381,7 +392,7 @@ public void process() throws BusinessException { ... }
 // OR: make BusinessException extend RuntimeException
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -401,7 +412,7 @@ logging.level.com.zaxxer.hikari.pool.HikariPool=DEBUG
 # Shows: "waiting for connection"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: "waiting for connection" example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Increase pool size or refactor REQUIRES_NEW out of
 high-concurrency code paths. Move the REQUIRES_NEW operation
@@ -435,7 +446,7 @@ void updatePriceDirectly(Long id, BigDecimal price);
 // WARNING: this bypasses @Version - use only when intended
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: "waiting for connection" example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -451,8 +462,7 @@ void updatePriceDirectly(Long id, BigDecimal price);
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-When does `@Transactional` NOT roll back?
+**[JUNIOR] Q1 - [MECHANISM] When does `@Transactional` NOT roll back?**
 
 *Why they ask:* The default rollback-only-on-RuntimeException
 behavior catches many developers off guard.
@@ -485,7 +495,7 @@ public void process() throws IOException, BusinessException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: "waiting for connection" example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 The easiest pattern is to make business exceptions extend
 `RuntimeException`, which causes automatic rollback without
@@ -497,9 +507,7 @@ RuntimeExceptions that you want the transaction to commit despite.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What is the difference between REQUIRED and REQUIRES_NEW
-propagation? When would you use each?
+**[MID] Q2 - [MECHANISM] What is the difference between REQUIRED and REQUIRES_NEW propagation? When would you use each?**
 
 *Why they ask:* Propagation is the most important configuration
 after the default, and REQUIRES_NEW has a significant gotcha.
@@ -536,7 +544,7 @@ public class AuditService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: "waiting for connection" example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 The connection pool implication: REQUIRES_NEW acquires a SECOND
 database connection while the outer transaction holds the first.
@@ -550,9 +558,7 @@ dangerous production consequence of overusing REQUIRES_NEW.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-A service method marked `@Transactional` is not rolling back.
-Walk me through the systematic diagnosis.
+**[SENIOR] Q3 - [DEBUGGING] A service method marked `@Transactional` is not rolling back. Walk me through the systematic diagnosis.**
 
 *Why they ask:* @Transactional not working is a very common
 production issue with multiple root causes.
@@ -596,9 +602,7 @@ systematically rather than guessing at self-call alone.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-Compare optimistic locking vs pessimistic locking. When do you
-use each?
+**[SENIOR] Q4 - [TRADE-OFF] Compare optimistic locking vs pessimistic locking. When do you use each?**
 
 *Why they ask:* Locking strategy is a core architectural decision
 for concurrent access.
@@ -646,8 +650,7 @@ the clear case where pessimistic is mandatory due to UX constraints.
 
 ---
 
-**Q5 [MID] - MECHANISM**
-What isolation anomalies does each isolation level prevent?
+**[MID] Q5 - [MECHANISM] What isolation anomalies does each isolation level prevent?**
 
 *Why they ask:* Isolation level selection requires understanding
 what each level prevents.
@@ -694,8 +697,7 @@ isolation.
 
 ---
 
-**Q6 [JUNIOR] - MECHANISM**
-What does `@Transactional(readOnly = true)` actually do?
+**[JUNIOR] Q6 - [MECHANISM] What does `@Transactional(readOnly = true)` actually do?**
 
 *Why they ask:* Many developers add readOnly without understanding
 what it actually changes.
@@ -734,7 +736,7 @@ class ReadWriteRoutingDataSource
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 So readOnly = true is part performance optimization, part contract
 (this method should not write), and part routing hint.
@@ -744,9 +746,7 @@ readOnly enables read replica routing in production architectures.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Describe a distributed transaction problem you encountered and
-how you solved it without distributed transactions.
+**[STAFF] Q7 - [BEHAVIORAL] Describe a distributed transaction problem you encountered and how you solved it without distributed transactions.**
 
 *Why they ask:* Distributed transactions (2PC/XA) are rarely the
 right solution. Staff engineers design around them.
@@ -781,7 +781,7 @@ On PaymentFailed:
   Order Service listens → marks order FAILED
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For the local transactional safety of event publishing, I used
 the Transactional Outbox pattern: the event is written to an
@@ -966,7 +966,7 @@ Flyway integration:
   → App starts (Hibernate validates against current schema)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Schema Generation and DDL Validation example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 `ddl-auto = update` is "almost safe" which makes it dangerous. It
@@ -1004,7 +1004,7 @@ spring.jpa.hibernate.ddl-auto=update
 # - No migration history/audit trail
 ```
 
-> **Code walkthrough:** `ddl-auto=update` feels safe but is a production
+> **Code walkthrough:** `ddl-auto=update` feels safe but is a productionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > anti-pattern. It applies only additive changes and cannot handle
 > column type changes, column removals, or constraint changes. Two nodes
 > starting simultaneously can both execute the same ALTER TABLE causing
@@ -1019,7 +1019,7 @@ spring.flyway.locations=classpath:db/migration
 spring.flyway.baseline-on-migrate=false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This application.properties: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // GOOD: Flyway migration script naming convention
@@ -1058,13 +1058,19 @@ ALTER TABLE users
 -- Note: no FK yet - add in next version after data backfill
 ```
 
-> **Code walkthrough:** Flyway migration scripts are named
+> **Code walkthrough:** Flyway migration scripts are namedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `V{version}__{description}.sql` (two underscores). They execute
 > in version order and are never re-executed (Flyway checks the checksum
 > in `flyway_schema_history`). The V3 migration adds a nullable column -
 > this is backward-compatible: the old version of the application can
 > still run (ignores the new column) while the new version reads it.
 > This is the expand phase of expand-contract migration.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Integration test with create-drop (isolated, no data leakage)
@@ -1091,7 +1097,7 @@ class UserRepositoryTest {
 // dropped on context close - clean per test run
 ```
 
-> **Code walkthrough:** `create-drop` is the correct setting for
+> **Code walkthrough:** `create-drop` is the correct setting forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > integration tests against in-memory H2. The schema is created
 > fresh for each test context and dropped when the context closes.
 > This ensures test isolation: no data from previous test runs
@@ -1217,7 +1223,7 @@ flyway repair  # resets checksum in history table to match file
 # Production: NEVER edit applied migrations
 # Instead: create V4 to correct V3's mistake
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Instead: create V4 to correct V3's mistake example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The rule: never edit a migration script after it has been applied
 to ANY environment. Always create a new version to correct mistakes.
@@ -1236,9 +1242,7 @@ to ANY environment. Always create a new version to correct mistakes.
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What does `spring.jpa.hibernate.ddl-auto=update` do and why
-is it dangerous in production?
+**[JUNIOR] Q1 - [MECHANISM] What does `spring.jpa.hibernate.ddl-auto=update` do and why is it dangerous in production?**
 
 *Why they ask:* `update` is the most commonly misused setting.
 
@@ -1277,8 +1281,7 @@ limited operation support, race condition, no audit trail.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-How does Flyway know which migrations have already been run?
+**[MID] Q2 - [MECHANISM] How does Flyway know which migrations have already been run?**
 
 *Why they ask:* Tests understanding of Flyway's state management.
 
@@ -1323,9 +1326,7 @@ is a real production migration task.
 
 ---
 
-**Q3 [SENIOR] - TRADE-OFF**
-How do you design a zero-downtime database migration for a
-column that must be renamed?
+**[SENIOR] Q3 - [TRADE-OFF] How do you design a zero-downtime database migration for a column that must be renamed?**
 
 *Why they ask:* Column rename is a common schema change that
 cannot be done atomically in a single deployment.
@@ -1361,7 +1362,7 @@ BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW EXECUTE FUNCTION sync_name();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Instead: create V4 to correct V3's mistake example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Deploy code that writes to BOTH columns and reads from `full_name`.
 Both old and new code work: old reads `name` (still populated),
@@ -1378,7 +1379,7 @@ ALTER TABLE users DROP COLUMN name;
 ALTER TABLE users ALTER COLUMN full_name SET NOT NULL;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Instead: create V4 to correct V3's mistake example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 This requires two deployment cycles but guarantees zero downtime.
 
@@ -1388,9 +1389,7 @@ transition truly zero-downtime for existing writes.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-After a production deployment, `ddl-auto=validate` fails with
-a schema mismatch. How do you diagnose and safely recover?
+**[SENIOR] Q4 - [DEBUGGING] After a production deployment, `ddl-auto=validate` fails with a schema mismatch. How do you diagnose and safely recover?**
 
 *Why they ask:* Schema validation failure in production is a
 critical incident requiring rapid diagnosis.
@@ -1407,7 +1406,7 @@ Schema-validation: missing column [email_verified]
 in table [users]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Instead: create V4 to correct V3's mistake example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: Check the entity diff. The entity has `@Column` on
 `emailVerified` but the migration script was not included in the
@@ -1419,7 +1418,7 @@ Step 3: Check Flyway migration history:
 SELECT * FROM flyway_schema_history
 ORDER BY installed_on DESC LIMIT 10;
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Was the migration marked as applied? If not: Flyway never ran it.
 If yes with success=false: the migration failed and needs repair.
@@ -1445,8 +1444,7 @@ scenario rather than just recovering from it.
 
 ---
 
-**Q5 [MID] - COMPARISON**
-When would you choose Liquibase over Flyway?
+**[MID] Q5 - [TRADE-OFF] When would you choose Liquibase over Flyway?**
 
 *Why they ask:* Tests awareness of the ecosystem and trade-off reasoning.
 
@@ -1484,11 +1482,7 @@ multi-database products.
 
 ---
 
-**Q6 [JUNIOR] - DEBUGGING**
-Your Spring Boot application fails to start with
-`javax.validation.ValidationException: HV000183:
-Unable to load 'javax.el.ExpressionFactory'`. Is this a
-schema issue?
+**[JUNIOR] Q6 - [DEBUGGING] Your Spring Boot application fails to start with `javax.validation.ValidationException: HV000183: Unable to load 'javax.el.ExpressionFactory'`. Is this a schema issue?**
 
 *Why they ask:* Tests ability to distinguish between Hibernate
 ORM schema validation and Bean Validation framework issues.
@@ -1511,7 +1505,7 @@ Fix: add the dependency:
     <artifactId>jakarta.el</artifactId>
 </dependency>
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Or in a pure Spring Boot app that should already have this,
 check for dependency exclusions that removed `tomcat-embed-el`.
@@ -1524,7 +1518,7 @@ SchemaManagementException:
   Schema-validation: wrong column type encountered in column [X]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 These are startup failures from `ddl-auto=validate` when the
 entity mapping does not match the database schema.
@@ -1540,9 +1534,7 @@ entity mapping validation (missing @Column mappings, etc.).
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-How would you migrate a critical production table of 500 million
-rows to add a NOT NULL column with a default value?
+**[STAFF] Q7 - [BEHAVIORAL] How would you migrate a critical production table of 500 million rows to add a NOT NULL column with a default value?**
 
 *Why they ask:* Large-table migrations require careful planning
 to avoid production downtime.
@@ -1566,7 +1558,7 @@ ALTER TABLE orders
 -- Note: add as nullable first
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 For PostgreSQL <11 or MySQL (which rewrites the table):
 
@@ -1576,7 +1568,7 @@ Step 1 (Expand - Migration V10):
 ALTER TABLE orders ADD COLUMN processed_at TIMESTAMP;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 2 (Backfill - Application Code):
 ```sql
@@ -1589,7 +1581,7 @@ WHERE id BETWEEN :startId AND :endId
 -- to let other queries run
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 3 (Contract - Migration V11, after backfill verified):
 ```sql
@@ -1600,7 +1592,7 @@ ALTER TABLE orders
 -- Adds constraint only - instant if no NULLs remain
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Verification:
 ```sql
@@ -1611,7 +1603,7 @@ SELECT id, created_at, processed_at FROM orders
 ORDER BY RANDOM() LIMIT 100;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 For 500M rows, the batch UPDATE takes hours. Run it during off-peak
 hours, monitor progress, and ensure no locks are held between batches.

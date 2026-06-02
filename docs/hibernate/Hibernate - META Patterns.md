@@ -174,6 +174,17 @@ public class OrderQueryService {
 > DataSource and database. The `@Transactional` annotation spans both
 > when needed - JOOQ participates in the Spring transaction context.
 
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
+
 ```java
 // DECISION EXAMPLE: bulk delete
 
@@ -198,7 +209,7 @@ int deleteExpiredOrders(
 // No entities loaded, no dirty checking, 1 round-trip
 ```
 
-> **Code walkthrough:** The BAD pattern loads 100,000 entities into
+> **Code walkthrough:** The BAD pattern loads 100,000 entities intoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the persistence context - 100,000 snapshots, 100,000 dirty checks,
 > 100,000 individual DELETE statements. The GOOD pattern uses
 > `@Modifying` to issue a single bulk DELETE. The trade-off: `@Modifying`
@@ -260,7 +271,7 @@ aggregations in Java, rather than in the database.
 // Hibernate may generate a different (suboptimal) query
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Replace with `@Query(nativeQuery=true)` or JOOQ for the analytics
 query. Keep Hibernate for entity writes.
@@ -282,7 +293,7 @@ FROM customers c LEFT JOIN orders o ON o.customer_id = c.id
 GROUP BY c.id, c.name;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -304,8 +315,7 @@ GROUP BY c.id, c.name;
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-When would you use native SQL instead of Hibernate?
+**[JUNIOR] Q1 - [MECHANISM] When would you use native SQL instead of Hibernate?**
 
 *Why they ask:* Tests knowledge of ORM boundaries.
 
@@ -348,16 +358,14 @@ em.createNativeQuery("SELECT ...", Order.class)
 jdbcTemplate.query("SELECT ...", rowMapper, params);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The three execution options and the
 specific PostgreSQL features (JSONB, window functions) as the trigger.
 
 ---
 
-**Q2 [MID] - TRADE-OFF**
-Your team debates using JOOQ for all database access vs Hibernate.
-How do you frame the decision?
+**[MID] Q2 - [TRADE-OFF] Your team debates using JOOQ for all database access vs Hibernate. How do you frame the decision?**
 
 *Why they ask:* Tests ability to evaluate data access framework trade-offs.
 
@@ -400,9 +408,7 @@ Decision triggers for JOOQ:
 
 ---
 
-**Q3 [SENIOR] - MECHANISM**
-How do `@Query(nativeQuery=true)` results map to entities vs
-projections in Spring Data JPA?
+**[SENIOR] Q3 - [MECHANISM] How do `@Query(nativeQuery=true)` results map to entities vs projections in Spring Data JPA?**
 
 *Why they ask:* Tests practical knowledge of native query result mapping.
 
@@ -420,7 +426,7 @@ List<Order> findByStatus(String s);
 // Requires all @Column-mapped columns to be in the SELECT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. Projection interface (Spring Data):
 ```java
@@ -437,7 +443,7 @@ List<OrderSummary> findSummaries();
 // Case-insensitive: column "total" -> getTotal()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 3. `Object[]` or `Map<String, Object>`:
 ```java
@@ -448,7 +454,7 @@ List<Object[]> findTotals();
 // Error-prone: no compile-time check
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Limitations of native query projections:
 - Pagination: native queries with pagination require `countQuery` parameter:
@@ -458,7 +464,7 @@ Limitations of native query projections:
       nativeQuery=true)
   Page<Order> findPagedOrders(String status, Pageable p);
   ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 - Sort: Pageable's Sort does not translate for native queries
   (sort by entity field name vs column name mismatch)
@@ -470,9 +476,7 @@ pagination with native queries.
 
 ---
 
-**Q4 [MID] - DEBUGGING**
-A developer replaced a JPQL query with native SQL for a complex report.
-The results are wrong for some users but correct for others. How do you debug?
+**[MID] Q4 - [DEBUGGING] A developer replaced a JPQL query with native SQL for a complex report. The results are wrong for some users but correct for others. How do you debug?**
 
 *Why they ask:* Tests native SQL debugging skills.
 
@@ -491,7 +495,7 @@ logging:
 # TRACE shows parameter values bound to each placeholder
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 2: Run the SQL manually with the failing user's parameters:
 Copy the SQL from the log, paste into pgAdmin/psql, substitute the
@@ -510,7 +514,7 @@ WHERE user_id = :userId  -- if userId is NULL: no rows matched
 WHERE (:userId IS NULL OR user_id = :userId)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 4: Check type mismatch:
 ```java
@@ -521,7 +525,7 @@ Step 4: Check type mismatch:
     nativeQuery=true)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 5: Test with Spring Boot Test:
 ```java
@@ -538,7 +542,7 @@ class OrderQueryTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The NULL handling difference between
 SQL and Java - `NULL = NULL` is FALSE in SQL, which causes rows to be
@@ -546,9 +550,7 @@ silently excluded.
 
 ---
 
-**Q5 [SENIOR] - COMPARISON**
-What is Spring JDBC Template and when would you prefer it over
-Hibernate's native query support?
+**[SENIOR] Q5 - [TRADE-OFF] What is Spring JDBC Template and when would you prefer it over Hibernate's native query support?**
 
 *Why they ask:* Tests knowledge of the full data access toolkit.
 
@@ -574,7 +576,7 @@ Use JdbcTemplate over Hibernate native queries when:
    // Hibernate has no clean way to run DDL within a transaction
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. Complex result set processing:
    ```java
@@ -586,7 +588,7 @@ Use JdbcTemplate over Hibernate native queries when:
    });
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 4. Raw performance without ORM overhead:
    JdbcTemplate has lower overhead than Hibernate native queries
@@ -602,9 +604,7 @@ typically 0.1-0.5ms per query. Meaningful only at > 10,000 queries/second.
 
 ---
 
-**Q6 [MID] - MECHANISM**
-How do you use Spring Data JPA projections to avoid loading
-unnecessary entity data?
+**[MID] Q6 - [MECHANISM] How do you use Spring Data JPA projections to avoid loading unnecessary entity data?**
 
 *Why they ask:* Projections are a common performance optimization.
 
@@ -628,7 +628,7 @@ List<ProductSummary> findAllProjectedBy();
 // (not SELECT * - only requested fields)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 DTO projection (constructor expression, most explicit):
 ```java
@@ -646,7 +646,7 @@ List<ProductDTO> findDTOsByCategory(String cat);
 // JPQL constructor expression - no entity loaded, just field values
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TRACE shows parameter values bound to each placeholder example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Difference:
 - Interface projection: Spring generates a proxy; fields are accessed
@@ -666,9 +666,7 @@ syntax and the note that interface projections can trigger additional queries
 
 ---
 
-**Q7 [SENIOR] - BEHAVIORAL**
-Describe a time when you chose native SQL or JOOQ for a specific
-operation that was failing with Hibernate. What was the decision process?
+**[SENIOR] Q7 - [BEHAVIORAL] Describe a time when you chose native SQL or JOOQ for a specific operation that was failing with Hibernate. What was the decision process?**
 
 *Why they ask:* Tests practical decision-making about ORM trade-offs.
 
@@ -724,7 +722,7 @@ Page<Object[]> getTopRoutes(@Param("customerId") Long id,
     Pageable pageable);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Maintainability: added the SQL as a test fixture in `src/test/resources/analytics/`
 with documented column ordering. Added a `@DataJpaTest` that runs the query
@@ -738,6 +736,69 @@ syntax regressions and ensures the column mapping is correct.
 
 *What separates good from great:* The test fixture approach and PostgreSQL
 Testcontainer for native SQL query testing.
+
+**[STAFF] Q8 - [TRADE-OFF] Your team wants to standardize on one data access layer for the entire platform - Hibernate, JOOQ, or plain JDBC. How do you lead the decision process and what criteria matter most?**
+
+**Answer:**
+The worst outcome is a religious war that ends with one technology mandated
+everywhere. The right process is criteria-first, then evidence, then
+decision.
+
+Criteria I use: (1) Query complexity distribution - what percentage of
+queries are simple CRUD vs complex analytics or reporting? If 80% CRUD and
+20% complex, Hibernate wins on productivity for the majority. If 40/60,
+JOOQ is worth serious consideration. (2) Team SQL fluency - engineers who
+think in SQL naturally will fight Hibernate's abstractions constantly; JOOQ
+and JDBC are better fits. (3) Schema ownership - does the team own the
+schema or is it shared/legacy? Legacy schemas with naming conventions that
+fight JPA mapping (no standard PKs, multi-column PKs, views) often make
+Hibernate painful. (4) Read/write ratio per service - write-heavy
+transactional services benefit from Hibernate's dirty checking; read-heavy
+reporting services benefit from JOOQ's type-safe SQL. (5) Performance SLA
+- if p99 < 10ms is required for 100+ table joins, native SQL wins every
+time.
+
+Evidence gathering: I run a proof-of-concept for the top 3 most complex
+queries in the current codebase using each candidate. Time to implement,
+readability, performance, and debugging effort are measured. This takes
+3-5 days but prevents 2 years of regret.
+
+My actual recommendation: for most Spring Boot microservices, Hibernate for
+transactional operations + Spring Data JPA for simple queries + native SQL
+for analytics is more pragmatic than forcing a single choice. The hybrid
+approach avoids the false trade-off entirely.
+
+*What separates good from great:* Using actual query complexity distribution
+and performance SLAs as objective criteria rather than tribal preference.
+
+---
+
+**[SENIOR] Q9 - [DESIGN] How would you design an abstraction layer that lets you switch between Hibernate and JOOQ for read operations without changing service layer code?**
+
+**Answer:**
+The standard approach is Repository pattern with a domain-focused interface
+that hides the data access technology completely.
+
+Design: define a repository interface in the domain layer with methods that
+speak domain language, not data access language. `OrderRepository.findByCustomerWithItems(Long customerId)` rather than any technology-specific API. The interface returns domain objects or projections - not JPA entities with proxy state, and not JOOQ Records.
+
+Implementation: write two implementations. `HibernateOrderRepository` uses
+EntityManager and JPQL/HQL. `JooqOrderRepository` uses DSL.using(configuration) and maps JOOQ Records to domain objects. Both implement the same interface. Spring profiles or a factory bean selects the implementation.
+
+The critical discipline: domain objects returned by the interface must have
+no framework contamination. No `@Entity`, no lazy proxies, no JOOQ Record
+inheritance. Plain immutable value objects or DTOs. If the service layer can
+receive a lazy proxy and never know it, you have a Hibernate leak. Test by
+running the full service test with the JOOQ implementation - any
+LazyInitializationException reveals a leak.
+
+Tradeoff: this adds a mapping layer (domain object from entity/record) that
+costs approximately 50-100 lines per aggregate. The payoff is genuine
+technology independence and the ability to optimize reads independently from
+writes (CQRS-lite pattern).
+
+*What separates good from great:* Identifying lazy proxy leaks as the most
+common way Hibernate bleeds into the service layer, defeating the abstraction.
 
 ---
 
@@ -866,7 +927,7 @@ Layer 3: DATABASE STATE
     - Are constraint violations expected?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate Debugging Mental Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Debugging Decision Tree:**
 
@@ -884,7 +945,7 @@ SYMPTOM: Too many SQL queries (slow)
   -> FetchMode.SELECT for collections (multiple SELECTs)
 
 SYMPTOM: Modification lost (no UPDATE)
-  -> Modifying a DETACHED entity (save() returned managed copy - you modified detached)
+  -> Modifying a DETACHED entity (save() returned managed copy - you modified...
   -> @Transactional missing (no dirty checking outside transaction)
   -> FlushMode.COMMIT (commit not called yet)
   -> @Column(updatable=false) on the field
@@ -896,7 +957,7 @@ SYMPTOM: Stale data returned
   -> Replica lag (read routed to lagging replica)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate Debugging Mental Model example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -945,7 +1006,7 @@ log.info("Current TX: {}",
 // If null: @Transactional is not working (self-invocation or missing)
 ```
 
-> **Code walkthrough:** The debugging toolkit has four steps. SQL logging
+> **Code walkthrough:** The debugging toolkit has four steps. SQL loggingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reveals N+1 patterns and wrong WHERE clauses. Statistics count actual
 > vs expected queries. `em.contains()` checks entity state - the most
 > common cause of "modification lost" bugs. Transaction name check confirms
@@ -979,7 +1040,7 @@ public void shipOrder(Long id) {
 // No explicit save() needed - dirty checking handles it
 ```
 
-> **Code walkthrough:** The "modification lost" bug almost always means
+> **Code walkthrough:** The "modification lost" bug almost always meansice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > either: (1) no active `@Transactional` (dirty checking never runs), or
 > (2) the entity was detached before the modification (merged entity vs
 > original). The fix is ensuring the modification happens within the
@@ -1049,7 +1110,7 @@ log.debug("Caller class: {}",
 // If the caller class is the SAME class: self-invocation (no proxy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Move the inner method to a separate Spring bean.
 
@@ -1077,7 +1138,7 @@ log.info("Inserts: {}", stats.getEntityInsertCount());
 // The INSERT values reveal which entity is being created
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1099,8 +1160,7 @@ log.info("Inserts: {}", stats.getEntityInsertCount());
 
 ---
 
-**Q1 [JUNIOR] - DEBUGGING**
-How do you enable SQL logging in a Spring Boot + Hibernate application?
+**[JUNIOR] Q1 - [DEBUGGING] How do you enable SQL logging in a Spring Boot + Hibernate application?**
 
 *Why they ask:* SQL logging is the first debugging tool.
 
@@ -1122,7 +1182,7 @@ spring:
         use_sql_comments: true      # adds HQL comment above SQL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 DEBUG level shows the SQL statements with `?` placeholders.
 TRACE level (BasicBinder) adds the parameter values:
@@ -1131,7 +1191,7 @@ Hibernate: select o1_0.id,o1_0.status,o1_0.total from orders o1_0 where o1_0.id=
 TRACE  binding parameter [1] as [BIGINT] - [42]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 `format_sql=true` formats multi-line SQL for readability.
 `use_sql_comments=true` adds a comment with the original HQL/JPQL:
@@ -1140,7 +1200,7 @@ TRACE  binding parameter [1] as [BIGINT] - [42]
 select o1_0.id,...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to use: development and staging only. Never in production.
 - Generates one log line per SQL statement + per parameter
@@ -1152,9 +1212,7 @@ actual parameter values bound to the prepared statement.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-You changed an entity field but no UPDATE statement appeared in
-the SQL logs. What do you check?
+**[MID] Q2 - [MECHANISM] You changed an entity field but no UPDATE statement appeared in the SQL logs. What do you check?**
 
 *Why they ask:* "Lost update" diagnosis is a frequent real-world debugging scenario.
 
@@ -1170,7 +1228,7 @@ boolean managed = em.contains(entity);
 // Fix: load fresh or merge
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. Is there an active @Transactional?
 ```java
@@ -1180,7 +1238,7 @@ String tx = TransactionSynchronizationManager
 // Fix: add @Transactional to the calling method
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 3. Is the field excluded from updates?
 ```java
@@ -1189,7 +1247,7 @@ private String orderNumber;
 // If you modified orderNumber: no SQL generated for it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 4. Was the value actually changed?
 Dirty checking compares with `equals()`. If the new value is equal
@@ -1199,7 +1257,7 @@ order.setStatus("PENDING"); // was already "PENDING"
 // equals() returns true -> not dirty -> no UPDATE
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 5. Was the entity detached mid-transaction?
 If a REQUIRES_NEW inner method committed, the outer context entities
@@ -1214,16 +1272,14 @@ context was somehow cleared or replaced, entities become detached.
 // in logs but are rolled back before you can observe them
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* The `updatable=false` check and the
 `equals()` comparison note - both cause silent "no UPDATE" without errors.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-How do you diagnose a Hibernate issue in production without
-enabling show_sql?
+**[SENIOR] Q3 - [DEBUGGING] How do you diagnose a Hibernate issue in production without enabling show_sql?**
 
 *Why they ask:* Production debugging requires non-invasive tools.
 
@@ -1238,7 +1294,7 @@ Production Hibernate diagnostics without `show_sql`:
 spring.jpa.properties.hibernate.generate_statistics: true
 management.endpoints.web.exposure.include: prometheus
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Key metrics:
 - `hibernate_query_executions_total`: total queries (N+1 indicator)
@@ -1255,7 +1311,7 @@ ORDER BY total_exec_time DESC LIMIT 10;
 -- Repeating query with different ID values = N+1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 3. PostgreSQL slow query log (activation without restart):
 ```sql
@@ -1265,7 +1321,7 @@ SELECT pg_reload_conf();
 -- Revert: ALTER SYSTEM SET log_min_duration_statement = '-1';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 4. APM tools (New Relic, Datadog, Elastic APM):
 SQL queries with call stacks, automatically sampled.
@@ -1278,7 +1334,7 @@ sessionFactory.getStatistics().getQueryPlanCacheHitCount()
 sessionFactory.getStatistics().getQueryPlanCacheMissCount()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `pg_stat_statements` - a PostgreSQL
 built-in that requires no application change and shows actual database
@@ -1286,9 +1342,7 @@ query patterns.
 
 ---
 
-**Q4 [MID] - DEBUGGING**
-An entity update seems to work (no exception, status 200 returned)
-but the database shows the old value. Walk me through your diagnosis.
+**[MID] Q4 - [DEBUGGING] An entity update seems to work (no exception, status 200 returned) but the database shows the old value. Walk me through your diagnosis.**
 
 *Why they ask:* Silent failures are the hardest Hibernate bugs to diagnose.
 
@@ -1309,7 +1363,7 @@ log.debug("entity managed: {}", em.contains(entity));
 // false = DETACHED - changes not tracked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 3: If no UPDATE - check transaction:
 ```java
@@ -1319,7 +1373,7 @@ log.debug("active tx: {}",
 // false = no @Transactional active
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Step 4: If UPDATE in logs but database unchanged - check for rollback:
 Add exception handler to log:
@@ -1329,7 +1383,7 @@ Add exception handler to log:
 // Check: does any code path between the update and commit throw?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Step 5: Are you reading from a read replica?
 ```java
@@ -1338,7 +1392,7 @@ Step 5: Are you reading from a read replica?
 // Fix: add sticky primary window for read-after-write
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 6: Verify with direct database query in a separate session:
 ```sql
@@ -1348,16 +1402,14 @@ SELECT * FROM orders WHERE id = ?;
 -- If new value: application read is from stale replica
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *What separates good from great:* The replica lag as a distinct root
 cause with a different fix than rollback scenarios.
 
 ---
 
-**Q5 [SENIOR] - TRADE-OFF**
-When debugging a Hibernate performance issue, how do you decide
-between optimizing the Hibernate mapping vs rewriting to native SQL?
+**[SENIOR] Q5 - [TRADE-OFF] When debugging a Hibernate performance issue, how do you decide between optimizing the Hibernate mapping vs rewriting to native SQL?**
 
 *Why they ask:* Tests judgment on optimization strategy.
 
@@ -1395,8 +1447,7 @@ objective threshold - 3x cost gap between generated and hand-written SQL.
 
 ---
 
-**Q6 [JUNIOR] - MECHANISM**
-What does LazyInitializationException mean and how do you fix it?
+**[JUNIOR] Q6 - [MECHANISM] What does LazyInitializationException mean and how do you fix it?**
 
 *Why they ask:* LazyInitializationException is the most common Hibernate exception.
 
@@ -1421,7 +1472,7 @@ order.getItems().size(); // LazyInitializationException!
 // items is a lazy proxy - session is closed, cannot load
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Fixes:
 
@@ -1431,7 +1482,7 @@ Fix 1: JOIN FETCH - load the association within the transaction:
 Optional<Order> findWithItems(Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (production): example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 Fix 2: @EntityGraph:
 ```java
@@ -1439,7 +1490,7 @@ Fix 2: @EntityGraph:
 Optional<Order> findById(Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 Fix 3: DTO - transform within the transaction:
 ```java
@@ -1452,7 +1503,7 @@ public OrderDTO getOrderWithItems(Long id) {
 // Controller receives DTO - no session needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 OSIV hides this exception: if `spring.jpa.open-in-view=true` (default),
 the session stays open through the controller. Lazy loading "works"
@@ -1464,9 +1515,7 @@ Always disable OSIV: `spring.jpa.open-in-view=false`.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Describe how you've built or improved Hibernate debugging knowledge
-sharing in your team.
+**[STAFF] Q7 - [BEHAVIORAL] Describe how you've built or improved Hibernate debugging knowledge sharing in your team.**
 
 *Why they ask:* Staff-level question about engineering culture and team capability.
 
@@ -1513,6 +1562,77 @@ size with zero maintenance overhead. The Friday reviews scale to sub-teams.
 *What separates good from great:* Query count assertions in CI as the
 scalable mechanism - it teaches without instruction and enforces without
 enforcement.
+
+**[SENIOR] Q8 - [SCENARIO] A production incident is happening now: an endpoint that normally runs 3 queries is running 200+. You have 10 minutes to diagnose and propose a fix. Walk me through your exact steps.**
+
+**Answer:**
+Minute 1-2: confirm and isolate. Pull the DataDog/New Relic trace for the
+affected endpoint. Confirm it is N+1 (query count scales with result set
+size) vs a different pattern (e.g. full table scan, missing index). Get
+the entity name from the slow query log - the pattern will be
+`SELECT * FROM table WHERE id = ?` repeated many times.
+
+Minute 3-4: identify the fetch path. Open the entity class and map the
+association chain. Which `@OneToMany` or `@ManyToOne` is triggering the
+extra queries? Look for `fetch = FetchType.LAZY` on the culprit association.
+
+Minute 5-6: check if the fix is safe to deploy now. The fastest fixes are:
+(1) Add `@BatchSize(size=25)` to the association - zero risk, just config.
+(2) Enable default_batch_fetch_size globally in application.yml -
+`spring.jpa.properties.hibernate.default_batch_fetch_size=25`. Zero code
+change, immediate improvement from 200 queries to ~8. This is my first
+recommendation for the 10-minute window.
+
+Minute 7-8: deploy the config change. If using Spring Boot, this is a
+one-line application.yml change and a rolling restart. No code review needed
+(it is not code).
+
+Minute 9-10: verify in production. Query count for the endpoint should drop
+from 200+ to single digits immediately. Monitor for 5 minutes. Write the
+post-incident ticket for proper JOIN FETCH or @EntityGraph implementation
+in the next sprint.
+
+*What separates good from great:* `default_batch_fetch_size` as a zero-code
+emergency mitigation that can be deployed in minutes without code review.
+
+---
+
+**[STAFF] Q9 - [DESIGN] How do you architect a Hibernate debugging strategy for a 50-engineer team where most engineers do not know SQL? What processes, tooling, and guardrails do you put in place?**
+
+**Answer:**
+The core problem: Hibernate's abstractions make it possible to write
+inefficient database code without knowing you are doing it. At 50 engineers
+and low SQL fluency, you need the safety net to be automatic, not a
+training program.
+
+Layer 1 - Automatic CI enforcement. Add `HibernateStatisticsAssert` or a
+custom `@Transactional` test wrapper that fails tests if query count exceeds
+a threshold. Every service test automatically counts queries. If a change
+causes query count to jump from 3 to 25, CI fails with a clear message
+about N+1. No SQL knowledge required to understand the failure.
+
+Layer 2 - Query visibility in development. Configure `show_sql=true` and
+`format_sql=true` in dev profiles. Add `p6spy` for developers who want
+parameter values. The goal: make SQL visible by default so engineers see
+what they are generating even if they do not read it carefully.
+
+Layer 3 - Architecture review for new entities. Any new `@OneToMany`
+association requires a fetch strategy decision to be documented in the PR:
+"lazy + batch" / "eager join" / "not loaded by this endpoint". This forces
+the author to think about it. Review time: 2 minutes.
+
+Layer 4 - Playbook for incidents. The debugging taxonomy from Layer 2
+becomes a shared Confluence page: "Hibernate is slow: start here." It walks
+through enabling statistics, reading the SQL log, identifying N+1 vs
+missing-index vs wrong-fetch patterns. Shared playbook means any engineer
+can diagnose, not just the Hibernate specialist.
+
+Layer 5 - Dedicated performance lane. One team meeting per quarter where
+the Hibernate statistics dashboard for the top 10 slowest queries is
+reviewed. This is proactive, not reactive.
+
+*What separates good from great:* CI query count assertions as the force
+multiplier - scales to 500 engineers with zero incremental effort.
 
 ---
 
@@ -1658,7 +1778,7 @@ STEP 5: FIX
   - DTO projection to load only needed data
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This N+1 Detection Checklist example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1692,7 +1812,7 @@ void orderListHasNoNPlusOne() {
 }
 ```
 
-> **Code walkthrough:** The test measures actual query count against a
+> **Code walkthrough:** The test measures actual query count against aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > known data set. 10 orders requires knowing if customer is fetched
 > with each order. `stats.clear()` resets counters before the operation.
 > `stats.getQueryExecutionCount()` returns the total after. `isLessThanOrEqualTo(2)`
@@ -1724,7 +1844,7 @@ class OrderServiceN1Test {
 // assertSelectCount is precise to the statement
 ```
 
-> **Code walkthrough:** `SQLStatementCountValidator` uses datasource-proxy
+> **Code walkthrough:** `SQLStatementCountValidator` uses datasource-proxyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to intercept and count all JDBC statements. `assertSelectCount(1)` fails
 > with a clear message if more than 1 SELECT is executed. This is more
 > precise than Statistics (which counts all query types) - it counts only
@@ -1770,7 +1890,7 @@ public class HibernateQueryCounter {
 //   description: "Check recent deployments"
 ```
 
-> **Code walkthrough:** The production N+1 monitor tracks queries per
+> **Code walkthrough:** The production N+1 monitor tracks queries perice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > session (proxy for queries per request). A baseline of 2-3 queries per
 > session is normal. A spike to 20+ sustained for 5 minutes indicates a
 > newly deployed N+1. The alert fires within 5 minutes of the deployment,
@@ -1842,7 +1962,7 @@ List<Order> orders = orderRepo.findAllWithItems();
 // But List.size() = 50
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:*
 ```java
@@ -1859,7 +1979,7 @@ orderRepo.findAllWithItems(
 // Hibernate batch-loads items for the specific IDs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -1879,7 +1999,7 @@ List<OrderItem> items = itemRepo.findByProduct(productId);
 // Actual: 1 SELECT for items + N SELECTs for orders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:*
 ```java
@@ -1890,7 +2010,7 @@ List<OrderItem> findByProductWithOrder(@Param("pid") Long pid);
 // 1 SELECT with JOIN - loads orders in same query
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1912,8 +2032,7 @@ List<OrderItem> findByProductWithOrder(@Param("pid") Long pid);
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is the N+1 query problem?
+**[JUNIOR] Q1 - [MECHANISM] What is the N+1 query problem?**
 
 *Why they ask:* Fundamental concept that every backend developer encounters.
 
@@ -1934,7 +2053,7 @@ for (Order o : orders) {
 // For 100 orders: 101 queries instead of 1-2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The queries look like:
 ```sql
@@ -1944,14 +2063,14 @@ SELECT * FROM customers WHERE id=2; -- query for order 2
 ... 98 more
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 How to detect in Spring Boot:
 ```yaml
 # application-dev.yml:
 logging.level.org.hibernate.SQL: DEBUG
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-dev.yml: example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Run the endpoint. Count SELECT statements in the log.
 Expected: 1-2 queries. If you see 50+: N+1.
@@ -1963,7 +2082,7 @@ List<Order> findAllWithCustomer();
 // 1 SQL: SELECT o.*, c.* FROM orders o JOIN customers c ON...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-dev.yml: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Explaining that N+1 is a symptom of
 lazy loading triggered in a loop - the root cause is an association
@@ -1971,9 +2090,7 @@ accessed per-entity outside the initial query.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What are @BatchSize and FetchMode.SUBSELECT? How do they differ
-from JOIN FETCH for solving N+1?
+**[MID] Q2 - [MECHANISM] What are @BatchSize and FetchMode.SUBSELECT? How do they differ from JOIN FETCH for solving N+1?**
 
 *Why they ask:* Tests knowledge of alternative N+1 solutions.
 
@@ -1993,7 +2110,7 @@ List<OrderItem> items;
 // ... (4 queries instead of 100)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-dev.yml: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `FetchMode.SUBSELECT`: loads all associations in one subquery:
 ```java
@@ -2005,7 +2122,7 @@ List<OrderItem> items;
 // SELECT * FROM items WHERE order_id IN (SELECT id FROM orders ...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-dev.yml: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `JOIN FETCH`: loads associations in the same query as the parent:
 ```java
@@ -2013,7 +2130,7 @@ List<OrderItem> items;
 // 1 query: SELECT o.*, i.* FROM orders JOIN order_items ON ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-dev.yml: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 When to prefer each:
 
@@ -2034,9 +2151,7 @@ association, maintaining lazy default behavior with better batch efficiency.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-You suspect an N+1 in a feature that was just deployed to production.
-How do you confirm it without causing more disruption?
+**[SENIOR] Q3 - [DEBUGGING] You suspect an N+1 in a feature that was just deployed to production. How do you confirm it without causing more disruption?**
 
 *Why they ask:* Production N+1 diagnosis without adding load or downtime.
 
@@ -2053,7 +2168,7 @@ increase(hibernate_query_executions_total{endpoint="/api/orders"}[1m])
 # Baseline: ~2-3. If > 20: N+1 confirmed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: pg_stat_statements (zero-overhead, always running):
 ```sql
@@ -2065,7 +2180,7 @@ ORDER BY calls DESC LIMIT 5;
 -- in the last 5 minutes: N+1 confirmed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 3: Slow query log (activate temporarily):
 ```sql
@@ -2077,7 +2192,7 @@ ALTER SYSTEM SET log_min_duration_statement = '-1';
 SELECT pg_reload_conf();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 4: Enable Hibernate statistics temporarily:
 ```java
@@ -2091,7 +2206,7 @@ log.info("Queries per session: {}", qps);
 sessionFactory.getStatistics().setStatisticsEnabled(false);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Rollback threshold: if database CPU is rising and queries/request > 20
 sustained for > 5 minutes: rollback the deployment. The N+1 will become
@@ -2103,8 +2218,7 @@ completely non-invasive, always available, shows real call patterns.
 
 ---
 
-**Q4 [MID] - MECHANISM**
-How does @EntityGraph differ from JOIN FETCH?
+**[MID] Q4 - [MECHANISM] How does @EntityGraph differ from JOIN FETCH?**
 
 *Why they ask:* Both solve N+1 but with different use cases.
 
@@ -2126,7 +2240,7 @@ List<Order> findAllFull();
 // Cons: one method per fetch combination needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @EntityGraph (annotation-based):
 ```java
@@ -2153,7 +2267,7 @@ List<Order> findByStatus(String status);
 Optional<Order> findById(Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 Key differences:
 - JOIN FETCH is query-specific: only that JPQL method uses it
@@ -2173,9 +2287,7 @@ JOIN default for @EntityGraph.
 
 ---
 
-**Q5 [SENIOR] - DEBUGGING**
-You add JOIN FETCH for a @OneToMany collection, but the list
-now returns duplicate parent entities. How do you fix it?
+**[SENIOR] Q5 - [DEBUGGING] You add JOIN FETCH for a @OneToMany collection, but the list now returns duplicate parent entities. How do you fix it?**
 
 *Why they ask:* JOIN FETCH Cartesian product is the most common JOIN FETCH mistake.
 
@@ -2198,7 +2310,7 @@ List<Order> findAllWithItems();
 // Returns: 10 Order objects (deduplicated by Hibernate in memory)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 2: Use Set<Order> return type:
 ```java
@@ -2206,7 +2318,7 @@ Set<Order> findAll(); // Set deduplicates by equals/hashCode
 // BUT: requires stable equals/hashCode on Order
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 3: Use @QueryHints to apply distinct:
 ```java
@@ -2218,7 +2330,7 @@ List<Order> findAllWithItems();
 // for Hibernate deduplication but don't add DISTINCT to SQL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 JPQL DISTINCT vs SQL DISTINCT:
 SQL DISTINCT: deduplicates at the database level (affects all columns).
@@ -2230,8 +2342,7 @@ hint to prevent SQL DISTINCT while keeping Hibernate-level deduplication.
 
 ---
 
-**Q6 [MID] - COMPARISON**
-What is the difference between N+1 on a @OneToMany vs @ManyToOne?
+**[MID] Q6 - [TRADE-OFF] What is the difference between N+1 on a @OneToMany vs @ManyToOne?**
 
 *Why they ask:* N+1 on @ManyToOne is less commonly understood.
 
@@ -2247,7 +2358,7 @@ for (Order o : orders) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Baseline: ~2-3. If > 20: N+1 confirmed example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @ManyToOne N+1: loading N children triggers N queries for parents.
 ```java
@@ -2260,7 +2371,7 @@ for (OrderItem i : items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Key differences:
 - `@OneToMany` is LAZY by default - always a risk if accessed in a loop
@@ -2279,7 +2390,7 @@ List<OrderItem> items = itemRepo.findByProductId(productId);
 // 100 Order objects instantiated = higher memory
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Recommendation: change `@ManyToOne` to LAZY and use JOIN FETCH explicitly
 where needed. This gives you the same control as `@OneToMany`.
@@ -2289,10 +2400,7 @@ the recommendation to change it to LAZY for explicit control.
 
 ---
 
-**Q7 [SENIOR] - DEBUGGING**
-Your monitoring shows a query rate spike to 10x immediately after
-a deployment. You suspect N+1 but the endpoint has not changed.
-What else do you check?
+**[SENIOR] Q7 - [DEBUGGING] Your monitoring shows a query rate spike to 10x immediately after a deployment. You suspect N+1 but the endpoint has not changed. What else do you check?**
 
 *Why they ask:* Tests systematic root-cause analysis beyond the obvious.
 
@@ -2335,6 +2443,75 @@ entity load chain for the affected endpoint.
 
 *What separates good from great:* L2C eviction as a non-code cause of
 query rate spike - often missed when debugging.
+
+**[SENIOR] Q8 - [SCENARIO] You are reviewing a PR that adds a new REST endpoint. The endpoint loads a list of Orders where each Order has a lazy @OneToMany Addresses collection. The PR author says "I added .size() to validate the collection is non-empty." What is the risk and how do you address it in the review?**
+
+**Answer:**
+The risk is an N+1 query triggered by `.size()` on a lazy collection.
+
+What happens at runtime: the JPQL `SELECT o FROM Order o WHERE ...` returns
+N Order entities. Each Order has `addresses` as a lazy proxy - no SQL has
+fired yet. The `.size()` call on the proxy triggers a `SELECT * FROM address WHERE order_id = ?` for EACH order. 10 orders = 10 extra queries. 1000 orders = 1000 extra queries.
+
+In the review I would:
+
+1. Flag it immediately: "This will trigger N+1. `addresses.size()` on each
+   Order fires a separate SELECT per Order."
+
+2. Offer the right fix: `JOIN FETCH o.addresses WHERE ...` in the JPQL,
+   or `@EntityGraph(attributePaths = "addresses")` on the Repository method.
+   This loads all addresses in a single JOIN, then `size()` operates on the
+   already-loaded collection.
+
+3. Check if `.size() > 0` is even the right check. Often the intent is
+   `o.addresses.isEmpty()` inverted, which is equivalent but communicates
+   intent better. If just checking existence, a COUNT query is more
+   efficient than loading the full collection.
+
+4. Require a test: `@DataJpaTest` with an assertion on query count using
+   `HibernateStatisticsAssert` or equivalent. If the test passes at 1 query
+   for a result set of 5 orders, the fix is correct.
+
+*What separates good from great:* Immediately recognizing `.size()` on a
+lazy collection as an N+1 trigger - the most common form in real codebases.
+
+---
+
+**[STAFF] Q9 - [BEHAVIORAL] Describe how you introduced N+1 detection into the development workflow at a previous company. What resistance did you face and how did you overcome it?**
+
+**Answer:**
+
+**Situation:** At a previous company, we had recurring production incidents
+where endpoints slowed down as data grew. Root cause was always N+1 but it
+was only discovered in production because development databases had 10-100
+rows, not 10,000.
+
+**Task:** Introduce automatic N+1 detection without disrupting the
+development workflow or requiring engineers to learn SQL.
+
+**Action:** I started with a proof of concept: I added a `@Rule` in JUnit 4
+(later `@BeforeEach` in JUnit 5) that captured `SessionStatistics.getEntityLoadCount()` before and after each test, and logged a warning if load count exceeded result set size by more than 20%. No failures, just warnings.
+
+For two sprints I ran this silently and collected the data. Found 12
+existing N+1 violations across 6 services. I brought this to the tech
+leads as concrete data: "These 12 existing violations are the reason for
+incidents 3, 7, and 9 this quarter."
+
+Resistance: "Adding query count assertions will slow down every test." I
+addressed this by showing the overhead is ~2ms per test (Hibernate
+statistics are always collected; we just read the counter). "We will have
+too many failing tests." I addressed this by proposing a soft-fail phase:
+warnings for 4 weeks, then failures only for new violations (threshold
+set to current count + 1 per existing violation).
+
+**Result:** Within 6 sprints, all 12 existing violations were fixed (team
+fixed them proactively once they could see them). Zero new N+1 incidents
+in production for the next 12 months. The tooling became part of the
+standard archetype, applied to all new services automatically.
+
+*What separates good from great:* The soft-fail phase as change management
+technique - it gives teams time to fix existing violations before the gate
+becomes hard.
 
 ---
 

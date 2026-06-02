@@ -121,7 +121,7 @@ public Order create(Order order) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java EE Security Annotations example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 **@RolesAllowed with multiple roles (OR logic):**
 
@@ -133,7 +133,7 @@ public Response getOrder(@PathParam("id") Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java EE Security Annotations example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Programmatic check alongside annotation:**
 
@@ -159,7 +159,7 @@ public Response getOrder(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java EE Security Annotations example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -282,7 +282,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Three layers of security annotation
+> **Code walkthrough:** Three layers of security annotationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > usage in a production pattern. The `OrderResource`
 > shows mixed annotation levels: `@PermitAll` on list
 > allows unauthenticated browsing; `getOrder` with
@@ -381,7 +381,7 @@ grep -r "ContainerRequestFilter\|@Provider" \
   src/main/java/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if auth filter is registered: example demonstrates HTTP request from shell using container. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:*
 ```xml
@@ -394,7 +394,7 @@ grep -r "ContainerRequestFilter\|@Provider" \
 </context-param>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if auth filter is registered: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -449,7 +449,7 @@ public class AuthFilter implements ContainerRequestFilter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if auth filter is registered: example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Some APIs return 404 (Not Found) for unauthorized access to sensitive resources: this avoids revealing the endpoint exists to unauthenticated attackers. The trade-off: developer experience vs security. For internal APIs, use 401/403 correctly. For public APIs with sensitive resources, consider 404."
 
@@ -479,7 +479,7 @@ Without `resteasy.role.based.security=true`:
 -> all callers get 200 regardless of role
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if auth filter is registered: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This is a common security misconfiguration in JAX-RS
 applications on WildFly/RESTEasy.
@@ -529,7 +529,7 @@ class OrderResourceSecurityTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if auth filter is registered: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Unit test with mocked SecurityContext:
 ```java
@@ -544,7 +544,7 @@ void adminSeesAllOrders() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if auth filter is registered: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "The negative test is mandatory. Without it, you verify the happy path but not the access control. Automated security scanners (OWASP ZAP) will catch missing authentication checks, but only if they're in the test scope."
 
@@ -580,7 +580,7 @@ public class OrderResource {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Rule: the most specific annotation wins.
 Method-level > Class-level.
@@ -644,7 +644,7 @@ public class JwtAuthMechanism
 public class AppConfig { }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 JAAS LoginModule cannot use CDI injection.
 Jakarta Security @HttpAuthenticationMechanism can.
@@ -704,7 +704,7 @@ public Response update(
 ) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For complex ABAC (multi-tenant, time-based, geo-based):
 use OPA (Open Policy Agent) or similar policy engine.
@@ -725,6 +725,12 @@ Top misconfigurations:
    All callers get access. Silent failure.
 
 2. JWT validation skipping signature or expiration:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
    ```java
    // BAD: only decodes, no verification
    JwtClaims claims = JwtClaims.parse(token);
@@ -739,7 +745,7 @@ Top misconfigurations:
        .build();
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 3. 401 response missing `WWW-Authenticate` header.
    Clients that follow the HTTP spec won't retry auth.
@@ -818,7 +824,7 @@ public class JwtAuthFilter implements ContainerRequestFilter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 JWT validation must check:
 - Signature (with correct public key)
@@ -877,7 +883,7 @@ public class SecurityAuditFilter
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Audit log mandatory fields:
 - Who (user identity or "anonymous")
@@ -1033,7 +1039,7 @@ If Module 2 had FAILED (but is OPTIONAL):
   Subject has Module 1's Principals only (no LDAP groups)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JAAS Authentication example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1172,7 +1178,7 @@ void demonstrateJaasLogin() throws LoginException {
 }
 ```
 
-> **Code walkthrough:** A JAAS LoginModule for JWT
+> **Code walkthrough:** A JAAS LoginModule for JWTice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > validation showing the two-phase commit protocol in
 > full detail. The `login()` method validates the token
 > but does NOT modify the Subject - it only sets
@@ -1271,7 +1277,7 @@ SELECT password FROM users WHERE username = 'testuser';
 # Then verify the hash matches what LoginModule computes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then verify the hash matches what LoginModule computes example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Match the password hashing algorithm between
 the LoginModule (`hashAlgorithm` option) and the
@@ -1326,7 +1332,7 @@ phase prevents this.
 -> Subject: unmodified (no Principals added)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then verify the hash matches what LoginModule computes example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* "The key implementation requirement: modules must store Principals in a temporary list during login() and only move them to Subject.getPrincipals() in commit(). Modules that add directly to Subject during login() break the protocol and create inconsistent state when abort() is called."
 
@@ -1367,7 +1373,7 @@ Security domain chain:
   -> add extra groups if available, OK if not
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then verify the hash matches what LoginModule computes example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* "SUFFICIENT enables fallback authentication: try JWT first (SUFFICIENT) - if valid, skip password check. If absent, fall through to username/password (REQUIRED). The client only sends one type of credential; the chain handles both. This is how enterprise SSO + local auth coexistence works."
 
@@ -1419,7 +1425,7 @@ public class FormCallbackHandler
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then verify the hash matches what LoginModule computes example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The same DatabaseLoginModule works with:
 - HTTP form login (FormCallbackHandler)
@@ -1466,7 +1472,7 @@ SecurityContext in JAX-RS/EJB request
   - @RolesAllowed checks against SecurityIdentity roles
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then verify the hash matches what LoginModule computes example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Legacy JAAS (PicketBox in WildFly < 12):
 - Security domain configured in standalone.xml
@@ -1514,7 +1520,7 @@ public class MyAuthMechanism
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "The CDI injection difference is decisive. A JAAS LoginModule needs a JNDI lookup to get a DataSource. A Jakarta Security @IdentityStore can inject @PersistenceContext or @Inject any CDI bean. For any new development on Jakarta EE 8+, Jakarta Security is the right API."
 
@@ -1528,6 +1534,12 @@ custom JAAS LoginModules?**
 Top risks:
 
 1. Credentials left in memory (String passwords):
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
    ```java
    // BAD: String immutable, stays in heap
    private String password = new String(pc.getPassword());
@@ -1542,7 +1554,7 @@ Top risks:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 2. SQL injection in credential validation:
    ```java
@@ -1553,7 +1565,7 @@ Top risks:
    ps.setString(1, username);
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 3. Timing attacks in comparison:
    ```java
@@ -1565,7 +1577,7 @@ Top risks:
        storedHash.getBytes(), computedHash.getBytes())) {...}
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 4. Logging credentials:
    ```java
@@ -1574,7 +1586,7 @@ Top risks:
        " password: " + password);
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Timing attacks are real: if the LoginModule returns faster for non-existent users (username lookup returns null immediately) than for wrong passwords (username found, hash computed, comparison runs), an attacker measures response times to enumerate valid usernames. Use constant-time comparison and normalize response time."
 
@@ -1596,7 +1608,7 @@ Debugging steps:
    :write-attribute(name=level,value=TRACE)
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: server log (preferred in production): example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 2. Test LoginModule in isolation:
    ```java
@@ -1622,7 +1634,7 @@ Debugging steps:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: server log (preferred in production): example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 3. Verify database hash directly:
    ```sql
@@ -1631,7 +1643,7 @@ Debugging steps:
    -- Manually compute hash and compare
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: server log (preferred in production): example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *What separates good from great:* "-Djava.security.debug=all outputs to stdout, not the server log. In production-like setups where stdout is redirected or discarded, use the server's logging configuration instead. The WildFly CLI approach writes to server.log where you can grep."
 
@@ -1662,7 +1674,7 @@ Role mapping connects them:
 </jboss-web>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: server log (preferred in production): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Elytron (modern): role decoder maps identity attributes:
 ```xml
@@ -1671,7 +1683,7 @@ Elytron (modern): role decoder maps identity attributes:
 <!-- Identity's 'groups' attribute is used directly as roles -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: server log (preferred in production): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Benefits: application code uses "ADMIN" (logical name);
 infrastructure uses LDAP group names. When LDAP group
@@ -1715,7 +1727,7 @@ subject.getPrincipals().stream()
     .anyMatch(p -> "admin".equals(p.getName()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: server log (preferred in production): example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* "A Subject can have a CallerPrincipal (identity) and RolePrincipal (roles) as separate Principal instances. The difference matters: getUserPrincipal() returns the CallerPrincipal (username); isUserInRole() checks RolePrincipals. Some LoginModule implementations add roles as Principals with class RolePrincipal; the app server knows which Principal types represent roles via configuration."
 

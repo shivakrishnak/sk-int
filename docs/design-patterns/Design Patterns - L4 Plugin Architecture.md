@@ -111,7 +111,7 @@ modification."
    - Never imports or directly references concrete plugins
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Plugin Architecture with Factory and Strategy example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Discovery mechanisms compared:**
 
@@ -154,7 +154,7 @@ public class PdfReportPlugin implements ReportPlugin {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Plugin Architecture with Factory and Strategy example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Extension points and lifecycle:**
 
@@ -229,7 +229,7 @@ public class SmsNotificationPlugin
 }
 ```
 
-> **Code walkthrough:** Each plugin is a `@Component` implementing
+> **Code walkthrough:** Each plugin is a `@Component` implementingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `NotificationPlugin`. The `getChannel()` discriminator identifies the
 > plugin type. `supports()` provides fine-grained matching (e.g., user
 > may not have an email address). `send()` is the core behavior. Spring
@@ -272,7 +272,7 @@ public class NotificationPluginRegistry {
 }
 ```
 
-> **Code walkthrough:** `List<NotificationPlugin>` injection collects all
+> **Code walkthrough:** `List<NotificationPlugin>` injection collects allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > beans implementing `NotificationPlugin`. The registry builds two indexes:
 > `byChannel` for O(1) lookup by type, and `all` for sequential `supports()`
 > matching. `Collections.unmodifiableList` ensures the registry is
@@ -312,7 +312,7 @@ public class NotificationService {
 // It imports zero concrete plugin classes.
 ```
 
-> **Code walkthrough:** `NotificationService` has zero knowledge of
+> **Code walkthrough:** `NotificationService` has zero knowledge ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > concrete plugins. It only knows `NotificationPluginRegistry` and
 > `NotificationPlugin`. Adding Slack: `NotificationService` is not
 > modified. The host is completely closed for modification (OCP). The
@@ -344,7 +344,7 @@ public class NotificationPluginRegistry {
 // automatically discovered. No code changes.
 ```
 
-> **Code walkthrough:** Java SPI (`ServiceLoader`) is the standard JDK
+> **Code walkthrough:** Java SPI (`ServiceLoader`) is the standard JDKice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mechanism for plugin discovery. Each JAR that provides a `NotificationPlugin`
 > implementation includes a `META-INF/services/com.example.NotificationPlugin`
 > file listing its implementations. `ServiceLoader.load()` discovers all
@@ -419,7 +419,7 @@ Provider JARs (plugins):
   Each JAR: independent deployment, own dependencies
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Deployment model:**
 
@@ -437,7 +437,7 @@ ClassLoader isolation:
   Core platform ClassLoader is parent; shared API classes only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Trade-offs:**
 
@@ -583,7 +583,7 @@ void logPlugins(ApplicationReadyEvent e) {
 # Check @ConditionalOn* if bean is conditional
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check @ConditionalOn* if bean is conditional example demonstrates shell script pattern using goroutine. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Failure 2: Wrong plugin selected when multiple match**
 
@@ -612,7 +612,7 @@ public class DefaultEmailPlugin implements NotificationPlugin {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check @ConditionalOn* if bean is conditional example demonstrates Java API usage using goroutine. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure 3: Plugin state mutation causes race conditions**
 
@@ -621,6 +621,12 @@ Symptom: intermittent wrong results in high-concurrency scenarios.
 Diagnosis: Plugin implementations are Spring singleton beans. If a plugin
 stores request-specific state as an instance field, concurrent requests
 share and overwrite it.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Instance field shared across requests
@@ -644,7 +650,7 @@ public class EmailPlugin implements NotificationPlugin {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Check @ConditionalOn* if bean is conditional example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -769,7 +775,7 @@ public interface NotificationPlugin {
     default boolean supportsRetry() { return false; }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check @ConditionalOn* if bean is conditional example demonstrates exception handling using interface. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 (2) Adapter base class: provide an abstract `AbstractNotificationPlugin`
 that implements all methods with defaults. Concrete plugins extend the
@@ -822,7 +828,7 @@ public class PluginRegistry {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using goroutine. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 (4) Health checks: each plugin exposes `boolean isHealthy()`. The registry
 routes only to healthy plugins. An unhealthy plugin is marked and retried
@@ -871,7 +877,7 @@ void selectsMostSpecificPlugin() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* Testing negative cases: no plugin
 matches (expected exception), two plugins match (correct one wins via
@@ -1018,7 +1024,7 @@ public class WhatsAppNotificationPlugin
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using goroutine. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 (2) Add `WhatsAppClient` to the dependencies or implement it.
 (3) Deploy. No changes to `NotificationService`, `PluginRegistry`,

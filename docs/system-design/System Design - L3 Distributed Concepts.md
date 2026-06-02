@@ -129,7 +129,7 @@ Real-world examples:
     MySQL single primary: not distributed -> no CAP concerns
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CAP Theorem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **PACELC model (more practical):**
 
@@ -157,7 +157,7 @@ Latency vs Consistency (no partition):
   The tradeoff exists even when network is healthy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CAP Theorem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -216,7 +216,7 @@ public class OrderRepository {
 }
 ```
 
-> **Code walkthrough:** These three examples show the CP/AP choice at the code
+> **Code walkthrough:** These three examples show the CP/AP choice at the codeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > level. Account balance uses MongoDB primary-read preference: any failure of
 > the primary returns an exception (not stale data). This is CP - the system
 > chooses consistency over availability. The feed repository uses Cassandra ONE -
@@ -287,10 +287,10 @@ reads (inventory reservation).
 
 ---
 
-#### Q1 - How do HBase and Cassandra exemplify CP vs AP?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do HBase and Cassandra exemplify CP vs AP?**
 
 **HBase (CP):**
-```
+```plaintext
 Architecture:
   Writes go to RegionServer (process that owns the data region)
   RegionServer determined by ZooKeeper (distributed coordinator)
@@ -312,7 +312,7 @@ Why CP:
   Design choice: error is better than wrong answer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Cassandra (AP):**
 ```
@@ -340,7 +340,7 @@ Why AP:
   Design choice: availability is the priority
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The choice isn't just about partition behavior
 but about the operational model. Cassandra requires no single primary, so there's
@@ -352,9 +352,9 @@ not the only criterion.
 
 ---
 
-#### Q2 - What is linearizability and how does it relate to CAP's "C"?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is linearizability and how does it relate to CAP's "C"?**
 
-```
+```plaintext
 Linearizability (CAP's "C"):
   The strongest consistency model
   Requirement: every operation appears to take effect
@@ -394,7 +394,7 @@ Weaker consistency models:
     Weaker than linearizability, stronger than eventual
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Spanner achieves external consistency (stronger
 than linearizability) across globally distributed shards using TrueTime (GPS +
@@ -408,11 +408,11 @@ truly global, strongly consistent data.
 
 ---
 
-#### Q3 - How does Google Spanner "solve" CAP?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does Google Spanner "solve" CAP?**
 
 Spanner: globally distributed, strongly consistent database.
 
-```
+```plaintext
 Spanner claim: "externally consistent" (equivalent to linearizability)
                across globally distributed shards
 
@@ -449,7 +449,7 @@ Does this "violate" CAP?
                       (consistent + higher latency, no partition vs latency tradeoff)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Spanner doesn't violate CAP. During partition,
 it blocks (unavailable). What Spanner achieves: strong consistency without
@@ -463,11 +463,11 @@ a service (Cloud Spanner) instead.
 
 ---
 
-#### Q4 - When would you choose AP over CP for a real system?
+**[MID] Q4 - [TRADE-OFF] When would you choose AP over CP for a real system?**
 
 AP trade-off decisions in practice:
 
-```
+```plaintext
 Choose AP (eventual consistency) when:
 
   Product catalog:
@@ -511,7 +511,7 @@ Choose CP (strong consistency) when:
     CP: second buyer gets "out of stock" immediately
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The nuanced answer: most systems use both
 AP and CP for different operations. Display operations (showing product prices,
@@ -524,7 +524,7 @@ eventually consistent) from the write model (CP, normalized, strongly consistent
 
 ---
 
-#### Q5 - How does distributed consensus (Paxos, Raft) relate to CP systems?
+**[MID] Q5 - [ARCHITECTURE] How does distributed consensus (Paxos, Raft) relate to CP systems?**
 
 CP systems need consensus to elect a leader and agree on state:
 
@@ -564,7 +564,7 @@ Raft algorithm (simpler than Paxos):
     Consul
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Raft's design principle: understandability
 over efficiency. Paxos is theoretically elegant but notoriously hard to implement
@@ -579,11 +579,11 @@ timeout 1000ms; increase for loaded systems.
 
 ---
 
-#### Q6 - How would you explain CAP to a product manager?
+**[MID] Q6 - [CONCEPTUAL] How would you explain CAP to a product manager?**
 
 Non-technical CAP explanation:
 
-```
+```plaintext
 Analogy: Bank branch during network outage
 
   Scenario: bank's central server is down
@@ -618,7 +618,7 @@ For a product manager:
     Shopping cart: wrong = annoying but recoverable (choose AP)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The CP vs AP choice should be visible in
 the product's error messages. A CP system during partition: "Service temporarily
@@ -631,7 +631,7 @@ leads to better UX and fewer "bug" reports about expected system behavior.
 
 ---
 
-#### Q7 - What is the PACELC theorem and why is it more useful than CAP?
+**[SENIOR] Q7 - [DEBUGGING] What is the PACELC theorem and why is it more useful than CAP?**
 
 PACELC: extends CAP to cover normal (non-partition) operation.
 
@@ -677,7 +677,7 @@ Why PACELC is more useful:
   CAP can't answer this; PACELC can
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* PACELC reframes the design question from
 "what do we do during failure?" to "what is our ongoing consistency vs latency
@@ -690,11 +690,11 @@ operation: latency or consistency?"
 
 ---
 
-#### Q8 - How do vector clocks resolve conflicts in AP systems?
+**[SENIOR] Q8 - [ARCHITECTURE] How do vector clocks resolve conflicts in AP systems?**
 
 Vector clocks: track causality to resolve write conflicts.
 
-```
+```plaintext
 Problem: AP system, two concurrent writes, which wins?
 
   User A (on server 1): updates profile name to "Alice"
@@ -736,7 +736,7 @@ Vector clock approach:
     -> No conflict: Bob wins clearly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Vector clocks track causality, not just time.
 They tell you: "Did writer B know about writer A's write when B wrote?" If yes:
@@ -750,7 +750,7 @@ the conflict (union of shopping cart items = correct merge for most cases).
 
 ---
 
-#### Q9 - How does the CAP theorem apply to designing a payment processing system?
+**[SENIOR] Q9 - [ARCHITECTURE] How does the CAP theorem apply to designing a payment processing system?**
 
 Payment processing: CAP analysis for a money-critical system.
 
@@ -791,7 +791,7 @@ Pattern: CP core (ledger) + AP periphery (everything else)
   Informational reads: AP for performance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Payment systems don't use a single database
 with a single consistency level. The money-critical path (debit, credit, reserve)
@@ -896,7 +896,7 @@ different replicas have different values. This is the 'eventual' window."
 
 **Consistency models spectrum:**
 
-```
+```plaintext
 Strongest:                              Weakest:
 Linearizability -> Sequential -> Causal -> Read-your-writes -> Eventual
 
@@ -927,7 +927,7 @@ Eventual consistency:
   Examples: DNS propagation, social feeds, shopping carts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **BASE vs ACID:**
 
@@ -959,11 +959,17 @@ The spectrum: pure BASE <-------> pure ACID
   Postgres sync replica: ACID everywhere
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Eventual consistency example: distributed counter
@@ -1126,7 +1132,7 @@ pre-read balance from possibly stale source.
 
 ---
 
-#### Q1 - How does anti-entropy repair work in Cassandra?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does anti-entropy repair work in Cassandra?**
 
 Anti-entropy: background process to ensure replicas converge.
 
@@ -1171,7 +1177,7 @@ Repair failure:
   With repair: full repair brings Node 2 up to date
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Anti-entropy repair is operationally critical
 in Cassandra deployments but often neglected. The common failure: nodes miss hints
@@ -1184,7 +1190,7 @@ has never been repaired is accumulating staleness silently.
 
 ---
 
-#### Q2 - What are CRDTs and which problems do they solve?
+**[JUNIOR] Q2 - [CONCEPTUAL] What are CRDTs and which problems do they solve?**
 
 CRDT (Conflict-free Replicated Data Type): data structures that auto-merge.
 
@@ -1233,7 +1239,7 @@ OR-Set (Observed-Remove Set):
   Use: shopping cart, todo list
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* CRDTs are now in production at major scale.
 Redis CRDT (Redis Enterprise): multi-master Redis with CRDT data types.
@@ -1247,7 +1253,7 @@ multi-value, or operational transform.
 
 ---
 
-#### Q3 - How does the read-repair process work and what are its limitations?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does the read-repair process work and what are its limitations?**
 
 Read repair: correct inconsistencies on-the-fly during reads.
 
@@ -1296,7 +1302,7 @@ Limitations:
   Without repair: deleted tombstones may resurface after GC grace period
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The GC grace period in Cassandra is the
 most subtle consistency issue. When data is deleted: a tombstone is written.
@@ -1311,7 +1317,7 @@ non-negotiable in production Cassandra clusters.
 
 ---
 
-#### Q4 - How does the saga pattern implement eventual consistency for distributed transactions?
+**[MID] Q4 - [ARCHITECTURE] How does the saga pattern implement eventual consistency for distributed transactions?**
 
 Saga: sequence of local transactions with compensating rollbacks.
 
@@ -1354,7 +1360,7 @@ Orchestration Saga:
   Cons: more coupling, orchestrator is a SPOF
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Idempotency is critical in saga implementations.
 Events can be delivered more than once (at-least-once delivery in Kafka). If
@@ -1368,7 +1374,7 @@ duplicate operations.
 
 ---
 
-#### Q5 - How do you handle user sessions in an eventually consistent system?
+**[MID] Q5 - [ARCHITECTURE] How do you handle user sessions in an eventually consistent system?**
 
 Session management with eventual consistency:
 
@@ -1410,7 +1416,7 @@ Option 4: Eventual consistency for non-critical session data
   Auth token: never eventually consistent (must be strongly consistent)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The JWT vs server-side session debate is
 about the consistency vs revocation trade-off. JWT is stateless (no DB lookup
@@ -1425,7 +1431,7 @@ within one use cycle.
 
 ---
 
-#### Q6 - What consistency guarantees does AWS DynamoDB provide?
+**[MID] Q6 - [CONCEPTUAL] What consistency guarantees does AWS DynamoDB provide?**
 
 DynamoDB consistency options:
 
@@ -1467,7 +1473,7 @@ Global Tables (multi-region):
   Strongly consistent reads: within local region only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* DynamoDB's Global Tables + last-writer-wins
 has a known limitation: concurrent writes to the same item from two regions
@@ -1481,7 +1487,7 @@ pattern at the DynamoDB level.
 
 ---
 
-#### Q7 - How do you implement a distributed cache that handles eventual consistency correctly?
+**[SENIOR] Q7 - [HANDS-ON] How do you implement a distributed cache that handles eventual consistency correctly?**
 
 Distributed cache consistency challenges:
 
@@ -1531,7 +1537,7 @@ Solution 4: Accept eventual consistency
   Build checkout path without relying on cached price
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "write then delete" invalidation pattern
 has the race condition described above (Service A populates stale after Service B
@@ -1544,7 +1550,7 @@ For 99% of cases: delete-on-write + short TTL is sufficient.
 
 ---
 
-#### Q8 - How does Kafka ensure eventually consistent event delivery?
+**[SENIOR] Q8 - [CONCEPTUAL] How does Kafka ensure eventually consistent event delivery?**
 
 Kafka's consistency model: at-least-once delivery (eventually consistent).
 
@@ -1585,7 +1591,7 @@ Idempotent consumer pattern:
   -- If RETURNING returns null: already processed, skip
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Exactly-once in Kafka solves the duplicate
 delivery problem at the infrastructure level. But exactly-once only applies
@@ -1599,7 +1605,7 @@ low (idempotent operation): at-least-once. If re-processing is expensive
 
 ---
 
-#### Q9 - How do you detect and fix consistency bugs in production?
+**[SENIOR] Q9 - [PRODUCTION] How do you detect and fix consistency bugs in production?**
 
 Detecting consistency bugs: monitoring, auditing, reconciliation.
 
@@ -1653,7 +1659,7 @@ Fixing consistency bugs in production:
     Root cause fix: prevent recurrence
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Consistency bugs in production are often
 discovered through business audits, not technical monitoring. "The books don't

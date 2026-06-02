@@ -144,7 +144,7 @@ SCALE-OUT ARCHITECTURE OPTIONS:
    Reads use purpose-built read stores
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate at Scale: Sharding and Read Replicas example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key insight:** Hibernate is optimized for transactional write-read
 patterns against a single database. At extreme scale, separating write
@@ -154,6 +154,12 @@ practical than trying to shard a relational database.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Read replica routing with AbstractRoutingDataSource
@@ -198,13 +204,24 @@ public class RoutingDataSourceConfig {
 }
 ```
 
-> **Code walkthrough:** `AbstractRoutingDataSource` delegates
+> **Code walkthrough:** `AbstractRoutingDataSource` delegatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `getConnection()` to one of N DataSources based on the key returned
 > by `determineCurrentLookupKey()`. The routing decision:
 > `isCurrentTransactionReadOnly()` returns `true` when the active
 > transaction was opened with `@Transactional(readOnly=true)`. This
 > routes read-only transactions to the replica automatically, with no
 > change needed in service code beyond the `readOnly=true` annotation.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // GOOD: Service using read replica routing
@@ -236,13 +253,24 @@ public class ProductService {
 }
 ```
 
-> **Code walkthrough:** `@Transactional(readOnly=true)` does two things:
+> **Code walkthrough:** `@Transactional(readOnly=true)` does two things:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (1) routes to the replica via `AbstractRoutingDataSource` and (2) tells
 > Hibernate it can skip dirty checking, reducing session overhead. Default
 > `@Transactional` (no readOnly) routes to the primary. The key: `listProducts`
 > serves read traffic from the replica, reducing primary load. `updatePrice`
 > uses the primary even though it starts with a read, because the write that
 > follows must go to the primary.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // GOOD: Read-after-write consistency handling
@@ -283,12 +311,23 @@ public class UserService {
 // for 5 seconds, ensuring they see their own writes
 ```
 
-> **Code walkthrough:** The "sticky primary" pattern solves read-after-write
+> **Code walkthrough:** The "sticky primary" pattern solves read-after-writeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > consistency. A Caffeine cache tracks user IDs that were written recently.
 > Reads for recently-written users are routed to the primary, not the replica,
 > for a 5-second window. After 5 seconds, the replica has caught up
 > (typical lag < 1 second) and reads route to the replica normally.
 > The cache is sized to hold 10,000 recent writers in ~1MB of memory.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // GOOD: Simple shard routing (application-level)
@@ -333,7 +372,7 @@ public class ShardedUserService {
 // Non-shard-key queries (by email): O(N) - all shards
 ```
 
-> **Code walkthrough:** Application-level sharding uses 4 `UserRepository`
+> **Code walkthrough:** Application-level sharding uses 4 `UserRepository`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > instances, each backed by a different `EntityManagerFactory` and `DataSource`.
 > `shardFor()` maps a user ID to a shard using modulo (consistent for a given
 > user, deterministic). Shard-key queries (by user ID) hit one shard - O(1).
@@ -434,7 +473,7 @@ SELECT client_addr, state, sent_lsn, write_lsn,
 FROM pg_stat_replication;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:*
 ```java
@@ -447,7 +486,7 @@ public UserDTO getUser(@PathVariable Long id) { ... }
 // Trade-off: more primary load, but guaranteed consistency
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -474,7 +513,7 @@ log.info("Shard distribution: {}",
       .collect(Collectors.joining(", ")));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Application-level: log shard key distribution: example demonstrates shell script pattern using Stream. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Choose a shard key with high cardinality and uniform distribution.
 User ID (random UUID) distributes uniformly. Auto-increment integers or
@@ -503,7 +542,7 @@ log.debug("Query hit {} shards for email search",
 # If shardCount = N (all shards): this query does not benefit from sharding
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If shardCount = N (all shards): this query does not benefit from sharding example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* One of:
 1. Add the shard key to the query (change the query to include user_id)
@@ -554,7 +593,7 @@ Phase 3 (100M users): CQRS + sharding for core entities
   Read path (simple by-ID): PostgreSQL read replica
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If shardCount = N (all shards): this query does not benefit from sharding example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min):
 The feed is the hardest scaling problem. Naive approach: for each user,
@@ -685,8 +724,7 @@ flowchart TD
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is a read replica and how does it help with Hibernate performance?
+**[JUNIOR] Q1 - [MECHANISM] What is a read replica and how does it help with Hibernate performance?**
 
 *Why they ask:* Read replicas are a fundamental scaling pattern.
 
@@ -722,9 +760,7 @@ the replica as always up-to-date.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-How does `AbstractRoutingDataSource` route transactions between
-primary and replica?
+**[MID] Q2 - [MECHANISM] How does `AbstractRoutingDataSource` route transactions between primary and replica?**
 
 *Why they ask:* Tests understanding of the Spring routing mechanism.
 
@@ -748,7 +784,7 @@ new AbstractRoutingDataSource() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `TransactionSynchronizationManager.isCurrentTransactionReadOnly()`
 returns the `readOnly` flag of the current `@Transactional` annotation.
@@ -770,8 +806,7 @@ at transaction start - cannot switch mid-transaction.
 
 ---
 
-**Q3 [SENIOR] - TRADE-OFF**
-When should you shard a database and when should you NOT?
+**[SENIOR] Q3 - [TRADE-OFF] When should you shard a database and when should you NOT?**
 
 *Why they ask:* Most engineers recommend sharding prematurely; trade-off
 analysis is the key skill.
@@ -811,10 +846,7 @@ non-relevant partitions), and parallelism without the complexity of sharding.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-Your service routes read queries to the replica. After a major
-data load, read performance suddenly degrades. The primary is
-fine. How do you diagnose?
+**[SENIOR] Q4 - [DEBUGGING] Your service routes read queries to the replica. After a major data load, read performance suddenly degrades. The primary is fine. How do you diagnose?**
 
 *Why they ask:* Replica-specific performance issues require different
 diagnostics than primary issues.
@@ -843,7 +875,7 @@ ANALYZE orders;
 -- This updates statistics without locking the table
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Cause 2: Replica replay lag causing long-running queries to be canceled.
 PostgreSQL replicas can cancel long-running queries to allow replica
@@ -860,7 +892,7 @@ WHERE state = 'active';
 -- Look for: "ERROR: canceling statement due to conflict with recovery"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: increase `max_standby_streaming_delay` (gives queries more time
 to complete) or tune `hot_standby_feedback=on` (prevents primary from
@@ -871,9 +903,7 @@ cleaning up row versions still needed by replica queries).
 
 ---
 
-**Q5 [STAFF] - ARCHITECTURE**
-How would you design a CQRS architecture for a Hibernate-backed
-service to improve read scalability without sharding?
+**[STAFF] Q5 - [DESIGN] How would you design a CQRS architecture for a Hibernate-backed service to improve read scalability without sharding?**
 
 *Why they ask:* CQRS with purpose-built read stores is often more practical
 than sharding for read-heavy services.
@@ -910,7 +940,7 @@ Read Path - Analytics:
   (Batch-updated from Kafka by streaming job)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Consistency model:
 The write store (PostgreSQL) is the source of truth. Read stores are
@@ -943,7 +973,7 @@ public Order createOrder(CreateOrderCmd cmd) {
 // the outbox record is re-processed on restart.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* The Outbox Pattern for guaranteed
 event delivery within the same transaction as the write - this is the
@@ -952,9 +982,7 @@ event stores.
 
 ---
 
-**Q6 [MID] - COMPARISON**
-What is the difference between read replicas and database table
-partitioning as scaling strategies?
+**[MID] Q6 - [TRADE-OFF] What is the difference between read replicas and database table partitioning as scaling strategies?**
 
 *Why they ask:* Tests understanding of different scaling dimensions.
 
@@ -992,9 +1020,7 @@ to Hibernate - it scales data without any application code change.
 
 ---
 
-**Q7 [SENIOR] - TRADE-OFF**
-What are the trade-offs between application-level sharding and
-using a database proxy for sharding (Vitess, Citus)?
+**[SENIOR] Q7 - [TRADE-OFF] What are the trade-offs between application-level sharding and using a database proxy for sharding (Vitess, Citus)?**
 
 *Why they ask:* Tests knowledge of sharding implementation strategies.
 
@@ -1039,10 +1065,7 @@ sharding for new services.
 
 ---
 
-**Q8 [STAFF] - DEBUGGING**
-After introducing read replica routing, integration tests that
-were passing are now failing intermittently. The failures are
-non-deterministic. What is happening?
+**[STAFF] Q8 - [DEBUGGING] After introducing read replica routing, integration tests that were passing are now failing intermittently. The failures are non-deterministic. What is happening?**
 
 *Why they ask:* Read replica routing in tests requires explicit configuration.
 
@@ -1059,7 +1082,7 @@ Test: assert() reads data -> @Transactional(readOnly=true) -> reads replica
 Result: replica may not have propagated the write yet -> data not found
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 In a test environment with an embedded or local database (H2, Testcontainers),
 there is no actual replica - both DataSources may point to the same
@@ -1081,7 +1104,7 @@ public class TestDataSourceConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 2: use a Spring profile that disables routing:
 ```yaml
@@ -1090,7 +1113,7 @@ spring.jpa.open-in-view: false
 # Override routing DataSource bean to return primary
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override routing DataSource bean to return primary example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Fix 3 (Testcontainers): start both primary and replica containers
 with real PostgreSQL streaming replication. Adds complexity but tests
@@ -1107,9 +1130,7 @@ lag handling specifically.
 
 ---
 
-**Q9 [SENIOR] - MECHANISM**
-What is `@Transactional(readOnly=true)` and what optimizations
-does Hibernate apply?
+**[SENIOR] Q9 - [MECHANISM] What is `@Transactional(readOnly=true)` and what optimizations does Hibernate apply?**
 
 *Why they ask:* Tests depth of understanding beyond just the routing benefit.
 
@@ -1154,9 +1175,7 @@ fails with: `FATAL: can't execute INSERT in a read-only transaction`.
 
 ---
 
-**Q10 [STAFF] - ARCHITECTURE**
-Your service's primary database is at 80% write capacity. You
-need to scale writes. Walk me through your decision process.
+**[STAFF] Q10 - [DESIGN] Your service's primary database is at 80% write capacity. You need to scale writes. Walk me through your decision process.**
 
 *Why they ask:* Tests architectural thinking under constraint - scaling
 writes is harder than scaling reads.
@@ -1177,7 +1196,7 @@ WHERE query LIKE 'INSERT%' OR query LIKE 'UPDATE%'
 ORDER BY total_exec_time DESC LIMIT 10;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override routing DataSource bean to return primary example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 2: Optimize existing writes.
 - Missing indexes on FK columns causing table scans on update cascades
@@ -1218,10 +1237,7 @@ distributed write bottleneck, and requires different solutions.
 
 ---
 
-**Q11 [MID] - DEBUGGING**
-Your service logs show `LazyInitializationException` only in
-certain environments. Development works fine. Production fails.
-How do you debug?
+**[MID] Q11 - [DEBUGGING] Your service logs show `LazyInitializationException` only in certain environments. Development works fine. Production fails. How do you debug?**
 
 *Why they ask:* Environment-specific LIE is a classic OSIV mis-configuration.
 
@@ -1250,14 +1266,14 @@ Diagnostic:
 # spring.jpa.open-in-view: false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spring.jpa.open-in-view: false example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Fix - Option 1 (correct): Disable OSIV in ALL environments:
 ```yaml
 # application.yml (base config, applies everywhere):
 spring.jpa.open-in-view: false
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml (base config, applies everywhere): example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Then fix each LIE by loading associations within the transaction using
 `@EntityGraph` or `JOIN FETCH` in the service layer. This surfaces
@@ -1277,9 +1293,7 @@ production performance under load.
 
 ---
 
-**Q12 [STAFF] - BEHAVIORAL**
-Describe a production scaling incident involving database read
-traffic that you diagnosed and resolved.
+**[STAFF] Q12 - [BEHAVIORAL] Describe a production scaling incident involving database read traffic that you diagnosed and resolved.**
 
 *Why they ask:* Tests real-world experience handling scaling incidents.
 

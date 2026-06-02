@@ -114,16 +114,22 @@ COMPILATION THRESHOLDS (approximate defaults):
   (actual: adaptive, depends on number of compiler threads)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 JIT and Deopt example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The `@Benchmark` annotation approach shows that
+> **Code walkthrough:** The `@Benchmark` annotation approach shows thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tiny accessor methods are completely transparent to the JIT - they get
 > inlined to field access. The key insight is that Java's "everything is
 > a method call" design has zero overhead for inlined methods.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Demonstrating JIT inlining benefits:
@@ -188,7 +194,7 @@ class GoodProcessor {
 // Shows: method name, tier, compilation time, code size
 ```
 
-> **Code walkthrough:** `PrintCompilation` output is the first diagnostic
+> **Code walkthrough:** `PrintCompilation` output is the first diagnosticice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for JIT issues. A method appearing multiple times (Tier 3, then Tier 4)
 > is normal - it means the method is hot enough to warrant C2 compilation.
 > "Made zombie" after a recompile means the old version was deoptimized and
@@ -241,7 +247,7 @@ not be inlined despite being final.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: JIT not compiling hot code - throughput plateaus at interpreter speed.**
-```
+```plaintext
 Symptom: High CPU, low throughput, -XX:+PrintCompilation shows no tier 4 compiles
   Or: throughput significantly lower than expected for warm JVM
 
@@ -270,7 +276,7 @@ Fix:
     Warning: higher compilation overhead, longer warm-up
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -371,7 +377,7 @@ for (int x : list) { ... }  // Iterator created, passed to hasNext()/next()
 // -> No GC pressure from iterator objects in tight loops!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Escape analysis + scalar replacement is why
 Java code doesn't pay the allocation/GC overhead for short-lived objects in
@@ -423,14 +429,14 @@ JIT compiler budget exhausted (Code Cache full, too many compilation tasks).
 # @ 25   MyService::process (35 bytes)   inline (hot)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @ 25   MyService::process (35 bytes)   inline (hot)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The `-XX:MaxInlineSize=35` default is
 conservative. For the highest-priority hot loop in your application:
 `-XX:MaxInlineSize=100` or `-XX:FreqInlineSize=400` can enable inlining of
 larger methods. But: wider inlining increases Code Cache pressure and compilation
 time. Profile first: if a specific method is on the hot path and NOT inlining:
-measure the impact of enabling it before tuning. JMH benchmark + `-XX:+PrintInlining`
+measure the impact of enabling it before tuning. JMH benchmark + `-XX:+PrintInli
 gives precise data on whether increasing MaxInlineSize helps your specific case.
 
 ---
@@ -447,7 +453,7 @@ at the cost of slower compilation.
 
 *What separates good from great:* The "compilation burst" at startup is a common
 source of poor initial latency in Java services. At startup: many methods need
-JIT compilation simultaneously, JIT threads consume 1-2 CPU cores for compilation,
+JIT compilation simultaneously, JIT threads consume 1-2 CPU cores for compilatio
 application threads compete for CPU. Symptom: high CPU + poor response times
 for first 2-5 minutes. Mitigation: (1) increase CICompilerCount (more parallel
 compilation, shorter burst), (2) use AppCDS (pre-compiled data, skip some JIT),
@@ -458,8 +464,8 @@ compilation, shorter burst), (2) use AppCDS (pre-compiled data, skip some JIT),
 
 **Q8 (profile-guided): How does profile data affect C2 optimizations?**
 
-A: C2 uses Tier 3 profile data for: (1) type profiles -> speculative devirtualization
-(inline the most common receiver type); (2) branch probabilities -> optimize layout
+A: C2 uses Tier 3 profile data for: (1) type profiles -> speculative devirtualiz
+(inline the most common receiver type); (2) branch probabilities -> optimize lay
 (hot branch taken -> jump-free layout, cold branch taken -> far jump); (3) null
 check profiles -> eliminate null checks for always-non-null values; (4) range
 check profiles -> eliminate array bounds checks for always-in-range accesses.
@@ -480,20 +486,20 @@ production-representative traffic.
 **Q9 (microservice JIT): How does JIT performance differ in microservices vs monoliths?**
 
 A: Microservices restart frequently (deployments, scaling). Each restart: JIT
-starts from scratch (no compiled code, full warm-up needed). Short-lived instances
+starts from scratch (no compiled code, full warm-up needed). Short-lived instanc
 (container scale-down): may never fully warm up. This is the "serverless JIT
-problem." Monoliths run for days/weeks: JIT reaches steady-state and stays there.
-Solutions: (1) GraalVM native image (AOT compilation, instant startup, no warm-up,
+problem." Monoliths run for days/weeks: JIT reaches steady-state and stays there
+Solutions: (1) GraalVM native image (AOT compilation, instant startup, no warm-u
 but lower peak performance); (2) AppCDS (faster warm-up, some compilation shared
 across restarts); (3) Checkpoint/Restore (CRIU/CRaC: snapshot a warm JVM and
 restore it for new instances).
 
 *What separates good from great:* CRaC (Coordinated Restore at Checkpoint), available
-in OpenJDK 21+ and Azul Zulu, checkpoints a running JVM to disk after warm-up and
+in OpenJDK 21+ and Azul Zulu, checkpoints a running JVM to disk after warm-up an
 restores the warm state for new instances. Startup time: milliseconds with a warm
 JIT state. This is the most impactful solution for microservices with frequent
 restarts. Trade-off: requires explicit checkpoint/restore lifecycle hooks in the
-application (`Resource` interface for handling pre-checkpoint/post-restore events).
+application (`Resource` interface for handling pre-checkpoint/post-restore event
 Kubernetes + CRaC + proper readiness probes: removes the JIT warm-up problem for
 containerized Java microservices entirely.
 
@@ -501,12 +507,12 @@ containerized Java microservices entirely.
 
 ### ⚖️ Comparison Table
 
-| Compilation Tier | Compiler | Profile Data | Speed vs Interpreter | Compilation Cost |
-|---|---|---|---|---|
-| 0 (Interpreted) | None | None | 1x | 0 |
-| 1 (C1 simple) | C1 | None | 5-10x | Very low |
-| 3 (C1 full) | C1 | Type/branch profiles | 5-10x | Low |
-| 4 (C2 full) | C2 | Uses Tier-3 data | 10-100x | High |
+| Compilation Tier| Compiler| Profile Data| Speed vs Interpreter| Compilation Co
+|----------|--------|--------------------|--------------------|----------------|
+| 0 (Interpreted)| None| None| 1x| 0|
+| 1 (C1 simple)| C1| None| 5-10x| Very low|
+| 3 (C1 full)| C1| Type/branch profiles| 5-10x| Low|
+| 4 (C2 full)| C2| Uses Tier-3 data| 10-100x| High|
 
 ---
 
@@ -531,12 +537,12 @@ containerized Java microservices entirely.
 ### 🎯 Model Answer
 
 **30 seconds:**
-> Deoptimization occurs when the JVM compiled code based on speculative assumptions
-> (e.g., "this virtual call always goes to ArrayList"), and those assumptions are
+> Deoptimization occurs when the JVM compiled code based on speculative assumpti
+> (e.g., "this virtual call always goes to ArrayList"), and those assumptions ar
 > violated at runtime. The JVM "backs out" the compiled code, returns to the
-> interpreter or a lower tier, then recompiles with updated (less optimistic) assumptions.
+> interpreter or a lower tier, then recompiles with updated (less optimistic) as
 > Frequent deoptimization ("deopt traps") is a performance killer - the method
-> oscillates between compiled and interpreted states instead of staying at Tier 4.
+> oscillates between compiled and interpreted states instead of staying at Tier 
 
 **3 minutes (Senior):**
 > C2 makes speculative optimizations based on Tier 3 profiles:
@@ -549,8 +555,8 @@ containerized Java microservices entirely.
 > 2. Current execution is "deoptimized": the compiled frame is reconstructed
 >    as an interpreted frame at the exact bytecode position.
 > 3. Execution continues in the interpreter.
-> 4. JVM marks the compiled method as "not entrant" (new callers get interpreter).
-> 5. The method is eventually recompiled with the updated profiles (less speculative).
+> 4. JVM marks the compiled method as "not entrant" (new callers get interpreter
+> 5. The method is eventually recompiled with the updated profiles (less specula
 >
 > Key deoptimization reasons:
 > - `unstable_if`: branch that was "never taken" in profiling was taken.
@@ -581,7 +587,7 @@ unpredictable journey time."
 ### 📘 Concept Explanation
 
 **Deoptimization triggers:**
-```
+```plaintext
 SPECULATIVE OPTIMIZATION       ASSUMPTION VIOLATED    DEOPT REASON
 Inline monomorphic call site   New class appears      class_check
 Remove dead branch             Branch actually taken  unstable_if
@@ -602,7 +608,7 @@ RECOMPILATION AFTER DEOPT:
   checks both branches, etc.)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @ 25   MyService::process (35 bytes)   inline (hot) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -612,6 +618,12 @@ RECOMPILATION AFTER DEOPT:
 > because the JIT inlines `Comparable.compareTo()` for `Integer` but then encounters
 > `String` objects. The JIT must deoptimize and recompile with a polymorphic
 > (non-speculative) call. The GOOD pattern keeps types consistent.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: mixing types in same call site -> deoptimization
@@ -654,7 +666,7 @@ jcmd <pid> JFR.start duration=30s filename=/tmp/deopt.jfr
 // Or: JMX MBean sun.management.HotSpotDiagnosticMXBean
 ```
 
-> **Code walkthrough:** The `List<Comparable>` mixing example is a real-world
+> **Code walkthrough:** The `List<Comparable>` mixing example is a real-worldice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > problem in generic utility code that handles multiple types. The JIT cannot
 > know at Tier 3 profiling which types will appear, so it builds a polymorphic
 > profile and C2 generates slower non-inlined dispatch. The pattern of "pass
@@ -707,10 +719,10 @@ so "remaining null checks" in JIT code are usually not performance issues.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Repeated deoptimization loop - method never reaches stable Tier 4.**
-```
+```plaintext
 Symptom: PrintCompilation shows method repeatedly compiled and deoptimized:
   t=100ms  45   3  mymethod (50 bytes)         <- C1
-  t=200ms  45   4  mymethod (50 bytes)         <- C2 (compiled based on profile)
+  t=200ms  45   4  mymethod (50 bytes)         <- C2 (compiled based on...
   t=201ms  45   4  mymethod (50 bytes)  deopt  <- assumption violated!
   t=250ms  45   3  mymethod (50 bytes)         <- back to C1 with new profile
   t=350ms  45   4  mymethod (50 bytes)         <- C2 recompile
@@ -728,7 +740,7 @@ Diagnosis:
 
 Fix based on reason:
   class_check: restrict the types passing through the call site
-  unstable_if: the condition is legitimately variable -> no fix (JIT handles it)
+  unstable_if: the condition is legitimately variable -> no fix (JIT handles...
   range_check: add bounds check before array access to make profile stable
   null_check: add Objects.requireNonNull at method entry (fail-fast before profiling)
 
@@ -737,7 +749,7 @@ Nuclear option: CompileThreshold increase
   Risk: longer warm-up time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

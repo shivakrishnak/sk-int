@@ -128,7 +128,7 @@ nx affected:build --base=origin/main --head=HEAD
 nx affected:test --base=origin/main --head=HEAD
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Nx: build only affected projects example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Remote cache architecture:**
 - Build inputs are content-hashed: source files + config + tool version
@@ -245,7 +245,7 @@ jobs:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Wasted CI compute costs 10-50x what affected-only would cost example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```json
 // packages/auth-library/project.json
@@ -270,7 +270,7 @@ jobs:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Wasted CI compute costs 10-50x what affected-only would cost example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```json
 // services/api-gateway/project.json - depends on auth-library
@@ -287,7 +287,7 @@ jobs:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Wasted CI compute costs 10-50x what affected-only would cost example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```yaml
 # .github/workflows/ci.yml - affected-only with remote cache
@@ -348,7 +348,7 @@ jobs:
         # E2E only runs for actual service changes, not library changes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This E2E only runs for actual service changes, not library changes example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```yaml
 # .github/workflows/main-merge.yml - additional safety on main
@@ -383,7 +383,7 @@ jobs:
         # not to origin/main HEAD
 ```
 
-> **Code walkthrough:** The dependency graph in `project.json` (via
+> **Code walkthrough:** The dependency graph in `project.json` (viaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `implicitDependencies`) is what makes affected detection transitive.
 > When `auth-library` changes, Nx traverses forward in the dependency
 > graph: `api-gateway` depends on `auth-library`, so `api-gateway`
@@ -604,7 +604,7 @@ git diff --name-only origin/main...HEAD
 #         services/api-gateway/src/routes.ts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This services/api-gateway/src/routes.ts example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Map changed files to Nx projects.
 Each project has a `root` directory in `project.json`. Nx maps
@@ -730,7 +730,7 @@ npx nx show project service-a --web
 # Shows dependency graph and timing for recent runs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows dependency graph and timing for recent runs example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Optimize parallelism.
 Is `--parallel` set appropriately for the runner's CPU count?
@@ -783,7 +783,7 @@ Renovate monorepo configuration:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows dependency graph and timing for recent runs example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Nx version management: shared dependencies are declared in the
 root `package.json` and inherited by all packages. Conflicting
@@ -822,7 +822,7 @@ docker run -e NODE_ENV=production myapp:$CI_SHA
 # If it fails here: the issue is reproducible and not environment-specific
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If it fails here: the issue is reproducible and not environment-specific example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Compare CI environment to container environment.
 What Node.js version? What OS? What environment variables? A monorepo
@@ -841,7 +841,7 @@ npx nx dep-graph --focus=api-service
 # Compare imports to project.json dependencies
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare imports to project.json dependencies example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Check for stale cache artifacts.
 If the CI build was a cache hit, verify the cache was valid by
@@ -852,7 +852,7 @@ npx nx show project api-service --json | \
 # Verify the files listed as inputs match what actually affects the output
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify the files listed as inputs match what actually affects the output example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The insight that monorepo implicit
 dependencies are the most common cause of "passes in CI, fails in
@@ -1183,7 +1183,7 @@ jobs:
 # Any service can deploy a breaking change undetected until E2E
 ```
 
-> **Code walkthrough:** E2E tests catch integration problems but
+> **Code walkthrough:** E2E tests catch integration problems butice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > create a coordination dependency. If all 20 services must pass
 > a shared E2E suite to deploy, one flaky E2E test blocks all
 > services. The "whose fault is this E2E failure" problem is a
@@ -1247,7 +1247,7 @@ public class PaymentServiceContractTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any service can deploy a breaking change undetected until E2E example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // payment-service (PROVIDER) - verifies it meets all consumer contracts
@@ -1288,8 +1288,9 @@ public class PaymentServicePactVerificationTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any service can deploy a breaking change undetected until E2E example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
+{% raw %}
 ```yaml
 # payment-service CI pipeline with Pact verification
 # .github/workflows/ci.yml
@@ -1338,8 +1339,9 @@ jobs:
             --to production \
             --broker-base-url https://pact-broker.company.com
 ```
+{% endraw %}
 
-> **Code walkthrough:** Consumer-driven means the consumer (order-
+> **Code walkthrough:** Consumer-driven means the consumer (order-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > service) defines what it needs, and the provider (payment-service)
 > must satisfy it. The Pact Broker stores all contracts and provides
 > the "can I deploy?" query. Before payment-service deploys to
@@ -1551,7 +1553,7 @@ file:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: Consumer publishes contract to Pact Broker.
 After the consumer's CI passes, the contract is published to the
@@ -1720,7 +1722,7 @@ For critical security patches, the SLA enforcement:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This security patch SLA example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Tracking adoption: a dashboard showing each repository's current
 version of critical shared libraries against the latest published
@@ -1762,7 +1764,7 @@ curl https://internal-api/deployments \
   &end_time=${INCIDENT_START_PLUS_10M} \
   | jq '.[] | [.service, .version, .deployed_at] | @csv'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query deployment events from the last 2 hours example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Overlay deployment timestamps against the incident start time on
 the Grafana dashboard (use annotation markers for deployments).
@@ -1779,7 +1781,7 @@ incident started, review the diff:
 ```bash
 git diff ${PREVIOUS_SHA}..${CURRENT_SHA} --stat
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query deployment events from the last 2 hours example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Focus on services that deployed close to the incident start time
 and have dependencies with the affected service.

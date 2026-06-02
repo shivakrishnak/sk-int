@@ -139,7 +139,7 @@ to serve requests as long as a majority of servers are alive.
    - Guaranteed by the above four properties together
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Raft Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Term - the Raft epoch:**
 
@@ -162,7 +162,7 @@ No two Leaders in the same term:
   Two candidates cannot both get a majority for the same term.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Raft Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Log replication detail:**
 
@@ -190,7 +190,7 @@ If Follower log is behind:
   Follower's conflicting entries overwritten by Leader's
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Raft Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why committed entries survive Leader failure:**
 
@@ -212,7 +212,7 @@ Election:
   B has E1 in its log → committed entry preserved
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Raft Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The quorum overlap guarantee is the core safety mechanism.
@@ -248,6 +248,12 @@ together guarantee that a committed entry is never lost."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // RAFT IN PRACTICE: Using etcd (Java client)
@@ -329,7 +335,7 @@ public class EtcdConfig {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern stores configuration in
+> **Code walkthrough:** The BAD pattern stores configuration inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a local `ConcurrentHashMap`. Each service instance has its own
 > copy; updates are not replicated. Two instances calling `set()`
 > concurrently will diverge. The GOOD pattern uses etcd - a Raft-based
@@ -443,7 +449,7 @@ Router:
   (etcd-style: linear range sharding)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Write path:**
 
@@ -459,7 +465,7 @@ Router:
 9. N4, N5 eventually apply index 42
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Read path (linearizable):**
 
@@ -481,7 +487,7 @@ Option C: Follower reads (stale reads)
   - Acceptable for read-your-writes if client uses the Leader
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Shard rebalancing:**
 
@@ -495,7 +501,7 @@ When a new node joins or a shard becomes too large:
   6. Clients route to new shards via updated config
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Production considerations:**
 
@@ -519,7 +525,7 @@ Snapshot: periodic (every 10k entries)
   - New followers receive snapshot + log tail
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -630,7 +636,7 @@ ping -c 100 etcd-node2 | tail -1
 # avg RTT should be < 10ms for 100-300ms election timeout
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This avg RTT should be < 10ms for 100-300ms election timeout example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: increase `election-timeout` and `heartbeat-interval` to
 account for observed P99 network latency. etcd rule: heartbeat
@@ -712,10 +718,9 @@ metric. It should converge to 0 within seconds of partition healing.
 
 ---
 
-**Q1 (Clarification) - Why does Raft require a quorum (majority)
-rather than all nodes acknowledging?**
+**[JUNIOR] Q1 - [MECHANISM] Why does Raft require a quorum (majority) rather than all nodes acknowledging?**
 
-A: Requiring all nodes to acknowledge means a single slow or
+Requiring all nodes to acknowledge means a single slow or
 failed node blocks all writes indefinitely. This makes the system
 unavailable during any node failure - unacceptable for production.
 
@@ -740,10 +745,9 @@ be unsafe. The overlap argument is the fundamental insight.
 
 ---
 
-**Q2 (Mechanism) - How does Raft's Leader election work in detail?
-What prevents two Leaders being elected in the same term?**
+**[JUNIOR] Q2 - [MECHANISM] How does Raft's Leader election work in detail? What prevents two Leaders being elected in the same term?**
 
-A: Election process:
+Election process:
 
 1. Each Follower has a randomized election timeout (150-300ms
    by default). If no heartbeat arrives within the timeout:
@@ -779,10 +783,9 @@ answer.
 
 ---
 
-**Q3 (Mechanism) - What is the log matching property and why
-is it critical?**
+**[JUNIOR] Q3 - [MECHANISM] What is the log matching property and why is it critical?**
 
-A: The Log Matching Property states:
+The Log Matching Property states:
 - If two log entries in different servers' logs have the same
   index and term number: they contain the same command.
   index and term number: all preceding log entries are identical.
@@ -813,11 +816,9 @@ divergence.
 
 ---
 
-**Q4 (Failure / Debugging) - A 5-node etcd cluster has one node
-down. Writes are taking 5x longer than usual. Why and how do
-you fix?**
+**[MID] Q4 - [DEBUGGING] A 5-node etcd cluster has one node down. Writes are taking 5x longer than usual. Why and how do you fix?**
 
-A: With one node down, writes still commit (4 healthy nodes,
+With one node down, writes still commit (4 healthy nodes,
 majority = 3). But the Leader still tries to replicate to all 5
 nodes, waiting for the down node's AppendEntries to timeout before
 considering the RPC failed (and counting the remaining 3 as majority).
@@ -842,7 +843,7 @@ etcdctl check perf --load="s"
 # Histogram shows tail latency at timeout boundary
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Histogram shows tail latency at timeout boundary example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: (1) Restore N5 as quickly as possible. (2) If N5 is
 permanently gone: remove it from the cluster
@@ -859,10 +860,9 @@ would make the problem worse.
 
 ---
 
-**Q5 (Failure / Debugging) - How do you recover an etcd cluster
-from a majority failure (all nodes down)?**
+**[MID] Q5 - [DEBUGGING] How do you recover an etcd cluster from a majority failure (all nodes down)?**
 
-A: A majority failure (> N/2 nodes lost permanently) means the
+A majority failure (> N/2 nodes lost permanently) means the
 cluster cannot form a quorum and cannot commit new entries. The
 cluster is unavailable for writes. If any surviving node has
 recent data, there are two recovery paths:
@@ -883,7 +883,7 @@ etcdctl member add etcd2 --peer-urls=http://etcd2:2380
 etcdctl member add etcd3 --peer-urls=http://etcd3:2380
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 4. Add new members back example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Path 2 - Force new cluster (dangerous):
 ```bash
@@ -895,7 +895,7 @@ etcd --force-new-cluster --data-dir=/var/lib/etcd
 # checkpoint are lost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This checkpoint are lost example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* emphasizing that snapshot
 backups are mandatory for etcd clusters. `--force-new-cluster`
@@ -907,10 +907,9 @@ storage (S3, GCS) taken every 5 minutes.
 
 ---
 
-**Q6 (Trade-off) - Raft vs. Paxos: what are the practical
-differences and when would you choose one over the other?**
+**[SENIOR] Q6 - [TRADE-OFF] Raft vs. Paxos: what are the practical differences and when would you choose one over the other?**
 
-A: Paxos is the theoretical foundation of distributed consensus.
+Paxos is the theoretical foundation of distributed consensus.
 Raft was designed specifically for understandability and
 implementability.
 
@@ -953,11 +952,9 @@ with the best tooling and documentation for your use case."
 
 ---
 
-**Q7 (Trade-off) - Linearizable reads in Raft require an extra
-round-trip. How do you optimize read throughput without sacrificing
-correctness?**
+**[SENIOR] Q7 - [TRADE-OFF] Linearizable reads in Raft require an extra round-trip. How do you optimize read throughput without sacrificing correctness?**
 
-A: The problem: linearizable reads in Raft require the Leader to
+The problem: linearizable reads in Raft require the Leader to
 confirm it is still the Leader before serving the read. One
 approach: the Leader sends a heartbeat and waits for majority
 ACK before responding to the read. This adds a full round-trip
@@ -1006,9 +1003,9 @@ who understand the algorithm from those who just use the API.
 
 ---
 
-**Q8 (System Design) - Design a distributed lock service using Raft.**
+**[SENIOR] Q8 - [DESIGN] Design a distributed lock service using Raft.**
 
-A: A distributed lock service provides mutual exclusion for
+A distributed lock service provides mutual exclusion for
 distributed processes. Requirements: safety (at most one holder
 at a time), liveness (lock is eventually released after holder
 failure), linearizability (lock acquisition is ordered).
@@ -1035,7 +1032,7 @@ Lease renewal (heartbeat):
   If no KeepAlive in ttl: lock auto-expires
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This checkpoint are lost example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **etcd implementation (Java):**
 ```java
@@ -1053,7 +1050,7 @@ lockClient.unlock(lockResp.getKey()).get();
 // Keep alive thread: leaseClient.keepAlive(leaseId,...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This checkpoint are lost example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure handling:**
 - Client dies without releasing: lease TTL expires, lock released
@@ -1076,7 +1073,7 @@ holder's write is rejected even if it arrives after the new holder.
 
 ---
 
-**Q9 (Code) - Implement a leader election mechanism using etcd.**
+**[SENIOR] Q9 - [SCENARIO] Implement a leader election mechanism using etcd.**
 
 A:
 ```java
@@ -1132,7 +1129,7 @@ public class LeaderElection {
 }
 ```
 
-> **Code walkthrough:** This uses etcd's Election API, built on
+> **Code walkthrough:** This uses etcd's Election API, built onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > top of Raft consensus. Each candidate creates a lease (10-second
 > TTL) and campaigns for the election key. Internally, etcd uses
 > a sorted key space: each candidate writes to the election key
@@ -1147,10 +1144,9 @@ public class LeaderElection {
 
 ---
 
-**Q10 (Mechanism) - How does Raft handle cluster membership changes
-(adding or removing nodes)?**
+**[SENIOR] Q10 - [MECHANISM] How does Raft handle cluster membership changes (adding or removing nodes)?**
 
-A: Cluster membership changes are dangerous in Raft because a
+Cluster membership changes are dangerous in Raft because a
 naive approach can create two independent majorities ("split-brain").
 
 Example: 3-node cluster (A, B, C). We want to add D and E.
@@ -1189,10 +1185,9 @@ majorities) demonstrates algorithmic depth.
 
 ---
 
-**Q11 (Production) - How do you tune an etcd cluster for
-high-throughput production workloads?**
+**[SENIOR] Q11 - [SCENARIO] How do you tune an etcd cluster for high-throughput production workloads?**
 
-A: Three key tuning dimensions: latency, throughput, and durability.
+Three key tuning dimensions: latency, throughput, and durability.
 
 **Latency tuning:**
 ```bash
@@ -1208,7 +1203,7 @@ A: Three key tuning dimensions: latency, throughput, and durability.
 --data-dir=/nvme/etcd
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This fsync on NVMe: <1ms → P99 write = 3ms example demonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Throughput tuning:**
 ```bash
@@ -1223,7 +1218,7 @@ A: Three key tuning dimensions: latency, throughput, and durability.
 # etcd_mvcc_db_total_size_in_bytes metrics
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This etcd_mvcc_db_total_size_in_bytes metrics example deice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Defragmentation:**
 ```bash
@@ -1234,7 +1229,7 @@ etcdctl defrag --cluster
 # Defrag takes the node offline briefly: stagger across cluster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Defrag takes the node offline briefly: stagger across cluster example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Monitoring KPIs:**
 - `etcd_server_leader_changes_seen_total` - leader stability
@@ -1252,10 +1247,9 @@ first when diagnosing high write latency.
 
 ---
 
-**Q12 (Behavioral) - Describe a time you had to reason about
-or debug a distributed consensus issue in production.**
+**[SENIOR] Q12 - [BEHAVIORAL] Describe a time you had to reason about or debug a distributed consensus issue in production.**
 
-A: Example structure:
+Example structure:
 
 "At [company], we used etcd as the configuration store for
 our microservices. We had a 3-node etcd cluster. During a

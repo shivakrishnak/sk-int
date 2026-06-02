@@ -147,7 +147,7 @@ Ecosystem       | SDK quality (Python, TypeScript)?
                 | Vendor stability and roadmap?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM API Selection Decision Framework example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Model tiers (2024 reference):**
 
@@ -169,7 +169,7 @@ Note: model versions change rapidly. Always verify
 current pricing and capabilities at documentation.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM API Selection Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -291,7 +291,7 @@ def run_benchmark(
     return results
 ```
 
-> **Code walkthrough:** The BAD pattern couples the
+> **Code walkthrough:** The BAD pattern couples theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > application directly to Anthropic's SDK: every
 > detail of the API call (`client.messages.create`,
 > model names, content blocks) is embedded in the
@@ -395,7 +395,7 @@ def call_with_logging(prompt: str) -> str:
 # Compare to test benchmark accuracy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare to test benchmark accuracy example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *Fix:* Build the benchmark from production logs
 (real user inputs, not developer-crafted examples).
@@ -458,7 +458,7 @@ gpt-4o         12.8/15   2.8s     $5.00
 claude-haiku   11.5/15   0.9s     $0.30
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare to test benchmark accuracy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Decision: if quality difference is statistically
 significant (not just noise) AND within acceptable
@@ -490,7 +490,7 @@ daily_cost =
 + (daily_requests * cached_tokens * cache_price/MTok)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare to test benchmark accuracy example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Example:
 - 10,000 requests/day
@@ -1023,7 +1023,7 @@ BREAK-EVEN ANALYSIS:
   Most apps: << 166M tokens/day -> API is cheaper
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build vs Buy for AI Features example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1135,7 +1135,7 @@ print(ev.should_self_host(api_cost, infra_cost))
 #  "recommendation": "Build (cost justified)"}
 ```
 
-> **Code walkthrough:** The `FeatureEvaluator` makes
+> **Code walkthrough:** The `FeatureEvaluator` makesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the build vs. buy decision quantitative, not intuitive.
 > `estimate_monthly_api_cost` requires the real
 > traffic projections: daily request count, average
@@ -1240,7 +1240,7 @@ print(f"API cost: ${api_cost:.0f}/month")
 # Never self-host at this scale
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Never self-host at this scale example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *Fix:* Migrate back to API. Cost to migrate: 1-2
 weeks. Monthly savings: $14,900. Payback: immediate.

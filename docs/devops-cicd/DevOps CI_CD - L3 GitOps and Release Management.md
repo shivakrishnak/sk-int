@@ -141,7 +141,7 @@ Cluster actual: deployment/myapp, replicas: 3 (someone scaled down)
 ArgoCD: detects OutOfSync, applies desired state → replicas: 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitOps example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Repository patterns:**
 - Monorepo: all application configs in one repository
@@ -188,6 +188,7 @@ the control theory feedback loop applied to infrastructure management.
 
 **BAD: CI pipeline with production kubectl credentials**
 
+{% raw %}
 ```yaml
 # SECURITY ANTI-PATTERN: CI pipeline deploys directly to production
 
@@ -219,8 +220,9 @@ jobs:
 # - Manual kubectl commands bypass this entirely (no drift detection)
 # - Rollback requires re-running the pipeline with old image
 ```
+{% endraw %}
 
-> **Code walkthrough:** Storing production Kubernetes credentials
+> **Code walkthrough:** Storing production Kubernetes credentialsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in CI secrets creates a critical security exposure: any user who
 > can trigger a CI pipeline (or any attacker who compromises CI) gains
 > the ability to execute arbitrary kubectl commands against production.
@@ -230,6 +232,7 @@ jobs:
 
 **GOOD: GitOps with ArgoCD - CI only updates Git, cluster pulls**
 
+{% raw %}
 ```yaml
 # Step 1: CI pipeline - only builds, tests, and updates Git
 # .github/workflows/ci.yml
@@ -270,8 +273,9 @@ jobs:
             "chore: update myapp to ${{ github.sha }}"
           git push
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Update the image tag in the Kustomize overlay example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```yaml
 # Step 2: ArgoCD Application - pulls from GitOps config, reconciles
@@ -305,7 +309,7 @@ spec:
         maxDuration: 3m
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This gitops-config/apps/myapp/argocd-app.yaml example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```yaml
 # Step 3: AppProject - RBAC for GitOps multi-tenancy
@@ -343,7 +347,7 @@ spec:
   # or RBAC resources - enforced by AppProject boundaries
 ```
 
-> **Code walkthrough:** The security model inversion is the key
+> **Code walkthrough:** The security model inversion is the keyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > design. The CI pipeline has credentials only to the GitOps config
 > Git repository (a GitHub token with narrow repo scope), NOT to
 > the production cluster. ArgoCD runs inside the cluster and has
@@ -651,7 +655,7 @@ kubectl create secret generic db-credentials \
 # sealed-secret.yaml can safely go into Git
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This sealed-secret.yaml can safely go into Git example demonstrates shell script pattern using generic type. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 The Git repository contains the SealedSecret YAML. ArgoCD syncs
 it. The SealedSecrets controller in the cluster decrypts it and
@@ -682,7 +686,7 @@ spec:
         property: password
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In Git (no sensitive values) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Decision framework: use SealedSecrets for simplicity and fully
 offline GitOps (no external dependencies). Use External Secrets
@@ -713,7 +717,7 @@ argocd app diff myapp
 # Shows the diff between desired and live state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows the diff between desired and live state example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Check for resource finalization loops. If a resource is
 being deleted but has a finalizer that is not being processed (e.g.,
@@ -723,7 +727,7 @@ state and ArgoCD cannot sync.
 kubectl get all -n myapp -o yaml | grep -A5 finalizers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows the diff between desired and live state example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Check for annotation drift. Some operators add annotations
 to resources after ArgoCD creates them. ArgoCD compares annotations
@@ -744,7 +748,7 @@ kubectl get deployment myapp -o yaml
 diff between the two outputs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows what is actually in the cluster example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: Force refresh and resync:
 ```bash
@@ -752,7 +756,7 @@ argocd app get myapp --refresh  # Force re-read of Git
 argocd app sync myapp --force  # Force sync even if "synced"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows what is actually in the cluster example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Distinguishing between "out of
 sync because Git was wrong" and "out of sync because of operator
@@ -1171,7 +1175,7 @@ public String checkout(Model model) {
 // No ability to A/B test old vs. new
 ```
 
-> **Code walkthrough:** Long-lived feature branches create integration
+> **Code walkthrough:** Long-lived feature branches create integrationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > risk that grows exponentially with branch lifetime. After 3 months,
 > merging back to main involves resolving months of accumulated
 > divergence. The release is then binary: all users get the new
@@ -1180,6 +1184,12 @@ public String checkout(Model model) {
 > before the problem is detected.
 
 **GOOD: Feature flag with progressive rollout via LaunchDarkly SDK**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Good: Feature flag controls feature visibility
@@ -1232,7 +1242,7 @@ public class CheckoutController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates exception handling using authentication. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```javascript
 // LaunchDarkly flag configuration (via dashboard/API)
@@ -1270,7 +1280,7 @@ public class CheckoutController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```java
 // Flag cleanup contract: flags that are fully rolled out
@@ -1290,7 +1300,7 @@ public ResponseEntity<CheckoutResponse> checkout(...) {
 }
 ```
 
-> **Code walkthrough:** The LaunchDarkly SDK evaluates flag rules
+> **Code walkthrough:** The LaunchDarkly SDK evaluates flag rulesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > locally from a cached copy - no network call on every request. The
 > `LDContext` includes user attributes that enable sophisticated
 > targeting: company employees always get the new feature, beta members
@@ -1599,6 +1609,12 @@ configuration. Integration tests use a test flag service with
 well-defined configurations. Never rely on the default flag state
 in tests.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // Good: explicit flag configuration in tests
 @Test
@@ -1615,7 +1631,7 @@ void checkout_withEnhancedCheckout_showsEnhancedUI() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Integration explosion: as you add flags, the number of state
 combinations grows. If you have a checkout flag, a payment flag,

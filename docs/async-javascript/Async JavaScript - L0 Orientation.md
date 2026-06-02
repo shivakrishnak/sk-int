@@ -168,7 +168,7 @@ const config = loadConfig();
 console.log('Config loaded:', config);
 ```
 
-> **Code walkthrough:** `readFileSync` is a blocking
+> **Code walkthrough:** `readFileSync` is a blockingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > call: the thread stalls until the OS returns the file
 > data. While it waits, no other JavaScript runs. In a
 > web server, this means every concurrent request stalls
@@ -197,7 +197,7 @@ async function startServer() {
 startServer();
 ```
 
-> **Code walkthrough:** `fs.readFile` returns a Promise
+> **Code walkthrough:** `fs.readFile` returns a Promiseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and hands the file read to Node.js libuv's thread pool.
 > The `await` suspends `loadConfig`'s execution frame
 > without blocking the thread. Other callbacks, timers,
@@ -291,7 +291,7 @@ app.get('/report', async (req, res) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 Fix: Move CPU work to a Worker thread or chunk it
 with `setImmediate` to yield between batches.
@@ -317,7 +317,7 @@ setInterval(() => {
 }, 5000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -332,8 +332,7 @@ setInterval(() => {
 | Design | 1 | When to use async vs Worker |
 | Beginner-trap | 1 | Async = multi-threaded misconception |
 
-**Q1. Why is JavaScript single-threaded, and how does
-async programming compensate for this limitation?**
+**[JUNIOR] Q1 - [MECHANISM] Why is JavaScript single-threaded, and how does async programming compensate for this limitation?**
 
 JavaScript was designed for the browser where a single
 thread simplifies the programming model: no race conditions
@@ -361,8 +360,7 @@ I/O-bound (handled by async) and CPU-bound (requires Workers).
 
 ---
 
-**Q2. What is the difference between concurrency and
-parallelism in the context of JavaScript?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between concurrency and parallelism in the context of JavaScript?**
 
 Parallelism: multiple computations happening at the same
 physical instant on multiple hardware threads or cores.
@@ -394,8 +392,7 @@ logical state with a gap between read and write).
 
 ---
 
-**Q3. What happens if you put CPU-intensive code inside
-an async function? Is it non-blocking?**
+**[JUNIOR] Q3 - [FAILURE] What happens if you put CPU-intensive code inside an async function? Is it non-blocking?**
 
 No. An async function with CPU-intensive code blocks the
 thread during that computation regardless of the `async`
@@ -411,7 +408,7 @@ async function looksConcurrent() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 The `async`/`await` yields at I/O boundaries (the `fetch`
 and `.json()` calls). But the `.sort()` with an expensive
@@ -432,7 +429,7 @@ async function chunkedSort(items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing the specific
 boundary: `await` yields at the expression it modifies,
@@ -442,8 +439,7 @@ CPU parallelism, chunking for cooperative yielding.
 
 ---
 
-**Q4. When would you choose synchronous blocking I/O over
-async I/O in Node.js?**
+**[MID] Q4 - [SCENARIO] When would you choose synchronous blocking I/O over async I/O in Node.js?**
 
 Sync I/O is appropriate when:
 - The application is in startup mode before the event loop
@@ -472,8 +468,7 @@ thread's event loop.
 
 ---
 
-**Q5. How would you diagnose whether the event loop is
-being blocked in a production Node.js service?**
+**[MID] Q5 - [DEBUGGING] How would you diagnose whether the event loop is being blocked in a production Node.js service?**
 
 Multiple tools at different levels:
 
@@ -503,9 +498,7 @@ a crisis to diagnose.
 
 ---
 
-**Q6. What would you expect to happen to a Node.js server
-if a synchronous `JSON.parse` call on a very large
-payload was added to a hot request handler?**
+**[SENIOR] Q6 - [MECHANISM] What would you expect to happen to a Node.js server if a synchronous `JSON.parse` call on a very large payload was added to a hot request handler?**
 
 All concurrent requests would experience increased
 latency proportional to the parse time, with no concurrency
@@ -535,8 +528,7 @@ just the one being processed.
 
 ---
 
-**Q7. What trade-offs does the async single-threaded
-model create for library and framework authors?**
+**[SENIOR] Q7 - [TRADE-OFF] What trade-offs does the async single-threaded model create for library and framework authors?**
 
 Library authors cannot use synchronous blocking I/O in
 any function intended for use in web servers or browsers.
@@ -729,7 +721,7 @@ Browser/Node Runtime (outside JS thread):
     When done: pushes callback to task queue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The JavaScript Event Loop and Call Stack example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The microtask queue is drained completely after
@@ -792,13 +784,21 @@ console.log('4: synchronous');
 // 2: setTimeout 0ms
 ```
 
-> **Code walkthrough:** Synchronous code (1 and 4) runs
+> **Code walkthrough:** Synchronous code (1 and 4) runsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > first - the call stack executes completely. Then the
 > microtask queue is drained: the Promise `.then` callback
 > runs (3). Only after microtasks are cleared does the event
 > loop pick up the setTimeout callback (2). The key insight:
 > `setTimeout(fn, 0)` does not mean "run immediately" - it
 > means "run after the current task AND all microtasks."
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // ADVANCED: Microtask starvation
@@ -823,7 +823,7 @@ async function processLargeList(items) {
 }
 ```
 
-> **Code walkthrough:** The BAD example demonstrates
+> **Code walkthrough:** The BAD example demonstratesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > microtask starvation: each `.then` callback schedules
 > another microtask before the queue can empty. The event
 > loop will never reach the task queue. The GOOD example
@@ -916,7 +916,7 @@ setInterval(() => {
 }, 1000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: Microtask starvation from recursive Promises**
 Symptom: application freezes with 100% CPU; setTimeout
@@ -944,8 +944,7 @@ detailed task scheduling logs.
 | Design | 1 | Choosing task vs microtask |
 | Trap | 1 | nextTick vs Promise ordering |
 
-**Q1. Explain the difference between the task queue and
-the microtask queue. Why does this distinction matter?**
+**[JUNIOR] Q1 - [TRADE-OFF] Explain the difference between the task queue and the microtask queue. Why does this distinction matter?**
 
 The task queue (macrotask queue) holds callbacks from:
 `setTimeout`, `setInterval`, I/O completions, UI events.
@@ -975,7 +974,7 @@ queue; it adds to it.
 
 ---
 
-**Q2. What is the execution order of the following?**
+**[JUNIOR] Q2 - [MECHANISM] What is the execution order of the following?**
 
 ```javascript
 console.log('A');
@@ -985,7 +984,7 @@ queueMicrotask(() => console.log('D'));
 console.log('E');
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Answer: A, E, C, D, B.
 
@@ -1007,7 +1006,7 @@ the same priority, ordered by insertion time.
 
 ---
 
-**Q3. What happens when you `await` a non-Promise value?**
+**[JUNIOR] Q3 - [FAILURE] What happens when you `await` a non-Promise value?**
 
 `await nonPromise` wraps the value in `Promise.resolve()`.
 The current async function is suspended and its continuation
@@ -1026,7 +1025,7 @@ console.log('after example()');
 // Output: 'before await', 'after example()', 'after await'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 `await 42` suspends the function even though 42 is not
 async. The continuation is added as a microtask.
@@ -1038,8 +1037,7 @@ unnecessary `await` adds microtask scheduling overhead.
 
 ---
 
-**Q4. When should you use `process.nextTick` vs
-`Promise.resolve().then()` in Node.js?**
+**[MID] Q4 - [TRADE-OFF] When should you use `process.nextTick` vs `Promise.resolve().then()` in Node.js?**
 
 Both schedule a microtask-like callback, but with different
 priority: `process.nextTick` callbacks run before Promise
@@ -1067,8 +1065,7 @@ historical Node.js API compatibility reasons.
 
 ---
 
-**Q5. What is backpressure in the context of the event loop,
-and when does it become a problem?**
+**[MID] Q5 - [MECHANISM] What is backpressure in the context of the event loop, and when does it become a problem?**
 
 Backpressure occurs when tasks are added to the task queue
 faster than the event loop can process them. The queue grows
@@ -1098,8 +1095,7 @@ these two rates.
 
 ---
 
-**Q6. How does the browser's rendering process interact
-with the event loop?**
+**[SENIOR] Q6 - [MECHANISM] How does the browser's rendering process interact with the event loop?**
 
 Browsers typically try to render at 60fps (every ~16.7ms).
 The browser uses the event loop structure: after each task
@@ -1127,8 +1123,7 @@ whether the UI feels responsive.
 
 ---
 
-**Q7. What is the `queueMicrotask` API and why was it
-added when `Promise.resolve().then()` already existed?**
+**[SENIOR] Q7 - [MECHANISM] What is the `queueMicrotask` API and why was it added when `Promise.resolve().then()` already existed?**
 
 `queueMicrotask(fn)` schedules `fn` as a microtask without
 allocating a Promise object. It was added in the HTML
@@ -1399,7 +1394,7 @@ async function combineFiles() {
 // Fix: const [a, b, c] = await Promise.all([...])
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Async Evolution: Callbacks to Async/Await example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Async/await is syntactic sugar over Promises. An `async`
@@ -1458,7 +1453,7 @@ function getUserOrders(userId, callback) {
 }
 ```
 
-> **Code walkthrough:** Three levels of nesting for three
+> **Code walkthrough:** Three levels of nesting for threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sequential operations. Error handling is manual and repeated
 > at every level - if you forget one `if (err) return`, errors
 > silently disappear. Variable access across levels requires
@@ -1492,7 +1487,7 @@ async function handler(req, res) {
 }
 ```
 
-> **Code walkthrough:** Three transformations from the BAD
+> **Code walkthrough:** Three transformations from the BADice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > example. First: async/await replaces nesting with linear
 > code. Second: `Promise.all` runs `getOrders` and `getPreferences`
 > concurrently - their total time is `max(orders, preferences)`,
@@ -1562,6 +1557,15 @@ rejections.
 
 **Failure 1: Unhandled Promise rejections**
 
+
+```javascript
+// BAD: not awaiting async operations
+function saveUser(user) {
+    db.save(user); // async call not awaited
+    return { success: true }; // returns before save completes
+}
+```
+
 ```javascript
 // BAD: Promise not awaited - error disappears silently
 async function badPattern() {
@@ -1579,7 +1583,7 @@ async function goodPattern() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 Node.js: `--unhandled-rejections=throw` crashes on
 unhandled rejections. Enable in production. Browser:
@@ -1599,7 +1603,7 @@ const [user, orders, config] = await Promise.all([
 ]);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **WHAT BREAKS: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **Failure 3: Lost error context in callback conversion**
 
@@ -1620,7 +1624,7 @@ async function wrappedLegacy(...args) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -1635,8 +1639,7 @@ async function wrappedLegacy(...args) {
 | Design | 1 | When to use each style |
 | Beginner-trap | 1 | Await in loops |
 
-**Q1. What is async/await syntactic sugar for? Explain
-the transformation.**
+**[JUNIOR] Q1 - [MECHANISM] What is async/await syntactic sugar for? Explain the transformation.**
 
 An `async` function is syntactic sugar for a function that
 returns a Promise. The function body is wrapped in a Promise
@@ -1660,7 +1663,7 @@ function example() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 The practical implication: `async` functions always return
 Promises even if they return plain values. `return 42`
@@ -1675,8 +1678,7 @@ behavior of unhandled rejections.
 
 ---
 
-**Q2. What is the behavior of `await` in a `for` loop,
-and how does it differ from `Promise.all`?**
+**[JUNIOR] Q2 - [MECHANISM] What is the behavior of `await` in a `for` loop, and how does it differ from `Promise.all`?**
 
 `await` in a `for` loop is sequential: each iteration waits
 for the previous to complete before starting the next.
@@ -1695,7 +1697,7 @@ const results = await Promise.all(
 results.forEach(process);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Sequential is correct when: each iteration depends on the
 previous result, or when you need to limit concurrency to
@@ -1715,8 +1717,7 @@ is required (maximum throughput, independent operations).
 
 ---
 
-**Q3. How do you handle errors from `Promise.all` when
-you need to know which Promise failed?**
+**[JUNIOR] Q3 - [MECHANISM] How do you handle errors from `Promise.all` when you need to know which Promise failed?**
 
 `Promise.all` short-circuits on the first rejection: it
 rejects with the error from the first failed Promise, and
@@ -1748,7 +1749,7 @@ const data = results
   .map(r => r.value);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Knowing `Promise.allSettled`
 exists and preferring it when partial success is acceptable.
@@ -1758,8 +1759,7 @@ failure mode.
 
 ---
 
-**Q4. What are unhandled Promise rejections and how do you
-prevent them?**
+**[MID] Q4 - [MECHANISM] What are unhandled Promise rejections and how do you prevent them?**
 
 An unhandled Promise rejection occurs when a Promise is
 rejected and no `.catch()` handler or `try/catch` around
@@ -1787,8 +1787,7 @@ any visible error.
 
 ---
 
-**Q5. How would you convert a callback-based function to
-a Promise-based one?**
+**[MID] Q5 - [MECHANISM] How would you convert a callback-based function to a Promise-based one?**
 
 Two approaches:
 
@@ -1799,7 +1798,7 @@ const readFile = promisify(fs.readFile);
 const data = await readFile('./config.json', 'utf8');
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 2. Manual wrapping for non-standard callbacks:
 ```javascript
@@ -1822,7 +1821,7 @@ function readWithProgress(path, onProgress) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construcice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Remembering to handle
 the error case in manual Promise wrappers. The most common
@@ -1831,8 +1830,7 @@ the error case, resulting in Promises that never settle.
 
 ---
 
-**Q6. What is "async contagion" and how does it affect
-codebase architecture?**
+**[SENIOR] Q6 - [DESIGN] What is "async contagion" and how does it affect codebase architecture?**
 
 Async contagion (sometimes called "colored functions") refers
 to the fact that once a function is `async`, every function
@@ -1864,8 +1862,7 @@ blast radius of async changes small.
 
 ---
 
-**Q7. What is the difference between `Promise.race` and
-`Promise.any`, and when would you use each?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between `Promise.race` and `Promise.any`, and when would you use each?**
 
 `Promise.race`: resolves or rejects with the first settled
 Promise (whichever finishes first, whether fulfilled or

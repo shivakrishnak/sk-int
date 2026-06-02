@@ -119,7 +119,7 @@ NEW         - Thread created but not yet started
 TERMINATED  - Thread completed execution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Thread Dump Analysis example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Lock annotations in the stack:**
 ```
@@ -129,7 +129,7 @@ TERMINATED  - Thread completed execution
 - parking to wait for <0xABCD>      - LockSupport.park (AQS/ReentrantLock)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Thread Dump Analysis example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **How to generate:**
 ```bash
@@ -155,17 +155,17 @@ jcmd <pid> JFR.dump filename=/tmp/recording.jfr
 # Then analyze with JMC (Java Mission Control)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then analyze with JMC (Java Mission Control) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Common analysis patterns:**
 
 Pattern 1 - Deadlock:
-```
+```plaintext
 "Found one Java-level deadlock" section present
 Threads in BLOCKED state with circular lock dependency
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then analyze with JMC (Java Mission Control) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 2 - Lock contention:
 ```
@@ -174,16 +174,16 @@ One RUNNABLE thread holding that lock with a long stack trace
 = hot contention point
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then analyze with JMC (Java Mission Control) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 3 - Thread pool exhaustion:
-```
+```plaintext
 All pool threads in WAITING at take() = idle (normal)
 All pool threads doing the same long operation = busy (may be normal)
 All pool threads in BLOCKED or long-running = exhausted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then analyze with JMC (Java Mission Control) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 4 - Stuck thread:
 ```
@@ -192,13 +192,13 @@ multiple dumps taken seconds apart = thread stuck in a tight loop
 or infinite operation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then analyze with JMC (Java Mission Control) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD pattern uses System.out to print a thread
+> **Code walkthrough:** The BAD pattern uses System.out to print a threadice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > dump, losing the lock annotations. The GOOD pattern uses ThreadMXBean
 > to programmatically capture dumps with full lock info. The production
 > example shows a health check endpoint that detects deadlocks.
@@ -219,7 +219,7 @@ void dumpThreads() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Then analyze with JMC (Java Mission Control) example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // GOOD: full thread dump with lock annotations via ThreadMXBean
@@ -249,7 +249,7 @@ void dumpThreadsWithLocks() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Then analyze with JMC (Java Mission Control) example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 ```java
 // PRODUCTION: deadlock detection health check
@@ -287,7 +287,7 @@ class DeadlockHealthCheck implements HealthIndicator {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then analyze with JMC (Java Mission Control) example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -361,7 +361,7 @@ ThreadFactory factory = new ThreadFactoryBuilder()
     .build();
 ExecutorService pool = Executors.newFixedThreadPool(10, factory);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Thread name appears in dumps as "payment-processor-0", making
 correlation to code much easier.
@@ -447,7 +447,7 @@ jstack <pid>          # to stdout
 jstack -l <pid>       # with extra lock info (-l flag)
 jstack -F <pid>       # force attach (if JVM not responding)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Note: `-F` may fail to show lock info in some JVM versions.
 
@@ -457,13 +457,13 @@ jcmd <pid> Thread.print              # basic
 jcmd <pid> Thread.print -l true      # with lock info
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **3. kill -3 / SIGQUIT (Linux/Mac):**
 ```bash
 kill -3 <pid>  # JVM prints dump to stderr (application log)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Useful when jstack is not available in the container.
 
@@ -472,7 +472,7 @@ Useful when jstack is not available in the container.
 ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 ThreadInfo[] ti = bean.dumpAllThreads(true, true);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Exposes via HTTP `/threaddump` endpoint (Spring Actuator: `/actuator/threaddump`).
 
@@ -481,7 +481,7 @@ Exposes via HTTP `/threaddump` endpoint (Spring Actuator: `/actuator/threaddump`
 jcmd <pid> JFR.start name=diagnosis duration=60s filename=/tmp/r.jfr
 # Then open with Java Mission Control (JMC)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then open with Java Mission Control (JMC) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Captures continuous thread samples, not just a snapshot.
 
@@ -561,7 +561,7 @@ indicates I/O blocking.
 
 A: Sample thread dump entry (annotated):
 
-```
+```plaintext
 "http-nio-8080-exec-1"           <- Thread name
   #62                            <- Thread number
   daemon                         <- Is a daemon thread
@@ -586,7 +586,7 @@ Locked ownable synchronizers:   <- Locks THIS thread holds
   - <0x000000076ab3c5e0> (a java.util.concurrent.locks.ReentrantLock$NonfairSync)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then open with Java Mission Control (JMC) example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key fields to read:
 1. Thread name: identifies the thread's role (from thread pool factory name)
@@ -635,7 +635,7 @@ Example dump (simplified):
   - locked <0xAAA> (Lock2)          <- holds Lock2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then open with Java Mission Control (JMC) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cycle: Thread-A holds 0xBBB (Lock1), wants 0xAAA (Lock2).
 Thread-B holds 0xAAA (Lock2), wants 0xBBB (Lock1). Deadlock.
@@ -664,14 +664,14 @@ Steps:
 grep -A 5 "State: BLOCKED" thread-dump.txt
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then open with Java Mission Control (JMC) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 2. Find the hot lock address: look for a lock address that appears
    multiple times in `- waiting to lock <addr>` lines.
 ```bash
 grep "waiting to lock" thread-dump.txt | sort | uniq -c | sort -rn
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then open with Java Mission Control (JMC) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 High count for a specific address = hot lock.
 
@@ -717,7 +717,7 @@ grep "pool-name-" thread-dump.txt | grep "State:" | \
 # 0 WAITING       <- none idle = pool exhausted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 0 WAITING       <- none idle = pool exhausted example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 If all pool threads are RUNNABLE, examine what they're doing:
 - All in the same method = possibly stuck (same stack in multiple dumps)
@@ -779,7 +779,7 @@ jcmd <pid> JFR.dump filename=/tmp/dump-$(date +%s).jfr
 jfr print --events jdk.JavaMonitorEnter /tmp/dump.jfr | head -100
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze: open with Java Mission Control (JMC) or: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Recommendation:
 - Production outage (hang / deadlock): thread dump (immediate, zero impact)
@@ -814,7 +814,7 @@ component in the code.
 # Immediately: payment processor has a lock contention problem
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Immediately: payment processor has a lock contention problem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Naming convention:
 ```java
@@ -839,7 +839,7 @@ Thread.ofVirtual()
     .factory();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Immediately: payment processor has a lock contention problem example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 System threads to recognize in dumps:
 - `"main"`: the main application thread
@@ -875,7 +875,7 @@ for i in 1 2 3; do
 done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Immediately: payment processor has a lock contention problem example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Quick scan - deadlock first.**
 ```bash
@@ -883,7 +883,7 @@ grep -l "deadlock" /tmp/dump-*.txt
 grep "Found one Java-level deadlock" /tmp/dump-*.txt
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Immediately: payment processor has a lock contention problem example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 4: Count threads per state.**
 ```bash
@@ -893,7 +893,7 @@ for f in /tmp/dump-*.txt; do
 done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Immediately: payment processor has a lock contention problem example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 5: Identify hot BLOCKED threads.**
 ```bash
@@ -901,7 +901,7 @@ grep -h "waiting to lock" /tmp/dump-*.txt | sort | uniq -c | sort -rn
 # Frequent lock address = hot contention point
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frequent lock address = hot contention point example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 6: Find locked threads (not progressing across dumps).**
 ```bash
@@ -909,7 +909,7 @@ diff /tmp/dump-1*.txt /tmp/dump-3*.txt | grep -A 3 "Thread"
 # Threads with identical stacks across 10 seconds = stuck
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threads with identical stacks across 10 seconds = sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Step 7: Correlate with metrics.**
 - CPU high: look for RUNNABLE threads in compute loops
@@ -968,7 +968,7 @@ for i in $(seq 1 $COUNT); do
 done
 echo "All dumps in /tmp/threaddump_*.txt"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threads with identical stacks across 10 seconds = sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Add to the JVM startup classpath as a diagnostic utility.
 
@@ -997,7 +997,7 @@ void detectDeadlock() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threads with identical stacks across 10 seconds = stuck example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Integrate with Spring Actuator:**
 Spring Boot Actuator exposes `/actuator/threaddump` endpoint.
@@ -1024,7 +1024,7 @@ void startJfr() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threads with identical stacks across 10 seconds = stuck example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* JFR's low overhead (1-2%) combined
 with a rolling buffer means it is safe to run 24/7 in production.
@@ -1079,7 +1079,7 @@ Analysis:
   Thread dumps -> FastThread.io / Samurai
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threads with identical stacks across 10 seconds = sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

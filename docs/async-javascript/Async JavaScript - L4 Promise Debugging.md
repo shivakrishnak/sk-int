@@ -135,7 +135,7 @@ function watchConnectionCancellable(socket, signal) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Promise Memory Leaks and Debugging example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **WHAT BREAKS: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ```javascript
 // LEAK PATTERN 2: Promises accumulate in a Map/Set
@@ -166,7 +166,7 @@ class RequestTrackerFixed {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Promise Memory Leaks and Debugging example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ```javascript
 // LEAK PATTERN 3: Large closure retained by long-lived Promise
@@ -189,7 +189,7 @@ async function processLargeDatasetFixed(dataRef) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Promise Memory Leaks and Debugging example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 JavaScript closures capture variables by reference, not value.
@@ -247,7 +247,7 @@ class NotificationService {
 // Solution: clear listeners after notification
 ```
 
-> **Code walkthrough:** The `listeners` array accumulates resolve
+> **Code walkthrough:** The `listeners` array accumulates resolveice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > functions indefinitely. Each `onMessage` call adds a closure
 > that captures `handler` and the resolve function. The `send`
 > method notifies all listeners but never removes them. After
@@ -328,7 +328,7 @@ function startMemoryMonitor(thresholdMB = 100) {
 // Then: global.gc(); const h = process.memoryUsage().heapUsed;
 ```
 
-> **Code walkthrough:** The fixed implementation uses a `Set`
+> **Code walkthrough:** The fixed implementation uses a `Set`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > instead of an array, enabling O(1) removal. The `cleanup`
 > function is called in all settlement paths: normal resolution,
 > cancellation via AbortSignal. The `entry.resolve` is replaced
@@ -391,7 +391,7 @@ leaks (objects that are referenced but no longer needed).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Node.js service heap growing monotonically**
-```
+```plaintext
 Diagnostic steps:
 1. Baseline memory: process.memoryUsage().heapUsed on startup
 2. Load test: sustained traffic for 10 minutes
@@ -411,10 +411,10 @@ Leak patterns to look for:
   - '@closure' objects retaining large data
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Browser tab memory growing during SPA navigation**
-```
+```plaintext
 Steps:
 1. Chrome DevTools -> Performance Monitor (live heap size)
 2. Navigate through app repeatedly
@@ -430,7 +430,7 @@ Common cause in React SPAs:
   - RxJS subscriptions not unsubscribed on component destroy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using React hook. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -445,8 +445,7 @@ Common cause in React SPAs:
 | Design | 2 | Cancellable Promise pattern, monitoring |
 | Behavioral | 1 | Diagnosing production memory leak |
 
-**Q1. How does JavaScript's garbage collector interact with
-Promises and closures?**
+**[JUNIOR] Q1 - [MECHANISM] How does JavaScript's garbage collector interact with Promises and closures?**
 
 V8 (and SpiderMonkey) use mark-and-sweep with generational
 collection. An object is GC-eligible when it is unreachable
@@ -474,7 +473,7 @@ async function heavyOperation() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 V8 optimization: V8 performs "escape analysis" and may not
 retain variables that are proven not to be referenced after
@@ -487,8 +486,7 @@ after last use is the reliable pattern.
 
 ---
 
-**Q2. What is the difference between a memory leak and
-high memory usage?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between a memory leak and high memory usage?**
 
 High memory usage: the process uses more memory than expected,
 but it is appropriate. An in-memory cache that grows to its
@@ -519,7 +517,7 @@ Browser:
   window.performance.memory.usedJSHeapSize
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The forced-GC pattern: always
 call `global.gc()` before measuring to ensure you are measuring
@@ -527,8 +525,7 @@ actual retained memory, not just unflushed allocated memory.
 
 ---
 
-**Q3. How do you find which Promise is leaking in a
-production Node.js service?**
+**[JUNIOR] Q3 - [MECHANISM] How do you find which Promise is leaking in a production Node.js service?**
 
 Step-by-step diagnosis:
 
@@ -551,7 +548,7 @@ Promise
           -> MyService._connection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This reveals that `MyService._connection` is an EventEmitter
 with accumulated `data` event listeners.
@@ -562,8 +559,7 @@ debuggers from people who "hope GC will fix it."
 
 ---
 
-**Q4. How do WeakMap and WeakRef help with async memory
-management?**
+**[MID] Q4 - [MECHANISM] How do WeakMap and WeakRef help with async memory management?**
 
 `WeakMap`: maps objects to values without preventing GC of
 the keys. Useful for associating async state with objects
@@ -579,7 +575,7 @@ function startAsyncOp(target, operation) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using SQL. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 `WeakRef`: holds a reference to an object without preventing GC.
 
@@ -599,7 +595,7 @@ class AsyncDataHolder {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 `FinalizationRegistry`: callback when an object is GCed.
 Useful for debugging leaks or cleaning up external resources:
@@ -615,7 +611,7 @@ function trackData(data) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* `WeakMap`/`WeakRef` are
 appropriate for caches and secondary associations. Using them
@@ -625,8 +621,7 @@ should drive lifetime.
 
 ---
 
-**Q5. How do you instrument a Node.js application to detect
-async leak patterns at runtime?**
+**[MID] Q5 - [MECHANISM] How do you instrument a Node.js application to detect async leak patterns at runtime?**
 
 ```javascript
 // Custom diagnostics using diagnostics_channel
@@ -671,7 +666,7 @@ setInterval(() => {
 }, 5000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The "oldest pending Promise"
 pattern - sorting pending Promises by age surfaces the ones
@@ -680,8 +675,7 @@ most likely to be genuine leaks.
 
 ---
 
-**Q6. What are the most common sources of memory leaks
-in React applications using async code?**
+**[SENIOR] Q6 - [SCENARIO] What are the most common sources of memory leaks in React applications using async code?**
 
 1. `useEffect` with async operations but no cleanup:
 ```javascript
@@ -703,7 +697,7 @@ useEffect(() => {
 }, []);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 2. `setInterval` not cleared on unmount:
 ```javascript
@@ -714,7 +708,7 @@ useEffect(() => {
 }, []);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 3. Global event listeners on `window` or `document`:
 ```javascript
@@ -729,7 +723,7 @@ useEffect(() => {
 }, []);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Framing the cleanup function
 as mandatory, not optional. Every `useEffect` that registers
@@ -739,8 +733,7 @@ catch all cases.
 
 ---
 
-**Q7. How do you implement a Promise pool that bounds
-memory usage from concurrent async operations?**
+**[SENIOR] Q7 - [SCENARIO] How do you implement a Promise pool that bounds memory usage from concurrent async operations?**
 
 Without bounded concurrency, processing 10,000 items in
 parallel creates 10,000 simultaneous Promises, each holding
@@ -784,7 +777,7 @@ const results = await processWithPool(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The worker pool pattern uses
 exactly `concurrency` worker promises, not `items.length`.
@@ -794,8 +787,7 @@ growth.
 
 ---
 
-**Q8. How do you debug async code that hangs (Promise
-never settles)?**
+**[SENIOR] Q8 - [DEBUGGING] How do you debug async code that hangs (Promise never settles)?**
 
 "Hanging" means a Promise is pending indefinitely - no resolve,
 no reject. Common causes: deadlock between two coroutines
@@ -829,7 +821,7 @@ async function suspectFunction() {
 // process._getActiveRequests() - pending IO requests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 In browsers: Chrome DevTools -> Application -> Service Workers
 shows pending async operations. For page hangs: use the
@@ -843,8 +835,7 @@ causing the hang.
 
 ---
 
-**Q9. What is the connection between tail call optimization
-and async recursion memory usage?**
+**[SENIOR] Q9 - [MECHANISM] What is the connection between tail call optimization and async recursion memory usage?**
 
 JavaScript (ES6+) specifies tail call optimization (TCO)
 for proper tail calls. TCO reuses the current stack frame
@@ -867,7 +858,7 @@ async function processTree(node, depth = 0) {
 // Memory: O(depth) Promises
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Fix: trampoline or iterative approach with explicit stack:
 ```javascript
@@ -884,7 +875,7 @@ async function processTreeIterative(root) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing that TCO is specified
 but not universally implemented, and providing the iterative
@@ -893,8 +884,7 @@ is also easier to add cancellation to via AbortController.
 
 ---
 
-**Q10. How do you profile async performance (slow Promises)
-separate from memory leaks?**
+**[SENIOR] Q10 - [DEBUGGING] How do you profile async performance (slow Promises) separate from memory leaks?**
 
 Performance profiling for async:
 
@@ -917,7 +907,7 @@ async function timed(name, fn) {
 const user = await timed('fetchUser', () => fetchUser(id));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Browser DevTools: Performance tab -> record -> look for:
 - "Task" entries that are long: synchronous code blocking event loop
@@ -938,7 +928,7 @@ const [measure] = performance.getEntriesByName('fetchDuration');
 console.log(`Fetch: ${measure.duration.toFixed(1)}ms`);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using `performance.mark/measure`
 in async code for production-observable timing. These entries
@@ -947,8 +937,7 @@ exported to observability platforms.
 
 ---
 
-**Q11. How do Promise.all and unhandled rejection interact
-to cause silent failures?**
+**[SENIOR] Q11 - [MECHANISM] How do Promise.all and unhandled rejection interact to cause silent failures?**
 
 `Promise.all` short-circuits on the first rejection: it rejects
 with that error and discards remaining Promises. The remaining
@@ -977,7 +966,7 @@ results.forEach((r, i) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The operational implication:
 in production, `Promise.all` + fast-failing Promises can
@@ -987,8 +976,7 @@ tool when you need to collect all outcomes.
 
 ---
 
-**Q12. How do you implement Promise-based resource pooling
-to prevent resource exhaustion?**
+**[SENIOR] Q12 - [SCENARIO] How do you implement Promise-based resource pooling to prevent resource exhaustion?**
 
 ```javascript
 class ResourcePool {
@@ -1044,7 +1032,7 @@ class ResourcePool {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The "give directly to next waiter"
 pattern: releasing back to the pool passes the resource
@@ -1100,7 +1088,7 @@ Client ──→ Job Queue (Redis)
            cleanup on settle: guaranteed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Design decisions:
 - Promise Pool limits concurrent Promises (memory bound)

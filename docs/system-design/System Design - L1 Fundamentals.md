@@ -129,11 +129,21 @@ Database scaling path:
   5. Sharding (scale writes horizontally - complex)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scalability Fundamentals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: stateful session (prevents horizontal scaling)
@@ -188,7 +198,7 @@ public class CartRepository {
 // Session state = Redis (shared, persistent)
 ```
 
-> **Code walkthrough:** The BAD example uses HttpSession which stores cart
+> **Code walkthrough:** The BAD example uses HttpSession which stores cartice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > data in JVM memory. The server remembers the cart, but only that specific
 > server. When a load balancer routes the same user to a different server,
 > the cart is gone. The GOOD example stores cart in Redis using a user ID key.
@@ -249,7 +259,7 @@ Diagnosis: enable slow query log, count queries per request in testing.
 
 ---
 
-#### Q1 - What is the CAP theorem's relationship to scalability?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the CAP theorem's relationship to scalability?**
 
 CAP says: distributed systems can only guarantee 2 of 3:
 - Consistency: all nodes see the same data at the same time
@@ -282,7 +292,7 @@ but multi-region systems must choose explicitly.
 
 ---
 
-#### Q2 - How does load balancing contribute to scalability?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does load balancing contribute to scalability?**
 
 Load balancer distributes requests across servers:
 
@@ -296,7 +306,7 @@ LB algorithms:
   Weighted: faster servers get more requests
   Least connections: route to server with fewest active requests
   IP hash: same client IP -> same server (poor man's sticky sessions)
-  L7 routing: route by URL path (/api -> API servers, /static -> static servers)
+  L7 routing: route by URL path (/api -> API servers, /static -> static...
 
 LB types:
   L4 (TCP/IP): routes by IP/port, fast, no content inspection
@@ -309,7 +319,7 @@ Health checks:
   -> No manual intervention, automatic failover
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The load balancer itself is a single point
 of failure. Solution: active-passive LB pair (one active, one standby with
@@ -321,7 +331,7 @@ and request routing for A/B testing and canary deployments.
 
 ---
 
-#### Q3 - What are the different types of database scaling?
+**[JUNIOR] Q3 - [CONCEPTUAL] What are the different types of database scaling?**
 
 ```
 Vertical scaling (scale-up):
@@ -358,7 +368,7 @@ Sharding (scale writes horizontally):
   Resharding: difficult, requires data migration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Start at the top of the list, not the bottom.
 Caching is faster to implement than sharding and handles most read bottlenecks.
@@ -370,7 +380,7 @@ that shard only when necessary defer the complexity until it's proven necessary.
 
 ---
 
-#### Q4 - What is the two-phase scaling approach for databases?
+**[MID] Q4 - [CONCEPTUAL] What is the two-phase scaling approach for databases?**
 
 Phase 1: Read scaling (most systems stop here)
 ```
@@ -384,7 +394,7 @@ Add read replicas:
           Read capacity: 5x (with 5 replicas)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 2: Write scaling (if still needed)
 ```
@@ -397,7 +407,7 @@ Options:
   C. Sharding by user ID, region, or date range
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 2 is where most teams struggle. The sharding decision:
 - What is the shard key? (must distribute writes evenly)
@@ -418,7 +428,7 @@ show you know the full progression, not just the end state.
 
 ---
 
-#### Q5 - How do CDNs contribute to scalability?
+**[MID] Q5 - [CONCEPTUAL] How do CDNs contribute to scalability?**
 
 CDN (Content Delivery Network): geographically distributed caches.
 
@@ -449,7 +459,7 @@ CDN caching rules:
                private content (unless signed URLs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* CDN cache invalidation is operationally
 tricky. Once an asset is in CDN edge caches globally, you can't instantly
@@ -461,7 +471,7 @@ never expire. Mutable assets use short TTL or key/version in URL.
 
 ---
 
-#### Q6 - What is auto-scaling and when does it help?
+**[MID] Q6 - [CONCEPTUAL] What is auto-scaling and when does it help?**
 
 Auto-scaling automatically adds/removes server instances based on metrics:
 
@@ -495,7 +505,7 @@ What auto-scaling does NOT help with:
   - Stateful services with local state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Auto-scaling has a lag of 2-5 minutes
 (time to provision, start, warm up new instance). For flash sales or
@@ -508,7 +518,7 @@ by design. If you scale in too aggressively, you scale out again immediately
 
 ---
 
-#### Q7 - How does sharding work and what are the trade-offs?
+**[SENIOR] Q7 - [TRADE-OFF] How does sharding work and what are the trade-offs?**
 
 Sharding partitions data across multiple DB instances:
 
@@ -550,7 +560,7 @@ Problems with sharding:
     Solution: saga pattern (compensating transactions)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Shard key selection is the most important
 decision in sharding. A good shard key: uniformly distributed, never grows
@@ -694,7 +704,7 @@ Bulkhead:
   Without bulkhead: shared thread pool -> both fail together
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reliability and Availability example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -753,7 +763,7 @@ resilience4j:
         timeout-duration: 2s
 ```
 
-> **Code walkthrough:** The three Resilience4j annotations stack:
+> **Code walkthrough:** The three Resilience4j annotations stack:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > TimeLimiter wraps the call with a 2-second timeout. Retry retries up to 3 times
 > on IOException or ConnectException (transient errors). CircuitBreaker counts
 > failures across calls and opens if 50% fail within the 10-call window.
@@ -818,7 +828,7 @@ circuit breaker (only probe with 1 request in half-open state).
 
 ---
 
-#### Q1 - What is the difference between reliability, availability, and durability?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between reliability, availability, and durability?**
 
 **Reliability:** System produces correct results.
 - Measured: error rate (% of requests returning wrong results)
@@ -850,7 +860,7 @@ An interview answer that separates these three is senior-level thinking.
 
 ---
 
-#### Q2 - How do you design for zero-downtime deployments?
+**[JUNIOR] Q2 - [ARCHITECTURE] How do you design for zero-downtime deployments?**
 
 Zero-downtime requires traffic to continue during code swap:
 
@@ -883,7 +893,7 @@ Rolling Deployment:
   Problem: two versions serving traffic simultaneously
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Resilience4j config example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Database changes in zero-downtime:
 - Expand-contract pattern:
@@ -904,7 +914,7 @@ each migration is backward-compatible. The deployment pipeline should check:
 
 ---
 
-#### Q3 - What are health checks and how do they work?
+**[JUNIOR] Q3 - [CONCEPTUAL] What are health checks and how do they work?**
 
 Health checks verify a service is healthy before sending traffic:
 
@@ -945,7 +955,7 @@ Kubernetes health check types:
     - Prevents premature liveness failure for slow-starting apps
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The wrong health check is worse than no
 health check. A health check that includes downstream service reachability
@@ -957,7 +967,7 @@ can't reach DB), not the liveness probe (a DB blip shouldn't restart my pod).
 
 ---
 
-#### Q4 - How does a distributed system handle partial failures?
+**[MID] Q4 - [ARCHITECTURE] How does a distributed system handle partial failures?**
 
 Partial failure: some components work, others don't.
 
@@ -993,7 +1003,7 @@ Partial failure: inventory service is slow
     -> Trade-off: oversell risk vs. user experience
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Partial failures require explicit decisions
 about which services are "critical path" (must succeed for operation to complete)
@@ -1006,7 +1016,7 @@ incident that happens in real systems.
 
 ---
 
-#### Q5 - What is fault injection and why is it important?
+**[MID] Q5 - [DEBUGGING] What is fault injection and why is it important?**
 
 Fault injection deliberately introduces failures to test resilience:
 
@@ -1042,7 +1052,7 @@ Advanced: game days
   Verify monitoring detects it, runbooks work, recovery time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Chaos engineering requires mature monitoring
 and on-call practices as prerequisites. Running Chaos Monkey without first
@@ -1054,7 +1064,7 @@ To Recover) decreases with chaos engineering experience.
 
 ---
 
-#### Q6 - How do you design for graceful degradation?
+**[MID] Q6 - [ARCHITECTURE] How do you design for graceful degradation?**
 
 Graceful degradation: serve partial results instead of errors when components fail.
 
@@ -1100,7 +1110,7 @@ Graceful degradation decision matrix:
    Auth svc           -> Fail closed (don't allow access)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The fallback design must be explicit in code
 review. The question: "What does this endpoint return if service X is down?"
@@ -1113,7 +1123,7 @@ components (auth, authorization): always fail closed.
 
 ---
 
-#### Q7 - What is SLA/SLO/SLI and how do they relate to system design?
+**[SENIOR] Q7 - [ARCHITECTURE] What is SLA/SLO/SLI and how do they relate to system design?**
 
 ```
 SLI (Service Level Indicator):
@@ -1154,7 +1164,7 @@ Design implications:
   Each nines costs: compute, complexity, operational burden
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Error budgets are the key insight that makes
 SLOs actionable. A team with 8.76 hours/year error budget can have roughly 3
@@ -1296,7 +1306,7 @@ Latency percentiles:
   - Lock contention
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Latency vs Throughput example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Latency budget:**
 
@@ -1324,11 +1334,19 @@ If P99 SLO is 200ms and P99 is 180ms:
   Must optimize existing calls before adding
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Latency vs Throughput example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
 
 ```java
 // BAD: synchronous chain (latency adds up)
@@ -1474,9 +1492,9 @@ increase heap size to reduce GC frequency.
 
 ---
 
-#### Q1 - What is the difference between P50, P95, and P99 latency?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between P50, P95, and P99 latency?**
 
-```
+```plaintext
 Given 100 requests sorted by latency:
   10ms, 12ms, ..., 50ms (P50), ..., 100ms (P95), ..., 500ms (P99), 2000ms
 
@@ -1507,7 +1525,7 @@ Why percentiles matter:
   Average hides outliers; percentiles expose the tail
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* High P99 with low P50 indicates a bimodal
 distribution - two types of requests. Fast path (cache hit, P50) and slow
@@ -1519,7 +1537,7 @@ because you can have terrible P99 with excellent P50 - average looks fine,
 
 ---
 
-#### Q2 - How does queue theory help understand system performance?
+**[JUNIOR] Q2 - [ARCHITECTURE] How does queue theory help understand system performance?**
 
 Queue theory models: arrival rate, service rate, queue length, wait time.
 
@@ -1551,7 +1569,7 @@ Key insight: near 100% utilization, latency explodes
   -> Keep headroom for traffic spikes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The queue model explains why adding capacity
 has diminishing returns when you're near saturation. At 99% utilization,
@@ -1564,11 +1582,11 @@ to absorb 2-3x spikes without queue buildup.
 
 ---
 
-#### Q3 - What is the impact of serialization on latency and throughput?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the impact of serialization on latency and throughput?**
 
 Serialization (converting objects to bytes for transmission) has measurable cost:
 
-```
+```plaintext
 Serialization benchmarks (rough order of magnitude):
   Java object -> JSON (Jackson): ~1-10 microseconds per object
   Java object -> Protobuf: ~0.1-1 microseconds per object
@@ -1591,7 +1609,7 @@ Payload size impact:
   -> 3x bandwidth reduction = 3x CDN/network cost reduction
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* JSON's human readability is a development
 and debugging benefit, not a performance benefit. For external APIs: JSON
@@ -1604,7 +1622,7 @@ cost of Protobuf IDL management must pay for itself.
 
 ---
 
-#### Q4 - How do you optimize the critical path latency?
+**[MID] Q4 - [CONCEPTUAL] How do you optimize the critical path latency?**
 
 Critical path: the longest sequence of operations that determines total latency.
 
@@ -1634,7 +1652,7 @@ Example: Checkout flow
     (34% improvement from caching alone)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Critical path analysis shows which operations
 are worth optimizing. The payment call (100ms) dominates. Caching inventory
@@ -1647,11 +1665,11 @@ before it.
 
 ---
 
-#### Q5 - What is connection pooling and how does it affect throughput?
+**[MID] Q5 - [CONCEPTUAL] What is connection pooling and how does it affect throughput?**
 
 Creating DB connections is expensive (~100ms per connection):
 
-```
+```plaintext
 Without connection pool:
   Request arrives
   -> Create new DB connection (100ms)
@@ -1681,7 +1699,7 @@ Pool sizing:
     Adjust based on: query duration, CPU vs I/O bound queries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Connection pool exhaustion is a common
 production issue. Symptoms: "HikariPool - Connection is not available, request
@@ -1693,7 +1711,7 @@ The real fix is always the slow query - more connections mask the problem.
 
 ---
 
-#### Q6 - How does caching reduce latency and increase throughput?
+**[MID] Q6 - [CONCEPTUAL] How does caching reduce latency and increase throughput?**
 
 Caching moves frequently accessed data closer to the compute:
 
@@ -1730,7 +1748,7 @@ Cache sizing with Pareto:
   DB reduction: 80%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cache hit rate is the key metric.
 80% hit rate = 5x reduction in DB load. 99% hit rate = 100x reduction.
@@ -1742,7 +1760,7 @@ Cache metadata (IDs, URLs) in Redis; serve binary data from CDN or blob storage.
 
 ---
 
-#### Q7 - What is the relationship between concurrency and latency under load?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the relationship between concurrency and latency under load?**
 
 As concurrency increases, latency eventually increases due to:
 
@@ -1778,7 +1796,7 @@ Practical implication:
     CPU-bound: still limited by core count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The optimal concurrency number is not infinite
 and not one - it depends on the workload. CPU-bound: one thread per core

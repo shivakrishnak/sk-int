@@ -153,7 +153,7 @@ Rules:
   - Layers can be tested in isolation (mock lower layer)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Layered Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The power of layered architecture is the dependency rule. When
@@ -220,7 +220,7 @@ public class UserController {
 // Problem: Adding a batch job needs to duplicate the SQL.
 ```
 
-> **Code walkthrough:** The antipattern bundles three concerns -
+> **Code walkthrough:** The antipattern bundles three concerns -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > HTTP routing, business validation, and SQL - into one class.
 > Testing the validation rule ("id must be positive") requires an
 > HTTP request and a database connection. Changing the database
@@ -268,7 +268,7 @@ public interface UserRepository
 }
 ```
 
-> **Code walkthrough:** The controller is now a thin HTTP adapter -
+> **Code walkthrough:** The controller is now a thin HTTP adapter -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it delegates immediately to `UserService`. The business rule
 > (validate ID) lives in `UserService` where it can be tested with
 > a unit test that mocks `UserRepository`. The data access layer
@@ -296,7 +296,7 @@ public class ReportController {
 // Fix: Move filter to UserService.findActiveUsers()
 ```
 
-> **Code walkthrough:** Layer skipping is the most common violation
+> **Code walkthrough:** Layer skipping is the most common violationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in layered architectures. The controller injects a repository
 > directly and applies filtering logic that belongs in the service
 > layer. The consequence: every controller that needs "active users"
@@ -402,7 +402,7 @@ public class UserService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Move behavior into the domain object. `user.deactivate()`
 should set the status and timestamp. The service becomes an
@@ -429,7 +429,7 @@ grep -r "ResponseBody\|@GetMapping" src/main/java/ |
   grep "@Entity"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then check if same classes appear in controller methods example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Introduce DTOs at the presentation boundary. The controller
 maps from domain/entity to DTO. The JPA entity stays in the data
@@ -456,7 +456,7 @@ cannot be mocked.
   (> 2 minutes for unit tests = dependency problem)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then check if same classes appear in controller methods example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Inject repository interfaces into services. Use Mockito or
 similar to mock repositories in service unit tests. Keep integration
@@ -767,7 +767,7 @@ class LayerArchitectureTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This test fails the build if any class in the service package
 imports a class from the controller package, or if any class
@@ -963,7 +963,7 @@ class OrderService {
 // Testing pricing: unit test PricingEngine alone.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Separation of Concerns example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 A "concern" in SoC is not just a technical concept - it is any
@@ -1040,13 +1040,24 @@ public class UserRegistrationService {
 // Reusing validation logic requires copy-pasting.
 ```
 
-> **Code walkthrough:** This service has four distinct concerns
+> **Code walkthrough:** This service has four distinct concernsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > packed into one method: input validation, security (password
 > hashing), persistence, and notification. Testing whether the email
 > validation throws correctly requires standing up JDBC and SMTP
 > infrastructure. When the welcome email subject changes, this class
 > changes - a notification concern change touching registration logic.
 > The four "reasons to change" are the signal to separate.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // GOOD: Each concern in its own component
@@ -1101,7 +1112,7 @@ public class UserRegistrationService {
 }
 ```
 
-> **Code walkthrough:** Each concern is now a focused class with
+> **Code walkthrough:** Each concern is now a focused class withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a single reason to change. `UserRegistrationValidator` changes
 > only when validation rules change. `WelcomeEmailSender` changes
 > only when the email content changes. `UserRegistrationService`
@@ -1186,7 +1197,7 @@ grep -l "^import" src/**/*.java |
   xargs grep -c "^import" | sort -rn | head -10
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find classes with many imports (many dependencies) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Identify distinct "reasons to change" in the class. Each
 reason becomes a new class. Use the Strangler Fig pattern: create
@@ -1214,7 +1225,7 @@ grep -r "WHERE.*AND.*status\|WHERE.*active" src/
 # logic in data access layer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This logic in data access layer example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Move business rules to the domain/service layer. The SQL
 becomes "WHERE id = ?" and the service filters in code, or the
@@ -1238,14 +1249,14 @@ They diverge over time.
 mixed in the same place.
 
 *Diagnostic:*
-```
+```plaintext
 - Are there discount calculations in the frontend?
 - Are there access control checks in the frontend
   that are NOT repeated server-side?
 - Do the frontend and backend rules ever disagree?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This logic in data access layer example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Business rules belong in the backend. The frontend should
 only apply them for UX purposes (pre-validation, display logic)
@@ -1376,7 +1387,7 @@ public class LoggingAspect {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This logic in data access layer example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Decorator pattern: wrap the business component with a decorator
 that adds the cross-cutting behavior. The `CachingUserRepository`
@@ -1717,7 +1728,7 @@ COUPLING LEVELS (worst to best):
 GOAL: High functional cohesion + message/data coupling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cohesion and Coupling example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Cohesion and coupling are inversely related. When a class has low
@@ -1782,7 +1793,7 @@ public class UserService {
 // Problem: Three different teams want to change this class.
 ```
 
-> **Code walkthrough:** `UserService` violates cohesion by mixing
+> **Code walkthrough:** `UserService` violates cohesion by mixingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > three distinct business concerns: user profile management, payment
 > processing, and email delivery. These concerns have different change
 > drivers (product team changes profiles, finance team changes payments,
@@ -1818,6 +1829,12 @@ public class EmailService {
 }
 ```
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // COUPLING EXAMPLE - Control coupling antipattern
 // BAD: Control coupling - flag changes behavior
@@ -1843,7 +1860,7 @@ public void processOrder(Order order) {
 // processOrder() never changes.
 ```
 
-> **Code walkthrough:** The control coupling example shows a flag
+> **Code walkthrough:** The control coupling example shows a flagice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > parameter (`isUrgent`) that changes behavior inside the method.
 > The caller must know that "urgent" means SMS and priority
 > fulfillment - internal implementation knowledge leaks out.
@@ -1872,7 +1889,7 @@ ApplicationState.cache.clear();      // affects all callers
 // Thread safety: all concurrent requests share one user!
 ```
 
-> **Code walkthrough:** Common coupling via shared mutable state
+> **Code walkthrough:** Common coupling via shared mutable stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the most dangerous form of coupling in production systems. Every
 > component that accesses `ApplicationState` is coupled to every other
 > component that modifies it. Thread safety is broken: `currentUser`
@@ -1960,7 +1977,7 @@ and distributed across services. The deployment boundary changed
 but the dependency structure did not.
 
 *Diagnostic:*
-```
+```plaintext
 - Service dependency graph: is it a tree or a web?
   (A web with many bidirectional arrows = high coupling)
 - What is the average chain depth for a user request?
@@ -1970,7 +1987,7 @@ but the dependency structure did not.
   (> 2 direct calls = potential over-coupling)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Introduce event-driven communication for non-critical
 chains. Use CQRS to separate read models from write models.
@@ -2001,7 +2018,7 @@ git log --stat --since="30 days ago" |
 # probably be in the same component
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This probably be in the same component example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Identify the scattered concern and consolidate it. Use
 the Inline Class refactoring to merge the scattered pieces, then
@@ -2039,7 +2056,7 @@ public class OrderContext {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This probably be in the same component example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Each layer defines its own input/output types. Map between
 them at layer boundaries. The controller creates a service request

@@ -104,7 +104,7 @@ External System (HTTP, DB, Queue)
 External System (Database, Email, Cache)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architectural Patterns and Design Pattern Migration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The domain defines what it needs (ports). Adapters fulfill those needs.
 The domain is testable without any external system (inject test adapters).
@@ -129,7 +129,7 @@ Read side subscribes and updates ReadModel.
 (Observer pattern between Command and Query sides)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architectural Patterns and Design Pattern Migration example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Event Sourcing:**
 
@@ -149,7 +149,7 @@ Event Sourcing:
     Memento (snapshots for performance)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architectural Patterns and Design Pattern Migration example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Saga Pattern (Distributed Transactions):**
 
@@ -173,7 +173,7 @@ Orchestration Saga:
   Benefit: flow is explicit and visible in one place.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architectural Patterns and Design Pattern Migration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Migration strategies:**
 
@@ -321,7 +321,7 @@ public class OrderReadModelUpdater {
 }
 ```
 
-> **Code walkthrough:** CQRS in action. `PlaceOrderCommandHandler` handles
+> **Code walkthrough:** CQRS in action. `PlaceOrderCommandHandler` handlesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > writes: validates, creates domain object, persists, publishes event.
 > `GetOrderQueryHandler` handles reads from a denormalized `OrderSummary`
 > read model. `OrderReadModelUpdater` listens for `OrderPlacedEvent` and
@@ -392,7 +392,7 @@ public class OrderPlacementSaga {
 }
 ```
 
-> **Code walkthrough:** The Orchestration Saga maintains a `SagaState`
+> **Code walkthrough:** The Orchestration Saga maintains a `SagaState`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that records each completed step and its result (IDs for compensation).
 > If any step fails: compensation is called in reverse order. The
 > `sagaRepo.save(saga)` after each step persists the progress.
@@ -474,7 +474,7 @@ Phase 4 (months 10-12): CQRS for Order Reads
   - Write consistency preserved (command side)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Pattern composition in the final state:**
 
@@ -599,7 +599,7 @@ grep -r "import javax.persistence" src/main/java/com/example/domain/
 # Any match = port/domain boundary violation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any match = port/domain boundary violation example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Failure 2: CQRS read model becomes stale**
 
@@ -631,7 +631,7 @@ public void recoverIncompleteSagas() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any match = port/domain boundary violation example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -900,7 +900,7 @@ public class OrderAggregate {
 // Snapshot creation: every 50 events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The snapshot strategy: how often to
 snapshot? Too frequent: high write overhead. Too infrequent: long replay

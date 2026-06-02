@@ -144,7 +144,7 @@ Portability
   - Replaceability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Software Architecture Quality Attributes and ISO 25010 example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Quality Attribute Scenarios (BASS, CLEMENTS, KAZMAN):**
 
@@ -174,7 +174,7 @@ payment service (artifact) processes and responds (response) within
 // Result: "fast" means 20s to the developer, 200ms to the customer.
 ```
 
-> **Code walkthrough:** The informally defined quality attribute
+> **Code walkthrough:** The informally defined quality attributeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the most common QA anti-pattern. Without a response measure
 > ("P99 < 2s at 1,000 req/s"), "fast" is undefined. The architect
 > cannot make a principled design decision (caching? async? different
@@ -232,7 +232,7 @@ payment service (artifact) processes and responds (response) within
  */
 ```
 
-> **Code walkthrough:** Three quality attribute scenarios following
+> **Code walkthrough:** Three quality attribute scenarios followingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the six-part format. Each scenario is ISO 25010 classified
 > (Performance Efficiency - Time Behaviour, Reliability - Availability,
 > Security - Integrity). Each scenario drives specific architectural
@@ -392,7 +392,7 @@ Quality
       80% line coverage for domain logic [M, L]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The [H, M] notation: importance to business (H/M/L) and technical
 risk of achieving it (H/M/L). ATAM evaluates architecture decisions
@@ -840,7 +840,7 @@ Quality
                    adds cost and complexity
         Non-risk: Kubernetes pod restart confirmed < 30s
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ATAM example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 [H, H] = High importance, High technical risk
 
@@ -1183,7 +1183,7 @@ Add k6 performance test gating deployment.
 Add cache hit rate monitoring dashboard.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ADR-022: Use Redis cache for product catalog examplice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Most candidates describe ADRs
 and ATAM separately. Great candidates show the integrated format
@@ -1289,7 +1289,7 @@ and describe the essential attendees and their roles.
 
 *Why they ask:* ATAM applied to the most common modern architecture decision.
 
-*Likely follow-up:* "What trade-off points are typical in microservices decisions?"
+*Likely follow-up:* "What trade-off points are typical in microservices decision
 
 Microservices decomposition is a set of architectural decisions
 evaluated against quality attribute scenarios in ATAM.
@@ -1323,23 +1323,23 @@ benefits. Great candidates apply ATAM thinking (sensitivity points,
 trade-offs) to specific microservices decomposition decisions,
 naming the quality attributes affected and the direction of impact.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | ATAM outputs, utility tree construction, trade-off identification |
-| Hiring Manager | When to use full vs lightweight ATAM, stakeholder communication |
-| Bar Raiser | ATAM + ADR integration, practical lightweight ATAM format |
-| Peer Engineer | Trade-off point identification, sensitivity point monitoring |
+| Interviewer Type| Emphasis|
+|------------|-----------------------------------------------------------------|
+| Technical Panel| ATAM outputs, utility tree construction, trade-off identifica
+| Hiring Manager| When to use full vs lightweight ATAM, stakeholder communicatio
+| Bar Raiser| ATAM + ADR integration, practical lightweight ATAM format|
+| Peer Engineer| Trade-off point identification, sensitivity point monitoring|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Method | Purpose | When to Use | Time Investment |
-|---|---|---|---|
-| Full ATAM | Evaluate high-risk architecture designs | Safety-critical, long-lived, first-of-kind systems | 2-3 days |
-| Lightweight ATAM | Evaluate individual architectural decisions | Standard enterprise decisions, ADR reviews | 30-60 min |
-| Architecture Review Board | Approve architectural decisions | When centralized governance is appropriate | Variable |
-| Fitness Functions | Continuously validate architectural properties | All production systems | Low (automated) |
+| Method| Purpose| When to Use| Time Investment|
+|---|-------|--------------------------------------------------|---------------|
+| Full ATAM| Evaluate high-risk architecture designs| Safety-critical, long-live
+| Lightweight ATAM| Evaluate individual architectural decisions| Standard enterp
+| Architecture Review Board| Approve architectural decisions| When centralized g
+| Fitness Functions| Continuously validate architectural properties| All product
 
 ---
 

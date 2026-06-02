@@ -108,7 +108,7 @@ ALB LISTENER RULES (evaluated in order):
 RESULT: rule 1 matches -> api-service receives request
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Load Balancing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Blue-Green Deployment via ALB Weights:**
 
@@ -129,7 +129,7 @@ ROLLBACK (if Green has errors):
   No DNS change needed (ALB does it instantly)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Load Balancing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -246,7 +246,7 @@ resource "aws_lb_listener_rule" "api_canary" {
 }
 ```
 
-> **Code walkthrough:** The Terraform creates an ALB with
+> **Code walkthrough:** The Terraform creates an ALB withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > three listeners: HTTPS (443), HTTP redirect (80), and the
 > API path rule. The ssl_policy `ELBSecurityPolicy-TLS13-1-2-2021-06`
 > enforces TLS 1.2+ and disables weak ciphers - using the
@@ -344,7 +344,7 @@ aws elbv2 describe-target-health \
 #           Target.ResponseCodeMismatch
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Target.ResponseCodeMismatch example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -373,8 +373,7 @@ to require multiple consecutive failures before deregistering.
 | Debugging | 1 | ALB access log analysis |
 | Behavioral | 2 | Multi-service ALB routing, incident diagnosis |
 
-**Q1. When would you use an ALB vs NLB vs CLB, and why is CLB
-considered legacy?**
+**[JUNIOR] Q1 - [TRADE-OFF] When would you use an ALB vs NLB vs CLB, and why is CLB considered legacy?**
 
 ALB (Application Load Balancer - Layer 7):
 - HTTP/HTTPS/gRPC traffic
@@ -404,8 +403,7 @@ partner allowlisting requirements often need NLB.
 
 ---
 
-**Q2. What is connection draining (deregistration delay) and
-what happens without it?**
+**[JUNIOR] Q2 - [FAILURE] What is connection draining (deregistration delay) and what happens without it?**
 
 Connection draining: when a target is deregistered from an ALB/NLB
 (scale-down, rolling deploy, health check failure), the load
@@ -419,7 +417,7 @@ In-flight requests: ECONNRESET (connection reset)
 User sees: 500 error or connection failure mid-request
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Target.ResponseCodeMismatch example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With connection draining:
 ```
@@ -429,7 +427,7 @@ New requests: routed to new instances only
 Old instance: deregistered after all connections close
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Target.ResponseCodeMismatch example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Tuning:
 ```hcl
@@ -440,7 +438,7 @@ resource "aws_lb_target_group" "app" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Match to your p99.9 request duration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Setting deregistration delay to
 match actual request duration. A 300s delay on an API with 2s max
@@ -449,8 +447,7 @@ p99.9 response time + 10% buffer is the right value.
 
 ---
 
-**Q3. How do you implement path-based routing on an ALB for
-microservices and what are the rule limits?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement path-based routing on an ALB for microservices and what are the rule limits?**
 
 ```bash
 # ALB routing architecture:
@@ -475,7 +472,7 @@ aws elbv2 modify-listener \
   --default-actions '[{"Type":"forward","TargetGroupArn":"'$WEB_TG_ARN'"}]'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Default action (priority 1000, catches everything else): example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Limits:
 - 100 rules per listener (default, can request increase)
@@ -489,8 +486,7 @@ rest. Requires no DNS change or feature flags.
 
 ---
 
-**Q4. DEBUGGING: Your ALB returns 502 errors. Walk through
-your diagnosis systematically.**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Your ALB returns 502 errors. Walk through your diagnosis systematically.**
 
 ```bash
 # 502 = ALB received an invalid response from the target
@@ -528,7 +524,7 @@ curl -v http://localhost:8080/health
 # ALB keeps connection open; app closes it; ALB sends 502
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ALB keeps connection open; app closes it; ALB sends 502 example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *What separates good from great:* The keep-alive connection reset
 cause. ALB reuses connections to backends. If the app has a lower
@@ -538,8 +534,7 @@ timeout higher than ALB idle timeout.
 
 ---
 
-**Q5. How does NLB preserve client source IP and why does
-it matter?**
+**[MID] Q5 - [MECHANISM] How does NLB preserve client source IP and why does it matter?**
 
 NLB operates at Layer 4 and does NOT terminate TCP connections
 (in TCP mode). It passes the connection directly to the backend.
@@ -568,8 +563,7 @@ because it still proxies at Layer 4.
 
 ---
 
-**Q6. TRADE-OFF: ALB vs API Gateway for REST APIs. When do
-you choose each?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: ALB vs API Gateway for REST APIs. When do you choose each?**
 
 | Dimension | ALB | API Gateway |
 |---|---|---|
@@ -601,7 +595,7 @@ ALB handles internal routing to microservices.
 
 ---
 
-**Q7. What is a sticky session and when is using it a mistake?**
+**[SENIOR] Q7 - [MECHANISM] What is a sticky session and when is using it a mistake?**
 
 Sticky sessions (session affinity): ALB routes subsequent requests
 from the same client to the same backend target, using a cookie
@@ -631,8 +625,7 @@ to use `spring-session-data-redis` or equivalent, remove stickiness.
 
 ---
 
-**Q8. How do you configure an ALB to route traffic across
-both ECS and Lambda backends?**
+**[SENIOR] Q8 - [MECHANISM] How do you configure an ALB to route traffic across both ECS and Lambda backends?**
 
 ```hcl
 # ALB supports multiple target types in different target groups:
@@ -675,7 +668,7 @@ resource "aws_lb_listener_rule" "async" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Route: /async/* -> Lambda, everything else -> ECS example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that Lambda targets have
 a 1MB request/response payload limit through ALB. Requests with
@@ -684,8 +677,7 @@ drives the Lambda vs ECS routing boundary.
 
 ---
 
-**Q9. BEHAVIORAL: Your ALB access logs show 40% of requests
-returning 503 for 15 minutes. Walk through your investigation.**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: Your ALB access logs show 40% of requests returning 503 for 15 minutes. Walk through your investigation.**
 
 503 from ALB = no healthy targets available to route the request.
 
@@ -696,7 +688,7 @@ aws elbv2 describe-target-health --target-group-arn $TG_ARN
 # Partial unhealthy? -> rolling failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Partial unhealthy? -> rolling failure example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Check health check endpoint from a target directly:
 ```bash
@@ -706,7 +698,7 @@ curl -v http://localhost:8080/health
 # 200 OK -> health check config problem (wrong path/port)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 200 OK -> health check config problem (wrong path/port) example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 3: Correlate with deployment or config change:
 ```bash
@@ -719,7 +711,7 @@ aws autoscaling describe-scaling-activities --auto-scaling-group-name prod-asg
 # Recent launch failures?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Recent launch failures? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Immediate mitigation:
 - Roll back the last deployment if one occurred
@@ -914,7 +906,7 @@ CACHE KEY (matters for correctness):
          /static/app.js -> cache 1 year (immutable file)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDN and DNS in the Cloud example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Route 53 Failover:**
 
@@ -931,7 +923,7 @@ FAILURE: Health check fails 3 consecutive times
          Full failover: 60-180s (check interval + TTL)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDN and DNS in the Cloud example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1073,7 +1065,7 @@ resource "aws_route53_record" "api_eu" {
 #         EU users routed to eu-west-1 (lower latency)
 ```
 
-> **Code walkthrough:** Two CloudFront origin behaviors
+> **Code walkthrough:** Two CloudFront origin behaviorsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > handle static vs API traffic differently. The static behavior
 > (default) forwards no query strings or headers to S3 and
 > caches up to 1 year - this means a user in Tokyo gets
@@ -1169,7 +1161,7 @@ aws cloudfront create-invalidation \
 # Old HTML references old hash, new HTML references new hash
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Old HTML references old hash, new HTML references new hash example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -1195,7 +1187,7 @@ aws route53 get-health-check \
 # Verify: FailureThreshold, RequestInterval, Path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify: FailureThreshold, RequestInterval, Path example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Implement a deep health check that validates
 the application can reach its database and dependencies.
@@ -1215,8 +1207,7 @@ is unreachable.
 | Debugging | 1 | Diagnosing CloudFront cache headers |
 | Behavioral | 2 | Regional latency, SPA deployment |
 
-**Q1. How does a CDN cache work and what determines whether
-a response is a cache hit or miss?**
+**[JUNIOR] Q1 - [MECHANISM] How does a CDN cache work and what determines whether a response is a cache hit or miss?**
 
 CDN cache flow:
 1. User in London requests `https://app.example.com/image.png`
@@ -1246,8 +1237,7 @@ never cache at all.
 
 ---
 
-**Q2. What is a CloudFront Origin Access Control (OAC) and
-why should you use it instead of OAI?**
+**[JUNIOR] Q2 - [SCENARIO] What is a CloudFront Origin Access Control (OAC) and why should you use it instead of OAI?**
 
 OAC (Origin Access Control) and OAI (Origin Access Identity) both
 restrict S3 bucket access: only CloudFront can read objects,
@@ -1291,7 +1281,7 @@ data "aws_iam_policy_document" "s3_oac" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This S3 bucket policy allows cloudfront.amazonaws.com with OAC: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The `AWS:SourceArn` condition
 in the bucket policy. Without it, ANY CloudFront distribution
@@ -1300,8 +1290,7 @@ restricts access to your specific CloudFront distribution only.
 
 ---
 
-**Q3. How do you implement cache invalidation in CloudFront
-and what are its cost implications?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement cache invalidation in CloudFront and what are its cost implications?**
 
 ```bash
 # Invalidate specific paths:
@@ -1318,7 +1307,7 @@ aws cloudfront create-invalidation \
 # then $0.005 per path. Wildcard /* counts as 1 path.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This then $0.005 per path. Wildcard /* counts as 1 path. example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Better alternative: versioned asset filenames (cache-busting):
 ```html
@@ -1329,7 +1318,7 @@ Better alternative: versioned asset filenames (cache-busting):
 <!-- Only index.html needs short TTL or invalidation on deploy -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This then $0.005 per path. Wildcard /* counts as 1 path. example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Recommended strategy:
 - Static assets (`*.js`, `*.css`, fonts): `Cache-Control: max-age=31536000,
@@ -1344,8 +1333,7 @@ in filename to guarantee uniqueness per version.
 
 ---
 
-**Q4. DEBUGGING: CloudFront is serving stale content after a
-deployment. How do you diagnose and fix?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: CloudFront is serving stale content after a deployment. How do you diagnose and fix?**
 
 ```bash
 # Step 1: Check what CloudFront cached vs what origin has:
@@ -1381,7 +1369,7 @@ aws cloudfront create-invalidation \
 # Only /index.html needs short TTL + invalidation on deploy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Only /index.html needs short TTL + invalidation on deploy example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *What separates good from great:* The permanent fix (content-hash
 filenames) vs the reactive fix (invalidation). Invalidation is a
@@ -1390,8 +1378,7 @@ invalidation for 99% of assets.
 
 ---
 
-**Q5. What is Route 53 latency-based routing and when does
-it route to a non-nearest region?**
+**[MID] Q5 - [MECHANISM] What is Route 53 latency-based routing and when does it route to a non-nearest region?**
 
 Latency-based routing: Route 53 routes DNS queries to the region
 with the lowest measured network latency from the user's location.
@@ -1423,7 +1410,7 @@ resource "aws_route53_record" "api_eu" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Points to ALB in eu-west-1 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When a non-nearest region is chosen:
 - The nearest region's record has a health check that is failing:
@@ -1438,8 +1425,7 @@ routing = both fast AND resilient.
 
 ---
 
-**Q6. What is the difference between A, CNAME, and ALIAS
-records in Route 53, and when do you use each?**
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between A, CNAME, and ALIAS records in Route 53, and when do you use each?**
 
 | Record Type | Maps To | Root Domain? | Latency? |
 |---|---|---|---|
@@ -1472,7 +1458,7 @@ example.com ALIAS my-alb.us-east-1.elb.amazonaws.com
 # Works because Route 53 resolves the ALB directly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Works because Route 53 resolves the ALB directly example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Knowing that ALIAS records for
 AWS resources are not standard DNS. They are a Route 53 extension.
@@ -1481,8 +1467,7 @@ to achieve the same effect at the zone apex.
 
 ---
 
-**Q7. TRADE-OFF: Long vs short TTLs in DNS and CDN. What are
-the specific costs of each choice?**
+**[SENIOR] Q7 - [TRADE-OFF] TRADE-OFF: Long vs short TTLs in DNS and CDN. What are the specific costs of each choice?**
 
 Long TTLs (3600s DNS, 86400s CDN):
 - Benefits: fewer origin requests, lower cost, faster user
@@ -1513,8 +1498,7 @@ raise TTL again. Reducing TTL after the change is too late.
 
 ---
 
-**Q8. How do you configure CloudFront for a single-page
-application (SPA) with client-side routing?**
+**[SENIOR] Q8 - [MECHANISM] How do you configure CloudFront for a single-page application (SPA) with client-side routing?**
 
 The SPA routing problem: user navigates to `app.example.com/dashboard`.
 CloudFront sees the path `/dashboard`, requests it from S3. S3 has
@@ -1536,7 +1520,7 @@ resource "aws_cloudfront_distribution" "spa" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Works because Route 53 resolves the ALB directly example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With OAC + S3: S3 returns 403 for missing files (not 404) because
 bucket policy blocks direct access. Map both 403 and 404 to index.html.
@@ -1548,7 +1532,7 @@ Caching for SPA:
 /assets/logo.png:     Cache-Control: max-age=31536000, immutable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Works because Route 53 resolves the ALB directly example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Using a build tool (Vite, Webpack)
 that automatically generates content-hash filenames for all bundled
@@ -1557,8 +1541,7 @@ TTL, everything else is immutable with year-long TTL.
 
 ---
 
-**Q9. BEHAVIORAL: Users in Europe report 3x slower response times
-than users in the US. How do you diagnose?**
+**[SENIOR] Q9 - [DEBUGGING] BEHAVIORAL: Users in Europe report 3x slower response times than users in the US. How do you diagnose?**
 
 Step 1: Confirm and quantify:
 ```bash
@@ -1572,7 +1555,7 @@ for region in us-east-1 eu-west-1 ap-southeast-1; do
 done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use an EC2 instance in that region or CloudShell example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 2: Determine if CDN is in use:
 - Check response for `X-Cache: Hit/Miss from cloudfront`
@@ -1589,7 +1572,7 @@ aws cloudwatch get-metric-statistics \
 # Low cache hit rate in EU -> frequent cache misses -> origin round-trip
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Low cache hit rate in EU -> frequent cache misses -> origin round-trip example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix options:
 - No CDN for API: deploy to EU region, add Route 53 latency routing

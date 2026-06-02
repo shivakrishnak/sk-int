@@ -129,7 +129,7 @@ MODERN:
 :not(.skip)  - negation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Selectors example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -210,7 +210,7 @@ to other elements, by state. CSS selectors satisfy all four.
 }
 ```
 
-> **Code walkthrough:** Single-class selectors are low
+> **Code walkthrough:** Single-class selectors are lowice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > specificity (0,1,0) and resilient to HTML restructuring.
 > BEM-style naming (block__element--modifier) documents
 > intent. When you need to override, add one class to
@@ -238,7 +238,7 @@ to other elements, by state. CSS selectors satisfy all four.
 }
 ```
 
-> **Code walkthrough:** `:has()` finally gives CSS a parent
+> **Code walkthrough:** `:has()` finally gives CSS a parentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > selector - something CSS lacked for decades. `:is()` reduces
 > repetition when you need to apply the same rule to multiple
 > selectors. `:where()` is ideal for CSS resets or design
@@ -317,14 +317,14 @@ the first `p` among siblings regardless of position.
 **Symptom: selector matches wrong elements**
 
 Diagnosis:
-```
+```plaintext
 # DevTools Elements panel:
 # Right-click element > Force State to test pseudo-classes
 # Use ctrl+F in Elements panel to test your selector
 # e.g. type ".nav > a" - DevTools highlights all matches
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DevTools highlights all matches example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -340,7 +340,7 @@ Fix: Check caniuse.com; add JS fallback or feature query:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DevTools highlights all matches example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -356,8 +356,7 @@ Fix: Check caniuse.com; add JS fallback or feature query:
 
 ---
 
-**Q1: What types of CSS selectors exist?** `[JUNIOR]`
-CONCEPTUAL
+**[JUNIOR] Q1 - [CONCEPTUAL] What types of CSS selectors exist?** `[JUNIOR]`**
 
 *Why they ask:* Establishes CSS foundation; tests vocabulary
 and whether they know beyond basics.
@@ -403,8 +402,7 @@ and ID selectors?"
 
 ---
 
-**Q2: My CSS selector isn't matching. How do I debug it?**
-`[MID]` DEBUGGING
+**[MID] Q2 - [DEBUGGING] My CSS selector isn't matching. How do I debug it?**
 
 *Why they ask:* Selector debugging is a daily skill.
 
@@ -450,8 +448,7 @@ mean in DevTools?"
 
 ---
 
-**Q3: What is :has() and why was it a big deal?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] What is :has() and why was it a big deal?** `[SENIOR]`**
 
 *Why they ask:* Tests awareness of modern CSS evolution.
 
@@ -495,7 +492,7 @@ MECHANISM
 
 ---
 
-**Q4: How do CSS combinators work?** `[JUNIOR]` MECHANISM
+**[MID] Q4 - [MECHANISM] How do CSS combinators work?** `[JUNIOR]` MECHANISM**
 
 *Why they ask:* Fundamental CSS knowledge; tests whether
 they understand structural relationships.
@@ -539,7 +536,7 @@ they understand structural relationships.
 
 ---
 
-**Q5: When should you use attribute selectors?** `[MID]`
+**[MID] Q5 - [SCENARIO] When should you use attribute selectors?** `[MID]`**
 TRADE-OFF
 
 *Why they ask:* Tests knowledge of less-common but important
@@ -585,8 +582,7 @@ between class and attribute selectors?"
 
 ---
 
-**Q6: What are pseudo-elements and when do you use them?**
-`[MID]` MECHANISM
+**[MID] Q6 - [MECHANISM] What are pseudo-elements and when do you use them?**
 
 *Why they ask:* Pseudo-elements like ::before/::after are
 widely used but often misunderstood.
@@ -631,8 +627,7 @@ widely used but often misunderstood.
 
 ---
 
-**Q7: How do nth-child selectors work?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q7 - [MECHANISM] How do nth-child selectors work?** `[SENIOR]`**
 
 *Why they ask:* nth-child patterns come up frequently for
 table striping, grid layouts, and list styling.
@@ -866,7 +861,7 @@ MODERN MATH:
   clamp(min, preferred, max)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Units and Values example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -921,7 +916,7 @@ p    { font-size: 16px; }
 .container { width: 960px; } /* breaks on mobile */
 ```
 
-> **Code walkthrough:** All `px` values are immune to user
+> **Code walkthrough:** All `px` values are immune to userice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > font size preferences. A user who sets their browser font
 > to 24px (common for low vision) gets no benefit - all text
 > stays at the declared pixel size. The fixed container width
@@ -945,7 +940,7 @@ small { font-size: 0.875rem; } /* 87.5% of root */
 }
 ```
 
-> **Code walkthrough:** Setting `:root { font-size: 100% }`
+> **Code walkthrough:** Setting `:root { font-size: 100% }`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > inherits the browser's user-configured font size (default
 > 16px, but user may have changed it). All `rem` values then
 > scale proportionally. `min(960px, 100% - 2rem)` is the
@@ -967,7 +962,7 @@ h1 { font-size: var(--fs-xl); }
 p  { font-size: var(--fs-base); }
 ```
 
-> **Code walkthrough:** `clamp(min, preferred, max)` creates
+> **Code walkthrough:** `clamp(min, preferred, max)` createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fluid values that scale linearly between a minimum (at small
 > viewports) and maximum (at large viewports). The middle
 > value is the preferred scale expression - `1rem + 0.5vw`
@@ -1055,13 +1050,13 @@ browser zoom or font size**
 Cause: font sizes set in `px`.
 
 Diagnosis:
-```
+```plaintext
 # Chrome > Settings > Appearance > Font size > set to Large
 # If your text stays the same size, you're using px
 # DevTools: Computed tab shows final px value of rem
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DevTools: Computed tab shows final px value of rem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Replace `font-size: 16px` with `font-size: 1rem`.
 Ensure root is `font-size: 100%` not a fixed px value.
@@ -1085,7 +1080,7 @@ Fix:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DevTools: Computed tab shows final px value of rem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1101,8 +1096,7 @@ Fix:
 
 ---
 
-**Q1: What is the difference between em and rem?** `[JUNIOR]`
-COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between em and rem?** `[JUNIOR]`**
 
 *Why they ask:* The most common CSS units question; reveals
 understanding of reference points.
@@ -1143,7 +1137,7 @@ understanding of reference points.
 
 ---
 
-**Q2: Why should I avoid px for font sizes?** `[JUNIOR]`
+**[JUNIOR] Q2 - [MECHANISM] Why should I avoid px for font sizes?** `[JUNIOR]`**
 TRADE-OFF
 
 *Why they ask:* Tests accessibility awareness.
@@ -1184,7 +1178,7 @@ TRADE-OFF
 
 ---
 
-**Q3: How does CSS calc() work?** `[MID]` MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does CSS calc() work?** `[MID]` MECHANISM**
 
 *Why they ask:* calc() is a workhorse of responsive CSS.
 
@@ -1229,8 +1223,7 @@ TRADE-OFF
 
 ---
 
-**Q4: What is clamp() and why is it useful?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is clamp() and why is it useful?** `[SENIOR]`**
 
 *Why they ask:* clamp() represents modern responsive CSS
 mastery.
@@ -1274,7 +1267,7 @@ typography without media queries?"
 
 ---
 
-**Q5: Debugging: a layout is breaking on mobile. Units might
+**[MID] Q5 - [DEBUGGING] Debugging: a layout is breaking on mobile. Units might**
 be the cause. How do you investigate?** `[MID]` DEBUGGING
 
 *Why they ask:* Responsive unit debugging is a real-world skill.
@@ -1316,8 +1309,7 @@ be the cause. How do you investigate?** `[MID]` DEBUGGING
 
 ---
 
-**Q6: What are viewport units and their gotchas?** `[MID]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What are viewport units and their gotchas?** `[MID]`**
 
 *Why they ask:* Viewport units are widely used and have
 well-known pitfalls that trip up developers.
@@ -1361,7 +1353,7 @@ well-known pitfalls that trip up developers.
 
 ---
 
-**Q7: How do you build accessible, responsive type
+**[SENIOR] Q7 - [MECHANISM] How do you build accessible, responsive type**
 without a design system?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Tests ability to apply unit knowledge to
@@ -1586,7 +1578,7 @@ TYPOGRAPHY PROPERTIES:
   font-display:    swap;    [on @font-face - FOIT prevention]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Colors and Typography example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1646,7 +1638,7 @@ h2 {
 }
 ```
 
-> **Code walkthrough:** Hardcoded colors scattered throughout
+> **Code walkthrough:** Hardcoded colors scattered throughoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > CSS mean a brand color change requires finding every
 > occurrence. Pixel `line-height` breaks when inherited by
 > elements with different font sizes - a 24px line-height on
@@ -1678,7 +1670,7 @@ h2 {
 }
 ```
 
-> **Code walkthrough:** Color tokens defined once in `:root`
+> **Code walkthrough:** Color tokens defined once in `:root`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mean every color change is a single edit. HSL format makes
 > colors human-readable and allows programmatic lightness
 > adjustments. Unitless `line-height` inherits as a ratio -
@@ -1702,7 +1694,7 @@ h2 {
 }
 ```
 
-> **Code walkthrough:** `font-display: swap` tells the browser
+> **Code walkthrough:** `font-display: swap` tells the browserice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to show the fallback font immediately and swap to the web
 > font when it loads. Without it, text may be invisible for
 > seconds during slow connections (FOIT). Variable fonts
@@ -1782,14 +1774,14 @@ colors and maintaining color consistency.
 **Symptom: web font not loading, using fallback font**
 
 Diagnosis:
-```
+```plaintext
 # Network tab: check font file HTTP status (200 vs 404)
 # Check CORS headers if font is on CDN
 # Check font-face src path is correct
 # Check: is the @font-face before the rule using it?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check: is the @font-face before the rule using it? example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1802,7 +1794,7 @@ Diagnosis:
 # Shows contrast ratio with pass/fail against AA/AAA
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows contrast ratio with pass/fail against AA/AAA example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: increase contrast by darkening foreground or lightening
 background (or vice versa). Use oklch or a contrast checker
@@ -1822,7 +1814,7 @@ to find a value that passes.
 
 ---
 
-**Q1: What is the difference between HSL and hex for
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between HSL and hex for**
 colors?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Color format fluency signals CSS depth.
@@ -1865,8 +1857,7 @@ colors?** `[JUNIOR]` COMPARISON
 
 ---
 
-**Q2: Why does WCAG specify color contrast ratios?**
-`[JUNIOR]` CONCEPTUAL
+**[JUNIOR] Q2 - [CONCEPTUAL] Why does WCAG specify color contrast ratios?**
 
 *Why they ask:* Accessibility is a core engineering concern;
 tests values not just technical knowledge.
@@ -1910,7 +1901,7 @@ tests values not just technical knowledge.
 
 ---
 
-**Q3: Explain font stacks and why you need multiple
+**[JUNIOR] Q3 - [MECHANISM] Explain font stacks and why you need multiple**
 fonts in font-family.** `[JUNIOR]` MECHANISM
 
 *Why they ask:* Font stacks are daily CSS; reveals knowledge
@@ -1962,8 +1953,7 @@ of web font loading failure modes.
 
 ---
 
-**Q4: How do you implement dark mode in CSS?** `[SENIOR]`
-PRODUCTION
+**[MID] Q4 - [DEBUGGING] How do you implement dark mode in CSS?** `[SENIOR]`**
 
 *Why they ask:* Dark mode is a modern frontend requirement;
 tests knowledge of CSS custom properties and media queries.
@@ -2018,8 +2008,7 @@ of dark mode preference?"
 
 ---
 
-**Q5: How do variable fonts change web typography?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] How do variable fonts change web typography?**
 
 *Why they ask:* Variable fonts represent modern font
 technology with performance implications.
@@ -2063,8 +2052,7 @@ technology with performance implications.
 
 ---
 
-**Q6: What is FOIT and FOUT and how do you prevent them?**
-`[MID]` DEBUGGING
+**[MID] Q6 - [DEBUGGING] What is FOIT and FOUT and how do you prevent them?**
 
 *Why they ask:* Font loading problems are visible performance
 bugs that affect UX.
@@ -2107,7 +2095,7 @@ bugs that affect UX.
 
 ---
 
-**Q7: Describe how you would set up a color system
+**[SENIOR] Q7 - [MECHANISM] Describe how you would set up a color system**
 using CSS custom properties.** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Color system design is a real senior
@@ -2171,6 +2159,90 @@ frontend skill.
 | Hiring Manager | Frame as accessibility compliance and brand consistency |
 | Bar Raiser | Discuss two-layer design token system for dark mode |
 | Peer Engineer | Discuss font-display choices and real FOUT experiences |
+
+---
+
+**[MID] Q8 - [DEBUGGING] A brand update requires changing
+the primary color across the entire app. How do you
+minimize the change surface?**
+
+*Why they ask:* Tests whether the candidate understands
+design token architecture vs. scattered CSS.
+
+> **Answer:**
+>
+> If the codebase uses CSS custom properties with semantic
+> tokens (the two-layer system from Q7), the change is
+> one line:
+> ```css
+> :root { --color-primary: hsl(250 90% 56%); }
+> ```
+> Every component that uses `--color-primary` updates
+> automatically. Zero component files touched.
+>
+> If the codebase uses hardcoded hex values (`color: #3B82F6`),
+> the change requires a global find-and-replace of all hex
+> values - fragile, error-prone, misses dynamic values.
+>
+> If the codebase uses Sass variables (`$primary: #3B82F6`),
+> the change is also one line in the variables file. But Sass
+> variables are compiled to static values; you can't change
+> them at runtime for things like dark mode.
+>
+> CSS custom properties are superior for brand changes
+> because: (1) one change location, (2) runtime changeable
+> (dark mode without re-compilation), (3) component isolation
+> via component-level overrides.
+>
+> *What separates good from great:* Also checking alpha
+> variants. Brand changes often need `--color-primary-alpha`
+> tokens for overlays and backgrounds. A complete token system
+> includes alpha variants so no component hard-codes
+> `rgba(59, 130, 246, 0.1)` with the brand color baked in.
+
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] When should you use `em` vs
+`rem` for font sizes?**
+
+*Why they ask:* Core CSS unit decision with real accessibility
+consequences.
+
+> **Answer:**
+>
+> `rem` (root em): relative to the root (`html`) font size.
+> Default browser root is 16px. `1rem = 16px`. Changes only
+> if the user changes their browser font size setting.
+>
+> `em` (element em): relative to the font size of the element
+> itself (or its parent if not set). `2em` on a 14px element
+> = 28px.
+>
+> The cascade problem with `em`: if you nest elements
+> that use `em`, font sizes compound. A 0.8em element inside
+> another 0.8em element has 0.64rem effective size. Deeply
+> nested components can have unexpectedly small text.
+>
+> Production rule:
+> - Use `rem` for: font sizes on components that should
+>   scale with user's browser font preference (headings,
+>   body text, UI labels). This is an accessibility best
+>   practice.
+> - Use `em` for: spacing (padding, margin) within a component
+>   that should scale proportionally when the component's
+>   font size changes. If a button's font size changes,
+>   `padding: 0.5em 1em` scales correctly; `padding: 8px 16px`
+>   doesn't.
+> - Avoid `px` for font sizes: px ignores browser font
+>   preferences, breaking accessibility for users with
+>   vision impairments.
+>
+> *What separates good from great:* Setting the root size
+> as a percentage: `html { font-size: 62.5%; }` makes `1rem
+> = 10px` which simplifies mental math. However, this pattern
+> overrides user font preferences if not done carefully.
+> Prefer designing in rem from the start rather than this
+> workaround.
 
 ---
 

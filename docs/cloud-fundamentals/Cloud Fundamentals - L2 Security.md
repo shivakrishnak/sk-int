@@ -100,7 +100,7 @@ S3         Data, bucket policy,  Hardware,
            encryption config     availability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Shared Responsibility Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Common Mistakes:**
 
@@ -126,7 +126,7 @@ MISTAKE 4: AWS HIPAA eligibility != compliance
   Customer: must also encrypt, audit, limit access
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Shared Responsibility Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -199,7 +199,7 @@ cloudtrail.start_logging(Name='org-security-trail')
 # Required for SOC 2, PCI-DSS, HIPAA compliance
 ```
 
-> **Code walkthrough:** Three blocks, each showing a customer
+> **Code walkthrough:** Three blocks, each showing a customerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > responsibility that AWS does not automatically handle.
 > S3 encryption: AWS provides the capability but pre-2023
 > buckets need explicit configuration. The BucketKeyEnabled=True
@@ -293,7 +293,7 @@ aws inspector2 list-findings \
   }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Inspector vulnerability findings: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -314,7 +314,7 @@ aws cloudtrail lookup-events \
     AttributeKey=ResourceName,Value=exposed-bucket
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Audit what was accessed (requires CloudTrail): example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -328,8 +328,7 @@ aws cloudtrail lookup-events \
 | Debugging | 1 | CloudTrail forensics |
 | Behavioral | 2 | Auditor response, customer controls |
 
-**Q1. Where exactly is the shared responsibility boundary
-and how does it change across IaaS, PaaS, and SaaS?**
+**[JUNIOR] Q1 - [MECHANISM] Where exactly is the shared responsibility boundary and how does it change across IaaS, PaaS, and SaaS?**
 
 The fundamental split:
 - **AWS always manages**: physical hardware, data center security,
@@ -362,8 +361,7 @@ is a customer misconfiguration, not an AWS failure.
 
 ---
 
-**Q2. What is the most commonly misunderstood customer
-responsibility in the AWS shared model?**
+**[JUNIOR] Q2 - [MECHANISM] What is the most commonly misunderstood customer responsibility in the AWS shared model?**
 
 Three common misunderstandings:
 
@@ -394,8 +392,7 @@ does not protect against application bugs, deletion, or ransomware.
 
 ---
 
-**Q3. How does the customer implement their side of the shared
-responsibility model at scale?**
+**[JUNIOR] Q3 - [DESIGN] How does the customer implement their side of the shared responsibility model at scale?**
 
 Four pillars of customer security controls:
 
@@ -427,7 +424,7 @@ aws configservice put-config-rule --config-rule '{
 }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable AWS Config managed rules: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Using AWS Config Rules + Security
 Hub for continuous compliance verification. Manual audits find
@@ -436,8 +433,7 @@ a resource drifts from the security baseline.
 
 ---
 
-**Q4. DEBUGGING: An S3 bucket was publicly accessible. AWS
-notified you. What are your investigation steps?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: An S3 bucket was publicly accessible. AWS notified you. What are your investigation steps?**
 
 ```bash
 # Step 1: Immediately remediate - remove public access:
@@ -471,7 +467,7 @@ grep -h '"GET "' logs/*.log | \
 # Notification obligations (GDPR, HIPAA timing requirements)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Notification obligations (GDPR, HIPAA timing requirements) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Running the S3 access log analysis
 immediately - not after the investigation. You need to know if
@@ -481,8 +477,7 @@ but forget to check what was read during the exposure window.
 
 ---
 
-**Q5. What is the TRADE-OFF between managed services (reduced
-customer responsibility) and vendor dependency?**
+**[MID] Q5 - [TRADE-OFF] What is the TRADE-OFF between managed services (reduced customer responsibility) and vendor dependency?**
 
 Managed service benefits:
 - AWS manages OS patching, database engine upgrades, hardware
@@ -517,8 +512,7 @@ not architectural.
 
 ---
 
-**Q6. What does AWS CloudTrail capture and what does it NOT
-capture that customers often assume it does?**
+**[SENIOR] Q6 - [MECHANISM] What does AWS CloudTrail capture and what does it NOT capture that customers often assume it does?**
 
 CloudTrail captures:
 - **Management events**: API calls that manage AWS resources
@@ -546,7 +540,7 @@ Application logs (business actions)
 = Complete audit coverage
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Notification obligations (GDPR, HIPAA timing requirements) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that S3 Data Events cost
 money (per-API-call charge) and must be explicitly enabled. Teams
@@ -555,8 +549,7 @@ incident that they have no record of which objects were read.
 
 ---
 
-**Q7. How do you verify AWS has fulfilled its side of the
-shared responsibility model?**
+**[SENIOR] Q7 - [MECHANISM] How do you verify AWS has fulfilled its side of the shared responsibility model?**
 
 AWS fulfills its side through third-party audits and certifications:
 
@@ -581,7 +574,7 @@ AWS fulfills its side through third-party audits and certifications:
 # Shows which of YOUR configurations meet security standards
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows which of YOUR configurations meet security standards example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Knowing the difference between
 AWS's certifications (which cover their infrastructure) and your
@@ -591,8 +584,7 @@ of AWS's certified infrastructure.
 
 ---
 
-**Q8. What is the AWS Well-Architected Security Pillar and
-how does it relate to the shared responsibility model?**
+**[SENIOR] Q8 - [DESIGN] What is the AWS Well-Architected Security Pillar and how does it relate to the shared responsibility model?**
 
 The Well-Architected Security Pillar defines six security best
 practice areas for customer responsibilities:
@@ -620,8 +612,7 @@ audits or incidents.
 
 ---
 
-**Q9. BEHAVIORAL: A compliance auditor asks "Who is responsible
-for ensuring database data is encrypted?" What is your answer?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: A compliance auditor asks "Who is responsible for ensuring database data is encrypted?" What is your answer?**
 
 Complete answer covering the shared responsibility:
 
@@ -839,7 +830,7 @@ If compromised: attacker reads 2024 reports only
 NOT: delete any bucket, access other data, change IAM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud IAM Least Privilege example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Privilege Escalation via IAM:**
 
@@ -859,11 +850,17 @@ MITIGATION:
   Separate: IAM management roles from service roles
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud IAM Least Privilege example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```json
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```json
 // BAD: Lambda role with wildcard permissions
@@ -921,7 +918,7 @@ MITIGATION:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Cloud IAM Least Privilege example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```python
 import boto3
@@ -963,7 +960,7 @@ iam.create_policy(
 # Services never accessed -> remove their permissions
 ```
 
-> **Code walkthrough:** The BAD policy grants three wildcards
+> **Code walkthrough:** The BAD policy grants three wildcardsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > on all resources - this Lambda can destroy the entire account's
 > S3 data, DynamoDB data, and SQS queues. The GOOD policy has
 > three separate statement blocks, each with a Sid (documentation),
@@ -1051,7 +1048,7 @@ aws cloudtrail lookup-events \
 # from unexpected source IPs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This from unexpected source IPs example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Prevention:* Scope s3 permissions to specific bucket and
 specific objects. Add explicit Deny for delete operations
@@ -1076,7 +1073,7 @@ aws iam simulate-principal-policy \
 aws iam list-attached-role-policies --role-name deploy-role
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Review current policies: example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Add only the specific required action to the role.
 Never add wildcards to fix a single permission issue.
@@ -1093,8 +1090,7 @@ Never add wildcards to fix a single permission issue.
 | Debugging | 1 | Policy evaluation logic |
 | Behavioral | 2 | AdministratorAccess remediation, cross-account setup |
 
-**Q1. What is the principle of least privilege in AWS IAM
-and what are the four mechanisms to implement it?**
+**[JUNIOR] Q1 - [SCENARIO] What is the principle of least privilege in AWS IAM and what are the four mechanisms to implement it?**
 
 Least privilege: grant only the permissions required to perform
 an action on specific resources, for the minimum necessary time.
@@ -1108,14 +1104,14 @@ Four AWS IAM mechanisms:
     "Resource":"arn:aws:s3:::my-bucket/*"}  // NOT "*"
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Review current policies: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. **Condition keys**: restrict by IP, time, MFA, request type:
    ```json
    {"Condition":{"IpAddress":{"aws:SourceIp":"10.0.0.0/8"}}}
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Review current policies: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 3. **Permission boundaries**: maximum permission ceiling for
    a role, regardless of what policies are attached:
@@ -1136,8 +1132,7 @@ For sensitive resources, use both IAM AND resource policies.
 
 ---
 
-**Q2. How do you audit existing IAM permissions to find
-over-permissive policies at scale?**
+**[JUNIOR] Q2 - [DESIGN] How do you audit existing IAM permissions to find over-permissive policies at scale?**
 
 ```bash
 # Tool 1: IAM Access Analyzer (identifies external access):
@@ -1163,7 +1158,7 @@ aws iam get-credential-report
 # Shows: all IAM users, last access dates, MFA status, key rotation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: all IAM users, last access dates, MFA status, key rotation example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Finding over-permissive roles:
 ```bash
@@ -1172,7 +1167,7 @@ aws iam list-roles --query \
 # Roles with trust policy wildcards = overly permissive assume-role
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Roles with trust policy wildcards = overly permissive assume-role example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Automating the audit, not just
 running it once. Schedule the Access Advisor report monthly; alert
@@ -1181,8 +1176,7 @@ permission creep before it becomes a risk.
 
 ---
 
-**Q3. What is IAM Access Analyzer and what specific risks
-does it detect that manual review misses?**
+**[JUNIOR] Q3 - [MECHANISM] What is IAM Access Analyzer and what specific risks does it detect that manual review misses?**
 
 Access Analyzer uses automated reasoning to find resources that
 grant external access. It analyzes resource policies and tells
@@ -1207,7 +1201,7 @@ aws accessanalyzer list-findings \
 # action: ["s3:GetObject"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This action: ["s3:GetObject"] example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 What Access Analyzer does NOT detect:
 - Over-permissive policies within your account (internal over-privilege)
@@ -1222,8 +1216,7 @@ makes findings authoritative (no false positives) and makes
 
 ---
 
-**Q4. DEBUGGING: A Lambda function receives AccessDenied despite
-having a policy that appears correct. Walk through diagnosis.**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: A Lambda function receives AccessDenied despite having a policy that appears correct. Walk through diagnosis.**
 
 ```bash
 # Step 1: Get the exact denied action from CloudTrail:
@@ -1252,7 +1245,7 @@ aws iam simulate-principal-policy \
 # 6. Session policy - was the role assumed with a session policy?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This was the role assumed with a session policy? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The VPC endpoint policy layer.
 Teams often add S3 VPC endpoints with restrictive endpoint policies
@@ -1262,8 +1255,7 @@ the bucket policy. This is the most commonly overlooked deny layer.
 
 ---
 
-**Q5. What is the difference between SCPs and IAM policies
-and how do they interact in AWS Organizations?**
+**[MID] Q5 - [TRADE-OFF] What is the difference between SCPs and IAM policies and how do they interact in AWS Organizations?**
 
 IAM policies: define what an identity (user, role) CAN do within
 an AWS account. They grant permissions.
@@ -1279,7 +1271,7 @@ Effective permissions =
   (minus any explicit Deny)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This was the role assumed with a session policy? example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If SCP denies `s3:DeleteBucket` for the account:
 - Even if a user has `s3:DeleteBucket` in their IAM policy: DENIED
@@ -1301,7 +1293,7 @@ SCP use cases:
    ["eu-west-1","eu-central-1"]}}}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This was the role assumed with a session policy? example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that SCPs apply to the
 management account only in read-only mode (they cannot restrict
@@ -1310,8 +1302,7 @@ but cannot restrict themselves via SCP without careful architecture.
 
 ---
 
-**Q6. TRADE-OFF: Least privilege vs developer productivity.
-How do you implement least privilege without blocking developers?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: Least privilege vs developer productivity. How do you implement least privilege without blocking developers?**
 
 The tension: strict least privilege creates constant friction
 (developers unable to deploy, test, or debug). Over-permissive
@@ -1346,7 +1337,7 @@ both productivity (broad initial) and compliance (measured actual).
 
 ---
 
-**Q7. How do you handle cross-account access in AWS IAM?**
+**[SENIOR] Q7 - [MECHANISM] How do you handle cross-account access in AWS IAM?**
 
 Cross-account access via role assumption:
 
@@ -1370,7 +1361,7 @@ aws sts assume-role \
 # Returns temporary credentials with 1-hour TTL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Returns temporary credentials with 1-hour TTL example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 For S3 cross-account access, BOTH are required:
 1. IAM policy in the requesting account (allows `sts:AssumeRole`
@@ -1387,8 +1378,7 @@ requesting account. Both are required when not using role assumption.
 
 ---
 
-**Q8. What are IAM permission boundaries and when should
-you use them?**
+**[SENIOR] Q8 - [SCENARIO] What are IAM permission boundaries and when should you use them?**
 
 Permission boundary: an advanced IAM feature that defines the
 maximum permissions a role or user can have, regardless of
@@ -1412,7 +1402,7 @@ Use case - delegated IAM management:
 // Developer cannot create a role without the boundary
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Returns temporary credentials with 1-hour TTL example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Other use cases:
 - Service accounts for CI/CD: limit max blast radius even if
@@ -1427,8 +1417,7 @@ no effective permissions until a policy is also attached. Boundary
 
 ---
 
-**Q9. BEHAVIORAL: You discover a production service role has
-AdministratorAccess. How do you remediate safely?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: You discover a production service role has AdministratorAccess. How do you remediate safely?**
 
 This requires careful change management because removing permissions
 from production roles can break services immediately.
@@ -1443,7 +1432,7 @@ aws iam get-service-last-accessed-details --job-id <JOB_ID>
 # Shows: which services were actually accessed and when
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: which services were actually accessed and when example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Check CloudTrail for the specific API calls:
 ```bash
@@ -1453,7 +1442,7 @@ aws cloudtrail lookup-events \
 # More granular than Access Advisor: exact actions and resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This More granular than Access Advisor: exact actions and resources example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Draft least-privilege policy from actual usage
 

@@ -75,7 +75,9 @@ the company directory (call by name, not extension number)."
 ### 📘 Concept Explanation
 
 **Network drivers, port mapping, DNS resolution:**
-```
+
+{% raw %}
+```plaintext
 NETWORK TYPES:
 
   # List networks:
@@ -117,7 +119,7 @@ NETWORK INSPECTION:
   # Shows: containers attached, subnet, gateway, options.
   
   # Get container's IP on a network:
-  docker inspect web --format '{{.NetworkSettings.Networks.myapp-net.IPAddress}}'
+  docker inspect web --format '{{.NetworkSettings.Networks.myapp-net.IPAddress}...
   
   # Test connectivity between containers:
   docker exec web ping db
@@ -147,16 +149,23 @@ NETWORK ISOLATION:
   # Or: connect a running container to additional network:
   docker network connect backend-net myapp
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: connect a running container to additional network: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Docker Compose network configuration shows
+> **Code walkthrough:** A Docker Compose network configuration showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > how frontend, backend, and database are isolated with only
 > necessary cross-network connections.
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: all containers on default bridge, no DNS, no isolation:
@@ -204,7 +213,7 @@ volumes:
   pgdata: {}
 ```
 
-> **Code walkthrough:** The `web` service is only on `frontend`:
+> **Code walkthrough:** The `web` service is only on `frontend`:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it cannot directly connect to `db`. The `app` service bridges both
 > networks: it serves `web` requests and connects to `db`. The `db`
 > service is only on `backend`: completely isolated from web traffic.
@@ -284,7 +293,9 @@ network instead.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Container cannot reach another container by hostname.**
-```
+
+{% raw %}
+```plaintext
 Symptom: app container: "getaddrinfo ENOTFOUND db"
   Or: "Connection refused: db:5432"
   
@@ -295,8 +306,8 @@ Root cause:
 
 Diagnosis:
   # Check which network the containers are on:
-  docker inspect web --format '{{json .NetworkSettings.Networks}}' | python3 -m json.tool
-  docker inspect db --format '{{json .NetworkSettings.Networks}}' | python3 -m json.tool
+  docker inspect web --format '{{json .NetworkSettings.Networks}}' | python3...
+  docker inspect db --format '{{json .NetworkSettings.Networks}}' | python3 -m...
   # If both are on "bridge" (default): switch to user-defined network.
   # If on different user-defined networks: connect or use shared network.
   
@@ -316,8 +327,9 @@ Fix:
   # Or: recreate containers with --network myapp-net.
   # In Compose: define a named network and assign services to it.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In Compose: define a named network and assign services to it. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -512,15 +524,20 @@ DOCKER COMPOSE VOLUMES:
     app-logs: {}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Restore from backup: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A production database volume setup with
+> **Code walkthrough:** A production database volume setup withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > backup demonstrates named volumes for persistence and bind mounts
 > for initialization scripts.
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # BAD: data in container writable layer - lost on container removal:
@@ -555,7 +572,7 @@ docker run --rm \
 docker start db
 ```
 
-> **Code walkthrough:** `postgres-data` is a named volume managed
+> **Code walkthrough:** `postgres-data` is a named volume managedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > by Docker. The `sql/` directory bind mount (`:ro`) injects
 > initialization scripts that Postgres runs on first start. The
 > `--tmpfs /run/secrets` (combined with `POSTGRES_PASSWORD_FILE`)
@@ -636,6 +653,8 @@ works on any host.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Volume data missing after container restart or migration.**
+
+{% raw %}
 ```
 Symptom: Database container starts but data is gone.
   Application: behaving as if fresh installation.
@@ -657,7 +676,7 @@ Diagnosis:
   # If Mounts is empty []: no volume was mounted. Data was in writable layer.
   
   # Check volume mount path:
-  docker inspect {container} --format '{{range .Mounts}}{{.Source}}->{{.Destination}}{{end}}'
+  docker inspect {container} --format '{{range .Mounts}}{{.Source}}...
   # Verify the Destination matches where the database expects data.
   # postgres:15 data path: /var/lib/postgresql/data
   # mysql:8 data path: /var/lib/mysql
@@ -670,8 +689,9 @@ Prevention:
   Backup named volumes before any major operations.
   Test the restore procedure: take a backup, create a new container, restore, verify.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If mounted to wrong path: DB writes to wrong location. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -868,15 +888,21 @@ IMAGE SCANNING:
   # Kubernetes: admission controller verifies signature before allowing pod creation.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes: admission controller verifies signature before allowing pod creation. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A CI/CD pipeline snippet shows the full image
+> **Code walkthrough:** A CI/CD pipeline snippet shows the full imageice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > lifecycle: build, scan, push to private registry, and verify.
 
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
+
+{% raw %}
 ```bash
 # BAD: push to Docker Hub with :latest, no scanning:
 docker build -t mycompany/myapp:latest .
@@ -914,8 +940,9 @@ echo "Deployed image digest: ${DIGEST}"
 sed -i "s|image:.*|image: ${DIGEST}|" k8s/deployment.yaml
 git commit -am "ci: update image to ${GIT_SHA}"
 ```
+{% endraw %}
 
-> **Code walkthrough:** Git SHA as the image tag: unique per commit,
+> **Code walkthrough:** Git SHA as the image tag: unique per commit,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > never overwritten. Trivy scan: fails the build on CRITICAL
 > vulnerabilities before any push occurs. ECR authentication: short-
 > lived token (12 hours), no long-lived credentials. The final step
@@ -1000,7 +1027,7 @@ images.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: `docker pull` failing with "429 Too Many Requests".**
-```
+```plaintext
 Symptom: CI/CD pipeline fails with:
   "Error response from daemon: toomanyrequests: You have reached
   your pull rate limit. You may increase the limit by authenticating
@@ -1013,7 +1040,7 @@ Root cause: Docker Hub rate limiting. Multiple CI/CD jobs pulling
 
 Immediate fix:
   Authenticate all Docker Hub pulls in CI/CD:
-  echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME"...
   # Increases limit to 200 pulls/6h per authenticated account.
   
   Or: pull the base image ONCE and cache in ECR/private registry:
@@ -1033,7 +1060,7 @@ Long-term fix:
     # Pulls from ECR cache. On miss: ECR fetches from Docker Hub (using 1 IP).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pulls from ECR cache. On miss: ECR fetches from Docker Hub (using 1 IP). example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

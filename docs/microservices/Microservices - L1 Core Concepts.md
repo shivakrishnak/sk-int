@@ -86,7 +86,7 @@ DECOMPOSE HORIZONTALLY (bad - anti-pattern):
   - Changing any feature touches all three services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Decomposition Principles example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Services should change for the same business reasons. If OrderController and OrderService always change together when an order feature changes, they belong in the same service. If OrderService and ShippingService never change for the same reason, they belong in separate services.
@@ -193,56 +193,49 @@ Fix: Consolidate related services (ProductService absorbs PriceService and Inven
 | Comparison | 2 min | 1 |
 | Misconception | 2 min | 1 |
 
-#### Q1
-**"What is the single responsibility principle for microservices?"**
+**[JUNIOR] Q1 - [MECHANISM] What is the single responsibility principle for microservices?**
 > "A service should have one reason to change. In practice: a service should own one bounded context or business capability. If you find that a service must change when the order workflow changes AND when the payment gateway changes, it has two responsibilities. The key question when designing: 'What changes would require modifying this service?' If the answer covers two unrelated business domains, the service should be split. Amazon's internal framing: a service is owned by one two-pizza team. If two teams both need to modify the same service for different business reasons, split the service."
 
 *What separates good from great:* "Single responsibility at the service level means accepting that the service will be larger than a single class. A ProductCatalogService with controllers, business logic, and repositories - potentially thousands of lines - has single responsibility if all that code changes for the same business reason (catalog management). Don't confuse code size with responsibility count."
 
 ---
 
-#### Q2
-**"How do you identify bounded contexts using event storming?"**
+**[JUNIOR] Q2 - [MECHANISM] How do you identify bounded contexts using event storming?**
 > "Event storming is a workshop technique. Put domain experts and developers in a room with a large wall covered in paper. Start with 'domain events' (things that happened in the business past tense): OrderPlaced, PaymentProcessed, ItemShipped. Use orange sticky notes. Cluster events around the commands that cause them (blue stickies: PlaceOrder, ProcessPayment). Add aggregates (yellow stickies: Order aggregate, Payment aggregate). Policies that react to events (lilac stickies: when OrderPlaced, trigger FraudCheck). After mapping 2-3 hours of business events: look for natural clusters. Events and commands that deal with the same aggregate and belong to the same team form a bounded context. A wall with a dense Order cluster and a separate Shipment cluster with few connections between them suggests those are two bounded contexts - two potential services."
 
 *What separates good from great:* "The value of event storming is not the map - it is the conversation. Domain experts disagree on terminology, reveal hidden business rules, and surface implicit workflows that developers never knew existed. The language disagreements are bounded context signals: if 'Order' means different things to the warehouse team and the finance team, that is a boundary."
 
 ---
 
-#### Q3
-**"Design the service decomposition for an online learning platform."**
+**[MID] Q3 - [DESIGN] Design the service decomposition for an online learning platform.**
 > "Identify business capabilities: User Management (registration, profiles, permissions), Course Catalog (browse, search, metadata), Enrollment (enroll, drop, track progress), Content Delivery (video streaming, slides, quizzes), Assessment (exams, grading, certificates), Notifications (email, in-app, reminders), Payments (subscriptions, one-time purchases, refunds). Each maps to a service with its own team and database. Why these boundaries: Course Catalog and Enrollment are separate because catalog changes (add a new course) and enrollment changes (user completes a course) happen for different reasons by different teams. Assessment is separate from Content Delivery because grading logic is complex and changes frequently, while content delivery is infrastructure-heavy. Payments is separate because it is a compliance-sensitive domain requiring different security controls and team expertise."
 
 *What separates good from great:* "Before finalizing the decomposition, ask: which service pairs are most likely to be changed together? If Enrollment and Assessment are always co-deployed, maybe they should be one service. The deployment frequency alignment is a better boundary signal than the conceptual model."
 
 ---
 
-#### Q4
-**"What is the difference between decomposing by business capability vs by subdomain?"**
+**[MID] Q4 - [TRADE-OFF] What is the difference between decomposing by business capability vs by subdomain?**
 > "Business capability decomposition: identify what the business does (not how or why) and create one service per capability. It is functional and relatively stable - 'order management' is a capability that survives even large technical changes. Subdomain decomposition (DDD): categorize subdomains as core (competitive advantage, invest here), supporting (necessary but generic), and generic (commodity, buy rather than build). More strategic - tells you where to invest engineering excellence vs where to use off-the-shelf solutions. In practice, they are complementary: use subdomain analysis to decide which services to build vs buy, then use capability analysis to define the boundaries of the services you build."
 
 *What separates good from great:* "The key insight from subdomain analysis: generic subdomains should rarely be custom microservices. User authentication is a generic subdomain - use Auth0, Okta, or Cognito. Email notification is generic - use SendGrid or SES. Custom-building these as microservices is waste. Build only the core and supporting subdomains as custom services."
 
 ---
 
-#### Q5
-**"How do you handle shared business logic that belongs in multiple services?"**
+**[SENIOR] Q5 - [MECHANISM] How do you handle shared business logic that belongs in multiple services?**
 > "Three options: (1) Duplicate it in both services if it is simple and unlikely to change - duplication avoids coupling. (2) Extract to a shared library if the logic is non-trivial and changes together. Risk: all consuming services must upgrade when the library changes, creating implicit coupling. Version the library carefully. (3) Create a separate service that exposes the logic as an API if the logic has its own lifecycle (changes for business reasons independent of consumers). The principle: prefer duplication over coupling for simple logic. Prefer a shared library for stable, domain-specific calculations. Prefer a service only when the logic has its own scaling requirements or business lifecycle."
 
 *What separates good from great:* "Shared libraries are the hidden coupling mechanism in microservices. If OrderService, PaymentService, and ShippingService all depend on a shared 'domain-commons' library at version X, upgrading the library requires coordinating all three services. This is softer coupling than a shared database but it is still coupling. Audit shared library dependencies regularly; extract to a separate service if the library is changing frequently."
 
 ---
 
-#### Q6
-**"What is domain event vs integration event and how do they relate to service decomposition?"**
+**[SENIOR] Q6 - [TRADE-OFF] What is domain event vs integration event and how do they relate to service decomposition?**
 > "Domain event: something significant that happened within a bounded context. OrderService publishes OrderPlacedDomainEvent internally. Only OrderService consumers know about it. It carries all the context needed within the domain. Integration event: a deliberately designed event for cross-service communication. OrderService publishes OrderPlacedIntegrationEvent to Kafka for FulfillmentService and NotificationService. It is a public contract. Domain events are implementation details. Integration events are API surface area. The design discipline: convert domain events to integration events explicitly at the service boundary, rather than directly exposing internal domain events as the public contract. This lets you refactor internal domain events without breaking other services."
 
 *What separates good from great:* "The translation layer between domain events and integration events is where you apply schema governance. A domain event can have 50 fields. The integration event exposes only what consumers actually need, following the interface segregation principle. Fewer fields in the integration event = fewer breaking changes as the internal domain evolves."
 
 ---
 
-#### Q7
-**"What is the two-pizza team rule and how does it inform service sizing?"**
+**[SENIOR] Q7 - [MECHANISM] What is the two-pizza team rule and how does it inform service sizing?**
 > "Amazon's Jeff Bezos: if two pizzas can't feed the team, the team is too large. Applied to microservices: a single microservice should be ownable by a two-pizza team (5-8 engineers). This is not a technical rule - it is an organizational constraint. A service that requires 20 engineers to maintain and modify is likely a distributed monolith, not a microservice. The corollary: the number of microservices in an organization should roughly equal the number of two-pizza teams. A 100-engineer organization has roughly 12-15 two-pizza teams and should have roughly 12-15 primary service domains (though each team may own 2-3 services). This provides a reality check: if someone proposes 200 microservices for a 50-engineer organization, the ratio does not work - no team can own multiple services without operational strain."
 
 *What separates good from great:* "The team-service alignment principle extends to on-call rotations. If a team cannot maintain on-call coverage for their services (meaning the services are too many or too complex for the team size), the services are over-decomposed relative to team capacity. Operational sustainability is as important as architectural cleanliness."
@@ -335,7 +328,7 @@ OPEN HOST SERVICE:
    ProductSearchAPI used by many consumers)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bounded Context and Domain-Driven Design Basics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Ubiquitous language:**
 ```
@@ -356,7 +349,7 @@ If both contexts share one class, the class
 must serve contradictory requirements.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bounded Context and Domain-Driven Design Basics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Bounded contexts let you maintain multiple models of the same real-world concept without contradiction. You acknowledge that different parts of the business have legitimately different views of the same entity and model them separately rather than forcing a universal model.
@@ -478,56 +471,49 @@ Fix: Introduce bounded context isolation. Each service defines its own model for
 | Misconception | 2 min | 1 |
 | Application | 3 min | 1 |
 
-#### Q1
-**"What is the ubiquitous language and why does it matter for microservices?"**
+**[JUNIOR] Q1 - [MECHANISM] What is the ubiquitous language and why does it matter for microservices?**
 > "The ubiquitous language is the shared vocabulary between developers and domain experts within a bounded context. It is used in code (class names, method names, variable names), in team conversations, and in documentation. It is specific to its bounded context. 'Account' in a banking context means something different from 'Account' in an authentication context. Using the ubiquitous language in code means your classes and methods read like business language. If a domain expert reads your code and recognizes the vocabulary, the model is well-aligned with the domain. For microservices: the ubiquitous language defines the vocabulary of each service's API. A service that exposes OrderService.place() using vocabulary from its bounded context is well-designed. A service that exposes OrderService.insertRecord() uses technical vocabulary, not domain vocabulary - sign of misalignment."
 
 *What separates good from great:* "The inverse: when developers invent their own vocabulary that does not match the domain, the code becomes a translation layer between developer terms and business terms. This translation tax increases over time as the domain evolves. Ubiquitous language eliminates the tax."
 
 ---
 
-#### Q2
-**"What is an anti-corruption layer and when do you need one?"**
+**[JUNIOR] Q2 - [MECHANISM] What is an anti-corruption layer and when do you need one?**
 > "An anti-corruption layer (ACL) is a translation layer at the boundary between two contexts with incompatible models. Without an ACL, one context's model leaks into the other: the modern OrderService imports classes from the legacy ERP system and its code becomes polluted with ERP concepts. With an ACL: the ERP integration code is isolated in a single translator class. The ACL receives ERP's XML response and produces OrderContext's Order object. OrderService code only knows about its own model. Use an ACL when: integrating with legacy systems that have different modeling conventions, integrating with external vendor systems (Salesforce, SAP) whose models don't match your domain, or any time a context boundary crosses a significantly different model. The ACL is a design pattern, not a separate service - it is a class or package within the consuming service."
 
 *What separates good from great:* "The ACL is most valuable when the external model changes independently. If the ERP vendor releases a new API version, only the ACL changes. The OrderService domain model is insulated. Without the ACL, an ERP API change requires updating every class in OrderService that uses ERP types."
 
 ---
 
-#### Q3
-**"How does a context map document service integration patterns?"**
+**[MID] Q3 - [MECHANISM] How does a context map document service integration patterns?**
 > "A context map is a diagram (and supporting documentation) that shows all bounded contexts and the relationships between them. For each pair of interacting contexts, it specifies: the relationship type (Customer-Supplier, Conformist, ACL, Shared Kernel, Open Host), the direction of influence (which context adapts to the other), and the integration mechanism (synchronous API, event stream, shared database - though the last should be rare). A context map reveals: which contexts are tightly coupled (Shared Kernel, Conformist) and which are well-isolated (ACL). It shows the power dynamics: a context conforming to an external system's model is a Conformist. If the external system is a vendor, you can't change its model. If it is an internal service, you might negotiate a better contract. The context map is a living document - update it as integration patterns change."
 
 *What separates good from great:* "Context maps are most valuable for identifying architectural risk. A cluster of Conformist relationships around one internal service means that service is a dependency bottleneck - its model changes cascade to many consumers. This is the signal that the bottleneck service should publish a stable, versioned API rather than allowing direct model coupling."
 
 ---
 
-#### Q4
-**"Apply DDD bounded contexts to design an e-commerce catalog and ordering system."**
+**[MID] Q4 - [DESIGN] Apply DDD bounded contexts to design an e-commerce catalog and ordering system.**
 > "ProductCatalogContext: manages products for browsing. Ubiquitous language: Product (title, description, images, category, tags), Category, SearchQuery, ProductVariant. Exposed via: ProductSearchAPI (Open Host Service). OrderContext: manages the purchase lifecycle. Ubiquitous language: Order, LineItem (product ID + price at purchase + quantity), Customer, ShippingAddress. Integration: when displaying an order, OrderContext needs product titles. It stores the product ID and name at purchase time (not a reference to the current catalog product - price and description can change). PricingContext: manages current prices, discounts, promotions. Ubiquitous language: Price, Discount, Promotion, PriceCalculation. Provides a PricingAPI for the OrderContext to get current prices at checkout. Context relationships: OrderContext is Customer to PricingContext Supplier. OrderContext integrates with ProductCatalogContext via ACL (to map catalog product IDs to stored line item data at order creation time)."
 
 *What separates good from great:* "The critical design decision: OrderContext stores product names and prices at purchase time, not references to the current catalog. Prices change and products are discontinued. A historical order must reflect what the customer purchased at the time, not current catalog state. This decision is only visible if you explicitly define the OrderContext model."
 
 ---
 
-#### Q5
-**"What is the difference between a bounded context and an aggregate?"**
+**[SENIOR] Q5 - [TRADE-OFF] What is the difference between a bounded context and an aggregate?**
 > "Different DDD concepts operating at different scopes. Bounded context: the macro-level boundary around a domain model. Applies to a service or a significant module. Inside a bounded context, terminology is consistent. Aggregate: a micro-level pattern within a bounded context. An aggregate is a cluster of domain objects (an Order with its LineItems) that are treated as a single unit for consistency. The Order aggregate root (Order) enforces invariants across all its LineItems. You always access LineItems through the Order, never directly. The aggregate root is the only entry point into the aggregate. A bounded context contains multiple aggregates. An Order bounded context might have Order aggregates and Discount aggregates."
 
 *What separates good from great:* "Aggregates define transaction boundaries within a context. If an operation must update Order and LineItem atomically, they should be in the same aggregate. If two updates need to be eventually consistent (not atomic), they should be in different aggregates. Getting aggregate boundaries right is critical for performance - an aggregate with 1000 child entities is loaded from the database on every access. Design aggregates as small as possible while maintaining consistency."
 
 ---
 
-#### Q6
-**"How does DDD apply when working with third-party APIs or external systems?"**
+**[SENIOR] Q6 - [MECHANISM] How does DDD apply when working with third-party APIs or external systems?**
 > "External systems have their own models that do not match your domain. The DDD approach: always use an anti-corruption layer. Never let the external system's model classes leak into your domain. Practical example: integrating Stripe for payments. Stripe has its own model: PaymentIntent, Customer, PaymentMethod. Your domain has: Payment, Order, BillingProfile. The ACL translates: StripePaymentResult -> PaymentConfirmedEvent (your domain event). Your domain code never imports Stripe classes beyond the ACL. Benefits: if you switch payment providers, only the ACL changes. If Stripe changes its API version, only the ACL changes. If you want to test your Payment domain logic without Stripe, stub the ACL."
 
 *What separates good from great:* "The ACL for external systems should be tested with integration tests (against the real API or a contract mock) while the domain logic is tested with unit tests against the ACL interface. This separation allows fast unit tests for business logic and slower integration tests for the external boundary."
 
 ---
 
-#### Q7
-**"What is a shared kernel and when should you use it?"**
+**[SENIOR] Q7 - [SCENARIO] What is a shared kernel and when should you use it?**
 > "A shared kernel is a deliberately shared subset of the domain model between two bounded contexts. Both contexts agree to keep the shared piece consistent. Example: a Money type (amount + currency) shared between OrderContext and PaymentContext. Both contexts need the same money semantics and agree not to change the Money type independently. Use it for: stable, foundational concepts that are semantically identical across contexts (date ranges, money, identifiers), and when the overhead of maintaining separate models exceeds the coupling cost. Avoid it for: large domain models, frequently changing models, or models where the semantic meaning differs slightly between contexts (even if they are called the same thing). The shared kernel creates a coordination requirement: any change to the kernel must be agreed upon by both teams. This is a form of coupling that should be conscious and deliberate."
 
 *What separates good from great:* "The shared kernel should be versioned like a public library. Major versions for breaking changes, with a migration period where both the old and new versions are supported. Treating the shared kernel as just 'common code' leads to casual modifications that cascade to all consumers - the same problem as any shared mutable dependency."
@@ -620,7 +606,7 @@ ASYNC CONTRACT (AsyncAPI):
   subscriber: [FulfillmentService, NotificationService]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Contract Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Contract versioning strategies:**
 ```
@@ -651,7 +637,7 @@ KAFKA SCHEMA EVOLUTION:
   - Change field type: BREAKING
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Contract Design example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 A contract is a promise. Once you publish a contract and consumers depend on it, breaking it requires coordination with all consumers. Design contracts to be stable by hiding implementation details and exposing only what consumers need.
@@ -765,56 +751,49 @@ Fix: Never rename fields - add the new field and deprecate the old one. Mark the
 | Comparison | 2 min | 1 |
 | Debugging | 3 min | 1 |
 
-#### Q1
-**"What is consumer-driven contract testing (CDCT)?"**
+**[JUNIOR] Q1 - [MECHANISM] What is consumer-driven contract testing (CDCT)?**
 > "CDCT (commonly implemented with Pact) is a testing approach where consumers define the interactions they expect from providers. Workflow: the consumer team writes a Pact test that specifies: 'when I call GET /orders/123, I expect to receive a response with these specific fields.' The test generates a Pact file (a JSON contract). The provider team runs provider verification: they run the service against the Pact file and verify that their service actually returns what the consumer expects. If the provider team changes the response schema in a way that breaks the consumer's Pact contract, the provider verification tests fail - before deployment. This prevents breaking changes from reaching consumers."
 
 *What separates good from great:* "CDCT flips the traditional testing model. Instead of providers testing what they think consumers need, consumers express what they actually use. Providers only need to fulfill what consumers actually test for. This avoids providers adding fields 'just in case' and encourages minimal, stable contracts."
 
 ---
 
-#### Q2
-**"Compare REST/OpenAPI vs gRPC/Protobuf for internal service contracts."**
+**[JUNIOR] Q2 - [TRADE-OFF] Compare REST/OpenAPI vs gRPC/Protobuf for internal service contracts.**
 > "REST/OpenAPI: human-readable, works with browsers, language-agnostic (JSON is everywhere), mature tooling for documentation and client generation. Downsides for internal use: JSON serialization is slower than binary, no native streaming, no built-in strong typing across languages. gRPC/Protobuf: binary serialization (3-10x faster than JSON), strongly typed with code generation in any language, native bi-directional streaming, built-in service definition. Downsides: not browser-native (requires gRPC-Web proxy), harder to debug (binary format), steeper learning curve. For internal service-to-service: gRPC is usually better when performance matters, services are in different languages, or streaming is needed. REST is fine for simpler cases or when the team already has REST expertise."
 
 *What separates good from great:* "The type safety argument for gRPC is significant in large organizations. With REST/JSON, a field type change (string to int) may not cause a compile error but will cause a runtime deserialization error. With Protobuf, the generated code enforces types at compile time. For teams shipping rapidly across multiple services, this compile-time safety prevents a class of production incidents."
 
 ---
 
-#### Q3
-**"What is Postel's Law and how does it apply to API contracts?"**
+**[MID] Q3 - [MECHANISM] What is Postel's Law and how does it apply to API contracts?**
 > "Postel's Law (robustness principle): 'Be liberal in what you accept, and conservative in what you send.' For API consumers: accept additional fields in responses without failing (ignore unknown fields). Accept old versions of request formats. For API providers: send only what is documented in the contract. Never send extra fields that consumers might accidentally depend on. Do not remove fields without explicit deprecation and migration. Applied practically: configure Jackson to ignore unknown fields by default. Validate outbound responses against a schema to ensure you are only sending contracted fields. This combination creates resilient integrations: providers can extend responses and consumers won't break."
 
 *What separates good from great:* "Postel's Law has limits. Being 'liberal in what you accept' for security-sensitive fields can create vulnerabilities. API security: do not apply the liberal acceptance principle to authentication, authorization, or input validation. Validate and sanitize all inputs strictly regardless of Postel's Law."
 
 ---
 
-#### Q4
-**"How do you handle API versioning in a microservices system with 50 services?"**
+**[MID] Q4 - [MECHANISM] How do you handle API versioning in a microservices system with 50 services?**
 > "At 50 services, unmanaged versioning creates chaos: each service has its own versioning strategy, consumers don't know which version to use, and version proliferation creates maintenance debt. Standardized approach: all services follow the same versioning convention (URL versioning: /api/v1/, /api/v2/). Versioning is in the path, not headers - it is explicit and discoverable. Breaking changes always require a new version. A breaking change is: removing a field, changing a field's type, changing required fields, changing error codes that consumers handle. Adding optional fields is not a breaking change. Sunset timeline: a deprecated version is supported for a minimum of 6 months (or as specified in the deprecation notice). After sunset, the old version returns 410 Gone. API catalog: publish all service contracts to a central catalog (Confluence, Backstage) so consumers can find and monitor their dependencies."
 
 *What separates good from great:* "Automate deprecation enforcement: add a custom HTTP response header (Deprecation: true, Sunset: Mon, 01 Jan 2025) to deprecated endpoints. Consumers can configure alerts when they receive a Deprecation header. This provides automatic visibility without requiring manual communication for every deprecated endpoint."
 
 ---
 
-#### Q5
-**"What is the open/closed principle for API contracts?"**
+**[SENIOR] Q5 - [MECHANISM] What is the open/closed principle for API contracts?**
 > "A well-designed API contract is open for extension but closed for modification. Open for extension: you can add new optional fields, new endpoints, new optional parameters. These additions do not break existing consumers. Closed for modification: you cannot change the meaning of existing fields, remove fields, or change required parameters without creating a new version. This is the same principle as the SOLID open/closed principle applied to APIs. A contract that is truly closed means existing consumers can depend on it forever without updates. Practical discipline: before releasing an API version, review it assuming it will exist for 3+ years. Is every field named well? Is the structure correct? Mistakes in v1 become permanent technical debt because v1 must be supported until all consumers migrate to v2."
 
 *What separates good from great:* "The most expensive API mistakes: choosing a too-specific name ('orderCreatedAt' vs 'createdAt'), using integers for IDs (breaks when you need string IDs later), and mixing concerns in a response (returning shipping information in the order response, then needing to remove it for privacy compliance). Review contracts with security and domain experts before publishing."
 
 ---
 
-#### Q6
-**"How do you document and discover APIs across 50 microservices?"**
+**[SENIOR] Q6 - [MECHANISM] How do you document and discover APIs across 50 microservices?**
 > "A service catalog is essential at this scale. Backstage (open-source by Spotify) is the most common choice: each service registers itself with metadata (owner, API contract location, dependencies, deployment status). API contracts (OpenAPI specs, AsyncAPI event schemas) are published to the catalog automatically from CI. Developers can browse the catalog to: find services that provide functionality they need, review the API contract before integrating, see who owns the service for questions, understand the service's dependencies for change impact analysis. The catalog reduces the 'who do I talk to about the order API?' friction and the 'does an API for this already exist?' discovery problem."
 
 *What separates good from great:* "The catalog is only valuable if it is kept up to date. Automate: CI pipelines validate that every service has a registered catalog entry and a published OpenAPI spec. Break the build if the spec is out of date (compare spec to actual API using contract testing). Manual documentation goes stale. Automated, spec-driven documentation stays current."
 
 ---
 
-#### Q7
-**"What are the security considerations for API contract design?"**
+**[SENIOR] Q7 - [DESIGN] What are the security considerations for API contract design?**
 > "API contracts are attack surfaces. Security considerations: (1) Input validation: document and enforce input constraints in the contract (max lengths, allowed characters, enum values). Reject inputs that violate constraints with 400 Bad Request, not 500 Internal Server Error. (2) Response minimization: do not include sensitive fields (SSNs, full card numbers, passwords) in responses unless the consumer has a legitimate need. Each API version should return the minimum necessary data. (3) Authentication contracts: document auth requirements clearly. Is the endpoint public, internal-only, or role-scoped? (4) Rate limiting: contract should document rate limits and return 429 Too Many Requests with Retry-After header when exceeded. (5) Error responses: do not leak internal implementation details (stack traces, database error messages) in error responses. Return generic error codes for internal failures."
 
 *What separates good from great:* "Treat your API contract as a security boundary. Every field in the request is a potential injection vector. Every field in the response is potential data disclosure. Design reviews for API contracts should include a security review as part of the contract approval process."

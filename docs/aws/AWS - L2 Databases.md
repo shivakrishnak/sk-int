@@ -121,7 +121,7 @@ Cluster Endpoints:
   Reader endpoint -> any healthy replica (round-robin)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RDS and Aurora example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -146,7 +146,7 @@ public class OrderHandler
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RDS and Aurora example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 ```java
 // GOOD: Static pool + RDS Proxy endpoint
@@ -187,7 +187,7 @@ public class OrderHandler
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RDS and Aurora example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 ```bash
 # Create Aurora PostgreSQL Serverless v2 (scales 0.5-64 ACUs):
@@ -222,7 +222,7 @@ aws rds create-db-proxy \
   --vpc-subnet-ids subnet-a subnet-b subnet-c
 ```
 
-> **Code walkthrough:** The BAD pattern creates a new
+> **Code walkthrough:** The BAD pattern creates a newice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > database TCP connection per Lambda invocation: 1,000
 > concurrent Lambdas = 1,000 simultaneous connections,
 > exceeding RDS max_connections (200 for db.t3.medium).
@@ -345,7 +345,7 @@ aws rds describe-db-clusters \
 # initializationFailTimeout = -1 (allow startup before DB ready)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This initializationFailTimeout = -1 (allow startup before DB ready) example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix:* Use cluster endpoint for the writer. Enable
 HikariCP `keepaliveTime`. Handle transient connection
@@ -363,8 +363,125 @@ errors with retry logic at the application level.
 | Debugging | 1 | Aurora Performance Insights workflow |
 | Behavioral | 2 | Reducing failover impact, Aurora Global Database |
 
-**Q1. What is the architectural difference between RDS Multi-AZ
-and Aurora storage, and why does it matter for failover?**
+---
+
+**[MID] Q1 - [DEBUGGING] A service using RDS and Aurora is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for RDS and Aurora beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for RDS and Aurora issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For RDS and Aurora specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare RDS and Aurora to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS RDS and Aurora service landscape and can make informed architectural decisions.
+
+RDS and Aurora has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives.
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have).
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using RDS and Aurora for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to RDS and Aurora.
+
+Multi-region architecture for RDS and Aurora: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems.
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance).
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What RDS and Aurora cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* RDS and Aurora cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in RDS and Aurora: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs.
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using RDS and Aurora in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach RDS and Aurora with security as a first-class concern, not an afterthought.
+
+Top security risks for RDS and Aurora: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for RDS and Aurora resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with RDS and Aurora: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for RDS and Aurora configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads.
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving RDS and Aurora that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world RDS and Aurora experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes).
+
+Strong answers include: specific RDS and Aurora service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient RDS and Aurora architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for RDS and Aurora peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency).
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled.
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain RDS and Aurora to someone who has never used AWS before. What problem does it solve, and when would a startup first need it?**
+
+*Why they ask:* Tests understanding of RDS and Aurora core value proposition beyond configuration options.
+
+RDS and Aurora exists because building the equivalent infrastructure yourself requires significant engineering time, ongoing maintenance, and operational expertise. AWS manages the undifferentiated heavy lifting so engineering teams can focus on product differentiation.
+
+For a startup: RDS and Aurora makes sense when the cost of building or managing the equivalent is higher than the RDS and Aurora bill. Early stage: use managed services liberally (S3, RDS, SQS) to move fast. Growth stage: optimize selectively where costs are significant and the team has the expertise to self-manage. Mature stage: strategic decisions about build vs. buy for each component.
+
+The mental model: RDS and Aurora is infrastructure you rent rather than infrastructure you build and maintain. Renting is more expensive per unit but cheaper in total when you factor in engineering time.
+
+*What separates good from great:* Understanding both when to use RDS and Aurora and when to NOT use it (when it's cheaper or simpler to self-manage).
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] Your organization is considering moving from RDS and Aurora to a self-managed equivalent (or vice versa). What is your decision framework and what would trigger the migration?**
+
+*Why they ask:* Tests strategic architectural thinking about RDS and Aurora managed vs self-managed trade-offs.
+
+Decision framework: (1) Cost crossover - calculate monthly RDS and Aurora bill vs cost of self-managed (engineering FTE + infrastructure + ops tooling). Self-managed typically wins at very high scale. (2) Differentiation - does managing this infrastructure provide competitive advantage? If no, managed service is better. (3) Team expertise - does the team have deep expertise to operate self-managed reliably? Managed services reduce operational risk.
+
+Triggers for migrating away from RDS and Aurora: feature limitation blocking a critical requirement, cost exceeding budget with no optimization path, compliance requirement incompatible with managed service model.
+
+Migration risk: any migration of RDS and Aurora in production requires a rollback plan, traffic cutover strategy (canary or blue-green), and parallel-run period to validate behavior before full cutover.
+
+*What separates good from great:* Doing the TCO analysis in a spreadsheet before the architecture review, not during it.
+
+**[JUNIOR] Q1 - [TRADE-OFF] What is the architectural difference between RDS Multi-AZ and Aurora storage, and why does it matter for failover?**
 
 RDS Multi-AZ:
 - Single primary EBS volume, synchronous replication to standby EBS
@@ -392,7 +509,7 @@ Aurora failover:
   Application: connection errors for ~30s during DNS propagation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This initializationFailTimeout = -1 (allow startup before DB ready) example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 *What separates good from great:* Aurora's shared storage means
 there is no data synchronization step during failover. The reader
@@ -402,8 +519,7 @@ why Aurora's failover is 2-4x faster.
 
 ---
 
-**Q2. What is the difference between Aurora read replicas and
-RDS read replicas, and when does the difference matter?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between Aurora read replicas and RDS read replicas, and when does the difference matter?**
 
 RDS Read Replicas:
 - Physical replication: binlog/WAL shipped from primary to replica
@@ -438,8 +554,7 @@ the architecture guarantees near-zero lag by design.
 
 ---
 
-**Q3. How does RDS Proxy reduce connection pressure from Lambda
-functions and what are its limitations?**
+**[JUNIOR] Q3 - [MECHANISM] How does RDS Proxy reduce connection pressure from Lambda functions and what are its limitations?**
 
 The Lambda-RDS connection problem:
 ```
@@ -452,7 +567,7 @@ Connection pool exhausted -> Lambda functions timeout
 RDS CPU spikes on connection handling (not queries)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This initializationFailTimeout = -1 (allow startup before DB ready) example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 RDS Proxy solution:
 ```
@@ -464,7 +579,7 @@ Lambda connections: pooled and multiplexed
 RDS: sees 20 connections, not 1000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This initializationFailTimeout = -1 (allow startup before DB ready) example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Configuration:
 ```hcl
@@ -485,7 +600,7 @@ resource "aws_db_proxy" "main" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This initializationFailTimeout = -1 (allow startup before DB ready) example demonstrates Terraform configuration evaluation. **KEY MECHANISM:** Terraform builds a dependency graph; resources with no explicit dependency are created in parallel. **WHY IT MATTERS:** modifying a resource in-place vs destroy-create depends on the provider schema - check the plan carefully. **TAKEAWAY: always run terraform plan and review before apply; use lifecycle.prevent_destroy for stateful resources.**
 
 Limitations:
 - RDS Proxy adds ~3-5ms latency per query
@@ -501,8 +616,7 @@ pinning rates eliminate the pooling benefit. Check the proxy
 
 ---
 
-**Q4. DEBUGGING: Aurora writes become slow under load but CPU
-is not high. How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Aurora writes become slow under load but CPU is not high. How do you diagnose?**
 
 ```bash
 # Step 1: Check Aurora Performance Insights:
@@ -542,7 +656,7 @@ FROM information_schema.global_status WHERE variable_name IN
 # < 99%: buffer pool too small, disk I/O is the bottleneck
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This < 99%: buffer pool too small, disk I/O is the bottleneck example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* Performance Insights wait event
 analysis. CPU not high + slow writes = I/O or lock bottleneck.
@@ -552,8 +666,7 @@ logging or SSH into the instance.
 
 ---
 
-**Q5. What is a parameter group in RDS and how do you modify
-one safely for production?**
+**[MID] Q5 - [MECHANISM] What is a parameter group in RDS and how do you modify one safely for production?**
 
 Parameter groups: RDS/Aurora configuration settings. Equivalent
 to `postgresql.conf` or `my.cnf`, but managed via AWS.
@@ -580,7 +693,7 @@ ParameterName=log_min_duration_statement,ParameterValue=1000,
 ApplyMethod=immediate  # dynamic: applies without reboot
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Key parameters for production:
 - `shared_buffers`: 25% of instance RAM (PostgreSQL buffer pool)
@@ -603,8 +716,7 @@ with no error message - the change appears applied but is not active.
 
 ---
 
-**Q6. TRADE-OFF: RDS PostgreSQL vs Aurora PostgreSQL. When
-does RDS make more sense than Aurora?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: RDS PostgreSQL vs Aurora PostgreSQL. When does RDS make more sense than Aurora?**
 
 Choose RDS PostgreSQL when:
 1. **PostgreSQL version compatibility**: RDS typically supports
@@ -638,8 +750,7 @@ Audit extensions before migrating.
 
 ---
 
-**Q7. How do you implement connection pooling for Aurora at
-scale and what are the architectural options?**
+**[SENIOR] Q7 - [DESIGN] How do you implement connection pooling for Aurora at scale and what are the architectural options?**
 
 Connection pooling options (smallest to largest scale):
 
@@ -652,7 +763,7 @@ spring.datasource.hikari:
   keepalive-time: 30000  # prevents Aurora TCP timeout
   max-lifetime: 1800000  # 30 min: shorter than Aurora 8-hour limit
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 Works for: single application instance. Multiplexes app threads
 (hundreds) to DB connections (20).
@@ -678,8 +789,7 @@ or dedicated PgBouncer deployment.
 
 ---
 
-**Q8. What is Aurora Global Database and how does it differ
-from cross-region read replicas?**
+**[SENIOR] Q8 - [MECHANISM] What is Aurora Global Database and how does it differ from cross-region read replicas?**
 
 Aurora cross-region read replica (older pattern):
 - Binlog replication across regions (similar to RDS replication)
@@ -717,7 +827,7 @@ resource "aws_rds_cluster" "secondary" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secondary region cluster (different region provider): example demonstrates Terraform configuration evaluation. **KEY MECHANISM:** Terraform builds a dependency graph; resources with no explicit dependency are created in parallel. **WHY IT MATTERS:** modifying a resource in-place vs destroy-create depends on the provider schema - check the plan carefully. **TAKEAWAY: always run terraform plan and review before apply; use lifecycle.prevent_destroy for stateful resources.**
 
 Cross-region latency impact: writes must replicate to secondary
 before acknowledging in some configurations. Check
@@ -730,8 +840,7 @@ consistency from any region without application-level routing.
 
 ---
 
-**Q9. BEHAVIORAL: Your Aurora cluster fails over and your
-application sees 60 seconds of errors. How do you reduce this?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: Your Aurora cluster fails over and your application sees 60 seconds of errors. How do you reduce this?**
 
 Root cause analysis:
 ```bash
@@ -747,7 +856,7 @@ aws rds describe-events \
 # -> Application connection pool held stale connections for 30s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Application connection pool held stale connections for 30s example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Fix 1: Reduce DNS propagation delay (RDS Proxy):
 ```
@@ -759,7 +868,7 @@ With RDS Proxy:
   application-visible downtime < 5 seconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Application connection pool held stale connections for 30s example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Fix 2: Faster connection validation in HikariCP:
 ```yaml
@@ -770,7 +879,7 @@ spring.datasource.hikari:
   keepalive-time: 30000        # 30s: detects dead connections early
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Application connection pool held stale connections for 30s example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 Fix 3: Java DNS cache clearing:
 ```
@@ -781,7 +890,7 @@ Fix 3: Java DNS cache clearing:
 -Dnetworkaddress.cache.negative.ttl=0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add to JVM startup: example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Expected outcome: RDS Proxy + connection validation + DNS cache fix
 reduces application-visible downtime from 60s to < 5s.
@@ -1002,7 +1111,7 @@ RULE: If you cannot serve an access pattern with
   Scan = full table read = gets more expensive as table grows.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DynamoDB Data Modeling example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -1024,7 +1133,7 @@ ScanRequest scan = ScanRequest.builder()
 // Latency: seconds or minutes at scale.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DynamoDB Data Modeling example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 ```java
 // GOOD: Single-table, Query on composite key
@@ -1048,7 +1157,7 @@ QueryResponse result = ddb.query(query);
 // O(orders per user), not O(total table size)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DynamoDB Data Modeling example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 ```java
 // HOT PARTITION: status as partition key
@@ -1064,7 +1173,7 @@ PutItemRequest bad = PutItemRequest.builder()
 // DynamoDB throttles when partition exceeds 1,000 WCU
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DynamoDB Data Modeling example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 ```java
 // GOOD: Shard the hot partition key
@@ -1096,7 +1205,7 @@ List<CompletableFuture<QueryResponse>> futures =
 // Merge all 10 responses for full PENDING list
 ```
 
-> **Code walkthrough:** The Scan anti-pattern reads every
+> **Code walkthrough:** The Scan anti-pattern reads everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > item in the table and discards non-matching ones. At
 > 1 billion items, this takes minutes and costs proportional
 > to table size - it gets worse as the table grows. The
@@ -1212,7 +1321,7 @@ aws cloudwatch get-metric-statistics \
   --end-time $(date -u +%FT%TZ)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check throttle metrics: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix:* Identify the hot partition key with Contributor
 Insights. Add random shard suffix (key#N) to distribute
@@ -1231,8 +1340,123 @@ writes. For time-series data: use date prefix in key
 | Debugging | 1 | Investigating throttled reads/writes |
 | Behavioral | 2 | Social media data model, GSI design |
 
-**Q1. What is single-table design in DynamoDB and why does
-DynamoDB encourage it?**
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] A service using DynamoDB Data Modeling is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for DynamoDB Data Modeling beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for DynamoDB Data Modeling issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For DynamoDB Data Modeling specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] Compare DynamoDB Data Modeling to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS DynamoDB Data Modeling service landscape and can make informed architectural decisions.
+
+DynamoDB Data Modeling has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (Check throttle metrics:, Q9)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (Check throttle metrics:, Q9)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+**[MID] Q1 - [DEBUGGING] A service using DynamoDB Data Modeling is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for DynamoDB Data Modeling beyond 'check CloudWatch logs'. (Check throttle metrics:, Q1)
+
+Diagnostic sequence for DynamoDB Data Modeling issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes. (Check throttle metrics:, Q1)
+
+For DynamoDB Data Modeling specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue. (Check throttle metrics:, Q1)
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare DynamoDB Data Modeling to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS DynamoDB Data Modeling service landscape and can make informed architectural decisions. (Check throttle metrics:, Q2)
+
+DynamoDB Data Modeling has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads. (Check throttle metrics:, Q2)
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (Check throttle metrics:, Q2)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (Check throttle metrics:, Q2)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using DynamoDB Data Modeling for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to DynamoDB Data Modeling.
+
+Multi-region architecture for DynamoDB Data Modeling: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems. (Check throttle metrics:, Q3)
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance). (Check throttle metrics:, Q3)
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What DynamoDB Data Modeling cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* DynamoDB Data Modeling cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in DynamoDB Data Modeling: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs. (Check throttle metrics:, Q4)
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using DynamoDB Data Modeling in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach DynamoDB Data Modeling with security as a first-class concern, not an afterthought.
+
+Top security risks for DynamoDB Data Modeling: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for DynamoDB Data Modeling resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with DynamoDB Data Modeling: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for DynamoDB Data Modeling configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads. (Check throttle metrics:, Q5)
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving DynamoDB Data Modeling that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world DynamoDB Data Modeling experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes). (Check throttle metrics:, Q6)
+
+Strong answers include: specific DynamoDB Data Modeling service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient DynamoDB Data Modeling architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for DynamoDB Data Modeling peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency). (Check throttle metrics:, Q7)
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled. (Check throttle metrics:, Q7)
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
+**[JUNIOR] Q1 - [DESIGN] What is single-table design in DynamoDB and why does DynamoDB encourage it?**
 
 Single-table design: store all entity types in one DynamoDB table,
 differentiated by the SK (sort key) prefix and item type attribute.
@@ -1261,7 +1485,7 @@ response = table.query(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Access pattern: get user + their orders in one query example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 Vs. relational approach:
 ```sql
@@ -1271,7 +1495,7 @@ FROM users u JOIN orders o ON u.id = o.user_id
 WHERE u.id = 123;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Access pattern: get user + their orders in one query example demonstrates SQL query execution plan. **KEY MECHANISM:** the database planner builds an execution plan from table statistics; sequential scan vs index scan differs by 100x. **WHY IT MATTERS:** SELECT * widens rows increasing I/O; missing WHERE clause on UPDATE/DELETE affects all rows with no undo. **TAKEAWAY: always SELECT only needed columns; use EXPLAIN ANALYZE to verify the execution plan.**
 
 *What separates good from great:* Knowing that single-table design
 is access-pattern-driven, not entity-driven. You design the table
@@ -1281,7 +1505,7 @@ wrong requires a table rebuild.
 
 ---
 
-**Q2. How do you model a one-to-many relationship in DynamoDB?**
+**[JUNIOR] Q2 - [MECHANISM] How do you model a one-to-many relationship in DynamoDB?**
 
 Pattern: PK = parent entity, SK = child type prefix + child ID:
 
@@ -1312,7 +1536,7 @@ response = table.get_item(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query: get user profile only (exact SK): example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 For access pattern "get order by order ID" (without knowing user):
 - Need a Global Secondary Index (GSI):
@@ -1321,7 +1545,7 @@ For access pattern "get order by order ID" (without knowing user):
 # Query GSI by order ID -> returns the order item
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query GSI by order ID -> returns the order item example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 *What separates good from great:* The reversed index pattern for
 bidirectional access. Add GSI with inverted PK/SK to support both
@@ -1330,8 +1554,7 @@ without duplicating data.
 
 ---
 
-**Q3. What is a Global Secondary Index (GSI) and what are
-its limitations vs the base table?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is a Global Secondary Index (GSI) and what are its limitations vs the base table?**
 
 GSI: an additional index on a DynamoDB table with a different PK
 (and optionally SK). Allows querying by a different attribute.
@@ -1351,7 +1574,7 @@ response = table.query(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Each item with PRODUCT# attribute is indexed in the GSI example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 GSI limitations (CRITICAL):
 1. **Eventually consistent**: GSI replication is async. A write
@@ -1375,8 +1598,7 @@ table with strongly consistent reads, not a GSI.
 
 ---
 
-**Q4. DEBUGGING: DynamoDB requests are returning
-`ProvisionedThroughputExceededException`. Walk through diagnosis.**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: DynamoDB requests are returning `ProvisionedThroughputExceededException`. Walk through diagnosis.**
 
 ```bash
 # Step 1: Identify which table and which operation:
@@ -1404,13 +1626,13 @@ aws dynamodb update-contributor-insights \
 
 # Step 4: Check if on-demand would help:
 # On-demand automatically scales per-partition (no provisioned cap)
-# Good for unpredictable or spiky workloads
+# Recommended for unpredictable or spiky workloads
 aws dynamodb update-table \
   --table-name my-table \
   --billing-mode PAY_PER_REQUEST
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Recommended for unpredictable or spiky workloads example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Fix for hot partition:
 ```python
@@ -1424,7 +1646,7 @@ def get_shard_key(user_id: str) -> str:
 # Trade-off: reads become more complex (multiple queries)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Trade-off: reads become more complex (multiple queries) example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 *What separates good from great:* Using Contributor Insights for
 hotspot detection rather than guessing. Without it, you can only
@@ -1434,8 +1656,7 @@ most traffic.
 
 ---
 
-**Q5. What is a hot partition in DynamoDB and how do you
-prevent it?**
+**[MID] Q5 - [MECHANISM] What is a hot partition in DynamoDB and how do you prevent it?**
 
 Hot partition: one DynamoDB partition receiving
 disproportionately high read or write traffic vs others.
@@ -1468,7 +1689,7 @@ PK = hashlib.md5(user_id.encode()).hexdigest()[:8] + f"#{user_id}"
 # Range queries still possible on the user_id suffix via GSI
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Range queries still possible on the user_id suffix via GSI example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 *What separates good from great:* The diagnosis gap. Hot partition
 throttling is non-obvious because it can occur even when you have
@@ -1478,8 +1699,7 @@ go to one partition.
 
 ---
 
-**Q6. TRADE-OFF: Single-table vs multi-table design. When is
-multi-table the better choice?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: Single-table vs multi-table design. When is multi-table the better choice?**
 
 Single-table advantages:
 - Fewer API calls for related data (co-location of hot data)
@@ -1518,8 +1738,7 @@ independently accessed: multi-table is simpler.
 
 ---
 
-**Q7. How do DynamoDB Streams work and what use cases do
-they enable?**
+**[SENIOR] Q7 - [MECHANISM] How do DynamoDB Streams work and what use cases do they enable?**
 
 DynamoDB Streams: ordered, time-stamped log of item-level changes
 in a DynamoDB table. Each stream record contains the old and/or
@@ -1547,7 +1766,7 @@ resource "aws_lambda_event_source_mapping" "orders_stream" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Lambda trigger on stream: example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 Use cases enabled by streams:
 1. **Change Data Capture (CDC)**: replicate changes to
@@ -1567,8 +1786,7 @@ before the 24-hour window expires.
 
 ---
 
-**Q8. What are DynamoDB Transactions and when should you
-use (and avoid) them?**
+**[SENIOR] Q8 - [SCENARIO] What are DynamoDB Transactions and when should you use (and avoid) them?**
 
 DynamoDB Transactions: all-or-nothing operations across up to
 100 items in one or more tables.
@@ -1605,7 +1823,7 @@ response = ddb.transact_write_items(
 # Neither item is modified
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Neither item is modified example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 Cost: transactions consume 2x WCU/RCU of equivalent non-transactional
 operations.
@@ -1628,8 +1846,7 @@ item = hot item anti-pattern + transactions is doubly problematic.
 
 ---
 
-**Q9. BEHAVIORAL: Design a DynamoDB data model for a social
-media app with users, posts, likes, and comments.**
+**[SENIOR] Q9 - [DESIGN] BEHAVIORAL: Design a DynamoDB data model for a social media app with users, posts, likes, and comments.**
 
 Step 1: Define access patterns:
 ```
@@ -1641,7 +1858,7 @@ AP5: Check if user liked a post
 AP6: Get feed (posts from followed users - hard!)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Neither item is modified example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Step 2: Single-table design:
 ```python
@@ -1672,7 +1889,7 @@ Step 2: Single-table design:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Likes (supports AP4+AP5: GET PK=POST#p001, SK=LIKE#alice): example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 Step 3: Feed (AP6) - hard problem:
 - Fan-out on write: when Alice posts, write a copy to every

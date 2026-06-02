@@ -152,13 +152,18 @@ GWT in Playwright (readable specifications):
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Testing Patterns (AAA, Given-When-Then) example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Granular vs monolithic tests:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: monolithic test - when it fails, which behavior broke?
@@ -211,7 +216,7 @@ describe('Checkout Flow', () => {
 // -> immediately clear what broke
 ```
 
-> **Code walkthrough:** The BAD example's test name "checkout flow works"
+> **Code walkthrough:** The BAD example's test name "checkout flow works"ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tells you nothing when it fails. Is the cart step missing? Does proceed
 > not work? Is the payment step broken? Each test covers one behavior,
 > so the failing test name is the diagnosis. The GOOD tests use
@@ -463,7 +468,7 @@ Anti-pattern 5: Testing the testing library
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frontend Testing Anti-patterns example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -516,7 +521,7 @@ test('registration flow: validates email', async ({ page }) => {
 // 3 tests covering all validation - not 22 E2E tests
 ```
 
-> **Code walkthrough:** The ice cream cone is the inversion of the
+> **Code walkthrough:** The ice cream cone is the inversion of theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > testing pyramid - heavy on slow E2E tests, light on fast unit tests.
 > Email validation logic belongs in a pure function unit test (zero
 > browser, <1ms). The component test verifies the form displays the

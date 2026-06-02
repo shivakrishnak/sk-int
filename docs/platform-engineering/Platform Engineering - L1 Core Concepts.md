@@ -243,6 +243,11 @@ capabilities.
 
 **Example 1: IDP CLI - scaffolding (GOOD vs BAD)**
 
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
+
 ```bash
 # BAD: No IDP - new service setup without golden path
 # Copy-paste from an existing service in GitHub
@@ -276,7 +281,7 @@ git push origin main
 # Service deployed to dev in under 15 minutes
 ```
 
-> **Code walkthrough:** The `platform scaffold` command
+> **Code walkthrough:** The `platform scaffold` commandice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the golden path entry point. It generates all the
 > files a new service needs with platform-standard
 > configurations: a Dockerfile using the golden path
@@ -292,6 +297,12 @@ git push origin main
 > value metric.
 
 **Example 2: IDP self-service infrastructure request**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: Ticket to provision infrastructure
@@ -321,7 +332,7 @@ spec:
 # Time: automated, 5-10 minutes
 ```
 
-> **Code walkthrough:** The self-service Database
+> **Code walkthrough:** The self-service Databaseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > resource is a Crossplane Composite Resource Claim.
 > The developer expresses intent ("I need a small
 > Postgres 14 database accessible from my namespace
@@ -1031,6 +1042,13 @@ per year, this condition is easily met.
 
 **Example 1: Backstage software template (YAML)**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # BAD: No golden path - custom setup per project
 # Each team writes their own CI/CD from scratch
@@ -1095,8 +1113,9 @@ spec:
       - title: Open in Catalog
         url: ${{ steps['register-catalog'].output.entityRef }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** The Backstage software template
+> **Code walkthrough:** The Backstage software templateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > defines the golden path as a declarative YAML
 > configuration. The `parameters` block collects
 > developer input via a Backstage portal UI form -
@@ -1111,6 +1130,12 @@ spec:
 > always set correctly.
 
 **Example 2: BAD vs GOOD Dockerfile golden path**
+
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```dockerfile
 # BAD: Custom Dockerfile per team
@@ -1136,7 +1161,7 @@ COPY target/app.jar /app.jar
 # Service team adds: their JAR. Nothing else needed.
 ```
 
-> **Code walkthrough:** The BAD Dockerfile is typical
+> **Code walkthrough:** The BAD Dockerfile is typicalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of what teams write without a golden path: full JDK
 > instead of JRE (3x larger), root user (security
 > misconfiguration), no health check (Kubernetes cannot
@@ -1771,7 +1796,7 @@ Developer accesses resource:
   # Or via platform dashboard
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or via platform dashboard example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The three layers of self-service:**
 
@@ -1900,7 +1925,7 @@ spec:
                     - environment
 ```
 
-> **Code walkthrough:** The XRD (Composite Resource
+> **Code walkthrough:** The XRD (Composite Resourceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Definition) is the schema the platform team writes
 > to define what parameters developers can specify.
 > The `claimNames.kind: PostgreSQLInstance` is the
@@ -1945,7 +1970,7 @@ spec:
 #   database: <base64 payments>
 ```
 
-> **Code walkthrough:** This is the complete developer
+> **Code walkthrough:** This is the complete developerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > workflow for self-service database provisioning.
 > The developer writes 12 lines of YAML. Crossplane
 > provisions: an RDS instance (30GB, PostgreSQL 14,
@@ -2321,7 +2346,7 @@ kubectl describe postgresqlinstance my-db \
 # Error message in condition = composition failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error message in condition = composition failure example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2 - Check the Composite Resource (XR):
 ```bash
@@ -2331,7 +2356,7 @@ kubectl describe xpostgresqlinstance xr-name
 # Check Conditions for error details
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Conditions for error details example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Check Managed Resources (cloud resources):
 ```bash
@@ -2341,7 +2366,7 @@ kubectl describe rdsinstance rds-name
 # or if it failed with an error
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or if it failed with an error example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4 - Check Crossplane provider logs:
 ```bash
@@ -2350,7 +2375,7 @@ kubectl logs -n crossplane-system \
 # Look for errors related to the resource name
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for errors related to the resource name example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common root causes: IAM permission error (provider
 credentials do not have permission to create the

@@ -110,7 +110,7 @@ state.
    Thread B -> needs L1 (held by A)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Deadlock Diagnosis example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **How it works (minimal example):**
 ```java
@@ -130,10 +130,10 @@ synchronized(L2) {         // acquires L2
 // Deadlock: A holds L1 waiting for L2; B holds L2 waiting for L1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Deadlock Diagnosis example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **Thread dump deadlock indicator:**
-```
+```plaintext
 Found one Java-level deadlock:
 =============================
 "Thread-A":
@@ -156,7 +156,7 @@ Java stack information for the threads listed above:
   - locked <0x...> (L2)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Deadlock Diagnosis example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use deadlock prevention vs detection:**
 - Prevention: preferred - no deadlocks ever occur (lock ordering,
@@ -168,7 +168,7 @@ Java stack information for the threads listed above:
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example shows the classic lock-order
+> **Code walkthrough:** The BAD example shows the classic lock-orderice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > inversion. The GOOD example shows global lock ordering by system
 > identity hash. The production example shows tryLock with timeout
 > for deadlock prevention.
@@ -194,7 +194,7 @@ class BankAccount {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L4 Deadlock Diagnosis example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // GOOD: global lock ordering using System.identityHashCode
@@ -223,7 +223,7 @@ static void transfer(BankAccount from, BankAccount to,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // PRODUCTION: tryLock with timeout for deadlock avoidance
@@ -260,7 +260,7 @@ class ResourceManager {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -342,7 +342,7 @@ pool.submit(() -> {
     f.get(); // DEADLOCK: waiting for a task that can't run
 });
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool managementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: use a separate pool for subtasks, or use ForkJoinPool (work-stealing
 allows the task to "help" execute its own subtasks).
@@ -360,20 +360,20 @@ keep transactions short; add appropriate indexes to avoid full table scans.
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 60 seconds |
-| Coffman conditions | 3-4 minutes |
-| Detection | 3-4 minutes |
-| Prevention strategies | 3-4 minutes |
-| Lock ordering | 3-4 minutes |
-| tryLock | 2-3 minutes |
-| Thread pool deadlock | 3-4 minutes |
-| DB deadlock | 3-4 minutes |
-| Livelock / starvation | 2-3 minutes |
-| Production diagnosis | 3-4 minutes |
-| Design prevention | 3-4 minutes |
-| Tool demo | 3-4 minutes |
+  | Question Category     | Time to Answer |  
+|---------------------|--------------|
+  | Definition            | 60 seconds     |  
+  | Coffman conditions    | 3-4 minutes    |  
+  | Detection             | 3-4 minutes    |  
+  | Prevention strategies | 3-4 minutes    |  
+  | Lock ordering         | 3-4 minutes    |  
+  | tryLock               | 2-3 minutes    |  
+  | Thread pool deadlock  | 3-4 minutes    |  
+  | DB deadlock           | 3-4 minutes    |  
+  | Livelock / starvation | 2-3 minutes    |  
+  | Production diagnosis  | 3-4 minutes    |  
+  | Design prevention     | 3-4 minutes    |  
+  | Tool demo             | 3-4 minutes    |  
 
 ---
 
@@ -391,17 +391,17 @@ T2: holds L2, waiting for L1 (blocked)
 System: no progress ever
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Livelock:** Threads are RUNNABLE but make no actual progress. They
 keep changing state in response to each other without advancing.
 Thread state in dump: RUNNABLE (misleading - looks active but stuck).
-```
+```plaintext
 T1: has resource A, sees B is needed, gives up A, waits for B
 T2: has resource B, sees A is needed, gives up B, waits for A
 Both retry simultaneously, same pattern repeats endlessly
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: add randomized backoff before retry.
 
@@ -412,7 +412,7 @@ delayed.
 High-priority threads always preempt a low-priority thread.
 Under non-fair locks: one thread always loses to faster threads.
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: fair lock mode (`new ReentrantLock(true)`), thread priority
 balancing, or design changes to ensure all threads eventually run.
@@ -475,7 +475,7 @@ Method 1: `jstack`
 ```bash
 jstack <pid> > thread-dump.txt
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Includes "Found one Java-level deadlock" section at the top with
 clear deadlock description.
@@ -500,10 +500,10 @@ if (deadlocked != null) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Reading the deadlock section:
-```
+```plaintext
 Found one Java-level deadlock:
 =============================
 "Thread-A":        <- WAITING thread
@@ -521,7 +521,7 @@ Stack traces (look for - locked and - waiting):
   - locked <0xDEF> (Lock1)  <- Thread-A holds Lock1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Add deadlock monitoring to production
 health checks via `ThreadMXBean.findDeadlockedThreads()`. Poll every
@@ -551,7 +551,7 @@ void doWork(Resource a, Resource b) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **Strategy 2 - tryLock with timeout (ReentrantLock):**
 Try to acquire locks with a timeout. On timeout: release all held
@@ -571,7 +571,7 @@ while (!success) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Strategy 3 - Lock coarsening (avoid nested locks):**
 Merge multiple fine-grained locks into one coarser lock. No nested
@@ -634,7 +634,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Hash collision handling: when two locks have the same
 `System.identityHashCode()` (rare but possible), a secondary ordering
@@ -697,7 +697,7 @@ boolean transfer(Account from, Account to, double amount) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Key requirement: the thread must release ALL held locks when it gives up.
 Releasing one but not others while waiting for the nth lock perpetuates
@@ -736,7 +736,7 @@ pool.submit(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Prevention strategies:
 
@@ -806,7 +806,7 @@ boolean isDeadlock(SQLException e) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Spring's `@Retryable` or resilience4j `Retry` simplify this pattern.
 
@@ -854,7 +854,7 @@ for i in {1..10}; do jstack <pid> >> all_dumps.txt; sleep 1; done
 grep "Thread-Name" all_dumps.txt | wc -l  # low count = starvation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Async-profiler and JFR (Java Flight
 Recorder) are more reliable than manual thread dumps. JFR's `jdk.ThreadSleep`,
@@ -926,7 +926,7 @@ AtomicReference<Config> current = new AtomicReference<>(defaultConfig);
 // Replace atomically when needed - no deadlock possible
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Message passing (actor model):** Threads communicate by sending
 messages to queues. No shared mutable state, no shared locks,
@@ -941,7 +941,7 @@ ExecutorService stateMgr =
     Executors.newSingleThreadExecutor();
 stateMgr.submit(() -> sharedState.update(value));
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Effectively eliminates deadlock while maintaining consistency.
 
@@ -989,14 +989,14 @@ Thread t2 = new Thread(() -> {
 t1.start(); t2.start(); t1.join(); t2.join(); // hangs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Step 2: Generate thread dump.
 ```bash
 jstack $(pgrep -f DeadlockDemo) | grep -A 30 "deadlock"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Output excerpt:
 ```
@@ -1005,7 +1005,7 @@ Found one Java-level deadlock:
   "Thread-1": waiting for <0x...>(L1), held by "Thread-0"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Fix - lock ordering.
 ```java
@@ -1024,7 +1024,7 @@ Thread t2 = new Thread(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take 10 dumps 1s apart, count thread appearances example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Both threads acquire in the same order - no cycle, no deadlock.
 
@@ -1089,7 +1089,7 @@ At 1M accounts, 100k TPS: probability of conflict per pair < 0.01%
 Expected concurrent transfers without contention: ~99.9%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

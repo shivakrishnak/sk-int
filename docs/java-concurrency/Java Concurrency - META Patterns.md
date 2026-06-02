@@ -115,10 +115,10 @@ void increment() { counter++; } // read-modify-write NOT atomic
 // Fix: AtomicInteger or synchronized
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Mental model 3 - Thread ownership:**
-```
+```plaintext
 Thread-confined: data only accessed by one thread
   -> No synchronization needed
   -> Example: local variables, ThreadLocal state
@@ -132,7 +132,7 @@ Shared mutable: data read and written by multiple threads
   -> Example: shared cache, counters, session state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Mental model 4 - Contention topology:**
 ```
@@ -149,13 +149,13 @@ Shared-write (hot spot): many threads write the same location
   -> Fix: partition (lock striping) or aggregate (LongAdder)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example shows two common mental model
+> **Code walkthrough:** The BAD example shows two common mental modelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > failures: conflating visibility with atomicity, and assuming thread
 > start implies HB with the thread's work. The GOOD example applies
 > the HB mental model to identify the correct synchronization.
@@ -168,7 +168,7 @@ void increment() { counter++; } // STILL BROKEN: ++ is read-modify-write
 // Two threads both read 5, both write 6, net increment = 1 not 2.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This META Patterns example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // GOOD: apply the correct mental model
@@ -183,7 +183,7 @@ void writerIncrement() { counter++; } // OK: only ONE thread writes
 int readerGet() { return counter; } // OK: volatile read
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This META Patterns example demonstrates Java API usage using concurrency primitive. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -243,7 +243,7 @@ executor.submit(task);  // PROBLEM: task captures reference to config variable
 // Writing config after submit(): NO HB guarantee
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -279,7 +279,7 @@ class Config {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Apply HB mental model:
 1. Is there a HB between `settings = loadFromDisk()` and `settings.get(key)`?
@@ -323,7 +323,7 @@ void run() {
 }
 void requestStop() { stop = true; } // write not guaranteed visible
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Test for visibility bug: the operation is a single read or single write
 (not a compound operation). Adding volatile fixes it.
@@ -336,7 +336,7 @@ volatile int count = 0;       // volatile: visibility OK
 void increment() { count++; } // atomicity BROKEN: 3 steps
 // read count, add 1, write count - another thread can interleave
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Test for atomicity bug: the operation requires multiple steps to complete
 (read then write, check then act, compare then update). Volatile alone
@@ -375,7 +375,7 @@ void processRequest(Request req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Thread-local confinement:
 ```java
@@ -385,7 +385,7 @@ ThreadLocal<SimpleDateFormat> formatter = ThreadLocal.withInitial(
 // Each thread gets its own instance -> no sharing -> no synchronization
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Actor-style confinement: one thread owns each entity.
 ```java
@@ -403,7 +403,7 @@ class AccountActor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Design rule: start with confinement. Only introduce sharing when
 the design requires it. Each sharing decision requires a synchronization
@@ -417,7 +417,7 @@ clean up ThreadLocal state at the end of a request:
 try { doWork(); }
 finally { threadLocal.remove(); }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Without this: ThreadLocal accumulates state from previous requests,
 causing data leaks or security issues (user A's data visible to user B).
@@ -438,7 +438,7 @@ Thread 1: processes Order 101 (no shared state)
 Thread 2: processes Order 102 (no shared state)
 Throughput: linear with threads (Amdahl S=0%)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Achieve this by: partitioning work by key (Kafka partition model),
 thread-local state, event-driven isolation.
@@ -449,7 +449,7 @@ Many threads read the same data; writes are rare.
 Thread 1-100: read config (very frequent)
 Config loader: writes config (once per minute)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Solution: volatile reference (visibility), ReadWriteLock (many readers),
 CopyOnWrite structures.
@@ -460,7 +460,7 @@ Many threads write the same location.
 Thread 1-100: increment the same counter (request counter)
 Throughput: O(1/N) - decreases with threads!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Solution: LongAdder (stripe), partition (each thread's own counter +
 periodic aggregation), message passing.
@@ -498,7 +498,7 @@ class SessionCache {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Model 1 - Happens-Before:**
 No HB relationship on `sessions`. Multiple threads can read and write
@@ -532,7 +532,7 @@ class SessionCache {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The four mental models converge on
 the same diagnosis from different angles. HB shows the gap. Visibility/
@@ -557,7 +557,7 @@ void init() {
     useResult(); // assumes thread is done
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Mental model catch: Thread.sleep() creates NO happens-before. If the
 thread takes > 1000ms, useResult() reads stale data.
@@ -569,7 +569,7 @@ if (!queue.isEmpty()) {
     Object item = queue.poll(); // item may be null!
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Mental model catch: atomicity bug. isEmpty() and poll() are two
 separate operations. Another thread may poll() between isEmpty()
@@ -584,7 +584,7 @@ list.add("item"); // modifies the list object
 // Thread B:
 for (String s : list) { ... } // ConcurrentModificationException!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Mental model catch: volatile protects the REFERENCE (list field),
 not the OBJECT contents. list.add() is not volatile-protected.
@@ -711,7 +711,7 @@ treatment (synchronization mechanism) follows from the diagnosis."
 
 **Decision Tree:**
 
-```
+```plaintext
 Q1: Is this data accessed by multiple threads?
   NO  -> No synchronization needed (thread-confined)
   YES -> Q2
@@ -742,7 +742,7 @@ Q5: What is the access pattern?
                                           covering all fields
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use each mechanism:**
 
@@ -763,7 +763,7 @@ Q5: What is the access pattern?
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example applies synchronized everywhere
+> **Code walkthrough:** The BAD example applies synchronized everywhereice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > without analysis. The GOOD example walks through the decision tree
 > to apply the minimum correct synchronization for each field.
 
@@ -783,7 +783,7 @@ class UserProfile {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // GOOD: apply decision tree per field
@@ -815,7 +815,7 @@ class UserProfile {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java API usage using concurrency primitive. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -857,7 +857,7 @@ synchronized void add(T item) { /* add item */ }
 // STILL NOT THREAD-SAFE for this pattern:
 if (!set.isEmpty()) { set.add(item); } // check-then-act: not atomic!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Thread-safe classes require client-side locking or explicit atomic
 compound operations.
@@ -910,7 +910,7 @@ class ShoppingCart {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Walk through each field:
 
@@ -985,7 +985,7 @@ volatile Config config = new Config(...);
 // correctly initialized
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Final limitation:**
 `final` only guarantees the value written in the constructor. If the
@@ -1000,7 +1000,7 @@ class BadConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The "final field + safe publication"
 pattern is the most efficient possible read path: no synchronization
@@ -1028,7 +1028,7 @@ if (value == null) {
 // Fix: map.computeIfAbsent(key, k -> 1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Scenario 2: conditional check-then-act.**
 ```java
@@ -1041,7 +1041,7 @@ if (!list.isEmpty()) {
 // Another thread may clear() the list between isEmpty() and get()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **Scenario 3: multiple fields must be consistent together.**
 ```java
@@ -1058,7 +1058,7 @@ class Counter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* Synchronized makes INDIVIDUAL methods
 atomic, but multi-method sequences are only atomic if the caller holds
@@ -1094,7 +1094,7 @@ AtomicLong:  ~90M ops/sec (decreases with threads)
 LongAdder:   ~400M ops/sec (stable with threads)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Rule of thumb:**
 - Rate meters (ops per second): LongAdder
@@ -1123,7 +1123,7 @@ Decision per field type:
 ```java
 @Autowired UserRepository userRepo; // set once by Spring, then read-only
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Effectively final after Spring initialization. No sync needed.
 BUT: must ensure Spring initialization is thread-safe (it is by
@@ -1133,7 +1133,7 @@ application context startup ordering).
 ```java
 @Value("${api.timeout}") int timeoutMs; // set once at startup
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Effectively final. No sync needed.
 
@@ -1141,7 +1141,7 @@ Effectively final. No sync needed.
 ```java
 int requestCount; // incremented by all requests
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Q3: compound (read-increment-write) -> AtomicInteger.
 
@@ -1149,7 +1149,7 @@ Q3: compound (read-increment-write) -> AtomicInteger.
 ```java
 Map<String, User> userCache = new HashMap<>(); // written and read by requests
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Q3: compound (get-then-put) -> ConcurrentHashMap with computeIfAbsent().
 
@@ -1157,7 +1157,7 @@ Q3: compound (get-then-put) -> ConcurrentHashMap with computeIfAbsent().
 ```java
 ThreadLocal<RequestContext> context = ThreadLocal.withInitial(() -> null);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Thread-confined. But: pool thread reuse -> MUST call remove() at
 request end.
@@ -1189,7 +1189,7 @@ a class.
 @GuardedBy("lockName") // field guarded by this lock
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Example:**
 ```java
@@ -1209,7 +1209,7 @@ public class BoundedCounter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **Javadoc contract:**
 ```java
@@ -1225,7 +1225,7 @@ public class BoundedCounter {
 public class ConfigLoader { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `@GuardedBy("lockName")` is the
 most actionable annotation. It tells code reviewers: "this field MUST
@@ -1249,7 +1249,7 @@ for effectively-immutable static final fields.
 static final List<String> ALLOWED = List.of("READ", "WRITE");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Case 2: Publishing once, reading many (safe publication).**
 If an object is written to a volatile field exactly once:
@@ -1260,7 +1260,7 @@ config = new Config(...); // safe publication
 // All readers see fully initialized Config via volatile HB
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Case 3: Statistical or non-critical data.**
 For some metrics (e.g., a hit counter where approximate counts are
@@ -1270,7 +1270,7 @@ long hitCount = 0; // no sync
 void recordHit() { hitCount++; } // racy - may miss some increments
 // Acceptable if approximate reporting is sufficient
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is a deliberate trade-off, not an oversight. Document it.
 
@@ -1283,7 +1283,7 @@ void init() { config = loadConfig(); } // Spring calls this on main thread
 // Thread.start() HB ensures config is visible
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The decision NOT to synchronize
 should be as deliberate as the decision TO synchronize. Document why
@@ -1414,7 +1414,7 @@ where user A sees user B's data.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example shows a ThreadLocal that is set
+> **Code walkthrough:** The BAD example shows a ThreadLocal that is setice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > but never cleared. The GOOD example uses try/finally to guarantee
 > cleanup, preventing context leakage to the next request.
 
@@ -1436,7 +1436,7 @@ class RequestFilter {
 // Security bug: user B sees user A's data
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // GOOD: always remove ThreadLocal in finally
@@ -1456,7 +1456,7 @@ class RequestFilter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java Stream pipeline using error handling. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -1526,7 +1526,7 @@ grep "threadLocal" src/**/*.java | grep -v "\.remove()"
 # Any ThreadLocal.set() without corresponding .remove() = risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -1560,7 +1560,7 @@ Downstream database latency: 25s per call (DB is slow).
 for i in 1 2 3; do jstack <pid> > dump-$i.txt; sleep 5; done
 grep -A 10 "pool-thread" dump-1.txt | grep "State:"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Result: all 20 threads RUNNABLE in `executeQuery()` waiting for DB.
 
@@ -1608,7 +1608,7 @@ synchronized void processWithCallback() {
     // that's waiting for THIS synchronized block: deadlock
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Fix: release the lock before calling external code or callbacks.
 
@@ -1626,7 +1626,7 @@ pool.submit(() -> {
     // subtasks, which are in the queue, never getting a thread!
 });
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Fix: use a separate pool for sub-tasks, or use ForkJoinPool work-stealing.
 
@@ -1649,7 +1649,7 @@ Normal: cache hit -> 1ms response
 Expiry: 500 threads simultaneously -> 500 DB queries -> DB overloaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Prevention strategies:
 
@@ -1662,7 +1662,7 @@ cache.computeIfAbsent(key, k -> expensiveLoad(k));
 // other threads see the same key in the map and wait for it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Strategy 2: Probabilistic early expiration:**
 ```java
@@ -1675,7 +1675,7 @@ if (expiresIn / totalTtl < 0.1 && Math.random() < 0.1) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Strategy 3: Staggered TTLs:**
 Instead of exact TTL, add jitter:
@@ -1686,7 +1686,7 @@ cache.put(key, value, baseTtl + jitter);
 // Different entries expire at slightly different times -> no mass expiry
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any ThreadLocal.set() without corresponding .remove() = risk example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Strategy 4: Cache refresh in background:**
 Serve stale while refreshing asynchronously. Stale-while-revalidate.
@@ -1719,7 +1719,7 @@ done
 # If count grows monotonically: thread leak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If count grows monotonically: thread leak example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common causes:
 1. Thread created in a loop without termination check:
@@ -1731,7 +1731,7 @@ void handleRequest(Request req) {
 // 1000 req/min = 1000 new threads/min -> leak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This If count grows monotonically: thread leak example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 2. ExecutorService not shut down:
 ```java
@@ -1741,7 +1741,7 @@ executor.submit(task);
 // executor.shutdown() never called -> 5 threads leak per request
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This If count grows monotonically: thread leak example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **WHAT BREAKS: always name threads and bound queue size to detect saturation.**
 
 3. ThreadPoolExecutor keepAlive set to 0 for non-core threads but
    core threads never idle (core threads don't terminate by default).
@@ -1756,7 +1756,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If count grows monotonically: thread leak example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 *What separates good from great:* Virtual threads in Java 21 change
 the economics: creating 1M virtual threads is fine. But monitoring
@@ -1788,7 +1788,7 @@ filter.doFilter: ctx.set(userContext);
 // forgot: ctx.remove()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This If count grows monotonically: thread leak example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Fix and prevention:
 ```java
@@ -1806,7 +1806,7 @@ void doFilter(Request req, FilterChain chain) {
 // Default to ThreadLocal (not InheritableThreadLocal)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This If count grows monotonically: thread leak example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Automated detection: lint rule or PR checklist:
 "Every `ThreadLocal.set()` must be followed by `ThreadLocal.remove()`

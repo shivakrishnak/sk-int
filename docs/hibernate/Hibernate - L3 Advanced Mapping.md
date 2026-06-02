@@ -141,7 +141,7 @@ TABLE_PER_CLASS:
   Polymorphic: UNION ALL cars, trucks, motorcycles
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Inheritance Mapping Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The inheritance strategy is declared once at the root entity and
@@ -227,7 +227,7 @@ public class Car extends Vehicle {
 // WHERE c.vehicle_id = ?
 ```
 
-> **Code walkthrough:** JOINED allows `nullable = false` on subclass
+> **Code walkthrough:** JOINED allows `nullable = false` on subclassice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > columns - `doors` is NOT NULL in the `cars` table. Every Car load
 > requires a JOIN between `vehicles` and `cars`. Polymorphic query
 > `FROM Vehicle` requires LEFT JOINs to all subclass tables - expensive
@@ -263,7 +263,7 @@ public class Order extends AuditEntity {
 // Can query: FROM Order - returns Orders with audit fields
 ```
 
-> **Code walkthrough:** `@MappedSuperclass` is NOT an entity. It
+> **Code walkthrough:** `@MappedSuperclass` is NOT an entity. Itice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > has no table. Its fields are included in each subclass entity's
 > own table. This is the correct pattern for common audit fields
 > (createdAt, updatedAt) or soft-delete flags. Zero runtime overhead
@@ -354,7 +354,7 @@ String subclassData;
 // instead of 35 nullable columns
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -381,7 +381,7 @@ public abstract class Vehicle {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -401,7 +401,7 @@ FROM Vehicle
 // Type-specific (2-way JOIN):
 FROM Car
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Or reconsider: migrate to SINGLE_TABLE if the hierarchy is stable.
 
@@ -419,9 +419,7 @@ Or reconsider: migrate to SINGLE_TABLE if the hierarchy is stable.
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is `@MappedSuperclass` and how is it different from
-`@Inheritance`?
+**[JUNIOR] Q1 - [MECHANISM] What is `@MappedSuperclass` and how is it different from `@Inheritance`?**
 
 *Why they ask:* @MappedSuperclass is frequently confused with inheritance.
 
@@ -461,7 +459,7 @@ class Car extends Vehicle { ... }
 // JPQL: FROM Vehicle -> returns all Vehicles (Cars, Trucks)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use `@MappedSuperclass` when: the superclass is just a container for
 common fields (audit fields, soft-delete, version) and subclasses
@@ -477,8 +475,7 @@ difference between the two annotations.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-When should you choose JOINED over SINGLE_TABLE?
+**[MID] Q2 - [MECHANISM] When should you choose JOINED over SINGLE_TABLE?**
 
 *Why they ask:* Understanding when JOINED is worth the JOIN cost.
 
@@ -513,10 +510,7 @@ with SINGLE_TABLE.
 
 ---
 
-**Q3 [SENIOR] - TRADE-OFF**
-You are designing a notification system with 8 types (Email, SMS,
-Push, Webhook, Slack, Teams, Discord, InApp), each with 3-5 unique
-fields. Which inheritance strategy?
+**[SENIOR] Q3 - [TRADE-OFF] You are designing a notification system with 8 types (Email, SMS, Push, Webhook, Slack, Teams, Discord, InApp), each with 3-5 unique fields. Which inheritance strategy?**
 
 *Why they ask:* 8 subtypes with unique fields is a real design decision.
 
@@ -546,7 +540,7 @@ public class Notification {
 // Email payload: {"subject":"...", "from":"...", "body":"..."}
 // SMS payload: {"phone":"...", "message":"..."}
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 One table, no JPA inheritance, type-specific data in JSON.
 In PostgreSQL, JSONB is queryable and indexable.
@@ -562,9 +556,7 @@ for notification/event hierarchies with many types.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-A `SELECT * FROM vehicles` returns correct data but omits some
-vehicles. No error is thrown. What could cause this?
+**[SENIOR] Q4 - [DEBUGGING] A `SELECT * FROM vehicles` returns correct data but omits some vehicles. No error is thrown. What could cause this?**
 
 *Why they ask:* Tests knowledge of discriminator mapping corner cases.
 
@@ -590,7 +582,7 @@ GROUP BY vehicle_type;
 -- those rows are silently dropped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fixes:
 1. Add the missing subclass entity with `@DiscriminatorValue`.
@@ -602,7 +594,7 @@ SELECT COUNT(*) FROM vehicles WHERE vehicle_type IS NULL;
 -- NULLs are also silently dropped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Prevention: always explicitly annotate `@DiscriminatorValue` on every
 subclass and never rely on the default (class simple name). Backfill
@@ -614,9 +606,7 @@ the problem rather than guess at it.
 
 ---
 
-**Q5 [MID] - COMPARISON**
-What is the difference between `@Embedded`/`@Embeddable` and
-inheritance in Hibernate?
+**[MID] Q5 - [TRADE-OFF] What is the difference between `@Embedded`/`@Embeddable` and inheritance in Hibernate?**
 
 *Why they ask:* Tests ability to distinguish IS-A from HAS-A patterns.
 
@@ -653,7 +643,7 @@ class Employee extends Person { ... }
 // FROM Person -> returns all Persons (including Employees)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Choose `@Embeddable` (composition) when:
 - The component has no identity of its own (no PK, no lifecycle)
@@ -672,8 +662,7 @@ inheritance for entity hierarchies (identity, lifecycle, polymorphism).
 
 ---
 
-**Q6 [MID] - DEBUGGING**
-All `Car` queries return some Truck data mixed in. What is happening?
+**[MID] Q6 - [DEBUGGING] All `Car` queries return some Truck data mixed in. What is happening?**
 
 *Why they ask:* Discriminator configuration bugs cause data integrity issues.
 
@@ -694,7 +683,7 @@ GROUP BY vehicle_type;
 -- Mismatch between Java defaults and database values
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Root cause scenario: Car was originally not annotated with
 `@DiscriminatorValue`, so rows were inserted with `vehicle_type = 'Car'`
@@ -707,7 +696,7 @@ UPDATE vehicles SET vehicle_type = 'CAR'
 WHERE vehicle_type = 'Car';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 subclass. This makes the discriminator value visible in code and immune
 to class renames.
@@ -717,9 +706,7 @@ counts actual discriminator values in the database - not guessing.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Tell me about a time you had to change an inheritance mapping
-strategy in a production system.
+**[STAFF] Q7 - [BEHAVIORAL] Tell me about a time you had to change an inheritance mapping strategy in a production system.**
 
 *Why they ask:* Inheritance strategy migration is a real and difficult
 operational task.
@@ -928,7 +915,7 @@ T2 unblocks -> reads T1's committed value
 T2 computes new stock based on T1's committed value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Optimistic and Pessimistic Locking example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Optimistic locking detects conflicts; pessimistic locking prevents them.
@@ -964,7 +951,7 @@ public void reserveSeat(Long seatId) {
 }
 ```
 
-> **Code walkthrough:** Both transactions read the same Seat, both see
+> **Code walkthrough:** Both transactions read the same Seat, both seeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `available = true`, both set it false, both commit. The seat is reserved
 > twice. No exception is thrown. This is the lost update problem - silent,
 > no error, discovered only by downstream inconsistencies.
@@ -1008,13 +995,24 @@ public void decrementStockWithRetry(Long id, int qty) {
 }
 ```
 
-> **Code walkthrough:** `@Version` appends `AND version = N` to every
+> **Code walkthrough:** `@Version` appends `AND version = N` to everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > UPDATE. If another transaction already committed a version increment,
 > 0 rows are updated and `OptimisticLockException` is thrown. The retry
 > annotation retries the entire transaction (reloading the entity with
 > the new version) up to 3 times. Exponential backoff reduces retry
 > collisions under high load. At low conflict rates (< 5%), this is
 > efficient and requires no database locks.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // GOOD: Pessimistic locking for booking (scarce resource)
@@ -1045,13 +1043,24 @@ public class SeatBookingService {
 Optional<Seat> findByIdForUpdate(@Param("id") Long id);
 ```
 
-> **Code walkthrough:** `LockModeType.PESSIMISTIC_WRITE` generates
+> **Code walkthrough:** `LockModeType.PESSIMISTIC_WRITE` generatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `SELECT ... FOR UPDATE`. Concurrent transactions attempting to lock
 > the same seat row BLOCK until this transaction commits. The second
 > transaction then reads the updated row (`available = false`) and
 > throws `SeatNotAvailableException`. No race condition, no double-booking.
 > The lock is held only for the duration of this short transaction - typically
 > < 100ms. Never hold a FOR UPDATE lock across an I/O operation.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // GOOD: Atomic UPDATE - alternative for high-throughput counters
@@ -1069,7 +1078,7 @@ int decrementStock(
 // Scales better than optimistic retries for hot items
 ```
 
-> **Code walkthrough:** The atomic UPDATE is a single SQL statement
+> **Code walkthrough:** The atomic UPDATE is a single SQL statementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that reads and writes in one database operation. The `AND p.stock >= :qty`
 > condition serves as both the business rule check (have enough stock?)
 > and the concurrency control (only one update succeeds when stock hits
@@ -1156,7 +1165,7 @@ WHERE id = ? AND version = ?
 -- AND version check for optimistic semantics in native SQL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ---
 
@@ -1180,7 +1189,7 @@ for (Long id : seatIds) {
 // Both transactions now lock 5 then 10 - no circular wait
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1193,6 +1202,12 @@ connections for 5-10 seconds.
 to external service) while holding the lock and connection.
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: lock held during I/O
 Seat seat = em.find(Seat.class, id, PESSIMISTIC_WRITE);
@@ -1209,7 +1224,7 @@ if (result.isSuccess()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1225,9 +1240,7 @@ if (result.isSuccess()) {
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What does `@Version` do in Hibernate and what happens when the
-version check fails?
+**[JUNIOR] Q1 - [MECHANISM] What does `@Version` do in Hibernate and what happens when the version check fails?**
 
 *Why they ask:* @Version is fundamental to Hibernate concurrency.
 
@@ -1261,7 +1274,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Critical: on retry, reload the entity from DB - do not reuse the
 stale object. The entity's version is still the old value; retrying
@@ -1272,9 +1285,7 @@ be reloaded on retry, not just the method retried with the stale object.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What is the difference between `PESSIMISTIC_READ` and
-`PESSIMISTIC_WRITE` lock modes?
+**[MID] Q2 - [MECHANISM] What is the difference between `PESSIMISTIC_READ` and `PESSIMISTIC_WRITE` lock modes?**
 
 *Why they ask:* Tests knowledge of the different pessimistic lock types.
 
@@ -1309,9 +1320,7 @@ PESSIMISTIC_READ - allow concurrent reads, prevent price change.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-`OptimisticLockException` rate spikes to 30% during a flash sale.
-How do you diagnose and fix it?
+**[SENIOR] Q3 - [DEBUGGING] `OptimisticLockException` rate spikes to 30% during a flash sale. How do you diagnose and fix it?**
 
 *Why they ask:* Tests handling of optimistic locking at high conflict rate.
 
@@ -1334,7 +1343,7 @@ int decrementStock(Long id, int qty);
 // Single atomic operation, no retry loop
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 This is more efficient than either locking strategy for hot-item
 flash sales because it has:
@@ -1348,7 +1357,7 @@ Long-term fix: Redis `DECRBY` for hot counters:
 DECRBY product:1001:stock 3
 // If result < 0: INCRBY to rollback, return "out of stock"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This moves the hot counter out of the relational database, removing
 row contention entirely.
@@ -1363,9 +1372,7 @@ database entirely.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-When should you use an atomic `UPDATE ... WHERE stock >= qty`
-instead of either locking strategy?
+**[SENIOR] Q4 - [TRADE-OFF] When should you use an atomic `UPDATE ... WHERE stock >= qty` instead of either locking strategy?**
 
 *Why they ask:* The atomic update is an underused alternative.
 
@@ -1401,7 +1408,7 @@ Limitations:
   em.evict(productRef); // force fresh load on next access
   ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 - Complex business logic cannot be expressed in one SQL expression:
   if the update requires reading multiple related entities, applying
@@ -1414,9 +1421,7 @@ explicit handling.
 
 ---
 
-**Q5 [MID] - MECHANISM**
-What happens to `@Version` when you use `SELECT FOR UPDATE`
-pessimistic locking?
+**[MID] Q5 - [MECHANISM] What happens to `@Version` when you use `SELECT FOR UPDATE` pessimistic locking?**
 
 *Why they ask:* Tests understanding of how the two mechanisms interact.
 
@@ -1457,9 +1462,7 @@ pessimistic for booking phase, optimistic for subsequent processing.
 
 ---
 
-**Q6 [JUNIOR] - DEBUGGING**
-You see duplicate invoice numbers despite `@Version` being configured.
-Why might this happen?
+**[JUNIOR] Q6 - [DEBUGGING] You see duplicate invoice numbers despite `@Version` being configured. Why might this happen?**
 
 *Why they ask:* Tests edge cases of optimistic locking.
 
@@ -1491,7 +1494,7 @@ SequenceCounter c = em.find(SequenceCounter.class, tenantId,
 long invoiceNumber = c.getAndIncrement();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. Unique constraint as the final defense:
 ```sql
@@ -1499,7 +1502,7 @@ ALTER TABLE invoices
 ADD CONSTRAINT uq_tenant_invoice
 UNIQUE (tenant_id, invoice_number);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Even if locking fails, the constraint prevents silent duplicates.
 
@@ -1509,9 +1512,7 @@ one layer.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Describe a concurrency bug you encountered in production and how
-you debugged and fixed it.
+**[STAFF] Q7 - [BEHAVIORAL] Describe a concurrency bug you encountered in production and how you debugged and fixed it.**
 
 *Why they ask:* Tests real-world concurrency debugging experience.
 
@@ -1550,7 +1551,7 @@ SequenceCounter c = em.find(SequenceCounter.class,
 long next = c.getAndIncrement(); // atomic, locked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Part 2: Unique constraint as defense-in-depth:
 ```sql
@@ -1559,7 +1560,7 @@ ADD CONSTRAINT uq_tenant_invoice
 UNIQUE (tenant_id, invoice_number);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 **R (Result):** Zero duplicate invoice numbers post-fix. Added a
 concurrent integration test:
@@ -1576,7 +1577,7 @@ Set<Long> numbers = futures.stream().map(f -> f.get())
     .collect(toSet());
 assertThat(numbers).hasSize(20); // all unique
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 This test runs in CI and catches any future regression.
 

@@ -113,7 +113,7 @@ Reactive Streams protocol:
       |--- onComplete() -------->|  6. terminal signal
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive Streams Specification example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Rule: `onNext` called at most total-requested times.
 Rule: after `onComplete` or `onError`, no more `onNext`.
@@ -153,6 +153,12 @@ within that demand.
 ### 💻 Code Example
 
 **The backpressure protocol with a custom Subscriber:**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Subscriber that ignores backpressure
@@ -196,7 +202,7 @@ class BoundedSubscriber<T> implements Flow.Subscriber<T> {
 }
 ```
 
-> **Code walkthrough:** The BAD subscriber calls `request(Long.MAX_VALUE)`,
+> **Code walkthrough:** The BAD subscriber calls `request(Long.MAX_VALUE)`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > saying "give me everything as fast as possible." This disables backpressure
 > and defeats the spec's purpose. If the publisher produces faster than
 > `process()` consumes, items accumulate in memory until OOM. The GOOD
@@ -280,7 +286,7 @@ jmap -dump:format=b,file=heap.hprof <pid>
 # with millions of entries = unbounded buffer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This with millions of entries = unbounded buffer example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix in Project Reactor:
 ```java
@@ -294,7 +300,7 @@ flux.limitRate(64) // request 64 at a time
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This with millions of entries = unbounded buffer example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -304,7 +310,7 @@ flux.limitRate(64) // request 64 at a time
 
 ---
 
-#### Q1 - What are the four Reactive Streams interfaces?
+**[JUNIOR] Q1 - [CONCEPTUAL] What are the four Reactive Streams interfaces?**
 
 `Publisher<T>`: produces items. Single method `subscribe(Subscriber)`.
 Calling subscribe does not start flow - flow starts when subscriber calls
@@ -331,7 +337,7 @@ shares one stream (hot, via multicast).
 
 ---
 
-#### Q2 - How does request(n) implement backpressure?
+**[JUNIOR] Q2 - [HANDS-ON] How does request(n) implement backpressure?**
 
 `request(n)` is the demand signal. The Subscriber calls it to say "I can
 handle n more items." The Publisher MUST NOT call `onNext` more times than
@@ -359,7 +365,7 @@ cap demand.
 
 ---
 
-#### Q3 - What happens when cancel() is called?
+**[JUNIOR] Q3 - [CONCEPTUAL] What happens when cancel() is called?**
 
 `subscription.cancel()` signals the Publisher to stop sending items.
 After cancel():
@@ -383,7 +389,7 @@ they cancel. Use Reactor's `doFinally(signalType -> cleanup())` instead
 
 ---
 
-#### Q4 - How does Java 9 Flow API relate to the spec?
+**[MID] Q4 - [CONCEPTUAL] How does Java 9 Flow API relate to the spec?**
 
 Java 9 added `java.util.concurrent.Flow` as a standard library inclusion
 of Reactive Streams. The interfaces are semantically identical:
@@ -411,7 +417,7 @@ only the interfaces; implementations remain in third-party libraries.
 
 ---
 
-#### Q5 - What is Processor and when would you implement one?
+**[MID] Q5 - [HANDS-ON] What is Processor and when would you implement one?**
 
 `Processor<T,R>` extends both `Publisher<R>` and `Subscriber<T>`. It
 subscribes to an upstream Publisher, processes items T to R, and publishes
@@ -439,7 +445,7 @@ sink.tryEmitNext(event);
 sink.tryEmitComplete();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This with millions of entries = unbounded buffer example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Knowing that Reactor deprecated
 `FluxProcessor` in 3.4 in favor of `Sinks`. Sinks decouple the emit
@@ -449,7 +455,7 @@ significantly.
 
 ---
 
-#### Q6 - How does a Reactive Streams pipeline differ from a Java Stream?
+**[MID] Q6 - [CONCEPTUAL] How does a Reactive Streams pipeline differ from a Java Stream?**
 
 | Feature | `java.util.Stream` | Reactive Streams |
 |---|---|---|
@@ -477,7 +483,7 @@ more appropriate than parallel streams.
 
 ---
 
-#### Q7 - What are the key Reactive Streams rules (give 5)?
+**[SENIOR] Q7 - [CONCEPTUAL] What are the key Reactive Streams rules (give 5)?**
 
 The 18 rules govern Publishers, Subscribers, and Subscriptions. Five
 most interview-relevant:
@@ -505,7 +511,7 @@ that use the stored Subscription.
 
 ---
 
-#### Q8 - How do reactive streams handle push-source boundaries?
+**[SENIOR] Q8 - [CONCEPTUAL] How do reactive streams handle push-source boundaries?**
 
 Many real data sources are push-based: Kafka produces messages regardless
 of consumer readiness, WebSocket frames arrive at network speed, sensor
@@ -532,7 +538,7 @@ kafkaFlux.onBackpressureError();
 // Emits onError(IllegalStateException) when overwhelmed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Kafka messaging. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Choosing strategy by domain:
 - Financial trades: `onBackpressureError()` - data loss is unacceptable
@@ -547,7 +553,7 @@ monitored: alert on buffer size growth AND on drop rate > 0%.
 
 ---
 
-#### Q9 - How do you test a custom Publisher or Subscriber implementation?
+**[SENIOR] Q9 - [HANDS-ON] How do you test a custom Publisher or Subscriber implementation?**
 
 Testing a custom Reactive Streams implementation requires verifying
 the protocol contract - not just happy path behavior.
@@ -576,7 +582,7 @@ void customPublisherRespectsBackpressure() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For TCK (Technology Compatibility Kit) testing - the official spec
 compliance test suite:
@@ -593,7 +599,7 @@ class MyPublisherTest
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The TCK runs all 18 spec rules automatically. Use it for any custom
 Publisher or Subscriber before publishing a library.
@@ -610,14 +616,14 @@ standard, not just an API.
 
 **Reactive Streams implementations:**
 
-| Feature | Project Reactor | RxJava 2/3 | Akka Streams | Java Flow |
-|---|---|---|---|---|
-| Types | Mono, Flux | Single, Observable | Source, Sink | Interfaces only |
-| Primary language | Java | Java / Kotlin | Scala / Java | Java |
-| Backpressure | Built-in | Built-in | Built-in | Spec contract |
-| Spring support | Native (WebFlux) | Via adapter | Limited | Via adapter |
-| Error operators | Rich | Rich | Rich | None (spec) |
-| Learning curve | Medium | Medium | High | Low |
+| Feature| Project Reactor| RxJava 2/3| Akka Streams| Java Flow|
+|-------------|----------------|------------------|------------|---------------|
+| Types| Mono, Flux| Single, Observable| Source, Sink| Interfaces only|
+| Primary language| Java| Java / Kotlin| Scala / Java| Java|
+| Backpressure| Built-in| Built-in| Built-in| Spec contract|
+| Spring support| Native (WebFlux)| Via adapter| Limited| Via adapter|
+| Error operators| Rich| Rich| Rich| None (spec)|
+| Learning curve| Medium| Medium| High| Low|
 
 For Spring development: Project Reactor is the default choice.
 
@@ -633,7 +639,7 @@ For Spring development: Project Reactor is the default choice.
 
 **Reactive Streams protocol:**
 
-```
+```plaintext
   Publisher        Subscription      Subscriber
       |                 |                |
       |<--subscribe() --|----------------|
@@ -801,7 +807,7 @@ Key operators:
   Threading:      subscribeOn, publishOn
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Project Reactor Flux and Mono example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 `flatMap` is the most powerful and most dangerous operator. `Flux.flatMap(fn,
@@ -844,6 +850,12 @@ and retry without re-running completed stages.
 
 **Core Mono and Flux patterns:**
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // 1. Single async result with blocking I/O
 Mono<User> findUser(String id) {
@@ -882,6 +894,7 @@ Flux<Order> processOrders(List<String> ids) {
     // For ids.size() = 10,000: 10,000 simultaneous calls
 }
 
+// BAD: see prior example above (bounded concurrency flatMap...)
 // GOOD: bounded concurrency flatMap
 Flux<Order> processOrdersBounded(List<String> ids) {
     return Flux.fromIterable(ids)
@@ -900,7 +913,7 @@ Flux<Event> auditedPipeline(Flux<Event> events) {
 }
 ```
 
-> **Code walkthrough:** Pattern 1 wraps a blocking JDBC call in
+> **Code walkthrough:** Pattern 1 wraps a blocking JDBC call inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Mono.fromCallable` and uses `subscribeOn(boundedElastic())` to run it
 > on a blocking-safe scheduler. Pattern 2 uses `Mono.zip` for parallel
 > fan-out - all three service calls start simultaneously. Pattern 3 chains
@@ -988,7 +1001,7 @@ BlockHound.install();
 // Throws BlockingOperationError when detected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 ```java
@@ -1001,7 +1014,7 @@ return Mono.fromCallable(() -> jdbc.query(sql))
     .subscribeOn(Schedulers.boundedElastic());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Rule: any blocking call MUST use `subscribeOn(Schedulers.boundedElastic())`.
 
@@ -1013,7 +1026,7 @@ Rule: any blocking call MUST use `subscribeOn(Schedulers.boundedElastic())`.
 
 ---
 
-#### Q1 - What is the difference between Mono and Flux?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between Mono and Flux?**
 
 `Mono<T>`: Publisher emitting 0 or 1 item then completing or erroring.
 For single-result operations: findById, HTTP call, cache lookup.
@@ -1034,7 +1047,7 @@ Mono<List<Integer>> collected = flux.collectList();
 Mono<Long> count = flux.count();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 `Mono<Void>`: used for void async operations. `Mono.empty()` completes
 without emitting. Do NOT use `Mono.just(null)` - Reactor prohibits null
@@ -1046,7 +1059,7 @@ integrated into a reactive chain without producing a result.
 
 ---
 
-#### Q2 - What is the difference between flatMap and concatMap?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between flatMap and concatMap?**
 
 `flatMap(fn)`: calls fn for each item, subscribes to ALL resulting publishers
 CONCURRENTLY. Merges results in arrival order (UNORDERED - faster inner
@@ -1069,7 +1082,7 @@ flux.concatMap(item -> processAsync(item));
 flux.flatMap(item -> processAsync(item), 8); // max 8 concurrent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Latency: flatMap = max(all durations). concatMap = sum(all durations).
 For 10 calls of 50ms: flatMap ≈ 50ms; concatMap ≈ 500ms.
@@ -1081,7 +1094,7 @@ flatMap causes subtle reordering bugs that appear only under concurrent load.
 
 ---
 
-#### Q3 - How do you combine multiple Monos in parallel?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you combine multiple Monos in parallel?**
 
 `Mono.zip(m1, m2)`: subscribes both simultaneously, fires when both
 complete. Returns `Mono<Tuple2<T1,T2>>`. Type-safe via TupleN up to Tuple8.
@@ -1098,7 +1111,7 @@ Mono<Response> buildResponse(String userId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Error handling with zip: if one Mono fails, the zip Mono fails immediately.
 The other Monos continue running (no cancellation). Use `zipDelayError` to
@@ -1108,7 +1121,7 @@ Mono.zipDelayError(user, orders, account, (u,o,a) -> build(u,o,a));
 // Waits for all to complete/fail; reports all failures together
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For 3+ Monos where tuple types are unwieldy:
 ```java
@@ -1119,7 +1132,7 @@ Mono<List<String>> combined = Mono.zip(monos,
         .toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Understanding that `Mono.zip` fails fast
 on first error (like `thenCombine`) vs `zipDelayError` which aggregates all
@@ -1128,7 +1141,7 @@ Choose based on whether you want fast fail or complete error inventory.
 
 ---
 
-#### Q4 - How does subscribeOn differ from publishOn?
+**[MID] Q4 - [CONCEPTUAL] How does subscribeOn differ from publishOn?**
 
 `subscribeOn(Scheduler)`: specifies which scheduler to use for subscribing
 to the source. Affects where the source Publisher runs. Position in chain
@@ -1149,7 +1162,7 @@ Flux.range(1, 100)
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Development only: BlockHound detects blocking on reactive threads example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Common use patterns:
 - `subscribeOn(boundedElastic)`: for blocking sources (JDBC, files)
@@ -1163,7 +1176,7 @@ consequences.
 
 ---
 
-#### Q5 - How do you handle errors in Reactor?
+**[MID] Q5 - [CONCEPTUAL] How do you handle errors in Reactor?**
 
 Five error handling operators with distinct semantics:
 
@@ -1193,7 +1206,7 @@ serviceCall()
             .filter(ex -> ex instanceof TransientException))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `retry()` re-subscribes to the entire
 source chain. For cold publishers (new HTTP request), this is a retry.
@@ -1203,7 +1216,7 @@ publishers requires reconnect-with-replay or dead-letter queue strategies.
 
 ---
 
-#### Q6 - What is the difference between hot and cold Flux?
+**[MID] Q6 - [CONCEPTUAL] What is the difference between hot and cold Flux?**
 
 **Cold Flux**: creates a new, independent data stream per subscriber.
 Each subscriber starts from the beginning.
@@ -1214,7 +1227,7 @@ cold.subscribe(n -> System.out.print(n)); // 1 2 3 4 5
 // Independent streams
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Hot Flux**: data flows regardless of subscribers. New subscribers
 receive items from the subscription point onward.
@@ -1231,7 +1244,7 @@ sink.tryEmitNext("event2"); // Both A and B receive event2
 // B missed event1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Converting cold to hot: `flux.share()` multicasts to multiple subscribers
 from a single source. `flux.publish().refCount(1)` starts on first
@@ -1244,7 +1257,7 @@ subscriptions or Kafka consumers per client - unintended and expensive.
 
 ---
 
-#### Q7 - How do you test Reactor code?
+**[SENIOR] Q7 - [HANDS-ON] How do you test Reactor code?**
 
 Project Reactor provides `StepVerifier` for synchronous testing:
 
@@ -1291,7 +1304,7 @@ void testWithVirtualTime() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `StepVerifier.withVirtualTime()`: replaces internal clock. `thenAwait()`
 advances virtual time. Essential for testing time-based operators without
@@ -1304,7 +1317,7 @@ contract and emit all items regardless.
 
 ---
 
-#### Q8 - When would you choose Reactor over CompletableFuture?
+**[SENIOR] Q8 - [TRADE-OFF] When would you choose Reactor over CompletableFuture?**
 
 | Scenario | Reactor | CompletableFuture |
 |---|---|---|
@@ -1333,7 +1346,7 @@ brownfield reactive migrations.
 
 ---
 
-#### Q9 - How do you debug a reactive pipeline?
+**[SENIOR] Q9 - [DEBUGGING] How do you debug a reactive pipeline?**
 
 Debugging reactive pipelines is the hardest part of Reactor. The async
 nature means stack traces do not show the call site.
@@ -1347,7 +1360,7 @@ flux.filter(x -> x > 0)
     .map(x -> x * 2)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. `checkpoint("label")` (production-safe): captures assembly stack trace
 only at that point. When an error propagates through, the checkpoint
@@ -1359,7 +1372,7 @@ flux.map(x -> transform(x))
     .checkpoint("service-call")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. `Hooks.onOperatorDebug()` (development only): captures assembly stack
 trace for EVERY operator. High overhead - never production.
@@ -1368,7 +1381,7 @@ trace for EVERY operator. High overhead - never production.
 Hooks.onOperatorDebug();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 4. Reactor's `ReactorDebugAgent`: Java agent that instruments at class
 load time. Low overhead. Production-safe alternative to `onOperatorDebug`.
@@ -1376,7 +1389,7 @@ load time. Low overhead. Production-safe alternative to `onOperatorDebug`.
 java -javaagent:reactor-tools.jar -jar service.jar
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Understanding WHY reactive stack traces
 are unhelpful: by the time an error is delivered via `onError`, the
@@ -1392,17 +1405,17 @@ attach that to runtime errors.
 
 **Reactor vs CompletableFuture vs Virtual Threads:**
 
-| Feature | Mono/Flux | CompletableFuture | Virtual Threads |
-|---|---|---|---|
-| Paradigm | Reactive | Async callbacks | Sync-style |
-| Single result | Mono<T> | CF<T> | Direct return |
-| Streaming | Flux<T> | Not native | Iterator |
-| Backpressure | Built-in | None | Pool limit |
-| Error handling | Rich operators | exceptionally/handle | try/catch |
-| Java version | 8+ (library) | 8+ | 21+ |
-| Spring WebFlux | Native | Via adapter | Servlet model |
-| Debugging | Needs tools | Moderate | Simple |
-| Learning curve | High | Medium | Low |
+| Feature| Mono/Flux| CompletableFuture| Virtual Threads|
+|--------------|--------------|--------------------|---------------|
+| Paradigm| Reactive| Async callbacks| Sync-style|
+| Single result| Mono<T>| CF<T>| Direct return|
+| Streaming| Flux<T>| Not native| Iterator|
+| Backpressure| Built-in| None| Pool limit|
+| Error handling| Rich operators| exceptionally/handle| try/catch|
+| Java version| 8+ (library)| 8+| 21+|
+| Spring WebFlux| Native| Via adapter| Servlet model|
+| Debugging| Needs tools| Moderate| Simple|
+| Learning curve| High| Medium| Low|
 
 ---
 
@@ -1416,7 +1429,7 @@ attach that to runtime errors.
 
 **Mono vs Flux signals and flatMap vs concatMap:**
 
-```
+```plaintext
 Mono<T> timeline:
   --[sub]--[onNext(v)]--[onComplete]-->
              (0 or 1 item)

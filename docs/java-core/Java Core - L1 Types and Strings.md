@@ -96,7 +96,7 @@ float     32-bit  ~1.4E-45 to ~3.4E+38        0.0f     Float
 double    64-bit  ~4.9E-324 to ~1.8E+308      0.0d     Double
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Types and Strings example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Autoboxing mechanics:**
 ```java
@@ -109,7 +109,7 @@ list.add(5);               // list.add(Integer.valueOf(5))
 int val = list.get(0);     // list.get(0).intValue()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Types and Strings example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Integer cache: -128 to 127:**
 ```java
@@ -124,7 +124,7 @@ System.out.println(c == d); // false (different objects)
 System.out.println(c.equals(d)); // true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Types and Strings example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Floating-point precision:**
 ```java
@@ -139,18 +139,25 @@ BigDecimal tax = new BigDecimal("0.02");
 BigDecimal total = price.add(tax); // exact: 0.12
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Types and Strings example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example demonstrates the boxing trap in a
+> **Code walkthrough:** This example demonstrates the boxing trap in aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > loop. The BAD version autoboxes every iteration, creating one `Integer`
 > object per iteration and putting GC pressure on the JVM. The GOOD
 > version works with primitives throughout, eliminating all heap allocation.
 > The null unboxing trap and Integer comparison trap are separate
 > common failures shown explicitly.
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
 
 ```java
 // BAD: autoboxing in loop creates 10,000 Integer objects:
@@ -180,7 +187,7 @@ if (x == y) { ... }       // compares references - WRONG
 if (x.equals(y)) { ... }  // compares values - CORRECT
 ```
 
-> **Code walkthrough:** The boxed `Long sum` creates 10,000 temporary
+> **Code walkthrough:** The boxed `Long sum` creates 10,000 temporaryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Long objects because `Long += int` unboxes, adds, and re-boxes on
 > every iteration. The JVM must allocate and then GC all these objects.
 > The primitive `long sum` version stays entirely in CPU registers.
@@ -246,7 +253,7 @@ int total = scores.values().stream()
     .mapToInt(Integer::intValue) // returns IntStream (no boxing)
     .sum();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Diagnosis: check for null values in the map/list before streaming.
 `Objects::nonNull` filter or `Optional` wrapper.
@@ -315,7 +322,7 @@ l.add(Integer.valueOf(3));
 int v = l.get(0).intValue();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `Integer.valueOf()` uses the cache for -128 to 127; outside that range
 it calls `new Integer(n)` (deprecated in Java 9).
@@ -352,7 +359,7 @@ c == d;            // false (different object references)
 c.equals(d);       // true (same value)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The cache exists for performance (small values are very common, caching
 avoids allocating the same Integer repeatedly) and is specified in the
@@ -384,9 +391,15 @@ Stored as double: 0.1000000000000000055511151231257827021181583404541015625
 0.1 + 0.2 = 0.30000000000000004 (not 0.3)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **For currency use `BigDecimal`:**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: float/double for money
 double price = 0.10;
@@ -400,7 +413,7 @@ BigDecimal total = price.add(tax);         // 0.12 - exact!
 // DO NOT use: new BigDecimal(0.10) - inherits double imprecision!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Use `double` for: physics simulations, statistics, rendering, any
 case where small rounding errors are acceptable.
@@ -443,7 +456,7 @@ jcmd <pid> JFR.start settings=profile duration=30s
 # Look for: java.lang.Integer, java.lang.Long in top allocations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: java.lang.Integer, java.lang.Long in top allocations example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Fixes:**
 - `int/long` local variables and parameters
@@ -483,7 +496,7 @@ public void processOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: java.lang.Integer, java.lang.Long in top allocations example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This produces NPE with stack trace pointing to the assignment line,
 not the null source. Confusing for developers who see `int qty = ...`
@@ -502,7 +515,7 @@ int qty = Optional.ofNullable(req.getQuantity()).orElse(0);
 private int quantity = 0; // never null
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: java.lang.Integer, java.lang.Long in top allocations example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* The best fix is domain-driven:
 if `quantity` being absent is a validation error (required field),
@@ -540,7 +553,7 @@ int effectiveDiscount =
     discountPercent != null ? discountPercent : 0;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: java.lang.Integer, java.lang.Long in top ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The choice between `int` and `Integer`
 communicates intent in APIs. A method signature `void process(int count)`
@@ -648,7 +661,7 @@ String d = c.intern();     // returns pooled "hello"
 a == d;                    // true (same pooled reference)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **StringBuilder vs String:**
 ```java
@@ -666,7 +679,7 @@ for (String item : items) {
 String result = sb.toString(); // one allocation at the end
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Java 9 compact strings:**
 - ASCII string: `byte[length]` (1 byte/char) - 50% less memory
@@ -677,13 +690,25 @@ String result = sb.toString(); // one allocation at the end
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The loop concatenation example is a classic
+> **Code walkthrough:** The loop concatenation example is a classicice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Java performance trap. `result += item` compiles to `result =
 > new StringBuilder(result).append(item).toString()` - creating two
 > temporary objects per iteration. For 1000 items: 2000 object
 > allocations. The StringBuilder version creates one buffer and
 > reuses it throughout the loop, with a single `toString()` allocation
 > at the end. The `==` trap is the most common String bug in Java code.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: == for string comparison
@@ -723,7 +748,7 @@ String json = """
     """; // indentation stripped by compiler
 ```
 
-> **Code walkthrough:** The null-safe comparison pattern `"literal".equals(var)`
+> **Code walkthrough:** The null-safe comparison pattern `"literal".equals(var)`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is preferred over `var.equals("literal")` because it never throws NPE
 > when `var` is null. The StringBuilder `deleteCharAt` pattern removes the
 > trailing comma from ID list construction - a common query-building
@@ -855,7 +880,7 @@ for (int i = 0; i < statuses.size(); i++) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **When NOT to use intern:** unique strings (user names, URLs) - interning
 adds JNI overhead without reducing duplicates. Consider a `Map<String,
@@ -899,7 +924,7 @@ class LogFormatter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 `StringBuffer` exists for historical compatibility. It was the only
 option before Java 5. `StringBuilder` was added in Java 5 as the
@@ -929,7 +954,7 @@ if ("ACTIVE".equals(status)) { ... }  // null-safe and value-based
 if (Objects.equals(status, "ACTIVE")) { ... } // null-safe both sides
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Trap 2: `.equals()` on potentially null reference**
 ```java
@@ -939,7 +964,7 @@ s.equals("test"); // NPE!
 Objects.equals(s, "test"); // safe - handles null on both sides
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Trap 3: case sensitivity**
 ```java
@@ -950,7 +975,7 @@ if (type.equals("json")) { ... }
 if ("json".equalsIgnoreCase(type)) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Trap 4: `compareTo()` for alphabetical sort (locale issues)**
 ```java
@@ -961,7 +986,7 @@ list.sort(String::compareTo);
 list.sort(Collator.getInstance(Locale.US)::compare);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* In a code review, any `string1 ==
 string2` comparison is a bug unless one of the operands is interned
@@ -1010,6 +1035,12 @@ usage in a JVM with millions of strings?**
 A:
 
 **1. Avoid unnecessary string creation:**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: new String per log message
 logger.info(new StringBuilder("User ").append(id).toString());
@@ -1017,7 +1048,7 @@ logger.info(new StringBuilder("User ").append(id).toString());
 logger.info("User {}", id); // SLF4J - only formats if level enabled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **2. Deduplication via G1GC:**
 JVM flag: `-XX:+UseStringDeduplication` (Java 8u20+, requires G1GC)
@@ -1029,7 +1060,7 @@ java -XX:+UseG1GC -XX:+UseStringDeduplication \
      -XX:+PrintStringDeduplicationStatistics -jar app.jar
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **3. Manual deduplication via intern():**
 For high-duplication fields (status codes, categories), intern strings
@@ -1080,7 +1111,7 @@ String json = """
 // lines, aligned to the closing """. Incidental whitespace stripped.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use cases: SQL queries, JSON/XML templates, HTML templates, multiline
 test assertions.
@@ -1093,7 +1124,7 @@ int age = 30;
 String msg = STR."Hello \{name}, you are \{age} years old.";
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Text blocks eliminate escape hell
 for SQL and JSON in tests. Important: the closing `"""` position
@@ -1184,7 +1215,7 @@ though it exists."
 
 **The contract requirements:**
 
-```
+```plaintext
 equals() contract (from Object.equals() Javadoc):
   Reflexive:   a.equals(a) == true
   Symmetric:   a.equals(b) == b.equals(a)
@@ -1199,7 +1230,7 @@ hashCode() contract (from Object.hashCode() Javadoc):
                (minimize collisions)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **How HashMap uses equals/hashCode:**
 ```
@@ -1216,19 +1247,25 @@ If hashCode is different for equal keys:
   put goes to bucket A; get goes to bucket B -> not found
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD class overrides only `equals`, breaking
+> **Code walkthrough:** The BAD class overrides only `equals`, breakingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the contract. Two `BadKey` objects with the same ID would be "equal"
 > via `equals()` but have different hash codes (from Object's identity-
 > based hashCode). HashMap would place them in different buckets and
 > never find one using the other as a lookup key. The GOOD class uses
 > `Objects.equals()` (null-safe) and `Objects.hash()` (prime-based
 > combination) to implement both consistently.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: only equals overridden (breaks HashMap contract):
@@ -1268,7 +1305,7 @@ class GoodKey {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1327,7 +1364,7 @@ map.get(key); // null - wrong bucket now!
 // Fix: use immutable keys, or don't include mutable fields
 // in hashCode/equals
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: check if hashCode implementation includes mutable fields.
 Test by putting, mutating, and getting - should find null.
@@ -1394,7 +1431,7 @@ Phase 2 (equals): which entry in the bucket?
           return entry.value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Java 8 improvement: when a bucket's linked list exceeds 8 entries,
 it's converted to a tree (TreeNode, Red-Black tree) for O(log n) vs
@@ -1444,7 +1481,7 @@ roles.get(alice);            // looks in bucket = hash("ALICE")
 roles.containsKey(alice);    // false - "lost" the entry
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Fix options:**
 1. Make key class immutable: `final class User { final String name; }`
@@ -1489,7 +1526,7 @@ evenly across buckets.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Why 31?** It's an odd prime, close to a power of 2, and JVMs optimize
 `31 * i` as `(i << 5) - i` (shift + subtract, no multiply needed).
@@ -1502,7 +1539,7 @@ return field1.hashCode() ^ field2.hashCode(); // XOR is symmetric;
           // Point(1,2).hashCode() == Point(2,1).hashCode() -> collision
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* For immutable classes: cache the
 hash code. `String` computes hash on first call and caches it in a field.
@@ -1534,7 +1571,7 @@ record Point(int x, int y) {}
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Records are ideal as HashMap keys: immutable (fields are final),
 correct equals/hashCode, and minimal boilerplate.
@@ -1552,7 +1589,7 @@ record CaseInsensitiveName(String value) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* When customizing equals for a record,
 you MUST also customize hashCode to maintain the contract. The compiler
@@ -1590,7 +1627,7 @@ d.equals(a); // true (Dog.equals accepts Animal!)
 // Violates symmetry!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Fix: use getClass() instead of instanceof for inheritance:**
 ```java
@@ -1604,7 +1641,7 @@ d.equals(a); // true (Dog.equals accepts Animal!)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Effective Java recommends: "There is no way to extend an instantiable
 class and add a value component while preserving the equals contract."
@@ -1656,7 +1693,7 @@ public class Person {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step explanation:
 1. `this == o`: fast path, same reference always equal

@@ -129,7 +129,7 @@ BRIDGE MODEL (most common in production SaaS):
   Scaling: add tenant = create schema, provision S3 prefix
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Tenant Cloud Architecture example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Row Level Security (PostgreSQL):**
 
@@ -160,7 +160,7 @@ ALTER TABLE orders FORCE ROW LEVEL SECURITY;
 -- FORCE: applies RLS even to table owner
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Tenant Cloud Architecture example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Noisy Neighbor Controls:**
 
@@ -189,11 +189,23 @@ CONTROLS:
      Alert when one tenant consumes > N% of shared resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Tenant Cloud Architecture example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // TENANT CONTEXT PROPAGATION: Spring Boot
@@ -347,7 +359,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ```sql
 -- S3 PER-TENANT ISOLATION via IAM:
@@ -369,7 +381,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** The TenantFilter is the security
+> **Code walkthrough:** The TenantFilter is the securityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > boundary at the HTTP layer: it extracts the tenant ID
 > from the JWT claim (verified, not trusted as a raw header)
 > and stores it in a ThreadLocal. The `finally` block clearing
@@ -473,7 +485,7 @@ grep -v "tenant_id" /var/log/postgresql/postgresql.log | \
 # Any match: missing tenant filter in application code
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any match: missing tenant filter in application code example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 1. Add PostgreSQL RLS as immediate safety net
@@ -512,7 +524,7 @@ public Object assertTenantCleared(ProceedingJoinPoint pjp)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any match: missing tenant filter in application code example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -614,7 +626,7 @@ flowchart TB
 
 ---
 
-#### CONCEPT 1: Explain the three multi-tenancy isolation models and when you would choose each.
+**[SENIOR] Q1 - [MECHANISM] Explain the three multi-tenancy isolation models and when you would choose each.**
 
 **Silo model (per-tenant stack):**
 
@@ -673,7 +685,7 @@ Bridge is the engineering compromise.
 
 ---
 
-#### CONCEPT 2: What is the noisy neighbor problem in multi-tenancy and how do you mitigate it?
+**[SENIOR] Q2 - [MECHANISM] What is the noisy neighbor problem in multi-tenancy and how do you mitigate it?**
 
 **Definition:** One tenant's resource consumption degrades
 performance for other tenants sharing the same infrastructure.
@@ -726,7 +738,7 @@ covers the database tier comprehensively.
 
 ---
 
-#### DEBUGGING 1: Tenant A reports seeing Tenant B's orders in their export. How do you investigate and what is the most likely cause?
+**[SENIOR] Q3 - [DEBUGGING] Tenant A reports seeing Tenant B's orders in their export. How do you investigate and what is the most likely cause?**
 
 **Step 1: Reproduce and contain:**
 - Attempt to reproduce: call the export endpoint as Tenant A
@@ -746,7 +758,7 @@ grep "SELECT.*FROM orders" /var/log/postgresql/postgresql.log |
 -- Any match: this query has no tenant filter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Step 3: Identify the code path:**
 The query without tenant filter maps to a specific
@@ -787,7 +799,7 @@ to a single tenant per job execution).
 
 ---
 
-#### DEBUGGING 2: Response times for all tenants degrade from 50ms to 800ms. Investigation shows one tenant is responsible. How do you identify and isolate them?
+**[SENIOR] Q4 - [DEBUGGING] Response times for all tenants degrade from 50ms to 800ms. Investigation shows one tenant is responsible. How do you identify and isolate them?**
 
 **Step 1: Identify the noisy tenant:**
 ```bash
@@ -815,7 +827,7 @@ ORDER BY connections DESC;
 # Schema with excessive connections = database noisy neighbor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Schema with excessive connections = database noisy neighbor example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: Immediate mitigation:**
 ```bash
@@ -833,7 +845,7 @@ WHERE query_start < now() - interval '30 seconds'
   AND schemaname = 'tenant_x';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kill long-running queries from this tenant's schema: example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Permanent fix:**
 - Add per-tenant rate limiting to API Gateway usage plans
@@ -850,7 +862,7 @@ kill long queries) shows incident response instinct.
 
 ---
 
-#### TRADE-OFF 1: Schema-per-tenant vs row-per-tenant. What are the trade-offs?
+**[SENIOR] Q1 - [TRADE-OFF] Schema-per-tenant vs row-per-tenant. What are the trade-offs?**
 
 **Schema-per-tenant:**
 
@@ -902,7 +914,7 @@ shows operational experience.
 
 ---
 
-#### TRADE-OFF 2: Tenant isolation via application code vs database-level enforcement (RLS). Why not just trust the application?
+**[SENIOR] Q2 - [TRADE-OFF] Tenant isolation via application code vs database-level enforcement (RLS). Why not just trust the application?**
 
 **Application-level isolation only:**
 
@@ -948,7 +960,7 @@ shows awareness of the operational challenge.
 
 ---
 
-#### DESIGN 1: Design the data isolation layer for a SaaS application serving 5,000 tenants with varying compliance requirements.
+**[SENIOR] Q3 - [DESIGN] Design the data isolation layer for a SaaS application serving 5,000 tenants with varying compliance requirements.**
 
 **Tier classification:**
 
@@ -977,7 +989,7 @@ TIER 3 - Starter (no compliance, ~4,450 tenants):
   Migration: single schema migration for all starter tenants
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kill long-running queries from this tenant's schema: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Shared infrastructure:**
 
@@ -1009,7 +1021,7 @@ deletion pipeline shows operational completeness.
 
 ---
 
-#### DESIGN 2: How would you implement per-tenant feature flags and A/B testing in a multi-tenant platform?
+**[SENIOR] Q4 - [DESIGN] How would you implement per-tenant feature flags and A/B testing in a multi-tenant platform?**
 
 **Requirements:** Different tenants can have different
 features enabled. Enterprise tenants get early access.
@@ -1037,7 +1049,7 @@ CREATE TABLE features (
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 **Evaluation logic:**
 
@@ -1063,7 +1075,7 @@ public class FeatureFlagService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Infrastructure:**
 
@@ -1086,7 +1098,7 @@ UX. The cache invalidation design shows operational thinking.
 
 ---
 
-#### BEHAVIORAL 1: Describe a time you had to add multi-tenancy to an existing single-tenant application.
+**[SENIOR] Q5 - [BEHAVIORAL] Describe a time you had to add multi-tenancy to an existing single-tenant application.**
 
 **STAR:**
 
@@ -1131,7 +1143,7 @@ process.
 
 ---
 
-#### BEHAVIORAL 2: How do you handle a situation where a tenant asks for data residency in a specific region that your platform doesn't currently support?
+**[SENIOR] Q6 - [BEHAVIORAL] How do you handle a situation where a tenant asks for data residency in a specific region that your platform doesn't currently support?**
 
 **The business and technical tension:**
 
@@ -1178,7 +1190,7 @@ thinking.
 
 ---
 
-#### SCENARIO 1: Your SaaS platform's largest tenant (30% of revenue) says their performance is degrading. Other tenants report no issues. What is the likely cause and how do you fix it?
+**[SENIOR] Q7 - [SCENARIO] Your SaaS platform's largest tenant (30% of revenue) says their performance is degrading. Other tenants report no issues. What is the likely cause and how do you fix it?**
 
 **30% of revenue tenant on a shared pool/bridge platform:**
 
@@ -1220,7 +1232,7 @@ ORDER BY mean_exec_time DESC
 LIMIT 10;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check schema-specific query performance: example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Recommendation:** Short term: add indexes, VACUUM,
 increase connection cap for their schema. Long term:
@@ -1237,7 +1249,7 @@ real production scenario for SaaS performance issues.
 
 ---
 
-#### SCENARIO 2: A potential enterprise customer requires penetration testing of your multi-tenant SaaS. What do you allow and what safeguards do you put in place?
+**[SENIOR] Q8 - [SCENARIO] A potential enterprise customer requires penetration testing of your multi-tenant SaaS. What do you allow and what safeguards do you put in place?**
 
 **What to allow:**
 

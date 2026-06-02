@@ -102,7 +102,7 @@ Cartesian product: R1 CROSS JOIN R2
   (all combinations: 2 rows x 2 rows = 4 rows)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Relational Algebra and Codd's 12 Rules example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Codd's 12 Rules:**
 
@@ -122,7 +122,7 @@ Rule 11: Distribution independence
 Rule 12: Non-subversion rule - no low-level interface bypasses constraints
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Relational Algebra and Codd's 12 Rules example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -222,7 +222,7 @@ WHERE d.budget > 1000000;
 --    sigma(p)(R1) JOIN R2 if p only involves R1 columns
 ```
 
-> **Code walkthrough:** The query optimizer translates SQL to a relational algebra
+> **Code walkthrough:** The query optimizer translates SQL to a relational algebraice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > expression tree, then applies transformation rules to find a more efficient tree.
 > Selection pushdown: move a WHERE clause filter as close to the base table as possible,
 > reducing the number of rows that flow through the join. This is why a query
@@ -334,45 +334,45 @@ WHERE NOT EXISTS (
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is relational algebra and why does it matter for SQL developers?**
+**[JUNIOR] Q1 - [MECHANISM] What is relational algebra and why does it matter for SQL developers?**
 
 🗣️ "Relational algebra: the mathematical foundation for all SQL operations. It defines 8 operators that work on relations (tables as sets of tuples): selection (filter rows), projection (select columns), union, intersection, difference, Cartesian product, natural join, and division. SQL is a concrete language that implements these operators plus extensions (ORDER BY, aggregation, NULLs). Why it matters for developers: (1) The query optimizer works by transforming SQL into a relational algebra expression tree, then applying equivalence-preserving transformations to find a cheaper plan. Understanding algebraic rules (selection pushdown, join reordering) helps explain why some query rewrites are faster. (2) Understanding that relations are SETS (no order, no duplicates) explains why ORDER BY must be explicit (no inherent row order), why DISTINCT is needed to remove duplicates, and why set operations (UNION, INTERSECT, EXCEPT) work as they do. (3) The division operator explains how to express 'for all' quantification in SQL (double NOT EXISTS pattern). This appears in interview problems."
 
-**Q2: How does the query optimizer use relational algebra?**
+**[JUNIOR] Q2 - [MECHANISM] How does the query optimizer use relational algebra?**
 
 🗣️ "The optimizer's job: find the algebraically equivalent plan with the lowest estimated cost. Steps: (1) SQL parsing: the SQL is parsed into a parse tree. (2) Semantic analysis: resolve table/column names. (3) Logical plan: convert to a relational algebra expression tree. (4) Optimization: apply transformation rules: selection pushdown (move filters to be applied on base tables before joins), join reordering (try different join orders using dynamic programming or genetic algorithm), projection pushdown (remove unused columns early). (5) Physical plan: choose implementation for each operator: hash join vs. nested loop vs. sort-merge join, index scan vs. seq scan. (6) Cost estimation: for each candidate plan, estimate cost using statistics (pg_statistics: row counts, selectivity, histogram). Choose the plan with the lowest estimated cost. Why algebraic transformation? Algebraic rules guarantee semantic equivalence - the result is the same, just computed differently. `JOIN(A, B) WHERE A.x = 5` can be transformed to `JOIN(SELECT * FROM A WHERE x=5, B)` - same result, potentially much cheaper (fewer rows in the join)."
 
-**Q3: What is Codd's Rule 1 and why is it fundamental?**
+**[JUNIOR] Q3 - [MECHANISM] What is Codd's Rule 1 and why is it fundamental?**
 
 🗣️ "Codd's Rule 1 (Information Rule): 'All information in a relational database is represented explicitly at the logical level in exactly one way - by values in tables.' This means: everything the database knows is stored as values in cells of tables. No information is stored in row order, column order, physical layout, or any other non-value representation. Why fundamental: (1) It is the basis for physical data independence (Rule 8): if all information is in values, the physical storage can change without affecting the logical model. (2) It justifies the 'table = first class citizen' principle: views, indexes, stored queries can all be represented as or derived from tables. (3) The system catalog itself (pg_tables, pg_columns) is a set of tables - queryable with the same SQL as user data (Rule 4: active online catalog). Violation example: storing information in column order (column 1 = most important) would violate Rule 1 - the ordering of columns carries information outside the value model. PostgreSQL satisfies Rule 1: column order is arbitrary (can be changed, does not affect semantics)."
 
-**Q4: Why does SQL violate the closed-world assumption of relational theory?**
+**[MID] Q4 - [MECHANISM] Why does SQL violate the closed-world assumption of relational theory?**
 
 🗣️ "Closed-world assumption (CWA): anything not in the database is FALSE. If Alice's phone number is not in the database, Alice does not have a phone number. Relational algebra is built on CWA: all values are known, and the absence of a tuple means the predicate is false. SQL violates CWA through NULLs. NULL means 'unknown' or 'missing', which breaks the two-valued logic (true/false) of relational algebra. SQL uses three-valued logic (true/false/unknown). Consequences: (1) `NULL = NULL` is UNKNOWN (not TRUE). This surprises developers: `WHERE phone = NULL` returns no rows; must use `WHERE phone IS NULL`. (2) `NOT IN (SELECT ... WHERE col IS NULL)` returns no rows: because `x NOT IN (..., NULL, ...)` is `x != NULL = UNKNOWN`, which evaluates as false. A famous SQL gotcha. (3) Aggregations: COUNT(*) counts NULLs; COUNT(col) excludes NULLs. Codd introduced NULLs (Rule 3) but their implementation in SQL has been controversial: some theorists argue NULLs should not exist in a truly relational system (C.J. Date argued for a two-valued logic without NULLs)."
 
-**Q5: How does understanding relational algebra help with SQL optimization?**
+**[MID] Q5 - [MECHANISM] How does understanding relational algebra help with SQL optimization?**
 
 🗣️ "Five practical applications: (1) Selection pushdown: knowing that `sigma(p)(R JOIN S) = sigma(p)(R) JOIN S` (when p only involves R columns) explains why putting filters in a WHERE clause is better than filtering on the outer result. The optimizer does this automatically, but knowing it helps write clearer SQL. (2) Projection pushdown: `pi(a,b)(R JOIN S)` can reduce to joining only the needed columns. For wide tables: specifying the needed columns in SELECT (not SELECT *) helps the optimizer and reduces I/O. (3) Join reordering: `(R JOIN S) JOIN T` may be cheaper as `R JOIN (S JOIN T)` depending on cardinalities. The optimizer tries combinations; `SET join_collapse_limit = N` controls how many join orderings PostgreSQL considers. (4) Set operations: UNION vs. UNION ALL: understanding that UNION is a set operation (deduplicates) while UNION ALL is a bag operation (no dedup) makes the performance difference clear. (5) Division pattern: the double NOT EXISTS pattern is directly derived from the relational algebra division operator. Without knowing the theoretical operator, the SQL expression is mysterious. With it: it is a direct translation."
 
-**Q6: What is meant by 'logical data independence' (Codd's Rule 9) and how is it achieved?**
+**[SENIOR] Q6 - [MECHANISM] What is meant by 'logical data independence' (Codd's Rule 9) and how is it achieved?**
 
 🗣️ "Logical data independence: application programs should not need to change when the logical schema changes (tables are split, merged, or restructured), as long as the information they need is still available. Mechanism: views. A view provides a stable interface over a changing underlying schema. Example: `CREATE VIEW customer_summary AS SELECT id, name, email FROM customers`. Applications query `customer_summary`. If `customers` is split into `customers` and `customer_contacts` (email moved to a new table): the view is updated to JOIN the two tables. Applications are not changed. Rule 9 is imperfectly achieved in practice: if a JOIN is added to a view, applications relying on `UPDATE customer_summary SET email = ...` may break (views with JOINs are not updatable by default). Workaround: `INSTEAD OF` triggers on views make them updatable. PostgreSQL achieves partial Rule 9 compliance: views provide logical independence for reads, but updatability is limited for complex views."
 
-**Q7: What are the practical implications of Codd's Rule 12 (non-subversion)?**
+**[SENIOR] Q7 - [MECHANISM] What are the practical implications of Codd's Rule 12 (non-subversion)?**
 
 🗣️ "Rule 12 (Non-subversion): 'If a relational system has a low-level language, that low-level language must not be able to bypass the integrity constraints or access rules of the higher-level relational language.' In practical terms: no backdoor. Any access to the database (PL/pgSQL, C extensions, direct page manipulation) must respect the same constraints as SQL. Implications: (1) Constraints defined via SQL (NOT NULL, FOREIGN KEY, CHECK) must be enforced for all write paths - including stored procedures, triggers, and extensions. (2) Row-level security (RLS) in PostgreSQL: applies to all queries, including dynamic SQL in PL/pgSQL functions (unless the function is SECURITY DEFINER and BYPASSRLS is set - which is a deliberate override). (3) Direct file manipulation (pg_filenode trick, hex editing): bypasses all constraints - a violation of Rule 12 and the reason direct file edits are unsupported. Violation example: a DBA using `pg_dump | sed 's/wrong/right/g' | pg_restore` to patch data - this bypasses constraints and audit logs (Rule 12 violation). Correct: always use SQL with constraints active."
 
-**Q8: How does understanding set theory help with SQL interview problems?**
+**[SENIOR] Q8 - [MECHANISM] How does understanding set theory help with SQL interview problems?**
 
 🗣️ "Three patterns directly from set theory: (1) Finding elements in one set but not another (set difference): `EXCEPT` in SQL. 'Find customers who ordered in 2023 but not 2024.' Intuitive once you think of years as sets. (2) Finding elements in both sets (intersection): `INTERSECT`. 'Find employees in both the Engineering and Management roles.' (3) 'For all' quantification (division): 'Find students who passed all exams.' This requires division. In SQL: double NOT EXISTS. Mental model: 'there is no exam for which this student has no passing record.' Alternatively: `GROUP BY student_id HAVING COUNT(DISTINCT exam_id) = (SELECT COUNT(*) FROM exams)`. (4) Aggregation with HAVING is a filter on grouped sets. (5) Understanding that ORDER BY is not part of the relational model explains why SQL guarantees ORDER BY only on the outermost query (not on subqueries). A subquery `SELECT ... ORDER BY` has no guaranteed row order when its result is used in the outer query. PostgreSQL may use the order but the optimizer is free to discard it."
 
-**Q9: What is the difference between a bag (multiset) and a set in the context of SQL?**
+**[SENIOR] Q9 - [TRADE-OFF] What is the difference between a bag (multiset) and a set in the context of SQL?**
 
 🗣️ "Set: a collection with no duplicates and no defined order. Relational algebra operates on sets. Bag (multiset): a collection that allows duplicates, with no defined order. SQL operates on bags by default. The difference: `UNION ALL` (bag union): `{1, 2, 2} UNION ALL {2, 3} = {1, 2, 2, 2, 3}`. Duplicates from both sides are preserved. `UNION` (set union): `{1, 2, 2} UNION {2, 3} = {1, 2, 3}`. Duplicates are removed. SQL SELECT without DISTINCT returns bags (duplicates possible). SELECT DISTINCT returns a set (duplicates removed). Why bags? Performance: removing duplicates requires hashing or sorting - O(N log N). Bags avoid this cost. For most SQL operations: duplicates are acceptable and the developer adds DISTINCT when needed. Implications for interviews: `COUNT(*)` counts all rows including duplicates. `COUNT(DISTINCT col)` counts unique values. `UNION ALL` is faster than `UNION` but preserves duplicates."
 
@@ -497,7 +497,7 @@ Schedule example:
   Cycle: T1 -> T2 -> T1. NOT SERIALIZABLE.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Gray and Lamport Transaction Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -618,7 +618,7 @@ public class RetryableTransactionExecutor {
 }
 ```
 
-> **Code walkthrough:** SERIALIZABLE isolation is theoretically correct
+> **Code walkthrough:** SERIALIZABLE isolation is theoretically correctice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > but requires the application to handle aborts. PostgreSQL's SSI tracks
 > read/write anti-dependencies. If a cycle is detected: one transaction is
 > aborted with SQLSTATE 40001 (serialization failure). Spring converts this
@@ -715,7 +715,7 @@ Classic example:
 -- Both transactions were valid individually at Snapshot Isolation.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates transaction isolation. **KEY MECHANISM:** each transaction sees a consistent snapshot; COMMIT makes changes visible to concurrent readers. **WHY IT MATTERS:** long transactions hold row locks, blocking concurrent writes - causing timeout cascades. **TAKEAWAY: keep transactions short; release locks quickly by committing early.**
 
 Fix: use SERIALIZABLE isolation (PostgreSQL SSI detects this anti-dependency cycle).
 Or use explicit locking: `SELECT ... FOR UPDATE` to prevent concurrent decisions.
@@ -724,39 +724,39 @@ Or use explicit locking: `SELECT ... FOR UPDATE` to prevent concurrent decisions
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the formal definition of a serializable schedule?**
+**[JUNIOR] Q1 - [MECHANISM] What is the formal definition of a serializable schedule?**
 
 🗣️ "A schedule S of transactions T1...Tn is serializable if it is conflict-equivalent to some serial schedule of the same transactions. Conflict equivalence: two schedules are conflict-equivalent if they have the same set of operations and every pair of conflicting operations (from different transactions, accessing the same data item, at least one is a write) appear in the same relative order. A serial schedule: transactions execute one at a time (T1 completes before T2 starts, or T2 before T1, etc.). To test serializability: build a precedence graph (dependency graph). One node per transaction. Add edge Ti -> Tj if Ti has an operation that precedes and conflicts with an operation in Tj. The schedule is serializable if and only if the precedence graph is acyclic. Acyclic: topological sort gives the equivalent serial order. Cyclic: the schedule is not serializable (some anomaly exists). PostgreSQL's SSI algorithm tracks these dependencies at runtime: if a cycle forms: one transaction is aborted."
 
-**Q2: How does Two-Phase Locking (2PL) ensure serializability?**
+**[JUNIOR] Q2 - [MECHANISM] How does Two-Phase Locking (2PL) ensure serializability?**
 
 🗣️ "Two-Phase Locking: every transaction must acquire all locks before releasing any lock. Two phases: growing phase (acquire locks, do not release) and shrinking phase (release locks, do not acquire). Theorem: any schedule produced by a 2PL protocol is serializable. Proof sketch: if Ti acquires a lock that Tj holds, Ti waits for Tj. This creates a 'Ti after Tj' ordering. 2PL ensures that once a transaction starts releasing locks (shrinking phase), it cannot acquire new locks - preventing it from observing data that is in the middle of being changed by another transaction. Strict 2PL: all locks held until commit/rollback. No lock release in the shrinking phase until the transaction ends. Strict 2PL prevents cascading aborts (a reading transaction cannot observe uncommitted writes) and ensures recoverable schedules. Most RDBMS implementations use strict 2PL for locks held on write operations. PostgreSQL: uses MVCC for reads (no read locks) + strict 2PL for write locks."
 
-**Q3: What is Serializable Snapshot Isolation (SSI) and how does PostgreSQL implement it?**
+**[JUNIOR] Q3 - [MECHANISM] What is Serializable Snapshot Isolation (SSI) and how does PostgreSQL implement it?**
 
 🗣️ "Snapshot Isolation (SI): each transaction sees a consistent snapshot of the database at its start time. Reads never block (no read locks). Writes conflict only if they touch the same rows. Weakness of SI: write skew. Two transactions read the same snapshot, make non-conflicting writes, but together violate a constraint that either transaction individually would not violate. SI does not detect this because there are no conflicting write-write pairs. SSI (Serializable Snapshot Isolation): extends SI by tracking read-write anti-dependencies. An anti-dependency: T1 reads a row that T2 subsequently writes. This creates a 'T1 before T2' ordering requirement. SSI builds a runtime dependency graph. If a cycle forms in this graph: PostgreSQL detects a potential serialization anomaly and aborts one of the involved transactions. Implementation: PostgreSQL tracks SIREAD locks (non-blocking: just records that a row was read). On write: PostgreSQL checks if any transaction has a SIREAD lock on the written row (anti-dependency). If this creates a cycle: abort. SSI was added in PostgreSQL 9.1. It provides full SERIALIZABLE isolation without traditional locking overhead for reads."
 
-**Q4: What is the ARIES recovery algorithm and how does it relate to ACID atomicity?**
+**[MID] Q4 - [MECHANISM] What is the ARIES recovery algorithm and how does it relate to ACID atomicity?**
 
 🗣️ "ARIES (Algorithms for Recovery and Isolation Exploiting Semantics): the standard crash recovery algorithm, developed at IBM Research (1992, Gray and Mohan). PostgreSQL's recovery algorithm is closely based on ARIES. Three phases of crash recovery: (1) Analysis phase: scan the WAL from the last checkpoint. Determine which transactions were active at crash time (not yet committed) and which dirty pages were not yet flushed to disk. (2) Redo phase: replay the WAL from the earliest dirty page. Redo ALL changes, including uncommitted transactions. This restores the exact state at the moment of crash. (3) Undo phase: roll back all transactions that were active (uncommitted) at crash time. Apply UNDO log entries to reverse their changes. Result: atomicity is restored. Committed transactions: fully applied. Uncommitted transactions: fully reversed. The database is in the exact state of the last committed transaction. WAL-first rule: a data page change is only allowed after the corresponding WAL record is written and fsynced. This ensures redo always has the complete history."
 
-**Q5: How does Jim Gray's concept of 'transaction' differ from everyday usage?**
+**[MID] Q5 - [MECHANISM] How does Jim Gray's concept of 'transaction' differ from everyday usage?**
 
 🗣️ "Jim Gray's formal definition ('The Transaction Concept', 1981): a transaction is a sequence of database operations that transforms the database from one consistent state to another consistent state. The key properties: (1) atomicity: the sequence is treated as an atomic unit (all or nothing). (2) Isolation: the intermediate state of a transaction is not visible to other transactions. The transaction appears to take effect instantaneously (at commit time). Everyday (loose) usage: 'transaction' often refers to any database operation, or even to a business operation (a payment is a 'transaction' from the business perspective). Gray's formal meaning is stricter: it is about the database's guarantee of atomicity and isolation. A payment is a business transaction; the ACID guarantee ensures that the corresponding database operations (debit + credit) are atomic and isolated. The distinction matters in interviews: when asked about ACID, describe the formal properties (not just 'BEGIN/COMMIT'). Gray also defined the concept of nested transactions, long-running transactions, and the notions of compensating transactions - which are the basis for the saga pattern in modern distributed systems."
 
-**Q6: What are the theoretical limits of isolation and why do databases offer weaker levels?**
+**[SENIOR] Q6 - [MECHANISM] What are the theoretical limits of isolation and why do databases offer weaker levels?**
 
 🗣️ "Theoretical maximum: SERIALIZABLE (full isolation). Every transaction appears to execute in some serial order. No anomalies possible. Cost: (1) With 2PL: heavy locking, high contention, many wait events. Throughput drops significantly under concurrent workloads. (2) With SSI: abort rate increases under heavy concurrent writes (more anti-dependency cycles detected). Applications must retry. Lower isolation levels sacrifice correctness for performance: READ UNCOMMITTED: reads uncommitted data (dirty reads). Very fast but almost never useful; data may be rolled back. READ COMMITTED: reads only committed data. Most common default (PostgreSQL default). Allows non-repeatable reads and phantom reads. REPEATABLE READ: consistent snapshot for the transaction. Prevents non-repeatable reads. Allows phantom reads (at the SQL standard level; PostgreSQL's implementation actually prevents phantoms too). SERIALIZABLE: full isolation. In practice: most applications use READ COMMITTED. The risk (non-repeatable reads, phantoms) is accepted because the business logic is designed not to depend on exact consistency at the row level. Financial operations: use SERIALIZABLE or explicit FOR UPDATE locking. The theoretical ideal (SERIALIZABLE) is too expensive for all workloads."
 
-**Q7: What is the relationship between Lamport's work and distributed transactions?**
+**[SENIOR] Q7 - [MECHANISM] What is the relationship between Lamport's work and distributed transactions?**
 
 🗣️ "Leslie Lamport's contributions: (1) 'Time, Clocks, and the Ordering of Events in a Distributed System' (1978): defined logical clocks (Lamport timestamps). If event A causally precedes event B: the Lamport timestamp of A is less than B. Used to establish ordering in distributed systems without synchronized clocks. (2) Paxos (1989/1998): the consensus algorithm. A distributed system agrees on a single value despite node failures and message delays. Foundation of distributed databases (CockroachDB, Spanner use Raft, which is based on Paxos). Relationship to ACID: ACID in a single-node system is manageable (WAL + MVCC + 2PL). In distributed systems: maintaining ACID across multiple nodes requires distributed consensus. Spanner uses TrueTime (GPS + atomic clocks) to provide globally consistent timestamps. CockroachDB uses Raft consensus to ensure that committed writes are replicated to a quorum before the commit is acknowledged. The combination: Lamport's theoretical foundations (ordering, consensus) + Gray's ACID formalization = the theoretical basis for distributed databases like Spanner and CockroachDB."
 
-**Q8: What is 'consistency' in ACID vs 'consistency' in CAP theorem?**
+**[SENIOR] Q8 - [TRADE-OFF] What is 'consistency' in ACID vs 'consistency' in CAP theorem?**
 
 🗣️ "ACID Consistency: the database is in a 'consistent state' where all defined invariants hold. Constraints: NOT NULL, FOREIGN KEY, CHECK, UNIQUE. A transaction preserves consistency: it moves the database from one constraint-satisfying state to another. The C in ACID is largely a developer responsibility (define constraints) and a database enforcement responsibility (reject writes that violate constraints). CAP Consistency (also called 'linearizability'): every read returns the most recent write. In a distributed system with replicas: if you write to node A and immediately read from node B, you see the latest write. This is a much stronger definition than ACID consistency. Linearizability requires coordination between replicas for every operation. CAP Consistency = all replicas agree on the current value at all times. ACID Consistency = the database satisfies its defined invariants. Completely different concepts, confusingly using the same word. In interviews: clarify which 'consistency' is being discussed. 'Eventual consistency' in NoSQL refers to CAP consistency (replicas eventually agree) - not to ACID consistency."
 
-**Q9: How does the formalization of ACID help in designing distributed sagas?**
+**[SENIOR] Q9 - [DESIGN] How does the formalization of ACID help in designing distributed sagas?**
 
 🗣️ "The saga pattern (Hector Garcia-Molina, 1987) was designed for long-running transactions that span multiple systems. The formal insight: a long-running transaction (hours or days) cannot hold database locks for its duration (deadlock, resource starvation). A saga: decompose the transaction into a sequence of local transactions, each of which commits independently. For each local transaction: define a compensating transaction (an undo operation that reverses the effects). If a step fails: run compensating transactions in reverse order for all previously committed steps. Relationship to ACID formalization: Atomicity of the overall saga is achieved through compensating transactions (not database rollback). The saga is not ACID-isolated: intermediate states are visible to other transactions between saga steps. The designer must ensure the intermediate states are acceptable (semantic consistency, not strict isolation). In practice: sagas are used in microservices for operations like: place order (saga: reserve inventory + create order + charge payment + fulfill). Each step: independent local ACID transaction. The saga coordinator: the orchestrator that manages the sequence and compensations."
 

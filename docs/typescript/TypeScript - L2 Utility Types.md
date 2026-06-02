@@ -146,7 +146,7 @@ USAGE PATTERNS:
   };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Built-in Utility Types example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -223,7 +223,7 @@ const ROLE_PERMS: Record<User['role'], Permission[]> = {
 };
 ```
 
-> **Code walkthrough:** The `UpdateUserDto` composition chains utility
+> **Code walkthrough:** The `UpdateUserDto` composition chains utilityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > types: first `Omit` removes auto-generated and immutable fields,
 > then `Partial` makes all remaining fields optional, then intersection
 > `&` adds back `id` as required. This derives the complete update
@@ -317,7 +317,7 @@ type PublicUser = Pick<User,
 // Adding new User fields doesn't accidentally expose them
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -337,8 +337,7 @@ type PublicUser = Pick<User,
 
 ---
 
-**Q1: How do you create an update DTO with all fields optional except ID?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] How do you create an update DTO with all fields optional except ID?**
 
 > **Answer:**
 >
@@ -368,8 +367,7 @@ type PublicUser = Pick<User,
 > or a branded type. This prevents writing separate update types for
 > every entity.
 
-**Q2: What is the difference between Exclude and Extract?** `[MID]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between Exclude and Extract?** `[MID]`**
 
 > **Answer:**
 >
@@ -407,8 +405,7 @@ MECHANISM
 > type implementation: `T extends U ? T : never` distributes over
 > union members - each member is independently tested against U.
 
-**Q3: How does Record<K,V> enforce exhaustive key coverage?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does Record<K,V> enforce exhaustive key coverage?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -591,7 +588,7 @@ KEY GENERATION IN MAPPED TYPES:
   // { getName: () => string; getAge: () => number }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Template Literal Types example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -617,6 +614,14 @@ members. Measure type-checking time when using large string unions.
 ### 💻 Code Example
 
 **Template literal types for a typed event system**
+
+
+```typescript
+// BAD: any disables type checking
+function processData(data: any): any {
+    return data.transform(); // no compile-time checks
+}
+```
 
 ```typescript
 // BAD: untyped event emitter
@@ -670,7 +675,7 @@ getUsers('name_asc');      // OK
 getUsers('invalid_sort');  // Error: not in SortKey
 ```
 
-> **Code walkthrough:** The `TypedEventEmitter<T>` connects event names
+> **Code walkthrough:** The `TypedEventEmitter<T>` connects event namesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to their data types via the generic parameter. `K extends string & keyof T`
 > narrows K to string keys of T (keyof returns `string | number | symbol`,
 > the `string &` selects only string keys). When you listen to
@@ -763,7 +768,7 @@ type ValidCssShorthand = `${'margin' | 'padding'}-${
 }`;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -783,8 +788,7 @@ type ValidCssShorthand = `${'margin' | 'padding'}-${
 
 ---
 
-**Q1: How would you type a URL route string to extract its parameters?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] How would you type a URL route string to extract its parameters?**
 
 > **Answer:**
 >
@@ -825,8 +829,7 @@ type ValidCssShorthand = `${'margin' | 'padding'}-${
 > template literal `infer` can capture dynamic path segments - enabling
 > "type-safe parsing" of URL patterns at compile time.
 
-**Q2: How do template literal types combine with branded types?**
-`[STAFF]` MECHANISM
+**[STAFF] Q2 - [MECHANISM] How do template literal types combine with branded types?**
 
 > **Answer:**
 >
@@ -858,7 +861,7 @@ type ValidCssShorthand = `${'margin' | 'padding'}-${
 > `string & { __brand: 'UserId' }`. Used in financial applications
 > (prevent mixing up currency amounts) and DDD (aggregate root IDs).
 
-**Q3: What are practical use cases for template literal types in
+**[JUNIOR] Q3 - [MECHANISM] What are practical use cases for template literal types in**
 production code?** `[SENIOR]` DECISION
 
 > **Answer:**
@@ -898,7 +901,7 @@ production code?** `[SENIOR]` DECISION
 > prevents the "added a new column but forgot to add both sort directions"
 > class of bugs - the union is always correct by construction.
 
-**Q4: What is the 'string & K' pattern and why is it needed in mapped
+**[MID] Q4 - [MECHANISM] What is the 'string & K' pattern and why is it needed in mapped**
 types?** `[SENIOR]` MECHANISM
 
 > **Answer:**

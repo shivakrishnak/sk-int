@@ -147,13 +147,23 @@ PROPERTY DESCRIPTORS:
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Objects and Prototypes example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Prototype chain and class inheritance**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: duplicating methods on every instance (common mistake)
@@ -208,7 +218,7 @@ emp instanceof Person;    // true (chain includes Person.prototype)
 emp instanceof Object;    // true (chain includes Object.prototype)
 ```
 
-> **Code walkthrough:** The BAD pattern creates a new function object
+> **Code walkthrough:** The BAD pattern creates a new function objectice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > per instance because `this.greet = function() {}` runs inside the
 > constructor for every `new Person()`. With thousands of instances,
 > you have thousands of identical function objects in memory. The
@@ -281,7 +291,7 @@ Object.getPrototypeOf(Employee.prototype); // Person.prototype
 // If chain is broken: problem in constructor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates ES6 class syntax. **KEY MECHANISM:** class syntax is syntactic sugar over prototype chains; methods go on Class.prototype. **WHY IT MATTERS:** instanceof fails across different window/realm boundaries in browser environments. **WHAT BREAKS: classes are prototype-based; for plain data objects, use factory functions.**
 
 ---
 
@@ -299,7 +309,7 @@ Object.getPrototypeOf(Employee.prototype); // Person.prototype
 
 ---
 
-**Q1: What is the prototype chain in JavaScript?** `[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the prototype chain in JavaScript?** `[JUNIOR]` DEFINITION**
 
 > **Answer:**
 >
@@ -504,13 +514,18 @@ ARRAY CREATION PATTERNS:
   chunk([1,2,3,4,5], 2)  // [[1,2],[3,4],[5]]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Arrays and Iteration Methods example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **map/filter/reduce chained**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 const orders = [
@@ -558,7 +573,7 @@ const range = Array.from({ length: 5 }, (_, i) => i + 1);
 // [1, 2, 3, 4, 5]
 ```
 
-> **Code walkthrough:** The declarative pipeline reads as a sentence:
+> **Code walkthrough:** The declarative pipeline reads as a sentence:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > filter to completed orders, map to revenue with tax, reduce to sum.
 > Each step is independently testable: you can console.log between
 > each chained method. The reduce without initial value bug is subtle:
@@ -635,7 +650,7 @@ const grouped = orders.reduce((groups, order) => {
 }, {});  // initial value: empty object
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -653,7 +668,7 @@ const grouped = orders.reduce((groups, order) => {
 
 ---
 
-**Q1: Implement map using reduce.** `[JUNIOR]` IMPLEMENTATION
+**[JUNIOR] Q1 - [MECHANISM] Implement map using reduce.** `[JUNIOR]` IMPLEMENTATION**
 
 > **Answer:**
 >
@@ -774,7 +789,7 @@ Together they enable expressive, concise code for common data manipulation patte
 
 **How it works:**
 
-```
+```plaintext
 ARRAY DESTRUCTURING:
 
   const [a, b, c] = [1, 2, 3];
@@ -865,13 +880,18 @@ SHALLOW vs DEEP COPY:
   const deep2 = structuredClone(original); // ES2022, preferred
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Destructuring and Spread Operator example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **React-style props and state patterns**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: accessing properties without destructuring
@@ -932,7 +952,7 @@ const { password, ...safeUser } = user;
 // safeUser has all fields except password (for API response)
 ```
 
-> **Code walkthrough:** The `UserCard` destructuring in parameters is
+> **Code walkthrough:** The `UserCard` destructuring in parameters isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the most common React/component pattern. Nested destructuring
 > `user: { name, role }` extracts `name` and `role` directly from the
 > `user` property - `user` itself is NOT a local variable. Default
@@ -986,6 +1006,16 @@ changes `original.nested.x`. Use `structuredClone(obj)` for deep copies.
 
 **Symptom: mutating state unexpectedly in React**
 
+
+```javascript
+// BAD: directly mutating state
+const [items, setItems] = useState([]);
+function addItem(item) {
+    items.push(item); // direct mutation - no re-render
+    setItems(items);
+}
+```
+
 ```javascript
 // SYMPTOM: state mutations cause React render bugs
 const [state, setState] = useState({ user: { name: 'Alice' } });
@@ -1003,7 +1033,7 @@ setState(prev => ({
 // setState receives a completely new reference -> re-render triggered
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1021,8 +1051,7 @@ setState(prev => ({
 
 ---
 
-**Q1: What is the difference between spread and rest operator?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between spread and rest operator?**
 
 > **Answer:**
 >

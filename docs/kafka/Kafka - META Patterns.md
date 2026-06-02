@@ -77,11 +77,11 @@ EVENT VS API DECISION FRAMEWORK:
   
   Question 2: Is there fan-out (multiple consumers)?
     YES -> Use event. One event triggers N reactions.
-           Example: "OrderPlaced" -> inventory, billing, notification, analytics (4 consumers).
+           Example: "OrderPlaced" -> inventory, billing, notification,...
     NO  -> Single consumer? API may be simpler. Continue to question 3.
   
   Question 3: Can the receiver be temporarily unavailable?
-    YES (receiver downtime acceptable) -> Use event. Kafka buffers during downtime.
+    YES (receiver downtime acceptable) -> Use event. Kafka buffers during...
     NO (receiver must process immediately) -> Use API with circuit breaker.
            Example: fraud detection before authorizing payment: must be synchronous.
   
@@ -124,15 +124,15 @@ COUPLING ANALYSIS (why decoupling matters):
     Benefits:
     - OrderService: one dependency (Kafka). Not on downstream services.
     - Adding new consumer: zero change to OrderService.
-    - If NotificationService is down: event waits in Kafka. No order placement failure.
+    - If NotificationService is down: event waits in Kafka. No order placement f
 
 ANTI-PATTERNS IN EVENT-DRIVEN THINKING:
 
   Anti-pattern 1: "Events for everything."
     Using events even for synchronous user-facing flows:
-      User clicks "Place Order" -> event produced -> ... -> response 200ms later.
+      User clicks "Place Order" -> event produced -> ... -> response 200ms...
     Problem: the user is waiting synchronously. You've added Kafka latency
-    (2-5ms per hop) + complexity for no benefit. Use REST/gRPC for user-facing operations.
+    (2-5ms per hop) + complexity for no benefit. Use REST/gRPC for user-facing o
   
   Anti-pattern 2: "Orchestrating services via events without a state machine."
     Complex multi-step workflow via event chain: no persistent state.
@@ -151,7 +151,7 @@ ANTI-PATTERNS IN EVENT-DRIVEN THINKING:
     for the state change, not everything about the entity.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -270,7 +270,7 @@ price of EDA's other benefits.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Cascading failure because synchronous user-facing flow used events for all steps.**
-```
+```plaintext
 Symptom: Order placement is slow (5+ seconds) during Kafka lag events.
   Users: see slow checkout. Conversion rate drops.
   Kafka: lag building up on order-commands topic.
@@ -297,14 +297,14 @@ Fix:
   The user's request: served directly by the OrderService without any Kafka round-trip.
   
   Before (broken):
-    Client -> OrderService -> Kafka -> CommandProcessor -> Kafka -> OrderService -> Client
+    Client -> OrderService -> Kafka -> CommandProcessor -> Kafka ->...
   
   After (correct):
-    Client -> OrderService (validates + persists) -> Client (immediate response)
-                                                  -> Kafka -> [background services]
+    Client -> OrderService (validates + persists) -> Client (immediate...
+                                                  -> Kafka -> [background...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If lag > 0: orders are queuing. Each order waits longer. example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -517,7 +517,7 @@ CIRCUIT BREAKER PATTERN:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consumer stops fetching when downstream failure rate exceeds threshold: example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -669,7 +669,7 @@ impact (e.g., "fraud detection is 5 minutes behind real-time transactions: 5-min
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Consumer kicked out of group due to exceeded max.poll.interval.ms.**
-```
+```plaintext
 Symptom: Consumer logs:
   "org.apache.kafka.clients.consumer.CommitFailedException: Commit cannot be
   completed since the group has already rebalanced and assigned the partitions
@@ -713,7 +713,7 @@ Fix:
     // Resume when downstream recovers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Watch CONSUMER-ID column: does it change frequently? Indicates rebalancing. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -870,7 +870,7 @@ COMPATIBILITY MODES:
     Useful when producers deploy first, consumers later.
     
     # Change: remove field from new schema:
-    # Old consumers (reading new messages): field missing -> use default. VALID.
+    # Old consumers (reading new messages): field missing -> use default....
     # New producers: don't include field. Old consumers: see default.
     # FORWARD COMPATIBLE if the removed field had a default.
   
@@ -888,8 +888,8 @@ COMPATIBILITY RULE SUMMARY:
   # ADD field without default -> BACKWARD INCOMPATIBLE. Not safe.
   # REMOVE field with default -> BACKWARD and FORWARD (FULL) compatible.
   # REMOVE field without default -> BACKWARD COMPATIBLE, FORWARD INCOMPATIBLE.
-  # RENAME field              -> BREAKING. Treat as: remove old field + add new field.
-  # CHANGE type (widening)    -> Depends. int -> long: often compatible in Avro.
+  # RENAME field              -> BREAKING. Treat as: remove old field + add...
+  # CHANGE type (widening)    -> Depends. int -> long: often compatible in...
   # CHANGE type (narrowing)   -> BREAKING. long -> int: data loss.
 
 MIGRATION PATTERN FOR BREAKING CHANGES:
@@ -927,7 +927,7 @@ MIGRATION PATTERN FOR BREAKING CHANGES:
   After retention expires: v1 topic is empty (data expired).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CHANGE type (narrowing)   -> BREAKING. long -> int: data loss. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -983,37 +983,37 @@ public ConsumerFactory<String, OrderPlacedEvent> consumerFactory() {
 }
 ```
 
-> **Code walkthrough:** `auto.register.schemas=false` is the key production safety setting.
-> With auto-registration enabled: the first producer to use a new schema registers it
-> automatically, without any compatibility check gate. A developer who accidentally removes a
-> required field: their schema is registered and the first message with the incompatible schema
-> breaks all consumers. With `auto.register.schemas=false`: schema registration happens in CI/CD
-> pipeline via `curl -X POST /subjects/order-events-value/versions -d @schema.avsc`. The CI
-> pipeline checks compatibility before merging. Incompatible schemas: fail the PR.
+> **Code walkthrough:** `auto.register.schemas=false` is the key production safeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> With auto-registration enabled: the first producer to use a new schema registe
+> automatically, without any compatibility check gate. A developer who accidenta
+> required field: their schema is registered and the first message with the inco
+> breaks all consumers. With `auto.register.schemas=false`: schema registration 
+> pipeline via `curl -X POST /subjects/order-events-value/versions -d @schema.av
+> pipeline checks compatibility before merging. Incompatible schemas: fail the P
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Schema evolution: how to change event formats over time without breaking consumers. Avro with
-> Schema Registry: the standard approach. Key rule: always add new fields with a default value
-> (backward compatible). Never add required fields (breaks old consumers). Schema Registry:
-> enforces these rules. Consumers: can read old and new messages because Avro handles missing
+> Schema evolution: how to change event formats over time without breaking consu
+> Schema Registry: the standard approach. Key rule: always add new fields with a
+> (backward compatible). Never add required fields (breaks old consumers). Schem
+> enforces these rules. Consumers: can read old and new messages because Avro ha
 > fields via defaults.
 
 ---
 
 **Senior / Staff (5+ years):**
-> Schema evolution governance is as important as the technical mechanism. Schema changes: should
-> require a pull request, a compatibility check in CI, and review by affected consumer teams.
-> Schema Registry: the contract between services. Break the contract: break the consumers.
-> Operational discipline: (1) `auto.register.schemas=false` in production. (2) Schema changes
-> via PR with compatibility check. (3) Consumer teams: notified of schema changes. (4) Breaking
-> changes: versioned migration plan (parallel v1/v2, migration window, deprecation date).
-> (5) Documentation: each event type has a schema changelog. Version history: visible in
-> Schema Registry UI. Without governance: schema changes will cause 3am production incidents.
-> With governance: schema changes are safe, predictable, and backward compatible.
+> Schema evolution governance is as important as the technical mechanism. Schema
+> require a pull request, a compatibility check in CI, and review by affected co
+> Schema Registry: the contract between services. Break the contract: break the 
+> Operational discipline: (1) `auto.register.schemas=false` in production. (2) S
+> via PR with compatibility check. (3) Consumer teams: notified of schema change
+> changes: versioned migration plan (parallel v1/v2, migration window, deprecati
+> (5) Documentation: each event type has a schema changelog. Version history: vi
+> Schema Registry UI. Without governance: schema changes will cause 3am producti
+> With governance: schema changes are safe, predictable, and backward compatible
 
 ---
 
@@ -1022,35 +1022,35 @@ public ConsumerFactory<String, OrderPlacedEvent> consumerFactory() {
 **Misconception: "JSON is simpler than Avro for schema evolution."**
 JSON is NOT simpler for schema evolution in production. JSON's apparent simplicity hides
 critical problems: (1) No schema enforcement: any JSON is valid. A consumer receiving JSON
-with a missing field: gets a NullPointerException or silently uses null. No compile-time
-check. No produce-time check. (2) No registry: JSON schema changes are implicit. Consumers
+with a missing field: gets a NullPointerException or silently uses null. No comp
+check. No produce-time check. (2) No registry: JSON schema changes are implicit.
 don't know when the schema changed. Backward compatibility: only if the consumer defensively
 handles missing fields. (3) Size: JSON is verbose (field names repeated in every record).
-Avro: field names in schema, not in payload. 3-5x smaller messages. (4) Avro's union type
+Avro: field names in schema, not in payload. 3-5x smaller messages. (4) Avro's u
 for optional fields (`["null", "type"]`) explicitly models nullable vs required. JSON: any
 field can be absent or null implicitly. Avro's advantages: schema enforcement at produce time,
-schema evolution rules enforced by the registry, smaller message size, generated type-safe
+schema evolution rules enforced by the registry, smaller message size, generated
 classes, and schema history in the registry. The "simplicity" of JSON for schema evolution
-is an illusion that collapses in production. JSON + Schema Registry (JSON Schema) is a middle
+is an illusion that collapses in production. JSON + Schema Registry (JSON Schema
 ground, but Avro or Protobuf are preferable for event streams.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Serialization | Schema Registry | Message Size | Type Safety | Evolution | Complexity |
-|---|---|---|---|---|---|
-| JSON String | Optional | Large | None | Manual | Low |
-| JSON + JSON Schema | Supported | Large | Partial | Registry-enforced | Medium |
-| Avro | Required | Small | Generated classes | Registry-enforced | Medium |
-| Protobuf | Optional | Smallest | Generated classes | Field number-based | Medium |
-| Thrift | Optional | Small | Generated classes | Manual | High |
+| Serialization| Schema Registry| Message Size| Type Safety| Evolution| Complexi
+|---|-------------|------------|-----------------|------------------|----------|
+| JSON String| Optional| Large| None| Manual| Low|
+| JSON + JSON Schema| Supported| Large| Partial| Registry-enforced| Medium|
+| Avro| Required| Small| Generated classes| Registry-enforced| Medium|
+| Protobuf| Optional| Smallest| Generated classes| Field number-based| Medium|
+| Thrift| Optional| Small| Generated classes| Manual| High|
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: schema evolution is a component-level concern, not a standalone system architecture design.)*
+*(Omit: schema evolution is a component-level concern, not a standalone system a
 
 ---
 
@@ -1122,7 +1122,7 @@ sequenceDiagram
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Consumers fail with "Unknown magic byte" or "Schema not found" errors.**
-```
+```plaintext
 Symptom: Consumer logs:
   "io.confluent.kafka.serializers.KafkaAvroDeserializer: Unknown magic byte!"
   Or: "io.confluent.kafka.common.errors.SerializationException: Error
@@ -1182,7 +1182,7 @@ Prevention:
   - Consumers: implement dead-letter queue for deserialization errors (instead of crashing).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cross-reference with producer logs around that offset. example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

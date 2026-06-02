@@ -1,6 +1,6 @@
 ---
 title: "TypeScript"
-nav_order: 53
+nav_order: 16
 has_children: true
 ---
 

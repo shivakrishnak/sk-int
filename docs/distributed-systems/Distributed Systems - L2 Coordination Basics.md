@@ -118,7 +118,7 @@ States: Follower → Candidate → Leader
 6. Leader sends heartbeats to prevent new elections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Leader Election example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ZooKeeper-based election:**
 ```
@@ -136,7 +136,7 @@ States: Follower → Candidate → Leader
    next node becomes leader automatically
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Leader Election example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Fencing tokens:**
 ```
@@ -146,7 +146,7 @@ Storage/replicas reject any write with token < latest_known.
 Prevents zombie leaders from writing stale data.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Leader Election example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Leader election must be combined with epoch fencing. Winning the
@@ -234,7 +234,7 @@ public class JobSchedulerLeader
 }
 ```
 
-> **Code walkthrough:** Apache Curator wraps ZooKeeper's leader
+> **Code walkthrough:** Apache Curator wraps ZooKeeper's leaderice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > election recipe. The `LeaderSelector` creates an ephemeral sequential
 > znode for this instance. The node with the smallest sequence number
 > becomes the leader and `takeLeadership` is called. The method blocks
@@ -314,14 +314,83 @@ best-effort (cache warm-up, low-stakes coordination): Redis SETNX.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Split-brain: two nodes both believe they are leader**
+
+**Symptom:** Two services simultaneously process exclusive tasks
+(duplicate job execution, duplicate writes, conflicting leader
+decisions). Logs show both nodes claiming leadership at the same time.
+
+**Root cause:** A network partition isolates the old leader from the
+quorum. The quorum elects a new leader. The old leader's session TTL
+has not expired, so it still considers itself leader and continues
+processing. During the TTL window, two leaders are active.
+
+**Diagnosis:**
+```bash
+# Check ZooKeeper session status for both suspected leaders
+echo 'stat' | nc <zk-host> 2181
+# Look for 'outstanding requests' and session count
+
+# Check which nodes hold the leader znode
+zkCli.sh -server <zk-host>:2181 get /election/leader
+# Should show exactly one node; two outputs = split-brain window
+
+# Verify etcd leader via API
+curl http://etcd:2379/v3/maintenance/status
+# leader field should be same across all members
+```
+
+> **Code walkthrough:** These commands identify active session holders and the current leader znode owner. KEY MECHANISM: ZooKeeper ephemeral znodes are held by a session; when the session TTL expires, the znode disappears and triggers leader re-election. WHY IT MATTERS: the TTL window (default 30s in ZooKeeper) is the split-brain exposure window - any task that takes longer than one TTL is at risk of dual execution. WHAT BREAKS: distributed job schedulers with exclusive tasks (Quartz, Spring Batch) can double-execute if they do not re-validate leadership before processing each item. TAKEAWAY: validate leadership immediately before each critical action, not just at startup.
+
+**Fix:** Reduce session TTL for ZooKeeper (minimum ~5s for LAN);
+implement fencing tokens - include a monotonically increasing leader
+term in all writes; storage layer rejects writes with stale terms.
+
+---
+
+**Failure Mode 2 - Leader thrashing under network instability**
+
+**Symptom:** Leader elections are happening every few seconds.
+Cluster is unavailable during each election. Metrics show
+`leader_changes_seen_total` counter incrementing rapidly.
+
+**Root cause:** Election timeout is set too close to the network
+round-trip time. Any minor packet delay triggers a new election.
+Too-aggressive heartbeat timeouts cause false failures.
+
+**Diagnosis:**
+```bash
+# Check etcd leader change frequency
+curl http://etcd:2379/metrics | grep etcd_server_leader_changes
+# Value > 1 per minute = thrashing
+
+# Check election timeout vs network latency
+ping -c 100 <etcd-peer> | tail -1
+# If avg RTT > election_timeout/10, timeout is too aggressive
+
+# View recent election events
+kubectl logs -n kube-system etcd-<node> | grep 'leader changed'
+```
+
+> **Code walkthrough:** The `etcd_server_leader_changes_seen_total` Prometheus metric is the definitive signal for thrashing. KEY MECHANISM: Raft election timeout must be at least 10x the network round-trip time to absorb packet jitter without triggering false failures. WHY IT MATTERS: every leader change causes an availability gap - Raft rejects writes during election (typically 100-500ms). At 1 election/minute that is 0.1-0.8% availability loss. WHAT BREAKS: write-heavy applications lose throughput; Kubernetes control plane becomes unstable, blocking pod scheduling. TAKEAWAY: set election timeout to `RTT * 10` minimum and ensure datacenter-local etcd nodes for production.
+
+**Fix:** Increase etcd `--heartbeat-interval` and
+`--election-timeout` proportionally (election = 5-10x heartbeat);
+co-locate etcd nodes to reduce RTT.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: Two nodes both believe they are the leader simultaneously.
-How did this happen and how do you fix it?
+**[JUNIOR] Q1 - [DEBUGGING] Two nodes both believe they are the leader simultaneously. How did this happen and how do you fix it?**
 
-A: Split-brain: a network partition isolated the old leader from the
+Split-brain: a network partition isolated the old leader from the
 majority. The majority elected a new leader. The old leader's
 session has not yet expired (still within the ZooKeeper/etcd TTL).
 Both write simultaneously. Fix: (1) implement fencing tokens -
@@ -331,10 +400,9 @@ old leader's session expires faster. (3) use Raft (built-in fencing
 via term numbers) rather than custom ZooKeeper recipes. Immediate
 mitigation: manually expire the old leader's session in ZooKeeper.
 
-Q: Leader failover is taking 45 seconds, causing service outage.
-Target is under 5 seconds. How do you reduce it?
+**[JUNIOR] Q2 - [MECHANISM] Leader failover is taking 45 seconds, causing service outage. Target is under 5 seconds. How do you reduce it?**
 
-A: 45 seconds suggests: the old leader's ZooKeeper/etcd session
+45 seconds suggests: the old leader's ZooKeeper/etcd session
 TTL is set to 45 seconds (common default). The new leader is not
 elected until the TTL expires. Fix: reduce the session TTL (e.g.,
 10 seconds). Set the election timeout shorter (e.g., 3 seconds).
@@ -345,8 +413,7 @@ detects and stops routing to the old leader).
 
 #### Candidate Mistakes
 
-Q: How do you prevent two processes from running the same scheduled
-job simultaneously in a distributed environment?
+**[JUNIOR] Q3 - [MECHANISM] How do you prevent two processes from running the same scheduled job simultaneously in a distributed environment?**
 
 **What NOT to say:** "Use a database flag to mark the job as running."
 
@@ -475,7 +542,7 @@ incorrect behavior.
 
 **Implementation: Redis SETNX:**
 
-```
+```plaintext
 Acquire:
   SET lock_name unique_id NX EX ttl_seconds
   Returns OK (acquired) or nil (already locked)
@@ -489,7 +556,7 @@ TTL: lock auto-expires if holder crashes before release
 unique_id: prevents releasing another process's lock
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Locking example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The fencing token problem:**
 
@@ -506,11 +573,11 @@ This is fencing. Redis SETNX alone does NOT provide
 fencing - you must implement it at the storage layer.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Locking example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ZooKeeper-based distributed lock:**
 
-```
+```plaintext
 1. Create ephemeral sequential znode:
    /locks/resource-0000000042
 
@@ -529,7 +596,7 @@ The monotonically increasing znode sequence
 number IS the fencing token.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Locking example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 A distributed lock with TTL but without fencing is not safe.
@@ -568,6 +635,12 @@ This is what Redis SETNX and ZooKeeper provide."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DISTRIBUTED LOCK WITH REDIS (Redisson)
@@ -708,10 +781,9 @@ If no: ZooKeeper/etcd. If tolerable with fencing: Redis.
 
 #### Production Failures
 
-Q: A distributed lock is being held indefinitely. Requests are
-queuing. What happened and how do you recover?
+**[JUNIOR] Q1 - [MECHANISM] A distributed lock is being held indefinitely. Requests are queuing. What happened and how do you recover?**
 
-A: The lock holder crashed without releasing the lock, AND the lock
+The lock holder crashed without releasing the lock, AND the lock
 was created without a TTL (or with an excessively long TTL).
 Immediate recovery: manually delete the lock key in Redis
 (`DEL lock_key`) or forcibly expire the ZooKeeper znode
@@ -720,10 +792,9 @@ process acquires the lock. Prevention: always set a TTL. Add
 monitoring/alerting on lock acquisition wait time - if it exceeds
 2x the expected critical section duration, alert.
 
-Q: Two processes are both executing the same critical section despite
-using a distributed lock. How is this possible?
+**[JUNIOR] Q2 - [MECHANISM] Two processes are both executing the same critical section despite using a distributed lock. How is this possible?**
 
-A: The fencing token problem. Process A acquired the lock, started
+The fencing token problem. Process A acquired the lock, started
 a long GC pause (or was stopped by the OS). The lock TTL expired.
 Process B acquired the lock and started. Process A resumed, still
 believing it holds the lock (no mechanism to notify it of expiry),
@@ -735,7 +806,7 @@ older than the last accepted token.
 
 #### Candidate Mistakes
 
-Q: How do you safely release a distributed Redis lock?
+**[JUNIOR] Q3 - [MECHANISM] How do you safely release a distributed Redis lock?**
 
 **What NOT to say:** "Just call DEL lock_key."
 
@@ -827,8 +898,7 @@ the full visual state machine.)*
 
 ---
 
-**Q1 (Conceptual): What is the purpose of the fencing token in
-leader election, and what happens without it?**
+**[JUNIOR] Q1 - [MECHANISM] What is the purpose of the fencing token in leader election, and what happens without it?**
 
 The fencing token (also called epoch, term, or generation number)
 is a monotonically increasing integer issued to each newly elected
@@ -857,8 +927,7 @@ writing" does NOT solve the problem.
 
 ---
 
-**Q2 (Conceptual): Compare Bully, Ring, and Raft election
-algorithms. When is each appropriate?**
+**[JUNIOR] Q2 - [MECHANISM] Compare Bully, Ring, and Raft election algorithms. When is each appropriate?**
 
 Bully algorithm: the node with the highest ID wins. When a node
 detects leader failure, it broadcasts an election message. If a
@@ -887,8 +956,7 @@ the concepts but are not used in real systems.
 
 ---
 
-**Q3 (Conceptual): How does ZooKeeper's ephemeral sequential znode
-approach provide built-in fencing for leader election?**
+**[JUNIOR] Q3 - [MECHANISM] How does ZooKeeper's ephemeral sequential znode approach provide built-in fencing for leader election?**
 
 Each candidate creates an ephemeral sequential znode under a
 parent path: `/election/leader-0000000042`. ZooKeeper auto-increments
@@ -914,8 +982,7 @@ number is globally unique and monotonically increasing.
 
 ---
 
-**Q4 (Trade-off): What are the trade-offs between short and long
-election timeouts in Raft?**
+**[MID] Q4 - [TRADE-OFF] What are the trade-offs between short and long election timeouts in Raft?**
 
 Short timeout (e.g., 50ms): faster leader failover - the cluster
 detects and resolves leader failure quickly. But spurious elections
@@ -942,8 +1009,7 @@ a correctness mechanism. Simultaneous timeouts lead to split votes
 
 ---
 
-**Q5 (Trade-off): Leader-based vs. leaderless replication: when
-does each approach win?**
+**[MID] Q5 - [TRADE-OFF] Leader-based vs. leaderless replication: when does each approach win?**
 
 Leader-based: strong consistency (single write path, no conflicts),
 simpler to reason about, easier to implement total order. Cost:
@@ -968,8 +1034,7 @@ consistency (financial ledger, distributed lock): leader-based.
 
 ---
 
-**Q6 (Debugging): How would you debug a cluster that is failing
-to elect a leader and is stuck in permanent candidate state?**
+**[SENIOR] Q6 - [DEBUGGING] How would you debug a cluster that is failing to elect a leader and is stuck in permanent candidate state?**
 
 Permanent candidate state means no node can get a majority vote.
 Possible causes:
@@ -1001,8 +1066,7 @@ vote request/response traces). They do not guess randomly.
 
 ---
 
-**Q7 (Debugging): A ZooKeeper-based leader election is producing
-frequent leadership changes. How do you investigate?**
+**[SENIOR] Q7 - [DEBUGGING] A ZooKeeper-based leader election is producing frequent leadership changes. How do you investigate?**
 
 Frequent leadership changes (leadership oscillation) indicate
 the current leader's ZooKeeper session is repeatedly expiring.
@@ -1033,8 +1097,7 @@ pauses longer than the ZooKeeper session timeout, losing leadership.
 
 ---
 
-**Q8 (Behavioral): Tell me about a time you debugged a coordination
-or concurrency problem in a distributed system.**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a time you debugged a coordination or concurrency problem in a distributed system.**
 
 *(Personalize from your experience. Structure: situation, what went
 wrong, how you debugged it, root cause, fix.)*
@@ -1057,8 +1120,7 @@ the immediate fix and the systemic improvement.
 
 ---
 
-**Q9 (Scale): How does leader election change when you scale from
-a 3-node cluster to 50-node or 1000-node clusters?**
+**[SENIOR] Q9 - [TRADE-OFF] How does leader election change when you scale from a 3-node cluster to 50-node or 1000-node clusters?**
 
 At 3 nodes: quorum = 2 votes. Election is fast. Network messages
 are O(n^2) = 9 total.
@@ -1172,8 +1234,7 @@ in the Concept Explanation section.)*
 
 ---
 
-**Q1 (Conceptual): Why is `SET lock NX EX ttl` safer than
-`SETNX` followed by `EXPIRE`?**
+**[JUNIOR] Q1 - [MECHANISM] Why is `SET lock NX EX ttl` safer than `SETNX` followed by `EXPIRE`?**
 
 `SETNX` (SET if Not eXists) sets the key but does not set an
 expiry. A separate `EXPIRE` command must be issued. This creates
@@ -1197,8 +1258,7 @@ check-and-delete).
 
 ---
 
-**Q2 (Conceptual): What is the Redlock algorithm and what is
-the controversy around it?**
+**[JUNIOR] Q2 - [MECHANISM] What is the Redlock algorithm and what is the controversy around it?**
 
 Redlock was proposed by Antirez (Redis author) to provide a
 more fault-tolerant distributed lock. It uses 5 independent Redis
@@ -1225,8 +1285,7 @@ ZooKeeper or etcd with fencing tokens.
 
 ---
 
-**Q3 (Conceptual): How would you implement distributed rate
-limiting using a distributed lock or atomic Redis operations?**
+**[JUNIOR] Q3 - [MECHANISM] How would you implement distributed rate limiting using a distributed lock or atomic Redis operations?**
 
 The naive approach - check count, increment, check - is not atomic
 and allows race conditions. The correct approaches:
@@ -1253,8 +1312,7 @@ requests to all see the count before it is incremented."
 
 ---
 
-**Q4 (Trade-off): When should you use a distributed lock vs.
-optimistic locking vs. idempotency?**
+**[MID] Q4 - [TRADE-OFF] When should you use a distributed lock vs. optimistic locking vs. idempotency?**
 
 **Distributed lock:** Use when: the operation has externally
 visible side effects that cannot be undone or deduplicated
@@ -1281,8 +1339,7 @@ locking? Distributed locks are expensive and have failure modes
 
 ---
 
-**Q5 (Trade-off): Describe the trade-off between lock granularity
-and throughput in distributed locking.**
+**[MID] Q5 - [TRADE-OFF] Describe the trade-off between lock granularity and throughput in distributed locking.**
 
 Coarse-grained lock (e.g., lock the entire user account):
 Simple to reason about. But all operations on the same account
@@ -1308,8 +1365,7 @@ the circular wait that leads to deadlock."
 
 ---
 
-**Q6 (Debugging): A distributed lock in Redis is being acquired
-by a process but it cannot release it. What might be wrong?**
+**[SENIOR] Q6 - [DEBUGGING] A distributed lock in Redis is being acquired by a process but it cannot release it. What might be wrong?**
 
 The process is trying to release a lock it no longer owns.
 Possible causes:
@@ -1340,9 +1396,7 @@ TTL, do not just retry.
 
 ---
 
-**Q7 (Debugging): Your team is seeing intermittent duplicate
-emails being sent by a distributed notification service.
-Distributed locks are already in use. How do you investigate?**
+**[SENIOR] Q7 - [DEBUGGING] Your team is seeing intermittent duplicate emails being sent by a distributed notification service. Distributed locks are already in use. How do you investigate?**
 
 This is the fencing token problem. The distributed lock is being
 used but without fencing. Investigation steps:
@@ -1374,8 +1428,7 @@ level as a defense-in-depth measure.
 
 ---
 
-**Q8 (Behavioral): Tell me about a time a distributed lock caused
-a production issue in your system.**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a time a distributed lock caused a production issue in your system.**
 
 *(Personalize from your experience.)*
 
@@ -1396,8 +1449,7 @@ as a code failure.
 
 ---
 
-**Q9 (Scale): How does distributed lock performance change at
-high request rates (10,000+ lock acquisitions per second)?**
+**[SENIOR] Q9 - [TRADE-OFF] How does distributed lock performance change at high request rates (10,000+ lock acquisitions per second)?**
 
 At 10,000 lock/s with Redis: each acquisition is a round-trip
 to Redis (~0.5-1ms LAN). At 10,000/s with a single Redis node,

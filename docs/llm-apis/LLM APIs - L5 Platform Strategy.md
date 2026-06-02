@@ -159,7 +159,7 @@ Feature Teams:
   +--> Error rates, latency P50/P99
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Model LLM Platform Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Routing decision factors:**
 
@@ -176,7 +176,7 @@ High urgency        | claude-sonnet   | gpt-4o     | priority
 Batch/offline       | claude-haiku    | -          | cost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Model LLM Platform Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -513,7 +513,7 @@ class ModelEvaluationPipeline:
         }
 ```
 
-> **Code walkthrough:** The platform consists of
+> **Code walkthrough:** The platform consists ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > five interlocking components. `ModelConfig` captures
 > all properties that affect routing: provider, pricing,
 > capability flags, and critically `approved_data_classes` -
@@ -622,7 +622,7 @@ def timed_route(requirements: TaskRequirements):
     return model
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --- CONTINUOUS EVALUATION --- example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *Fix:*
 1. Run the router in-process (not as a remote service).
@@ -751,7 +751,7 @@ MODEL_GOVERNANCE = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Same model, Enterprise with BAA example demonstrates context manager. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 Process:
 1. New model submission: team requests approval
@@ -834,7 +834,7 @@ Cost allocation patterns:
         )
         return result
     ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Same model, Enterprise with BAA example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
     Monthly: query the usage log, aggregate by (team, feature).
     Report to team leads.
@@ -923,7 +923,7 @@ ROUTING_CONFIG = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Same model, Enterprise with BAA example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "The shadow percent config means migrations happen without emergency coordination. Gradually increase shadow percent over 2 weeks, monitor quality - then flip to 100%."
 
@@ -995,7 +995,7 @@ LLM_METRICS = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Alerting rules:
 - error_rate > 5% over 5 minutes: alert on-call
@@ -1074,7 +1074,7 @@ Strategies:
         assert result.strip().lower() in ("urgent", "normal", "low")
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 (3) Per-model prompt variants (when necessary):
     If prompt adjustments are needed for a new model,
@@ -1088,7 +1088,7 @@ Strategies:
     }
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern using SQL. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 (4) Behavioral pin: use `top_p=1, temperature=0` for
     deterministic outputs. This reduces variance between
@@ -1158,7 +1158,7 @@ result = platform.call(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 The platform selects: Anthropic Enterprise (BAA) - only model approved for PHI.
 The billing team never needs to know which specific model was used.

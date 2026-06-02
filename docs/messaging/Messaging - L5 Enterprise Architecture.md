@@ -81,7 +81,7 @@ Mesh routing:
   Access control enforced per event type
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Mesh and Enterprise Messaging Architecture example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Enterprise messaging governance model:
 ```
@@ -105,7 +105,7 @@ ACCESS GOVERNANCE:
   Audit log: all access events recorded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Mesh and Enterprise Messaging Architecture example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Enterprise messaging is not a technical problem - it is an organizational and governance problem. The event mesh provides the infrastructure layer; governance policies determine what flows where, who can access what, and how schemas evolve. Without governance, an event mesh becomes a faster way to create more spaghetti.
@@ -338,7 +338,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 | Scale | 3 min | 1-2 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - Definition
+**[JUNIOR] Q1 - [CONCEPTUAL] Definition**
 **"What is an event mesh and when does an enterprise need one?"**
 
 *What to say:*
@@ -348,7 +348,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q2 - Mechanism
+**[JUNIOR] Q2 - [CONCEPTUAL] Mechanism**
 **"How does protocol mediation work in an event mesh - specifically Kafka to MQTT?"**
 
 *What to say:*
@@ -358,7 +358,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q3 - Comparison
+**[JUNIOR] Q3 - [CONCEPTUAL] Comparison**
 **"Compare an event mesh to an event bus (like AWS EventBridge) and to traditional ESB (Enterprise Service Bus)."**
 
 *What to say:*
@@ -368,7 +368,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q4 - Scenario
+**[MID] Q4 - [CONCEPTUAL] Scenario**
 **"Design an event mesh for a global e-commerce company with data centers in the US, EU, and Asia-Pacific, with EU GDPR requiring EU customer data to never leave EU servers."**
 
 *What to say:*
@@ -378,7 +378,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q5 - Debugging
+**[MID] Q5 - [DEBUGGING] Debugging**
 **"Events from the US cluster are arriving at the EU cluster with a 5-minute lag. Normal latency is under 1 second. What do you investigate?"**
 
 *What to say:*
@@ -388,7 +388,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q6 - Deep Dive
+**[MID] Q6 - [CONCEPTUAL] Deep Dive**
 **"How does event mesh governance prevent schema proliferation and 'schema debt' at enterprise scale?"**
 
 *What to say:*
@@ -398,7 +398,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q7 - Scenario
+**[SENIOR] Q7 - [CONCEPTUAL] Scenario**
 **"Your company is acquiring another company with its own Kafka cluster. Design the event mesh integration strategy."**
 
 *What to say:*
@@ -408,7 +408,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q8 - Behavioral
+**[SENIOR] Q8 - [CONCEPTUAL] Behavioral**
 **"Tell me about a time you designed or worked on an enterprise messaging architecture."**
 
 *What to say (structure):*
@@ -418,7 +418,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q9 - Scale
+**[SENIOR] Q9 - [ARCHITECTURE] Scale**
 **"How does enterprise messaging governance change when you go from 10 to 1000 event types?"**
 
 *What to say:*
@@ -428,7 +428,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q10 - Misconception
+**[STAFF] Q10 - [CONCEPTUAL] Misconception**
 **"We use Kafka everywhere, so we have a single event platform and do not need an event mesh."**
 
 *What to say:*
@@ -438,7 +438,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q11 - Deep Dive
+**[STAFF] Q11 - [CONCEPTUAL] Deep Dive**
 **"What is the CloudEvents specification and why is it relevant to enterprise messaging?"**
 
 *What to say:*
@@ -448,7 +448,7 @@ Fix: Implement schema registry federation - replicate schema registrations from 
 
 ---
 
-#### Q12 - Edge Case
+**[STAFF] Q12 - [CONCEPTUAL] Edge Case**
 **"What happens during a mesh partition - when two regional brokers cannot communicate? How do consumers in each region behave?"**
 
 *What to say:*
@@ -516,7 +516,7 @@ DATA CLASSIFICATIONS:
   PARTNER: approved subset -> partner gateway only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

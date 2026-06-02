@@ -81,7 +81,7 @@ Lag rate of change:
   At this rate: lag doubles in ~8 minutes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consumer Lag Management and Diagnosis example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Consumer throughput calculation:
 ```
@@ -104,7 +104,7 @@ Example:
     Throughput = 12,000/minute (easily keeping up)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consumer Lag Management and Diagnosis example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Lag categories:
 ```
@@ -129,7 +129,7 @@ Stuck lag (critical):
   or external dependency outage.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consumer Lag Management and Diagnosis example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Lag is a symptom. The cause is always one of: (1) production rate exceeds consumption capacity, (2) consumer processing is slow, (3) consumer is blocked (poison message, dependency down). Treating the symptom (restarting consumers) without fixing the cause will recur.
@@ -359,7 +359,7 @@ kafka-consumer-groups.sh --bootstrap-server \
 # If needed > partition_count: must optimize processing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If needed > partition_count: must optimize processing example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: optimize consumer processing (caching, batching), increase partition count to allow more parallelism, and add consumers up to partition count. For the catch-up window: deploy a dedicated catch-up consumer with higher max.poll.records and optimized processing, then switch back to normal consumer configuration once lag is drained.
 
@@ -395,7 +395,7 @@ kafka-consumer-groups.sh \
 kubectl get pods -l app=my-service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if consumer processes are running example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: restart consumer instances. On startup, the consumer group will resume from the last committed offset (if the offset still exists in the __consumer_offsets topic) or start from auto.offset.reset policy.
 
@@ -415,7 +415,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 | Scale | 3 min | 1-2 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - Definition
+**[JUNIOR] Q1 - [CONCEPTUAL] Definition**
 **"What is consumer lag and what does it indicate about system health?"**
 
 *What to say:*
@@ -425,7 +425,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q2 - Mechanism
+**[JUNIOR] Q2 - [CONCEPTUAL] Mechanism**
 **"How does Kafka calculate consumer lag internally?"**
 
 *What to say:*
@@ -435,7 +435,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q3 - Comparison
+**[JUNIOR] Q3 - [CONCEPTUAL] Comparison**
 **"Compare consumer lag monitoring via JMX vs Prometheus vs the Kafka Admin API."**
 
 *What to say:*
@@ -445,7 +445,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q4 - Scenario
+**[MID] Q4 - [CONCEPTUAL] Scenario**
 **"Your inventory service consumer lag is growing at 10,000 messages per minute. You have 8 consumer instances and 8 partitions. Production rate is 15,000 messages per minute. How do you recover?"**
 
 *What to say:*
@@ -455,7 +455,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q5 - Debugging
+**[MID] Q5 - [DEBUGGING] Debugging**
 **"Consumer lag spiked to 2 million messages overnight during off-hours. No consumer errors in the logs. What happened?"**
 
 *What to say:*
@@ -465,7 +465,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q6 - Deep Dive
+**[MID] Q6 - [CONCEPTUAL] Deep Dive**
 **"Explain how KEDA uses consumer lag to autoscale Kafka consumers in Kubernetes."**
 
 *What to say:*
@@ -475,7 +475,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q7 - Misconception
+**[SENIOR] Q7 - [CONCEPTUAL] Misconception**
 **"Consumer lag alerts are a Kafka team responsibility - application teams should not need to worry about it."**
 
 *What to say:*
@@ -485,7 +485,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q8 - Behavioral
+**[SENIOR] Q8 - [CONCEPTUAL] Behavioral**
 **"Tell me about a time consumer lag caused a production incident."**
 
 *What to say (structure):*
@@ -495,7 +495,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q9 - Scale
+**[SENIOR] Q9 - [ARCHITECTURE] Scale**
 **"How do you manage consumer lag for 50 consumer groups across 200 topics at enterprise scale?"**
 
 *What to say:*
@@ -505,7 +505,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q10 - Deep Dive
+**[STAFF] Q10 - [CONCEPTUAL] Deep Dive**
 **"What is the difference between consumer lag and consumer group offset commit frequency, and how do they interact?"**
 
 *What to say:*
@@ -515,7 +515,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q11 - Comparison
+**[STAFF] Q11 - [CONCEPTUAL] Comparison**
 **"Compare consumer lag management in Kafka vs RabbitMQ."**
 
 *What to say:*
@@ -525,7 +525,7 @@ Fix: restart consumer instances. On startup, the consumer group will resume from
 
 ---
 
-#### Q12 - Edge Case
+**[STAFF] Q12 - [CONCEPTUAL] Edge Case**
 **"A consumer group has 0 lag but 0 active members. Is this a problem?"**
 
 *What to say:*
@@ -603,7 +603,7 @@ ALERT THRESHOLDS:
   Page: lag growing AND DLQ depth > 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

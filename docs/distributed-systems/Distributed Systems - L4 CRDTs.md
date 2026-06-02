@@ -120,7 +120,7 @@ If these hold: any order of merges → same result.
 Network delays, message reordering, duplicates: all harmless.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict-free Replicated Data Types example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **G-Counter (Grow-only Counter):**
 
@@ -145,7 +145,7 @@ Example:
   Total = 6  ✓ regardless of merge order
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict-free Replicated Data Types example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **PN-Counter (Positive-Negative Counter):**
 
@@ -168,7 +168,7 @@ Why it works:
   Consistent after convergence.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict-free Replicated Data Types example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **OR-Set (Observed-Remove Set):**
 
@@ -200,7 +200,7 @@ OR-Set (observed-remove):
     add wins (new uuid not seen by the remove)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict-free Replicated Data Types example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **LWW-Register (Last-Write-Wins):**
 
@@ -221,7 +221,7 @@ Danger: clock skew → wrong winner
        not physical wall clock
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **State-based (CvRDT) vs. Operation-based (CmRDT):**
 
@@ -244,7 +244,7 @@ Delta-CRDT (hybrid):
   Used in: Redis CRDT, production systems
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 CRDTs do not eliminate conflict - they eliminate the possibility
@@ -282,6 +282,18 @@ the mathematical requirement."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // G-COUNTER CRDT IMPLEMENTATION
@@ -342,6 +354,7 @@ public class GCounter {
     // merge(A,A) == A ✓ idempotent
 }
 
+// BAD: see prior example above (OR-Set CRDT...)
 // GOOD: OR-Set CRDT
 public class ORSet<T> {
     // (element, unique-tag) pairs
@@ -459,15 +472,15 @@ convergence, not that all updates are preserved.
 
 ### ⚖️ Comparison Table
 
-| CRDT Type | Supported Ops | Merge | Trade-off |
-|---|---|---|---|
-| G-Counter | Increment only | max per slot | Cannot decrement |
-| PN-Counter | Increment + decrement | max for P and N | May go negative |
-| G-Set | Add only | union | Cannot remove |
-| OR-Set | Add + remove | union of (e,tag) pairs | Add-wins on conflict |
-| LWW-Register | Write (with ts) | higher timestamp wins | Concurrent writes lost |
-| MV-Register | Write | keeps all concurrent values | Client resolves conflicts |
-| Grow-only Set | Add | union | No removes |
+| CRDT Type| Supported Ops| Merge| Trade-off|
+|---|--------------------|---------------------------|-------------------------|
+| G-Counter| Increment only| max per slot| Cannot decrement|
+| PN-Counter| Increment + decrement| max for P and N| May go negative|
+| G-Set| Add only| union| Cannot remove|
+| OR-Set| Add + remove| union of (e,tag) pairs| Add-wins on conflict|
+| LWW-Register| Write (with ts)| higher timestamp wins| Concurrent writes lost|
+| MV-Register| Write| keeps all concurrent values| Client resolves conflicts|
+| Grow-only Set| Add| union| No removes|
 
 **The deciding factor:** What operations does the application need
 and what are acceptable conflict semantics? Shopping cart: OR-Set
@@ -517,11 +530,11 @@ Conflict:
   → sorted deterministically → same result at all nodes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Architecture:**
 
-```
+```plaintext
 Users (clients):
   - Local CRDT document replica
   - Apply own edits locally (instant, no network wait)
@@ -543,7 +556,7 @@ Offline support:
     CRDT is commutative and associative)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Storage: persisting CRDT state:**
 
@@ -568,11 +581,11 @@ Option C: CRDT state only (no log)
   - Cons: no edit history, no undo
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Scaling to large documents:**
 
-```
+```plaintext
 100k character document:
   Each character has a position identifier (50-100 bytes)
   Full state: 100k * 75 bytes = 7.5MB
@@ -592,7 +605,7 @@ Tombstone accumulation:
     (causal stability threshold)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -679,13 +692,13 @@ all replicas have acknowledged seeing the delete. If one replica
 is permanently offline: tombstones are never safe to collect.
 
 Diagnosis:
-```
+```plaintext
 CRDT state size = alive_elements + tombstone_elements
 Monitor: crdt_set_size vs crdt_tombstone_count
 Alert when: tombstone_count > 10x alive_count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: (1) Implement causal stability GC: track the
 "causal stable frontier" (minimum operation seen by ALL active
@@ -719,7 +732,7 @@ ntpstat
 # "System time" offset > 10ms: risk of LWW inversion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "System time" offset > 10ms: risk of LWW inversion example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: (1) Use logical timestamps (Lamport clock, HLC - Hybrid
 Logical Clock) instead of wall clock. HLC combines wall clock
@@ -748,7 +761,7 @@ partition_duration * write_rate = delta_size
 At 10k ops/sec over 5 min partition: 3M operations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "System time" offset > 10ms: risk of LWW inversion ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: (1) Implement adaptive merging: apply the delta in
 batches (1000 operations at a time), yielding to other
@@ -762,23 +775,22 @@ new local operations while processing the delta.
 
 ### 🎯 Interview Deep-Dive
 
-| Category | Count |
-|---|---|
-| Clarification | 1 |
-| Mechanism | 3 |
-| Failure / Debugging | 2 |
-| Trade-off | 2 |
-| System Design | 1 |
-| Code | 1 |
-| Behavioral | 1 |
-| Production | 1 |
+  | Category            | Count |  
+|-------------------|-----|
+  | Clarification       | 1     |  
+  | Mechanism           | 3     |  
+  | Failure / Debugging | 2     |  
+  | Trade-off           | 2     |  
+  | System Design       | 1     |  
+  | Code                | 1     |  
+  | Behavioral          | 1     |  
+  | Production          | 1     |  
 
 ---
 
-**Q1 (Clarification) - What makes a data structure a CRDT vs. a
-regular distributed data structure?**
+**[JUNIOR] Q1 - [MECHANISM] What makes a data structure a CRDT vs. a regular distributed data structure?**
 
-A: A CRDT has a mathematically proven merge function (join operation)
+A CRDT has a mathematically proven merge function (join operation)
 that satisfies three properties:
 
 1. Commutativity: merge(A, B) = merge(B, A). The order in which
@@ -809,8 +821,7 @@ the state. All three are required for a well-defined merge.
 
 ---
 
-**Q2 (Mechanism) - How does an OR-Set differ from a G-Set and a
-2P-Set? When would you choose each?**
+**[JUNIOR] Q2 - [MECHANISM] How does an OR-Set differ from a G-Set and a 2P-Set? When would you choose each?**
 
 A:
 G-Set (grow-only set):
@@ -855,10 +866,9 @@ difference between knowing CRDTs and knowing how to use them.
 
 ---
 
-**Q3 (Mechanism) - How do CRDTs relate to vector clocks and
-causal consistency?**
+**[JUNIOR] Q3 - [MECHANISM] How do CRDTs relate to vector clocks and causal consistency?**
 
-A: Vector clocks and CRDTs are complementary mechanisms.
+Vector clocks and CRDTs are complementary mechanisms.
 
 Vector clocks track causal relationships: if event A happens
 before event B (causality), the vector clock of B is greater
@@ -895,11 +905,9 @@ awareness.
 
 ---
 
-**Q4 (Failure / Debugging) - A distributed shopping cart using
-an OR-Set CRDT is showing items that users deleted. How do you
-diagnose and fix?**
+**[MID] Q4 - [DEBUGGING] A distributed shopping cart using an OR-Set CRDT is showing items that users deleted. How do you diagnose and fix?**
 
-A: Items appearing after deletion in an OR-Set typically indicate
+Items appearing after deletion in an OR-Set typically indicate
 one of three causes:
 
 Cause 1 - Stale replica re-syncing after partition:
@@ -919,7 +927,7 @@ Log: compare operation timestamps on all devices for this item
     → stale-add re-sync case
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: use causal information. When the user deletes an item:
 tag the delete with the current device's vector clock.
@@ -947,10 +955,9 @@ to treat explicit delete as permanent for a session.
 
 ---
 
-**Q5 (Failure / Debugging) - How do you garbage-collect tombstones
-in an OR-Set in production?**
+**[MID] Q5 - [DEBUGGING] How do you garbage-collect tombstones in an OR-Set in production?**
 
-A: Tombstones in an OR-Set accumulate when elements are removed.
+Tombstones in an OR-Set accumulate when elements are removed.
 A tombstone is a deleted tag (element, uuid). The tombstone
 cannot be removed until all replicas have seen the delete.
 
@@ -967,7 +974,7 @@ For each tombstone (element, uuid, delete_timestamp):
     Keep (some replica may not have seen the delete yet)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Implementation:
 1. Each replica periodically broadcasts its current vector clock
@@ -999,10 +1006,9 @@ and having a concrete policy is production-level knowledge.
 
 ---
 
-**Q6 (Trade-off) - CRDTs vs. Operational Transformation (OT)
-for collaborative editing. Which do you choose?**
+**[SENIOR] Q6 - [TRADE-OFF] CRDTs vs. Operational Transformation (OT) for collaborative editing. Which do you choose?**
 
-A: Both OT and CRDTs enable collaborative real-time editing.
+Both OT and CRDTs enable collaborative real-time editing.
 The choice involves fundamental trade-offs.
 
 **Operational Transformation:**
@@ -1051,10 +1057,9 @@ handles the GC and tombstone management automatically."
 
 ---
 
-**Q7 (Trade-off) - What are the practical limitations of CRDTs
-that make them unsuitable for financial systems?**
+**[SENIOR] Q7 - [TRADE-OFF] What are the practical limitations of CRDTs that make them unsuitable for financial systems?**
 
-A: CRDTs are built for eventual consistency with convergence
+CRDTs are built for eventual consistency with convergence
 guarantees. Financial systems require invariants that CRDTs
 cannot express:
 
@@ -1096,8 +1101,7 @@ provide.
 
 ---
 
-**Q8 (System Design) - Design a mobile offline-first note-taking
-app sync using CRDTs.**
+**[SENIOR] Q8 - [DESIGN] Design a mobile offline-first note-taking app sync using CRDTs.**
 
 A:
 ```
@@ -1147,7 +1151,7 @@ Conflict example:
   → user can undo to recover "Team Meeting" (local undo log)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the undo log. CRDTs converge
 to one winner, but the losing write is gone from the CRDT state.
@@ -1158,10 +1162,9 @@ is a design concern that pure CRDT discussions miss.
 
 ---
 
-**Q9 (Production) - How does Redis Enterprise implement CRDTs?
-What trade-offs does it make?**
+**[SENIOR] Q9 - [SCENARIO] How does Redis Enterprise implement CRDTs? What trade-offs does it make?**
 
-A: Redis Enterprise CRDT (Redis CRDB) implements a subset of
+Redis Enterprise CRDT (Redis CRDB) implements a subset of
 Redis data structures as CRDTs for active-active geo-replication.
 
 Supported CRDT types in Redis Enterprise:
@@ -1206,10 +1209,9 @@ who expect ZINCRBY to be safe across regions.
 
 ---
 
-**Q10 (Behavioral) - Describe a time you evaluated or implemented
-a CRDT-based system. What trade-offs did you navigate?**
+**[SENIOR] Q10 - [BEHAVIORAL] Describe a time you evaluated or implemented a CRDT-based system. What trade-offs did you navigate?**
 
-A: Example structure:
+Example structure:
 
 "At [company], we were building a collaborative task management
 feature. Multiple users could assign, reassign, and complete tasks
@@ -1252,10 +1254,9 @@ senior engineers apply.
 
 ---
 
-**Q11 (Mechanism) - What is a delta-CRDT and why is it important
-for production systems?**
+**[SENIOR] Q11 - [MECHANISM] What is a delta-CRDT and why is it important for production systems?**
 
-A: A delta-CRDT sends only the "delta" (the change since the last
+A delta-CRDT sends only the "delta" (the change since the last
 synchronization) instead of the full CRDT state.
 
 Full state CvRDT (state-based) problem:
@@ -1281,7 +1282,7 @@ For a CRDT state S and operation op:
   merge(S_remote, delta) = correct merged state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Practical example (G-Counter delta sync):
 ```
@@ -1293,7 +1294,7 @@ Bandwidth: 8 bytes (one int) vs. 12 bytes (3 ints)
 At 100 nodes: 8 bytes vs. 400 bytes per sync
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Production relevance: Redis Enterprise CRDB uses delta-CRDTs
 internally. Redis operations broadcast deltas, not full state.
@@ -1311,11 +1312,9 @@ deltas, not full states).
 
 ---
 
-**Q12 (Behavioral) - A team proposes using CRDTs to replace the
-distributed lock service for inventory management.
-What do you say?**
+**[SENIOR] Q12 - [BEHAVIORAL] A team proposes using CRDTs to replace the distributed lock service for inventory management. What do you say?**
 
-A: This is a classic "use the right tool" evaluation.
+This is a classic "use the right tool" evaluation.
 
 My response: "I would say no to replacing the lock service with
 CRDTs for inventory management, and here is why."

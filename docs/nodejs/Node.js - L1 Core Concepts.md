@@ -117,13 +117,21 @@ Priority order (high to low):
   5. I/O callbacks (poll phase)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Loop Fundamentals example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Recognition) - Execution order:**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // Understanding event loop execution order:
@@ -248,7 +256,7 @@ clinic doctor -- node server.js
 # clinic flame (flamegraph) for CPU hot spots
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This clinic flame (flamegraph) for CPU hot spots example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Move CPU-intensive operations to Worker Threads.
 Split large synchronous operations into chunks using `setImmediate`.
@@ -376,13 +384,23 @@ Error-first callback convention:
     // Same semantics, no nesting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Callbacks and Error-first Pattern example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Error handling:**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: not checking error argument:
@@ -424,7 +442,7 @@ const { readFile } = require('fs').promises;
 const { Client } = require('pg'); // pg natively supports promises
 ```
 
-> **Code walkthrough:** The first BAD example shows the most common
+> **Code walkthrough:** The first BAD example shows the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mistake: ignoring the error argument. If the file doesn't exist, `err`
 > is an `ENOENT` error and `data` is `undefined`. `JSON.parse(undefined)`
 > throws "Unexpected token u in JSON" - a misleading error. Always check
@@ -486,7 +504,7 @@ process.on('uncaughtException', (err) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Callbacks and Error-first Pattern example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -512,7 +530,7 @@ app.get('/users', asyncHandler(async (req, res) => {
 }));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -648,13 +666,23 @@ ES Modules (ESM):
     "type":"module" in package.json: .js files are ESM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node.js Module System (require vs import) example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Module system choices:**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: mixing CJS and ESM in the same project carelessly:
@@ -687,7 +715,7 @@ const config = JSON.parse(
 //   3. Set "type":"module" when fully migrated
 ```
 
-> **Code walkthrough:** `import.meta.url` is the ESM equivalent of
+> **Code walkthrough:** `import.meta.url` is the ESM equivalent ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `__filename` in CJS. It contains the URL of the current module
 > (e.g., `file:///app/src/server.js`). `fileURLToPath` converts it
 > to a regular file system path. `dirname()` extracts the directory.
@@ -754,7 +782,7 @@ build that maps correctly.
 Error [ERR_REQUIRE_ESM]: require() of ES Module not supported
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node.js Module System (require vs import) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cause: Package has `"type": "module"` or is an `.mjs` file, and
 consumer is using `require()`.

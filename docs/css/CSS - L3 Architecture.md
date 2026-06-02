@@ -165,7 +165,7 @@ OOCSS PRINCIPLES:
      .sidebar-heading { color: gray; font-size: 0.9em; }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Methodologies (BEM, SMACSS, OOCSS) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -225,7 +225,7 @@ automatically.
 /* Which .title applies where? Depends on load order */
 ```
 
-> **Code walkthrough:** Generic class names (`.title`,
+> **Code walkthrough:** Generic class names (`.title`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `.image`) conflict when multiple components are loaded.
 > The last stylesheet wins for same-specificity selectors.
 > This is how CSS becomes unmaintainable: each developer
@@ -249,7 +249,7 @@ automatically.
 /* Zero conflicts - namespaced to their block */
 ```
 
-> **Code walkthrough:** `.card__title` and `.post__title`
+> **Code walkthrough:** `.card__title` and `.post__title`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are different selectors. They cannot conflict even if
 > both elements exist on the same page. The block name
 > acts as a namespace. Every class has the same specificity
@@ -287,7 +287,7 @@ body { font-family: system-ui, sans-serif; }
 /* SMACSS: state + module = contextual override */
 ```
 
-> **Code walkthrough:** SMACSS layer separation means you
+> **Code walkthrough:** SMACSS layer separation means youice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > know WHERE to find any rule. Layout rules are all in one
 > section. Component (Module) rules use BEM naming. State
 > rules are toggled by JavaScript class manipulation.
@@ -370,7 +370,7 @@ Cause: BEM classes mixed with element/ID selectors.
 article.card { } /* specificity: 0,1,1 - breaks BEM */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: only use classes in BEM selectors. Never combine
 with element or ID selectors.
@@ -393,8 +393,7 @@ with element or ID selectors.
 
 ---
 
-**Q1: What problem do CSS methodologies solve?** `[MID]`
-CONCEPTUAL
+**[JUNIOR] Q1 - [CONCEPTUAL] What problem do CSS methodologies solve?** `[MID]`**
 
 *Why they ask:* Tests understanding of the CSS global scope
 problem.
@@ -446,8 +445,7 @@ in a large codebase?"
 
 ---
 
-**Q2: Explain BEM naming with an example.** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] Explain BEM naming with an example.** `[JUNIOR]`**
 
 *Why they ask:* BEM is nearly universal in frontend teams.
 
@@ -506,7 +504,7 @@ MECHANISM
 
 ---
 
-**Q3: When would you choose CSS Modules over BEM?**
+**[JUNIOR] Q3 - [SCENARIO] When would you choose CSS Modules over BEM?**
 `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Architecture decision for real projects.
@@ -561,8 +559,7 @@ MECHANISM
 
 ---
 
-**Q4: What are the OOCSS principles?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What are the OOCSS principles?** `[SENIOR]`**
 
 *Why they ask:* OOCSS principles underlie all methodologies
 and Tailwind.
@@ -637,8 +634,7 @@ and Tailwind.
 
 ---
 
-**Q5: How do SMACSS State classes work with JavaScript?**
-`[MID]` MECHANISM
+**[MID] Q5 - [MECHANISM] How do SMACSS State classes work with JavaScript?**
 
 *Why they ask:* JS-CSS integration is everyday frontend work.
 
@@ -704,8 +700,7 @@ classes?"
 
 ---
 
-**Q6: What is the "specificity flat" design?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is the "specificity flat" design?** `[SENIOR]`**
 
 *Why they ask:* Specificity management is a senior CSS skill.
 
@@ -770,7 +765,7 @@ BEM-based codebase?"
 
 ---
 
-**Q7: How has CSS methodology evolved from BEM to
+**[SENIOR] Q7 - [MECHANISM] How has CSS methodology evolved from BEM to**
 modern tooling?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Historical context shows professional
@@ -823,7 +818,7 @@ evolution awareness.
 
 ---
 
-**Q8: Describe BEM in a real design system component
+**[SENIOR] Q8 - [DESIGN] Describe BEM in a real design system component**
 library.** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Tests ability to apply methodology at scale.
@@ -906,7 +901,7 @@ library.** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q9: How do you handle global vs component-level
+**[SENIOR] Q9 - [TRADE-OFF] How do you handle global vs component-level**
 overrides in BEM without !important?** `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Managing overrides is a real daily pain point.
@@ -1173,7 +1168,7 @@ CSS MODULES (comparison):
   // No TypeScript types without extra plugin
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS-in-JS Trade-offs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1237,7 +1232,7 @@ function Progress({ value }) {
 }
 ```
 
-> **Code walkthrough:** The `progress` prop changes on
+> **Code walkthrough:** The `progress` prop changes onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > every animation frame. Each render triggers styled-
 > components to evaluate the template literal, compute
 > a new hash, and update the CSSOM rule. This is main
@@ -1246,6 +1241,7 @@ function Progress({ value }) {
 
 **GOOD: CSS custom property for dynamic values**
 
+{% raw %}
 ```javascript
 // GOOD: CSS custom property for dynamic value
 const ProgressBar = styled.div`
@@ -1266,8 +1262,9 @@ function Progress({ value }) {
 // styled-components renders with a fixed class
 // CSS custom property update handled by CSS engine
 ```
+{% endraw %}
 
-> **Code walkthrough:** Move the dynamic value from the
+> **Code walkthrough:** Move the dynamic value from theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > CSS-in-JS template to a CSS custom property in the
 > inline style. styled-components generates ONE class
 > (no re-hashing on value change). The CSS custom property
@@ -1305,7 +1302,7 @@ export const secondary = style([base, {
 }]);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 ```typescript
 // Button.tsx
@@ -1322,7 +1319,7 @@ function Button({ variant = 'primary', className, ...props }) {
 }
 ```
 
-> **Code walkthrough:** vanilla-extract processes `button.css.ts`
+> **Code walkthrough:** vanilla-extract processes `button.css.ts`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > at build time. The output is a static CSS file with hashed
 > class names. No runtime processing. TypeScript types
 > ensure `styles.primary` is valid (typos are type errors).
@@ -1390,12 +1387,12 @@ just scoped CSS with no TypeScript-first authoring.
 
 **Symptom: RSC runtime error with styled-components**
 
-```
+```plaintext
 Error: styled-components requires React Client Context.
 Cannot be used in Server Components.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cause: styled-components v5 uses React Context internally,
 which is unavailable in RSC.
@@ -1423,7 +1420,7 @@ const css = sheet.getStyleTags();
 // Inject css into HTML head
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1443,8 +1440,7 @@ const css = sheet.getStyleTags();
 
 ---
 
-**Q1: What is CSS-in-JS and what problem does it solve?**
-`[MID]` CONCEPTUAL
+**[MID] Q1 - [CONCEPTUAL] What is CSS-in-JS and what problem does it solve?**
 
 *Why they ask:* Sets baseline understanding of the concept.
 
@@ -1495,8 +1491,7 @@ const css = sheet.getStyleTags();
 
 ---
 
-**Q2: What is the performance cost of runtime CSS-in-JS?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q2 - [DEBUGGING] What is the performance cost of runtime CSS-in-JS?**
 
 *Why they ask:* Performance implications are the main
 argument against CSS-in-JS.
@@ -1548,7 +1543,7 @@ noticeable?"
 
 ---
 
-**Q3: Why is styled-components (v5) incompatible with
+**[JUNIOR] Q3 - [MECHANISM] Why is styled-components (v5) incompatible with**
 React Server Components?** `[SENIOR]` MECHANISM
 
 *Why they ask:* RSC is the current React paradigm; this
@@ -1605,8 +1600,7 @@ fix this?"
 
 ---
 
-**Q4: What are zero-runtime CSS-in-JS alternatives?**
-`[SENIOR]` COMPARISON
+**[SENIOR] Q4 - [TRADE-OFF] What are zero-runtime CSS-in-JS alternatives?**
 
 *Why they ask:* Shows awareness of the modern ecosystem.
 
@@ -1661,7 +1655,7 @@ that CSS Modules doesn't?"
 
 ---
 
-**Q5: How do you handle dynamic styles without
+**[MID] Q5 - [MECHANISM] How do you handle dynamic styles without**
 runtime CSS-in-JS?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Tests practical CSS custom property
@@ -1740,7 +1734,7 @@ knowledge for dynamic styling.
 
 ---
 
-**Q6: What is FOUC and how does CSS-in-JS address it
+**[SENIOR] Q6 - [MECHANISM] What is FOUC and how does CSS-in-JS address it**
 in SSR?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* SSR + CSS-in-JS is a common gotcha.
@@ -1809,7 +1803,7 @@ in SSR?** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q7: When would you choose styled-components in 2024?**
+**[SENIOR] Q7 - [SCENARIO] When would you choose styled-components in 2024?**
 `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Shows ability to make pragmatic decisions
@@ -1861,7 +1855,7 @@ rather than dogmatic ones.
 
 ---
 
-**Q8: What is StyleX (Meta) and how does it compare
+**[SENIOR] Q8 - [MECHANISM] What is StyleX (Meta) and how does it compare**
 to Tailwind?** `[STAFF]` COMPARISON
 
 *Why they ask:* StyleX is used at Facebook-scale; staff
@@ -1917,7 +1911,7 @@ improve performance?"
 
 ---
 
-**Q9: How do you migrate from styled-components to CSS
+**[SENIOR] Q9 - [MECHANISM] How do you migrate from styled-components to CSS**
 Modules?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Migration strategy is a real work scenario

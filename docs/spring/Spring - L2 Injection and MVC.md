@@ -148,7 +148,7 @@ Three injection mechanisms:
    }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Autowired and Injection Types example demonstrates null-safe value wrapping using Spring annotation. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 **The key insight:**
 Constructor injection makes the dependency graph explicit and verifiable. If a
@@ -208,7 +208,7 @@ public class OrderService {
 // Problem 3: Dependencies hidden - not in constructor
 ```
 
-> **Code walkthrough:** Field injection hides the dependency contract. A developer
+> **Code walkthrough:** Field injection hides the dependency contract. A developerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reading only the class signature sees no dependencies - they must inspect all
 > fields. Testing requires either starting a Spring context or using Mockito
 > @InjectMocks which injects via reflection. Neither is clean. The fields cannot
@@ -267,7 +267,7 @@ class OrderServiceTest {
 }
 ```
 
-> **Code walkthrough:** Constructor injection makes dependencies visible in
+> **Code walkthrough:** Constructor injection makes dependencies visible inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the constructor signature - a contract reviewable at a glance. Fields are
 > final, guaranteeing immutability after construction. Unit testing requires
 > no Spring infrastructure - just `new OrderService(mock, mock, mock)`. The
@@ -305,7 +305,7 @@ public class DataSourceConfig {
 }
 ```
 
-> **Code walkthrough:** When multiple beans of the same type exist, Spring
+> **Code walkthrough:** When multiple beans of the same type exist, Springice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requires disambiguation. @Qualifier on the injection point selects by bean name.
 > @Primary marks the default bean when no qualifier is specified. The bean name
 > defaults to the @Bean method name. This pattern is common for read/write
@@ -388,7 +388,7 @@ point or restructure to extract shared functionality into a third service.
 
 ---
 
-#### Q1 - What are the three types of dependency injection in Spring?
+**[JUNIOR] Q1 - [CONCEPTUAL] What are the three types of dependency injection in Spring?**
 
 1. **Constructor injection**: dependencies provided via constructor parameters.
    Spring calls the constructor. Recommended for all required dependencies.
@@ -405,7 +405,7 @@ properties to POJOs. These are specialised injection forms.
 
 ---
 
-#### Q2 - Why is constructor injection preferred over field injection?
+**[JUNIOR] Q2 - [TRADE-OFF] Why is constructor injection preferred over field injection?**
 
 Constructor injection advantages:
 1. **Immutability**: fields can be final - set once, never changed.
@@ -427,7 +427,7 @@ the object exists with null fields. Constructor injection eliminates this window
 
 ---
 
-#### Q3 - How does @Qualifier work and when do you use it?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does @Qualifier work and when do you use it?**
 
 @Qualifier specifies which bean to inject when multiple beans of the same
 type are available.
@@ -450,7 +450,7 @@ public class ReportService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @Primary marks the default: if no @Qualifier is specified, the @Primary bean
 is chosen. @Qualifier overrides @Primary.
@@ -463,7 +463,7 @@ cleaner than string qualifiers because they are refactor-safe.
 
 ---
 
-#### Q4 - How do you handle optional dependencies in Spring?
+**[MID] Q4 - [CONCEPTUAL] How do you handle optional dependencies in Spring?**
 
 Three approaches:
 
@@ -475,7 +475,7 @@ Three approaches:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **Optional<T> constructor parameter**:
    ```java
@@ -484,7 +484,7 @@ Three approaches:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 3. **@Autowired(required = false) on field** (avoid in new code):
    ```java
@@ -492,7 +492,7 @@ Three approaches:
    private EmailService emailService; // null if no bean
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Best approach for new code: constructor with Optional<T> parameter.
 It makes the optionality explicit in the class contract.
@@ -503,7 +503,7 @@ EmailService is optional.
 
 ---
 
-#### Q5 - What is @Primary and when do you use it?
+**[MID] Q5 - [CONCEPTUAL] What is @Primary and when do you use it?**
 
 @Primary marks a bean as the default candidate when multiple beans of the
 same type exist and no @Qualifier is specified.
@@ -521,7 +521,7 @@ auto-configuration beans without explicit exclusion.
 
 ---
 
-#### Q6 - How does Spring resolve injection when multiple beans exist?
+**[MID] Q6 - [CONCEPTUAL] How does Spring resolve injection when multiple beans exist?**
 
 Resolution order:
 1. **Type match**: find all beans of the required type.
@@ -539,7 +539,7 @@ a design strategy. Use @Qualifier for self-documenting, refactor-safe injection.
 
 ---
 
-#### Q7 - How do you break a circular dependency in Spring?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you break a circular dependency in Spring?**
 
 A circular dependency is usually a design problem. Correct fix: redesign.
 
@@ -552,7 +552,7 @@ If needed:
        public ServiceA(@Lazy ServiceB b) { /* ... */ }
    }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
    Spring creates a proxy for ServiceB, breaking the constructor cycle.
 
@@ -567,7 +567,7 @@ dependency is inherent to the domain model and refactoring is not feasible.
 
 ---
 
-#### Q8 - What is the difference between @Autowired, @Resource, and @Inject?
+**[SENIOR] Q8 - [CONCEPTUAL] What is the difference between @Autowired, @Resource, and @Inject?**
 
 **@Autowired (Spring):**
 - Resolves by type first, then name
@@ -592,7 +592,7 @@ portable between Spring and Jakarta EE/CDI containers.
 
 ---
 
-#### Q9 - How does constructor injection work with Lombok?
+**[SENIOR] Q9 - [CONCEPTUAL] How does constructor injection work with Lombok?**
 
 @RequiredArgsConstructor generates a constructor for all final fields:
 
@@ -608,7 +608,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Spring 4.3+ finds the single generated constructor and uses it without
 @Autowired. @RequiredArgsConstructor + @NonNull adds null checks in the
@@ -792,7 +792,7 @@ On Exception -> [HandlerExceptionResolver]
   DefaultHandlerExceptionResolver: Spring defaults
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring MVC Request Lifecycle example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 HandlerInterceptors run inside the DispatcherServlet context - they have access
@@ -883,7 +883,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 }
 ```
 
-> **Code walkthrough:** A practical timing and logging interceptor. preHandle
+> **Code walkthrough:** A practical timing and logging interceptor. preHandleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > stores the start time in the request and logs which controller method handles
 > it. afterCompletion calculates duration and logs the response status.
 > afterCompletion is guaranteed to run even if the handler throws, making it
@@ -931,7 +931,7 @@ public class GlobalExceptionHandler {
 record ErrorResponse(String code, Object details) {}
 ```
 
-> **Code walkthrough:** @RestControllerAdvice combines @ControllerAdvice and
+> **Code walkthrough:** @RestControllerAdvice combines @ControllerAdvice andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > @ResponseBody - all methods serialize to JSON automatically. Three handlers
 > cover: validation errors (400), domain not-found (404), and catch-all (500).
 > The catch-all logs for ops visibility while returning a generic message -
@@ -1012,7 +1012,7 @@ Diagnosis: Check the exception stack trace - if it shows outside DispatcherServl
 
 ---
 
-#### Q1 - What is DispatcherServlet and what is its role?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is DispatcherServlet and what is its role?**
 
 DispatcherServlet is a standard Java Servlet registered with the embedded
 servlet container. Every HTTP request to a Spring MVC application passes through
@@ -1037,7 +1037,7 @@ by defining these beans.
 
 ---
 
-#### Q2 - What is HandlerMapping and what does it do?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is HandlerMapping and what does it do?**
 
 HandlerMapping maps incoming requests (URL + HTTP method) to a handler.
 In @RequestMapping-based Spring MVC, the handler is a HandlerMethod (a
@@ -1058,7 +1058,7 @@ and router functions can coexist.
 
 ---
 
-#### Q3 - What is the difference between HandlerInterceptor and Servlet Filter?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between HandlerInterceptor and Servlet Filter?**
 
 **Servlet Filter:**
 - Part of the Servlet specification
@@ -1083,7 +1083,7 @@ being a Spring bean with full DI support.
 
 ---
 
-#### Q4 - How do you implement centralized exception handling?
+**[MID] Q4 - [HANDS-ON] How do you implement centralized exception handling?**
 
 **@ControllerAdvice + @ExceptionHandler** (preferred):
 ```java
@@ -1097,7 +1097,7 @@ public class GlobalExceptionHandler {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Catches exceptions from any @Controller in the application.
 
@@ -1110,7 +1110,7 @@ standard exceptions with RFC 7807 Problem Detail responses.
 
 ---
 
-#### Q5 - What is HandlerMethodArgumentResolver?
+**[MID] Q5 - [CONCEPTUAL] What is HandlerMethodArgumentResolver?**
 
 Resolves @Controller method parameters from the HTTP request. Each @RequestParam,
 @PathVariable, @RequestBody has a corresponding resolver.
@@ -1140,7 +1140,7 @@ public class CurrentUserResolver
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration using Spring annotation. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 *What separates good from great:* Spring Security's @AuthenticationPrincipal
 is implemented this way. Understanding this mechanism means you can implement
@@ -1148,7 +1148,7 @@ the same pattern for tenant ID from header, pagination from query params, etc.
 
 ---
 
-#### Q6 - What is the difference between @Controller and @RestController?
+**[MID] Q6 - [CONCEPTUAL] What is the difference between @Controller and @RestController?**
 
 @RestController = @Controller + @ResponseBody on the class.
 
@@ -1170,7 +1170,7 @@ The String is serialized as a JSON string instead.
 
 ---
 
-#### Q7 - How does @RequestBody parsing work?
+**[SENIOR] Q7 - [CONCEPTUAL] How does @RequestBody parsing work?**
 
 @RequestBody triggers HttpMessageConverter to deserialize the request body.
 
@@ -1192,7 +1192,7 @@ The stream is not resettable. If you need to read the body multiple times
 
 ---
 
-#### Q8 - How do you add custom headers to all responses?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you add custom headers to all responses?**
 
 Option 1 - Servlet Filter (for ALL requests):
 ```java
@@ -1212,7 +1212,7 @@ public class SecurityHeadersFilter
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 2 - HandlerInterceptor (MVC requests only):
 ```java
@@ -1223,7 +1223,7 @@ public void afterCompletion(...) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Security headers should use Servlet Filter to apply to all responses
 including error pages and static content.
@@ -1234,7 +1234,7 @@ HSTS). Configure via HttpSecurity.headers() rather than writing your own filter.
 
 ---
 
-#### Q9 - How do you handle multipart file uploads?
+**[SENIOR] Q9 - [SYSTEM DESIGN] How do you handle multipart file uploads?**
 
 ```java
 @RestController
@@ -1260,7 +1260,7 @@ public class FileUploadController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Configuration:
 ```
@@ -1268,7 +1268,7 @@ spring.servlet.multipart.max-file-size=10MB
 spring.servlet.multipart.max-request-size=10MB
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* getContentType() returns the MIME type from
 HTTP headers - user-controlled and not trustworthy for security decisions.

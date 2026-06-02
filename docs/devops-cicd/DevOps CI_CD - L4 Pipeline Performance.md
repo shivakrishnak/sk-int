@@ -142,7 +142,7 @@ Serial: 1000 tests × 30s avg = 500 minutes
 10 runners: 100 tests each × 30s + overhead = 55 minutes (10x)
 20 runners: 50 tests each × 30s + overhead = 30 minutes (17x)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pipeline Performance and Parallelization example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Diminishing returns: coordination overhead (runner startup, result
 aggregation) limits benefit beyond 20-30 runners for typical test suites.
@@ -202,6 +202,12 @@ minimize sequential stages by running as much as possible in parallel.
 
 **BAD: Serial pipeline with no caching or parallelism**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```yaml
 # ANTI-PATTERN: Everything serial, no caching
 
@@ -248,7 +254,7 @@ jobs:
 # Every PR, every time, regardless of what changed
 ```
 
-> **Code walkthrough:** The three performance anti-patterns compound
+> **Code walkthrough:** The three performance anti-patterns compoundice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > each other. No dependency caching forces a full npm install from
 > the internet on every run. Serial test execution ignores all
 > available CPU concurrency. The Docker build without layer caching
@@ -258,6 +264,7 @@ jobs:
 
 **GOOD: Parallel pipeline with multiple caching layers**
 
+{% raw %}
 ```yaml
 # Optimized pipeline: caching + parallelism + fail-fast ordering
 
@@ -367,6 +374,7 @@ jobs:
           # App code layer: rebuilt only if app files changed
           # From 8 min → 45 seconds for typical code changes
 ```
+{% endraw %}
 
 > **Code walkthrough:** The pipeline has four key design decisions.
 > Stage 1 (static analysis) runs first and must pass before
@@ -703,7 +711,7 @@ CACHE_KEY=$(echo -n \
   | sha256sum | cut -d' ' -f1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Example cache key for a Node.js project example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Understanding the "cache poisoning"
 risk. If an attacker can write to the content-addressable cache with
@@ -729,7 +737,7 @@ Index-based sharding (simple): partition by file index.
 jest --shard=1/5
 # This runs the first 20% of test files by alphabetical order
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This runs the first 20% of test files by alphabetical order example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Problem: if test files have unequal execution times, shards have
 unequal durations. The slowest shard determines total pipeline time.
@@ -743,7 +751,7 @@ jest --shard=1/5
 # Assigns tests to shards to balance total duration across shards
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Assigns tests to shards to balance total duration across shards example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Optimal shard count calculation:
 
@@ -837,7 +845,7 @@ ENTRYPOINT ["java", \
   "-jar", "app.jar"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This All layers above are cache hits for typical code changes example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The cache efficiency analysis:
 - Layer 1 (pom.xml copy): cache hit ~95% (pom.xml changes rarely)
@@ -979,7 +987,7 @@ git log --all -- .github/workflows/
 git log --since="3 months ago" --oneline -- .github/workflows/ci.yml
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows all changes to CI config in the past 3 months example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Profile the current slow state.
 Which step is now responsible for the growth?
@@ -1019,7 +1027,7 @@ test_B → covers: user.java:45, user.java:67, auth.java:22
 test_C → covers: inventory.java:100, order.java:88
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows all changes to CI config in the past 3 months example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: On a PR, identify changed lines.
 ```bash
@@ -1027,7 +1035,7 @@ git diff origin/main..HEAD --unified=0 | grep "^@@"
 # output: @@-45,6 +45,7@@ → user.java line 45 changed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This output: @@-45,6 +45,7@@ → user.java line 45 changed example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Find all tests that cover the changed lines.
 ```
@@ -1036,7 +1044,7 @@ Tests covering user.java:45: test_A, test_B
 Run: test_A, test_B (not test_C)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This output: @@-45,6 +45,7@@ → user.java line 45 changed example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Tools:
 - JVM: Launchable (ML-based TIA, works with JUnit), Diffblue Cover
@@ -1122,6 +1130,7 @@ Correctness requirements:
 Cache keys must include all build inputs that affect the output.
 A missing input in the cache key causes stale cache hits.
 
+{% raw %}
 ```yaml
 # Complete cache key for a Java project:
 key: |
@@ -1132,8 +1141,9 @@ key: |
 # Includes: OS (Linux vs. macOS affects binary), pom.xml (dependencies),
 # source files (compiled output), Java version (class file format)
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This source files (compiled output), Java version (class file format) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Cache restoration must be atomic. A partial cache restore (e.g.,
 corrupted download) must be detected and result in a cache miss,
@@ -1148,6 +1158,7 @@ is too broad (only includes pom.xml) gives high hit rate but may
 return stale compiled output. The design: split into multiple caches
 with different scopes.
 
+{% raw %}
 ```yaml
 # Tiered caching: most specific first, fall back to broader
 restore-keys: |
@@ -1155,8 +1166,9 @@ restore-keys: |
   java-build-linux-${{ hashFiles('pom.xml') }}-
   java-build-linux-
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tiered caching: most specific first, fall back to broader example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Security requirements:
 

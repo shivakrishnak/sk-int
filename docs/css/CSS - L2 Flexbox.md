@@ -128,7 +128,7 @@ THE TWO AXES (row direction):
   Cross: ^     (align-items distributes here)     v
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Flexbox Model example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -183,7 +183,7 @@ align-items + flex properties.
 }
 ```
 
-> **Code walkthrough:** When you need items in the last
+> **Code walkthrough:** When you need items in the lastice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > row to align to the grid, flex-wrap is fragile. The
 > `calc()` breaks at different gap values, and last-row
 > items stretch out of alignment. This is Grid's job.
@@ -211,7 +211,7 @@ align-items + flex properties.
 .card-footer { /* stays at bottom */ }
 ```
 
-> **Code walkthrough:** Navbar uses flex-start default with
+> **Code walkthrough:** Navbar uses flex-start default withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > flex: 1 on nav to fill space, pushing actions right.
 > align-items: center vertically aligns all items. Card
 > column flex with flex: 1 on body pushes footer to bottom
@@ -242,7 +242,7 @@ align-items + flex properties.
 }
 ```
 
-> **Code walkthrough:** `flex: 1 1 280px` creates natural
+> **Code walkthrough:** `flex: 1 1 280px` creates naturalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > responsive columns. Items are at least 280px wide, grow
 > to fill space, and wrap to new lines when the row can't
 > fit them. This replaces media queries for most card grid
@@ -326,7 +326,7 @@ Cause: `min-width: auto` preventing shrinking.
 # If auto and content is wide -> item won't shrink
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If auto and content is wide -> item won't shrink exice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: `min-width: 0` on flex items containing text.
 
@@ -343,22 +343,21 @@ to `justify-content: flex-start` with fixed item widths.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| "Explain flex model" | 3-4 min | Two axes + item sizing |
-| flex vs grid choice | 3-4 min | 1D vs 2D distinction |
-| "How to center in flex?" | 2 min | Both axes simultaneously |
-| flex:1 vs flex: 1 1 auto | 3-4 min | Basis zero vs auto |
-| Flex overflow debugging | 3-4 min | min-width: 0 fix |
-| Equal-height cards | 2 min | align-items:stretch default |
-| flex-wrap with gap | 2-3 min | Responsive columns |
-| Flex vs Grid decision | 3 min | 1D vs 2D judgment |
-| Sticky footer pattern | 3 min | column flex + flex:1 |
+| Scenario| Recommended Time| Key Signal|
+|----|---------------------------------------------|---------------------------|
+| "Explain flex model"| 3-4 min| Two axes + item sizing|
+| flex vs grid choice| 3-4 min| 1D vs 2D distinction|
+| "How to center in flex?"| 2 min| Both axes simultaneously|
+| flex:1 vs flex: 1 1 auto| 3-4 min| Basis zero vs auto|
+| Flex overflow debugging| 3-4 min| min-width: 0 fix|
+| Equal-height cards| 2 min| align-items:stretch default|
+| flex-wrap with gap| 2-3 min| Responsive columns|
+| Flex vs Grid decision| 3 min| 1D vs 2D judgment|
+| Sticky footer pattern| 3 min| column flex + flex:1|
 
 ---
 
-**Q1: How does Flexbox differ from CSS Grid?** `[MID]`
-COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] How does Flexbox differ from CSS Grid?** `[MID]`**
 
 *Why they ask:* The most common layout choice question.
 
@@ -395,8 +394,7 @@ over the other."
 
 ---
 
-**Q2: Explain the flex shorthand property.** `[MID]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] Explain the flex shorthand property.** `[MID]`**
 
 *Why they ask:* `flex` shorthand has non-obvious defaults.
 
@@ -440,7 +438,7 @@ MECHANISM
 
 ---
 
-**Q3: How do you vertically center with Flexbox?**
+**[JUNIOR] Q3 - [MECHANISM] How do you vertically center with Flexbox?**
 `[JUNIOR]` HANDS-ON
 
 *Why they ask:* Classic CSS question; vertical centering
@@ -487,7 +485,7 @@ was notoriously hard before Flexbox.
 
 ---
 
-**Q4: What is min-width: 0 and why do flex developers
+**[MID] Q4 - [MECHANISM] What is min-width: 0 and why do flex developers**
 need to know it?** `[SENIOR]` DEBUGGING
 
 *Why they ask:* The most common flex overflow bug.
@@ -535,7 +533,7 @@ need to know it?** `[SENIOR]` DEBUGGING
 
 ---
 
-**Q5: When would you choose flex over Grid?** `[SENIOR]`
+**[MID] Q5 - [SCENARIO] When would you choose flex over Grid?** `[SENIOR]`**
 TRADE-OFF
 
 *Why they ask:* Shows layout architecture judgment.
@@ -582,7 +580,7 @@ the other mid-project?"
 
 ---
 
-**Q6: Explain the difference between align-items and
+**[SENIOR] Q6 - [TRADE-OFF] Explain the difference between align-items and**
 align-content.** `[SENIOR]` MECHANISM
 
 *Why they ask:* Confusion between single-line and multi-line
@@ -629,8 +627,7 @@ alignment causes bugs.
 
 ---
 
-**Q7: How does flex-direction change the axis model?**
-`[MID]` MECHANISM
+**[MID] Q7 - [MECHANISM] How does flex-direction change the axis model?**
 
 *Why they ask:* Axis mental model is foundational.
 
@@ -675,8 +672,7 @@ alignment causes bugs.
 
 ---
 
-**Q8: How does gap work vs margin in flex layouts?**
-`[MID]` COMPARISON
+**[MID] Q8 - [TRADE-OFF] How does gap work vs margin in flex layouts?**
 
 *Why they ask:* Gap replaced margin hacks; tests modern CSS.
 
@@ -723,7 +719,7 @@ alignment causes bugs.
 
 ---
 
-**Q9: How would you build a fixed-width sidebar with
+**[SENIOR] Q9 - [DESIGN] How would you build a fixed-width sidebar with**
 a flexible main content area using Flex?** `[SENIOR]`
 HANDS-ON
 
@@ -788,24 +784,23 @@ HANDS-ON
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Walk through the flex sizing algorithm |
-| Hiring Manager | Frame as solving real layout problems cleanly |
-| Bar Raiser | Discuss when Grid should replace Flex |
-| Peer Engineer | Share the min-width:0 fix story |
+| Interviewer Type| Emphasis|
+|------------------------|---------------------------------------------|
+| Technical Panel| Walk through the flex sizing algorithm|
+| Hiring Manager| Frame as solving real layout problems cleanly|
+| Bar Raiser| Discuss when Grid should replace Flex|
+| Peer Engineer| Share the min-width:0 fix story|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Layout Tool | Best For | Key Weakness |
-|---|---|---|
-| Flexbox | 1D, components, centering | 2D column alignment |
-| CSS Grid | 2D, named areas, card grids | Simpler for 1D rows |
-| Inline-block | Simple text-flow items | No gap/alignment |
-| Float | Text wrapping around image | Everything else |
-| Position:absolute | Overlays, tooltips | Flow-independent |
+| Layout Tool| Best For| Key Weakness|
+| Flexbox| 1D, components, centering| 2D column alignment|
+| CSS Grid| 2D, named areas, card grids| Simpler for 1D rows|
+| Inline-block| Simple text-flow items| No gap/alignment|
+| Float| Text wrapping around image| Everything else|
+| Position:absolute| Overlays, tooltips| Flow-independent|
 
 ---
 
@@ -1008,7 +1003,7 @@ SHORTHAND:
   (justify-items is ignored in Flex)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Flexbox Alignment Patterns example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1063,7 +1058,7 @@ are placed.
 }
 ```
 
-> **Code walkthrough:** Absolute positioning removes the
+> **Code walkthrough:** Absolute positioning removes theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > CTA from flex flow. It can overlap other nav items and
 > the container doesn't account for its width. This is
 > exactly the problem that `margin-left: auto` solves.
@@ -1083,7 +1078,7 @@ are placed.
 /* CTA pushed to right; all items stay in flow */
 ```
 
-> **Code walkthrough:** `margin-left: auto` on the CTA
+> **Code walkthrough:** `margin-left: auto` on the CTAice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > absorbs all space to its left, effectively right-aligning
 > it. The item stays in flow, other items are unaffected,
 > and the container height is determined by all items
@@ -1116,7 +1111,7 @@ are placed.
 .card-footer { /* pinned to bottom */ }
 ```
 
-> **Code walkthrough:** Three common patterns showing
+> **Code walkthrough:** Three common patterns showingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > alignment solving real problems. Equal-height cards
 > come free with stretch default. Baseline alignment
 > fixes typographic misalignment between different font
@@ -1222,7 +1217,7 @@ enough items to wrap?
 
 ---
 
-**Q1: How do you push one flex item to the right while
+**[JUNIOR] Q1 - [MECHANISM] How do you push one flex item to the right while**
 keeping others at the left?** `[MID]` HANDS-ON
 
 *Why they ask:* Classic flex pattern; tests margin:auto.
@@ -1270,7 +1265,7 @@ five items to the right?"
 
 ---
 
-**Q2: What is the difference between stretch and baseline
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between stretch and baseline**
 for align-items?** `[SENIOR]` COMPARISON
 
 *Why they ask:* Baseline is often correct but less known.
@@ -1311,8 +1306,7 @@ for align-items?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q3: Why doesn't justify-self work in Flexbox?** `[SENIOR]`
-CONCEPTUAL
+**[JUNIOR] Q3 - [CONCEPTUAL] Why doesn't justify-self work in Flexbox?** `[SENIOR]`**
 
 *Why they ask:* Tests CSS design reasoning.
 
@@ -1352,7 +1346,7 @@ CONCEPTUAL
 
 ---
 
-**Q4: How do you create a sticky footer using Flexbox?**
+**[MID] Q4 - [MECHANISM] How do you create a sticky footer using Flexbox?**
 `[MID]` HANDS-ON
 
 *Why they ask:* Classic layout challenge; tests column flex.
@@ -1405,7 +1399,7 @@ CONCEPTUAL
 
 ---
 
-**Q5: How does flex alignment interact with RTL writing
+**[MID] Q5 - [MECHANISM] How does flex alignment interact with RTL writing**
 direction?** `[STAFF]` CONCEPTUAL
 
 *Why they ask:* Internationalization awareness.
@@ -1455,8 +1449,7 @@ flip in RTL?"
 
 ---
 
-**Q6: Explain space-between, space-around, and space-evenly.**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q6 - [TRADE-OFF] Explain space-between, space-around, and space-evenly.**
 
 *Why they ask:* Common confusion between three similar values.
 
@@ -1497,7 +1490,7 @@ flip in RTL?"
 
 ---
 
-**Q7: How do you ensure flex items have equal height
+**[SENIOR] Q7 - [MECHANISM] How do you ensure flex items have equal height**
 even with different content?** `[JUNIOR]` DEBUGGING
 
 *Why they ask:* Equal-height columns is a common requirement.
@@ -1548,8 +1541,7 @@ even with different content?** `[JUNIOR]` DEBUGGING
 
 ---
 
-**Q8: How does align-self interact with align-items?**
-`[MID]` MECHANISM
+**[MID] Q8 - [MECHANISM] How does align-self interact with align-items?**
 
 *Why they ask:* Per-item override is a fundamental flex
 alignment concept.
@@ -1604,7 +1596,7 @@ alignment concept.
 
 ---
 
-**Q9: Build a card grid with uniform column alignment
+**[SENIOR] Q9 - [MECHANISM] Build a card grid with uniform column alignment**
 and a pinned footer. Why might you choose Grid over Flex?**
 `[SENIOR]` HANDS-ON
 

@@ -120,6 +120,12 @@ for animation (composite-only) vs "expensive" (reflow).
 
 **How it works:**
 
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 BROWSER RENDERING PIPELINE:
 
@@ -183,7 +189,7 @@ FORCED SYNCHRONOUS LAYOUT (LAYOUT THRASHING):
   // Result: 1 layout calculation total
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This CSS Performance, Reflow, and Repaint example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -255,7 +261,7 @@ function animate(element, to) {
 }
 ```
 
-> **Code walkthrough:** `top` is a layout property - changing
+> **Code walkthrough:** `top` is a layout property - changingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it triggers reflow. Every animation frame (16ms at 60fps)
 > the browser recalculates layout for the modal and everything
 > affected by its position. Under any main thread pressure,
@@ -289,7 +295,7 @@ function animate(element, to) {
 }
 ```
 
-> **Code walkthrough:** `transform: translateY(-100%)` moves
+> **Code walkthrough:** `transform: translateY(-100%)` movesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the element visually without changing its position in the
 > layout flow. The transition between states runs entirely
 > on the GPU compositor thread. `will-change: transform`
@@ -297,6 +303,11 @@ function animate(element, to) {
 > starts, preventing jank from the initial promotion.
 
 **PRODUCTION: batched DOM operations to prevent thrashing**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // GOOD: batch reads then writes with requestAnimationFrame
@@ -326,7 +337,7 @@ class ElementResizer {
 }
 ```
 
-> **Code walkthrough:** All reads happen synchronously in
+> **Code walkthrough:** All reads happen synchronously inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > one pass (causing one layout flush). Then `requestAnimationFrame`
 > defers the writes to the next frame. The writes happen after
 > the browser's layout/paint cycle for that frame. Result:
@@ -351,7 +362,7 @@ class ElementResizer {
 /* 50-80% reduction in initial render time for long pages */
 ```
 
-> **Code walkthrough:** `content-visibility: auto` is a CSS
+> **Code walkthrough:** `content-visibility: auto` is a CSSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > containment hint. The browser skips layout and painting for
 > off-screen sections. `contain-intrinsic-size` estimates the
 > section's height for scroll position calculation. Without it,
@@ -450,7 +461,7 @@ Diagnosis checklist:
 - CSS transition on layout properties → use transform
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -474,7 +485,7 @@ elements.forEach(el => {
 // FastDOM batches all reads then all writes per frame
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -492,24 +503,24 @@ The scrolling becomes composite-only.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Rendering pipeline stages | 3-4 min | All 4 stages |
-| Reflow vs repaint vs composite | 4 min | Property categories |
-| Why transform is fast | 3-4 min | Compositor thread |
-| Layout thrashing | 4-5 min | Read/write batching |
-| will-change usage + risks | 3-4 min | GPU memory trade-off |
-| content-visibility | 3-4 min | Modern optimization |
-| CSS animation vs JS animation | 4 min | Thread comparison |
-| Forced synchronous layout | 3-4 min | offsetWidth trap |
-| contain: layout | 3-4 min | Layout isolation |
-| Diagnose jank in DevTools | 4-5 min | Performance tooling |
-| CSS houdini/paint API | 4 min | Extensibility |
-| GPU memory budget | 3-4 min | will-change limits |
+| Scenario| Recommended Time| Key Signal|
+|------------------|--------------------------------------|--------------------|
+| Rendering pipeline stages| 3-4 min| All 4 stages|
+| Reflow vs repaint vs composite| 4 min| Property categories|
+| Why transform is fast| 3-4 min| Compositor thread|
+| Layout thrashing| 4-5 min| Read/write batching|
+| will-change usage + risks| 3-4 min| GPU memory trade-off|
+| content-visibility| 3-4 min| Modern optimization|
+| CSS animation vs JS animation| 4 min| Thread comparison|
+| Forced synchronous layout| 3-4 min| offsetWidth trap|
+| contain: layout| 3-4 min| Layout isolation|
+| Diagnose jank in DevTools| 4-5 min| Performance tooling|
+| CSS houdini/paint API| 4 min| Extensibility|
+| GPU memory budget| 3-4 min| will-change limits|
 
 ---
 
-**Q1: Walk me through the browser rendering pipeline
+**[JUNIOR] Q1 - [MECHANISM] Walk me through the browser rendering pipeline**
 and how CSS fits in.** `[SENIOR]` MECHANISM
 
 *Why they ask:* Foundation of all CSS performance knowledge.
@@ -567,7 +578,7 @@ and how CSS fits in.** `[SENIOR]` MECHANISM
 
 ---
 
-**Q2: What is the difference between reflow, repaint,
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between reflow, repaint,**
 and composite?** `[MID]` MECHANISM
 
 *Why they ask:* Core question for CSS performance.
@@ -628,7 +639,7 @@ and composite?** `[MID]` MECHANISM
 
 ---
 
-**Q3: Why should you use transform instead of top/left
+**[JUNIOR] Q3 - [SCENARIO] Why should you use transform instead of top/left**
 for animation?** `[JUNIOR]` MECHANISM
 
 *Why they ask:* This is the most practical CSS performance rule.
@@ -692,8 +703,7 @@ with transform?"
 
 ---
 
-**Q4: What is layout thrashing and how do you prevent it?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q4 - [DEBUGGING] What is layout thrashing and how do you prevent it?**
 
 *Why they ask:* Layout thrashing is the most common DOM
 performance bug.
@@ -782,7 +792,7 @@ performance bug.
 
 ---
 
-**Q5: What is `will-change` and what are its risks?**
+**[MID] Q5 - [FAILURE] What is `will-change` and what are its risks?**
 `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Misuse of will-change is a common performance
@@ -848,7 +858,7 @@ z-index stacking context?"
 
 ---
 
-**Q6: What is `content-visibility: auto` and when should
+**[SENIOR] Q6 - [SCENARIO] What is `content-visibility: auto` and when should**
 you use it?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Modern CSS performance technique for long pages.
@@ -907,8 +917,7 @@ you use it?** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q7: What is the CSS paint API (Houdini)?** `[STAFF]`
-MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is the CSS paint API (Houdini)?** `[STAFF]`**
 
 *Why they ask:* Staff engineers understand the CSS extensibility
 platform.
@@ -995,8 +1004,7 @@ have?"
 
 ---
 
-**Q8: What is CSS `contain` and when is it valuable?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q8 - [MECHANISM] What is CSS `contain` and when is it valuable?**
 
 *Why they ask:* CSS Containment is an underused performance tool.
 
@@ -1064,7 +1072,7 @@ layout and contain: strict?"
 
 ---
 
-**Q9: How do you diagnose CSS animation performance
+**[SENIOR] Q9 - [DEBUGGING] How do you diagnose CSS animation performance**
 with DevTools?** `[SENIOR]` DEBUGGING
 
 *Why they ask:* Performance diagnosis is a production skill.
@@ -1121,7 +1129,7 @@ with DevTools?** `[SENIOR]` DEBUGGING
 
 ---
 
-**Q10: What is the RAIL model and how does it relate
+**[SENIOR] Q10 - [MECHANISM] What is the RAIL model and how does it relate**
 to CSS performance?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Staff engineers tie CSS optimization to
@@ -1180,8 +1188,7 @@ frame?"
 
 ---
 
-**Q11: What CSS properties create a stacking context?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q11 - [MECHANISM] What CSS properties create a stacking context?**
 
 *Why they ask:* Stacking contexts cause z-index bugs that
 confuse developers.
@@ -1242,7 +1249,7 @@ context?"
 
 ---
 
-**Q12: Describe a CSS performance investigation at scale.
+**[SENIOR] Q12 - [DESIGN] Describe a CSS performance investigation at scale.**
 You have a React app with 500+ components and users report
 scroll lag.** `[STAFF]` PRODUCTION
 
@@ -1330,27 +1337,27 @@ the reflow?"
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Layout thrashing and batching patterns |
-| Hiring Manager | RAIL model and user experience targets |
-| Bar Raiser | Scroll-driven animations and Houdini |
-| Peer Engineer | DevTools diagnosis workflow |
+| Interviewer Type| Emphasis|
+|------------------------------|--------------------------------------|
+| Technical Panel| Layout thrashing and batching patterns|
+| Hiring Manager| RAIL model and user experience targets|
+| Bar Raiser| Scroll-driven animations and Houdini|
+| Peer Engineer| DevTools diagnosis workflow|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| CSS Property Change | Stage Triggered | Cost | Animation Safe |
-|---|---|---|---|
-| width/height | Layout → Paint → Composite | High | No |
-| top/left | Layout → Paint → Composite | High | No |
-| background-color | Paint → Composite | Medium | No |
-| box-shadow | Paint → Composite | Medium | No |
-| transform | Composite only | Very low | Yes |
-| opacity | Composite only | Very low | Yes |
-| visibility | Paint → Composite | Medium | Limited |
-| display | Layout → Paint → Composite | Very High | No |
+| CSS Property Change| Stage Triggered| Cost| Animation Safe|
+|---|--------------------------------------|--------------------|--------------|
+| width/height| Layout → Paint → Composite| High| No|
+| top/left| Layout → Paint → Composite| High| No|
+| background-color| Paint → Composite| Medium| No|
+| box-shadow| Paint → Composite| Medium| No|
+| transform| Composite only| Very low| Yes|
+| opacity| Composite only| Very low| Yes|
+| visibility| Paint → Composite| Medium| Limited|
+| display| Layout → Paint → Composite| Very High| No|
 
 ---
 
@@ -1393,7 +1400,7 @@ CSS PERFORMANCE ARCHITECTURE:
 └─────────────────────────────────────────────┘
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key decisions:
 - Critical CSS inlined: eliminates render-blocking CSS

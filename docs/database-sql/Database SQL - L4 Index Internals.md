@@ -88,7 +88,7 @@ Properties:
   - Each internal page's keys divide the key space for routing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Page Splits, Fill Factor, Bloat example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Fill factor and page splits:**
 
@@ -112,7 +112,7 @@ When fill factor = 100:
   - Read-mostly tables with rare inserts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Page Splits, Fill Factor, Bloat example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -163,7 +163,7 @@ FROM (
 -- If avg_free_bytes is very high: the index is bloated.
 ```
 
-> **Code walkthrough:** `bt_page_stats` (from pageinspect) returns statistics
+> **Code walkthrough:** `bt_page_stats` (from pageinspect) returns statisticsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > per B-tree page. `live_items`: number of live entries. `free_size`: unused bytes.
 > After heavy random inserts: page splits have occurred, creating new pages.
 > Some pages may be partially full (result of the 90% fill factor after splits).
@@ -210,7 +210,7 @@ REINDEX INDEX CONCURRENTLY idx_orders_status_default;
 -- DROP INDEX CONCURRENTLY ... and recreate with new settings)
 ```
 
-> **Code walkthrough:** When `status` is frequently updated (PENDING -> SHIPPED),
+> **Code walkthrough:** When `status` is frequently updated (PENDING -> SHIPPED),ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the old index entry for the old status is marked dead; a new entry for the new
 > status is inserted. If the new entry does not fit on the same page (page is full):
 > a split occurs. Lower fill factor (70%) reserves more space per page, reducing
@@ -357,7 +357,7 @@ Heap-index alignment (quarterly for large tables):
   -- Index scans become sequential, 10-100x faster.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -438,7 +438,7 @@ WHERE i.indrelid = 'orders'::regclass;
 -- leaf_live_percent < 70%: significant bloat.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix:
 ```sql
@@ -446,7 +446,7 @@ REINDEX INDEX CONCURRENTLY idx_orders_customer;
 -- After rebuild: size reduces, scans faster.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 **Failure 2: Frequent page splits causing write latency spikes**
 
@@ -465,7 +465,7 @@ SELECT
     -- High blks_written increase = many page splits + dirty writes.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: lower fill factor (70%), or switch to a sequential key pattern if possible.
 For UUIDs (highly random): use UUID v7 (time-ordered) instead of UUID v4 (random).
@@ -484,7 +484,7 @@ FROM pg_stats WHERE tablename = 'orders' AND attname = 'customer_id';
 -- 10,000 random I/Os per customer query.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: `CLUSTER orders USING idx_orders_customer` - reorders the heap by index key.
 After CLUSTER: correlation = 1.0. Index scan is now mostly sequential I/O.
@@ -494,51 +494,51 @@ CLUSTER requires a table lock; use pg_repack for zero-downtime.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Explain the B-tree page split algorithm and how fill factor affects it.**
+**[JUNIOR] Q1 - [MECHANISM] Explain the B-tree page split algorithm and how fill factor affects it.**
 
 🗣️ "A page split occurs when a new index entry must be inserted into a leaf page that is already full. The algorithm: (1) Allocate a new page. (2) Redistribute the existing entries between the old and new pages. For a 50/50 split: move the upper half of entries to the new page. For fill_factor=90%: the new page receives entries such that both new pages are 90% full after the split (not exactly 50/50 - the split point is chosen to achieve the target fill factor). (3) Update the parent internal page: add a pointer to the new page with the split key. (4) If the parent is also full: the parent splits recursively. Root split: the current root splits into two children; a new root page is created pointing to both. This increases the tree height. WAL cost of a split: the old page, new page, and parent page must all be WAL-logged. A cascading split: multiple WAL records. Fill factor lower value: pages have reserved space; new inserts find room; splits are less frequent."
 
-**Q2: What is the difference between REINDEX and VACUUM for index maintenance?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between REINDEX and VACUUM for index maintenance?**
 
 🗣️ "VACUUM: (1) marks dead index entries as reusable (free space for new entries on the same page). Does NOT compact the B-tree. Does NOT reduce the index file size. Does NOT remove partially-empty pages. The dead entries' slots are now available for new inserts - no immediate size reduction. (2) Updates the visibility map for Index Only Scan optimization. REINDEX: completely rebuilds the index from scratch. Reads all live heap tuples in order. Builds a new B-tree packed at the specified fill factor. Old index replaced with new one. Size: typically 20-50% smaller after REINDEX for a bloated index. `REINDEX INDEX CONCURRENTLY` (PostgreSQL 12+): no write lock. `REINDEX INDEX` (non-concurrent): takes a ShareLock on the table (writes are blocked). Always use CONCURRENTLY in production."
 
-**Q3: How does index correlation affect query performance?**
+**[JUNIOR] Q3 - [MECHANISM] How does index correlation affect query performance?**
 
 🗣️ "Index correlation (from `pg_stats.correlation`): ranges from -1 to 1. 1.0 = physical heap order perfectly matches index key order. For an index on `created_at` with perfectly sequential inserts: correlation is close to 1.0. 0.0 = random. For an index on a UUID column with random UUIDs: correlation is near 0. Impact on Index Scan: an index scan follows the index leaf list in key order. For each index entry: fetch the corresponding heap row. If correlation is 1.0: the heap rows are in the same order as the index - sequential heap reads (fast). If correlation is 0.0: each heap row is on a different random page. For 10,000 rows: 10,000 random heap page reads. For 100,000+ rows with low correlation: the planner often prefers a Seq Scan (fewer total I/Os) over an Index Scan (too many random I/Os). Improving correlation: CLUSTER the table by the index. For time-series data: inserts are sequential, so correlation is naturally near 1.0."
 
-**Q4: When would you use a BRIN index instead of a B-tree?**
+**[MID] Q4 - [SCENARIO] When would you use a BRIN index instead of a B-tree?**
 
 🗣️ "BRIN (Block Range INdex): stores per-block-range minimum and maximum values. Very small index (compared to B-tree). Useful for: tables where rows are physically inserted in sorted order and queries use range predicates on the sort column. Classic example: a time-series events table with `created_at` as the BRIN column. Rows are appended in time order (sequential inserts). BRIN for `created_at`: each block range has a min and max timestamp. For `WHERE created_at > '2024-01-01'`: the BRIN index eliminates block ranges with max < '2024-01-01'. Very large ranges of old data are skipped. BRIN index size: typically 100-1000x smaller than B-tree. Limitation: low selectivity (BRIN returns many 'maybe' pages; must still scan them for exact filtering). For a table scanned in order: B-tree scan is precise, BRIN is approximate. Use BRIN when: table is very large (100M+ rows), insert order matches the sort order, and approximate block-level filtering is sufficient."
 
-**Q5: What is the effect of UUID primary keys vs. sequential integers on B-tree performance?**
+**[MID] Q5 - [MECHANISM] What is the effect of UUID primary keys vs. sequential integers on B-tree performance?**
 
 🗣️ "UUID v4 (random): each new UUID is inserted at a random position in the B-tree leaf sequence. The 'right side' of the B-tree is the rightmost page (the largest key). Sequential integers always insert at the right side. Random UUIDs insert randomly - possibly any leaf page. Effect: (1) Page splits: random inserts cause splits throughout the tree (not just at the right side). More splits per insert. (2) Index cache efficiency: sequential inserts reuse the right-most page (stays in shared_buffers). Random inserts touch many pages; cache hit ratio drops. (3) WAL volume: random inserts = more splits = more WAL. (4) Index bloat: pages split to 90% full then receive no further inserts (random key space is huge). Pages remain 90% full indefinitely - actually good! Solution: UUID v7 (time-ordered UUID): the first 48 bits are a timestamp. Monotonically increasing over time. Inserts at the right side of the B-tree. Same insert characteristics as sequential integers. KSUID, ULID: similar time-ordered alternatives."
 
-**Q6: How do multi-column index storage and page layout work?**
+**[SENIOR] Q6 - [MECHANISM] How do multi-column index storage and page layout work?**
 
 🗣️ "A multi-column B-tree index `(a, b, c)`: the key in each index entry is the tuple (a, b, c) compared lexicographically (a first, then b for equal a, then c for equal b). The B-tree is sorted by this composite key. Entry size: each entry has a fixed header (6 bytes) + the key data. Key data: the actual column values, NULL bitmap, and pointer to the heap tuple (ctid: 6 bytes). Wide composite keys (many columns, wide VARCHAR): large entries per page. Fewer entries fit per page = more pages = taller tree = more page traversals. For a (customer_id INT, status TEXT, created_at TIMESTAMPTZ, id BIGINT): key size = 4 + ~10 + 8 + 8 = 30 bytes + 6 (ctid) + 24 (header, alignment) = ~60 bytes per entry. An 8KB page holds ~120 entries (8192 / 68 = ~120). For a table with 10M rows: ~85,000 leaf pages. INCLUDE columns: stored only at the leaf level and not in the key - they don't affect key size (internal node capacity is unchanged)."
 
-**Q7: What happens during CLUSTER and why is it not commonly used in production?**
+**[SENIOR] Q7 - [FAILURE] What happens during CLUSTER and why is it not commonly used in production?**
 
 🗣️ "CLUSTER orders USING idx_orders_customer: rewrites the entire table in the order of the specified index. The new table file has rows in the exact order of the index. Correlation becomes 1.0. Benefits: (1) index scans are now sequential I/O on the heap; (2) range queries (all orders for customer X) read contiguous heap pages; (3) cache efficiency improves (sequential scan caching). Cost: (1) requires an exclusive lock on the table for the entire duration. No reads or writes during the operation. (2) Duration: proportional to table size (full table rewrite). A 100GB table: 1-2 hours. Not practical in production without a maintenance window. (3) The physical order decays over time: new inserts go to free pages, not in order. CLUSTER must be re-run periodically. Alternative: pg_repack - rewrites the table in order without an exclusive lock (uses triggers to track changes during the rewrite). Production-safe."
 
-**Q8: How do you diagnose and fix an index that is too large relative to its usefulness?**
+**[SENIOR] Q8 - [DEBUGGING] How do you diagnose and fix an index that is too large relative to its usefulness?**
 
 🗣️ "Oversized index symptoms: index is rarely used (low idx_scan count in pg_stat_user_indexes) but takes significant disk space. Contributing to write overhead (every write updates an unused index). Diagnosis: `SELECT indexrelname, idx_scan, pg_size_pretty(pg_relation_size(indexrelid)) FROM pg_stat_user_indexes WHERE indrelid = 'orders'::regclass ORDER BY idx_scan`. Low idx_scan + large size = candidate for removal. Verification: enable `track_io_timing = on` and observe if the index is used in production. Check `pg_stat_user_indexes.idx_scan` over a 24-hour production period. If idx_scan is 0 for a 24-hour window: the index is unused. Drop it: `DROP INDEX CONCURRENTLY idx_name`. Caveat: some indexes are rarely used but critical (unique constraints, foreign key support). Never drop a unique or primary key index."
 
-**Q9: Explain page deduplication in B-tree indexes (PostgreSQL 13+).**
+**[SENIOR] Q9 - [MECHANISM] Explain page deduplication in B-tree indexes (PostgreSQL 13+).**
 
 🗣️ "PostgreSQL 13 introduced B-tree deduplication. For non-unique indexes where many rows have the same key value (e.g., `status` with values PENDING/ACTIVE/CLOSED and millions of rows per value): each leaf entry has the key + a posting list. The posting list contains multiple heap tuple IDs (ctids) for rows with the same key, stored compactly. Before deduplication: if 1,000 rows have `status='PENDING'`: 1,000 separate leaf entries, each with key + 1 ctid. After deduplication: 1 leaf entry with key + posting list of 1,000 ctids. Space savings: up to 60-80% for low-cardinality indexes. Benefits: (1) smaller index (more entries fit per page); (2) fewer page splits; (3) faster scans (fewer leaf pages to traverse). Enabled by default in PostgreSQL 13+. Can be disabled per-index: `CREATE INDEX ... WITH (deduplicate_items = off)`. Check: `SELECT amopclaid, amoprightarg FROM pg_amop WHERE amopfamily = ...' - or simply verify via pgstatindex after major insert batches."
 
-**Q10: How does PostgreSQL handle concurrent reads and writes to the same index page?**
+**[SENIOR] Q10 - [MECHANISM] How does PostgreSQL handle concurrent reads and writes to the same index page?**
 
 🗣️ "Index page locking: PostgreSQL uses a per-page lightweight lock (LWLock) for index pages. For a read (Index Scan): the reader acquires a shared (read) lock on the page. For a write (INSERT into index): the writer acquires an exclusive lock on the page. Multiple readers can hold the page concurrently (shared lock allows concurrent shares). A writer blocks all readers of that page while the write proceeds. The write is very brief (microseconds): insert the entry, update the page. The lock is released immediately. Contrast with table-level locking: no table-level lock is needed for index reads or writes (just the specific page). This is why concurrent reads and writes can proceed with minimal contention. The exception: a page split - the parent page must also be locked during the split. A cascading split (multiple pages) briefly locks all involved pages. For extremely high concurrent write rates: index page contention can appear in `pg_stat_activity` as wait events of type 'Lock' on index pages."
 
-**Q11: What is a GIN index and when is it better than a B-tree?**
+**[SENIOR] Q11 - [MECHANISM] What is a GIN index and when is it better than a B-tree?**
 
 🗣️ "GIN (Generalized Inverted Index): maps each element (key) to the list of rows containing that element. For JSONB: each JSON key and value is indexed. For arrays: each array element is indexed. For full-text search: each lexeme (word token) is indexed. B-tree: maps one (composite) key per row. One index entry per row. For a JSONB column with different keys per row: B-tree would need separate indexes per possible key. GIN handles arbitrary keys. Query: `WHERE data @> '{"type": "payment"}'` - GIN finds all rows where the JSONB contains `type=payment`. B-tree cannot do this. Tradeoffs: GIN inserts are slower (must update postings for all contained elements). GIN is larger. GIN reads are very fast (direct lookup per element). Use GIN for: JSONB containment queries, array `@>` contains queries, full-text search `@@`. Use B-tree for: equality, range, ORDER BY on a specific column."
 
-**Q12: What monitoring should you set up for index health in production?**
+**[SENIOR] Q12 - [MECHANISM] What monitoring should you set up for index health in production?**
 
 🗣️ "Six key metrics: (1) Index bloat: weekly `pgstatindex` scan. Alert: leaf_live_percent < 70%. Action: REINDEX CONCURRENTLY. (2) Unused indexes: daily check `pg_stat_user_indexes.idx_scan`. If idx_scan = 0 for 7 days: candidate for removal review. (3) Index size growth: daily `pg_relation_size(index)`. Alert: growth > 10% per day (unexpected). (4) Split rate proxy: monitor WAL generation rate. Sudden WAL increase with constant data volume = more splits (more WAL per page split). (5) Cache efficiency: `pg_statio_user_indexes.idx_blks_read` vs `idx_blks_hit`. Target: 99% hit ratio. Low hit ratio = indexes not cached = disk reads. (6) Correlation: quarterly check `pg_stats.correlation` for frequently-scanned index columns. If correlation drops below 0.5 for a large table: schedule a CLUSTER or pg_repack. Set up a weekly report: index bloat + unused + size + cache hit. Dashboard in Grafana or DataDog with these metrics from the pg_stat views."
 

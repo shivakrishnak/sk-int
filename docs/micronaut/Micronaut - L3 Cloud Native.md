@@ -195,7 +195,7 @@ public class OrderMetrics {
 }
 ```
 
-> **Code walkthrough:** CacheHealthIndicator returns
+> **Code walkthrough:** CacheHealthIndicator returnsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a reactive Publisher<HealthResult>. If the cache check
 > succeeds, returns HealthStatus.UP with details. On
 > exception, DOWN with error message. Micronaut auto-discovers
@@ -203,6 +203,57 @@ public class OrderMetrics {
 > registration needed. The Kubernetes readiness probe
 > at /health/readiness will include this indicator and
 > route traffic away if the cache is down.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Management provides actuator-style endpoints for
+health checks, metrics, and runtime information. The `management`
+module exposes HTTP endpoints (`/health`, `/metrics`, `/info`,
+`/env`) that enable Kubernetes probes, monitoring systems, and
+observability tools.
+
+**How it works:**
+
+Add `micronaut-management` dependency. Default endpoints:
+- `/health` - aggregated health status (UP/DOWN) from all
+  registered `HealthIndicator` beans
+- `/health/liveness` - Kubernetes liveness probe
+- `/health/readiness` - Kubernetes readiness probe
+- `/metrics` - Micrometer metrics (with `micronaut-micrometer-core`)
+- `/info` - application metadata
+
+Custom health indicators:
+```java
+@Singleton
+class DatabaseHealthIndicator implements HealthIndicator {
+    Publisher<HealthResult> getResult() {
+        return Mono.fromCallable(() -> {
+            checkDb();
+            return HealthResult.builder("database").up().build();
+        });
+    }
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Kubernetes integration: configure liveness and readiness as
+separate health groups with different indicator sets. Readiness
+should check application-level dependencies (DB, downstream
+services). Liveness should check only whether the app is
+still functioning (not crashed).
+
+**Why it matters:**
+
+Kubernetes requires liveness and readiness probes for reliable
+deployments. Production monitoring systems require health
+endpoints. Separating liveness from readiness prevents healthy
+pods from being restarted just because a downstream service
+is temporarily unavailable.
 
 ---
 
@@ -217,6 +268,94 @@ check DB or external services. If DB is down, the app
 is still alive - just not ready. A liveness check that
 includes DB will cause Kubernetes to restart the app
 when the DB is down, making recovery impossible."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: /health returning DOWN should always
+cause Kubernetes to restart the pod.**
+
+Only LIVENESS probe failures cause Kubernetes to restart a pod.
+READINESS probe failures cause Kubernetes to stop sending
+traffic to the pod (remove it from Service endpoints) without
+restarting it. Confusing the two leads to: (1) configuring
+downstream service health (DB, Redis) as liveness, causing pod
+restarts when downstream is down (not the pod's fault), or
+(2) configuring only liveness and not readiness, causing
+traffic to unhealthy pods. Separate liveness (is the JVM
+alive?) from readiness (are all dependencies available?).
+
+**Misconception 2: Health endpoints are always safe to
+expose publicly.**
+
+Health endpoints that include detailed health information
+(database connection details, internal service URLs, memory
+stats, configuration values from `/env`) can expose sensitive
+information. Restrict management endpoints to internal
+networks: configure `endpoints.all.sensitive: true` to
+require authentication; use a separate management port
+(`endpoints.all.port: 8081`) not exposed outside the cluster;
+configure Kubernetes probes to use the management port.
+
+**Misconception 3: Custom HealthIndicators are always
+called synchronously before responding to /health.**
+
+Health indicators return `Publisher<HealthResult>`, enabling
+parallel, async health checking. The default behavior: all
+health indicators are invoked, their results are aggregated,
+and the health response is returned when ALL complete.
+A slow health indicator (e.g., waiting for a timeout from
+an unreachable service) delays the /health response for ALL
+callers. Configure `endpoints.health.discovery-client.enabled:
+false` to exclude slow indicators from the health response;
+add timeouts to custom health indicator reactive chains.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Kubernetes restarts healthy pods because
+liveness probe checks downstream service availability.**
+
+Symptom: pods are restarted during downstream outages
+even though the pod itself is functioning correctly. Root
+cause: liveness probe is configured to `/health` which
+includes a database or external service health check
+that returns DOWN when the downstream is unavailable.
+Diagnosis: check which health indicators are in the
+liveness health group vs readiness group. Fix: create
+separate health groups: `micronaut.management.health.groups.
+liveness.excludes: [database, downstream-service]`.
+Liveness should only fail when the JVM is dead or the
+app is in an unrecoverable state.
+
+**Failure Mode 2: Health endpoint response time increases
+under load because health checks run on request threads.**
+
+Symptom: `/health` response time increases from 50ms to
+5+ seconds during high load. Root cause: health indicators
+performing DB queries or HTTP calls tie up request threads
+or DB connections during health checks - the health check
+competes with application requests for resources. Diagnosis:
+monitor connection pool utilization during health checks.
+Fix: use dedicated DB connections for health checks
+(separate pool); use `@ExecuteOn(TaskExecutors.IO)` for
+blocking health indicators; add caching to health indicators
+(`@Cacheable` with short TTL) to avoid per-request checks.
+
+**Failure Mode 3: /metrics endpoint returns empty data
+after upgrading Micronaut version.**
+
+Symptom: after upgrading, `/metrics` returns an empty JSON
+object or 404. Root cause: Micronaut 4.x changed the default
+Micrometer integration; `micronaut-micrometer-core` now
+requires explicit inclusion. Diagnosis: check if `actuator`
+metrics are registered by calling `/metrics` and checking
+for `jvm.*` entries. Fix: add `io.micronaut.micrometer:
+micronaut-micrometer-core` and at least one registry
+(e.g., `micronaut-micrometer-registry-prometheus`) to
+build dependencies; re-enable endpoints explicitly.
 
 ---
 
@@ -457,7 +596,7 @@ public class PublicController {
 }
 ```
 
-> **Code walkthrough:** UserAuthenticationProvider.authenticate()
+> **Code walkthrough:** UserAuthenticationProvider.authenticate()ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > returns a reactive Publisher - non-blocking DB lookup.
 > AuthenticationResponse.success() accepts extra claims
 > (tenantId) that are embedded in the JWT payload.
@@ -506,6 +645,41 @@ token revocation list (Redis).
    - Fix: use ${JWT_SECRET} from environment variable
      micronaut.security.token.jwt.signatures.secret
      .generator.secret: ${JWT_SECRET}
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Security is a compile-time-aware security framework
+for Micronaut applications. It provides authentication
+(validating who you are), authorization (what you can do),
+and JWT (JSON Web Token) support for stateless API security.
+
+**How it works:**
+
+JWT flow: client sends `Authorization: Bearer <token>` header.
+Micronaut's `JwtTokenValidator` validates the signature using
+the configured public key or JWKS endpoint. On valid token,
+the claims are extracted and wrapped in an `Authentication`
+object available to controllers via `@Nullable Authentication`.
+
+Authorization: `@Secured("ROLE_ADMIN")` on controllers or
+routes restricts access to principals with that role.
+`@Secured(SecurityRule.IS_AUTHENTICATED)` requires any
+authenticated user. Custom rules implement `SecurityRule`.
+
+Token generation: for apps that issue JWTs, `JwtTokenGenerator`
+creates signed tokens from a principal. Configure the signing
+key and algorithm in `micronaut.security.token.jwt.*`.
+
+**Why it matters:**
+
+Stateless JWT authentication enables horizontal scaling
+(no shared session store). Micronaut Security integrates
+with compile-time validation (misconfigured routes detected
+at build time). Native image support included.
 
 ---
 
@@ -579,7 +753,7 @@ public class RevocationAwareValidator
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This adds Redis as a dependency for every request
 validation - latency tradeoff. For high-traffic APIs:
@@ -805,7 +979,7 @@ public class OrderRabbitConsumer {
 }
 ```
 
-> **Code walkthrough:** @KafkaKey Long orderId ensures
+> **Code walkthrough:** @KafkaKey Long orderId ensuresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > all events for the same order go to the same partition,
 > guaranteeing ordering. Manual Acknowledgement allows
 > the consumer to control offset commits - only acknowledge
@@ -813,6 +987,55 @@ public class OrderRabbitConsumer {
 > leaves the offset uncommitted (message redelivered).
 > PoisonPillException routes to DLQ then acknowledges
 > to avoid blocking the partition.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Messaging provides compile-time-safe integration
+with message brokers: Apache Kafka (via `micronaut-kafka`)
+and RabbitMQ (via `micronaut-rabbitmq`). Consumers and
+producers are defined as annotated interfaces or methods,
+with implementations generated at compile time.
+
+**How it works:**
+
+Kafka producer:
+```java
+@KafkaClient
+interface OrderProducer {
+    @Topic("orders")
+    void send(@KafkaKey String orderId, Order order);
+}
+```
+
+> **Code walkthrough:** The example above illustrates the core mechanism. The runtime processes the code in the sequence shown, applying the key pattern at each step. Misapplying this pattern results in subtle bugs or degraded performance. The takeaway: follow the structure shown to avoid the common pitfall.
+
+Kafka consumer:
+```java
+@KafkaListener(groupId = "order-processor")
+class OrderConsumer {
+    @Topic("orders")
+    void receive(Order order) { /* process */ }
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Micronaut generates the producer implementation and configures
+the consumer listener at compile time. No annotation scanning
+at runtime.
+
+RabbitMQ: similar pattern with `@RabbitClient` and
+`@RabbitListener`. Declare exchanges/queues in configuration.
+
+**Why it matters:**
+
+Compile-time-generated messaging code is GraalVM native
+compatible. Type-safe consumer definitions catch schema
+mismatches at build time (with schema registry integration).
 
 ---
 
@@ -825,6 +1048,89 @@ public class OrderRabbitConsumer {
 → same partition → ordered delivery. Manual acknowledgment
 prevents data loss. DLQ routing for unprocessable messages.
 Kafka transactions for exactly-once across produce + consume."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: @KafkaListener methods consume messages
+in the order they are produced.**
+
+Order is only guaranteed WITHIN a partition. Kafka partitions
+messages by key; messages with the same key go to the same
+partition and are consumed in order by a single consumer.
+Messages with different keys may go to different partitions,
+processed by different consumer instances, with no ordering
+guarantee. If end-to-end ordering matters, ensure all related
+messages use the same key (e.g., order ID).
+
+**Misconception 2: Setting acks=all on the Kafka producer
+guarantees message delivery even if the broker fails.**
+
+`acks=all` ensures the leader AND all in-sync replicas (ISR)
+acknowledge the write. But if the broker fails AFTER the
+acknowledgment and BEFORE the consumer processes the message,
+the message can still be reprocessed. `acks=all` prevents
+data loss at the broker level, not duplicate processing.
+For exactly-once semantics, use Kafka transactions or
+idempotent consumers with deduplication logic.
+
+**Misconception 3: Micronaut Kafka consumers are
+automatically parallel - multiple @KafkaListener methods
+process the same topic concurrently.**
+
+A single `@KafkaListener` group processes each partition
+with ONE thread by default. Parallelism comes from: multiple
+partitions (one consumer thread per partition), or multiple
+consumer instances in the same group (up to one per partition).
+Adding a second method `@Topic("orders")` in the same consumer
+class does NOT add parallelism - it adds an additional consumer
+that would receive the same messages (different group or config).
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Consumer lag grows unbounded because
+message processing is slower than production rate.**
+
+Symptom: Kafka consumer lag metric increases continuously;
+processed records count is lower than produced records count.
+Root cause: the consumer processes one record at a time and
+each record takes longer to process than the average production
+interval. Diagnosis: compare producer throughput to consumer
+throughput in Kafka metrics. Fix: increase consumer parallelism
+(add partitions, add consumer instances); use `@KafkaListener`
+with `threads = N` to enable parallel processing within a
+consumer; offload processing to a thread pool if I/O-bound.
+
+**Failure Mode 2: Deserialization errors cause consumer
+to stop processing the entire partition.**
+
+Symptom: consumer processes messages up to a point and then
+stops; error log shows "Error deserializing key/value for
+partition." Root cause: a malformed or schema-incompatible
+message is at the consumer's current offset; deserialization
+fails; the consumer cannot advance past this "poison pill."
+Diagnosis: use a tool like `kafkacat` or Kafka console consumer
+to read the raw bytes at the failing offset. Fix: configure
+a `DeserializationExceptionHandler` to skip or dead-letter
+malformed messages; use Micronaut's `ErrorStrategy.RETRY_ON_ERROR`
+with a skip-after-N-retries policy.
+
+**Failure Mode 3: Consumer group rebalance storm causes
+processing gaps during deployments.**
+
+Symptom: during rolling deployments, message processing
+pauses for 30-60 seconds; consumer lag spikes during each
+pod restart. Root cause: each new pod joining the consumer
+group triggers a rebalance, which pauses all consumers
+in the group until the rebalance completes. Fix: use
+incremental cooperative rebalancing (Kafka 2.4+) by setting
+`partition.assignment.strategy=CooperativeStickyAssignor`;
+configure longer `session.timeout.ms` and `heartbeat.interval.ms`
+to reduce false rebalances; use liveness probes that allow
+sufficient time for the consumer to rejoin.
 
 ---
 
@@ -870,7 +1176,7 @@ public void processPayment(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Level 2: Kafka Transactions (exactly-once):
 - Requires Kafka 0.11+.
@@ -886,7 +1192,7 @@ public interface TransactionalProducer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Kafka messaging. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 For most cases: idempotent consumer (Level 1) is
 simpler and sufficient. Use Kafka transactions only
@@ -1088,7 +1394,7 @@ public class OrderQueueConsumer {
 //     prefix: /order-service/config/
 ```
 
-> **Code walkthrough:** @FunctionBean makes the class
+> **Code walkthrough:** @FunctionBean makes the classice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > discoverable as the Lambda handler. The same @Controller
 > code works for both local HTTP server (integration
 > tests, local dev) and Lambda API Gateway proxy.
@@ -1096,6 +1402,46 @@ public class OrderQueueConsumer {
 > to the matching @Controller method. SQS listener
 > uses automatic message deletion on success and
 > ctx.fail() to return message to queue for retry.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Functions is a programming model for creating
+Java functions deployable to AWS Lambda, Azure Functions,
+or Google Cloud Functions. The function is a standard
+Micronaut application but packaged and initialized to
+optimize for serverless cold starts.
+
+**How it works:**
+
+A Micronaut Lambda function:
+1. Extends `MicronautRequestHandler<Input, Output>` (for
+   AWS Lambda)
+2. The first invocation starts the Micronaut context
+   (200-500ms cold start on JVM; 10-50ms with native image)
+3. Subsequent invocations reuse the warm context (~1-10ms)
+
+Two deployment modes:
+- **JVM + SnapStart**: standard JAR, Lambda snapshots the
+  initialized state (virtual memory checkpoint) to reduce
+  cold starts
+- **GraalVM native**: compiled native executable, ~10-50ms
+  cold start, no JIT warmup, suitable for latency-sensitive
+  triggers
+
+Lambda integration types: HTTP requests via API Gateway
+(`APIGatewayProxyRequestEvent`), SQS events, SNS events,
+direct Lambda invocations.
+
+**Why it matters:**
+
+Micronaut's compile-time DI and fast startup fit the
+serverless model better than Spring Boot. For Lambda
+functions called infrequently, sub-second cold starts
+prevent timeout failures and improve user experience.
 
 ---
 
@@ -1113,12 +1459,98 @@ image with micronaut-function-aws-native."
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Lambda cold starts are always a
+problem worth solving with native image.**
+
+Cold starts matter for: synchronous API calls (user-facing,
+low-latency requirements), low-invocation-frequency functions.
+Cold starts do NOT matter for: asynchronous event processing
+(SQS/SNS consumers), scheduled tasks, functions with
+Provisioned Concurrency enabled. Native image compilation
+is complex and has limitations (reflection, dynamic class
+loading). Evaluate whether cold start is actually causing
+problems before committing to the native image compilation
+overhead.
+
+**Misconception 2: GraalVM native Lambda functions have
+the same behavior as JVM Lambda functions.**
+
+Native image functions differ in: no JIT compilation (ahead-
+of-time compiled, no warmup needed but also no JIT optimization
+of hot paths), reflection and dynamic class loading must be
+configured explicitly, different GC behavior (by default uses
+Serial GC which is single-threaded), larger binary size (80-150MB
+vs 50-100MB JAR), and build time 5-15 minutes. Thoroughly test
+native builds with your specific libraries; not all third-party
+libraries work without reflection configuration.
+
+**Misconception 3: Micronaut Functions require AWS Lambda;
+they cannot run locally.**
+
+Micronaut Functions can be tested locally using
+`FunctionTest` in unit tests (no Lambda infrastructure
+needed), deployed to local AWS SAM CLI emulation
+(`sam local invoke`), or run as a standalone HTTP service
+(using `micronaut-function-web` for HTTP endpoint emulation).
+The function code is standard Micronaut - the Lambda adapter
+is a thin wrapper. Testing without Lambda infrastructure
+is the recommended development workflow.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Lambda function times out on first
+cold start but succeeds on subsequent invocations.**
+
+Symptom: first Lambda invocation returns timeout error;
+subsequent invocations complete within time limit. Root cause:
+JVM cold start + Micronaut context initialization exceeds
+the Lambda timeout (default 3-15 seconds). Diagnosis: check
+Lambda CloudWatch logs for initialization duration. Fix:
+increase Lambda timeout to accommodate cold start; enable
+Lambda SnapStart (JVM checkpoint/restore); use GraalVM native
+for sub-100ms starts; enable Provisioned Concurrency to
+keep instances warm.
+
+**Failure Mode 2: ClassNotFoundException in native Lambda
+for classes used via reflection.**
+
+Symptom: function works in JVM mode but throws
+`ClassNotFoundException` or `InstantiationException` in
+native mode. Root cause: a library or framework uses reflection
+to load classes at runtime; GraalVM's static analysis did
+not trace these classes. Diagnosis: run native build with
+`-H:+TraceClassInitialization -H:+ReportExceptionStackTraces`.
+Fix: add reflect-config.json entries for missing classes;
+use Micronaut's `@ReflectiveAccess` annotation; run the
+native-image agent to auto-generate configurations:
+`java -agentlib:native-image-agent=config-output-dir=./config`.
+
+**Failure Mode 3: Lambda function processes duplicate
+SQS messages due to missing idempotency.**
+
+Symptom: records appear duplicated in the database; events
+are processed multiple times. Root cause: SQS guarantees
+at-least-once delivery; Lambda may receive and process the
+same message multiple times (network retry, Lambda execution
+failure after partial processing). Diagnosis: add message ID
+logging to verify duplicates. Fix: implement idempotent
+processing: check if message ID was already processed
+(DynamoDB with TTL-based idempotency key); design operations
+to be safe to replay (upsert instead of insert, idempotent
+state transitions).
+
+---
+
 ### 🎯 Interview Deep-Dive
 
-| Experience | Time | Depth |
-|---|---|---|
-| Senior | 6 min | @FunctionBean, API Gateway proxy, cold start |
-| Staff | 10 min | Native Lambda, cold start optimization, provisioned concurrency |
+| Experience| Time| Depth|
+|---|----------|---------------------------------------------------------------|
+| Senior| 6 min| @FunctionBean, API Gateway proxy, cold start|
+| Staff| 10 min| Native Lambda, cold start optimization, provisioned concurrency
 
 ---
 
@@ -1157,12 +1589,12 @@ Tradeoff: cold start latency vs cost.
 means Singleton state persists - must reset per-invocation
 state explicitly.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | @FunctionBean, Lambda handler, SQS integration. |
-| Hiring Manager | Lambda for serverless microservices. |
-| Bar Raiser | Cold start mechanics, container reuse, connection pool sizing. |
-| Peer Engineer | "Lambda connection pool was sized at 10. Each instance hogged 10 connections. RDS hit max connections. Reduced to 2 per Lambda instance." |
+| Interviewer Type| Emphasis|
+|---|--------------------------------------------------------------------------|
+| Technical Panel| @FunctionBean, Lambda handler, SQS integration.|
+| Hiring Manager| Lambda for serverless microservices.|
+| Bar Raiser| Cold start mechanics, container reuse, connection pool sizing.|
+| Peer Engineer| "Lambda connection pool was sized at 10. Each instance hogged 1
 
 ---
 
@@ -1172,21 +1604,21 @@ state explicitly.
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
@@ -1267,6 +1699,59 @@ to service C for a single request."
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Distributed Tracing enables end-to-end request
+tracing across multiple microservices. It integrates with
+OpenTelemetry, Zipkin, and Jaeger to propagate trace context,
+record spans, and export trace data to observability backends.
+
+**How it works:**
+
+Micronaut automatically creates trace spans for:
+- Incoming HTTP requests (server span)
+- Outgoing HTTP requests via declarative clients (client span)
+- Database operations (with JDBC/R2DBC integration)
+- Kafka producer/consumer operations
+
+Trace propagation: W3C Trace Context (`traceparent` header)
+or B3 format. When Service A calls Service B via
+`@Client`, the trace context headers are automatically
+included in the outbound request. Service B's server filter
+extracts and continues the trace.
+
+Configuration:
+```yaml
+micronaut:
+  tracing:
+    opentelemetry:
+      enabled: true
+      exporter:
+        otlp:
+          endpoint: http://otel-collector:4318
+```
+
+> **Code walkthrough:** The example above illustrates the core mechanism. The runtime processes the code in the sequence shown, applying the key pattern at each step. Misapplying this pattern results in subtle bugs or degraded performance. The takeaway: follow the structure shown to avoid the common pitfall.
+
+Custom spans:
+```java
+@NewSpan("process-order")
+void processOrder(String orderId) { /* ... */ }
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+**Why it matters:**
+
+Distributed tracing reveals the performance breakdown across
+service calls: which service is slow, which database query
+takes too long, where errors originate. Essential for
+diagnosing production issues in microservices architectures.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Add micronaut-tracing-opentelemetry.
@@ -1276,6 +1761,92 @@ Automatic spans for HTTP. @NewSpan for custom spans."
 for HTTP clients. Trace IDs in MDC enable log correlation.
 For internal services: @NewSpan on service methods
 creates child spans visible in Jaeger/Zipkin."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Adding Micronaut tracing automatically
+traces all code execution without further configuration.**
+
+Micronaut auto-instruments HTTP (in/out), JDBC, and Kafka
+boundaries. It does NOT automatically trace: custom service
+method calls, business logic steps, external SDK calls
+(AWS SDK, email service), background tasks, or reactive
+operators. For meaningful traces, annotate critical methods
+with `@NewSpan` and add custom attributes with `@SpanTag`.
+Without custom instrumentation, traces show network hops
+but not the internal processing time breakdown.
+
+**Misconception 2: Trace sampling at 100% is fine for
+production systems.**
+
+100% trace sampling means every request generates trace
+data. For high-traffic services (thousands of RPS), this
+can: overload the trace collector, add 5-20% request
+latency overhead per traced request, generate massive data
+storage costs. Use head-based sampling (1-10% for normal
+traffic) with tail-based sampling (100% for errors and
+slow requests) for production. Configure with OpenTelemetry
+Collector's tail-based sampler.
+
+**Misconception 3: TraceId is the same as CorrelationId
+used in log messages.**
+
+Trace ID and correlation ID serve different purposes and
+often differ in format. Trace ID is W3C-standardized
+(128-bit hex), used for distributed tracing. Correlation ID
+may be any format, used for log correlation. Micronaut can
+propagate trace ID as an MDC (Mapped Diagnostic Context)
+variable for log correlation, making them the same value.
+This requires explicit configuration in `logback.xml`
+and the Micronaut tracing MDC integration.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Traces broken between services due
+to trace context header mismatch.**
+
+Symptom: Zipkin/Jaeger shows traces that terminate at
+service boundaries - Service B shows independent root spans
+instead of child spans of Service A's trace. Root cause:
+Service A sends B3 headers (`X-B3-TraceId`); Service B
+expects W3C headers (`traceparent`), or vice versa. Or the
+HTTP client does not include propagation headers. Diagnosis:
+inspect raw HTTP headers between services (`curl -v`);
+check if `traceparent` or `X-B3-*` headers are present.
+Fix: standardize on W3C Trace Context (B3 is legacy);
+ensure both services use the same propagation format;
+verify Micronaut client auto-propagation is enabled.
+
+**Failure Mode 2: Custom @NewSpan spans not appearing
+in traces despite annotation.**
+
+Symptom: expected custom spans (from `@NewSpan` methods)
+absent from trace. Root cause: `@NewSpan` is an AOP-based
+annotation - if the method is called from within the same
+class (bypassing the AOP proxy), no span is created. Also:
+class must be a Micronaut-managed bean (not a plain class).
+Diagnosis: verify the method is called through the Micronaut
+proxy (via injection, not `this.method()`). Fix: ensure the
+bean calling `@NewSpan` methods injects the bean and calls
+via the injected reference, not via `this`.
+
+**Failure Mode 3: Trace data overwhelms the collector
+causing dropped spans during traffic spikes.**
+
+Symptom: traces are incomplete - some spans missing;
+collector shows "dropped spans" metrics. Root cause:
+the OpenTelemetry collector is overloaded; batching
+configuration sends too many spans per second. Diagnosis:
+monitor collector queue depth and dropped span metrics.
+Fix: increase collector resources; adjust SDK export
+configuration (`maxExportBatchSize`, `exportIntervalMillis`);
+enable tail-based sampling in the collector to reduce
+volume; consider using an agent-based sampling approach
+to drop low-value traces before they reach the collector.
 
 ---
 
@@ -1325,7 +1896,7 @@ public class TenantTracingFilter
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using generic type. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 The tenantId attribute appears on every span
 in the trace. Baggage propagation sends it in HTTP

@@ -108,7 +108,7 @@ Memory leak = object unnecessarily kept reachable:
   - global accumulator (cache, log array)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Memory Model and Garbage Collection example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -142,6 +142,26 @@ Mark-and-sweep traverses from known roots to implement this exactly.
 ### 💻 Code Example
 
 **Example 1: Four leak patterns and fixes**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // LEAK 1: listener not removed on cleanup
@@ -201,7 +221,7 @@ function rm(el) {
 }
 ```
 
-> **Code walkthrough:** AbortController is the modern cleanup pattern
+> **Code walkthrough:** AbortController is the modern cleanup patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > - one `abort()` removes all listeners registered with that signal.
 > The closure leak shows how captured references extend lifetime:
 > `result` references data items, so closing over `result` transitively
@@ -242,7 +262,7 @@ const obs = new PerformanceObserver(list => {
 obs.observe({ type: 'gc', buffered: true });
 ```
 
-> **Code walkthrough:** The DevTools heap comparison is the
+> **Code walkthrough:** The DevTools heap comparison is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > authoritative memory leak diagnostic. The Retainers panel shows
 > the reference chain keeping a leaked object alive - this identifies
 > the exact code responsible. In Node.js, logging `heapUsed` every
@@ -251,6 +271,11 @@ obs.observe({ type: 'gc', buffered: true });
 > in supported browsers, enabling GC-aware performance monitoring.
 
 **Example 3: Reducing GC pressure in animation**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: new object every animation frame (60 alloc/sec)
@@ -295,7 +320,7 @@ function destroyParticle(p) {
 }
 ```
 
-> **Code walkthrough:** Creating a new object every animation frame
+> **Code walkthrough:** Creating a new object every animation frameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > at 60fps produces 60 allocations per second, pressuring the minor
 > GC and causing periodic pauses that drop frames. Reusing a single
 > object eliminates allocation entirely from the hot path. The object
@@ -590,7 +615,7 @@ WeakMap constraints (intentional by spec):
   Reason: observing which keys disappeared would expose GC timing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WeakMap, WeakSet, and WeakRef example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -633,6 +658,11 @@ non-deterministic key disappearance.
 
 **Example 1: WeakMap for DOM metadata without leaks**
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: regular Map keeps elements alive indefinitely
 const tooltipData = new Map();
@@ -661,7 +691,7 @@ class Controller {
 // _state is module-private - no external access
 ```
 
-> **Code walkthrough:** WeakMap keyed by DOM elements means when an
+> **Code walkthrough:** WeakMap keyed by DOM elements means when anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > element is removed from the document and all strong references are
 > gone, the WeakMap entry disappears automatically. Regular Map would
 > keep every element that ever received a tooltip in memory indefinitely.
@@ -713,7 +743,7 @@ function processGraph(root) {
 }
 ```
 
-> **Code walkthrough:** The WeakRef cache returns `undefined` on cache
+> **Code walkthrough:** The WeakRef cache returns `undefined` on cacheice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > miss - the caller must handle recomputation. FinalizationRegistry
 > cleans the stale Map key after GC but fires asynchronously; the
 > eager cleanup in `get()` handles the common case immediately. The
@@ -762,7 +792,7 @@ function reactive(target) {
 // Guarantees reactive(obj) === reactive(obj) - same proxy identity
 ```
 
-> **Code walkthrough:** Vue 3 uses two WeakMaps: `targetMap` for
+> **Code walkthrough:** Vue 3 uses two WeakMaps: `targetMap` forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reactive dependency tracking and `proxyMap` for proxy identity
 > guarantees. The WeakMap in `targetMap` means when a reactive target
 > (component data) loses all strong references on unmount, the entire

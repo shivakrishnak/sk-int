@@ -159,13 +159,23 @@ E2E flakiness patterns:
     // Playwright auto-waits for actionable state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Detection, Prevention, and Resolution example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Failure + Fix) - Timer-based flakiness:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: Flaky test - depends on real clock timing
@@ -234,7 +244,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** The timer-based flaky test depends on real
+> **Code walkthrough:** The timer-based flaky test depends on realice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > clock time: if CI is slower than 200ms, the assertion runs before
 > the 500ms debounce fires. `jest.useFakeTimers()` replaces `setTimeout`/
 > `setInterval` with Jest-controlled versions. `jest.advanceTimersByTime(600)`
@@ -371,7 +381,7 @@ Metrics (monitor via dashboard):
   Quarantine queue size
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -101,7 +101,7 @@ try (ObjectInputStream ois = new ObjectInputStream(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Serialization example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **serialVersionUID:**
 ```java
@@ -116,7 +116,7 @@ private static final long serialVersionUID = 1L;
 // If you change a field type: InvalidClassException unless UID also changed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Serialization example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Custom serialization:**
 ```java
@@ -143,17 +143,27 @@ class SecureData implements Serializable {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Serialization example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The `ObjectInputFilter` whitelist is the mandatory
+> **Code walkthrough:** The `ObjectInputFilter` whitelist is the mandatoryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > security control for any code that deserializes Java objects from untrusted
 > sources. Without it: any class on the classpath can be instantiated, enabling
 > gadget chain attacks. The filter runs BEFORE `readObject()` on each class
 > in the stream - it rejects the stream if the class is not whitelisted.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: deserializing without filter (vulnerability!)
@@ -272,7 +282,7 @@ as the constructor. Without `readObject()` validation: ANY field value
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: deserialization gadget chain - Remote Code Execution.**
-```
+```plaintext
 Attack scenario:
   1. Attacker finds an endpoint that deserializes user-supplied Java bytes
      (REST endpoint accepting Content-Type: application/x-java-serialized-object,
@@ -305,7 +315,7 @@ Mitigation:
      java -jar ysoserial.jar CommonsCollections1 'id' | nc target 1099
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -366,7 +376,7 @@ class Dog extends Animal implements Serializable {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The inheritance requirement is subtle.
 When deserializing `Dog`, the JVM calls `Animal()`'s no-arg constructor
@@ -415,7 +425,7 @@ class User implements Serializable {
 // making incompatible changes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `serialVersionUID` is a versioning contract.
 If you deploy a new version of a service that has sessions serialized to
@@ -467,7 +477,7 @@ class Connection implements Serializable {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The transient field lifecycle question
 is critical for distributed session replication. Session objects serialized
@@ -544,7 +554,7 @@ class Period implements Serializable {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The serialization proxy pattern (Effective Java
 Item 90) is the gold standard for secure, correct serialization. Instead of
@@ -592,7 +602,7 @@ Attack surface in production:
   - Many messaging systems that serialize message bodies as Java objects
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Java deserialization vulnerability
 disclosure in 2015 (by Chris Frohoff and Gabriel Lawrence) showed that
@@ -661,7 +671,7 @@ ObjectInputFilter.Config.setSerialFilter(filter);
 // Applies to ALL ObjectInputStream instances that don't set their own filter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using generic type. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `ObjectInputFilter` is necessary but not
 sufficient. The whitelist must be maintained: every new domain class added
@@ -724,7 +734,7 @@ class NonSerializableChild extends SerializableBase {
 // OK for optional fields
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The non-Serializable parent with no-arg
 constructor pattern is the classic Spring/JPA entity issue. JPA entities extend
@@ -785,7 +795,7 @@ class NetworkPacket implements Externalizable {
 // High-performance code (game state, network packets): Externalizable or Kryo
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* In benchmarks, `Externalizable` is
 approximately 3-5x faster than `Serializable` for complex objects (less
@@ -840,7 +850,7 @@ Elvis e1 = Elvis.INSTANCE;
 // This is why Effective Java recommends Enum for singletons
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using enum. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The Enum singleton recommendation from
 Effective Java (Item 3) is backed by the JVM's enum serialization guarantee.
@@ -900,7 +910,7 @@ Input input = new Input(new FileInputStream("file.bin"));
 User restored = kryo.readObject(input, User.class);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using generic type. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The serialization format choice is an
 architectural decision with long-term consequences. JSON: human-readable,
@@ -942,7 +952,7 @@ Step 3: InvokerTransformer.transform(input):
 Result: JVM executes: Runtime.getRuntime().exec("wget ...")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Simplified gadget chain concept (DO NOT USE - educational only):
@@ -970,7 +980,7 @@ class InvokerTransformer implements Transformer, Serializable {
 // when received from untrusted sources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The ysoserial tool (https://github.com/frohoff/ysoserial)
 is the reference for testing. It generates gadget chain payloads for
@@ -1029,7 +1039,7 @@ A:
 // Java serialization for cross-service, external API, or any untrusted input
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using SQL. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The Protocol Buffers field number is the
 key to schema evolution. In JSON: a field named "userId" can be renamed to
@@ -1154,7 +1164,7 @@ sequenceDiagram
 
 **Java deserialization attack chain:**
 
-```
+```plaintext
 Untrusted Byte Stream
      |
      v (ObjectInputStream.readObject())

@@ -121,7 +121,7 @@ Availability numbers:
   99.999%:5 minutes downtime/year
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Back-of-Envelope Estimation example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Estimation workflow:**
 
@@ -164,7 +164,7 @@ Step 6: Validate + imply architecture
     S3: $0.023/GB = ~$920/month for 40TB
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Back-of-Envelope Estimation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -226,7 +226,7 @@ say simple, keep it simple.
 
 ---
 
-#### Q1 - Walk me through estimating QPS for a URL shortener.
+**[JUNIOR] Q1 - [CONCEPTUAL] Walk me through estimating QPS for a URL shortener.**
 
 ```
 URL shortener estimation:
@@ -267,7 +267,7 @@ Architecture implied:
     Sharding: by short_code (hash-based sharding)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The sanity check is critical. I made an
 arithmetic error midway (1.4 instead of 1,157). Catching it by re-running the
@@ -281,7 +281,7 @@ domain intuition to catch math errors.
 
 ---
 
-#### Q2 - How do you estimate storage for a photo sharing app?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you estimate storage for a photo sharing app?**
 
 ```
 Instagram-scale photo storage:
@@ -314,7 +314,7 @@ Metadata storage:
   Storage: PostgreSQL or Cassandra (91TB over 5 years is large but manageable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The lifecycle analysis (most photos: rarely
 accessed after first week) is the operational insight that reduces storage cost
@@ -327,7 +327,7 @@ single lifecycle rule. Cost awareness is part of system design at scale.
 
 ---
 
-#### Q3 - How do you estimate latency for a distributed system?
+**[JUNIOR] Q3 - [ARCHITECTURE] How do you estimate latency for a distributed system?**
 
 Latency decomposition: identifying where time is spent.
 
@@ -365,7 +365,7 @@ Where latency hides:
   GC pause (Java): P99.9 spike due to stop-the-world GC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The latency budget concept: define total budget
 (200ms P99), then allocate: "API gateway: 5ms, service logic: 10ms, DB: 20ms,
@@ -378,7 +378,7 @@ and happens in the tail (P99 only). Not on the hot path.
 
 ---
 
-#### Q4 - How do you estimate the number of servers needed?
+**[MID] Q4 - [CONCEPTUAL] How do you estimate the number of servers needed?**
 
 Server count estimation: translating QPS to infrastructure.
 
@@ -418,7 +418,7 @@ Step 4: Server count
   Netflix's own CDN (Open Connect): 100,000+ servers worldwide
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The CDN absorption calculation reveals why
 video streaming is feasible: without CDN, 1.2 exabytes/day would require a
@@ -432,11 +432,11 @@ at scale).
 
 ---
 
-#### Q5 - Walk me through estimating for a design you've never seen before.
+**[MID] Q5 - [ARCHITECTURE] Walk me through estimating for a design you've never seen before.**
 
 Estimation framework for novel systems:
 
-```
+```plaintext
 Example: Estimate for a real-time multiplayer game (MOBA, 5v5)
 
 Step 1: Define the events
@@ -472,7 +472,7 @@ Step 5: Server capacity
   Practical: 5,000-10,000 servers for 1M concurrent (actual Riot/Valve scale)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* When your estimate produces an unreasonable
 answer (5,000 servers per event type seems high): don't accept it. Re-examine
@@ -486,7 +486,7 @@ an outlier.
 
 ---
 
-#### Q6 - How does estimation change for mobile vs web?
+**[MID] Q6 - [CONCEPTUAL] How does estimation change for mobile vs web?**
 
 Mobile-specific estimation factors:
 
@@ -525,7 +525,7 @@ Data efficiency:
   Image: serve mobile-optimized sizes (thumbnails, not originals)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The morning commute reconnect spike is a real
 mobile design challenge. Users on a subway lose connectivity, emerge at a station,
@@ -538,7 +538,7 @@ reconnect spikes for mobile-first apps as part of capacity planning.
 
 ---
 
-#### Q7 - How do you verify an estimation is reasonable?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you verify an estimation is reasonable?**
 
 Estimation validation: sanity-checking the numbers.
 
@@ -584,7 +584,7 @@ Sanity check methods:
   Is this reasonable for a startup? No (adjust design)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The backward check (compute forward, verify
 backward) is the most reliable mechanical validation. If forward and backward
@@ -728,7 +728,7 @@ Consistency vs Performance:
   Denormalization: trade storage + write complexity for read simplicity
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Trade-off Navigation Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -793,7 +793,7 @@ capacity (10K)." Without that justification: simpler is better.
 
 ---
 
-#### Q1 - How do you choose between SQL and NoSQL?
+**[JUNIOR] Q1 - [TRADE-OFF] How do you choose between SQL and NoSQL?**
 
 ```
 SQL (PostgreSQL, MySQL):
@@ -835,7 +835,7 @@ Decision framework:
     Session cache: Redis (fast read/write, TTL)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "choose both" answer is the production
 reality. Large systems use multiple data stores, each chosen for its fit to
@@ -847,7 +847,7 @@ for none.
 
 ---
 
-#### Q2 - When should you use synchronous vs asynchronous communication?
+**[JUNIOR] Q2 - [CONCEPTUAL] When should you use synchronous vs asynchronous communication?**
 
 ```
 Synchronous (request-response):
@@ -888,7 +888,7 @@ Decision framework:
     Different steps have different consistency requirements
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The hybrid pattern is the practical production
 approach. Identify per-operation: "does the user need this result NOW?" Payment:
@@ -900,9 +900,9 @@ as possible (fewer synchronous dependencies = fewer failure points).
 
 ---
 
-#### Q3 - How do you decide whether to cache data?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you decide whether to cache data?**
 
-```
+```plaintext
 Caching decision framework:
 
 Cache when:
@@ -934,7 +934,7 @@ Common caching mistakes:
          or distributed lock on cache miss (only one request rebuilds)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cache stampede is the most commonly overlooked
 caching failure mode. A popular cached item (product details for a viral product)
@@ -947,9 +947,9 @@ subsequent requests wait for the lock (or return stale value if available).
 
 ---
 
-#### Q4 - How do you balance operational simplicity vs performance optimization?
+**[MID] Q4 - [CONCEPTUAL] How do you balance operational simplicity vs performance optimization?**
 
-```
+```plaintext
 Operational complexity cost:
   Each optimization: adds code complexity, infrastructure complexity, or both
   Code complexity: harder to debug, more failure modes, longer onboarding
@@ -983,7 +983,7 @@ YAGNI (You Ain't Gonna Need It):
   Add complexity when the simplest solution clearly fails
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* "Start simple, add complexity as needed" is
 the principle, but it requires the discipline to remove complexity when it's no
@@ -996,9 +996,9 @@ complexity improves reliability (fewer things to fail) and developer velocity
 
 ---
 
-#### Q5 - How do you evaluate the cost trade-off in a system design?
+**[MID] Q5 - [TRADE-OFF] How do you evaluate the cost trade-off in a system design?**
 
-```
+```plaintext
 Cost dimensions in system design:
   Compute: CPU (EC2 instance hours, EKS worker nodes)
   Storage: S3, EBS, RDS storage
@@ -1038,7 +1038,7 @@ Serverless vs always-on:
   Lambda also: no idle cost, auto-scale to zero
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cost is a first-class design constraint at
 companies beyond early-stage startups. Mentioning cost trade-offs proactively
@@ -1051,7 +1051,7 @@ with an SLO ("infrastructure cost per user per month < $X").
 
 ---
 
-#### Q6 - How do you trade off between build vs buy?
+**[MID] Q6 - [TRADE-OFF] How do you trade off between build vs buy?**
 
 Build vs buy: make or use an existing solution.
 
@@ -1091,13 +1091,13 @@ Real examples:
   Payment processing: Buy (Stripe, Braintree) vs Build
     -> Always buy for small/medium: PCI compliance alone justifies it
   Message queue: Buy (SQS, Confluent Kafka) vs Build/Self-host (Kafka)
-    -> SQS: simple use cases. Self-host Kafka: high throughput, need full control
+    -> SQS: simple use cases. Self-host Kafka: high throughput, need full...
   Search: Buy (Elasticsearch managed, Algolia) vs Build
-    -> Algolia: great UX, expensive at scale. Self-host ES: complex, full control
+    -> Algolia: great UX, expensive at scale. Self-host ES: complex, full...
 
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Netflix paradox: Netflix builds much of
 its own infrastructure (Open Connect CDN, Hystrix circuit breaker, Eureka service
@@ -1111,7 +1111,7 @@ insufficient or too expensive.
 
 ---
 
-#### Q7 - Walk me through a complete trade-off analysis for designing a notification system.
+**[SENIOR] Q7 - [TRADE-OFF] Walk me through a complete trade-off analysis for designing a notification system.**
 
 Notification system trade-off analysis:
 
@@ -1168,7 +1168,7 @@ Summary trade-offs made:
   Key-value for preferences: fast lookups, flexible schema
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The structured trade-off analysis per design
 decision is the format that impresses interviewers. Not "here's my design" but
@@ -1318,7 +1318,7 @@ Human errors:
     Delete confirmation + soft delete patterns
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Failure Mode Thinking example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1353,7 +1353,7 @@ public class ProductService {
 }
 ```
 
-```
+```plaintext
 # application.yml: Resilience4j config
 resilience4j:
   circuitbreaker:
@@ -1381,7 +1381,7 @@ resilience4j:
         timeout-duration: 3s
 ```
 
-> **Code walkthrough:** Resilience4j applies four layers of resilience to the
+> **Code walkthrough:** Resilience4j applies four layers of resilience to theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > inventory service call. TimeLimiter: fail fast after 3 seconds (prevents thread
 > blocking). Retry: up to 3 attempts on transient failures (IOException, timeout);
 > ignores 4xx client errors (retrying a 400 is pointless). CircuitBreaker: opens
@@ -1451,11 +1451,11 @@ to ServiceC. Cascade stops at the first circuit breaker.
 
 ---
 
-#### Q1 - How do you design for partial failure?
+**[JUNIOR] Q1 - [ARCHITECTURE] How do you design for partial failure?**
 
 Partial failure: some services work, others don't.
 
-```
+```plaintext
 Scenario: e-commerce product page
   Components: product details, reviews, recommendations, inventory status
   Failure: recommendation service down
@@ -1491,7 +1491,7 @@ Partial failure tolerant design:
   User does NOT see: error page from recommendation service failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml: Resilience4j config example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Degraded responses require explicit design
 for each non-critical component. "If reviews service is unavailable: show reviews
@@ -1504,7 +1504,7 @@ test them explicitly (turn off each service, verify correct degraded behavior).
 
 ---
 
-#### Q2 - How do you implement timeout and retry correctly?
+**[JUNIOR] Q2 - [HANDS-ON] How do you implement timeout and retry correctly?**
 
 Timeout and retry: the most common resilience mechanisms.
 
@@ -1546,7 +1546,7 @@ Retry: try again on transient failure
     Total max time: ~3 seconds (3 * 500ms * 2 backoff) before circuit opens
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.yml: Resilience4j config example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The combination of timeout AND retry requires
 careful math. If timeout = 3 seconds and retry = 3 attempts: one failed request
@@ -1560,11 +1560,11 @@ budget to fit within the caller's SLO.
 
 ---
 
-#### Q3 - What is a bulkhead pattern and when do you use it?
+**[JUNIOR] Q3 - [ARCHITECTURE] What is a bulkhead pattern and when do you use it?**
 
 Bulkhead: isolate failures to prevent cascade.
 
-```
+```plaintext
 Problem without bulkhead:
   Service: one shared thread pool (200 threads)
   Payment service: slow (3 seconds per call)
@@ -1607,7 +1607,7 @@ When NOT to use:
   Simple system: overhead not worth it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The bulkhead sizing is a capacity planning
 exercise. "50 threads for payment service" is the correct choice only if: max
@@ -1620,7 +1620,7 @@ sizing exercise should be done per dependency based on actual traffic patterns.
 
 ---
 
-#### Q4 - How do you approach chaos engineering?
+**[MID] Q4 - [CONCEPTUAL] How do you approach chaos engineering?**
 
 Chaos engineering: deliberately break things to find failure modes.
 
@@ -1658,7 +1658,7 @@ Common first experiments:
   Fill disk to 90% (should alert, not crash)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The hypothesis-driven approach is what separates
 chaos engineering from random destruction. "I believe this system handles X failure"
@@ -1672,11 +1672,11 @@ gracefully and learned from systematically.
 
 ---
 
-#### Q5 - How do you detect failures before users report them?
+**[MID] Q5 - [PRODUCTION] How do you detect failures before users report them?**
 
 Proactive monitoring: finding failures before users notice.
 
-```
+```plaintext
 Alert pyramid:
   User-facing metrics (most important):
     Error rate > 0.1% (real user errors)
@@ -1714,7 +1714,7 @@ Distributed tracing alerts:
   Diagnosis: check EXPLAIN ANALYZE, identify missing index
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Synthetic monitoring (proactive probes) catches
 failure modes that metrics miss. A service can have 0% error rate from real users
@@ -1727,11 +1727,11 @@ This prevents deploying broken code to users.
 
 ---
 
-#### Q6 - What is defense-in-depth for system reliability?
+**[MID] Q6 - [ARCHITECTURE] What is defense-in-depth for system reliability?**
 
 Defense-in-depth: multiple independent layers of protection.
 
-```
+```plaintext
 Principle: no single layer is infallible
   If layer 1 fails: layer 2 catches it
   Multiple independent layers: very low probability all fail simultaneously
@@ -1770,7 +1770,7 @@ Production incident:
   RTO: 30 minutes. RPO: 5 minutes (5 minutes of orders re-entered or recovered from Layer 5)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The DELETE FROM orders scenario is a real
 production incident that has happened at numerous companies. The postmortem
@@ -1785,7 +1785,7 @@ deployment pipelines (flag any DDL/DML that affects row counts significantly).
 
 ---
 
-#### Q7 - How do you design for graceful degradation?
+**[SENIOR] Q7 - [ARCHITECTURE] How do you design for graceful degradation?**
 
 Graceful degradation: maintain partial functionality when a component fails.
 
@@ -1826,7 +1826,7 @@ Implementation:
   Engineering: clear ownership per degradation mode
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Graceful degradation requires product + engineering
 alignment on "what is the minimum viable experience?" For Spotify: playing music

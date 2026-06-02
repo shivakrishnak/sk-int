@@ -64,7 +64,7 @@ ASYNC (with temporal decoupling):
   Consumer reads when it recovers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Temporal Decoupling Mental Model example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Temporal decoupling transfers the availability requirement from the consumer to the broker. You are not eliminating the dependency - you are concentrating it in one place (the broker), which you can make highly available more easily than every consumer.
@@ -187,44 +187,37 @@ Fix: Scale consumer instances to increase parallel processing. For lag that exce
 | Comparison | 2 min | 1 |
 | Misconception | 2 min | 1 |
 
-#### Q1
-**"What does temporal decoupling enable that synchronous communication cannot?"**
+**[JUNIOR] Q1 - [MECHANISM] What does temporal decoupling enable that synchronous communication cannot?**
 > "Three things: (1) Independent availability - producer succeeds when consumer is down. (2) Rate mismatch absorption - producer at 10K/s, consumer at 1K/s, broker absorbs the difference. (3) Independent deployment - consumer can be restarted, scaled, or replaced without coordinating with the producer."
 
 *What separates good from great:* "And it enables replay: you can re-process historical events by resetting consumer offsets. This is impossible with synchronous systems."
 
-#### Q2
-**"When is temporal decoupling a design mistake?"**
+**[JUNIOR] Q2 - [DESIGN] When is temporal decoupling a design mistake?**
 > "When the caller needs the result immediately. Order creation can be decoupled from email delivery. But payment authorization cannot be decoupled from fraud checking - the customer is waiting for approval in real time. Using async messaging for payment authorization would mean authorizing the payment before knowing if fraud detection approves it."
 
 *What separates good from great:* "The smell of a misapplied temporal decoupling: you end up building a synchronous reply-to mechanism on top of the async messaging system (send a request event, wait for a response event on a reply topic). At that point, you have the complexity of async messaging plus the semantics of synchronous RPC. Use actual synchronous RPC instead."
 
-#### Q3
-**"How do you debug a service that suddenly started processing stale events - events from 2 hours ago instead of current events?"**
+**[MID] Q3 - [DEBUGGING] How do you debug a service that suddenly started processing stale events - events from 2 hours ago instead of current events?**
 > "Stale events indicate consumer lag. Check consumer group offsets: run kafka-consumer-groups.sh and look at the LAG column for the consumer group. If LAG is high, the consumer fell behind. Check when the lag started growing (timestamp on the oldest unprocessed offset). Likely causes: consumer was down or slow for a period, got a large backlog, and is now processing it. Current events are at the end of the backlog, so the consumer processes 2-hour-old events first. Resolution depends on urgency: if stale processing is acceptable, wait for the consumer to drain. If not, reset the offset to recent messages (accepting that intermediate events are skipped)."
 
 *What separates good from great:* "Add timestamp-based monitoring: alert when the age of the oldest unconsumed event exceeds an SLA (e.g., > 5 minutes for critical processing). This catches lag before it becomes 2 hours."
 
-#### Q4
-**"Compare temporal decoupling with spatial decoupling in messaging."**
+**[MID] Q4 - [MECHANISM] Compare temporal decoupling with spatial decoupling in messaging.**
 > "Temporal decoupling: producer and consumer are independent in time. Spatial decoupling: producer and consumer do not know each other's identity or location. Both properties exist together in a messaging system. Without temporal decoupling, consumers must be up when producers publish. Without spatial decoupling, producers must know consumer addresses and routing. A messaging broker provides both: the producer sends to a topic (spatial decoupling - no knowledge of consumers) and the consumer reads when available (temporal decoupling). These two properties together are what makes messaging fundamentally different from RPC."
 
 *What separates good from great:* "Spatial decoupling also enables fan-out: multiple consumers subscribe to one topic without the producer knowing or caring. Adding a new consumer requires no change to the producer. This extensibility is the foundation of the event-driven architecture pattern."
 
-#### Q5
-**"A system using temporal decoupling for order processing has events that are 3 hours old being processed. Is this a problem?"**
+**[SENIOR] Q5 - [MECHANISM] A system using temporal decoupling for order processing has events that are 3 hours old being processed. Is this a problem?**
 > "It depends entirely on the business requirement. For an order confirmation email, 3-hour-old events are fine - the email is delayed but not incorrect. For an order fraud detection check, 3 hours is likely a problem - the account may have been further compromised in that time. For an order inventory reservation, it may be a severe problem - the item may have sold out in the last 3 hours. The technical fact (consumer lag is 3 hours) is neutral; the business impact depends on the SLA of each consumer. This is why consumer lag monitoring must be tied to business SLAs, not just technical thresholds."
 
 *What separates good from great:* "Define the Maximum Acceptable Lag (MAL) per consumer group based on the business requirement, and alert when lag exceeds MAL. Different consumer groups processing the same topic may have different MALs: fraud detection MAL = 5 minutes, email notification MAL = 60 minutes."
 
-#### Q6
-**"How does temporal decoupling affect exactly-once semantics?"**
+**[SENIOR] Q6 - [MECHANISM] How does temporal decoupling affect exactly-once semantics?**
 > "Temporal decoupling makes exactly-once harder. In a synchronous call, the caller knows immediately if the call succeeded or failed. In async messaging with temporal decoupling, the producer does not know if the consumer successfully processed the message. The consumer may fail after receiving the message but before committing. On restart, it receives the message again (at-least-once semantics). To achieve exactly-once: the consumer must process idempotently (applying the same message twice produces the same result), or use Kafka transactions (consumer commits its offset and its downstream write in a single transaction). The idempotent approach is more common: design consumers so that reprocessing an already-processed message is a no-op (use event ID as an idempotency key in the output database)."
 
 *What separates good from great:* "Temporal decoupling fundamentally means the consumer must be prepared for at-least-once delivery. Design for idempotency from the start - add an event ID column to your database tables, check for duplicates before processing. Adding idempotency after the fact to a non-idempotent consumer is much harder."
 
-#### Q7
-**"What is the durability guarantee of temporal decoupling in Kafka?"**
+**[SENIOR] Q7 - [MECHANISM] What is the durability guarantee of temporal decoupling in Kafka?**
 > "Temporal decoupling is only as durable as the broker's durability guarantees. If Kafka is configured with replication factor 1 and a broker fails, events are lost - temporal decoupling fails because the events are no longer available for the consumer. For temporal decoupling to be meaningful, the broker must be more durable than the expected consumer downtime. Production configuration: replication factor = 3, min.insync.replicas = 2. This tolerates 1 broker failure without data loss. The producer sets acks=all to ensure messages are replicated before the produce call returns. With this configuration, temporal decoupling is durable against any single broker failure."
 
 *What separates good from great:* "Temporal decoupling durability has a time dimension too: Kafka's retention period. If consumer lag exceeds the topic retention period, old messages are deleted before the consumer reads them. Set retention based on the maximum expected consumer downtime, not just storage cost. For critical consumers with SLA of 7 days recovery, set retention to at least 7 days."
@@ -315,7 +308,7 @@ CORRELATION ID (REQUEST-REPLY):
   use result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fire and Forget vs Correlation ID example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Correlation ID is synchronous semantics on an async substrate. You get the response you need, but the two sides are still temporally decoupled - the consumer processes the request independently. If you need synchronous behavior, consider whether true synchronous RPC (gRPC) is cleaner than simulating it over messaging.
@@ -425,44 +418,37 @@ Fix: Add a timeout mechanism - schedule a task to remove and complete-exceptiona
 | Scenario | 5 min | 2 |
 | Debugging | 3 min | 1 |
 
-#### Q1
-**"When should you choose correlation ID over a direct synchronous gRPC call?"**
+**[JUNIOR] Q1 - [SCENARIO] When should you choose correlation ID over a direct synchronous gRPC call?**
 > "When the responder is unavailable via synchronous RPC (different messaging platform, no gRPC support), when processing takes longer than a synchronous timeout would allow, or when you need the temporal decoupling of the reply (the responder can be down temporarily without the caller blocking). If none of these conditions apply and the responder supports gRPC, use gRPC - it is simpler, has better error propagation, and is lower latency."
 
 *What separates good from great:* "The key smell that you are simulating sync over async unnecessarily: if your correlation ID timeout is 100ms and you are waiting synchronously for the reply, you have achieved the complexity of async with the latency profile of sync. Use actual sync at that point."
 
-#### Q2
-**"How do you handle correlation ID timeouts and retries without duplicate processing?"**
+**[JUNIOR] Q2 - [MECHANISM] How do you handle correlation ID timeouts and retries without duplicate processing?**
 > "Timeout: after publishing the request, schedule a timeout (e.g., 30 seconds). If no correlated reply arrives, complete the future with a timeout exception. Do not automatically retry - the consumer may have processed the request and the reply was lost. Retry-safe design: include the correlation ID in the response, and use it as an idempotency key on the consumer side. If the same request (same correlation ID) arrives twice, the consumer returns the cached response rather than processing twice. This allows safe retries from the producer without duplicate effects."
 
 *What separates good from great:* "The hardest case: the consumer processed the request, wrote the result to its database, but the reply event was lost. The producer times out and retries. If the consumer is idempotent on the correlation ID, it returns the same result without reprocessing. If not, it processes twice. Design for idempotency on the correlation ID."
 
-#### Q3
-**"Design an async order approval system where a manager reviews and approves orders over Kafka."**
+**[MID] Q3 - [DESIGN] Design an async order approval system where a manager reviews and approves orders over Kafka.**
 > "Manager approval takes seconds to minutes (human interaction), far too long for synchronous HTTP. Design: Order service publishes order.approval.requested event with correlation ID and a reply-to topic. A notification service consumes and sends the manager an approval request (email, Slack). Manager approves via a UI backed by an approval service. Approval service publishes order.approved or order.rejected event with the correlation ID to the reply-to topic. Order service consumes the reply, matches by correlation ID, and continues order processing. Timeout: if no approval in 24 hours, escalate (publish a different event to trigger escalation). This is a legitimate use of correlation ID over async messaging - the timeout is hours, not milliseconds, making synchronous HTTP completely impractical."
 
 *What separates good from great:* "Persistence of the pending request state: if the order service restarts between publishing the request and receiving the reply, the in-memory correlation ID map is lost. Solution: persist pending requests to a database (pending_approvals table with correlation ID and request timestamp). On startup, reload pending requests from the database. This makes the correlation ID pattern resilient to restarts."
 
-#### Q4
-**"How does fire-and-forget interact with back-pressure?"**
+**[MID] Q4 - [MECHANISM] How does fire-and-forget interact with back-pressure?**
 > "Fire-and-forget does not inherently apply back-pressure from the consumer to the producer. The producer publishes at its own rate; the broker buffers; the consumer processes at its own rate. If the consumer is slower than the producer, consumer lag grows. The broker does not signal the producer to slow down. Back-pressure in Kafka is manual: monitor consumer lag and alert when lag grows. Reduce producer rate (via throttling or pausing) or scale consumers. This is a fundamental difference from reactive streams (Project Reactor, Akka Streams) that implement protocol-level back-pressure. For use cases where consumer overload is a risk, design the producer to check consumer lag before producing (lag-based rate limiting), or deploy a consumer-side throttle that slows ack commits when the consumer is under pressure."
 
 *What separates good from great:* "Reactive streams and Kafka serve different use cases. Reactive streams provide back-pressure for in-process pipeline control. Kafka provides temporal decoupling and durability across services. Mixing the mental models causes confusion - do not expect Kafka to apply back-pressure the way Project Reactor does."
 
-#### Q5
-**"What is the reply-to header in AMQP and how does it relate to correlation ID?"**
+**[SENIOR] Q5 - [MECHANISM] What is the reply-to header in AMQP and how does it relate to correlation ID?**
 > "In AMQP, the reply-to property specifies the queue name where the reply should be sent. The correlation-id property contains the ID that links the reply to the original request. These are first-class AMQP properties - built into the protocol. In Kafka, both must be implemented manually as message headers (reply.to: a topic name, correlation.id: UUID). AMQP's built-in support for request-reply makes the pattern more straightforward in AMQP than in Kafka. In Kafka, the convention is: use a header named correlationId (or X-Correlation-Id by CloudEvents convention) and agree on a reply topic naming convention. The pattern is the same; the protocol support differs."
 
 *What separates good from great:* "Some teams use per-request reply topics in Kafka (create a topic per correlation ID). This is almost always a mistake - Kafka has overhead per topic, and per-request topics are not cleaned up cleanly. Use a shared reply topic (e.g., order-service.replies) with a consumer-side filter on the correlation ID."
 
-#### Q6
-**"How does the correlation ID pattern scale when you have 1000 instances of the reply consumer?"**
+**[SENIOR] Q6 - [MECHANISM] How does the correlation ID pattern scale when you have 1000 instances of the reply consumer?**
 > "The correlation ID problem at scale: the producer publishes a request and subscribes to a reply topic. But there are 1000 producer instances, each with its own pending requests map. The reply event lands on one of the 1000 consumer instances (Kafka's consumer group assigns one partition to each instance). The instance that receives the reply may not be the instance that published the request. The reply goes unmatched. Solutions: (1) The reply topic's partition key is the correlation ID, and the producer subscribes to a specific partition based on its instance ID. Complex partitioning logic. (2) Use a centralized pending request store (Redis) shared by all producer instances. Any instance can check for a match. (3) Redesign: instead of correlation ID, the consumer publishes the result to a result-store (database), and the producer polls the result-store for its request's result. This scales naturally to 1000 instances."
 
 *What separates good from great:* "The scaling challenge of correlation ID is why many teams move to event sourcing for long-running async workflows: the workflow state is persisted (in an event store or saga state store), not held in-memory. Any instance can recover the workflow state from the store. This is the design that scales to thousands of instances."
 
-#### Q7
-**"What is the difference between fire-and-forget and outbox pattern?"**
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between fire-and-forget and outbox pattern?**
 > "Fire-and-forget describes the interaction pattern (no response expected). The outbox pattern describes the reliability mechanism for publishing events transactionally. In the outbox pattern, instead of publishing directly to Kafka (which may fail independently of the database transaction), you write the event to an outbox table in the same database transaction as your business data. A separate process (Debezium CDC or outbox relay) reads the outbox table and publishes to Kafka. This guarantees that if the database commit succeeds, the event will eventually be published - even if the Kafka publish initially fails. Fire-and-forget events often use the outbox pattern for reliable delivery."
 
 *What separates good from great:* "The outbox pattern solves the dual-write problem: without it, you write to the database AND publish to Kafka. If one succeeds and the other fails, you have inconsistency. The outbox pattern makes the database write the single atomic operation, and the Kafka publish becomes an eventual consequence."
@@ -559,7 +545,7 @@ During partition (3 brokers, min.ISR=2):
     Risk: Broker 1 fails, last N messages lost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CAP Theorem Applied to Messaging example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 CAP is not a one-time architectural decision - it is a per-topic configuration. Design your configuration to match the business requirement of each event type: use `acks=all + min.insync.replicas=2` for events where loss is unacceptable; use `acks=1` for high-throughput events where availability outweighs occasional loss risk.
@@ -578,6 +564,12 @@ CAP is not a one-time architectural decision - it is a per-topic configuration. 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Single acks setting for all topics
@@ -666,44 +658,37 @@ Fix: Restore the out-of-sync or failed broker. Once the broker rejoins and syncs
 | Comparison | 2 min | 1 |
 | Scenario | 5 min | 2 |
 
-#### Q1
-**"How does Kafka's acks configuration map to CAP theorem properties?"**
+**[JUNIOR] Q1 - [MECHANISM] How does Kafka's acks configuration map to CAP theorem properties?**
 > "acks=0: pure availability. Producer fires and forgets. Partition or broker failure has no impact on write success. Consistency guarantee: none (events may be lost). acks=1: availability-leaning. Wait for leader acknowledgment only. During a partition, if the leader is in the majority partition, writes succeed. If the leader fails before replication, the last message is lost. acks=all: consistency-leaning. Wait for all in-sync replicas to acknowledge. During a partition where ISR drops below min.insync.replicas, writes fail with NotEnoughReplicasException. This is the consistency choice: the system becomes unavailable for writes rather than risk losing a message."
 
 *What separates good from great:* "acks=all does not mean 'all brokers'. It means all in-sync replicas. ISR is a subset of all replicas. If min.insync.replicas=2 and you have 3 replicas, one replica can be significantly behind (and removed from ISR) and acks=all still succeeds - because 2 ISR replicas acknowledged."
 
-#### Q2
-**"What is PACELC and how does it extend CAP for messaging systems?"**
+**[JUNIOR] Q2 - [MECHANISM] What is PACELC and how does it extend CAP for messaging systems?**
 > "CAP covers the partition case. PACELC extends it: 'If there is a Partition (P), choose between Availability (A) and Consistency (C). Else (E) - no partition - choose between Latency (L) and Consistency (C).' For Kafka: during partition, acks=all chooses consistency over availability. Else (normal operation), acks=all still adds latency because the producer waits for replica acknowledgment before returning. acks=1 has lower latency (don't wait for replicas) at the cost of weaker consistency. PACELC makes explicit that the consistency-latency trade-off exists in normal operation, not just during failures."
 
 *What separates good from great:* "For high-throughput systems, the PACELC latency-consistency trade-off is the more practically important one - partitions are rare, but every message write faces the latency cost of acks=all. Measuring the actual p99 producer latency under acks=all vs acks=1 for your topic's throughput quantifies this trade-off concretely."
 
-#### Q3
-**"A payment team wants 100% availability for their payment event topic. How do you respond?"**
+**[MID] Q3 - [MECHANISM] A payment team wants 100% availability for their payment event topic. How do you respond?**
 > "100% availability and 100% durability are not simultaneously achievable in a distributed system - this is exactly what CAP theorem tells us. During a network partition, you must choose. For a payment topic, the correct choice is: durability over availability. The payment system should stop accepting new payments (serve a clear error) rather than accept payments that may not be durably stored. Accepting a payment without durable storage of the payment event creates a much worse user experience (payment processed but no record) than a clear error page. The configuration: acks=all, min.insync.replicas=2, replication factor=3. This provides durability against any single broker failure. The remaining availability risk: a simultaneous 2-broker failure. For that risk, the mitigation is operational (monitoring, alerting, fast broker recovery procedures), not configuration."
 
 *What separates good from great:* "The framing helps: ask the team 'what is worse - a payment that fails clearly, or a payment that was accepted but the record may be lost?' Almost always, the answer is the second case is worse. This reframes the trade-off from 'availability vs consistency' to 'clear failure vs silent data loss.'"
 
-#### Q4
-**"How does the BASE model (Basically Available, Soft state, Eventually consistent) apply to Kafka consumers?"**
+**[MID] Q4 - [MECHANISM] How does the BASE model (Basically Available, Soft state, Eventually consistent) apply to Kafka consumers?**
 > "BASE is the eventual consistency model that applies to most Kafka consumer workflows. Basically Available: the consumer group continues processing even if some partitions are temporarily unreachable (consumer group rebalances around the unavailable partitions). Soft state: the consumer's view of data changes over time as more events arrive - consumer application state is a projection of the event log that grows as events are processed. Eventually consistent: after a partition heals and events replicate, all consumers will eventually see the same events. No global snapshot of 'current state' exists at any moment. BASE vs ACID for messaging: ACID applies to the Kafka broker's write operations (a message write to a replicated partition is ACID if acks=all). BASE applies to consumer processing - consumers see events eventually, not instantaneously, and the consumer's derived state is eventually consistent with the event log."
 
 *What separates good from great:* "Understanding BASE helps set realistic expectations for consumers: 'I query the consumer's state and it says X. Two seconds later it says Y.' This is not a bug - it is the BASE model. Applications built on eventually consistent consumers must be designed to tolerate this: UI must show 'processing' states, and business logic must not assume consumer state is immediately consistent with the producing service's state."
 
-#### Q5
-**"Design a globally consistent event counter using Kafka."**
+**[SENIOR] Q5 - [DESIGN] Design a globally consistent event counter using Kafka.**
 > "Globally consistent in the strong sense (all consumers see the same count at the same time) cannot be achieved with standard Kafka due to CAP. The practical design: use a single-partition counter topic. A single partition has strict ordering - events are read in the order they were produced. All consumers of this partition see the same count, in the same order. Limitation: single partition = single write throughput (max a few hundred thousand events per second). For higher throughput: sharded counters (one partition per shard, each with an independent count). A periodic aggregation job (Kafka Streams, Flink) computes the total count with a configurable lag. This is eventually consistent - the aggregated count is accurate as of N seconds ago. The honest answer to 'globally consistent event counter at scale': define 'consistent.' If you mean all consumers see the exact same count at this exact millisecond, you cannot achieve this at global scale without a central consensus (and the latency that entails). If you mean consumers see a count that is accurate within 5 seconds, Kafka Streams aggregation achieves this easily."
 
 *What separates good from great:* "The question reveals a hidden assumption that needs surfacing: what does 'globally consistent' mean for a counter in a distributed system? Surfacing the assumption and explaining the CAP trade-off before designing the solution demonstrates senior-level thinking."
 
-#### Q6
-**"How does Kafka's exactly-once semantics interact with the CAP theorem?"**
+**[SENIOR] Q6 - [MECHANISM] How does Kafka's exactly-once semantics interact with the CAP theorem?**
 > "Kafka's exactly-once (idempotent producer + transactions) provides ACID-like guarantees within the Kafka ecosystem, but it does not change the CAP position. Exactly-once means: a message is written to a partition exactly once (idempotent producer prevents duplicates from retries). The Kafka transaction mechanism ensures atomic multi-partition writes. But during a partition, the consistency guarantees still apply based on the acks configuration. If the transactional coordinator is in the minority partition during a network split, transactions will time out. The system prefers consistency (transactions fail) over availability (accepting writes that can't be coordinated). Exactly-once does not add availability - it adds durability and atomic consistency for the transactions that do succeed."
 
 *What separates good from great:* "Exactly-once semantics apply to the write path. Consumer exactly-once requires more: the consumer must write its offset and its business state atomically. This is the consume-transform-produce pattern with Kafka transactions, consuming from one topic and producing to another in one atomic transaction. Without the consumer side, you have producer exactly-once but still consumer at-least-once."
 
-#### Q7
-**"What does Kafka Raft (KRaft) mode change about CAP theorem considerations?"**
+**[SENIOR] Q7 - [MECHANISM] What does Kafka Raft (KRaft) mode change about CAP theorem considerations?**
 > "KRaft replaces ZooKeeper as Kafka's metadata layer. Previously, ZooKeeper managed cluster metadata (broker registration, topic configuration, controller election). A ZooKeeper outage could prevent Kafka from performing controller elections or configuration changes. With KRaft, Kafka manages its own metadata via a built-in Raft consensus group. This improves the consistency of metadata operations: Raft provides stronger consistency guarantees for metadata than ZooKeeper did in practice. The CAP position of data plane operations (produce and consume) is unchanged - acks and min.insync.replicas still govern those trade-offs. What changes: the control plane (metadata) is more consistent and available in KRaft because it does not depend on an external ZooKeeper ensemble. Operational CAP improvement: eliminating ZooKeeper removes a separate component that could become unavailable independently, simplifying the overall system's failure modes."
 
 *What separates good from great:* "KRaft mode also eliminates the ZooKeeper scalability limit on partition count. ZooKeeper struggled with more than 200K partitions per cluster. KRaft supports millions of partitions. This changes the architecture pattern for large-scale Kafka deployments - more topics and partitions are practical, which affects global messaging topology options."

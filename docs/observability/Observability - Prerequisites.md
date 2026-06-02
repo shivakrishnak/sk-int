@@ -770,7 +770,7 @@ curl 'http://jaeger:16686/api/services' | jq
 # where a parent trace_id exists in logs but not in Jaeger
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This where a parent trace_id exists in logs but not in Jaeger example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add trace context propagation to all messaging middleware
 using W3C Trace Context headers. Test with integration tests that
@@ -798,7 +798,7 @@ curl http://otel-collector:8888/metrics | \
 # If rate > 10,000/sec from one service, reduce granularity
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If rate > 10,000/sec from one service, reduce granularity example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Disable auto-instrumentation for internal methods. Keep
 spans only at external service boundaries: HTTP, DB, cache, queue.
@@ -829,7 +829,7 @@ curl -s http://prometheus:9090/api/v1/query \
 # Any metric with > 100,000 series is a cardinality risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any metric with > 100,000 series is a cardinality risk example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Remove high-cardinality labels from Prometheus metrics.
 Use trace exemplars to link specific metric data points to trace
@@ -1326,7 +1326,7 @@ curl 'http://jaeger:16686/api/traces/{trace-id}' | \
 # If root_dur >> child_sum, there is an instrumentation gap
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If root_dur >> child_sum, there is an instrumentation gap example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Instrument the async hops. Pass trace context through
 message headers and async task executors.

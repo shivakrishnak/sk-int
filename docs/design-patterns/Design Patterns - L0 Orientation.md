@@ -168,7 +168,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Every new notification channel requires
+> **Code walkthrough:** Every new notification channel requiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > modifying `OrderService`. The class knows all concrete listener
 > types. Adding a 4th listener violates the Open/Closed Principle
 > and creates tight coupling.
@@ -201,7 +201,7 @@ public class AnalyticsNotifier implements OrderListener {
 }
 ```
 
-> **Code walkthrough:** `OrderService` depends on the `OrderListener`
+> **Code walkthrough:** `OrderService` depends on the `OrderListener`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > interface, not on concrete classes. Adding a new notification type
 > requires zero changes to `OrderService` - create a new implementation
 > and register it. This is Observer: Subject (`OrderService`) maintains
@@ -513,7 +513,7 @@ BEHAVIORAL (11 patterns)
   Visitor                  operations on object structure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GoF Pattern Categories example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The category reveals the locus of change. Creational: what changes is
@@ -565,7 +565,7 @@ public class EmailNotifierFactory extends NotifierFactory {
 }
 ```
 
-> **Code walkthrough:** Factory Method separates object creation from
+> **Code walkthrough:** Factory Method separates object creation fromice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > use. `NotifierFactory` knows how to use a `Notifier` but not which
 > concrete type to create. Subclasses fill in the creation. The caller
 > picks the factory subclass at startup; after that, the type is hidden.
@@ -592,7 +592,7 @@ public class LoggingOrderService implements OrderService {
 }
 ```
 
-> **Code walkthrough:** Decorator wraps an existing object through the
+> **Code walkthrough:** Decorator wraps an existing object through theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > same interface. `LoggingOrderService` adds logging to any `OrderService`
 > without inheritance. This is structurally how Spring AOP works: a proxy
 > wraps the target bean, adding cross-cutting behavior.
@@ -932,7 +932,7 @@ CONSEQUENCES:
   cascade risk if one observer triggers another.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pattern Anatomy and Recognition example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Structural fingerprints for common patterns:
 
@@ -965,7 +965,7 @@ Builder:
   Risk: partial builds if build() not called
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pattern Anatomy and Recognition example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Every pattern has a structural fingerprint. Once you know the fingerprint,
@@ -1019,7 +1019,7 @@ public interface UserChangeListener {
 }
 ```
 
-> **Code walkthrough:** This is Observer. Fingerprint: `UserRepository`
+> **Code walkthrough:** This is Observer. Fingerprint: `UserRepository`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (Subject) holds `List<UserChangeListener>` (Observer interface).
 > `updateUser` iterates the list and calls through the interface.
 > Subject does not know concrete listener types. Production gap: if
@@ -1049,7 +1049,7 @@ public class SortedList<T extends Comparable<T>> {
 // new SortedList<>((a,b)->a.getName().compareTo(b.getName()))
 ```
 
-> **Code walkthrough:** This is Strategy. `SortedList` holds a
+> **Code walkthrough:** This is Strategy. `SortedList` holds aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Comparator<T>` field (the Strategy interface). The sort algorithm
 > delegates to the strategy; the caller selects the strategy at
 > construction time. In Java 8+, the strategy is passed as a lambda -

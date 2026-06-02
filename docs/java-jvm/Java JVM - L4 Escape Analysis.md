@@ -136,7 +136,7 @@ SCALAR REPLACEMENT EXAMPLE:
     - Equivalent speed to C struct on stack
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Escape Analysis example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -146,6 +146,12 @@ SCALAR REPLACEMENT EXAMPLE:
 > escape through method calls that the JIT can't inline. The GOOD pattern structures
 > code so objects remain in scope, enabling scalar replacement. The key insight: what
 > LOOKS like a temporary allocation may or may not be eliminated - measurement is required.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: object appears local but escapes through external method call
@@ -231,7 +237,7 @@ public double benchmarkWithEA() {
 // (numbers are illustrative - actual depends on workload)
 ```
 
-> **Code walkthrough:** The JMH comparison between `DoEscapeAnalysis` enabled vs
+> **Code walkthrough:** The JMH comparison between `DoEscapeAnalysis` enabled vsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > disabled is the definitive way to measure escape analysis impact on a specific
 > code path. A 15x difference in the `magnitude` example is not unusual - the
 > no-EA version allocates on every call (GC pressure, cache misses), the EA version
@@ -320,7 +326,7 @@ Fix:
   Option E: Pre-allocate and reuse (ThreadLocal pool for hot paths)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -416,7 +422,7 @@ public String withStringBufferNoEA() {
 # JMH result: ~35ns/op (synchronized overhead visible: 3x slower)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JMH result: ~35ns/op (synchronized overhead visible: 3x slower) example demonstrates shell script pattern using concurrency primitive. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Lock elision is visible in `-XX:+PrintOptimizations`
 output (diagnostic JVM build). Each eliminated lock is logged. For production debugging:
@@ -682,7 +688,7 @@ ALTERNATIVE (Value types with Valhalla):
   // Currently: JDK 23+ preview
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Design principles:** (1) ThreadLocal for hot-path context objects eliminates escape
 across thread boundaries. (2) "Mutate in place" reduces intermediate object count.

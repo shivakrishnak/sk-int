@@ -122,7 +122,7 @@ Template Method:
   Code clue: "public final void execute() { before(); doX(); after(); }"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pattern Recognition in Code example demonstrates contract definition using authentication. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Pattern fingerprints (structural clues):**
 
@@ -169,13 +169,23 @@ public class CachingRepository implements UserRepository {
 // 3. Adds behavior (cache check/put) around the delegation call
 ```
 
-> **Code walkthrough:** `CachingRepository` is a Decorator. The three
+> **Code walkthrough:** `CachingRepository` is a Decorator. The threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > recognition signals: (1) implements `UserRepository` - same interface
 > as the delegate. (2) takes `UserRepository` as constructor argument -
 > wraps the real implementation. (3) adds behavior (cache check) around
 > `delegate.findById()`. Decorators are easy to miss because they look
 > like normal implementations. The tell: "this class implements the same
 > interface it takes as a constructor argument."
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // REFACTORING TO A PATTERN: recognizing where to apply
@@ -232,7 +242,7 @@ public class ReportExporter {
 // No changes to ReportExporter.
 ```
 
-> **Code walkthrough:** The `if/else on type` in `ReportExporter` is the
+> **Code walkthrough:** The `if/else on type` in `ReportExporter` is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > OCP violation signal: adding a new format requires modifying `ReportExporter`.
 > The Strategy pattern recognition: multiple branches doing "the same thing,
 > differently" is always a Strategy candidate. After refactoring: `ReportExporter`
@@ -481,6 +491,12 @@ outweighs them. They are not worth it when the benefit is hypothetical.
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // OVER-ENGINEERING: Strategy with one implementation
 
@@ -509,7 +525,7 @@ public class UserNotifier {
 // No performance penalty for extracting the interface later.
 ```
 
-> **Code walkthrough:** The "BAD" example adds an interface before there
+> **Code walkthrough:** The "BAD" example adds an interface before thereice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is a reason to have one. Every reader must check "are there other
 > implementations of `UserNotifier`?" - and the answer is no. Cognitive
 > overhead with zero benefit. The "GOOD" example: simple class, easy to
@@ -549,7 +565,7 @@ public class PushNotificationStrategy
 // This is the right use of Strategy.
 ```
 
-> **Code walkthrough:** Three implementations of `NotificationStrategy`
+> **Code walkthrough:** Three implementations of `NotificationStrategy`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > exist. The Strategy pattern eliminates a three-branch if/else chain
 > in the caller. Adding a new channel: create a new class annotated
 > with `@Component("SLACK")`, Spring auto-registers it. This is appropriate
@@ -811,7 +827,7 @@ Smell: Tight coupling - one class knows 5 others
 Pattern: Mediator or Event-driven (Observer)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Refactoring to Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Refactoring mechanics:**
 
@@ -835,7 +851,7 @@ Run tests after EVERY step.
 Total time: 20-30 minutes.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Refactoring to Patterns example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -930,7 +946,7 @@ public class PricingService {
 // No changes to PricingService or any other class.
 ```
 
-> **Code walkthrough:** Four refactoring steps, each independently
+> **Code walkthrough:** Four refactoring steps, each independentlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > verifiable with tests. Step 0: the if/else is correct but not
 > extensible (OCP violation). Steps 1-3: Extract Method, Extract
 > Interface, Extract Class. Step 4: replace the if/else dispatch with
@@ -939,6 +955,12 @@ public class PricingService {
 > run in isolation without constructing a full `PricingService`.
 > Cognitive load per class drops from "understand all the if/else" to
 > "understand one discount calculation."
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // REFACTORING TO BUILDER: Constructor parameter explosion
@@ -1023,7 +1045,7 @@ EmailMessage msg = EmailMessage
     .build();
 ```
 
-> **Code walkthrough:** The Builder refactoring solves two problems:
+> **Code walkthrough:** The Builder refactoring solves two problems:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (1) telescoping constructors (5 overloaded constructors with different
 > optional parameter combinations); (2) parameter position confusion
 > (which positional argument is which?). The Builder's named methods

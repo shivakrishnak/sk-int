@@ -64,7 +64,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Flyway vs Liquibase setup and integration with JPA:**
-```
+```plaintext
 FLYWAY SETUP (Spring Boot auto-configuration):
 
   # application.properties:
@@ -159,7 +159,7 @@ ADDING COLUMN: SAFE MIGRATION PATTERN:
   # Safe: add index CONCURRENTLY (PostgreSQL, no table lock):
   V6__add_products_name_index.sql:
   CREATE INDEX CONCURRENTLY idx_products_name ON products(name);
-  -- CONCURRENTLY: no exclusive table lock. Safe for production with live traffic.
+  -- CONCURRENTLY: no exclusive table lock. Safe for production with live...
   -- Flyway: run in own transaction (or set spring.flyway.mixed=false).
   
   # UNSAFE: renaming a column (breaks existing queries):
@@ -175,7 +175,7 @@ ADDING COLUMN: SAFE MIGRATION PATTERN:
   -- Phase 3 (next deploy after all instances updated): drop old column.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This UNSAFE: renaming a column (breaks existing queries): example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -265,7 +265,7 @@ all environments is the goal.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Flyway startup failure - "Migration checksum mismatch".**
-```
+```plaintext
 Symptom: application fails to start with:
   "FlywayException: Validate failed: Detected failed migration to version 3"
   or: "Migration checksum mismatch for migration version 5"
@@ -292,7 +292,7 @@ Fix:
     Git pre-commit hook: detect changes to db/migration/ for already-committed files.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use only when the modification was intentional AND DB state is correct. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -380,7 +380,7 @@ instances updated, add the NOT NULL constraint. Always separate schema changes f
 ### 📘 Concept Explanation
 
 **@Embeddable, @ElementCollection, and @Converter patterns:**
-```
+```plaintext
 @EMBEDDABLE (value object mapping):
 
   // Define the value object:
@@ -529,7 +529,7 @@ instances updated, add the NOT NULL constraint. Always separate schema changes f
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -655,7 +655,7 @@ Fix option 2: If collection size is bounded and small (< 10):
   At that size: replace-all is acceptable.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

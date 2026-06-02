@@ -152,6 +152,90 @@ differentiator from Spring. Spring uses ClassPathScanningCandidateComponentProvi
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut is a stripped-down Spring Boot.**
+
+Micronaut is not a lighter version of Spring - it is a ground-up
+redesign with a fundamentally different architecture. Spring processes
+annotations at runtime using reflection. Micronaut processes
+annotations at compile time using Java annotation processors (APT/KAPT).
+This difference means Micronaut's runtime has no classpath scanning,
+no runtime proxies, and no reflection-based dependency injection.
+The APIs look superficially similar (both use `@Controller`, `@Inject`),
+but the execution model is completely different.
+
+**Misconception 2: Micronaut is only useful for serverless/Lambda.**
+
+Micronaut's compile-time DI and fast startup benefit any deployment
+where startup time matters: Kubernetes pods (faster scale-up),
+testing (faster test cycles), and CI/CD pipelines (quicker feedback).
+It also reduces memory per-instance - relevant for high-density
+pod deployments with tight resource limits. The native image support
+is a bonus, not the primary value proposition. Many teams use
+Micronaut in traditional long-running services specifically for its
+lower memory footprint compared to Spring.
+
+**Misconception 3: Micronaut's compile-time approach means you
+cannot use dynamic features at runtime.**
+
+Micronaut restricts REFLECTIVE dynamic behavior - you cannot
+dynamically create beans at runtime by scanning classes you did not
+register. But it fully supports dynamic behavior that does not rely
+on reflection: dynamic routing, runtime configuration overrides,
+feature flags, event publishing, conditional beans via
+`@Requires`, and programmatic bean registration via
+`BeanDefinitionRegistry`. The restriction is specifically on
+reflection-based meta-programming.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Application fails to start with
+"No bean of type X found" after migrating from Spring.**
+
+Symptom: `No bean of type [com.example.MyService] found` at
+startup. Root cause: Micronaut requires beans to be discoverable
+at compile time. If a class is in a JAR without Micronaut
+annotation processing, or if it uses reflection-based proxy
+patterns that Micronaut cannot process, the bean is invisible.
+Diagnosis: check if the failing class is in a third-party JAR
+without Micronaut support; check if it uses Spring-specific
+annotations instead of `jakarta.inject.*`. Fix: use
+`@Factory` to manually create the bean; add an explicit
+`@Introspected` annotation; or use `@Requires` to gate the
+missing dependency.
+
+**Failure Mode 2: GraalVM native-image build fails with
+"reflection not found" errors for Micronaut beans.**
+
+Symptom: native build succeeds but runtime throws
+`ClassNotFoundException` or `InstantiationException` for
+Micronaut-managed classes. Root cause: a library used by
+the Micronaut application uses reflection without registering
+it, and the closed-world analysis misses it. Diagnosis: run
+the native build with `-H:+ReportExceptionStackTraces` to get
+detailed failure messages; use `reflect-config.json` to list
+missing classes. Fix: add reflect/resource configuration for
+the offending library; use Micronaut's GraalVM integration
+annotations (`@ReflectiveAccess`) for classes that need it.
+
+**Failure Mode 3: Slow compilation times in large projects
+due to annotation processing overhead.**
+
+Symptom: incremental builds take 30-60 seconds even for small
+changes. Root cause: Micronaut's annotation processors run on
+every compile cycle, regenerating bean definitions and HTTP
+client stubs. Diagnosis: profile the build with Gradle's
+`--profile` flag; check if annotation processing is running
+on all source sets. Fix: enable Gradle incremental annotation
+processing (Micronaut 3.x+ supports this); split large
+monolithic modules into smaller subprojects to reduce the
+annotation processing scope.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 | Experience | Time | Depth |
@@ -303,6 +387,54 @@ clearest cases."
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut was created to solve the fundamental tension between
+Java's enterprise framework capabilities and cloud-native
+deployment requirements. Spring Boot, the dominant Java
+microservices framework, uses runtime reflection for DI, AOP,
+and configuration binding. This approach works well for
+traditional deployments but creates systemic problems in
+cloud environments.
+
+**How it works:**
+
+Spring's startup sequence: JVM starts -> Spring scans the
+classpath for annotated classes -> creates bean proxies via
+CGLIB (bytecode generation) -> initializes ApplicationContext
+-> ready. Each step involves reflection and classloading.
+Micronaut's startup sequence: JVM starts -> loads pre-generated
+bean factory classes (compiled at build time) -> wires beans ->
+ready. No scanning, no proxy generation, no reflection.
+
+The compile-time shift is implemented via Java Annotation
+Processor (APT) during `javac`. Micronaut's processors read
+`@Singleton`, `@Controller`, `@Client` etc. and generate
+concrete implementation classes (e.g. `$MyService$Definition.class`)
+that the runtime uses directly.
+
+**Why it matters:**
+
+A Spring Boot app (no-feature scaffold): startup ~2s, memory
+~200MB. A Micronaut equivalent: startup ~200ms, memory ~60MB.
+At 50-pod deployment: 50 × 140MB saved = 7GB less RAM. For
+Lambda functions with cold-start budget under 1s, Spring often
+cannot start in time without GraalVM; Micronaut can start in
+~200ms as a regular JVM process.
+
+**Trade-offs:**
+
+Micronaut faster/smaller: startup, memory, GraalVM compatibility.
+Spring advantages: vastly larger ecosystem, more dynamic features,
+easier reflection-based meta-programming, better IDE tooling
+maturity, larger talent pool. Choose Micronaut when deployment
+density or startup time is a hard constraint; choose Spring when
+ecosystem breadth or team familiarity is more important.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Micronaut was created to be faster and
@@ -316,6 +448,87 @@ has in cloud-native: (1) cold start latency (Lambda),
 (3) GraalVM native-image compatibility. If none of
 these are constraints, Spring is often the better
 choice (larger ecosystem, more mature)."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut's startup speed advantage
+disappears in long-running services.**
+
+Startup speed matters for initial deployment AND for horizontal
+scaling events (Kubernetes pod scale-out). A service that takes
+30 seconds to scale from 2 to 10 pods during a traffic spike
+may fail SLOs. Micronaut's 200ms startup vs Spring's 8s means
+Kubernetes can scale out 40x faster. The memory advantage also
+applies continuously - a 140MB/pod saving compounds across every
+pod in the fleet at all times.
+
+**Misconception 2: Micronaut is harder to use than Spring
+because it lacks Spring's convenience annotations.**
+
+Micronaut has equivalent annotations for nearly all Spring
+features: `@Controller` (same), `@Get`/`@Post` instead of
+`@GetMapping`/`@PostMapping`, `@Singleton`/`@Prototype` instead
+of Spring scopes, `@ConfigurationProperties` (same concept),
+`@Requires` instead of `@ConditionalOn*`. The learning curve
+is about 2-3 weeks for an experienced Spring developer - the
+concepts are the same, only the annotations and extension points
+differ slightly.
+
+**Misconception 3: You must use GraalVM with Micronaut
+to get its performance benefits.**
+
+GraalVM native image is optional and primarily relevant for
+Lambda/edge computing. On regular JVM, Micronaut provides
+significantly faster startup (200ms vs 2-8s) and lower memory
+usage (60-100MB vs 200-400MB) without GraalVM, simply because
+it avoids reflection-based classloading and proxy generation.
+Most Micronaut production deployments use standard OpenJDK or
+Amazon Corretto, not GraalVM.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Compile-time validation errors obscure
+the actual misconfiguration.**
+
+Symptom: build fails with `Error: Could not write class file`
+or complex APT error stack traces that do not point to the
+actual user error. Root cause: Micronaut's annotation processors
+encounter an invalid configuration (circular dependency, wrong
+type injection, missing `@Introspected`) and throw a compile-
+time exception that may be buried in the build output. Diagnosis:
+run `./gradlew compileJava --stacktrace` and look for the
+innermost `Caused by:` message. Fix: read the FULL annotation
+processor error message; common causes are missing `@Introspected`
+on injected POJOs or type mismatch in `@ConfigurationProperties`.
+
+**Failure Mode 2: Runtime injection fails for beans in
+modules compiled without Micronaut annotation processing.**
+
+Symptom: bean injection works in the main application module
+but fails for beans defined in a utility or shared library
+submodule. Root cause: the submodule was compiled without
+Micronaut's annotation processor configured in its build
+file. Micronaut cannot discover beans in modules where APT
+did not run. Diagnosis: check if `micronaut-inject-java` is
+in the annotation processor dependencies of the submodule.
+Fix: add the annotation processor to each module that defines
+Micronaut beans.
+
+**Failure Mode 3: ApplicationContext tests fail because
+test beans are not injected when using @MicronautTest.**
+
+Symptom: `@MicronautTest` annotated test has `@Inject`-annotated
+fields that remain null. Root cause: test class is not in the
+same package as the Application class, or the test is not using
+the correct `@MicronautTest` setup. Diagnosis: check if
+`@MicronautTest(application = Application.class)` is specified;
+verify the test class extends `AbstractMicronautTest` if required.
+Fix: add `@MicronautTest(application = Application.class)` or
+configure the test application class explicitly.
 
 ---
 
@@ -477,6 +690,46 @@ Lambda serverless + no CDI complexity → Micronaut."
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Three leading Java microservices frameworks that all support
+cloud-native deployment but with different architectural
+philosophies and trade-off profiles.
+
+**How it works:**
+
+- **Spring Boot**: Runtime DI via reflection + CGLIB proxies.
+  Largest ecosystem (thousands of starters). AOT compilation
+  available since 3.x but optional. Best IDE support.
+- **Micronaut**: Compile-time DI (Micronaut APT). No runtime
+  reflection for DI. Native-ready from day one. Smaller
+  ecosystem. Fast startup on standard JVM.
+- **Quarkus**: Build-time augmentation (Quarkus build system
+  processes extensions at build time). JVM and native modes.
+  Imperative (RESTEasy) + reactive (Mutiny) programming models.
+  Dev mode with live reload.
+
+**Comparison matrix:**
+
+| Dimension | Spring Boot | Micronaut | Quarkus |
+|---|---|---|---|
+| Startup (JVM) | 2-8s | 0.1-0.5s | 0.1-0.4s |
+| Memory (JVM) | 200-400MB | 60-100MB | 60-120MB |
+| Ecosystem | Vast (1000s starters) | Moderate | Large |
+| Learning curve | Gentle (vast docs) | Moderate | Moderate |
+| Native support | Spring AOT (3.x+) | Built-in | Built-in |
+| Dev experience | Mature tooling | Good | Excellent (dev mode) |
+
+**Decision framework:**
+
+Spring Boot: existing Spring expertise, need maximum ecosystem.
+Micronaut: need fast startup on JVM without native compilation.
+Quarkus: need best developer experience + native/JVM flexibility.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Spring Boot has the biggest ecosystem but
@@ -490,6 +743,86 @@ teams already on Spring or needing rich enterprise
 integrations: Spring Boot. Quarkus has CDI which is
 the Java standard - useful for teams that value
 standards compliance."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Quarkus is always faster than Micronaut
+or Spring Boot.**
+
+Performance depends heavily on the workload. In startup time
+and memory, Quarkus and Micronaut are comparable (both compile-
+time DI frameworks). For throughput and latency at steady state,
+all three are within 5-10% of each other for typical REST API
+workloads. The "Quarkus is fastest" claim comes from benchmarks
+that favor cold start scenarios. For long-running services
+handling steady traffic, the difference is negligible. Choose
+based on ecosystem fit and team expertise, not micro-benchmarks.
+
+**Misconception 2: You cannot use Spring libraries with
+Micronaut or Quarkus.**
+
+Quarkus supports Spring compatibility extensions (`quarkus-spring-web`,
+`quarkus-spring-di`) that allow using Spring annotations in Quarkus.
+Micronaut has similar compatibility layers. However, these do NOT
+load the Spring runtime - they translate Spring annotations to the
+framework's native model at build time. Not all Spring features
+are supported; advanced Spring features (SpEL, complex `@Conditional`
+logic, Spring Security's full feature set) may not translate.
+
+**Misconception 3: Migrating from Spring Boot to Micronaut
+is just a search-and-replace of annotations.**
+
+While many annotations have Micronaut equivalents, the migration
+involves: (1) understanding which Spring-idiomatic patterns cannot
+be expressed in Micronaut (runtime bean manipulation, reflection-
+heavy custom frameworks), (2) replacing Spring Data with Micronaut
+Data (different but conceptually similar), (3) adapting Spring
+Security to Micronaut Security (different API, similar model),
+and (4) updating test infrastructure. Plan 2-4 weeks for a
+medium-size Spring Boot app migration to Micronaut.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Framework selection decision made solely
+on benchmarks leads to mismatched team expertise.**
+
+Symptom: team adopts Quarkus/Micronaut for performance benchmarks
+but struggles with the ecosystem - cannot find integrations for
+existing services, or spends weeks working around missing features.
+Root cause: framework selection optimized for one dimension
+(startup speed) while ignoring others (ecosystem, team knowledge,
+available hiring pool). Diagnosis: after 2-3 months, the team
+is spending more time on framework workarounds than on business
+features. Fix: run a proof-of-concept that exercises your
+specific requirements (message broker integration, existing DB
+drivers, security library) before committing to a new framework.
+
+**Failure Mode 2: Using Spring Boot-style lazy initialization
+patterns in Micronaut breaks compile-time guarantees.**
+
+Symptom: `ApplicationContext.getBean(Class)` calls succeed in
+development but fail in native image builds with "bean not found."
+Root cause: programmatic bean lookup bypasses Micronaut's compile-
+time analysis - the native image compiler cannot trace which beans
+will be requested at runtime. Fix: prefer constructor injection or
+`@Inject` field injection over programmatic `getBean()` calls.
+When dynamic bean lookup is required, declare it explicitly via
+`BeanLocator` with known types.
+
+**Failure Mode 3: Native image build times make CI/CD
+impractical for fast iteration.**
+
+Symptom: each CI pipeline run takes 15-25 minutes for the native
+image compilation step. Root cause: GraalVM native-image performs
+whole-program analysis - inherently slow for large applications.
+Fix: use layered Docker builds with a cached base layer that
+excludes frequently-changing application code; run native builds
+only on release/main branches, not on feature branches; use JVM
+mode builds for development and PR validation.
 
 ---
 
@@ -645,6 +978,52 @@ and native-image compatibility."
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut's architecture is built on a single guiding principle:
+move as much work as possible from runtime to compile time.
+Every feature in Micronaut is designed to answer: "Can this be
+determined at compile time, and if so, should it be?"
+
+**How it works:**
+
+Micronaut implements four compile-time mechanisms:
+
+1. **Dependency Injection**: Annotation processors generate
+   `BeanDefinition` classes for each bean. At runtime, Micronaut's
+   `ApplicationContext` loads these pre-built definitions directly.
+2. **AOP**: Interceptors are woven at compile time into generated
+   subclasses (not runtime CGLIB proxies).
+3. **HTTP routing**: Controller routes are compiled into an
+   efficient lookup structure at build time.
+4. **Configuration binding**: `@ConfigurationProperties` classes
+   have type-safe binding generated at compile time.
+
+The result: at runtime, Micronaut is essentially executing
+pre-compiled code paths with no dynamic discovery overhead.
+
+**Why it matters:**
+
+The philosophical shift has second-order effects beyond startup
+speed: compile-time errors catch misconfigured beans before
+deployment, reducing production surprises. GraalVM native image
+compatibility follows naturally - the closed-world assumption is
+satisfied because reflection is not used. Testing is faster
+because the ApplicationContext starts in milliseconds.
+
+**Trade-offs:**
+
+Less dynamic: cannot register beans at runtime via reflection,
+cannot override configuration dynamically via bytecode
+manipulation. Longer build times: annotation processing adds
+10-30% to build time. Smaller escape hatch: when you need
+something Micronaut doesn't support out of the box, the path
+forward is more explicit than Spring's open reflection model.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Micronaut's philosophy is to do as much
@@ -657,6 +1036,87 @@ ready), cloud-native defaults (service discovery,
 health, tracing built-in). The trade-off Micronaut
 accepts: compile time increases, and dynamic behavior
 (runtime bean registration) is harder."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut's architecture means all
+configuration is baked in at compile time.**
+
+Micronaut's compile-time work covers the STRUCTURE of the
+application (which beans exist, how they wire together). Runtime
+CONFIGURATION (database URLs, feature flags, external service
+endpoints) is still read at runtime from environment variables,
+system properties, config files, and configuration servers
+(Consul, AWS Parameter Store). `@ConfigurationProperties` binds
+runtime values to compile-time-generated type-safe classes.
+The distinction: wiring (compile-time) vs values (runtime).
+
+**Misconception 2: Compile-time DI means you cannot have
+conditional beans or feature toggles.**
+
+Micronaut has `@Requires` - a compile-time conditional annotation
+that creates beans only when specific conditions are met:
+`@Requires(property="feature.enabled", value="true")` or
+`@Requires(env="production")`. These conditions ARE evaluated
+at runtime against the current configuration, but the BEAN
+DEFINITION exists statically. This is functionally equivalent
+to Spring's `@ConditionalOnProperty` but with better performance
+and native image compatibility.
+
+**Misconception 3: The compile-time model makes Micronaut
+suitable only for simple CRUD microservices.**
+
+Micronaut supports the full range of enterprise Java patterns:
+reactive programming (via RxJava/Reactor), event-driven messaging
+(Kafka, RabbitMQ, SQS), distributed tracing (Zipkin, Jaeger,
+OpenTelemetry), security (JWT, OAuth2, LDAP), caching (Hazelcast,
+Redis, Caffeine), database access (Hibernate, JDBC, R2DBC),
+and function-as-a-service. The compile-time architecture is the
+delivery mechanism, not a feature restriction.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Complex reflection-based third-party
+libraries fail silently in Micronaut context.**
+
+Symptom: library that worked in Spring Boot does not function
+in Micronaut - objects are null, methods are not intercepted,
+or dynamic proxies fail. Root cause: the library relies on
+Spring's reflection infrastructure, CGLIB proxies, or
+`ApplicationContext.getBean()` that does not exist in Micronaut.
+Diagnosis: enable debug logging; check if library's documentation
+mentions Spring specifically; look for Micronaut integration
+module (many popular Spring libraries have Micronaut ports).
+Fix: use a Micronaut-native equivalent; write a `@Factory` wrapper
+that bridges the library to Micronaut's bean model.
+
+**Failure Mode 2: Build hangs or runs out of memory due to
+annotation processing on very large source sets.**
+
+Symptom: `./gradlew compileJava` hangs at annotation processing
+or fails with `OutOfMemoryError: GC overhead limit exceeded`.
+Root cause: Micronaut's annotation processors load many classes
+for analysis; very large source trees (1000+ annotated classes)
+can exhaust the default JVM memory. Fix: increase the Gradle
+daemon heap: `org.gradle.jvmargs=-Xmx4g` in `gradle.properties`;
+split large modules into smaller submodules; upgrade to
+Micronaut 4.x which improved APT memory efficiency.
+
+**Failure Mode 3: Circular dependency at compile-time
+produces cryptic processor error.**
+
+Symptom: build fails with `APT error: circular dependency
+detected` or `StackOverflowError in annotation processor`.
+Root cause: bean A depends on bean B which depends on bean A
+- Micronaut detects this at compile time (unlike Spring which
+may detect it at startup). Fix: break the circular dependency
+by introducing an interface, using an event/listener pattern,
+or making one injection `@Lazy` (Micronaut supports lazy
+injection to break cycles in specific cases).
 
 ---
 

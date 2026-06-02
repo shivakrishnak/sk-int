@@ -108,7 +108,7 @@ console.log('D');
 // Output: A, D, C, B
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Mental Models for JavaScript Async Reasoning example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ```javascript
 // TEST: does await pause the whole program?
@@ -130,7 +130,7 @@ console.log('2: after calling fetchData');
 // Output: 1, 2, 3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Mental Models for JavaScript Async Reasoning example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // TEST: forEach await misconception
@@ -160,7 +160,7 @@ for (const id of ids) {
 console.log('done'); // now actually after all data
 ```
 
-> **Code walkthrough:** The three code blocks test the mental
+> **Code walkthrough:** The three code blocks test the mentalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > models. The two-queue test shows that Promise.then (microtask)
 > always fires before setTimeout(0) (macrotask), even though
 > setTimeout(0) is registered first. The paused-function test
@@ -210,7 +210,7 @@ async function badOrder() {
 }
 ```
 
-> **Code walkthrough:** Without the two-queue mental model,
+> **Code walkthrough:** Without the two-queue mental model,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > this is mysterious. With it: `await Promise.resolve()` yields
 > to the microtask queue. The microtask drains (resume this
 > function). Only then does the event loop pick up the setTimeout
@@ -300,7 +300,7 @@ const result = await fetchData();
 processData(result); // correct: awaits before using
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -314,7 +314,7 @@ processData(result); // correct: awaits before using
 | Debugging | 1 | Using models to predict before debugging |
 | Behavioral | 1 | Teaching async to a team |
 
-**Q1. Explain the output order of this code and why:**
+**[JUNIOR] Q1 - [SCENARIO] Explain the output order of this code and why:**
 ```javascript
 console.log(1);
 setTimeout(() => console.log(2), 0);
@@ -323,7 +323,7 @@ queueMicrotask(() => console.log(4));
 console.log(5);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Using the two-queue model:
 - Synchronous: 1, 5 (run in-line, no queue)
@@ -345,7 +345,7 @@ For all practical purposes, they have the same priority.
 
 ---
 
-**Q2. Why does `await` inside `forEach` not work as expected?**
+**[JUNIOR] Q2 - [MECHANISM] Why does `await` inside `forEach` not work as expected?**
 
 The paused-function model explains it:
 1. `forEach` calls the async callback for element 0
@@ -366,7 +366,7 @@ for (const item of items) {
 await Promise.all(items.map(item => process(item)));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Knowing that `Promise.all`
 with `.map` is O(N) parallel, while `for...of` with `await`
@@ -379,7 +379,7 @@ Do later operations depend on earlier results? -> sequential.
 
 ---
 
-**Q3. How do you teach the mental models to a new team member?**
+**[JUNIOR] Q3 - [MECHANISM] How do you teach the mental models to a new team member?**
 
 Teaching approach:
 1. Start with the output-order quiz (Q1 above). Let them guess.
@@ -398,7 +398,7 @@ dissonance, which is a stronger memory consolidation trigger).
 
 ---
 
-**Q4. What is the danger of an infinite microtask loop?**
+**[MID] Q4 - [MECHANISM] What is the danger of an infinite microtask loop?**
 
 ```javascript
 // Infinite microtask loop: starves all macrotasks
@@ -411,7 +411,7 @@ infiniteMicrotask();
 // Node.js: no I/O events processed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Using the two-queue model: the microtask queue must drain
 before any macrotask runs. If a microtask always queues
@@ -434,7 +434,7 @@ to I/O between calls.
 
 ---
 
-**Q5. What is the "mental model" for Promises vs callbacks?**
+**[MID] Q5 - [TRADE-OFF] What is the "mental model" for Promises vs callbacks?**
 
 Callbacks (CPS) model: "tell me what to do when done."
 Promise model: "give me a receipt; I'll check it later."
@@ -460,7 +460,7 @@ honored, use that one."
 
 ---
 
-**Q6. How do you reason about Promise chain order?**
+**[SENIOR] Q6 - [MECHANISM] How do you reason about Promise chain order?**
 
 Chain order model: each `.then()` adds to the microtask queue.
 
@@ -477,7 +477,7 @@ console.log('sync');
 // Then microtasks drain: start, step1, step2 run in chain order.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Chaining vs nesting:
 ```javascript
@@ -491,7 +491,7 @@ Promise.all([fetch('/a'), fetch('/b')])
   .then(([a, b]) => process(a, b)); // parallel, no nesting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Knowing when to nest (later
 fetch depends on earlier result) vs when to use `Promise.all`
@@ -500,7 +500,7 @@ for independence.
 
 ---
 
-**Q7. What mental model helps reason about async error handling?**
+**[SENIOR] Q7 - [MECHANISM] What mental model helps reason about async error handling?**
 
 The "exception propagation through the chain" model:
 
@@ -516,7 +516,7 @@ Promise.resolve()
   .then(() => console.log('continues'))     // runs: catch recovers chain
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 With async/await: normal try/catch. Rejections ARE exceptions.
 ```javascript
@@ -529,7 +529,7 @@ async function f() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The "catch recovers the chain"
 behavior. After `.catch()` handles a rejection, the chain
@@ -668,7 +668,7 @@ const displayName = computed(() =>
 // Synchronous, reactive, no subscription management
 ```
 
-> **Code walkthrough:** The five cases map to the decision
+> **Code walkthrough:** The five cases map to the decisionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tree directly. Single request is cleanest with async/await.
 > Cancellable single request can use AbortController + Promise,
 > but switchMap wins when the cancellation trigger is itself
@@ -725,7 +725,7 @@ ngOnDestroy() {
 // This is ONE request that returns ONE value.
 ```
 
-> **Code walkthrough:** Using an Observable with `take(1)` for
+> **Code walkthrough:** Using an Observable with `take(1)` forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a single HTTP request is the most common over-engineering pattern
 > in Angular applications. The `take(1)` signals "I only want one
 > value" - which IS a Promise. The Observable adds: pipe operators,
@@ -782,7 +782,7 @@ class SearchComponent {
 }
 ```
 
-> **Code walkthrough:** The `loadUser` method with async/await
+> **Code walkthrough:** The `loadUser` method with async/awaitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is readable, has clear error handling with try/catch, and
 > needs no cleanup. The `Dashboard` `vm$` Observable demonstrates
 > where `combineLatest` shines: three independent streams that
@@ -846,7 +846,7 @@ someObs$.subscribe(
 const data = await somePromise; // eslint warns if no try/catch in strict mode
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -860,8 +860,7 @@ const data = await somePromise; // eslint warns if no try/catch in strict mode
 | Debugging | 1 | Converting between abstractions |
 | Behavioral | 1 | Team decision making |
 
-**Q1. When would you choose an async generator over
-both Promise and Observable?**
+**[JUNIOR] Q1 - [SCENARIO] When would you choose an async generator over both Promise and Observable?**
 
 Async generators are for:
 - Multi-value sequences that are pull-based (consumer controls pace)
@@ -893,7 +892,7 @@ for await (const item of pages('/api/orders')) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The backpressure property.
 For each iteration of `for await`, the generator advances
@@ -902,8 +901,7 @@ pauses. Observables are push-based: no built-in pause.
 
 ---
 
-**Q2. How do you convert between Promise and Observable
-and why would you?**
+**[JUNIOR] Q2 - [MECHANISM] How do you convert between Promise and Observable and why would you?**
 
 ```typescript
 import { from, firstValueFrom, lastValueFrom } from 'rxjs';
@@ -923,7 +921,7 @@ const last: User = await lastValueFrom(userObs$.pipe(take(3)));
 //   on a Promise-based API
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Knowing `firstValueFrom`
 throws `EmptyError` if the Observable completes without
@@ -932,7 +930,7 @@ a fallback: `firstValueFrom(obs$, { defaultValue: null })`.
 
 ---
 
-**Q3. What are the practical limits of Observables?**
+**[JUNIOR] Q3 - [MECHANISM] What are the practical limits of Observables?**
 
 1. **Error handling complexity**: errors terminate the stream.
    Inner operators must catchError or the outer stream dies.
@@ -959,7 +957,7 @@ everywhere" does not understand concurrent event coordination.
 
 ---
 
-**Q4. How does Signals fit into the Promise/Observable decision?**
+**[MID] Q4 - [MECHANISM] How does Signals fit into the Promise/Observable decision?**
 
 Signals are a third option for synchronous reactive state:
 
@@ -978,7 +976,7 @@ const fullName  = computed(() => `${firstName()} ${lastName()}`);
 // Pull-based sequence: async generator
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Signals DO NOT replace Observables for async. Signals are
 synchronous. For a Signal from an Observable (Angular):
@@ -988,7 +986,7 @@ const user = toSignal(this.userService.user$, { initialValue: null });
 // Bridges reactive (Observable) to component state (Signal)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* `toSignal` is the bridge
 pattern for Angular. It converts an Observable into a Signal,
@@ -998,8 +996,7 @@ to Signal at the component boundary for use in templates.
 
 ---
 
-**Q5. How would you explain the Promise vs Observable
-decision to a non-technical stakeholder?**
+**[MID] Q5 - [TRADE-OFF] How would you explain the Promise vs Observable decision to a non-technical stakeholder?**
 
 Using the email vs newsletter analogy:
 
@@ -1028,7 +1025,7 @@ matters to the stakeholder.
 
 ---
 
-**Q6. What is the `race` operator and when should you use it?**
+**[SENIOR] Q6 - [SCENARIO] What is the `race` operator and when should you use it?**
 
 `Promise.race` and RxJS `race()`: complete with the first
 to emit, cancel/ignore others.
@@ -1058,7 +1055,7 @@ const result$ = race(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Knowing that `Promise.race`
 does not cancel the losing Promises - they continue to run
@@ -1068,8 +1065,7 @@ Observable `race()` with proper unsubscription.
 
 ---
 
-**Q7. When should you wrap a third-party callback-based API
-in Promises vs Observables?**
+**[SENIOR] Q7 - [TRADE-OFF] When should you wrap a third-party callback-based API in Promises vs Observables?**
 
 Decision: will this callback fire once or many times?
 
@@ -1093,7 +1089,7 @@ const messages$ = new Observable(subscriber => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The Observable constructor
 cleanup function (`return () => ws.close()`). When all
@@ -1218,7 +1214,7 @@ async function loadUser(id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging Async Code: Systematic Approach example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // BUG CATEGORY 2: Error Silencing
@@ -1245,7 +1241,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging Async Code: Systematic Approach example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // BUG CATEGORY 3: Resource Leak
@@ -1265,7 +1261,7 @@ componentDidMount() {
 // Node.js: process.memoryUsage().heapUsed growing over time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging Async Code: Systematic Approach example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 ```javascript
 // BUG CATEGORY 4: Timing Violation
@@ -1286,7 +1282,7 @@ function render() {
 return data?.items.map(i => <div key={i.id}>{i.name}</div>) ?? <Spinner />;
 ```
 
-> **Code walkthrough:** The four categories cover the most
+> **Code walkthrough:** The four categories cover the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common async bugs. The race condition fix uses a request
 > token (incrementing counter) to detect when a newer request
 > has superseded the current one - simpler and more reliable
@@ -1336,7 +1332,7 @@ async function loadDashboard() {
 }
 ```
 
-> **Code walkthrough:** The non-systematic approach adds
+> **Code walkthrough:** The non-systematic approach addsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > console.log statements until the developer accidentally
 > discovers the problem. This works but is slow, does not
 > build understanding, and the "fix" may not address the root
@@ -1378,7 +1374,7 @@ class DashboardComponent {
 }
 ```
 
-> **Code walkthrough:** The systematic approach identifies
+> **Code walkthrough:** The systematic approach identifiesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the bug as a race condition before writing any fix code.
 > The `filter(u => u !== null)` + `take(1)` pattern waits until
 > the user is authenticated before loading the dashboard,
@@ -1451,7 +1447,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -1465,8 +1461,7 @@ process.on('unhandledRejection', (reason, promise) => {
 | Debugging | 2 | DevTools technique, production async logging |
 | Behavioral | 1 | Incident post-mortem with async root cause |
 
-**Q1. How do you detect and diagnose an unhandled Promise
-rejection in production?**
+**[JUNIOR] Q1 - [DEBUGGING] How do you detect and diagnose an unhandled Promise rejection in production?**
 
 Setup (must be in place before bugs occur):
 ```javascript
@@ -1491,7 +1486,7 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Diagnosis from logs:
 1. Check the error message and stack trace
@@ -1507,8 +1502,7 @@ is non-fatal.
 
 ---
 
-**Q2. How do you reproduce and fix an intermittent async
-race condition?**
+**[JUNIOR] Q2 - [MECHANISM] How do you reproduce and fix an intermittent async race condition?**
 
 Reproduction:
 ```javascript
@@ -1522,7 +1516,7 @@ async function getUser(id) {
 // Once reproducible: fix and verify without artificial delay
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Fix pattern (request token):
 ```javascript
@@ -1538,7 +1532,7 @@ async function loadContent(id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Verification:
 1. Add a counter: how many times does `requestId !== latestRequestId`?
@@ -1554,8 +1548,7 @@ a 1-in-100 bug into a 99-in-100 bug.
 
 ---
 
-**Q3. How do you diagnose event loop blocking in production
-Node.js?**
+**[JUNIOR] Q3 - [DEBUGGING] How do you diagnose event loop blocking in production Node.js?**
 
 Detection:
 ```javascript
@@ -1574,7 +1567,7 @@ setInterval(() => {
 }, 5000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Diagnosis when lag detected:
 ```javascript
@@ -1594,7 +1587,7 @@ s.post('Profiler.enable', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Common causes found via profiler:
 - Synchronous JSON.parse/stringify of large objects
@@ -1610,7 +1603,7 @@ data, you are guessing.
 
 ---
 
-**Q4. How do you use DevTools to debug async code in the browser?**
+**[MID] Q4 - [DEBUGGING] How do you use DevTools to debug async code in the browser?**
 
 Key DevTools techniques:
 
@@ -1650,7 +1643,7 @@ window.fetch = async function(url, init) {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The fetch monkey-patching
 pattern for temporary debugging. It adds timing and status
@@ -1659,8 +1652,7 @@ Remove it before merging.
 
 ---
 
-**Q5. What is the correct pattern for cleaning up async
-subscriptions in React vs Angular?**
+**[MID] Q5 - [TRADE-OFF] What is the correct pattern for cleaning up async subscriptions in React vs Angular?**
 
 React (useEffect cleanup):
 ```javascript
@@ -1678,7 +1670,7 @@ useEffect(() => {
 }, [dependency]); // cleanup runs when dependency changes or unmount
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Angular (takeUntilDestroyed - Angular 16+):
 ```typescript
@@ -1698,7 +1690,7 @@ class MyComponent {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* `takeUntilDestroyed` in
 Angular 16+ vs the older `takeUntil(this.destroy$)` pattern.
@@ -1709,7 +1701,7 @@ no forgetting the `ngOnDestroy` call.
 
 ---
 
-**Q6. How do you test async code for race conditions?**
+**[SENIOR] Q6 - [SCENARIO] How do you test async code for race conditions?**
 
 Property-based testing approach:
 ```javascript
@@ -1734,7 +1726,7 @@ test('loadUser always shows correct user for last call', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 The random delay generates hundreds of timing combinations,
 systematically finding the race window.
@@ -1747,8 +1739,7 @@ of manual runs will be found in 2-3 of 100 property test runs.
 
 ---
 
-**Q7. What is the systematic approach to diagnosing a
-production async incident?**
+**[SENIOR] Q7 - [DEBUGGING] What is the systematic approach to diagnosing a production async incident?**
 
 Incident response methodology:
 

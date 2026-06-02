@@ -178,7 +178,7 @@ Memory comparison:
   GraalVM native: 50-200MB total
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Boot Startup Performance and Optimization example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 There is no free lunch. GraalVM native has tradeoffs: longer build time,
@@ -201,6 +201,14 @@ without the native image complexity.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
 
 ```java
 // BAD: @PostConstruct doing slow I/O
@@ -257,7 +265,7 @@ public class ProductCacheService
 }
 ```
 
-> **Code walkthrough:** The BAD pattern blocks startup entirely - repo.findAll()
+> **Code walkthrough:** The BAD pattern blocks startup entirely - repo.findAll()ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > on a large table can take minutes. This fails Kubernetes liveness probes and
 > causes rolling deployment timeouts. The GOOD pattern uses async warm-up via
 > CompletableFuture: startup completes immediately, cache fills in background,
@@ -319,7 +327,7 @@ class OrderHints implements RuntimeHintsRegistrar {
 }
 ```
 
-> **Code walkthrough:** GraalVM native image requires all reflective access,
+> **Code walkthrough:** GraalVM native image requires all reflective access,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > resource loading, and proxy creation to be declared at build time. Spring's
 > AOT processing auto-detects most cases, but custom code that uses reflection
 > programmatically (e.g., JAXB, custom serializers, dynamic class loading)
@@ -416,7 +424,7 @@ Fix: Add @ImportRuntimeHints with RuntimeHintsRegistrar for the dynamic code.
 
 ---
 
-#### Q1 - What are the main phases of Spring Boot startup and which is slowest?
+**[JUNIOR] Q1 - [CONCEPTUAL] What are the main phases of Spring Boot startup and which is slowest?**
 
 Spring Boot startup consists of:
 
@@ -449,7 +457,7 @@ reveals this. Fixing those specific beans (async init, lazy loading) provides
 
 ---
 
-#### Q2 - How does spring.main.lazy-initialization=true work?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does spring.main.lazy-initialization=true work?**
 
 With lazy initialization:
 
@@ -478,7 +486,7 @@ logging.level.org.springframework.context
   .annotation.CommonAnnotationBPP=TRACE
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log when lazy beans are initialized example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* spring.main.lazy-initialization=true in
 production requires specific safeguards: (1) Set a test mode
@@ -489,7 +497,7 @@ critical beans (health-checked, startup-critical) before readiness signal.
 
 ---
 
-#### Q3 - What is AppCDS (Application Class Data Sharing) and how does it help?
+**[MID] Q3 - [MECHANISM] What is AppCDS (Application Class Data Sharing) and how does it help?**
 
 AppCDS (Application Class Data Sharing) is a JVM feature that:
 1. Creates a shared archive of pre-loaded classes
@@ -512,7 +520,7 @@ java -Xshare:dump -XX:SharedClassListFile=classes.lst \
 java -Xshare:on -XX:SharedArchiveFile=app-cds.jsa -jar app.jar
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: explicit CDS example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Benefits:
 - 20-40% startup time reduction
@@ -535,7 +543,7 @@ capturing during normal server operation.
 
 ---
 
-#### Q4 - How does GraalVM native image differ from JVM for Spring Boot?
+**[MID] Q4 - [MECHANISM] How does GraalVM native image differ from JVM for Spring Boot?**
 
 **JVM execution model:**
 - Bytecode loaded at startup (class loading)
@@ -573,7 +581,7 @@ the throughput difference is not observable under real load.
 
 ---
 
-#### Q5 - What is Project CRaC and how does Spring Boot support it?
+**[SENIOR] Q5 - [MECHANISM] What is Project CRaC and how does Spring Boot support it?**
 
 CRaC (Coordinated Restore at Checkpoint) is a JVM feature (JEP draft):
 1. Run application to fully warm up (JIT compiled, caches warm)
@@ -612,7 +620,7 @@ public class CachedDataService
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: explicit CDS example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 AWS Lambda Snapstart uses a similar mechanism:
 - Lambda function's JVM state is snapshotted after initialization
@@ -628,7 +636,7 @@ production-grade for all use cases, and requires managing snapshot images.
 
 ---
 
-#### Q6 - How do virtual threads (Project Loom) affect Spring Boot performance?
+**[SENIOR] Q6 - [MECHANISM] How do virtual threads (Project Loom) affect Spring Boot performance?**
 
 Virtual threads (JDK 21, Spring Boot 3.2+):
 - Traditional platform threads: 1 OS thread per Java thread
@@ -643,7 +651,7 @@ Spring Boot 3.2 virtual threads:
 spring.threads.virtual.enabled=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable virtual threads for Tomcat and @Async example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Effect on throughput:
 - Platform threads: 200-500 concurrent requests
@@ -670,7 +678,7 @@ ThreadLocal-based SecurityContext works correctly with virtual threads.
 
 ---
 
-#### Q7 - How do you minimize memory footprint of a Spring Boot application?
+**[SENIOR] Q7 - [MECHANISM] How do you minimize memory footprint of a Spring Boot application?**
 
 Memory sources:
 - Heap: BeanFactory (singleton objects), caches, application data
@@ -688,7 +696,7 @@ Reduction strategies:
 -XX:MaxRAMPercentage=75.0  # 75% of container memory
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or for containers (respect cgroup limits): example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Metaspace:**
 ```properties
@@ -696,7 +704,7 @@ Reduction strategies:
 # Prevents metaspace from growing unboundedly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prevents metaspace from growing unboundedly example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Auto-configurations (exclude unused):**
 ```java
@@ -707,7 +715,7 @@ Reduction strategies:
 })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prevents metaspace from growing unboundedly example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Class count (fewer classes = less Metaspace):**
 ```properties
@@ -715,7 +723,7 @@ spring.main.lazy-initialization=true
 # Uninitialized beans: classes may not be loaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Uninitialized beans: classes may not be loaded example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **GraalVM native:**
 - Eliminates JVM metaspace overhead entirely
@@ -730,7 +738,7 @@ Use Actuator JVM metrics (jvm.memory.max, jvm.memory.used) under load to tune.
 
 ---
 
-#### Q8 - How do you optimize Spring Boot startup for integration tests?
+**[STAFF] Q8 - [MECHANISM] How do you optimize Spring Boot startup for integration tests?**
 
 Integration tests start a full Spring context for each @SpringBootTest class.
 With 50 test classes, startup runs 50 times - unacceptable.
@@ -740,6 +748,12 @@ Strategies:
 **1. Context caching (Spring TestContext Framework):**
 Spring automatically caches ApplicationContext objects between test classes
 that have the same configuration. Tests sharing the same context don't restart.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: unique @MockBean per test = new context per test
@@ -773,7 +787,7 @@ class SharedMockConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Uninitialized beans: classes may not be loaded example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **2. Slice tests (load only needed layers):**
 ```java
@@ -781,7 +795,7 @@ class SharedMockConfig {
 @DataJpaTest                        // JPA layer only
 @JsonTest                           // Jackson only
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Uninitialized beans: classes may not be loaded example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 These start in 1-3 seconds vs 10-30 for @SpringBootTest.
 
@@ -790,7 +804,7 @@ These start in 1-3 seconds vs 10-30 for @SpringBootTest.
 # application-test.properties
 spring.main.lazy-initialization=true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-test.properties example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Test context starts faster. Errors surface when test methods access beans.
 
@@ -803,7 +817,7 @@ Avoid @DirtiesContext by using @Transactional (roll back DB changes) and
 
 ---
 
-#### Q9 - How does Spring Boot handle startup failure gracefully?
+**[STAFF] Q9 - [FAILURE] How does Spring Boot handle startup failure gracefully?**
 
 Failure analyzers diagnose common startup failures:
 ```
@@ -825,7 +839,7 @@ Consider the following:
   DataSource bean.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-test.properties example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Built-in FailureAnalyzers cover:
 - Port already in use (PortInUseFailureAnalyzer)
@@ -853,7 +867,7 @@ public class MyServiceFailureAnalyzer
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-test.properties example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Register in META-INF/spring.factories:
 ```
@@ -861,7 +875,7 @@ org.springframework.boot.diagnostics.FailureAnalyzer=\
   com.example.MyServiceFailureAnalyzer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-test.properties example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* FailureAnalyzers are loaded before the
 ApplicationContext fully starts (via SpringFactoriesLoader). They must not
@@ -872,7 +886,7 @@ an expert to interpret, the developer gets an actionable message.
 
 ---
 
-#### Q10 - What is AOT processing in Spring Boot 3 and how does it work?
+**[STAFF] Q10 - [MECHANISM] What is AOT processing in Spring Boot 3 and how does it work?**
 
 AOT (Ahead of Time) processing is Spring Boot 3's build-time optimization:
 
@@ -909,7 +923,7 @@ Runtime (native):
   - Startup in milliseconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-test.properties example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* AOT processing has implications for
 conditional beans. @ConditionalOnClass, @ConditionalOnProperty evaluated
@@ -921,7 +935,7 @@ Spring: configuration must be more deterministic.
 
 ---
 
-#### Q11 - How do you handle startup performance for serverless (AWS Lambda)?
+**[STAFF] Q11 - [MECHANISM] How do you handle startup performance for serverless (AWS Lambda)?**
 
 Serverless cold start challenges:
 - Lambda: cold start = new JVM + Spring context startup
@@ -953,7 +967,7 @@ Solutions:
     </build>
 </profile>
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-test.properties example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Native image = 50-300ms cold start. Full functionality.
 
@@ -976,7 +990,7 @@ starters, use Class-Data Sharing archive for JVM mode.
 
 ---
 
-#### Q12 - How do you measure and compare Spring Boot startup improvements?
+**[STAFF] Q12 - [MECHANISM] How do you measure and compare Spring Boot startup improvements?**
 
 Measurement methods:
 
@@ -990,7 +1004,7 @@ SpringApplication app = new SpringApplication(App.class);
 app.setApplicationStartup(
     new BufferingApplicationStartup(2048));
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Returns per-step breakdown. Essential for root-cause identification.
 
@@ -999,7 +1013,7 @@ Returns per-step breakdown. Essential for root-cause identification.
 java -verbose:class -jar app.jar 2>&1 |
   wc -l  # total classes loaded
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 High class count indicates opportunity for AppCDS.
 
@@ -1009,7 +1023,7 @@ Measure from pod creation to readiness probe success:
 kubectl get pod {name} -o yaml |
   grep -A5 conditions
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 startedAt vs readyTime = actual Kubernetes view.
 
@@ -1035,7 +1049,7 @@ GraalVM native    | 200ms   | 150MB  | 15min  | Hints
 CRaC              | 100ms   | 400MB  | +3min  | Connections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Startup time optimization has diminishing
 returns. Moving from 15s to 5s is valuable (3x improvement). Moving from 5s

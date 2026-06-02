@@ -168,7 +168,7 @@ Quality governance framework:
     Alert team if budgets exceeded by > 20%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This }); example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -176,6 +176,7 @@ Quality governance framework:
 
 **Example (Production) - Test platform utilities:**
 
+{% raw %}
 ```typescript
 // src/test/fixtures/userFactory.ts
 import { faker } from '@faker-js/faker';
@@ -265,8 +266,9 @@ test('admin sees delete button', async () => {
   // Admin-specific behavior...
 });
 ```
+{% endraw %}
 
-> **Code walkthrough:** The factory pattern with `@faker-js/faker`
+> **Code walkthrough:** The factory pattern with `@faker-js/faker`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > generates realistic test data with unique values per test run, avoiding
 > the "Alice/Bob" static fixtures that can create subtle dependencies.
 > `overrides` pattern makes factories extensible: `createUser({ role: 'admin' })`
@@ -293,7 +295,7 @@ For a 100+ engineer frontend organization with multiple teams:
   - customMatchers (toHaveLoadingState, toBeAccessible)
   - setupTests.ts (extend matchers, configure MSW)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This }); example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Published to internal npm registry. All teams use the same utilities.
 When a provider is added globally, only the shared package updates.
@@ -313,7 +315,7 @@ export default {
   performance: { unit: 180, e2e: 900 }, // seconds
 };
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This }); example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Quality gate configuration in source control, not scattered in CI YAML.
 

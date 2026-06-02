@@ -92,7 +92,7 @@ G1 Heap (Java 9 default):
   Humongous: > 50% of region size -> allocated in consecutive Humongous regions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Heap Internals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -224,23 +224,23 @@ Fix:
     Risk: Survivor overflow if too many objects accumulate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Eden-Survivor-Old Gen lifecycle | 2 minutes |
-| Survivor ping-pong mechanism | 2 minutes |
-| Tenuring threshold | 2 minutes |
-| G1 regions | 2 minutes |
-| Humongous objects | 2 minutes |
-| Tuning Young Gen size | 2-3 minutes |
-| Promotion failure diagnosis | 2 minutes |
-| Survivor space sizing | 2 minutes |
-| TLAB explained | 90 seconds |
+| Question Category| Time to Answer|
+|-------------------------------|-----------------------------------------|
+| Eden-Survivor-Old Gen lifecycle| 2 minutes|
+| Survivor ping-pong mechanism| 2 minutes|
+| Tenuring threshold| 2 minutes|
+| G1 regions| 2 minutes|
+| Humongous objects| 2 minutes|
+| Tuning Young Gen size| 2-3 minutes|
+| Promotion failure diagnosis| 2 minutes|
+| Survivor space sizing| 2 minutes|
+| TLAB explained| 90 seconds|
 
 ---
 
@@ -267,9 +267,9 @@ without first profiling TLAB fill rates.
 **Q2 (G1 regions): How does G1 GC's regional design differ from Parallel GC?**
 
 A: Parallel GC uses fixed contiguous regions: one Young Gen block, one Old Gen block,
-fixed sizes. G1 uses 2048 equal-sized regions dynamically assigned as Eden/Survivor/Old.
+fixed sizes. G1 uses 2048 equal-sized regions dynamically assigned as Eden/Survi
 This allows G1 to: (1) collect only a subset of Old Gen regions per cycle (mixed GC),
-selecting regions with most garbage first (garbage-first); (2) dynamically resize
+selecting regions with most garbage first (garbage-first); (2) dynamically resiz
 Young Gen by changing how many regions are Young; (3) concurrent background work
 (marking, cleanup) while the application runs. G1 targets a pause time goal and
 adjusts its work accordingly.
@@ -277,7 +277,7 @@ adjusts its work accordingly.
 *What separates good from great:* G1's "Mixed GC" phase is the key differentiator.
 After a concurrent marking cycle, G1 knows the "live object density" of each Old Gen
 region. In mixed GC: G1 collects Young regions (always) plus a selection of Old Gen
-regions chosen for highest garbage density. This avoids the all-or-nothing Full GC.
+regions chosen for highest garbage density. This avoids the all-or-nothing Full 
 G1 gradually reclaims Old Gen region by region. The `G1MixedGCCountTarget` flag
 controls how many mixed GC cycles complete before G1 stops mixed mode (default 8).
 This is why G1 is called "Garbage-First": it prioritizes collecting the regions
@@ -300,7 +300,7 @@ this happens on every request: 1000 req/s * 5MB = 5GB/s of Humongous allocations
 -> continuous Old Gen pressure -> frequent concurrent GC cycles -> high GC CPU.
 Fix: stream the JSON response instead of building the full string, or
 increase G1 region size to make 5MB objects no longer Humongous:
-`-XX:G1HeapRegionSize=16m` (makes threshold 8MB, 5MB objects are no longer Humongous).
+`-XX:G1HeapRegionSize=16m` (makes threshold 8MB, 5MB objects are no longer Humon
 
 ---
 
@@ -320,7 +320,7 @@ If the distribution peaks at age 1-2 (very young objects being promoted):
 Survivors are too small. If distribution peaks at age 14-15 (objects surviving
 to threshold): these are genuinely long-lived and should be in Old Gen.
 The ideal: a clear bimodal distribution (young objects die in Eden, long-lived
-objects promoted to Old Gen, Survivors hold the "unsure" middle-lifespan objects).
+objects promoted to Old Gen, Survivors hold the "unsure" middle-lifespan objects
 
 ---
 
@@ -332,7 +332,7 @@ Smaller ratio (e.g., 4): larger Survivors, smaller Eden. Smaller Eden:
 Minor GC runs more often (fills faster). Larger Survivors: hold more surviving
 objects, less promotion to Old Gen.
 
-*What separates good from great:* The formula: `Eden = (SurvivorRatio / (SurvivorRatio + 2)) * YoungGenSize`.
+*What separates good from great:* The formula: `Eden = (SurvivorRatio / (Survivo
 With SurvivorRatio=8: Eden = (8/10) * YoungGen = 80%. With SurvivorRatio=4:
 Eden = (4/6) * YoungGen = 67%. G1 GC doesn't use SurvivorRatio in the same
 way (regions are dynamic). These flags primarily affect Parallel GC and
@@ -358,7 +358,7 @@ to "give more heap to Old Gen" and end up with a Young Gen too small for the
 allocation rate - causing frequent Minor GCs that hurt throughput. Better
 approach: use G1 with default settings (it auto-tunes), enable GC logging,
 let it run under real load, then observe if it needs adjustment. GC self-tuning
-is surprisingly effective for most workloads. Manual tuning should be evidence-based
+is surprisingly effective for most workloads. Manual tuning should be evidence-b
 (specific bottleneck identified in GC logs).
 
 ---
@@ -389,7 +389,7 @@ A: Remembered Sets (RS) are per-region data structures in G1 that track incoming
 references from other regions. When a Minor GC collects Young Gen: it must scan
 not only from GC roots but also from Old Gen objects that reference Young Gen
 (cross-region references). Instead of scanning all of Old Gen: G1 maintains a
-Remembered Set per Young Gen region listing all incoming cross-region references.
+Remembered Set per Young Gen region listing all incoming cross-region references
 The write barrier maintains these sets when any reference is modified.
 
 *What separates good from great:* Remembered Sets have a maintenance cost.
@@ -422,12 +422,12 @@ loops, or Jackson's deserialization creating many small intermediate objects.
 
 ### ⚖️ Comparison Table
 
-| GC Type | Young Gen Design | Old Gen Design | Tuning Control |
-|---|---|---|---|
-| Serial/Parallel GC | Fixed Eden + 2 Survivors | Contiguous fixed block | SurvivorRatio, NewRatio |
-| G1 GC | Dynamic Young regions | Dynamic Old regions | MaxGCPauseMillis, G1HeapRegionSize |
-| ZGC | No generational (pre-21) / Gen in Java 21 | All one generational | None (minimal tuning) |
-| Shenandoah | Generational (optional) | All one region | ShenandoahInitFreeThreshold |
+| GC Type| Young Gen Design| Old Gen Design| Tuning Control|
+|---|----------------|----------------------|----------------------------------|
+| Serial/Parallel GC| Fixed Eden + 2 Survivors| Contiguous fixed block| Survivor
+| G1 GC| Dynamic Young regions| Dynamic Old regions| MaxGCPauseMillis, G1HeapReg
+| ZGC| No generational (pre-21) / Gen in Java 21| All one generational| None (mi
+| Shenandoah| Generational (optional)| All one region| ShenandoahInitFreeThresho
 
 ---
 
@@ -460,8 +460,8 @@ loops, or Jackson's deserialization creating many small intermediate objects.
 > on 64-bit JVMs with heap < 32GB) compresses object pointers from 8 to 4 bytes.
 
 **3 minutes (Senior):**
-> Object header: (1) Mark word (8 bytes, 64-bit JVM) - stores identity hash code,
-> lock state (unlocked/biased/thin lock/fat lock), GC age; (2) Class pointer/klass
+> Object header: (1) Mark word (8 bytes, 64-bit JVM) - stores identity hash code
+> lock state (unlocked/biased/thin lock/fat lock), GC age; (2) Class pointer/kla
 > pointer - points to the class metadata in Metaspace (compressed to 4 bytes
 > with `-XX:+UseCompressedOops`). Total header: 12-16 bytes on 64-bit JVM
 > (12 with compressed oops, 16 without).
@@ -470,10 +470,10 @@ loops, or Jackson's deserialization creating many small intermediate objects.
 > Padding added to keep fields aligned (int fields 4-byte aligned, long/double
 > 8-byte aligned). Object size rounded up to 8-byte boundary.
 >
-> Compressed OOPs: references stored as 32-bit offsets instead of 64-bit pointers.
+> Compressed OOPs: references stored as 32-bit offsets instead of 64-bit pointer
 > Active for heap < 32GB (default). Above 32GB: references become 64-bit again
 > (significant memory increase). Rule: keep JVM heap < 32GB if you use many
-> object references. Above 32GB, use ZGC (which has its own pointer compression).
+> object references. Above 32GB, use ZGC (which has its own pointer compression)
 
 **Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
@@ -497,7 +497,7 @@ regardless of what you pack."
 ### 📘 Concept Explanation
 
 **Object header breakdown:**
-```
+```plaintext
 64-bit JVM with CompressedOops (heap < 32GB):
   Mark Word:      8 bytes (lock state, hash code, GC age)
   Class Pointer:  4 bytes (compressed klass pointer to Metaspace)
@@ -521,13 +521,13 @@ Array objects:
   new int[100] = 12 + 4 + 400 = 416 bytes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The JOL (Java Object Layout) library shows exact object
+> **Code walkthrough:** The JOL (Java Object Layout) library shows exact objectice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sizes. The common mistake is assuming an `Integer` is 4 bytes (same as `int`).
 > It's 16 bytes - 4x overhead plus GC cost. A `List<Integer>` of 1 million
 > integers = 4MB (int[]) vs 20-24MB (Integer[] + object headers).
@@ -579,7 +579,7 @@ System.out.println("Integer size approx: " + (before - after)); // ~16 bytes
 // -javaagent:jol-core.jar for accurate in-process measurement
 ```
 
-> **Code walkthrough:** The `Long[]` vs `long[]` comparison demonstrates the
+> **Code walkthrough:** The `Long[]` vs `long[]` comparison demonstrates theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > practical cost of autoboxing at scale. A `List<Long>` backing a million
 > entries: 28MB for boxed vs 8MB for `LongStream`/`long[]`. For memory-intensive
 > applications: use primitive collections (Eclipse Collections, Koloboke, or
@@ -661,7 +661,7 @@ Prevention:
   Use static analysis: SpotBugs has rules for boxing in collections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -725,6 +725,12 @@ Despite writing different fields: they share a cache line, causing the line to
 bounce between cores (invalidation protocol). Result: poor concurrent performance
 despite no logical data sharing.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: counter and flag in same object - likely same cache line
 class Metrics {
@@ -746,7 +752,7 @@ class Metrics {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `@jdk.internal.vm.annotation.Contended` (used
 internally by `AtomicLong`, `ForkJoinPool`, `Thread` for fields like
@@ -863,7 +869,7 @@ ManagementFactory.getMemoryPoolMXBeans().forEach(pool ->
         pool.getName(), pool.getUsage().getUsed(), pool.getUsage().getMax()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This via jconsole, JVisualVM, or programmatic: example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The class histogram is the single most
 useful first diagnostic: it reveals "1,000,000 instances of com.example.User,
@@ -898,7 +904,7 @@ Better: use -XX:MaxRAMPercentage=75
   Total: ~2048MB (fits container)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This via jconsole, JVisualVM, or programmatic: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `-XX:MaxRAMPercentage` is the container-native
 JVM flag. It reads the container's memory limit from cgroups (Docker/Kubernetes)

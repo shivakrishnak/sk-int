@@ -152,7 +152,7 @@ Build artifact (Docker image, JAR, binary)
   → Attached to artifact in registry
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Supply Chain Security and SBOM example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Query (at CVE disclosure time):
 ```
@@ -162,7 +162,7 @@ CVE-2021-44228 (Log4Shell): log4j-core 2.0.0-2.14.1
   → Prioritize remediation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Supply Chain Security and SBOM example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SLSA (Supply-chain Levels for Software Artifacts):**
 - Level 1: documentation only (basic baseline)
@@ -267,8 +267,9 @@ FROM eclipse-temurin:21-jre-jammy@sha256:a4c0fe6c5b3f...
 # Update process: automated PR to update the digest after verification
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Update process: automated PR to update the digest after verification example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
+{% raw %}
 ```yaml
 # Complete supply chain hardened CI pipeline
 name: Secure Build and Deploy
@@ -367,8 +368,9 @@ jobs:
             --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
             ghcr.io/myorg/myapp@${{ steps.build.outputs.digest }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This validates the entire trust chain example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```bash
 # CVE response workflow: Log4Shell scenario
@@ -393,7 +395,7 @@ done
 # Without SBOM: weeks of manual review
 ```
 
-> **Code walkthrough:** Three security layers work together. The
+> **Code walkthrough:** Three security layers work together. Theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > SHA256 digest pinning in the Dockerfile ensures the exact base
 > image byte-for-byte, making the build reproducible. The Grype
 > scan with `--fail-on high` is a deployment gate: an image with
@@ -787,7 +789,7 @@ Practical implementation in GitHub Actions (SLSA Level 2):
   # Signed with Sigstore OIDC (keyless)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Signed with Sigstore OIDC (keyless) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Verification at deployment:
 ```bash
@@ -799,7 +801,7 @@ slsa-verifier verify-image \
   --source-tag v1.2.0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This from the expected repository example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Understanding the practical SLSA
 level achievable with current tooling. Level 1 is trivial (any CI).
@@ -866,7 +868,7 @@ cosign verify \
 # Any image signed by a different GitHub org or workflow is rejected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any image signed by a different GitHub org or workflow is rejected example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Understanding the Rekor transparency
 log's security guarantee. Rekor is append-only and Merkle-tree-based
@@ -917,7 +919,7 @@ EOF
 # (48 other services NOT affected)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (48 other services NOT affected) example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Hour 2 - Triage and emergency response.
 Three affected services identified. Create P0 security incidents
@@ -988,7 +990,7 @@ VEX document structure:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (48 other services NOT affected) example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 VEX status values:
 - `not_affected`: vulnerability is present but not exploitable
@@ -1087,7 +1089,7 @@ ORDER BY deployed_at;
 # Output: image with this version was first deployed 3 months ago
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Output: image with this version was first deployed 3 months ago example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Check if CVE was known at deployment time.
 ```bash
@@ -1099,7 +1101,7 @@ curl "https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=CVE-2024-XXXX" |
 #             was deployed. CI scan at deploy time would not have caught it.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This was deployed. CI scan at deploy time would not have caught it. example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 3: Verify the nightly re-scan is functional.
 ```bash
@@ -1109,7 +1111,7 @@ kubectl logs -n security jobs/nightly-rescan-$(date +%Y%m%d) | tail -50
 # Verify: the re-scan should have flagged this after CVE publish date
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify: the re-scan should have flagged this after CVE publish date example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Remediation.
 Prioritize by CVSS score and exposure:
@@ -1176,7 +1178,7 @@ validators:
           cert_identity: https://github.com/myorg/*/.*
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: keyless mode using certificate identity example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Kyverno policy (alternative):
 ```yaml
@@ -1203,7 +1205,7 @@ spec:
                     rekorURL: https://rekor.sigstore.dev
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: keyless mode using certificate identity example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The runtime guarantee: no unsigned or improperly signed image can
 run in the `production` or `staging` namespace. Even if a developer
@@ -1304,7 +1306,7 @@ Source Commit SHA-abc123
     validated in CI and tested in dev and staging
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: keyless mode using certificate identity example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Registry structure for promotion:
 ```
@@ -1315,7 +1317,7 @@ registry.company.com/
   production/myapp:sha-abc123 <- promoted to production, same digest
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: keyless mode using certificate identity example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The promotion act (copying the image from one registry path to another)
 does not change the image's SHA256 digest. The signature remains valid
@@ -1359,7 +1361,7 @@ jobs:
     needs: [test, security]  # Deploy only if both pass
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR: keyless mode using certificate identity example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Scan SBOM, not the full image. Scanning an SBOM (text file) is
 10x faster than scanning a Docker image (requires unpacking all

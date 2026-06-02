@@ -81,6 +81,12 @@ propagation, and confusing "callback called" with "function returned."
 
 **How it works:**
 
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 CORRECT MENTAL MODEL - EVENT LOOP:
 
@@ -144,7 +150,7 @@ SEQUENTIAL vs PARALLEL ASYNC (most misunderstood):
   users.forEach(process);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Async Mental Models example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -173,6 +179,16 @@ database queries at 10ms each: sequential = 10 seconds, parallel =
 ### 💻 Code Example
 
 **Sequential vs parallel patterns and error handling**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // WRONG MENTAL MODEL: treating async as synchronous
@@ -246,7 +262,7 @@ async function processData() {
 processData().catch(handleError);
 ```
 
-> **Code walkthrough:** The first example shows the most common async
+> **Code walkthrough:** The first example shows the most common asyncice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mental model error: reading a value synchronously that will only be
 > set asynchronously. `fetchUser` returns immediately (a Promise), and
 > the code after it runs BEFORE the Promise resolves. The sequential vs
@@ -354,7 +370,7 @@ async function processAll(items) {
 // controlled for DB/API rate limits)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -372,7 +388,7 @@ async function processAll(items) {
 
 ---
 
-**Q1: What is the difference between a Promise being "pending",
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between a Promise being "pending",**
 "resolved", and "rejected"?** `[JUNIOR]` MECHANISM
 
 > **Answer:**
@@ -420,7 +436,7 @@ async function processAll(items) {
 > value) so multiple callers all receive the same result without
 > triggering multiple operations.
 
-**Q2: What is Promise.allSettled and when do you use it instead of
+**[JUNIOR] Q2 - [MECHANISM] What is Promise.allSettled and when do you use it instead of**
 Promise.all?** `[MID]` DECISION
 
 > **Answer:**
@@ -472,7 +488,7 @@ Promise.all?** `[MID]` DECISION
 > to settle wins, used for timeouts) complete the suite of Promise
 > combinators.
 
-**Q3: How does error propagation work in async/await and Promise
+**[JUNIOR] Q3 - [MECHANISM] How does error propagation work in async/await and Promise**
 chains?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -538,7 +554,7 @@ chains?** `[SENIOR]` MECHANISM
 > (TypeScript ESLint) catches every awaited Promise that lacks error
 > handling.
 
-**Q4: What is the difference between microtasks and tasks in the
+**[MID] Q4 - [TRADE-OFF] What is the difference between microtasks and tasks in the**
 event loop?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -599,7 +615,7 @@ event loop?** `[SENIOR]` MECHANISM
 > after microtasks drain) - this is why it's used for animation:
 > it guarantees exactly one call per frame.
 
-**Q5: What are common patterns for handling timeouts with Promises?**
+**[MID] Q5 - [MECHANISM] What are common patterns for handling timeouts with Promises?**
 `[MID]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -652,8 +668,7 @@ event loop?** `[SENIOR]` MECHANISM
 > listen to `signal.addEventListener('abort', ...)`. AbortController
 > is the production standard for cancellable async operations.
 
-**Q6: What is the 'await in a loop' antipattern and how do you fix it?**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q6 - [DEBUGGING] What is the 'await in a loop' antipattern and how do you fix it?**
 
 > **Answer:**
 >
@@ -724,7 +739,7 @@ event loop?** `[SENIOR]` MECHANISM
 > (1000 concurrent queries). Always use p-limit or similar for
 > large batches.
 
-**Q7: What is the purpose of 'finally' in Promise chains and
+**[SENIOR] Q7 - [MECHANISM] What is the purpose of 'finally' in Promise chains and**
 async/await?** `[JUNIOR]` MECHANISM
 
 > **Answer:**
@@ -935,7 +950,7 @@ AUTO-BOXING OF PRIMITIVES:
   console.log(s.foo); // undefined (wrapper was discarded)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Everything-is-an-Object Mental Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -1026,7 +1041,7 @@ const safe = Object.assign(
 );
 ```
 
-> **Code walkthrough:** The class-to-prototype equivalence shows that
+> **Code walkthrough:** The class-to-prototype equivalence shows thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `class` is purely syntactic sugar - no new mechanism is introduced.
 > The `Dog.prototype = Object.create(Animal.prototype)` line sets up
 > the prototype chain so `instanceof Animal` works correctly.
@@ -1134,7 +1149,7 @@ function deepMerge(target, source) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1152,7 +1167,7 @@ function deepMerge(target, source) {
 
 ---
 
-**Q1: What is the difference between an object's prototype and its
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between an object's prototype and its**
 constructor's prototype property?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -1198,8 +1213,7 @@ constructor's prototype property?** `[SENIOR]` MECHANISM
 > why you can do `foo instanceof Object` for anything that traces back
 > to `Object.prototype`.
 
-**Q2: How does the 'new' keyword work step by step?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How does the 'new' keyword work step by step?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -1252,8 +1266,7 @@ MECHANISM
 > of a new object (step 2: `Foo.call(undefined)` in strict mode, or
 > `Foo.call(globalThis)` in sloppy mode).
 
-**Q3: What is prototype pollution and how do you prevent it?**
-`[STAFF]` SECURITY
+**[STAFF] Q3 - [SECURITY] What is prototype pollution and how do you prevent it?**
 
 > **Answer:**
 >
@@ -1329,7 +1342,7 @@ MECHANISM
 > `__proto__`), use `Object.create(null)` for config objects, run
 > `npm audit` in CI, and use a security linter (eslint-plugin-security).
 
-**Q4: How does Object.create() differ from 'new'?** `[SENIOR]` MECHANISM
+**[MID] Q4 - [MECHANISM] How does Object.create() differ from 'new'?** `[SENIOR]` MECHANISM**
 
 > **Answer:**
 >
@@ -1385,8 +1398,7 @@ MECHANISM
 > regular `{}` has built-in properties with those names. `Object.create(null)`
 > avoids this. V8 handles null-prototype objects efficiently.
 
-**Q5: What is the difference between hasOwnProperty and 'in' operator?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q5 - [MECHANISM] What is the difference between hasOwnProperty and 'in' operator?**
 
 > **Answer:**
 >
@@ -1438,8 +1450,7 @@ MECHANISM
 > it could be overridden. `Object.hasOwn(obj, key)` is the modern
 > safe alternative and should be preferred in all new code.
 
-**Q6: How do mixins work with JavaScript prototypes?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] How do mixins work with JavaScript prototypes?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -1499,7 +1510,7 @@ MECHANISM
 > often cleaner than mixins. The advice: favor composition over
 > inheritance, and favor composition over mixins.
 
-**Q7: What is the prototype chain performance implications and how
+**[SENIOR] Q7 - [MECHANISM] What is the prototype chain performance implications and how**
 does V8 optimize property access?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -1511,6 +1522,7 @@ does V8 optimize property access?** `[STAFF]` MECHANISM
 > ```javascript
 > // V8 SHAPE/HIDDEN CLASS OPTIMIZATION:
 >
+> // BAD: see prior example above (consistent shape (all Point ob...)
 > // GOOD: consistent shape (all Point objects have same structure)
 > class Point {
 >   constructor(x, y) {
@@ -1729,7 +1741,7 @@ PERFORMANCE DECISION TREE:
     4. Can native APIs cover this in 20 lines?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Decision Framework example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -1761,6 +1773,26 @@ with team size.
 ### 💻 Code Example
 
 **Decision patterns in practice**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // DECLARATION DECISIONS:
@@ -1855,7 +1887,7 @@ async function loadData(id) {
 }
 ```
 
-> **Code walkthrough:** The `var` vs `let`/`const` example shows the
+> **Code walkthrough:** The `var` vs `let`/`const` example shows theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > closure-in-loop problem in the context of a real pattern (setTimeout
 > in a loop). `var` creates a single `i` binding; by the time setTimeout
 > callbacks run, `i` = `items.length`. `let` creates a new binding
@@ -1970,7 +2002,7 @@ module.exports = {
 // 5. New code must comply immediately (block PR merge on errors)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using SQL. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -1988,8 +2020,7 @@ module.exports = {
 
 ---
 
-**Q1: When should you use a class vs a plain object in JavaScript?**
-`[SENIOR]` DECISION
+**[SENIOR] Q1 - [TRADE-OFF] When should you use a class vs a plain object in JavaScript?**
 
 > **Answer:**
 >
@@ -2050,8 +2081,7 @@ module.exports = {
 > is encapsulating the relationship between state and behavior. If
 > there's no behavior, you don't need a class.
 
-**Q2: When is synchronous code acceptable vs when must you use async?**
-`[SENIOR]` DECISION
+**[SENIOR] Q2 - [TRADE-OFF] When is synchronous code acceptable vs when must you use async?**
 
 > **Answer:**
 >
@@ -2109,7 +2139,7 @@ module.exports = {
 > guarantee an operation completes in < 10ms consistently, make it
 > async (or move it to a Worker).
 
-**Q3: How do you decide when to add a dependency vs writing it
+**[JUNIOR] Q3 - [TRADE-OFF] How do you decide when to add a dependency vs writing it**
 yourself?** `[STAFF]` DECISION
 
 > **Answer:**
@@ -2170,7 +2200,7 @@ yourself?** `[STAFF]` DECISION
 > number formatting across locales). Know when you're in deep-domain
 > territory.
 
-**Q4: How do you choose between different state management approaches
+**[MID] Q4 - [SCENARIO] How do you choose between different state management approaches**
 in a React application?** `[SENIOR]` DECISION
 
 > **Answer:**
@@ -2239,8 +2269,7 @@ in a React application?** `[SENIOR]` DECISION
 > and get BETTER behavior (background sync, cache invalidation, request
 > deduplication) for free.
 
-**Q5: When should you use TypeScript vs JavaScript?** `[SENIOR]`
-DECISION
+**[MID] Q5 - [TRADE-OFF] When should you use TypeScript vs JavaScript?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -2297,7 +2326,7 @@ DECISION
 > Strict mode catches: null/undefined errors, implicit any, strict
 > function types. It's worth the additional annotation overhead.
 
-**Q6: How do you decide what to test and how?** `[SENIOR]` DECISION
+**[SENIOR] Q6 - [MECHANISM] How do you decide what to test and how?** `[SENIOR]` DECISION**
 
 > **Answer:**
 >
@@ -2336,6 +2365,7 @@ DECISION
 > ```
 >
 > ```javascript
+> // BAD: see prior example above (test behavior, not implementat...)
 > // GOOD: test behavior, not implementation
 > // BAD: test that 'calculateTotal' calls 'applyDiscount':
 > it('calls applyDiscount', () => {
@@ -2366,7 +2396,7 @@ DECISION
 > give you confidence that the system still works. Implementation tests
 > become maintenance overhead.
 
-**Q7: How do you handle technical debt decisions in a JavaScript
+**[SENIOR] Q7 - [MECHANISM] How do you handle technical debt decisions in a JavaScript**
 codebase?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**

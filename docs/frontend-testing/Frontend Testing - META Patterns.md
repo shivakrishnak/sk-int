@@ -97,7 +97,7 @@ What NOT to test:
   Generated code (GraphQL types, API clients)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test Selection Mental Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -342,7 +342,7 @@ Decision framework (per test):
       (may not be testing meaningful behavior)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Testing Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -406,7 +406,7 @@ test('shows spinner while search is in progress', async () => {
 //           only ONE E2E test for the complete flow
 ```
 
-> **Code walkthrough:** The framework eliminates the trivial "component
+> **Code walkthrough:** The framework eliminates the trivial "componentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > renders" test and focuses on meaningful behaviors. Each test uses the
 > component's public interface (props, DOM output) - no internal state
 > access. The loading behavior test uses a mock that returns an
@@ -591,7 +591,7 @@ TDD cycle:
     Refactor: extract helpers, add TypeScript types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test-Driven Development for Frontend example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -657,7 +657,7 @@ test('cannot go beyond last page', () => {
 // - No over-engineering (only what tests required)
 ```
 
-> **Code walkthrough:** The TDD cycle forces a clear interface before
+> **Code walkthrough:** The TDD cycle forces a clear interface beforeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > implementation. Writing `usePagination({ total: 50 })` in the test
 > defines the API contract before a single line of implementation
 > exists. Each Red-Green cycle adds exactly one feature with the minimal

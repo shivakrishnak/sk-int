@@ -134,7 +134,7 @@ function PrivateRoute({ children }) {
 // <PrivateRoute><Dashboard /></PrivateRoute>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Higher-Order Components example demonstrates variable declaration using authentication. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -147,6 +147,7 @@ the modern hook-based alternatives shows pattern evolution awareness.
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // WRAPPER HELL (classic HOC problem):
 // Applying multiple HOCs creates DevTools nightmare
@@ -179,8 +180,9 @@ function MyComponent() {
 // 4. React.memo is technically a HOC:
 const MemoizedList = React.memo(ExpensiveList);
 ```
+{% endraw %}
 
-> **Code walkthrough:** The "wrapper hell" example shows why HOCs fell
+> **Code walkthrough:** The "wrapper hell" example shows why HOCs fellice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > out of favor - 6 levels of nesting in DevTools makes debugging painful.
 > The hook version is completely flat: all behavior is called at the top
 > of one function component. React Router v6 replaced `withRouter` (HOC)
@@ -264,8 +266,7 @@ Symptom: original component behaves differently when used without the HOC; addin
 
 ---
 
-**Q1: How do you migrate a withAuth HOC to the hooks pattern?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] How do you migrate a withAuth HOC to the hooks pattern?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -402,6 +403,7 @@ implicitly through React Context, providing a cohesive API.
 
 **How it works:**
 
+{% raw %}
 ```jsx
 // RENDER PROP PATTERN:
 function Toggle({ render }) {
@@ -486,8 +488,9 @@ Accordion.Item = AccordionItem;
   </Accordion.Item>
 </Accordion>
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Render Props and Compound Components example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -560,7 +563,7 @@ Tabs.Content = TabsContent;
 </Tabs>
 ```
 
-> **Code walkthrough:** The Tabs compound component shares `active` state
+> **Code walkthrough:** The Tabs compound component shares `active` stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and `setActive` via Context. `TabsTrigger` reads `active` (for styling)
 > and calls `setActive` (for navigation). `TabsContent` reads `active` to
 > decide whether to render. No prop drilling: each sub-component accesses
@@ -645,8 +648,7 @@ Symptom: `<Tabs.Panel>` used without a parent `<Tabs>` wrapper throws a null ref
 
 ---
 
-**Q1: Design a Dropdown component using compound components pattern.**
-`[SENIOR]` LIVE CODING
+**[SENIOR] Q1 - [SCENARIO] Design a Dropdown component using compound components pattern.**
 
 > **Answer:**
 >

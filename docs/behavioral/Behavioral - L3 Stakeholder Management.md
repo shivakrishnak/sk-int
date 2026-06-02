@@ -149,7 +149,7 @@ GOOD: "Our login system has a fragility we have
       I want to spend one sprint on it."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Managing Up and Stakeholder Communication example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 > **The stakeholder communication walkthrough:** The four-part model
 > (Status, Forecast, Risks, Ask) is what prevents the most common
@@ -302,7 +302,7 @@ Translate to business impact: cost, risk to revenue, user impact.
 
 ---
 
-**Q1: Tell me about a time you had to deliver bad news to
+**[JUNIOR] Q1 - [MECHANISM] Tell me about a time you had to deliver bad news to**
 leadership.** `[MID+]` SCENARIO
 
 > **Answer using STAR:**
@@ -339,7 +339,7 @@ leadership.** `[MID+]` SCENARIO
 
 ---
 
-**Q2: Tell me about a time you influenced a decision without
+**[JUNIOR] Q2 - [MECHANISM] Tell me about a time you influenced a decision without**
 having direct authority.** `[SENIOR]` SCENARIO
 
 > **Answer using STAR:**
@@ -374,7 +374,198 @@ having direct authority.** `[SENIOR]` SCENARIO
 
 ---
 
+**[MID] Q3 - [SCENARIO] Tell me about a time you managed a difficult stakeholder.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** A key business stakeholder for our platform
+> team had a pattern of adding scope to in-flight projects
+> after commitments were set, and escalating to leadership when
+> the team said the additions would affect the delivery date.
+>
+> **T (Task):** I was the tech lead. My goal was to protect
+> the team's commitments without damaging the relationship.
+>
+> **A (Action):** I requested a recurring 30-minute weekly
+> sync with the stakeholder to review status and capture any
+> new needs before they became mid-sprint additions. In each
+> sync I maintained a visible backlog of their requests with
+> a clear status: "in current scope," "deferred to next sprint,"
+> or "needs trade-off discussion." When new requests came in,
+> I responded within 24 hours with a one-line impact summary:
+> "Adding X will push Y by 3 days - want to discuss the trade-off?"
+> This removed the ambiguity that had been driving the
+> escalations - they were escalating because they did not
+> know what was happening.
+>
+> **R (Result):** Scope additions dropped by 60% over two
+> months. The stakeholder told my manager the team had become
+> much easier to work with. The escalations stopped entirely.
+>
+> *What separates good from great:* Recognizing that difficult
+> stakeholder behavior often reflects an information gap, not
+> bad intent. The fix was transparency, not confrontation.
+
 ---
+
+**[SENIOR] Q4 - [MECHANISM] How do you communicate project risks to non-technical stakeholders?**
+
+> **Answer:**
+>
+> The core principle: translate technical risk into business
+> consequence before communicating it. A stakeholder cannot
+> act on "the cache layer is approaching memory saturation."
+> They can act on "if we do not address this by Tuesday, we
+> risk a 30-minute outage during the Thursday product demo."
+>
+> My framework:
+>
+> **1. Quantify the risk.** What is the probability? What is
+> the impact? What is the timeline? A risk with no timeline
+> is not actionable.
+>
+> **2. Translate to business terms.** Revenue impact, user
+> impact, client commitment impact. If you cannot articulate
+> the business consequence, you have not fully understood
+> the risk yourself.
+>
+> **3. Come with options.** "Here are three paths: ignore
+> and accept the risk, mitigate now at X cost, defer and
+> monitor." Risk communication without options puts the
+> burden entirely on the stakeholder.
+>
+> **4. Make a recommendation.** "I recommend option 2 because
+> the mitigation cost is much lower than the incident cost."
+> Stakeholders expect engineers to have a point of view.
+>
+> **5. Close with a decision point.** "I need a decision by
+> end of day Thursday to have time to implement before the
+> demo." Open-ended risk conversations produce no action.
+>
+> *What separates good from great:* The engineers who get
+> stakeholder trust communicate risks early and proactively,
+> not after the risk materializes. Saying "I knew about this
+> two weeks ago but thought I could handle it" destroys trust
+> faster than the risk itself.
+
+---
+
+**[ALL] Q5 - [MECHANISM] How do you explain a technical concept to a non-technical stakeholder?**
+
+> **Answer:**
+>
+> The key move is to lead with the outcome, not the mechanism.
+> Stakeholders do not need to understand how a message queue
+> works; they need to understand that it prevents order
+> processing failures during traffic spikes.
+>
+> My approach:
+>
+> **Step 1 - Identify what decision or action you need from
+> them.** This shapes what to explain. If you need budget
+> approval, focus on cost and risk. If you need a date
+> extension, focus on complexity and impact.
+>
+> **Step 2 - Use an analogy they already know.** "A message
+> queue is like a take-a-number system at a busy deli. Orders
+> wait their turn rather than everyone shouting at the same
+> time." Analogies are not dumbing down - they are
+> activating existing mental models.
+>
+> **Step 3 - Avoid jargon substitutes.** Do not replace
+> "distributed transaction" with "complicated multi-step
+> process" - that is still vague. Say: "When two systems
+> need to update at the same moment and one fails, we can
+> end up in an inconsistent state. Think of it like a bank
+> transfer that debits but never credits."
+>
+> **Step 4 - Check understanding by asking them to summarize
+> the implication back to you.** "Does that change how you
+> want to handle the timeline?"
+>
+> *What separates good from great:* The engineers who
+> communicate best with stakeholders invest time learning
+> the stakeholder's mental model - their priorities, their
+> vocabulary, what decisions they own. You cannot communicate
+> well to an audience you have not studied.
+
+---
+
+**[SENIOR] Q6 - [SCENARIO] Tell me about a time you had to get alignment across teams with different priorities.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** A platform migration required coordinated
+> changes across three product teams - each with different
+> sprint commitments and different OKRs. The platform team
+> could not proceed without all three completing their
+> migration endpoints by a specific date.
+>
+> **T (Task):** I was the platform team's lead and owned
+> the coordination effort.
+>
+> **A (Action):** I created a shared one-page migration
+> brief: what was changing, why, what each team needed to
+> do, and the dependency timeline. I held a single joint
+> kickoff with all three teams rather than three separate
+> conversations - so everyone heard the same message and
+> understood each other's constraints. I then set up a
+> shared Slack channel with weekly status updates and
+> flagged blockers publicly so any team could see cross-team
+> dependencies. When Team B fell behind, I asked what
+> support they needed from us rather than escalating
+> immediately - they needed a 2-hour pairing session on
+> the API contract, which I provided.
+>
+> **R (Result):** All three teams completed migration within
+> one week of the target date. No executive escalation needed.
+>
+> *What separates good from great:* Creating shared context
+> rather than managing each team in isolation. Alignment
+> across teams breaks down when each team has a different
+> understanding of the situation. The joint kickoff and
+> shared channel maintained a single source of truth.
+
+---
+
+**[ALL] Q7 - [SCENARIO] How do you handle a situation where requirements are unclear or keep changing?**
+
+> **Answer:**
+>
+> Unclear requirements are a signal, not just a problem.
+> They usually mean either: the business has not yet decided
+> what they want, the technical implications are not
+> understood, or the right stakeholders are not yet involved.
+>
+> My approach:
+>
+> **Step 1 - Do not start building on unclear requirements.**
+> The cost of rework is always higher than the cost of
+> clarification. Ask: "What problem are we solving?" before
+> asking "what should we build?"
+>
+> **Step 2 - Make your assumptions explicit.** Write down
+> what you are assuming, send it for confirmation, and
+> only start building once the assumptions are acknowledged.
+> Unwritten assumptions become arguments later.
+>
+> **Step 3 - For changing requirements, apply a trade-off
+> conversation, not a yes/no gate.** "We can add this new
+> requirement. It will add 3 days and push feature Y out
+> of this sprint. Is that the right trade-off?" Changing
+> requirements is normal; invisible cost of change is the
+> problem.
+>
+> **Step 4 - Create a written record of scope decisions.**
+> A one-line Slack message confirmed by the requester is
+> enough. The act of writing forces clarity.
+>
+> *What separates good from great:* Engineers who make
+> assumptions explicit early create a dynamic where
+> requirement changes become visible decisions rather than
+> silent scope creep. The documentation is not overhead;
+> it is the mechanism that makes stakeholder alignment
+> sustainable.
 
 ---
 
@@ -529,7 +720,7 @@ GOOD: "I am proposing we descope A and B for this
       when they get addressed. Do I have alignment?"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prioritization Under Constraints example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 > **The prioritization framework walkthrough:** The "who owns the
 > decision" question is the most important and most skipped.
@@ -690,7 +881,7 @@ uncertain about - fail early when there is still time to adapt.
 
 ---
 
-**Q1: Tell me about a time you had to cut scope to hit a deadline.**
+**[JUNIOR] Q1 - [MECHANISM] Tell me about a time you had to cut scope to hit a deadline.**
 `[MID+]` SCENARIO
 
 > **Answer using STAR:**
@@ -723,7 +914,7 @@ uncertain about - fail early when there is still time to adapt.
 
 ---
 
-**Q2: How do you handle competing priorities from multiple
+**[JUNIOR] Q2 - [MECHANISM] How do you handle competing priorities from multiple**
 stakeholders?** `[SENIOR]` SCENARIO
 
 > **Answer using STAR:**
@@ -756,6 +947,193 @@ stakeholders?** `[SENIOR]` SCENARIO
 > full context, they are more likely to accept a sequencing
 > decision. Transparency about trade-offs is what makes priority
 > decisions stick.
+
+---
+
+**[ALL] Q3 - [MECHANISM] How do you prioritize when multiple things are marked urgent at the same time?**
+
+> **Answer:**
+>
+> "Everything is urgent" usually means either: (1) no one
+> has made a prioritization decision, or (2) someone is trying
+> to avoid making one. My first move is to force the decision
+> to the right level.
+>
+> My framework:
+>
+> **Step 1 - Separate urgency from importance.** Urgency is
+> time pressure. Importance is business impact. A request
+> can be both, either, or neither. Most "urgent" requests are
+> actually important but not time-critical once you probe.
+>
+> **Step 2 - Ask: what is the consequence of a one-day delay
+> for each item?** Hard deadlines with external contracts fail
+> this test. Internal preferences usually do not.
+>
+> **Step 3 - Identify what is blocking others.** Items where
+> another engineer or team cannot proceed without your output
+> are functionally urgent - they multiply your impact.
+>
+> **Step 4 - Communicate the sequence explicitly.** "I will
+> take A first, then B. B will start in approximately X hours.
+> If B's urgency has changed, let me know now." This prevents
+> silent re-prioritization from creating surprises.
+>
+> *What separates good from great:* Engineers who ask
+> "what breaks first if nothing moves?" - they are prioritizing
+> by consequence, not by who asked loudest. The ability to
+> articulate the reasoning for a sequence, not just the
+> sequence itself, is what stakeholders and managers trust.
+
+---
+
+**[MID] Q4 - [SCENARIO] Tell me about a time you said no to a request from a stakeholder or leadership.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** A product manager asked our team to add
+> a new integration feature to an in-flight release that was
+> two weeks from shipping. The feature was not scoped and would
+> require three days of work.
+>
+> **T (Task):** I needed to decline or negotiate scope without
+> damaging the relationship.
+>
+> **A (Action):** I did not say "no." I said: "We can include
+> this, but it will push the release by three days or we drop
+> one of the existing items. Which trade-off do you prefer?"
+> I brought the original commitment to the conversation as
+> context, not as an argument. The PM chose to defer the new
+> feature to the next sprint.
+>
+> **R (Result):** The release shipped on time. The deferred
+> feature was delivered in the following sprint with no issue.
+> The PM later said they appreciated the explicit trade-off
+> framing - it gave them the information they needed to decide,
+> rather than just a refusal.
+>
+> *What separates good from great:* Saying no with a trade-off
+> is always better than a flat no. A flat no is a
+> conversation-ender. A trade-off question is a
+> decision-enabler. The stakeholder gets to choose; you are
+> the one who makes the choice visible.
+
+---
+
+**[SENIOR] Q5 - [MECHANISM] How do you make trade-off decisions between paying down technical debt and shipping features?**
+
+> **Answer:**
+>
+> Technical debt and features compete for the same capacity.
+> The decision framework I use:
+>
+> **1. Classify the debt by consequence type:**
+> - Velocity debt: slows new feature delivery (refactoring,
+>   test coverage, documentation)
+> - Reliability debt: causes or risks production incidents
+>   (error handling, retry logic, monitoring)
+> - Security debt: creates compliance or breach risk
+>
+> Reliability and security debt are not negotiable against
+> features. They need timelines, not debates.
+>
+> **2. Quantify velocity debt as a tax.** If the current
+> codebase adds 20% to every feature estimate because of
+> poor abstractions, that is a 20% tax on all future work.
+> The debt is already costing you capacity.
+>
+> **3. Use the "rule of three":**: fix debt when you touch
+> the same area three times. The third time you are in
+> that code, the refactor is worth doing.
+>
+> **4. Time-box debt repayment.** Rather than debt sprints
+> (which stakeholders resist), I advocate for 20% of every
+> sprint as capacity reserved for refactoring. This is
+> invisible to stakeholders and sustainable for engineers.
+>
+> *What separates good from great:* Understanding that
+> technical debt is not a backlog item - it is a tax rate.
+> The decision is not "when do we pay it?" but "are we
+> willing to pay 20% more for every feature until we address
+> this?" Framing it this way makes the business case obvious
+> without requiring engineering to argue for investment.
+
+---
+
+**[MID] Q6 - [SCENARIO] Tell me about a time you had to reprioritize mid-project because of new information.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** Midway through a sprint, we learned a
+> compliance requirement was being enforced earlier than
+> planned - two weeks earlier. The compliance work was
+> in the next sprint's plan, not the current one.
+>
+> **T (Task):** I needed to reprioritize without creating
+> chaos for the team or making invisible the impact on
+> the original sprint commitments.
+>
+> **A (Action):** I mapped the compliance work to its minimum
+> viable scope (what was needed to avoid a compliance audit
+> failure, not what was ideal). I brought the original sprint
+> commitments to my manager and product owner with a clear
+> question: "The compliance work requires 5 days of capacity.
+> These are the three items from the current sprint that would
+> slip. Which two should we defer?" They chose. I communicated
+> the deferral to the stakeholders of the affected items that
+> day, with the reason and a revised date.
+>
+> **R (Result):** Compliance work completed before the
+> enforcement date. Two features slipped by one sprint.
+> No stakeholder surprises because the communication was
+> same-day and included a revised date.
+>
+> *What separates good from great:* The minimum-viable scope
+> analysis. Under pressure, engineers often over-scope the
+> urgent item because they are trying to do it right while
+> rushing. Separating "what is needed to avoid failure" from
+> "what is ideal" is the move that created capacity for
+> the reprioritization.
+
+---
+
+**[ALL] Q7 - [MECHANISM] How do you communicate scope changes or delays to stakeholders?**
+
+> **Answer:**
+>
+> The core principle: communicate early, communicate the
+> cause, and communicate what you need from them.
+>
+> My pattern for scope changes:
+>
+> **1. Communicate as soon as the change is confirmed,
+> not when you have the full solution.** Stakeholders need
+> time to adapt. A heads-up on Monday that the Friday delivery
+> will slip is manageable. A heads-up on Friday is a crisis.
+>
+> **2. Lead with impact, not cause.** "The delivery date is
+> moving from Friday to next Wednesday" before the explanation.
+> Stakeholders care about impact first.
+>
+> **3. Explain cause briefly and without jargon.** "We
+> discovered the external API has a rate limit that prevents
+> us from processing at the required throughput" - one
+> sentence, jargon-free.
+>
+> **4. State what you need from them.** "Do you want to
+> proceed with the revised date, or should we adjust scope
+> to hit Friday?" Give them a decision to make, not just
+> information to receive.
+>
+> **5. Follow up in writing.** A Slack message or email
+> after the verbal conversation creates a record and prevents
+> "I didn't know" conversations later.
+>
+> *What separates good from great:* The engineers who have
+> the best stakeholder relationships communicate bad news
+> faster and more clearly than anyone else. Trust is built
+> by the quality of your communication when things go wrong,
+> not when they go right.
 
 ---
 

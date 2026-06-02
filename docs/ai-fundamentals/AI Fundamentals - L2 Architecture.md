@@ -158,7 +158,7 @@ Result: P("on"|"The cat sat") = 0.6
         ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Transformer Architecture for Developers example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -253,7 +253,7 @@ def attention(
 # This reduces generation from O(n^2) per step to O(n).
 ```
 
-> **Code walkthrough:** The `attention` function captures
+> **Code walkthrough:** The `attention` function capturesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the core mechanism: query-key dot products (scaled)
 > produce attention scores showing how much each token
 > should attend to each other. The causal mask (upper
@@ -973,7 +973,7 @@ Multi-head: run 8-96 parallel versions of this,
 each with smaller d_k, concatenate and project back.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Attention Mechanism example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1040,7 +1040,7 @@ def attention_naive(Q, K, V):
     # models see future tokens.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This models see future tokens. example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 import numpy as np
@@ -1109,7 +1109,7 @@ def multi_head_attention(
     return concat @ W_O  # [seq, d_model]
 ```
 
-> **Code walkthrough:** The BAD version omits two critical
+> **Code walkthrough:** The BAD version omits two criticalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > elements: (1) the sqrt(d_k) scaling that prevents
 > large dot products from pushing softmax into saturation,
 > and (2) the causal mask that prevents generation models
@@ -1400,7 +1400,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HuggingFace: enable flash attention 2 example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* Knowing the exact
 memory savings (O(n) vs. O(n^2)), the speed improvement

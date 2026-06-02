@@ -7,6 +7,17 @@ permalink: /platform-engineering/l3-team-topologies/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Stream-Aligned vs Platform Team Dynamics](#stream-aligned-vs-platform-team-dynamics) | |
+| 2 | [Inverse Conway Maneuver](#inverse-conway-maneuver) | |
+
+---
+
+
 # Stream-Aligned vs Platform Team Dynamics
 
 ---
@@ -132,7 +143,7 @@ ANTI-PATTERN: TICKET-DRIVEN MODEL
             platform doing toil not engineering
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stream-Aligned vs Platform Team Dynamics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 X-as-a-Service scales: 5 platform engineers can support 200 product
@@ -192,7 +203,7 @@ follow.)*
 # MTTR: target < 1 hour for platform-adjacent incidents
 ```
 
-> **Code walkthrough:** Platform team health cannot be measured by
+> **Code walkthrough:** Platform team health cannot be measured byice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Kubernetes uptime alone. Ticket volume decreasing means self-service
 > is improving. Time-to-deploy decreasing means golden paths are
 > maturing. Toil ratio below 20% means the team is engineering, not
@@ -306,7 +317,7 @@ internally; run quarterly developer experience surveys.
 
 ---
 
-#### Q1 - How do you determine if a Platform team is delivering value?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you determine if a Platform team is delivering value?**
 
 Value falls into two metric categories: reliability (is the platform
 up?) and developer experience (is the platform helping teams ship faster?).
@@ -337,7 +348,7 @@ DORA metrics per product team is the output metric for platform ROI.
 
 ---
 
-#### Q2 - How do you handle a Stream-Aligned team that refuses to use the platform?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you handle a Stream-Aligned team that refuses to use the platform?**
 
 Refusal falls into three categories:
 
@@ -362,7 +373,7 @@ refusal as product feedback, not defiance, is the mature response.
 
 ---
 
-#### Q3 - What is the difference between Platform team and Enabling team?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between Platform team and Enabling team?**
 
 **Platform team:** builds and operates internal products (CI/CD,
 Kubernetes, developer portals) as persistent services with SLOs. Permanent
@@ -387,7 +398,7 @@ team cannot exit after 6 months, the capability was not transferred.
 
 ---
 
-#### Q4 - How do you set SLOs for an internal developer platform?
+**[MID] Q4 - [CONCEPTUAL] How do you set SLOs for an internal developer platform?**
 
 Internal developer platforms should have SLOs. Internal customers cannot
 choose a competitor, but they can choose workarounds that create technical
@@ -418,7 +429,7 @@ means for the platform.
 
 ---
 
-#### Q5 - How do you handle the tension between platform standardization and team autonomy?
+**[MID] Q5 - [CONCEPTUAL] How do you handle the tension between platform standardization and team autonomy?**
 
 Resolution framework:
 
@@ -442,7 +453,7 @@ trust the platform yet). The response is different in each case.
 
 ---
 
-#### Q6 - Describe the cognitive load problem in platform engineering.
+**[MID] Q6 - [CONCEPTUAL] Describe the cognitive load problem in platform engineering.**
 
 Three types (Team Topologies):
 
@@ -469,7 +480,7 @@ hour/week." This makes platform ROI visible to leadership.
 
 ---
 
-#### Q7 - How do you scale a Platform team as the organization grows?
+**[SENIOR] Q7 - [ARCHITECTURE] How do you scale a Platform team as the organization grows?**
 
 Platform team scaling is not linear with organization growth. A well-built
 self-service platform handles 2x load with modest headcount increases.
@@ -497,7 +508,7 @@ ROI > 4x." Leadership invests in Platform teams that can make this case.
 
 ---
 
-#### Q8 - What makes a successful platform team launch?
+**[SENIOR] Q8 - [CONCEPTUAL] What makes a successful platform team launch?**
 
 Most platform team launches fail for organizational reasons, not technical.
 
@@ -524,7 +535,7 @@ then measured the result.
 
 ---
 
-#### Q9 - How do you measure and reduce developer toil from the platform perspective?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you measure and reduce developer toil from the platform perspective?**
 
 Toil: manual, repetitive, automatable, tactical, grows with scale, adds
 no lasting value.
@@ -718,7 +729,7 @@ Target architecture:   Design org to match:
   No cross-team deps for routine features.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Inverse Conway Maneuver example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Architecture is a consequence of team structure. Architecture decision
@@ -780,7 +791,7 @@ Step 4: Conway's Law validation test
   If > 1 team required: coupling still exists, find and remove it
 ```
 
-> **Code walkthrough:** The Inverse Conway Maneuver is applied in Step 2
+> **Code walkthrough:** The Inverse Conway Maneuver is applied in Step 2ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > - teams are designed to match target service boundaries, not the other
 > way around. Step 3 identifies residual coupling and replaces it with
 > async events or self-service portals. Step 4 validates by asking: can
@@ -870,7 +881,7 @@ Database coupling test:
   Any database with > 1 team having write access = coupling point.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: data migration - extract team-specific data into team-owned data
 stores. Highest-effort, highest-value change for enabling team autonomy.
@@ -897,7 +908,7 @@ focused sub-teams with clear ownership boundaries and APIs between them.
 
 ---
 
-#### Q1 - Can you give a real example of Conway's Law causing architectural problems?
+**[JUNIOR] Q1 - [ARCHITECTURE] Can you give a real example of Conway's Law causing architectural problems?**
 
 Classic example: the shared-database anti-pattern.
 
@@ -926,7 +937,7 @@ play out in expensive ways.
 
 ---
 
-#### Q2 - How do you apply the Inverse Conway Maneuver during a monolith-to-microservices migration?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you apply the Inverse Conway Maneuver during a monolith-to-microservices migration?**
 
 Most migrations fail because they are treated as technical migrations.
 They are actually organizational migrations.
@@ -958,7 +969,7 @@ enforces the future domain boundary today.
 
 ---
 
-#### Q3 - How does Conway's Law apply to API design?
+**[JUNIOR] Q3 - [ARCHITECTURE] How does Conway's Law apply to API design?**
 
 If a single team owns both the API producer and all API consumers, they
 produce APIs optimized for internal use: chatty (many calls per user
@@ -981,7 +992,7 @@ the Inverse Conway Maneuver to API design itself.
 
 ---
 
-#### Q4 - What organizational signals indicate Conway's Law problems?
+**[MID] Q4 - [CONCEPTUAL] What organizational signals indicate Conway's Law problems?**
 
 **Signal 1 - Coordinated deployments required:** multiple teams must deploy
 simultaneously for any feature. Cause: team boundaries cross service
@@ -1010,7 +1021,7 @@ cause remains.
 
 ---
 
-#### Q5 - How do you use the Inverse Conway Maneuver for a platform engineering organization?
+**[MID] Q5 - [CONCEPTUAL] How do you use the Inverse Conway Maneuver for a platform engineering organization?**
 
 **Monolithic platform team (anti-pattern):**
 One Platform team owns Kubernetes, CI/CD, observability, developer portal,
@@ -1035,7 +1046,7 @@ Inverse Conway discipline as any other architectural migration.
 
 ---
 
-#### Q6 - How does Conway's Law intersect with DDD bounded contexts?
+**[MID] Q6 - [CONCEPTUAL] How does Conway's Law intersect with DDD bounded contexts?**
 
 Without deliberate alignment: bounded contexts defined on paper, teams
 organized by technical function. Bounded contexts cross team boundaries.
@@ -1059,7 +1070,7 @@ is a mechanism to exploit, not a constraint to fight.
 
 ---
 
-#### Q7 - What is the risk of overusing the Inverse Conway Maneuver?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the risk of overusing the Inverse Conway Maneuver?**
 
 **Reorganization cost:**
 - 3-6 months to rebuild trust and working relationships
@@ -1087,7 +1098,7 @@ the last resort, not the first.
 
 ---
 
-#### Q8 - How do you pitch the Inverse Conway Maneuver to organizational leadership?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you pitch the Inverse Conway Maneuver to organizational leadership?**
 
 **Business framing (not technical framing):**
 "We consistently cannot ship Payments features without involving 3 teams
@@ -1114,7 +1125,7 @@ organizational changes with business impact, not cleaner architecture diagrams.
 
 ---
 
-#### Q9 - Describe a Conway's Law intervention you have seen or executed.
+**[SENIOR] Q9 - [CONCEPTUAL] Describe a Conway's Law intervention you have seen or executed.**
 
 Context: 8 product teams all writing to a shared PostgreSQL database. No
 team owned a bounded context. Schema changes required company-wide migration

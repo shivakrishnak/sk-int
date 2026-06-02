@@ -72,7 +72,7 @@ Identify which station is the bottleneck before adding machines."
 ### 📘 Concept Explanation
 
 **Producer, consumer, broker tuning with metrics:**
-```
+```plaintext
 PRODUCER TUNING:
 
   // High-throughput producer profile:
@@ -177,7 +177,7 @@ BROKER TUNING:
   log.flush.interval.ms=Long.MAX_VALUE        # rely on OS
   
   # JVM (jvm.options or KAFKA_HEAP_OPTS):
-  # -Xmx8g -Xms8g  <- max 8GB. More = GC pauses. Kafka: most data in page cache.
+  # -Xmx8g -Xms8g  <- max 8GB. More = GC pauses. Kafka: most data in page...
   # G1GC (Java 11+):
   # -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:G1HeapRegionSize=16m
 
@@ -187,7 +187,7 @@ BROKER METRICS:
   kafka.server:type=BrokerTopicMetrics,name=BytesInPerSec: bytes received.
   kafka.server:type=BrokerTopicMetrics,name=BytesOutPerSec: bytes sent.
   kafka.log:type=LogFlushStats,name=LogFlushRateAndTimeMs: flush latency.
-    High value: OS flushing page cache. Usually harmless. High p99 -> disk I/O problem.
+    High value: OS flushing page cache. Usually harmless. High p99 -> disk I/O...
   kafka.server:type=ReplicaManager,name=UnderReplicatedPartitions:
     Non-zero: replicas falling behind. Check broker disk and network.
   kafka.controller:type=KafkaController,name=ActiveControllerCount:
@@ -212,7 +212,7 @@ OS TUNING (Linux):
   sysctl -w vm.dirty_background_ratio=5  # background flush at 5%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dirty page flush: let OS batch writes: example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -344,7 +344,7 @@ should match actual consumer parallelism + throughput requirements.
   └─────────────────┘        │                 │        └─────────────────┘
                              │ Broker 2        │
   ┌─────────────────┐        │ Broker 3        │        Partition count = 16
-  │ Service B       ├───────>│                 │        (matches consumer count)
+ │ Service B ├───────>│ │ (matches consumer count)
   │ (same config)   │        │ 16 partitions   │
   └─────────────────┘        │ RF=3, ISR=2     │
                              └─────────────────┘
@@ -353,7 +353,7 @@ should match actual consumer parallelism + throughput requirements.
   Per broker: ~170 MB/s. Per disk (8): ~21 MB/s. Well within SSD capability.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dirty page flush: let OS batch writes: example demoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -419,7 +419,7 @@ flowchart TD
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Throughput collapses after broker upgrade - compression setting mismatch.**
-```
+```plaintext
 Symptom: producer throughput dropped 40% after Kafka broker upgrade.
   Producer CPU: increased. Broker CPU: increased.
   No errors. Records are delivered.
@@ -458,10 +458,10 @@ Monitor:
   throughput (should recover), compression-rate-avg (should be < 0.7 for text data).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure: Consumer throughput plateau - max.poll.interval.ms exceeded under load.**
-```
+```plaintext
 Symptom: consumer throughput fine at low load. Under high load: consumers repeatedly leave
   and rejoin the group. Rebalances every 5 minutes. Throughput: poor.
   Log: "max.poll.interval.ms=300000 exceeded, leaving group".
@@ -472,7 +472,7 @@ Root cause: processing time for max.poll.records (default 500) records > 5 minut
     max.poll.interval.ms=300s (5min).
     Under normal load: fine. Under spike: queue backs up,
     each record takes 500ms -> 500*500ms = 250s.
-    Then load increases more -> 500ms * 500 = 250s. Spike -> 600ms -> 300s = timeout.
+    Then load increases more -> 500ms * 500 = 250s. Spike -> 600ms -> 300s =...
 
 Fix options:
   1. Reduce max.poll.records:
@@ -493,7 +493,7 @@ Fix options:
      This fixes the root cause; the others are mitigations.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

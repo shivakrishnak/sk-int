@@ -66,6 +66,12 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Lock contention details and measurement:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 JAVA LOCK ESCALATION PATH (HotSpot JVM):
 
@@ -185,7 +191,7 @@ CRITICAL SECTION MINIMIZATION:
   // 60x less contention for the same throughput.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L3 Concurrency Performance example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -305,7 +311,7 @@ timed lock, fairness, or multiple conditions. Use `synchronized` for simplicity 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Service throughput plateaus under load despite adding threads.**
-```
+```plaintext
 Symptom: 10 threads -> 10,000 RPS. 50 threads -> 10,200 RPS.
   Adding threads doesn't improve throughput (Amdahl's Law: serial fraction dominates).
   CPU usage: high (threads are running, not sleeping).
@@ -333,7 +339,7 @@ Diagnosis:
 Fix: move the IO outside the lock (see Code Example above).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -441,11 +447,11 @@ the Striped lock transfer example). The consistent ordering rule prevents deadlo
 ### 📘 Concept Explanation
 
 **CAS internals and lock-free patterns:**
-```
+```plaintext
 CAS CPU INSTRUCTION:
 
   x86: LOCK CMPXCHG dest, src
-    Atomically: if (dest == rax) { dest = src; ZF=1; } else { rax = dest; ZF=0; }
+    Atomically: if (dest == rax) { dest = src; ZF=1; } else { rax = dest;...
   ARM: LDAXR/STLXR pair (load-exclusive, store-exclusive)
     More complex: two instructions, but also atomic.
   
@@ -536,7 +542,7 @@ LONGADDER INTERNALS:
     -> Use LongAdder for 2+ threads with write-heavy counter.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -544,6 +550,12 @@ LONGADDER INTERNALS:
 
 > **Code walkthrough:** The LongAdder vs AtomicLong comparison shows the concrete break-even
 > point and the design rule. The AtomicStampedReference example shows the ABA fix in code.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // LONGADDER VS ATOMICLONG DECISION:
@@ -697,7 +709,7 @@ Fix:
   
   Alternatively: use Thread-Local counters and aggregate periodically:
   class ThreadLocalCounter {
-      private ThreadLocal<long[]> local = ThreadLocal.withInitial(() -> new long[1]);
+      private ThreadLocal<long[]> local = ThreadLocal.withInitial(() -> new...
       private AtomicLong aggregate = new AtomicLong();
       
       void increment() { local.get()[0]++; }
@@ -707,7 +719,7 @@ Fix:
   // No CAS on the hot path. Periodic aggregation is cheap.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

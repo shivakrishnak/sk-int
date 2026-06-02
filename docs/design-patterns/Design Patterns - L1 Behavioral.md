@@ -119,7 +119,7 @@ ConcreteObserverB implements Observer:
   + update(subject): // independent reaction
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Observer Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Two notification styles:
 - **Push**: Subject includes the changed data in the notification
@@ -277,7 +277,7 @@ public class InventoryListener {
 }
 ```
 
-> **Code walkthrough:** Spring's `ApplicationEventPublisher` implements
+> **Code walkthrough:** Spring's `ApplicationEventPublisher` implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Observer at the framework level. `OrderService` (Subject) publishes
 > an event without knowing who listens. `@EventListener` methods
 > (Observers) register automatically through component scanning.
@@ -579,7 +579,7 @@ context.setStrategy(new ConcreteStrategyA())
 new Context(new ConcreteStrategyB())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Strategy Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The strategy selection is separated from the strategy execution. The
@@ -643,7 +643,7 @@ public class PaymentProcessor {
 }
 ```
 
-> **Code walkthrough:** Every new payment type requires editing this
+> **Code walkthrough:** Every new payment type requires editing thisice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > class. The class grows unboundedly. Each case branch has entirely
 > different logic that cannot be tested independently. A change to
 > credit card processing risks breaking PayPal (same compilation unit).
@@ -691,7 +691,7 @@ public class PaymentProcessor {
 }
 ```
 
-> **Code walkthrough:** Adding a new payment type: create a new
+> **Code walkthrough:** Adding a new payment type: create a newice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `@Component` implementing `PaymentStrategy`, Spring auto-injects it
 > into the `List<PaymentStrategy>`. `PaymentProcessor` never changes.
 > Each strategy is independently testable (no switch case, no other
@@ -716,7 +716,7 @@ SortingService sortService = new SortingService(
     (a, b) -> a.getPerformance() - b.getPerformance());
 ```
 
-> **Code walkthrough:** In Java 8+, any functional interface is a
+> **Code walkthrough:** In Java 8+, any functional interface is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Strategy interface. `Comparator` is the canonical example. Strategies
 > are expressed as lambdas - no separate classes needed for simple
 > single-expression algorithms. For complex algorithms with multiple
@@ -1010,7 +1010,7 @@ ConcreteClassB extends AbstractClass:
   # optionalHook(): override with extra B behavior
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This optionalHook(): override with extra B behavior example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Three types of methods in Template Method:
 1. **Concrete methods** - fixed, shared implementation in base class
@@ -1111,7 +1111,7 @@ public class JsonExporter extends DataExporter {
 }
 ```
 
-> **Code walkthrough:** The `export()` template method is `final` -
+> **Code walkthrough:** The `export()` template method is `final` -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > subclasses cannot change the overall process. `buildHeader()` and
 > `formatRow()` are abstract - subclasses must provide these. Hook
 > methods (`prepare`, `buildFooter`, `finalize`) have empty default

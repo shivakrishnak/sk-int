@@ -131,7 +131,7 @@ PATTERN 5: STATEFUL SESSION
             repeating context in every call
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MCP Server Design Patterns example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -332,7 +332,7 @@ async def call_tool(name: str, arguments: dict):
     raise ValueError(f"Unknown tool: {name}")
 ```
 
-> **Code walkthrough:** The `JiraClient` class
+> **Code walkthrough:** The `JiraClient` classice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > encapsulates the full JIRA REST API - authentication,
 > URL construction, and response parsing are hidden
 > from the AI. The three tool definitions are the
@@ -587,7 +587,7 @@ async def read_resource(uri: str):
     return content
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 When to invalidate: TTL-based is simplest. If you
 have resource subscriptions, invalidate the cache
@@ -989,7 +989,7 @@ BAD: session_state["cursor"] = db_cursor  # reconnect breaks
 GOOD: return cursor_token; require on next call
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MCP Anti-Patterns example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1020,6 +1020,31 @@ AP6 violates session independence.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 """
@@ -1259,7 +1284,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize",
 "params":{"protocolVersion":"2024-11-05",
 "capabilities":{}}}' | python server.py
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test manually: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Look at the output. If the first character is not `{`:
 there is stdout contamination.
@@ -1269,7 +1294,7 @@ there is stdout contamination.
 # Find all non-stderr print statements:
 grep -rn "print(" server.py | grep -v "file=sys.stderr"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find all non-stderr print statements: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Redirect all logging to stderr.
 
@@ -1338,7 +1363,7 @@ def sanitize_input(text: str, max_len: int = 500) -> str:
     return text[:max_len]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find all non-stderr print statements: example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Layer 2 - Pattern detection:
 ```python
@@ -1357,9 +1382,14 @@ def detect_injection(text: str) -> bool:
     return False
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find all non-stderr print statements: example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Layer 3 - Structural isolation (most important):
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # BAD: user input as instruction
 f"Please {user_query}"
@@ -1368,7 +1398,7 @@ f"Please {user_query}"
 f"Process this text: [{user_query}]"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: user input as data example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Layer 4 - Constrained outputs for sampling:
 `max_tokens=10` limits the model's response for
@@ -1399,7 +1429,7 @@ return [types.TextContent(
     })
 )]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: user input as data example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 If count is always 0 and the query is echoed correctly:
 either the search truly found nothing or there's
@@ -1420,7 +1450,7 @@ except Exception as e:
         text=f"Error: {type(e).__name__}: {str(e)[:100]}"
     )]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: user input as data example demonstrates Python code pattern using async/await. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 If you now see errors: it was silent failure.
 
@@ -1432,7 +1462,7 @@ result = asyncio.run(search("your_query"))
 print(result)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: user input as data example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "Echo the query
 back in the response - confirms the AI is passing
@@ -1489,7 +1519,7 @@ except Exception as e:
     # str(e) may include the URL with password!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates context manager using error handling. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 Three-layer protection:
 
@@ -1504,7 +1534,7 @@ except Exception as e:
     )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates Python code pattern using error handling. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Layer 2 - Sanitize before logging:
 ```python
@@ -1516,7 +1546,7 @@ def sanitize_for_log(msg: str) -> str:
     )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Layer 3 - Use secrets manager, not plain DATABASE_URL
 with credentials embedded.
@@ -1545,7 +1575,7 @@ except Exception:
     return []  # silent failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates Python code pattern using error handling. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 The AI received empty results, interpreted as "no
 employees in that department," and reported "0 employees."
@@ -1640,7 +1670,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"initialize",
 "params":{"protocolVersion":"2024-11-05",
 "capabilities":{}}}' | python server.py | python -m json.tool
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 If this parses without error: no contamination.
 If json.tool reports a parse error: stdout is contaminated.
@@ -1652,14 +1682,14 @@ python -c "import json; json.loads('$result')" || \
   (echo "FAIL: stdout contamination" && exit 1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Find offending print statements:
 ```bash
 grep -rn "print(" server.py | grep -v "file=sys.stderr"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This str(e) may include the URL with password! example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* "Add this to CI -
 a debug print left in code is one of the most common

@@ -136,13 +136,13 @@ GC PHASES AND PAUSES:
       -> update all remaining stale references
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 ZGC example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** ZGC tuning is minimal by design. The code examples below
+> **Code walkthrough:** ZGC tuning is minimal by design. The code examples belowice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > demonstrate: enabling ZGC, reading diagnostic output, detecting common issues
 > (heap too small, object allocation rate too high, ZGC overhead). The BAD pattern
 > shows a workload that overloads ZGC; the GOOD pattern shows correct sizing.
@@ -184,6 +184,12 @@ GC PHASES AND PAUSES:
 # Reason: ZGC needs space for: current live objects +
 #   relocation set (copy destinations) + new allocations during GC
 # Under-sized heap -> allocation stall -> increased latency
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
 ```
 
 ```java
@@ -251,7 +257,7 @@ class DataProcessor_GOOD {
 //   (Docker/Linux: check /proc/<pid>/maps line count)
 ```
 
-> **Code walkthrough:** "Allocation Stall" in ZGC is equivalent to G1's
+> **Code walkthrough:** "Allocation Stall" in ZGC is equivalent to G1'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > "to-space exhausted" - both indicate the GC cannot keep up with the allocation
 > rate. ZGC's concurrent design means stalls are rare but not impossible. The
 > mitigation hierarchy: first increase heap, then reduce allocation rate, then
@@ -305,7 +311,7 @@ numbers for ZGC processes. RSS (resident set size) = actual physical memory = no
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: ZGC allocation stalls under high load - latency spikes from < 1ms to 10ms+.**
-```
+```plaintext
 Symptom: Occasional 10-50ms spikes under load (P99 latency)
   ZGC log: "Allocation Stall" events
   Monitoring: heap usage close to Xmx during spikes
@@ -349,7 +355,7 @@ Fix:
     Typically 2-4x better throughput with similar pause times
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Under-sized heap -> allocation stall -> increased latency example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -516,7 +522,7 @@ A: ZGC with container awareness (JDK 11+ cgroups v2 support):
 # 1GB for off-heap, Metaspace, ZGC overhead
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 1GB for off-heap, Metaspace, ZGC overhead example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* ZGC's virtual address reservation (3x heap) is
 visible as VSZ in `kubectl top pod` or `docker stats`. A pod with `Xmx=2g` and ZGC:
@@ -580,7 +586,7 @@ A: For a Spring Boot microservice with 4GB memory limit, latency SLA < 50ms:
 # No other tuning needed - ZGC self-tunes allocation trigger
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ZGC self-tunes allocation trigger example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The "do not over-tune ZGC" principle. ZGC's
 ergonomics: determines when to start GC (allocation rate-based), how many pages
@@ -660,7 +666,7 @@ ZGC's trade-offs now prevents surprises when upgrading JDK versions.
 
 **Architecture Decision:**
 
-```
+```plaintext
 PAYMENT SERVICE GC ARCHITECTURE:
 
   Deployment:
@@ -708,7 +714,7 @@ MONITORING:
   Alert 4: Heap usage > 85% consistently -> live set growing (leak)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ZGC self-tunes allocation trigger example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **GC strategy:** ZGC with generational mode. Accept 3% throughput overhead for
 consistent sub-2ms GC pauses. Heap sized at 75% of container for ZGC headroom.

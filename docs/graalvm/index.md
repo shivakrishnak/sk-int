@@ -1,6 +1,6 @@
 ---
 title: "GraalVM"
-nav_order: 11
+nav_order: 45
 has_children: true
 ---
 

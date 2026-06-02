@@ -110,7 +110,7 @@ HALF-OPEN <───────────────────────
 OPEN (back)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Circuit Breaker Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Resilience4j configuration:**
 
@@ -131,7 +131,7 @@ CircuitBreakerConfig config = CircuitBreakerConfig.custom()
     .build();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Circuit Breaker Pattern example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Fallback strategies:**
 
@@ -150,7 +150,7 @@ CircuitBreakerConfig config = CircuitBreakerConfig.custom()
    Example: order placed → outbox → retry when B recovers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Circuit Breaker Pattern example demonstrates a key ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Sliding window types (Resilience4j):**
 
@@ -166,7 +166,7 @@ variable-rate services (different failure rates
 at different times of day).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Circuit Breaker Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The circuit breaker serves two purposes: (1) protects the caller
@@ -204,6 +204,12 @@ resources."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CIRCUIT BREAKER WITH RESILIENCE4J
@@ -267,7 +273,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern calls the payment service
+> **Code walkthrough:** The BAD pattern calls the payment serviceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly with no protection. A 30-second timeout on a slow
 > payment service would hold a thread for the full duration,
 > exhausting the thread pool under load. The GOOD pattern wraps
@@ -332,13 +338,13 @@ and `ignoreExceptions` configuration for this.
 
 ### ⚖️ Comparison Table
 
-| Pattern | Protects Against | Mechanism | Use When |
-|---|---|---|---|
-| Circuit Breaker | Cascade failure, thread exhaustion | State machine, fail fast | All remote calls |
-| Retry | Transient failures | Re-execute on failure | Brief, recoverable |
-| Timeout | Slow calls | Bounded wait time | All remote calls |
-| Bulkhead | Thread pool exhaustion | Separate pools per service | High concurrency |
-| Rate Limiter | Overload | Throttle incoming requests | Downstream capacity limit |
+| Pattern| Protects Against| Mechanism| Use When|
+|---|---------------------|--------------------------|-------------------------|
+| Circuit Breaker| Cascade failure, thread exhaustion| State machine, fail fast|
+| Retry| Transient failures| Re-execute on failure| Brief, recoverable|
+| Timeout| Slow calls| Bounded wait time| All remote calls|
+| Bulkhead| Thread pool exhaustion| Separate pools per service| High concurrency
+| Rate Limiter| Overload| Throttle incoming requests| Downstream capacity limit|
 
 **The deciding factor:** These are complementary, not competing.
 Production resilience = Timeout + Retry + CircuitBreaker + Bulkhead
@@ -346,15 +352,82 @@ applied together (defense in depth).
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Circuit stuck OPEN after service recovery**
+
+**Symptom:** Circuit breaker stays OPEN indefinitely even after the
+downstream service has fully recovered. Requests fail fast with no
+retry, degrading user experience long after the incident ended.
+
+**Root cause:** The half-open probe request failed (network blip,
+cold start latency spike), resetting the circuit back to OPEN. The
+`successThreshold` for transitioning OPEN → CLOSED is set too high
+(e.g., requires 5 consecutive successes), and the probe interval is
+too long (e.g., 60s), so recovery takes 5+ minutes.
+
+**Diagnosis:**
+```bash
+# Check circuit state in Resilience4j actuator endpoint
+curl http://service/actuator/circuitbreakers
+# Look for: state=OPEN, slowCallRate, failureRate, bufferedCalls
+
+# Check transition events in logs
+grep "CircuitBreaker.*state" app.log | tail -20
+# Expected: CLOSED -> OPEN at incident start, OPEN -> HALF_OPEN,
+# then HALF_OPEN -> CLOSED on recovery
+```
+
+> **Code walkthrough:** The `actuator/circuitbreakers` endpoint exposes the Resilience4j circuit state machine. KEY MECHANISM: the circuit transitions from OPEN to HALF_OPEN when `waitDurationInOpenState` elapses; it transitions to CLOSED only when `permittedNumberOfCallsInHalfOpenState` calls succeed at or above the success rate. WHY IT MATTERS: if `waitDurationInOpenState` is 60s and `permittedNumberOfCallsInHalfOpenState` is 5, recovery takes at least 60s plus 5 probe round-trips. WHAT BREAKS: setting probe count too high means any cold-start latency spike during probing triggers a reset back to OPEN. TAKEAWAY: tune half-open probe count to 2-3 and interval to 10-15s for fast recovery.
+
+**Fix:** Reduce `waitDurationInOpenState` to 10-30s, set
+`permittedNumberOfCallsInHalfOpenState: 3`, and set
+`slowCallDurationThreshold` with realistic SLA values so cold-start
+latency does not count as a failure.
+
+---
+
+**Failure Mode 2 - Retry storm amplifying downstream failure**
+
+**Symptom:** A downstream service is at 80% capacity. Clients start
+retrying on timeout. The retry storm pushes the downstream to 200%
+capacity, causing a complete blackout. The circuit breaker opens
+too late because failure rate threshold is not exceeded yet (timeouts
+are not counted as failures in default config).
+
+**Root cause:** Retries without circuit breakers and without
+jitter cause coordinated thundering herds. Default Resilience4j
+config counts only exceptions as failures, not slow calls, so a
+slow (not failing) downstream triggers retries but not the circuit.
+
+**Diagnosis:**
+```bash
+# Check if slow calls trigger circuit - look at slowCallRate
+curl http://service/actuator/circuitbreakers | jq '.circuitBreakers'
+# If slowCallRate is high but state is CLOSED, circuit misconfigured
+
+# Check retry attempts in metrics
+curl http://service/actuator/metrics/resilience4j.retry.calls
+# High retry_count with FAILED_WITH_RETRY = retry storm in progress
+```
+
+> **Code walkthrough:** The metrics endpoint shows `resilience4j.retry.calls` with tags `kind=failed_with_retry` vs `kind=successful_without_retry`. KEY MECHANISM: when the upstream retries without circuit breakers, each timeout generates `maxAttempts` requests amplifying load by `maxAttempts` factor. WHY IT MATTERS: a service at 80% capacity receiving 3x retry amplification exceeds capacity completely, turning a partial failure into total outage. WHAT BREAKS: the circuit never opens because slow calls do not count as failures in default config. TAKEAWAY: always configure `slowCallRateThreshold` and `slowCallDurationThreshold` alongside the failure rate threshold.
+
+**Fix:** Configure `slowCallRateThreshold: 50` (50% slow calls opens
+circuit), add exponential backoff with jitter on retries, and ensure
+the retry policy has a circuit breaker wrapping it.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: The payment service circuit breaker is OPEN. Orders are being
-queued. The payment service has recovered. The circuit is not
-closing. What is happening?
+**[JUNIOR] Q1 - [MECHANISM] The payment service circuit breaker is OPEN. Orders are being queued. The payment service has recovered. The circuit is not closing. What is happening?**
 
-A: The HALF-OPEN probe request is still failing. Possible causes:
+The HALF-OPEN probe request is still failing. Possible causes:
 (1) The payment service recovered at the application level but
 its database is still degraded. The probe requests are hitting
 the DB-dependent endpoint and failing. Check: are probes hitting
@@ -370,7 +443,7 @@ and the circuit does not close. Reduce probe timeout separately.
 
 #### Candidate Mistakes
 
-Q: How does a circuit breaker prevent cascade failures?
+**[JUNIOR] Q2 - [FAILURE] How does a circuit breaker prevent cascade failures?**
 
 **What NOT to say:** "It stops the failing service from receiving
 requests."
@@ -532,11 +605,11 @@ is the first step to fixing it.
    - One service's cache eviction storms affect all
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Monolith Anti-pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **What makes a TRUE microservice:**
 
-```
+```plaintext
 Independence checklist:
 ✅ Owns its own database (private, not shared)
 ✅ Can be deployed without other services
@@ -547,7 +620,7 @@ Independence checklist:
 ✅ A team can work on it without coordinating with other teams
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Monolith Anti-pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Fix strategies:**
 
@@ -572,7 +645,7 @@ Share only: API client stubs, proto files, event schemas.
 Never share: domain objects, business logic, JPA entities.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Monolith Anti-pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The shared database is the most common and most severe form
@@ -606,6 +679,12 @@ the shared internals are accessed across a network."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DISTRIBUTED MONOLITH ANTI-PATTERNS
@@ -672,7 +751,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The BAD patterns show the two most common
+> **Code walkthrough:** The BAD patterns show the two most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > distributed monolith symptoms. The JOIN across the `users` table
 > creates a database-level coupling: any schema change to `users`
 > breaks `OrderRepository`. The synchronous chain means a failure
@@ -737,12 +816,12 @@ domain objects, JPA entities, business logic.
 
 ### ⚖️ Comparison Table
 
-| Architecture | Deployment | Failure Isolation | Scale | Choose When |
-|---|---|---|---|---|
-| Monolith | Single unit | None | Vertical | Small team, early stage |
-| Distributed Monolith | Pseudo-independent | None | Constrained | NEVER (anti-pattern) |
-| Microservices | Independent | Isolated | Independent | Scale teams, complex domain |
-| Modular Monolith | Single unit | In-process | Vertical | Growing team, clear modules |
+| Architecture| Deployment| Failure Isolation| Scale| Choose When|
+|---|----------------|-----------------|-----------|---------------------------|
+| Monolith| Single unit| None| Vertical| Small team, early stage|
+| Distributed Monolith| Pseudo-independent| None| Constrained| NEVER (anti-patte
+| Microservices| Independent| Isolated| Independent| Scale teams, complex domain
+| Modular Monolith| Single unit| In-process| Vertical| Growing team, clear modul
 
 **The deciding factor:** A modular monolith (strong module
 boundaries, no shared state between modules, clean APIs between
@@ -756,11 +835,9 @@ trap and the operational overhead of microservices.
 
 #### Production Failures
 
-Q: Deploying a new version of the UserService caused
-OrderService, PaymentService, and InventoryService to all start
-returning errors. What went wrong and what does this indicate?
+**[JUNIOR] Q1 - [MECHANISM] Deploying a new version of the UserService caused OrderService, PaymentService, and InventoryService to all start returning errors. What went wrong and what does this indicate?**
 
-A: This is a distributed monolith. The services are not
+This is a distributed monolith. The services are not
 independently deployable. Most likely cause: the UserService
 shared library (or shared database schema) was changed in a
 backward-incompatible way. When UserService deployed with a new
@@ -776,8 +853,7 @@ API versioning for UserService, enabling gradual migration.
 
 #### Candidate Mistakes
 
-Q: Our monolith is slow to deploy. We want to break it into
-microservices. Where do we start?
+**[JUNIOR] Q2 - [MECHANISM] Our monolith is slow to deploy. We want to break it into microservices. Where do we start?**
 
 **What NOT to say:** "Split it by technical layer: separate the
 controllers, services, and DAOs into different deployables."
@@ -859,18 +935,17 @@ transition diagram.)*
 
 ### 🎯 Interview Deep-Dive
 
-| Question Type | Count | Timing |
-|---|---|---|
-| Conceptual | 3 | 2 min each |
-| Trade-off | 2 | 3 min each |
-| Debugging | 2 | 3 min each |
-| Behavioral | 1 | 4 min |
-| Scale | 1 | 3 min |
+| Question Type| Count| Timing|
+|--------------------|------------------|-----------------|
+| Conceptual| 3| 2 min each|
+| Trade-off| 2| 3 min each|
+| Debugging| 2| 3 min each|
+| Behavioral| 1| 4 min|
+| Scale| 1| 3 min|
 
 ---
 
-**Q1 (Conceptual): Explain the purpose of HALF-OPEN state in a
-circuit breaker. Why is it needed?**
+**[JUNIOR] Q1 - [MECHANISM] Explain the purpose of HALF-OPEN state in a circuit breaker. Why is it needed?**
 
 After the circuit opens (too many failures), the system needs a
 mechanism to discover when the downstream service has recovered
@@ -899,8 +974,7 @@ a ping endpoint. A ping succeeds even if the database connection
 
 ---
 
-**Q2 (Conceptual): What is the difference between circuit breaker
-and retry patterns? When should you use each or both?**
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between circuit breaker and retry patterns? When should you use each or both?**
 
 Retry: detects a single failed request and re-executes it.
 Addresses transient failures (brief network blip, service
@@ -932,8 +1006,7 @@ in the circuit breaker failure rate."
 
 ---
 
-**Q3 (Conceptual): How does a bulkhead pattern complement a
-circuit breaker?**
+**[JUNIOR] Q3 - [MECHANISM] How does a bulkhead pattern complement a circuit breaker?**
 
 Circuit breaker prevents calling a failed service. But before
 the circuit trips, a slow service can still exhaust the caller's
@@ -963,8 +1036,7 @@ semaphore (lighter weight, works in reactive frameworks).
 
 ---
 
-**Q4 (Trade-off): What is the cost of setting a circuit breaker
-threshold too low vs. too high?**
+**[MID] Q4 - [TRADE-OFF] What is the cost of setting a circuit breaker threshold too low vs. too high?**
 
 Too low (e.g., 10% failure rate threshold, minimum 5 calls):
 A brief burst of 1 error in 5 calls trips the circuit (20%).
@@ -999,8 +1071,7 @@ to the expected call rate."
 
 ---
 
-**Q5 (Trade-off): When is a fallback response the right choice
-vs. failing fast with an error?**
+**[MID] Q5 - [TRADE-OFF] When is a fallback response the right choice vs. failing fast with an error?**
 
 Fail fast (return error to caller): appropriate when there is no
 reasonable alternative to the requested operation. If the payment
@@ -1029,9 +1100,7 @@ at that point, fail fast rather than sell products at outdated prices."
 
 ---
 
-**Q6 (Debugging): You are seeing intermittent 503 errors from
-Service A that calls Service B. Circuit breaker metrics show
-the circuit is CLOSED (not open). What are the possible causes?**
+**[SENIOR] Q6 - [DEBUGGING] You are seeing intermittent 503 errors from Service A that calls Service B. Circuit breaker metrics show the circuit is CLOSED (not open). What are the possible causes?**
 
 If the circuit is CLOSED but 503s are occurring, the failures
 are not yet crossing the circuit breaker threshold (but they will
@@ -1067,9 +1136,7 @@ Service B.
 
 ---
 
-**Q7 (Debugging): The circuit breaker is causing more harm than
-good: it trips on normal business errors and stays open too long.
-How do you reconfigure it?**
+**[SENIOR] Q7 - [DEBUGGING] The circuit breaker is causing more harm than good: it trips on normal business errors and stays open too long. How do you reconfigure it?**
 
 Step 1: identify which exceptions are being counted as failures.
 Enable Resilience4j event logging. Each `CircuitBreakerOnErrorEvent`
@@ -1085,7 +1152,7 @@ CircuitBreakerConfig.custom()
     .build()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 After (records only infrastructure exceptions):
 ```java
@@ -1101,7 +1168,7 @@ CircuitBreakerConfig.custom()
     .build()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 3: if it stays open too long, reduce `waitDurationInOpenState`
 and increase `permittedNumberOfCallsInHalfOpenState` (more probe
@@ -1115,8 +1182,7 @@ return business errors frequently.
 
 ---
 
-**Q8 (Behavioral): Tell me about a time you implemented or
-debugged a circuit breaker in production.**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a time you implemented or debugged a circuit breaker in production.**
 
 *(Personalize from experience.)*
 
@@ -1135,8 +1201,7 @@ inventory recovered."
 
 ---
 
-**Q9 (Scale): How does circuit breaker behavior change when
-a service has many callers (thousands of instances)?**
+**[SENIOR] Q9 - [TRADE-OFF] How does circuit breaker behavior change when a service has many callers (thousands of instances)?**
 
 In a single-instance circuit breaker: the circuit state is
 in-memory, per instance. 1,000 service instances each have their
@@ -1248,8 +1313,7 @@ concerns.)*
 
 ---
 
-**Q1 (Conceptual): List 5 signs that a system is a distributed
-monolith, not true microservices.**
+**[JUNIOR] Q1 - [MECHANISM] List 5 signs that a system is a distributed monolith, not true microservices.**
 
 1. **Shared database:** multiple services read from and write
    to the same database schema. Tables owned by "Service A" are
@@ -1281,9 +1345,7 @@ forms of the same anti-pattern."
 
 ---
 
-**Q2 (Conceptual): What is the strangler fig pattern and how
-does it help migrate from a monolith to microservices without
-creating a distributed monolith?**
+**[JUNIOR] Q2 - [MECHANISM] What is the strangler fig pattern and how does it help migrate from a monolith to microservices without creating a distributed monolith?**
 
 The strangler fig pattern (named after a tropical plant that
 gradually replaces its host tree) involves incrementally migrating
@@ -1318,8 +1380,7 @@ the new service's data schema without touching the monolith?"
 
 ---
 
-**Q3 (Conceptual): Why is a shared domain object library across
-microservices an anti-pattern?**
+**[JUNIOR] Q3 - [MECHANISM] Why is a shared domain object library across microservices an anti-pattern?**
 
 A shared domain library (e.g., `Order`, `User`, `Product` classes
 in `company-domain.jar`) creates temporal coupling: any change to
@@ -1347,8 +1408,7 @@ fully independent evolution.
 
 ---
 
-**Q4 (Trade-off): Monolith vs. microservices vs. modular monolith:
-when is each the right choice?**
+**[MID] Q4 - [TRADE-OFF] Monolith vs. microservices vs. modular monolith: when is each the right choice?**
 
 Monolith: right for small teams (< 10 engineers), early product
 stage where requirements change rapidly, systems where
@@ -1380,8 +1440,7 @@ the benefits are real."
 
 ---
 
-**Q5 (Trade-off): What are the costs and risks of migrating
-from a distributed monolith to true microservices?**
+**[MID] Q5 - [TRADE-OFF] What are the costs and risks of migrating from a distributed monolith to true microservices?**
 
 The risks:
 
@@ -1417,8 +1476,7 @@ extracting the next.
 
 ---
 
-**Q6 (Debugging): A team extracted a service but deployments are
-still coordinated. What is the hidden coupling?**
+**[SENIOR] Q6 - [DEBUGGING] A team extracted a service but deployments are still coordinated. What is the hidden coupling?**
 
 Coordinated deployments after extraction indicate a hidden
 coupling. Common causes:
@@ -1454,8 +1512,7 @@ deprecation with migration period.
 
 ---
 
-**Q7 (Debugging): How do you identify which service "owns" a
-table in a shared database?**
+**[SENIOR] Q7 - [DEBUGGING] How do you identify which service "owns" a table in a shared database?**
 
 When there is no formal ownership, use these heuristics:
 
@@ -1489,8 +1546,7 @@ insert/update analysis."
 
 ---
 
-**Q8 (Behavioral): Have you worked in a distributed monolith?
-How did you identify it and what steps did you take?**
+**[SENIOR] Q8 - [BEHAVIORAL] Have you worked in a distributed monolith? How did you identify it and what steps did you take?**
 
 *(Personalize from experience.)*
 
@@ -1510,8 +1566,7 @@ deployment coordination from 8 services to 2."
 
 ---
 
-**Q9 (Scale): How does the impact of a distributed monolith
-change as the team and system scale?**
+**[SENIOR] Q9 - [TRADE-OFF] How does the impact of a distributed monolith change as the team and system scale?**
 
 At small scale (5 engineers, 3 services): the shared database
 is manageable. Everyone knows the schema. Coordinated deployments

@@ -126,7 +126,7 @@ Subject proxy = (Subject) Proxy.newProxyInstance(
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Proxy Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Four canonical Proxy types:**
 
@@ -238,7 +238,7 @@ public class OrderRepository {
 // Zero changes to OrderRepository's code.
 ```
 
-> **Code walkthrough:** The static Proxy (`SecuredOrderRepository`)
+> **Code walkthrough:** The static Proxy (`SecuredOrderRepository`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > separates security from business logic cleanly. The Spring AOP version
 > goes further: no proxy class to write at all - the framework creates
 > it at runtime from the `@PreAuthorize` annotation. The real repository
@@ -274,7 +274,7 @@ for (Order order : orders) {
 List<Order> findPendingWithItems();
 ```
 
-> **Code walkthrough:** JPA's lazy loading is a Virtual Proxy:
+> **Code walkthrough:** JPA's lazy loading is a Virtual Proxy:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `items` is a Hibernate proxy object that loads from the database
 > on first access. This delays the load until needed (good for
 > performance when items are not always needed). The trap: the N+1
@@ -625,7 +625,7 @@ root.operation()  // 600 (100+200+300)
 // root combines: 300 + 300 = 600
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Composite Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The recursive delegation to `child.operation()` in the Composite class
@@ -668,7 +668,7 @@ public long calculateSize(Object node) {
 }
 ```
 
-> **Code walkthrough:** Every new node type requires modifying this
+> **Code walkthrough:** Every new node type requires modifying thisice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > method. The `instanceof` chain is the signal that Composite is the
 > right pattern. The traversal logic is outside the objects themselves.
 
@@ -739,7 +739,7 @@ root.print(""); // prints tree structure
 // Client calls root.getSize() - does not know the tree structure
 ```
 
-> **Code walkthrough:** `root.getSize()` calls `src.getSize()` and
+> **Code walkthrough:** `root.getSize()` calls `src.getSize()` andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `test.getSize()`. `src.getSize()` sums its children (2048 + 1024 = 3072).
 > `test.getSize()` returns 512. The recursion happens inside `Directory.getSize()`
 > via the `FileSystemNode::getSize` method reference - no `instanceof` anywhere.
@@ -783,7 +783,7 @@ public class CompositeDiscountRule implements DiscountRule {
 // Complex discount rules built as trees at runtime
 ```
 
-> **Code walkthrough:** Discount rules form a Composite tree: a
+> **Code walkthrough:** Discount rules form a Composite tree: aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `CompositeDiscountRule` with AND combines `PremiumUserRule` and
 > `LargeOrderRule`. The tree can be as deep as needed. Rules can be
 > loaded from configuration and assembled at startup. The `discount()`

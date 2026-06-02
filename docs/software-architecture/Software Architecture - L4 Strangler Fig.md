@@ -135,7 +135,7 @@ Phase N - Legacy retired:
             (Legacy receives no traffic; decommissioned)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Strangler Fig Migration Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use Strangler Fig:**
 - Legacy system is live and cannot be taken offline
@@ -171,7 +171,7 @@ Phase N - Legacy retired:
 // The "code" is a blank new project that never ships.
 ```
 
-> **Code walkthrough:** The big-bang rewrite is a process anti-pattern,
+> **Code walkthrough:** The big-bang rewrite is a process anti-pattern,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > not a code pattern. The failure mode is that the rewrite
 > team underestimates scope (the complex 20% of the legacy that
 > handles all the edge cases), while the legacy continues to
@@ -268,7 +268,7 @@ public class PaymentMigrationService {
 // }
 ```
 
-> **Code walkthrough:** The facade (Spring Cloud Gateway) starts
+> **Code walkthrough:** The facade (Spring Cloud Gateway) startsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as a transparent proxy. Adding the payment route entry is a
 > configuration change, not a code change: deploy updated config,
 > and payment requests are now routed to the new service. The
@@ -352,7 +352,7 @@ grep -r "DiscoveryClient\|feign\|restTemplate" api-gateway/src/
 # Any result = gateway has business logic
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any result = gateway has business logic example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Routing rules must be purely structural (URL, header,
 method). Feature flag routing belongs in the application layer,
@@ -380,7 +380,7 @@ WHERE p2.id IS NULL;
 -- Should be 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any result = gateway has business logic example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Set a fixed dual-write end date when the migration begins.
 Run automated data consistency checks daily. If consistency checks
@@ -607,7 +607,7 @@ Kafka: customer.changes topic
 New Customer Service (consumes events, maintains own DB)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The new Customer Service does not depend on the legacy internals.
 It reads a stream of change events. When the legacy is decommissioned,
@@ -641,7 +641,7 @@ grep "new-service" access.log | wc -l
 # Ratio = migration progress percentage
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Ratio = migration progress percentage example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Capabilities migrated: what percentage of the legacy's functional
 capabilities have been extracted? Maintain a capability inventory
@@ -880,7 +880,7 @@ spring:
             - Weight=payment, 90
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Route 10% of payment traffic to new service example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The canary route allows validating the new service with real
 production traffic (10%) before full cutover. Monitor error rates
@@ -925,7 +925,7 @@ Mobile client (old app version)
 Payment Service (new API: /api/payments)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Route 10% of payment traffic to new service example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 API versioning in the facade: when the new service introduces
 a new API version (`/api/v2/payment`), both versions are

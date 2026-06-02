@@ -117,16 +117,22 @@ GC LOGS SHOW:
   (GC work = 0.0850 - 0.0820 = 0.003 = 3ms, reach time = 82ms!)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Safepoints and Sync example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The counted loop issue is the most common cause of
+> **Code walkthrough:** The counted loop issue is the most common cause ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > unexpected safepoint delays. The BAD pattern: a JIT-compiled counted loop
 > without safepoint checks can hold the entire JVM for hundreds of milliseconds.
 > The diagnostic pattern using safepoint logging reveals this clearly.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: tight counted loop without safepoint poll
@@ -277,23 +283,23 @@ Verification:
   [safepoint] Total time stopped: 0.0070000 seconds   <- 7ms total (GC work)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Safepoint definition | 2 minutes |
-| How safepoint polling works | 2 minutes |
-| Thread states at safepoints | 2 minutes |
-| Counted loop problem | 2 minutes |
-| Time to safepoint diagnosis | 2 minutes |
-| JNI and safepoints | 2 minutes |
-| UseCountedLoopSafepoints | 90 seconds |
-| async-profiler and safepoint blind spots | 2 minutes |
-| Safepoint operations beyond GC | 2 minutes |
+| Question Category| Time to Answer|
+|----------------------------------------|---------------------|
+| Safepoint definition| 2 minutes|
+| How safepoint polling works| 2 minutes|
+| Thread states at safepoints| 2 minutes|
+| Counted loop problem| 2 minutes|
+| Time to safepoint diagnosis| 2 minutes|
+| JNI and safepoints| 2 minutes|
+| UseCountedLoopSafepoints| 90 seconds|
+| async-profiler and safepoint blind spots| 2 minutes|
+| Safepoint operations beyond GC| 2 minutes|
 
 ---
 
@@ -301,7 +307,7 @@ Verification:
 
 A: A safepoint is a point in a thread's execution where: (1) the JVM knows the exact
 location of all object references (in registers, on the stack), (2) the thread is not
-mid-operation on JVM internals, (3) the thread's state can be safely inspected or
+mid-operation on JVM internals, (3) the thread's state can be safely inspected o
 modified. At a safepoint: the JVM can walk the thread's stack, update object references
 (for GC moving), and change the thread's execution (for deoptimization). Not all points
 in code are safepoints - only specifically marked ones.
@@ -310,7 +316,7 @@ in code are safepoints - only specifically marked ones.
 redefinition (javaagent bytecode transformation), biased lock revocation, deoptimization
 (when JIT assumptions are violated), method profiling samples (some GC profilers require
 all threads at safepoints to get accurate stack samples). The term "safepoint" is JVM
-internal - application code sees only the "pause." JFR events include safepoint events
+internal - application code sees only the "pause." JFR events include safepoint 
 that show the reason for the safepoint (GC, deopt, lock revocation, etc.) and duration.
 
 ---
@@ -319,17 +325,17 @@ that show the reason for the safepoint (GC, deopt, lock revocation, etc.) and du
 
 A: HotSpot uses a "polling page" mechanism: a specially mapped memory page. When no
 safepoint is needed: the page is readable. When a safepoint is requested: the JVM
-marks the page as unreadable (mprotect). JIT-compiled code periodically reads from this
+marks the page as unreadable (mprotect). JIT-compiled code periodically reads fr
 page (a load instruction). If the page is unreadable: SIGSEGV is raised. A signal handler
 catches it and brings the thread to a safepoint.
 
-*What separates good from great:* The polling page mechanism evolved in JDK 14+ with
-"thread-local handshakes" (JEP 312). Previously: a safepoint required ALL threads to
-stop simultaneously. With thread-local handshakes: the JVM can suspend one thread
+*What separates good from great:* The polling page mechanism evolved in JDK 14+ 
+"thread-local handshakes" (JEP 312). Previously: a safepoint required ALL thread
+stop simultaneously. With thread-local handshakes: the JVM can suspend one threa
 (for deoptimization, stack sampling) without stopping all others. This significantly
-reduces the scope of pauses for non-GC safepoint operations. GC still requires all
+reduces the scope of pauses for non-GC safepoint operations. GC still requires a
 threads, but deoptimization and lock revocation now use thread-local handshakes
-(much cheaper). JDK 15+ also uses per-thread polling pages (each thread reads from
+(much cheaper). JDK 15+ also uses per-thread polling pages (each thread reads fr
 its own page), enabling more targeted thread suspension.
 
 ---
@@ -338,17 +344,17 @@ its own page), enabling more targeted thread suspension.
 
 A: GC (all types: Minor, Mixed, Full, concurrent marking initial+remark phases).
 Deoptimization (when JIT's speculative assumptions are violated). Biased lock revocation
-(pre-JDK 15). Class redefinition (javaagent transformations, JVM TI). Thread dumps
+(pre-JDK 15). Class redefinition (javaagent transformations, JVM TI). Thread dum
 (`jstack`). Heap dumps (`jcmd GC.heap_dump`). Code cache flush (when JIT code is
 invalidated). Profile data collection (some implementations).
 
-*What separates good from great:* Biased locking (pre-JDK 15) caused many unexpected
+*What separates good from great:* Biased locking (pre-JDK 15) caused many unexpe
 safepoints. When a biased lock is revoked (another thread tries to acquire it): global
 safepoint required to revoke the bias. Applications with many threads contending on
 "biased" locks (HashMap, ArrayList, synchronized blocks that are sometimes accessed
 by different threads) saw frequent short safepoints for bias revocation. JDK 15
-deprecated biased locking (disabled by default in JDK 17). If running on JDK 8-14
-with safepoint logs showing "RevokeBias" frequently: upgrade to JDK 17+ to eliminate
+deprecated biased locking (disabled by default in JDK 17). If running on JDK 8-1
+with safepoint logs showing "RevokeBias" frequently: upgrade to JDK 17+ to elimi
 those safepoints entirely.
 
 ---
@@ -356,19 +362,19 @@ those safepoints entirely.
 **Q4 (counted loops): Why do counted loops cause safepoint delays?**
 
 A: JIT compilers optimize counted loops aggressively (integer overflow detection,
-vectorization, loop unrolling). Safepoint poll is inserted at the loop back-edge.
-But: for some counted loop forms (int-indexed, simple body), the JIT may hoist the
+vectorization, loop unrolling). Safepoint poll is inserted at the loop back-edge
+But: for some counted loop forms (int-indexed, simple body), the JIT may hoist t
 safepoint poll OUT of the loop body (to just before the loop), or in some JIT versions,
 omit it entirely in short loops. Result: the loop runs to completion before the
-first safepoint poll. A 100M-iteration loop: 50-500ms runtime without any safepoint
+first safepoint poll. A 100M-iteration loop: 50-500ms runtime without any safepo
 = the GC must wait the full loop duration.
 
-*What separates good from great:* The optimization is not a bug - it's intentional.
-Inserting a safepoint poll at every counted loop back-edge adds a conditional branch
+*What separates good from great:* The optimization is not a bug - it's intention
+Inserting a safepoint poll at every counted loop back-edge adds a conditional br
 per iteration, reducing vectorization opportunities and adding overhead. The JIT trades:
-"safepoint responsiveness vs loop throughput." `-XX:+UseCountedLoopSafepoints` (JDK 10+)
-forces safepoint polls at counted loop back-edges, guaranteeing responsiveness at a
-small cost (~1-2% for CPU-bound loops). The cost is worth it for any service with GC
+"safepoint responsiveness vs loop throughput." `-XX:+UseCountedLoopSafepoints` (
+forces safepoint polls at counted loop back-edges, guaranteeing responsiveness a
+small cost (~1-2% for CPU-bound loops). The cost is worth it for any service wit
 pause SLAs. JDK 21's JIT improvements reduce the overhead further. As a rule: enable
 `UseCountedLoopSafepoints` in any production service with latency requirements.
 
@@ -376,27 +382,27 @@ pause SLAs. JDK 21's JIT improvements reduce the overhead further. As a rule: en
 
 **Q5 (diagnosis): How do you find which code is causing safepoint delays?**
 
-A: (1) Enable `-Xlog:safepoint+thread=debug` -> shows thread name and current bytecode
-position at safepoint. (2) async-profiler wall-clock profiling (`-e wall`): captures
-samples even in safepoint-immune code. (3) JFR "JavaMonitorEnter" and "SafepointWait"
-events. (4) If `-Xlog:safepoint+thread=debug` shows a specific method: inspect it for
-counted loops. (5) GC pause histogram: if P99 >> P50 and the spike correlates with
+A: (1) Enable `-Xlog:safepoint+thread=debug` -> shows thread name and current by
+position at safepoint. (2) async-profiler wall-clock profiling (`-e wall`): capt
+samples even in safepoint-immune code. (3) JFR "JavaMonitorEnter" and "Safepoint
+events. (4) If `-Xlog:safepoint+thread=debug` shows a specific method: inspect i
+counted loops. (5) GC pause histogram: if P99 >> P50 and the spike correlates wi
 batch processing: counted loop is likely.
 
-*What separates good from great:* async-profiler's `-e wall` (wall clock mode) is
-critical for finding safepoint-immune code. Standard CPU profilers using JVMTI work
+*What separates good from great:* async-profiler's `-e wall` (wall clock mode) i
+critical for finding safepoint-immune code. Standard CPU profilers using JVMTI w
 by: pausing each thread at a safepoint to take a sample. But code in a counted loop
-without safepoint polls is "safepoint-immune" - the profiler can't sample it! This
-means: the exact code causing the problem is INVISIBLE to standard profilers. async-profiler
+without safepoint polls is "safepoint-immune" - the profiler can't sample it! Th
+means: the exact code causing the problem is INVISIBLE to standard profilers. as
 uses OS signals (SIGPROF) to interrupt threads regardless of safepoint state, enabling
-profiling of safepoint-immune code. Without `-e wall`: the profiler silently misses
+profiling of safepoint-immune code. Without `-e wall`: the profiler silently mis
 the bottleneck.
 
 ---
 
 **Q6 (JNI): How does JNI code interact with safepoints?**
 
-A: Native code doesn't have JVM safepoint polls - it can't be stopped at arbitrary
+A: Native code doesn't have JVM safepoint polls - it can't be stopped at arbitra
 points. JNI code runs concurrently with a STW operation (surprising!). When the JVM
 wants a safepoint: JNI threads are "acknowledged" as safe because: the JNI code isn't
 manipulating JVM heap. But: the JNI thread CANNOT re-enter Java code during the
@@ -426,29 +432,29 @@ every 30 seconds: it causes a STW pause every 30 seconds!
 *What separates good from great:* Diagnosing "phantom pauses": use JFR to record
 `jdk.SafepointBegin` and `jdk.SafepointEnd` events. Each event includes the "reason"
 field: GC, Deoptimize, PrintThreads (thread dump), RevokeBias, etc. If frequent
-non-GC safepoints: (1) "PrintThreads" -> your monitoring is taking thread dumps too
-frequently; (2) "Deoptimize" -> JIT is frequently invalidating compiled code (check for
-polymorphic call sites); (3) "RevokeBias" -> upgrade to JDK 17+ (biased locking removed).
+non-GC safepoints: (1) "PrintThreads" -> your monitoring is taking thread dumps 
+frequently; (2) "Deoptimize" -> JIT is frequently invalidating compiled code (ch
+polymorphic call sites); (3) "RevokeBias" -> upgrade to JDK 17+ (biased locking 
 
 ---
 
 **Q8 (virtual threads): How do virtual threads change safepoint behavior?**
 
-A: Virtual threads (JDK 21+) run on carrier threads (platform threads). When a virtual
+A: Virtual threads (JDK 21+) run on carrier threads (platform threads). When a v
 thread performs a blocking operation (I/O, sleep): it unmounts from the carrier thread.
 The carrier thread is a platform thread and participates in safepoints normally.
-Virtual thread suspension is managed by JVM, not OS - the JVM knows exactly where the
+Virtual thread suspension is managed by JVM, not OS - the JVM knows exactly wher
 virtual thread is suspended. For safepoints: carrier threads reach safepoints normally;
 suspended virtual threads are considered safe (their state is captured in the JVM's
 continuation stack).
 
 *What separates good from great:* Virtual threads dramatically improve safepoint behavior
-for I/O-heavy workloads. Traditional thread-per-request (50ms I/O per request, 100 threads):
+for I/O-heavy workloads. Traditional thread-per-request (50ms I/O per request, 1
 100 threads participate in safepoints, and 90 of them are blocked in I/O (at safepoints
-immediately). With virtual threads: potentially 10000 requests in-flight, but only
+immediately). With virtual threads: potentially 10000 requests in-flight, but on
 N platform threads (carrier threads) participate in safepoints. Fewer platform threads
-= fewer threads that need to reach safepoints = lower safepoint sync time. The trade-off:
-virtual thread continuations that ARE actively computing (CPU-bound work) are still
+= fewer threads that need to reach safepoints = lower safepoint sync time. The t
+virtual thread continuations that ARE actively computing (CPU-bound work) are st
 subject to the counted loop safepoint problem.
 
 ---
@@ -457,15 +463,15 @@ subject to the counted loop safepoint problem.
 
 A: Safepoint polling is a conditional branch per poll point. The cost: ~1-2 CPU
 instructions per method return/loop back-edge. For typical Java code: negligible
-(< 0.1% overhead). For tight loops: the poll prevents some JIT optimizations (loop
+(< 0.1% overhead). For tight loops: the poll prevents some JIT optimizations (lo
 unrolling, vectorization). `UseCountedLoopSafepoints` adds polls in counted loops:
-~1-2% overhead for CPU-bound loop-heavy code. For I/O-heavy code: zero difference
+~1-2% overhead for CPU-bound loop-heavy code. For I/O-heavy code: zero differenc
 (I/O wait is safepoint by definition).
 
-*What separates good from great:* The polling page mechanism (JDK 9+) is extremely
+*What separates good from great:* The polling page mechanism (JDK 9+) is extreme
 efficient. The safepoint check is a read from a cached memory page. When no safepoint
-is pending: the page is in L1/L2 cache, the read takes 0-4 cycles. The branch predictor
-predicts "no safepoint" (it's almost always true). Overhead is < 0.1%. When a safepoint
+is pending: the page is in L1/L2 cache, the read takes 0-4 cycles. The branch pr
+predicts "no safepoint" (it's almost always true). Overhead is < 0.1%. When a sa
 IS requested: the page protection is changed, the read faults, the handler stops the
 thread. This is the "stop on exception" model: zero overhead for the 99.99% case
 (no safepoint pending), at the cost of a trap (SIGSEGV) for the 0.01% case (safepoint
@@ -475,14 +481,14 @@ requested). JDK 14+ per-thread polling pages improve this further.
 
 ### ⚖️ Comparison Table
 
-| Safepoint Cause | Frequency | STW Duration | Prevention |
-|---|---|---|---|
-| GC (Minor) | High | 5-50ms | Tune MaxGCPauseMillis, heap |
-| GC (Full) | Rare (ALARM) | Seconds | Fix IHOP, heap sizing |
-| Deoptimization | Medium (after warmup) | 1-5ms | Stable class hierarchy |
-| Biased lock revocation | High (JDK 8-16) | 1-10ms | Upgrade to JDK 17+ |
-| Thread dump (jstack) | Per-use | 5-50ms | Limit monitoring frequency |
-| Counted loop delay | Application-specific | 10-500ms+ | UseCountedLoopSafepoints |
+| Safepoint Cause| Frequency| STW Duration| Prevention|
+|------------|---------------------|---------------|---------------------------|
+| GC (Minor)| High| 5-50ms| Tune MaxGCPauseMillis, heap|
+| GC (Full)| Rare (ALARM)| Seconds| Fix IHOP, heap sizing|
+| Deoptimization| Medium (after warmup)| 1-5ms| Stable class hierarchy|
+| Biased lock revocation| High (JDK 8-16)| 1-10ms| Upgrade to JDK 17+|
+| Thread dump (jstack)| Per-use| 5-50ms| Limit monitoring frequency|
+| Counted loop delay| Application-specific| 10-500ms+| UseCountedLoopSafepoints|
 
 ---
 
@@ -517,8 +523,8 @@ requested). JDK 14+ per-thread polling pages improve this further.
 **3 minutes (Senior):**
 > Mark word layout (64-bit JVM, default compressed oops):
 > ```
-> Unlocked:      [hash: 25 | age: 4 | 0 | 01]
-> Biased:        [thread_id: 54 | epoch: 2 | 1 | 01]  (JDK < 17)
+ > Unlocked:      [hash: 25| age: 4| 0| 01]
+ > Biased:        [thread_id: 54| epoch: 2| 1| 01]  (JDK < 17)
 > Lightweight:   [stack_ptr: 62 | 00]  (lock record ptr on stack)
 > Heavyweight:   [monitor_ptr: 62 | 10]  (ObjectMonitor ptr)
 > GC Marked:     [...] 11
@@ -526,9 +532,9 @@ requested). JDK 14+ per-thread polling pages improve this further.
 >
 > Lock acquisition path (JDK 17+ without biased locking):
 > 1. Check: mark word state == unlocked (01)?
-> 2. Yes: try CAS(expected=mark_word, new=lock_record_on_stack) -> success = lightweight lock
+> 2. Yes: try CAS(expected=mark_word, new=lock_record_on_stack) -> success = lig
 > 3. CAS fails (another thread took it): spin briefly, then inflate
-> 4. Inflate: allocate ObjectMonitor, set mark word to heavyweight (10), block on mutex
+> 4. Inflate: allocate ObjectMonitor, set mark word to heavyweight (10), block o
 >
 > ObjectMonitor: contains entry set (threads waiting to acquire), wait set
 > (threads in Object.wait()), owner, recursion count.
@@ -546,7 +552,7 @@ fails (contention). Diagnose with JFR JavaMonitorEnter events."
 
 **(2) First principles:** "synchronized needs mutual exclusion. JVM implements it in
 the object header to avoid allocating a separate mutex object for every synchronized
-use. Most locks are uncontended - use fast CAS. Contended: use OS mutex (slower but
+use. Most locks are uncontended - use fast CAS. Contended: use OS mutex (slower 
 correct)."
 
 **(3) Bridge:** "JVM locking is like a parking spot. Unoccupied: you just park (mark
@@ -612,17 +618,27 @@ LOCK INFLATION SEQUENCE:
      Thread B wakes, acquires ObjectMonitor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Lock contention is often hidden behind seemingly simple
+> **Code walkthrough:** Lock contention is often hidden behind seemingly simpleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > synchronized blocks. The BAD pattern: synchronizing on a shared singleton for
 > every operation creates a serialization point. The GOOD pattern: use
 > purpose-built concurrency primitives (ConcurrentHashMap, AtomicLong) that avoid
 > synchronized blocks entirely or reduce their scope.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: coarse-grained synchronization - contention bottleneck
@@ -684,7 +700,7 @@ class MetricsCollector_GOOD {
 // Stack traces: where the lock is being held AND where it's being waited on
 ```
 
-> **Code walkthrough:** `ConcurrentHashMap` with `LongAdder` is the canonical
+> **Code walkthrough:** `ConcurrentHashMap` with `LongAdder` is the canonicalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > high-throughput counter pattern in Java. `LongAdder` uses "striping" - it maintains
 > an array of counters, one per CPU (approximately), and each thread increments its
 > own counter. No synchronization needed. On read (sum()): it adds all counters.
@@ -777,7 +793,7 @@ Fix options:
   E. Remove shared state: thread-local data, partition by thread
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -840,7 +856,7 @@ public String buildReport() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* Lock elision requires escape analysis to confirm the
 object is thread-local. If the object is passed to a method that the JIT can't inline:
@@ -879,7 +895,7 @@ Fix: Replace synchronized with ReentrantLock
   -> ReentrantLock re-acquired correctly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* JDK 21 released virtual threads as GA. JDK 24 is
 fixing the pinning issue by making `synchronized` virtual-thread-friendly (Project Loom
@@ -982,7 +998,7 @@ double read() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* StampedLock is NOT reentrant. A thread that already
 holds a write lock cannot acquire a read lock (unlike ReentrantReadWriteLock).

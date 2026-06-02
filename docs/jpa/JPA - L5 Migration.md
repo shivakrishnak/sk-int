@@ -66,7 +66,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Hibernate 5 to 6 migration guide (jakarta namespace and breaking changes):**
-```
+```plaintext
 JAKARTA NAMESPACE MIGRATION (Hibernate 5 -> 6 / Spring Boot 2 -> 3):
 
   // Hibernate 5 / Spring Boot 2:
@@ -202,7 +202,7 @@ ECLIPSELINK TO HIBERNATE SPECIFIC CHANGES:
   // Full rewrite needed if using multi-tenancy features.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L5 Migration example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
@@ -358,7 +358,7 @@ PHASE 4: PRODUCTION DEPLOYMENT
   3. Rollback plan: keep H5 branch deployable for 2 weeks.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -402,26 +402,26 @@ PHASE 4: PRODUCTION DEPLOYMENT
 
 ```mermaid
 flowchart TD
-    A[Start: H5/SB2 codebase] --> B[Phase 1: Add integration tests\nEstablish query coverage]
+    A[Start: H5/SB2 codebase] --> B[Phase 1: Add integration tests\nEstablish qu
     B --> C{Coverage >= 80%?}
-    C -->|No| D[Write more tests]
+     C --> | No  | D[Write more tests]                            
     D --> C
-    C -->|Yes| E[Phase 2: Upgrade SB3 + H6]
+     C --> | Yes | E[Phase 2: Upgrade SB3 + H6]                   
     E --> F[Run IDE javax->jakarta migration]
     F --> G[Fix compile errors\n @Type, UserType, etc.]
     G --> H[Run integration tests]
     H --> I{All passing?}
-    I -->|No| J[Fix: JPQL, collections, @Type]
+     I --> | No  | J[Fix: JPQL, collections, @Type]               
     J --> H
-    I -->|Yes| K[Phase 3: Load test\nCompare H5 vs H6 perf]
+     I --> | Yes | K[Phase 3: Load test\nCompare H5 vs H6 perf]   
     K --> L{Perf regressions?}
-    L -->|Yes| M[Fix slow queries\nAdd indexes, rewrite JPQL]
+     L --> | Yes | M[Fix slow queries\nAdd indexes, rewrite JPQL] 
     M --> K
-    L -->|No| N[Phase 4: Deploy to Staging]
+     L --> | No  | N[Phase 4: Deploy to Staging]                  
     N --> O[Monitor: errors, latency, DB]
     O --> P{Issues?}
-    P -->|Yes| Q[Fix or rollback to H5]
-    P -->|No| R[Production Deploy\nBlue-Green]
+     P --> | Yes | Q[Fix or rollback to H5]                       
+     P --> | No  | R[Production Deploy\nBlue-Green]               
 ```
 
 > **Diagram walkthrough:** The flowchart shows the four-phase migration process with explicit
@@ -437,7 +437,7 @@ flowchart TD
 
 **Failure: Post-migration performance regression: queries 5x slower in Hibernate 6.**
 ```
-Symptom: after H5->H6 migration, findOrdersByCustomer() goes from 20ms to 100ms.
+Symptom: after H5->H6 migration, findOrdersByCustomer() goes from 20ms to...
   Load test: p99 increased from 200ms to 1000ms for order queries.
   DB: no new load. Query plan changed.
 
@@ -472,7 +472,7 @@ Fix:
     Compare plans. Investigate any plan that changed from index scan to seq scan.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

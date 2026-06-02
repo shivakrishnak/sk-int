@@ -75,6 +75,19 @@ changes (your code) at the end."
 ### 📘 Concept Explanation
 
 **Layer caching, .dockerignore, BuildKit, remote cache:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```
 CACHE INVALIDATION CASCADE:
 
@@ -112,7 +125,7 @@ CACHE INVALIDATION CASCADE:
   # Build context size check:
   docker build --no-cache . 2>&1 | head -5
   # "Sending build context to Docker daemon  1.2GB"  <- BAD (no .dockerignore)
-  # "Sending build context to Docker daemon  45.6MB" <- GOOD (with .dockerignore)
+  # "Sending build context to Docker daemon  45.6MB" <- GOOD (with...
   
   # If build context is large: check what's being sent:
   # (Temporarily use a simple Dockerfile that just lists context size.)
@@ -173,14 +186,15 @@ BUILD ARG VS BUILD CONTEXT OPTIMIZATION:
   ARG BUILD_DATE           # only layers AFTER this point are affected
   LABEL build-date=$BUILD_DATE
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: ARG just before use: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Maven build with BuildKit cache mount
+> **Code walkthrough:** A Maven build with BuildKit cache mountice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and a Dockerfile comparison showing cache-breaking patterns.
 
 ```dockerfile
@@ -213,7 +227,7 @@ RUN --mount=type=cache,target=/root/.m2 \
 # Warm builds (only source changed): ~10s instead of 3 minutes.
 ```
 
-> **Code walkthrough:** The `COPY pom.xml .` then `RUN dependency:
+> **Code walkthrough:** The `COPY pom.xml .` then `RUN dependency:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > go-offline` sequence separates dependency resolution (slow, cached)
 > from compilation (fast, re-runs on every source change). The
 > `--mount=type=cache,target=/root/.m2` cache mount stores Maven's
@@ -296,7 +310,7 @@ artifacts.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Build cache never hits despite no code changes.**
-```
+```plaintext
 Symptom: Every docker build rebuilds all layers.
   docker build --progress=plain: all steps show "CACHED: false".
   Even when nothing changed: full rebuild every time.
@@ -334,7 +348,7 @@ Fixes:
      (this way the combined instruction is cached together)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check ARG order in Dockerfile: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -440,6 +454,19 @@ a clean table where you bring exactly what you need."
 ### 📘 Concept Explanation
 
 **Base image options, scanning, non-root, capabilities, pinning:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```
 BASE IMAGE SIZE AND COMPATIBILITY COMPARISON:
 
@@ -561,14 +588,15 @@ NON-ROOT USER AND CAPABILITIES:
   # --read-only: container filesystem is immutable.
   # --tmpfs /tmp: RAM-backed writable /tmp (for temp files).
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This --tmpfs /tmp: RAM-backed writable /tmp (for temp files). example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Node.js Dockerfile demonstrating the
+> **Code walkthrough:** A Node.js Dockerfile demonstrating theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > progression from insecure to hardened, with scanning integration.
 
 ```dockerfile
@@ -607,7 +635,7 @@ HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
 CMD ["node", "src/server.js"]
 ```
 
-> **Code walkthrough:** `--omit=dev` excludes devDependencies (test
+> **Code walkthrough:** `--omit=dev` excludes devDependencies (testice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > frameworks, build tools, linters) from the production image. These
 > can add 200-500MB. `--ignore-scripts` prevents npm postinstall
 > scripts from running during `npm ci`: a defense against supply chain
@@ -734,7 +762,7 @@ Fixes:
   # Not always possible.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Not always possible. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

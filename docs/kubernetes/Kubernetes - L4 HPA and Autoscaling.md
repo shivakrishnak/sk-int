@@ -96,7 +96,7 @@ Desired replica formula:
 desiredReplicas = ceil[currentReplicas * (currentMetricValue / desiredMetricValue)]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HPA, VPA, and Cluster Autoscaler example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Example: CPU target = 50%, current usage = 80%, current replicas = 4:
 `desiredReplicas = ceil(4 * (80 / 50)) = ceil(6.4) = 7`
@@ -146,7 +146,7 @@ spec:
         periodSeconds: 60
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HPA, VPA, and Cluster Autoscaler example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Vertical Pod Autoscaler (VPA):**
 
@@ -180,7 +180,7 @@ spec:
       controlledResources: [cpu, memory]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Auto: like Recreate; will use in-place updates when available (K8s 1.27+) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Cluster Autoscaler (CA):**
 
@@ -233,7 +233,7 @@ spec:
       threshold: "100"  # 100 sessions per pod
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Auto: like Recreate; will use in-place updates when available (K8s 1.27+) example demonstrates YAML configuration pattern using Kafka messaging. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 KEDA installs a KEDA controller that reads trigger sources (RabbitMQ queue depth,
 Redis list length, SQS queue size, Prometheus query) and feeds the values to the
@@ -327,6 +327,12 @@ spec:
       - type: Percent
         value: 30          # max 30% reduction per step
         periodSeconds: 60
+```
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
 ```
 
 ```yaml
@@ -560,7 +566,7 @@ A: HPA uses the following formula per metric:
 desiredReplicas = ceil[currentReplicas * (currentMetricValue / desiredMetricValue)]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This k8s.io/cluster-autoscaler/<cluster-name> = owned example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For resource metrics (CPU/memory), currentMetricValue is the AVERAGE across all pods.
 Example:
@@ -672,7 +678,7 @@ With least-waste expander: Group A wins (minimum waste)
 With price expander: Group B might win (spot instances cost less)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Scale-up timing: CA evaluates Pending pods every 10 seconds. After deciding to scale,
 it sets the node group desired count +N. The cloud provider (ASG, GKE node pool) then
@@ -730,7 +736,7 @@ vpa:
     - containerName: api
       controlledResources: [memory]  # CPU excluded from VPA control
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This VPA only manages memory example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 HPA manages CPU utilization. VPA right-sizes memory without affecting HPA's denominator.
 
@@ -752,7 +758,7 @@ kubectl get pods -n kube-system | grep metrics-server
 # Should show Running
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Should show Running example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: check if metrics work at all.
 ```bash
@@ -761,7 +767,7 @@ kubectl top pods -n <namespace>
 # If both fail: metrics-server is down or can't reach kubelets
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If both fail: metrics-server is down or can't reach kubelets example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: check metrics-server logs.
 ```bash
@@ -772,7 +778,7 @@ kubectl logs -n kube-system deployment/metrics-server
 # "no such host": DNS resolution issue for node names
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "no such host": DNS resolution issue for node names example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: verify HPA can see the Metrics API.
 ```bash
@@ -781,7 +787,7 @@ kubectl get --raw "/apis/metrics.k8s.io/v1beta1/pods"
 # If 404: metrics-server is not registered as an API extension
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If 404: metrics-server is not registered as an API extension example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: check if pods have resource requests set.
 HPA CPU utilization requires `resources.requests.cpu` on the container. Without it:
@@ -790,7 +796,7 @@ HPA can't compute utilization %.
 kubectl get deployment <name> -o jsonpath='{.spec.template.spec.containers[0].resources}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If 404: metrics-server is not registered as an API extension example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix path:
 1. If metrics-server down: restart or reinstall it
@@ -858,7 +864,7 @@ spec:
         periodSeconds: 60               # max 25% reduction per minute
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: HPA configuration example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The `AverageValue` target means: if current total requests/second across all pods is
 6000, and target is 500/pod: desiredReplicas = ceil(6000/500) = 12 pods.
@@ -906,7 +912,7 @@ spec:
       queueLength: "1"   # 1 job per worker pod
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: HPA configuration example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 `ScaledJob` creates Kubernetes Jobs (not Deployments) for each batch item.
 Jobs run to completion. Completed Jobs don't count against replica limits.
@@ -957,7 +963,7 @@ behavior:
       value: 10             # only remove 10% of pods per step
       periodSeconds: 120    # wait 2 minutes between steps
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: HPA configuration example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Slow scale-down: even if metrics dip briefly, 10-minute stabilization prevents premature removal.
 
@@ -965,7 +971,7 @@ Protection 2 - minReplicas matching availability SLO:
 ```yaml
 minReplicas: 3   # even at zero traffic, maintain 3 pods
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: HPA configuration example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 With zone-spread pod topology, 3 pods in 3 AZs survives AZ failure. Never set minReplicas
 below your availability SLO floor.
@@ -979,7 +985,7 @@ spec:
     matchLabels:
       app: payment-service
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: HPA configuration example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 CA respects PDB: if evicting a pod from a draining node would violate PDB, CA waits.
 
@@ -992,7 +998,7 @@ containers:
         command: ["/bin/sh", "-c", "sleep 30"]
   terminationGracePeriodSeconds: 60
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: HPA configuration example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 30-second preStop hook: pod stays Up on the load balancer while it finishes in-flight
 requests before termination signal.
@@ -1044,7 +1050,7 @@ Queue depth = 50 (first message arrives):
   HPA resumes -> formula: desiredReplicas = ceil(50 / targetPerPod)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to choose KEDA:
 - Event sources beyond CPU/memory (queues, databases, HTTP requests, Cron schedules)
@@ -1132,7 +1138,7 @@ Root cause: found a deployment with HPA configured:
 minReplicas: 1
 maxReplicas: 10000   # ← intended 100, typo added an extra zero
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 A load test earlier that day generated 100x normal traffic. HPA scaled to 10,000 pods.
 CA added nodes to accommodate all 10,000 pods. 487 nodes running for 18 hours
@@ -1209,26 +1215,26 @@ Node Groups:
   gpu: p3.2xlarge on-demand (ML inference)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key decisions:
 1. CA expander: `priority` - spot-batch first, general on-demand fallback
 2. KEDA for all event-driven and ML (scale-to-zero when no requests)
 3. HPA on custom metrics (not CPU) for API: req/s from Prometheus
-4. VPA in `Off` mode for all services: quarterly manual right-sizing from recommendations
+4. VPA in `Off` mode for all services: quarterly manual right-sizing from recomm
 5. Karpenter for API services: node consolidation saves ~20% node cost at night
 
 Cost optimization:
 - Batch workers on spot: $0.12/pod-hour vs $0.35/pod-hour on-demand
-- ML inference at scale-to-zero: $0 during nights and weekends (vs $500/day idle)
+- ML inference at scale-to-zero: $0 during nights and weekends (vs $500/day idle
 - CA node consolidation overnight: 50 nodes during peak -> 15 nodes at 3 AM
 
 *What separates good from great:* The "ML inference at scale-to-zero" pattern is
 transformative for GPU costs. GPU nodes are $3-10/hour. Keeping 5 GPU nodes idle
-overnight = $200-500/night in waste. KEDA ScaledObject with minReplicaCount=0 eliminates
+overnight = $200-500/night in waste. KEDA ScaledObject with minReplicaCount=0 el
 this entirely: nodes are terminated when no inference requests exist, provisioned when
 a new inference request arrives (cold start ~90 seconds with Karpenter). For SLOs that
-don't require < 90s response to the FIRST request, this is a significant cost win.
+don't require < 90s response to the FIRST request, this is a significant cost wi
 
 ---
 

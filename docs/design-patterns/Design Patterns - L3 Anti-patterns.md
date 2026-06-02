@@ -115,7 +115,7 @@ God Class path:
   -> Hard to test, hard to extend, low cohesion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Design Pattern Anti-patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The canonical anti-patterns:**
 
@@ -171,7 +171,7 @@ public class UserFactory implements UserCreator {
 // no benefit unless User creation varies.
 ```
 
-> **Code walkthrough:** `UserFactory` wraps a `new User()` with no
+> **Code walkthrough:** `UserFactory` wraps a `new User()` with noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > variation, no complexity, no valid reason for the factory. The cost:
 > two extra files, an extra dependency injection, mental overhead
 > for every developer who asks "why is there a factory here?"
@@ -196,7 +196,7 @@ public class SmtpEmailSender implements EmailSender {
 // Add it back when a second implementation appears.
 ```
 
-> **Code walkthrough:** The Strategy interface with one implementation
+> **Code walkthrough:** The Strategy interface with one implementationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is pure overhead. Interfaces are not free: they add indirection,
 > increase the number of types a developer must understand, and imply
 > extensibility that does not materialize. The pattern is premature -
@@ -261,11 +261,17 @@ String msg = "Hello, World";
 // The pattern soup adds 4 classes to replace 1 line.
 ```
 
-> **Code walkthrough:** Four classes and two design patterns to produce
+> **Code walkthrough:** Four classes and two design patterns to produceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a greeting string. This is pattern fetishism: patterns applied for
 > their own sake, not to solve a problem. The test? "What problem does
 > each pattern solve?" Strategy: no variation exists. Factory: no
 > construction complexity. The simple version is the correct version.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Recognize when patterns ARE warranted
@@ -284,7 +290,7 @@ public interface DataSourceFactory {
 // Two implementations exist (prod, test) -> Factory justified
 ```
 
-> **Code walkthrough:** Patterns are justified when the variation
+> **Code walkthrough:** Patterns are justified when the variationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > they encapsulate exists. The test: "Show me the second implementation."
 > If there is no second implementation and no imminent need for one,
 > the pattern is premature. This is the Rule of Three: add an abstraction
@@ -626,7 +632,7 @@ void test2() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Singleton Anti-pattern example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **The thread-safety problem:**
 
@@ -666,7 +672,7 @@ public static Singleton getInstance() {
 // Holder class loaded only when getInstance() first called.
 ```
 
-> **Code walkthrough:** Three thread-safety solutions. `synchronized`
+> **Code walkthrough:** Three thread-safety solutions. `synchronized`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > on every `getInstance()` call creates lock contention on every access -
 > wrong for high-concurrency systems. Double-checked locking with `volatile`
 > is correct in Java 5+ (the `volatile` keyword ensures the write to
@@ -742,6 +748,12 @@ public class PaymentService {
 > requires a real `application.properties` file with `payment.api.key`.
 > In CI/CD: every test environment needs this config. There is no way
 > to inject a test config without reflection.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Spring manages the singleton lifecycle

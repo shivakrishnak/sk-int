@@ -126,7 +126,7 @@ WRITE LAYER (on task completion)
     kv_store.set(updated_entities)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Long-Term Memory Architecture example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Storage tier comparison:**
 
@@ -143,7 +143,7 @@ In-context     | Always       | Critical     | Always-needed
 (system prompt)| present      | instructions | facts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Long-Term Memory Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -323,7 +323,7 @@ class MemoryAgent:
         return result
 ```
 
-> **Code walkthrough:** `LongTermMemoryStore` implements
+> **Code walkthrough:** `LongTermMemoryStore` implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the storage tier (simplified in-memory; production
 > uses vector DB for semantic search + relational DB
 > for structured records). The retrieval layer in
@@ -502,7 +502,7 @@ def semantic_search(
     return [r[0] for r in rows]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pgvector cosine similarity query: example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* The specific
 operator (`<=>` for cosine distance in pgvector)
@@ -978,7 +978,7 @@ PROCEDURAL MEMORY:
   Used for: consistent behavior, safety constraints
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Episodic vs Semantic vs Procedural Memory example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1110,7 +1110,7 @@ def build_system_prompt(
     return "\n\n".join(parts)
 ```
 
-> **Code walkthrough:** The code shows all three memory
+> **Code walkthrough:** The code shows all three memoryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > types with distinct implementations. Episodic memory
 > uses SQLite with a user_id + timestamp key - it
 > accumulates a history of past interactions, retrieved
@@ -1340,7 +1340,7 @@ async def retrieve_all_memory(
     return "\n\n".join(parts)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This no query example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 Context budget allocation: how much context space
 to allocate to each memory type matters.

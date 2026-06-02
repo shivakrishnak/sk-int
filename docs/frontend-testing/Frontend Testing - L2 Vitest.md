@@ -130,13 +130,18 @@ Module resolution comparison:
     Concurrent tests: test.concurrent() for parallel execution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vitest and Vite-native Testing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Vitest vs Jest config for Vite project:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: Jest config for Vite project (extensive extra config needed)
@@ -200,7 +205,7 @@ describe('formatCurrency', () => {
 });
 ```
 
-> **Code walkthrough:** The Jest configuration for a Vite project
+> **Code walkthrough:** The Jest configuration for a Vite projectice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requires duplicating all the module resolution config: TypeScript
 > transform settings, path alias mappings, ESM package exclusions.
 > This config drifts from `vite.config.ts` over time - an alias added
@@ -414,7 +419,7 @@ Vitest execution model:
     Exclude generated code via coverage.exclude patterns
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test Performance Optimization with Vitest example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -479,7 +484,7 @@ export default mergeConfig(viteConfig, defineConfig({
 // "test:ui": "vitest --ui",       // browser-based test UI
 ```
 
-> **Code walkthrough:** `pool: 'threads'` (the default) is the fastest
+> **Code walkthrough:** `pool: 'threads'` (the default) is the fastestice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > option for most test suites - Worker threads share the V8 heap with
 > the parent process and have lower startup overhead than forks. The
 > `poolOptions.threads.singleThread: false` is the default that enables

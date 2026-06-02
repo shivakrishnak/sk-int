@@ -79,6 +79,8 @@ up service names to extensions). External calls: iptables NAT
 ### 📘 Concept Explanation
 
 **Network namespaces, veth pairs, bridge, iptables, overlay:**
+
+{% raw %}
 ```
 LINUX NETWORK NAMESPACE INTERNALS:
 
@@ -195,16 +197,23 @@ DEBUGGING CONTAINER CONNECTIVITY:
   # Step 4: check iptables (if using user-defined rules):
   iptables -L DOCKER-USER -n -v  # Docker's user-defined chain
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 4: check iptables (if using user-defined rules): example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Debugging a "container can't reach another
+> **Code walkthrough:** Debugging a "container can't reach anotherice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > container" scenario shows the systematic network diagnosis workflow.
 
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
+
+{% raw %}
 ```bash
 # Scenario: app container cannot reach db container.
 # Error: "Connection refused to db:5432"
@@ -237,8 +246,9 @@ docker exec app nslookup db
 docker exec app nc -z -v db 5432
 # Connection to db 5432 port [tcp/postgresql]: succeeded!
 ```
+{% endraw %}
 
-> **Code walkthrough:** The diagnosis reveals the root cause: both
+> **Code walkthrough:** The diagnosis reveals the root cause: bothice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > containers are on the default bridge network where Docker's embedded
 > DNS is not available. The fix: create a user-defined network and
 > re-run containers on it. `127.0.0.11` is Docker's embedded DNS
@@ -374,7 +384,7 @@ flowchart TB
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Published port is unreachable from outside the host.**
-```
+```plaintext
 Symptom: curl http://host-ip:8080 returns "Connection refused"
   or times out. But the container is running and healthy.
 
@@ -410,7 +420,7 @@ Fixes:
      Or: systemctl restart docker (full rule refresh).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Docker's DNAT rules: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -526,7 +536,7 @@ with direct access, no tracing paper needed."
 ### 📘 Concept Explanation
 
 **OverlayFS internals, CoW cost, volumes performance, docker diff:**
-```
+```plaintext
 OVERLAYFS LAYER STRUCTURE:
 
   # View storage driver in use:
@@ -637,14 +647,20 @@ VOLUME PERFORMANCE (macOS/Windows Docker Desktop):
   # or develop in a devcontainer inside the VM.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or develop in a devcontainer inside the VM. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A PostgreSQL volume configuration with
+> **Code walkthrough:** A PostgreSQL volume configuration withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > explicit best practices vs the common mistake of in-container data.
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: PostgreSQL data in container writable layer:
@@ -679,7 +695,7 @@ volumes:
   pgdata: {}  # Managed by Docker. Stored in /var/lib/docker/volumes/.
 ```
 
-> **Code walkthrough:** The `pgdata` named volume is stored at
+> **Code walkthrough:** The `pgdata` named volume is stored atice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `/var/lib/docker/volumes/projectname_pgdata/_data/` on the host
 > (inside the Linux VM on Docker Desktop). PostgreSQL writes to this
 > path: direct filesystem access, no OverlayFS. `docker compose down`
@@ -761,7 +777,9 @@ up before a `down -v`.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: PostgreSQL container is extremely slow or crashes with disk full.**
-```
+
+{% raw %}
+```plaintext
 Symptom A: DB operations 10x slower than expected.
   Symptom B: Container exits with "No space left on device".
   Symptom C: docker stats shows high BlockIO, low throughput.
@@ -796,15 +814,16 @@ Immediate fix (with data loss risk - dev only):
   4. Import data: docker run --rm -v pgdata:/data
        -v ./backup:/backup alpine
        cp -a /backup/data/. /data/
-  5. Re-run with volume: docker run --name mydb -v pgdata:/var/lib/postgresql/data ...
+  5. Re-run with volume: docker run --name mydb -v pgdata:/var/lib/postgresql/d...
 
 Prevention: ALWAYS configure volumes for database containers.
   Test: after creating a DB container, immediately run:
   docker inspect <dbname> --format '{{json .Mounts}}' | jq
   # Expect: type=volume or type=bind. Never empty.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Expect: type=volume or type=bind. Never empty. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

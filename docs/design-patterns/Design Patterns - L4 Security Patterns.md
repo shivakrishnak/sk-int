@@ -104,7 +104,7 @@ Caller -> [Security Proxy] -> Real Method
                 |-- Proceeds if permitted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Security Design Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **2. Interceptor / Filter Chain (Defense in Depth)**
 
@@ -118,7 +118,7 @@ Request -> [JWT Filter] -> [AuthnFilter] -> [CORSFilter]
         -> [Controller]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Security Design Patterns example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **3. Secure Factory (Input Validation)**
 
@@ -211,7 +211,7 @@ public class OrderPermissionEvaluator
 }
 ```
 
-> **Code walkthrough:** `@PreAuthorize` is applied via a Spring AOP
+> **Code walkthrough:** `@PreAuthorize` is applied via a Spring AOPice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > proxy. The expression `hasPermission(#orderId, 'ORDER', 'READ')` is
 > evaluated by Spring's `PermissionEvaluator`. The custom evaluator
 > fetches the order and checks that the authenticated user (from
@@ -312,7 +312,7 @@ public class JwtAuthFilter
 }
 ```
 
-> **Code walkthrough:** `JwtAuthFilter` runs on every request before
+> **Code walkthrough:** `JwtAuthFilter` runs on every request beforeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Spring Security's authentication processing. It extracts the Bearer
 > token, validates it with `JwtValidator`, loads `UserDetails`, and sets
 > the `Authentication` in `SecurityContextHolder`. If invalid: log and
@@ -320,6 +320,16 @@ public class JwtAuthFilter
 > filter - let the downstream `ExceptionTranslationFilter` handle it with
 > a proper 401 response. The filter returns `STATELESS` session policy:
 > no `HttpSession` is created; every request must include a valid JWT.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // PATTERN 3: Secure Factory with validation
@@ -366,12 +376,18 @@ public final class ApiKey {
 }
 ```
 
-> **Code walkthrough:** `ApiKey.of(value)` validates format before
+> **Code walkthrough:** `ApiKey.of(value)` validates format beforeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > construction. Invalid API keys cannot exist as `ApiKey` objects - they
 > are rejected at the boundary. The class is `final` (cannot be subclassed
 > to bypass validation). `toString()` returns `"ApiKey[***]"` preventing
 > accidental key logging. No setters: once created, the key value cannot
 > change. This is the Secure Factory + Immutable Value Object combination.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PATTERN 4: Secure-Default configuration
@@ -400,7 +416,7 @@ http.authorizeHttpRequests(authz -> authz
 );
 ```
 
-> **Code walkthrough:** Security defaults should be the most restrictive
+> **Code walkthrough:** Security defaults should be the most restrictiveice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > option. `anyRequest().authenticated()` means all unmatched requests
 > require authentication. `anyRequest().denyAll()` is stricter - unmatched
 > requests are rejected even with valid credentials (they must be explicitly
@@ -488,7 +504,7 @@ Request
 Controller -> Service -> Repository
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Tenant isolation at data layer:**
 
@@ -519,7 +535,7 @@ public class TenantFilterAspect {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Trade-offs:**
 
@@ -633,7 +649,7 @@ logging.level.org.springframework.security=DEBUG
 # "Granting access to /api/orders"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Granting access to /api/orders" example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Failure 2: JWT validation not rejecting expired tokens**
 
@@ -652,7 +668,7 @@ Jwts.parserBuilder()
     .parseClaimsJws(token); // throws ExpiredJwtException if expired
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Granting access to /api/orders" example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure 3: Tenant data leak (wrong tenant_id in context)**
 
@@ -678,7 +694,7 @@ public class TenantContextFilter implements Filter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Granting access to /api/orders" example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Failure 4: Mass assignment vulnerability**
 
@@ -686,6 +702,12 @@ Symptom: users can modify fields they should not (e.g., setting their
 own `isAdmin` flag via JSON deserialization).
 
 Diagnosis: DTOs with `@JsonProperty` on all fields including sensitive ones.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Any field in the JSON is accepted
@@ -705,7 +727,7 @@ public class UserUpdateRequest {
 // on the DTO class, and use @JsonIgnore on admin field
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This "Granting access to /api/orders" example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -893,7 +915,7 @@ echo "<jwt_payload>" | base64 -d | python3 -m json.tool
 # Redis: SMEMBERS token:blacklist | wc -l
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Redis: SMEMBERS token:blacklist | wc -l example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Differentiating between "token expired"
 (expected behavior) and "token blacklisted" (server-side action). Both
@@ -960,7 +982,7 @@ preparedStatement.setString(1, username);
 // Input "admin'--" is treated as a literal string
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Redis: SMEMBERS token:blacklist | wc -l example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing that Hibernate protects against
 SQL injection for JPQL queries by default, but `@NativeQuery` with string
@@ -988,7 +1010,7 @@ User U -> has Role R -> Role R has Permission P on Resource R-Type
 User U -> has direct ACL entry for Resource ID
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Redis: SMEMBERS token:blacklist | wc -l example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Spring Security ACL module: stores ACL entries in the database
 (`acl_object_identity`, `acl_entry`). `@PostAuthorize` filters query
@@ -1022,7 +1044,7 @@ http.authorizeHttpRequests(authz -> authz
 // All exposed without authentication.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Redis: SMEMBERS token:blacklist | wc -l example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix:
 ```java
@@ -1034,7 +1056,7 @@ http.authorizeHttpRequests(authz -> authz
     .anyRequest().authenticated());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Redis: SMEMBERS token:blacklist | wc -l example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This vulnerability exposed environment variables (database passwords,
 API keys) to any internet user through `/actuator/env`. Exploited in

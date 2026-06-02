@@ -86,7 +86,7 @@ Special cases:
   webpack plugins required?-> webpack (ecosystem dependency)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Tool Selection Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Trade-off summary:**
 
@@ -99,7 +99,7 @@ esbuild:      ★★★   |  ★     |   ★       | API-level only
 Rollup:       ★★    |  ★★    |   ★★      | Plugins
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Tool Selection Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -133,7 +133,7 @@ npm install --save-dev vite @vitejs/plugin-react
 # Run unit tests and E2E tests
 ```
 
-> **Code walkthrough:** The migration decision is a cost-benefit
+> **Code walkthrough:** The migration decision is a cost-benefitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > analysis. The benefit is measurable: measure current dev startup time
 > and HMR speed. The cost depends on how deep webpack customization goes.
 > Most React/TypeScript SPAs migrate in 1-3 days. The `process.env`
@@ -352,7 +352,7 @@ npm ci vs npm install:
     - USE IN: local dev when adding new packages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dependency Management Mental Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -392,7 +392,7 @@ npm install
 }
 ```
 
-> **Code walkthrough:** `npm why` is the diagnostic for dependency
+> **Code walkthrough:** `npm why` is the diagnostic for dependencyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > questions - it shows the full path from your direct dep to any
 > transitive package. The `overrides` field (npm 8.3+) forces a
 > specific version for transitive dependencies - essential when a
@@ -609,7 +609,7 @@ Pragmatic spectrum (best practice):
   Step 5 is rare. 95% of projects stay at step 1-3.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Zero Config vs Full Control Trade-off example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -653,7 +653,7 @@ export default defineConfig({
 });
 ```
 
-> **Code walkthrough:** Every line of build config is a maintenance
+> **Code walkthrough:** Every line of build config is a maintenanceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > obligation. Only add config when you have a concrete problem it
 > solves. "We might add SVGs later" is not a reason to add svgr today.
 > The speculative config becomes cargo-cult configuration: no one knows
@@ -690,7 +690,7 @@ function myCustomPlugin(): Plugin {
 }
 ```
 
-> **Code walkthrough:** The Vite plugin API is remarkably clean - a
+> **Code walkthrough:** The Vite plugin API is remarkably clean - aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > plugin is just an object with hook functions. This means "escape to
 > raw config" usually means "write a 20-line Vite plugin", not "rewrite
 > with webpack." The actual escape (abandoning Vite entirely) is rare

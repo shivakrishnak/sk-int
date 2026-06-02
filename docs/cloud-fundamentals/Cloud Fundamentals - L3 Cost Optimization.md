@@ -118,7 +118,7 @@ TOP COST DRIVERS (typical order):
    Win: Reduce cross-AZ traffic between microservices
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Cost Optimization Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Compute Optimizer Example:**
 
@@ -138,7 +138,7 @@ WARNING: t3 has CPU burst limits - not suitable for
   sustained CPU-intensive workloads (batch, video encoding)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Cost Optimization Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -234,7 +234,7 @@ for lg in log_groups['logGroups']:
         )
 ```
 
-> **Code walkthrough:** Four optimization scripts. The EBS
+> **Code walkthrough:** Four optimization scripts. The EBSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > scan uses `status = available` to find volumes not attached
 > to any instance - these are billing continuously at $0.08/GB/month
 > with no value. An instance was terminated but EBS was not
@@ -345,7 +345,7 @@ resource "aws_budgets_budget" "monthly" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AWS Budget alert: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -380,7 +380,7 @@ resource "aws_vpc_endpoint" "s3" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This S3 traffic (ECR layers stored in S3) avoids NAT example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -394,8 +394,7 @@ resource "aws_vpc_endpoint" "s3" {
 | Debugging | 1 | AWS Cost Explorer analysis workflow |
 | Behavioral | 2 | 40% bill spike investigation, $50k optimization |
 
-**Q1. What are the highest-ROI cloud cost optimization patterns
-and how do you prioritize them?**
+**[JUNIOR] Q1 - [MECHANISM] What are the highest-ROI cloud cost optimization patterns and how do you prioritize them?**
 
 Prioritized by ROI-to-effort ratio:
 
@@ -431,8 +430,7 @@ save more money faster. RI first, right-size after.
 
 ---
 
-**Q2. How do you identify right-sizing opportunities for
-EC2 instances?**
+**[JUNIOR] Q2 - [MECHANISM] How do you identify right-sizing opportunities for EC2 instances?**
 
 ```bash
 # AWS Compute Optimizer (automated right-sizing recommendations):
@@ -458,7 +456,7 @@ aws cloudwatch get-metric-statistics \
 #   might be appropriate (pays per actual burst, cheaper for spiky)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This might be appropriate (pays per actual burst, cheaper for spiky) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Memory metrics require CloudWatch agent (not default):
 ```bash
@@ -467,7 +465,7 @@ Memory metrics require CloudWatch agent (not default):
 # If both CPU < 20% AND memory < 30%: downsize both dimensions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If both CPU < 20% AND memory < 30%: downsize both dimensions example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The burstable instance insight.
 T3/T4g instances use CPU credits. For workloads that are idle 90%
@@ -476,8 +474,7 @@ cheaper than M5 with equivalent peak performance.
 
 ---
 
-**Q3. How do S3 storage classes work and how do lifecycle
-policies reduce storage costs?**
+**[JUNIOR] Q3 - [MECHANISM] How do S3 storage classes work and how do lifecycle policies reduce storage costs?**
 
 | Storage Class | Cost (GB/mo) | Retrieval | Min Duration | Use Case |
 |---|---|---|---|---|
@@ -504,7 +501,7 @@ Lifecycle policy example:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If both CPU < 20% AND memory < 30%: downsize both dimensions example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Intelligent Tiering note: automatically moves objects between
 frequent and infrequent access tiers. No retrieval fee.
@@ -519,8 +516,7 @@ despite higher per-GB price.
 
 ---
 
-**Q4. DEBUGGING: Your AWS bill is 40% higher than last month
-with no new services deployed. How do you investigate?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Your AWS bill is 40% higher than last month with no new services deployed. How do you investigate?**
 
 ```bash
 # Step 1: Cost Explorer - find the cause by service and time:
@@ -556,7 +552,7 @@ aws ce get-cost-and-usage ... \
 # Find which team or environment is responsible
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find which team or environment is responsible example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The NAT Gateway data transfer
 cost pattern. A team that adds a new service pulling Docker images
@@ -566,8 +562,7 @@ for S3 eliminates this cost entirely.
 
 ---
 
-**Q5. What is a VPC Endpoint and how does it reduce data
-transfer costs?**
+**[MID] Q5 - [MECHANISM] What is a VPC Endpoint and how does it reduce data transfer costs?**
 
 VPC Endpoint: private connection from a VPC to AWS services
 without traffic leaving the AWS network.
@@ -586,7 +581,7 @@ resource "aws_vpc_endpoint" "s3" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This S3 traffic via NAT Gateway: $0.045/GB example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Interface Endpoint (HOURLY COST)**: for all other AWS services.
 ```hcl
@@ -599,7 +594,7 @@ resource "aws_vpc_endpoint" "ecr_api" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Break-even vs NAT: > 3.5 GB/hour of ECR traffic example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 NAT Gateway cost avoided by VPC Endpoints:
 ```
@@ -612,7 +607,7 @@ VPC Endpoint: $0 (Gateway endpoint is free)
 Savings: $135/month with 1-hour implementation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Break-even vs NAT: > 3.5 GB/hour of ECR traffic example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that ECR (Docker images)
 stores layers in S3. Adding the Gateway VPC Endpoint for S3 (not
@@ -621,8 +616,7 @@ for ECR image pulls.
 
 ---
 
-**Q6. TRADE-OFF: Optimize for cost vs optimize for performance.
-How do you make the decision?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: Optimize for cost vs optimize for performance. How do you make the decision?**
 
 Framework: optimize where the cost reduction does not impact user
 experience; accept cost for user-facing performance.
@@ -651,7 +645,7 @@ Savings > $500/month AND P99 latency impact < 20%: optimize
 Any impact on availability SLA: do not optimize
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Break-even vs NAT: > 3.5 GB/hour of ECR traffic example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Measuring performance AFTER
 optimization, not predicting. Right-size an instance in a staging
@@ -660,8 +654,7 @@ then apply to production.
 
 ---
 
-**Q7. How do you use AWS Cost Explorer and Savings Plans
-analyzer to identify RI and Savings Plans opportunities?**
+**[SENIOR] Q7 - [MECHANISM] How do you use AWS Cost Explorer and Savings Plans analyzer to identify RI and Savings Plans opportunities?**
 
 ```bash
 # Step 1: Get Savings Plans recommendations:
@@ -692,7 +685,7 @@ aws ce get-reservation-coverage \
 # Shows: On-Demand Hours, Reserved Hours, Coverage%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: On-Demand Hours, Reserved Hours, Coverage% example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Buying Compute Savings Plans
 instead of EC2 Instance Savings Plans or standard RIs for EC2.
@@ -702,8 +695,7 @@ instance families - the commitment automatically re-applies.
 
 ---
 
-**Q8. What is auto-scaling and how do you configure it to
-reduce cost while maintaining performance?**
+**[SENIOR] Q8 - [MECHANISM] What is auto-scaling and how do you configure it to reduce cost while maintaining performance?**
 
 ```hcl
 # Target tracking scaling (simplest, highest value):
@@ -737,7 +729,7 @@ resource "aws_autoscaling_schedule" "scale_down_night" {
 # Savings: 18 instance-hours/day = 60% cost reduction
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Savings: 18 instance-hours/day = 60% cost reduction example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Setting scale-in cooldown longer
 than scale-out cooldown. Scale out quickly (CPU spike = scale NOW),
@@ -747,8 +739,7 @@ instance). This prevents oscillation (scale in -> traffic spikes
 
 ---
 
-**Q9. BEHAVIORAL: Your team has a $50k/month AWS bill.
-How do you start optimizing?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: Your team has a $50k/month AWS bill. How do you start optimizing?**
 
 Week 1: Establish baseline and quick wins
 ```bash
@@ -762,7 +753,7 @@ Week 1: Establish baseline and quick wins
 #    - Old AMIs with no active instances
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Old AMIs with no active instances example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Week 2-4: Analysis and RI/SP purchase
 ```bash
@@ -774,7 +765,7 @@ Week 2-4: Analysis and RI/SP purchase
 #    EC2 Compute Optimizer recommendations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This EC2 Compute Optimizer recommendations example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Month 2+: Architectural optimization
 - Auto-scaling for variable-load services
@@ -946,7 +937,7 @@ SAVINGS PLAN example:
     Next $0.05: at On-Demand rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reserved vs On-Demand vs Spot Pricing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Spot Interruption Risk:**
 
@@ -972,7 +963,7 @@ WORKLOADS SUITABLE FOR SPOT:
   - Video encoding (segment-based)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reserved vs On-Demand vs Spot Pricing example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1081,7 +1072,7 @@ resource "aws_spot_fleet_request" "batch" {
 # AWS applies 66% discount to first $0.50/hr of Compute
 ```
 
-> **Code walkthrough:** The mixed instances policy is the
+> **Code walkthrough:** The mixed instances policy is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > production pattern: `on_demand_base_capacity = 2` ensures
 > two stable, uninterruptible instances always run for
 > the baseline workload. `on_demand_percentage_above_base = 0`
@@ -1188,7 +1179,7 @@ while true; do
 done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query IMDS v2 for termination notice: example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 ---
 
@@ -1212,7 +1203,7 @@ aws ec2 describe-reserved-instances-modifications
 # Shows which instance types are covered vs On-Demand
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows which instance types are covered vs On-Demand example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Exchange Standard RIs for Convertible RIs
 (allows type change). Or use Compute Savings Plans
@@ -1230,8 +1221,7 @@ which auto-apply to any instance type.
 | Debugging | 1 | Spot capacity unavailable diagnosis |
 | Behavioral | 2 | Spot for batch, RI purchase recommendation |
 
-**Q1. What is the EC2 pricing hierarchy and when does each
-purchase option make sense?**
+**[JUNIOR] Q1 - [MECHANISM] What is the EC2 pricing hierarchy and when does each purchase option make sense?**
 
 | Option | Discount | Commitment | Interruption | Best For |
 |---|---|---|---|---|
@@ -1264,8 +1254,7 @@ savings across the fleet.
 
 ---
 
-**Q2. How do EC2 Spot Instances work and what triggers an
-interruption?**
+**[JUNIOR] Q2 - [MECHANISM] How do EC2 Spot Instances work and what triggers an interruption?**
 
 Spot Instances: excess EC2 capacity sold at discount. AWS can
 reclaim the capacity with a 2-minute warning.
@@ -1297,7 +1286,7 @@ spot/termination-time 2>/dev/null)
 done &
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Graceful shutdown: drain queue, checkpoint, notify example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Interruption rates by instance type (approximate):
 - Small, common types (m5.large): 5-15% monthly rate
@@ -1313,8 +1302,7 @@ across 3 AZs means interruptions are unlikely to hit all at once.
 
 ---
 
-**Q3. What are Compute Savings Plans and how do they differ
-from EC2 Instance Savings Plans and Reserved Instances?**
+**[JUNIOR] Q3 - [MECHANISM] What are Compute Savings Plans and how do they differ from EC2 Instance Savings Plans and Reserved Instances?**
 
 | Type | Applies To | Flexibility | Discount |
 |---|---|---|---|
@@ -1350,8 +1338,7 @@ first (higher discount) and Compute SP covers the rest.
 
 ---
 
-**Q4. DEBUGGING: Your Spot Fleet is not launching any instances
-despite requesting 100 units of capacity. How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Your Spot Fleet is not launching any instances despite requesting 100 units of capacity. How do you diagnose?**
 
 ```bash
 # Step 1: Check Spot Fleet request status:
@@ -1382,7 +1369,7 @@ aws ec2 get-spot-placement-scores \
 # Increases probability of capacity being available
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Increases probability of capacity being available example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Using the Spot Placement Score
 before submitting a large Spot request. The score shows which
@@ -1391,8 +1378,7 @@ of fulfillment. Check it before needing the capacity.
 
 ---
 
-**Q5. How do you calculate the ROI of a 3-year Reserved Instance
-vs on-demand pricing?**
+**[MID] Q5 - [TRADE-OFF] How do you calculate the ROI of a 3-year Reserved Instance vs on-demand pricing?**
 
 ```
 Example: m5.xlarge in us-east-1
@@ -1415,7 +1401,7 @@ Break-even analysis:
   slightly less total savings)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Increases probability of capacity being available example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Risk factors for 3-year commitment:
 - Will this instance type still fit the workload in 3 years?
@@ -1433,8 +1419,7 @@ Convertible). This exit option reduces the risk of long commitments.
 
 ---
 
-**Q6. TRADE-OFF: 1-year vs 3-year Reserved Instance. How do
-you decide?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: 1-year vs 3-year Reserved Instance. How do you decide?**
 
 | Dimension | 1-Year | 3-Year |
 |---|---|---|
@@ -1472,8 +1457,7 @@ costs ~10% less discount.
 
 ---
 
-**Q7. What is a Spot Fleet and when would you use it vs
-a simple Spot Instance request?**
+**[SENIOR] Q7 - [TRADE-OFF] What is a Spot Fleet and when would you use it vs a simple Spot Instance request?**
 
 Single Spot Instance request: requests a specific instance type in
 a specific AZ. If that type is unavailable: request fails.
@@ -1496,7 +1480,7 @@ interrupted or unavailable.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Increases probability of capacity being available example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Allocation strategies:
 - `lowestPrice`: always use cheapest available (highest interruption risk)
@@ -1517,8 +1501,7 @@ with lower interruption rates.
 
 ---
 
-**Q8. How do Compute Savings Plans differ from EC2 Instance
-Savings Plans and how do they interact?**
+**[SENIOR] Q8 - [MECHANISM] How do Compute Savings Plans differ from EC2 Instance Savings Plans and how do they interact?**
 
 Application order (automatic, most specific first):
 ```
@@ -1529,7 +1512,7 @@ Application order (automatic, most specific first):
 3. On-Demand rate applied to uncovered usage
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Increases probability of capacity being available example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Practical example:
 ```
@@ -1547,7 +1530,7 @@ Application:
 - Fargate: Compute SP only (EC2 SP doesn't apply)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Increases probability of capacity being available example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Optimization: buy EC2 Instance SP for your primary instance family
 (highest discount for that specific commitment), then add Compute SP
@@ -1561,8 +1544,7 @@ service launch, major re-architecture).
 
 ---
 
-**Q9. BEHAVIORAL: Your team runs 50 EC2 instances 24/7 at
-on-demand rates. How do you reduce cost?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: Your team runs 50 EC2 instances 24/7 at on-demand rates. How do you reduce cost?**
 
 Step 1: Classify the workload (1 week):
 ```bash
@@ -1583,7 +1565,7 @@ Step 1: Classify the workload (1 week):
 #   - 70-90% savings
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - 70-90% savings example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Purchase Savings Plans immediately:
 ```bash
@@ -1595,7 +1577,7 @@ aws ce get-savings-plans-purchase-recommendation \
 # Apply to Group A steady-state usage
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Apply to Group A steady-state usage example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Migrate Group C to Spot (2 weeks):
 ```bash
@@ -1604,7 +1586,7 @@ Step 3: Migrate Group C to Spot (2 weeks):
 # 80% savings for 5 instances = large absolute saving
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 80% savings for 5 instances = large absolute saving example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Right-size Group A and Group B (4 weeks):
 - Compute Optimizer recommendations

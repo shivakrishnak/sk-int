@@ -162,7 +162,7 @@ CSS CASCADE LAYERS (@layer):
      specificity (both are 0,1,0) */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Specificity and Cascade Control example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -219,7 +219,7 @@ h2.card-title { color: black !important; }
 /* Now NOTHING can override this */
 ```
 
-> **Code walkthrough:** Each developer increased specificity
+> **Code walkthrough:** Each developer increased specificityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to override the previous rule. The final `!important` is
 > the end of the road - you cannot override `!important` on
 > the same element without your own `!important`. This is
@@ -243,7 +243,7 @@ h2.card-title { color: black !important; }
    needs higher specificity to override */
 ```
 
-> **Code walkthrough:** BEM's flat specificity means all
+> **Code walkthrough:** BEM's flat specificity means allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > component classes are (0,1,0). Source order determines
 > cascade. When a modifier context genuinely needs an
 > override (`.card--featured` changes the title color),
@@ -288,7 +288,7 @@ h2.card-title { color: black !important; }
 }
 ```
 
-> **Code walkthrough:** `@layer` declares priority order
+> **Code walkthrough:** `@layer` declares priority orderice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > independent of specificity or source order. A `utilities`
 > layer class always overrides a `components` layer class
 > even if both have identical (0,1,0) specificity. `@layer`
@@ -309,7 +309,7 @@ h2.card-title { color: black !important; }
 .alert { border-radius: 0; } /* wins! */
 ```
 
-> **Code walkthrough:** `:where()` applies the selector's
+> **Code walkthrough:** `:where()` applies the selector'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > styles but contributes zero specificity. Library CSS should
 > use `:where()` wrappers so users can override with any
 > specificity. Design systems intended for external consumption
@@ -382,7 +382,7 @@ DevTools steps:
 7. Check @layer (newer DevTools show layer badges)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -411,8 +411,7 @@ Fix: use `@layer` for cascade control instead of `!important`.
 
 ---
 
-**Q1: How is CSS specificity calculated?** `[MID]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] How is CSS specificity calculated?** `[MID]`**
 
 *Why they ask:* Core CSS knowledge required of all frontend devs.
 
@@ -464,8 +463,7 @@ MECHANISM
 
 ---
 
-**Q2: What is the full CSS cascade algorithm?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What is the full CSS cascade algorithm?** `[SENIOR]`**
 
 *Why they ask:* Understanding the cascade depth signals
 CSS expertise.
@@ -526,7 +524,7 @@ CSS expertise.
 
 ---
 
-**Q3: Why should you avoid using IDs in CSS selectors?**
+**[JUNIOR] Q3 - [MECHANISM] Why should you avoid using IDs in CSS selectors?**
 `[JUNIOR]` TRADE-OFF
 
 *Why they ask:* Common CSS best practice with a non-obvious reason.
@@ -581,8 +579,7 @@ are acceptable?"
 
 ---
 
-**Q4: What does !important actually do in the cascade?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What does !important actually do in the cascade?**
 
 *Why they ask:* !important is widely misunderstood.
 
@@ -642,8 +639,7 @@ are acceptable?"
 
 ---
 
-**Q5: What is CSS @layer and how does it control cascade?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] What is CSS @layer and how does it control cascade?**
 
 *Why they ask:* @layer is modern CSS's answer to specificity wars.
 
@@ -711,8 +707,7 @@ are acceptable?"
 
 ---
 
-**Q6: What is :where() and when do you use it?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is :where() and when do you use it?** `[SENIOR]`**
 
 *Why they ask:* Modern CSS pseudo-class; library authors
 must know it.
@@ -782,8 +777,7 @@ must know it.
 
 ---
 
-**Q7: How do you debug a specificity problem?** `[MID]`
-DEBUGGING
+**[SENIOR] Q7 - [DEBUGGING] How do you debug a specificity problem?** `[MID]`**
 
 *Why they ask:* Practical DevTools knowledge.
 
@@ -840,7 +834,7 @@ Styles panel mean?"
 
 ---
 
-**Q8: How does specificity interact with CSS Custom
+**[SENIOR] Q8 - [MECHANISM] How does specificity interact with CSS Custom**
 Properties?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Custom properties have their own inheritance/
@@ -908,8 +902,7 @@ custom properties?"
 
 ---
 
-**Q9: What is CSS @scope and when will it matter?**
-`[STAFF]` ARCHITECTURE
+**[STAFF] Q9 - [ARCHITECTURE] What is CSS @scope and when will it matter?**
 
 *Why they ask:* Staff engineers track browser platform evolution.
 
@@ -1165,7 +1158,7 @@ JavaScript class toggling. Creating decorative content
 
 **How it works:**
 
-```
+```plaintext
 PSEUDO-CLASSES (state and position):
 
 State-based:
@@ -1224,7 +1217,7 @@ Advanced:
   ::part()      - Shadow DOM exportparts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Pseudo-classes and Pseudo-elements example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1284,7 +1277,7 @@ document.querySelectorAll('.button').forEach(btn => {
 /* Loses benefits of CSS transitions/animations */
 ```
 
-> **Code walkthrough:** Hover and focus state styling
+> **Code walkthrough:** Hover and focus state stylingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > belongs entirely in CSS. JavaScript event listeners for
 > pure visual state changes add unnecessary overhead, prevent
 > CSS transitions from working smoothly, and don't work
@@ -1355,7 +1348,7 @@ figure:has(figcaption) img {
 }
 ```
 
-> **Code walkthrough:** `:has()` enables styles that depend
+> **Code walkthrough:** `:has()` enables styles that dependice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > on the element's CONTENT or state of its children - the
 > "parent selector" missing from CSS for 25 years. Before
 > `:has()`, every example here required JavaScript class
@@ -1463,7 +1456,7 @@ is inline). If either is missing:
 
 ---
 
-**Q1: What is the difference between pseudo-classes and
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between pseudo-classes and**
 pseudo-elements?** `[JUNIOR]` MECHANISM
 
 *Why they ask:* Fundamental CSS knowledge check.
@@ -1512,8 +1505,7 @@ pseudo-elements?** `[JUNIOR]` MECHANISM
 
 ---
 
-**Q2: Explain :focus vs :focus-visible vs :focus-within.**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] Explain :focus vs :focus-visible vs :focus-within.**
 
 *Why they ask:* Focus handling is critical for accessibility.
 
@@ -1575,8 +1567,7 @@ ring behavior?"
 
 ---
 
-**Q3: How does :nth-child differ from :nth-of-type?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does :nth-child differ from :nth-of-type?**
 
 *Why they ask:* Common source of bugs for developers.
 
@@ -1637,8 +1628,7 @@ ring behavior?"
 
 ---
 
-**Q4: Explain the LVHA order for link pseudo-classes.**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q4 - [MECHANISM] Explain the LVHA order for link pseudo-classes.**
 
 *Why they ask:* Common gotcha with link styling.
 
@@ -1692,8 +1682,7 @@ ring behavior?"
 
 ---
 
-**Q5: What is the :has() selector and why is it significant?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] What is the :has() selector and why is it significant?**
 
 *Why they ask:* `:has()` is the biggest CSS selector addition
 in years.
@@ -1762,7 +1751,7 @@ in years.
 
 ---
 
-**Q6: When and how do you use ::before and ::after?**
+**[SENIOR] Q6 - [MECHANISM] When and how do you use ::before and ::after?**
 `[MID]` HANDS-ON
 
 *Why they ask:* Common CSS technique with specific requirements.
@@ -1840,8 +1829,7 @@ in years.
 
 ---
 
-**Q7: What is :not() and how does it handle specificity?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is :not() and how does it handle specificity?**
 
 *Why they ask:* `:not()` behavior changed between CSS2 and CSS4.
 
@@ -1903,8 +1891,7 @@ and :not(.a, .b)?"
 
 ---
 
-**Q8: What is the ::selection pseudo-element?** `[JUNIOR]`
-MECHANISM
+**[SENIOR] Q8 - [MECHANISM] What is the ::selection pseudo-element?** `[JUNIOR]`**
 
 *Why they ask:* Accessible CSS customization technique.
 
@@ -1963,7 +1950,7 @@ MECHANISM
 
 ---
 
-**Q9: Debug this: styles inside :hover on a touch device
+**[STAFF] Q9 - [DEBUGGING] Debug this: styles inside :hover on a touch device**
 don't work.** `[SENIOR]` DEBUGGING
 
 *Why they ask:* Touch vs pointer device CSS interaction is

@@ -143,7 +143,7 @@ JpaRepository hierarchy:
     -> JpaSpecificationExecutor (dynamic queries)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Data JPA Repository example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Query method derivation happens at application startup. If the method name
@@ -234,6 +234,17 @@ public interface OrderRepository
 > the naming convention: findBy + PropertyName + Condition. All queries are
 > generated at startup - invalid property names fail immediately.
 
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
+
 ```java
 // BAD: N+1 query problem - classic JPA trap
 public List<OrderDto> getOrdersWithItems(String email) {
@@ -279,7 +290,7 @@ public interface OrderRepository
 }
 ```
 
-> **Code walkthrough:** The N+1 problem is the most common JPA performance
+> **Code walkthrough:** The N+1 problem is the most common JPA performanceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > issue. The BAD example loads orders (1 query), then for each order calls
 > getItems() (N queries). At scale (1000 orders), this is 1001 queries.
 > The JOIN FETCH version uses one query with a SQL JOIN. The DTO projection
@@ -329,7 +340,7 @@ public Page<Order> search(OrderSearchRequest req,
 }
 ```
 
-> **Code walkthrough:** The Specification pattern enables building JPQL predicates
+> **Code walkthrough:** The Specification pattern enables building JPQL predicatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > dynamically at runtime. Each specification is a lambda returning a JPA Predicate.
 > Null specifications are handled by returning null (which Spring Data ignores).
 > This is the correct solution for search forms where any combination of filters
@@ -417,7 +428,7 @@ the transaction boundary.
 
 ---
 
-#### Q1 - How does Spring Data JPA generate repository implementations?
+**[JUNIOR] Q1 - [HANDS-ON] How does Spring Data JPA generate repository implementations?**
 
 At application startup:
 1. JpaRepositoriesAutoConfiguration activates (classpath: JPA, Spring Data JPA)
@@ -439,7 +450,7 @@ merge() based on isNew() check (entity has null ID or @Version is null).
 
 ---
 
-#### Q2 - What is the N+1 query problem and how do you diagnose it?
+**[JUNIOR] Q2 - [DEBUGGING] What is the N+1 query problem and how do you diagnose it?**
 
 N+1: loading N entities and then executing 1 additional query per entity
 to load an associated collection.
@@ -452,7 +463,7 @@ to load an associated collection.
 -> executed for each order when items are accessed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Total: 101 queries instead of 1 or 2.
 
@@ -476,7 +487,7 @@ the correct fix for cases where you always need the association.
 
 ---
 
-#### Q3 - What is the difference between @Query JPQL and native SQL?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between @Query JPQL and native SQL?**
 
 **JPQL (@Query)**:
 - Queries entity names and property names, not table/column names
@@ -503,7 +514,7 @@ DTO is preferable to JPQL + entity loading.
 
 ---
 
-#### Q4 - What is a DTO projection in Spring Data JPA?
+**[MID] Q4 - [BEHAVIORAL] What is a DTO projection in Spring Data JPA?**
 
 A DTO projection is an interface (or class) with getters matching the fields
 selected in the query. Spring Data JPA maps query results to the projection
@@ -525,7 +536,7 @@ public interface OrderSummary {
 List<OrderSummary> findByStatus(OrderStatus s);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Class projection (DTO constructor):
 ```java
@@ -540,7 +551,7 @@ List<OrderSummary> findSummariesByStatus(
     @Param("status") OrderStatus status);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Interface projections use JDK proxies
 (one proxy per result row). For large result sets, class projections (DTO with
@@ -550,7 +561,7 @@ all rows into memory at once.
 
 ---
 
-#### Q5 - How does pagination work in Spring Data JPA?
+**[MID] Q5 - [CONCEPTUAL] How does pagination work in Spring Data JPA?**
 
 Repository method returning Page<T>:
 ```java
@@ -558,7 +569,7 @@ Page<Order> findByStatus(OrderStatus status,
                          Pageable pageable);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Calling code:
 ```java
@@ -576,7 +587,7 @@ result.getTotalPages();   // total pages
 result.hasNext();         // more pages?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Page<T> executes TWO queries: one for data, one for COUNT. For large tables,
 COUNT(*) can be expensive. Use Slice<T> instead of Page<T> when you only
@@ -589,7 +600,7 @@ full JOIN which is expensive. Use a custom countQuery in @Query:
 
 ---
 
-#### Q6 - What is @Modifying and when do you need it?
+**[MID] Q6 - [CONCEPTUAL] What is @Modifying and when do you need it?**
 
 @Modifying marks a @Query method as a write operation (UPDATE or DELETE).
 Without it, Spring Data throws InvalidDataAccessApiUsageException for DML queries.
@@ -612,7 +623,7 @@ int deleteOldOrdersByStatus(
     @Param("cutoff") LocalDateTime cutoff);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 @Modifying(clearAutomatically = true): clears the first-level cache (persistence
 context) after the update. Without this, the cache may contain stale data -
@@ -626,7 +637,7 @@ entity validation and auditing, updating entities via save() is cleaner - bulk
 
 ---
 
-#### Q7 - How does @Transactional interact with Spring Data repositories?
+**[SENIOR] Q7 - [CONCEPTUAL] How does @Transactional interact with Spring Data repositories?**
 
 SimpleJpaRepository methods are @Transactional (read-only for queries,
 read-write for save/delete). This means each call is its own transaction.
@@ -639,7 +650,7 @@ paymentRepository.save(payment); // TX2
 // If TX2 fails, TX1 is already committed - inconsistency!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Correct pattern: @Transactional on the service method:
 ```java
@@ -655,7 +666,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 With @Transactional on the service: Spring starts a transaction before the
 method, repository calls join the existing transaction
@@ -669,7 +680,7 @@ and the second @Transactional is ignored. This is the self-invocation problem.
 
 ---
 
-#### Q8 - What is the Specification pattern and when do you use it?
+**[SENIOR] Q8 - [ARCHITECTURE] What is the Specification pattern and when do you use it?**
 
 The Specification pattern (Criteria API wrapper) enables building dynamic
 predicates at runtime. Use it when query conditions are optional at runtime
@@ -686,7 +697,7 @@ where(hasEmail(req.getEmail()))
     .and(afterDate(req.getAfterDate()))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Pros: type-safe, composable, handles nulls via null predicate convention
 Cons: verbose code compared to QueryDSL; complex queries can be hard to read
@@ -703,7 +714,7 @@ Fix with query.distinct(true) in the specification.
 
 ---
 
-#### Q9 - What are custom repository implementations?
+**[SENIOR] Q9 - [HANDS-ON] What are custom repository implementations?**
 
 For operations that don't fit derived queries, @Query, or Specification, you
 can add custom implementation to a repository:
@@ -736,7 +747,7 @@ public interface OrderRepository extends
         OrderRepositoryCustom {}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Spring Data detects the Impl suffix and wires them together. The proxy
 delegates to OrderRepositoryImpl for the custom method.
@@ -907,7 +918,7 @@ Registration options:
   @Component + @ConfigurationProperties (direct)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @ConfigurationProperties example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **The key insight:**
 Relaxed binding is one of @ConfigurationProperties's most useful features.
@@ -965,7 +976,7 @@ public class PaymentService {
 }
 ```
 
-> **Code walkthrough:** The @Value approach scatters configuration knowledge
+> **Code walkthrough:** The @Value approach scatters configuration knowledgeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > across classes. To find all payment configuration, you search the codebase
 > for @Value annotations containing "payment". If apiKey is missing, you get
 > IllegalArgumentException when Spring tries to resolve the placeholder - but
@@ -1026,7 +1037,7 @@ public class PaymentConfig {
 // app.payment.circuit-breaker.failure-threshold=3
 ```
 
-> **Code walkthrough:** @ConfigurationProperties groups all payment configuration
+> **Code walkthrough:** @ConfigurationProperties groups all payment configurationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in one class. @Validated enables JSR-303 validation - if api-key is missing or
 > url is empty, Spring throws BindException at startup with a clear error message.
 > Duration type: Spring Boot converts "5000ms" or "5s" to Duration automatically.
@@ -1142,7 +1153,7 @@ Fix: Verify the prefix and field names; ensure class is registered via
 
 ---
 
-#### Q1 - What is @ConfigurationProperties and how does it differ from @Value?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is @ConfigurationProperties and how does it differ from @Value?**
 
 @ConfigurationProperties binds a group of properties with a common prefix to
 a POJO. @Value injects individual property values.
@@ -1170,7 +1181,7 @@ configuration testing clean.
 
 ---
 
-#### Q2 - How does relaxed binding work?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does relaxed binding work?**
 
 Spring Boot supports multiple naming conventions for the same property:
 
@@ -1181,7 +1192,7 @@ app.payment.api_key=secret        # underscore
 APP_PAYMENT_API_KEY=secret        # env var (UPPER_SNAKE)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 All of these bind to the Java field `private String apiKey`.
 
@@ -1201,7 +1212,7 @@ with Spring Boot configuration.
 
 ---
 
-#### Q3 - How do you validate @ConfigurationProperties?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you validate @ConfigurationProperties?**
 
 Add @Validated to the class and JSR-303 annotations to fields:
 
@@ -1222,7 +1233,7 @@ public class AppProperties {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 If validation fails at startup: BindException wraps the ConstraintViolations.
 Spring Boot prints each failed constraint with the property name and invalid value.
@@ -1233,7 +1244,7 @@ are not evaluated. This is a common oversight when using nested configuration.
 
 ---
 
-#### Q4 - What is constructor binding and how is it different from setter binding?
+**[MID] Q4 - [CONCEPTUAL] What is constructor binding and how is it different from setter binding?**
 
 **Setter binding** (default):
 - Spring creates the object using the default constructor
@@ -1261,7 +1272,7 @@ public class ServerProperties {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 In Spring Boot 3.x, constructor binding is detected automatically for classes
 with a single constructor that has all properties - @ConstructorBinding is not
@@ -1274,7 +1285,7 @@ change after construction. Prefer constructor binding (or records) for all new
 
 ---
 
-#### Q5 - How does @ConfigurationProperties support type conversion?
+**[MID] Q5 - [CONCEPTUAL] How does @ConfigurationProperties support type conversion?**
 
 Spring Boot includes converters for many types:
 
@@ -1295,7 +1306,7 @@ public Converter<String, MyType> myTypeConverter() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @ConfigurationPropertiesBinding marks the converter as intended for
 @ConfigurationProperties binding (not MVC type conversion).
@@ -1308,7 +1319,7 @@ configuration values communicate intent and prevent units confusion
 
 ---
 
-#### Q6 - How do you use @ConfigurationProperties for multi-profile configuration?
+**[MID] Q6 - [CONCEPTUAL] How do you use @ConfigurationProperties for multi-profile configuration?**
 
 application.yml with profiles:
 ```yaml
@@ -1328,7 +1339,7 @@ app:
     timeout: 5s  # tighter in production
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The @ConfigurationProperties class is the same - Spring loads different property
 values based on active profile. No Java code changes needed.
@@ -1341,7 +1352,7 @@ public class ProductionPaymentProperties
         extends PaymentProperties { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* application.yml's multi-document format
 (---) allows profile-specific sections in one file. For complex configuration,
@@ -1350,7 +1361,7 @@ overrides only the production-specific values.
 
 ---
 
-#### Q7 - How do you test @ConfigurationProperties?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you test @ConfigurationProperties?**
 
 Option 1 - @SpringBootTest (integration):
 ```java
@@ -1366,7 +1377,7 @@ class PaymentPropertiesTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 2 - @ConfigurationPropertiesTest (slice test):
 ```java
@@ -1383,7 +1394,7 @@ class PaymentPropertiesTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 3 - Direct constructor (unit test):
 ```java
@@ -1397,7 +1408,7 @@ PaymentProperties props = new PaymentProperties(
 // No Spring needed at all
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Option 3 (direct construction) is the fastest
 and most appropriate for unit testing your configuration class's logic
@@ -1406,7 +1417,7 @@ tests that verify the full property binding chain.
 
 ---
 
-#### Q8 - What is the difference between application.properties and application.yml?
+**[SENIOR] Q8 - [CONCEPTUAL] What is the difference between application.properties and application.yml?**
 
 Both serve the same purpose - externalized configuration. Differences:
 
@@ -1434,7 +1445,7 @@ environment-specific overrides in properties.
 
 ---
 
-#### Q9 - How do you access properties programmatically (without binding)?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you access properties programmatically (without binding)?**
 
 Option 1 - Environment.getProperty():
 ```java
@@ -1448,7 +1459,7 @@ public class DynamicConfigService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 2 - @PropertySource + @Value:
 ```java
@@ -1460,7 +1471,7 @@ public class CustomConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 3 - ApplicationContext.getEnvironment():
 ```java
@@ -1469,7 +1480,7 @@ String value = applicationContext
     .getProperty("my.prop");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Environment.getProperty() is useful for: dynamic property lookup based on
 runtime values, checking if a property exists without failing, accessing

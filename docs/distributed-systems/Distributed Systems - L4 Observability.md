@@ -134,7 +134,7 @@ TRACES
   Tools:   Jaeger, Zipkin, AWS X-Ray, Datadog APM, Tempo
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Tracing and Observability example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Trace context propagation (W3C standard):**
 
@@ -170,7 +170,7 @@ Trace backend (Jaeger):
   Identifies: payment-svc consumed 250/350ms = 71% of latency
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Tracing and Observability example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **OpenTelemetry (OTel) - the standard:**
 
@@ -200,7 +200,7 @@ Manual instrumentation (when needed):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Tracing and Observability example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Sampling strategies:**
 
@@ -225,7 +225,7 @@ Tail-based sampling:
   - Jaeger and OpenTelemetry Collector support tail sampling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The value of distributed tracing is proportional to coverage.
@@ -256,6 +256,12 @@ all records for a given ID to reconstruct the distributed state."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DISTRIBUTED TRACING WITH SPRING BOOT + MICROMETER
@@ -464,7 +470,7 @@ SLO alerting:
     to reduce alert fatigue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This otel.exporter.otlp.endpoint: http://jaeger:4317 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -569,7 +575,7 @@ grep "traceparent" /var/log/app/*.log
 # Missing traceparent on outbound calls = not propagated
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Missing traceparent on outbound calls = not propagated example demonstrates HTTP request from shell using container. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: ensure all HTTP clients (RestTemplate, WebClient, Feign,
 OkHttp) have OpenTelemetry instrumentation registered.
@@ -581,7 +587,7 @@ restTemplate.getInterceptors()
     // Should contain OTel propagation interceptor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Missing traceparent on outbound calls = not propagated example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -605,7 +611,7 @@ cat /etc/otelcol/config.yaml | grep -A20 sampling
 # If no results: traces were not sampled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no results: traces were not sampled example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: implement tail-based sampling. OTel Collector config:
 ```yaml
@@ -623,7 +629,7 @@ processors:
         probabilistic: {sampling_percentage: 1}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no results: traces were not sampled example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -648,9 +654,15 @@ curl http://prometheus:9090/api/v1/status/tsdb?topN=20 | \
   python3 -m json.tool | grep -A5 "seriesCountByMetricName"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find highest-cardinality metrics example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: remove high-cardinality labels from metrics.
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: user_id as a label
 Counter.builder("api.requests")
@@ -667,7 +679,7 @@ Counter.builder("api.requests")
     .increment();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Find highest-cardinality metrics example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -686,10 +698,9 @@ Counter.builder("api.requests")
 
 ---
 
-**Q1 (Clarification) - What is the difference between monitoring
-and observability?**
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between monitoring and observability?**
 
-A: Monitoring is about tracking known failure modes. You define
+Monitoring is about tracking known failure modes. You define
 metrics and thresholds for conditions you anticipate. "Alert me
 when error rate > 1%." Monitoring answers: "Is the system
 behaving as expected?" It is proactive but limited to known
@@ -723,10 +734,9 @@ unexpected questions." This distinction, from Charity Majors
 
 ---
 
-**Q2 (Mechanism) - How does W3C traceparent work and what does
-each field mean?**
+**[JUNIOR] Q2 - [MECHANISM] How does W3C traceparent work and what does each field mean?**
 
-A: The W3C Trace Context specification defines a standard HTTP
+The W3C Trace Context specification defines a standard HTTP
 header for distributed trace propagation:
 
 `traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01`
@@ -763,10 +773,9 @@ propagates to all services.
 
 ---
 
-**Q3 (Mechanism) - How do you add trace context to structured logs
-and correlate traces with logs?**
+**[JUNIOR] Q3 - [MECHANISM] How do you add trace context to structured logs and correlate traces with logs?**
 
-A: Trace-log correlation requires injecting the current trace ID
+Trace-log correlation requires injecting the current trace ID
 and span ID into every log record.
 
 Spring Boot + MDC (Mapped Diagnostic Context):
@@ -784,7 +793,7 @@ Spring Boot + MDC (Mapped Diagnostic Context):
 // → Shows all log lines for that trace across all services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find highest-cardinality metrics example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Manual MDC (if auto-configuration is not available):
 ```java
@@ -814,7 +823,7 @@ public class TraceIdFilter extends OncePerRequestFilter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find highest-cardinality metrics example demonstratice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Grafana Tempo + Loki integration:
 - Tempo stores traces, Loki stores logs
@@ -832,11 +841,9 @@ into log search is error-prone and slow during incidents.
 
 ---
 
-**Q4 (Failure / Debugging) - P99 latency spiked for the checkout
-service. You have metrics, logs, and traces. Walk through your
-investigation.**
+**[MID] Q4 - [DEBUGGING] P99 latency spiked for the checkout service. You have metrics, logs, and traces. Walk through your investigation.**
 
-A: Systematic investigation using the three pillars:
+Systematic investigation using the three pillars:
 
 Step 1 - Metrics (narrow the window and service):
 ```promql
@@ -851,7 +858,7 @@ http_server_duration_milliseconds{
 # checkout-service and payment-service both elevated
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This checkout-service and payment-service both elevated ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2 - Traces (identify the slow path):
 ```
@@ -863,7 +870,7 @@ Jaeger query: service=checkout-service, latency > 500ms,
 → Bottleneck: Stripe API latency
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This checkout-service and payment-service both elevated example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3 - Logs (confirm and get details):
 ```
@@ -874,7 +881,7 @@ Loki query: {app="payment-service"} |= "stripe"
 → Check Stripe status page: confirmed Stripe incident
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This checkout-service and payment-service both elevated ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Result: Stripe's API had increased latency starting at 14:02.
 Action: activate circuit breaker to fallback payment flow.
@@ -892,10 +899,9 @@ narrows the scope before opening a detailed view.
 
 ---
 
-**Q5 (Failure / Debugging) - Traces show a 200ms gap in a span
-where no child spans exist. What could cause this?**
+**[MID] Q5 - [DEBUGGING] Traces show a 200ms gap in a span where no child spans exist. What could cause this?**
 
-A: A 200ms "gap" (time elapsed within a span with no child spans
+A 200ms "gap" (time elapsed within a span with no child spans
 explaining it) indicates work happening without instrumentation.
 
 Common causes:
@@ -924,6 +930,14 @@ Common causes:
    to the async thread - the work happened "outside" the span.
 
 Diagnosis:
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
+
 ```java
 // Check for missing context in async code:
 // BAD: context not propagated
@@ -945,7 +959,7 @@ CompletableFuture.runAsync(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This checkout-service and payment-service bice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the async context propagation
 issue (cause 4). This is the most common production tracing bug.
@@ -958,10 +972,9 @@ is there - just not instrumented because of the async context loss.
 
 ---
 
-**Q6 (Trade-off) - Compare OpenTelemetry, Jaeger, and Zipkin.
-Which do you recommend and why?**
+**[SENIOR] Q6 - [TRADE-OFF] Compare OpenTelemetry, Jaeger, and Zipkin. Which do you recommend and why?**
 
-A: These operate at different layers:
+These operate at different layers:
 
 OpenTelemetry (OTel):
 - Layer: instrumentation API + SDK + protocol (OTLP)
@@ -1007,10 +1020,9 @@ config - no code changes."
 
 ---
 
-**Q7 (Trade-off) - What is the cost of observability and how
-do you justify it?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the cost of observability and how do you justify it?**
 
-A: Observability has three cost dimensions:
+Observability has three cost dimensions:
 
 1. Performance overhead (instrumentation cost):
    - OTel auto-instrumentation adds ~2-5% CPU overhead
@@ -1047,8 +1059,7 @@ into business value.
 
 ---
 
-**Q8 (System Design) - Design the observability stack for a
-high-traffic e-commerce platform with 10k requests/second.**
+**[SENIOR] Q8 - [DESIGN] Design the observability stack for a high-traffic e-commerce platform with 10k requests/second.**
 
 A:
 ```
@@ -1098,7 +1109,7 @@ Cost estimate:
   Total: ~$1,000/month for observability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* cost estimate and tail-based
 sampling policy. Specifying "1% normal + 100% errors/slow" shows
@@ -1108,10 +1119,9 @@ is the production standard that balances cost and coverage.
 
 ---
 
-**Q9 (Production) - How do you implement SLO-based alerting with
-multi-burn-rate alerts?**
+**[SENIOR] Q9 - [SCENARIO] How do you implement SLO-based alerting with multi-burn-rate alerts?**
 
-A: SLO alerting detects when the system is consuming its error
+SLO alerting detects when the system is consuming its error
 budget faster than the allowed rate.
 
 SLO: 99.9% availability → error budget = 0.1% = 43.2 minutes/month
@@ -1148,7 +1158,7 @@ Multi-burn-rate (Google SRE Book recommendation):
     severity: ticket
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Triggers: gradual degradation (ticket) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Why multi-burn-rate:
 - Fast alert: catch spikes quickly (14x burn → page in 5 min)
@@ -1168,10 +1178,9 @@ how to derive the thresholds from the SLO budget.
 
 ---
 
-**Q10 (Behavioral) - Describe how you introduced distributed
-tracing to a team that had been operating without it.**
+**[SENIOR] Q10 - [BEHAVIORAL] Describe how you introduced distributed tracing to a team that had been operating without it.**
 
-A: Example structure:
+Example structure:
 
 "At [company], we had 15 microservices and no distributed tracing.
 Debugging production issues required manually correlating log
@@ -1221,10 +1230,9 @@ program upfront.
 
 ---
 
-**Q11 (Mechanism) - What is exemplar in Prometheus and how does
-it connect metrics to traces?**
+**[SENIOR] Q11 - [MECHANISM] What is exemplar in Prometheus and how does it connect metrics to traces?**
 
-A: A Prometheus exemplar is a specific sample of a metric
+A Prometheus exemplar is a specific sample of a metric
 observation that includes additional metadata - specifically
 a trace ID. It connects a specific metric value to the
 distributed trace that produced it.
@@ -1236,7 +1244,7 @@ http_server_duration_bucket{le="500",job="checkout",
   status="200"} 1350 {traceID="abc123"} 1705000000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The metric says: "1350 requests completed within 500ms."
 The exemplar says: "The specific trace ID 'abc123' was one
@@ -1259,7 +1267,7 @@ With exemplars: alert fires → click → see the trace
   (< 30 seconds to root cause from alert)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Implementation (Micrometer):
 ```java
@@ -1270,7 +1278,7 @@ management.prometheus.metrics.export.histogram-publish-percentiles=true
 management.tracing.enabled=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* exemplars are one of the
 least-known but most valuable features for three-pillar correlation.
@@ -1284,14 +1292,12 @@ teams dramatically more efficient.
 
 ---
 
-**Q12 (Behavioral) - A production alert fires for high P99 latency.
-Walk through your entire end-to-end investigation using all three
-observability pillars.**
+**[SENIOR] Q12 - [BEHAVIORAL] A production alert fires for high P99 latency. Walk through your entire end-to-end investigation using all three observability pillars.**
 
-A: Structured incident response using the three pillars:
+Structured incident response using the three pillars:
 
 Phase 1 - Triage (0-5 minutes): Metrics
-```
+```plaintext
 Alert: checkout_latency_p99 > 500ms for 5 minutes
 Dashboard: checkout service P99 = 820ms (normally 120ms)
            payment service P99 = 750ms (normally 80ms)
@@ -1300,7 +1306,7 @@ Dashboard: checkout service P99 = 820ms (normally 120ms)
 Conclusion: checkout + payment slow, no errors, started ~14:03
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 2 - Locate (5-10 minutes): Traces
 ```
@@ -1316,13 +1322,13 @@ Jaeger query:
 → payment→stripe is the bottleneck (85% of total latency)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 3 - Diagnose (10-15 minutes): Logs
 ```
 Loki query:
-  {app="payment-service"} |= "stripe" | json
-  | duration_ms > 500 | time range 14:03-14:08
+   {app="payment-service"} | = "stripe"        | json                   
+                           | duration_ms > 500 | time range 14:03-14:08 
 → 50 log lines: all show Stripe API duration 600-750ms
 → Normal Stripe duration (previous 24h): 40-70ms
 → 10x latency increase on Stripe's side
@@ -1330,7 +1336,7 @@ Loki query:
    incident started 14:01 UTC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates a ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Action (15 minutes):
 ```
@@ -1341,7 +1347,7 @@ Communication: notify on-call that this is Stripe's incident,
 Track: monitor Stripe status + checkout P99 until recovery
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This metric sample with exemplar example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Result: full root cause in 15 minutes. Checkout degradation was
 Stripe's issue, not a code change. Circuit breaker prevents

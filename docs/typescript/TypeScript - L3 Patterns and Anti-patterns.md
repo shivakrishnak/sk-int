@@ -75,6 +75,18 @@ expressed in code.
 
 **How it works:**
 
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 PATTERN 1: DISCRIMINATED UNIONS
 
@@ -190,7 +202,7 @@ PATTERN 5: BUILDER WITH THIS TYPE
   // Returns TypedQueryBuilder, not QueryBuilder!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This TypeScript Design Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -219,6 +231,11 @@ functions to improve performance. Branded types have zero runtime cost.
 ### 💻 Code Example
 
 **State machine with discriminated unions**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: boolean soup - all combinations possible, most are invalid
@@ -279,7 +296,7 @@ function reducer(
 }
 ```
 
-> **Code walkthrough:** The `UserListState` union makes four and only
+> **Code walkthrough:** The `UserListState` union makes four and onlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > four phases possible. The `loading` phase carries `startedAt` which
 > only makes sense during loading - it's part of the loading STATE,
 > not a separate field that could get out of sync. Similarly, `retryCount`
@@ -389,6 +406,11 @@ handling" use case is just the most commonly cited example.
 
 **Non-exhaustive switch on discriminated union:**
 
+
+```typescript
+// BAD: using any defeats type safety
+```
+
 ```typescript
 // SYMPTOM: new state variant added but switch doesn't handle it
 //          TypeScript shows no error -> wrong!
@@ -426,7 +448,7 @@ function render(phase: Phase): string {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -446,8 +468,7 @@ function render(phase: Phase): string {
 
 ---
 
-**Q1: How do discriminated unions prevent impossible states?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] How do discriminated unions prevent impossible states?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -492,8 +513,7 @@ MECHANISM
 > exactly 4 representable states - the invalid ones cannot be constructed.
 > This eliminates an entire class of defensive checks.
 
-**Q2: How do you implement the satisfies operator correctly?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How do you implement the satisfies operator correctly?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -540,8 +560,7 @@ MECHANISM
 > `as const` + type annotation because it doesn't just narrow to literals
 > but also validates the SHAPE.
 
-**Q3: How do branded types work and what do they prevent?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How do branded types work and what do they prevent?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -677,6 +696,36 @@ hard-to-find bugs.
 
 **How it works:**
 
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 ANTI-PATTERN CATALOG:
 
@@ -767,7 +816,7 @@ ANTI-PATTERN CATALOG:
     // ts-expect-error ERRORS if no error exists (catches when fixed)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This TypeScript Anti-patterns and Pitfalls example demonstrates a key concept in practice using enum. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -797,6 +846,30 @@ TypeScript metrics (percentage of `any` usage) correlate with defect rates.
 ### 💻 Code Example
 
 **Refactoring anti-patterns to correct patterns**
+
+
+```typescript
+// BAD: any disables type checking
+function processData(data: any): any {
+    return data.transform(); // no compile-time checks
+}
+```
+
+
+```typescript
+// BAD: any disables type checking
+function processData(data: any): any {
+    return data.transform(); // no compile-time checks
+}
+```
+
+
+```typescript
+// BAD: any disables type checking
+function processData(data: any): any {
+    return data.transform(); // no compile-time checks
+}
+```
 
 ```typescript
 // Anti-pattern 1: as X instead of type guard
@@ -850,7 +923,7 @@ if (typeof result === 'object' && result !== null && 'name' in result) {
 }
 ```
 
-> **Code walkthrough:** The `fetchUser` refactor shows the most
+> **Code walkthrough:** The `fetchUser` refactor shows the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > impactful anti-pattern fix: replacing `as User` (a lie to the
 > compiler) with runtime validation via Zod. The `UserSchema.parse()`
 > call validates the actual JSON against the expected shape at runtime
@@ -971,7 +1044,7 @@ interop). It is never a solution to a type error in business logic.
 // Goal: < 10 per 10,000 lines (< 0.1%)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using SQL. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -991,7 +1064,7 @@ interop). It is never a solution to a type error in business logic.
 
 ---
 
-**Q1: Why is the {} type dangerous in TypeScript?** `[SENIOR]` MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] Why is the {} type dangerous in TypeScript?** `[SENIOR]` MECHANISM**
 
 > **Answer:**
 >
@@ -1044,8 +1117,7 @@ interop). It is never a solution to a type error in business logic.
 > `object` (any non-primitive), `Record<string, unknown>` (string-keyed
 > object), or explicit interface shapes. This is caught by `@typescript-eslint/ban-types`.
 
-**Q2: What is the difference between any and unknown?** `[MID]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between any and unknown?** `[MID]`**
 
 > **Answer:**
 >
@@ -1091,8 +1163,7 @@ MECHANISM
 > doesn't match expectations - making the error handling visible in code
 > instead of silently crashing at runtime.
 
-**Q3: When is a type assertion (as X) actually appropriate?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q3 - [TRADE-OFF] When is a type assertion (as X) actually appropriate?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -1136,8 +1207,7 @@ DECISION
 > by either: a comment explaining WHY the type is correct, a preceding
 > runtime check, or a test that verifies the actual value shape.
 
-**Q4: What is wrong with numeric enums and how do you fix it?** `[MID]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is wrong with numeric enums and how do you fix it?** `[MID]`**
 
 > **Answer:**
 >

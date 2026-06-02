@@ -136,7 +136,7 @@ Finding: Exfiltration:S3/ObjectRead.Unusual
     Audit S3 bucket policies and IAM roles with access.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AWS Security GuardDuty and Inspector example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -237,7 +237,7 @@ def ensure_isolation_sg_exists():
     return sg['GroupId']
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Response within seconds example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 ```yaml
 # EventBridge rule: trigger Lambda on HIGH GuardDuty findings
@@ -259,7 +259,7 @@ EventPattern:
       - prefix: Trojan
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (CloudFormation/CDK) example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 ```bash
 # Enable GuardDuty (takes < 1 minute):
@@ -287,7 +287,7 @@ aws guardduty get-findings-statistics \
 # Shows: count of findings by severity (1-10 scale)
 ```
 
-> **Code walkthrough:** The automated response Lambda
+> **Code walkthrough:** The automated response Lambdaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > demonstrates defense-in-depth: when credential
 > exfiltration is detected, two containment actions
 > execute simultaneously. The EC2 isolation replaces
@@ -419,7 +419,7 @@ aws ec2 describe-instances \
   --query 'Reservations[*].Instances[*].InstanceId'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if source IP is one of your EC2 instances: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Response:*
 
@@ -458,7 +458,7 @@ aws inspector2 list-findings \
   }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Score > 9.0 = CRITICAL. Check if instance is reachable. example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Response:*
 
@@ -514,7 +514,7 @@ AWS Organizations Structure:
           - All findings -> Security Tooling Account
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Score > 9.0 = CRITICAL. Check if instance is reachable. example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 **Automated Security Response Architecture:**
 
@@ -537,7 +537,7 @@ Config ----------->  |---> EventBridge
                   JIRA P1 ticket
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Score > 9.0 = CRITICAL. Check if instance is reachable. example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 **Key design decisions:**
 
@@ -562,7 +562,7 @@ Config ----------->  |---> EventBridge
      "Resource": "*"
    }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Score > 9.0 = CRITICAL. Check if instance is reachable. example demonstrates JSON serialization structure. **KEY MECHANISM:** the JSON parser builds an object tree requiring strict syntax with no trailing commas. **WHY IT MATTERS:** a single syntax error in a JSON config file causes the entire application to fail to start. **TAKEAWAY: always validate JSON config with a linter before deploying.**
 
    Applied to all non-Security OUs. Even an account
    administrator cannot disable GuardDuty.
@@ -662,6 +662,164 @@ flowchart TB
 
 ### 🎯 Interview Deep-Dive
 
+---
+
+**[MID] Q1 - [DEBUGGING] A service using AWS Security GuardDuty and Inspector is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for AWS Security GuardDuty and Inspector beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for AWS Security GuardDuty and Inspector issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For AWS Security GuardDuty and Inspector specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare AWS Security GuardDuty and Inspector to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS AWS Security GuardDuty and Inspector service landscape and can make informed architectural decisions.
+
+AWS Security GuardDuty and Inspector has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives.
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have).
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using AWS Security GuardDuty and Inspector for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to AWS Security GuardDuty and Inspector.
+
+Multi-region architecture for AWS Security GuardDuty and Inspector: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems.
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance).
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What AWS Security GuardDuty and Inspector cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* AWS Security GuardDuty and Inspector cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in AWS Security GuardDuty and Inspector: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs.
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using AWS Security GuardDuty and Inspector in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach AWS Security GuardDuty and Inspector with security as a first-class concern, not an afterthought.
+
+Top security risks for AWS Security GuardDuty and Inspector: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for AWS Security GuardDuty and Inspector resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with AWS Security GuardDuty and Inspector: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for AWS Security GuardDuty and Inspector configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads.
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving AWS Security GuardDuty and Inspector that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world AWS Security GuardDuty and Inspector experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes).
+
+Strong answers include: specific AWS Security GuardDuty and Inspector service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient AWS Security GuardDuty and Inspector architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for AWS Security GuardDuty and Inspector peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency).
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled.
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain AWS Security GuardDuty and Inspector to someone who has never used AWS before. What problem does it solve, and when would a startup first need it?**
+
+*Why they ask:* Tests understanding of AWS Security GuardDuty and Inspector core value proposition beyond configuration options.
+
+AWS Security GuardDuty and Inspector exists because building the equivalent infrastructure yourself requires significant engineering time, ongoing maintenance, and operational expertise. AWS manages the undifferentiated heavy lifting so engineering teams can focus on product differentiation.
+
+For a startup: AWS Security GuardDuty and Inspector makes sense when the cost of building or managing the equivalent is higher than the AWS Security GuardDuty and Inspector bill. Early stage: use managed services liberally (S3, RDS, SQS) to move fast. Growth stage: optimize selectively where costs are significant and the team has the expertise to self-manage. Mature stage: strategic decisions about build vs. buy for each component.
+
+The mental model: AWS Security GuardDuty and Inspector is infrastructure you rent rather than infrastructure you build and maintain. Renting is more expensive per unit but cheaper in total when you factor in engineering time.
+
+*What separates good from great:* Understanding both when to use AWS Security GuardDuty and Inspector and when to NOT use it (when it's cheaper or simpler to self-manage).
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] Your organization is considering moving from AWS Security GuardDuty and Inspector to a self-managed equivalent (or vice versa). What is your decision framework and what would trigger the migration?**
+
+*Why they ask:* Tests strategic architectural thinking about AWS Security GuardDuty and Inspector managed vs self-managed trade-offs.
+
+Decision framework: (1) Cost crossover - calculate monthly AWS Security GuardDuty and Inspector bill vs cost of self-managed (engineering FTE + infrastructure + ops tooling). Self-managed typically wins at very high scale. (2) Differentiation - does managing this infrastructure provide competitive advantage? If no, managed service is better. (3) Team expertise - does the team have deep expertise to operate self-managed reliably? Managed services reduce operational risk.
+
+Triggers for migrating away from AWS Security GuardDuty and Inspector: feature limitation blocking a critical requirement, cost exceeding budget with no optimization path, compliance requirement incompatible with managed service model.
+
+Migration risk: any migration of AWS Security GuardDuty and Inspector in production requires a rollback plan, traffic cutover strategy (canary or blue-green), and parallel-run period to validate behavior before full cutover.
+
+*What separates good from great:* Doing the TCO analysis in a spreadsheet before the architecture review, not during it.
+
+---
+
+**[MID] Q10 - [DEBUGGING] A service using AWS Security GuardDuty and Inspector is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for AWS Security GuardDuty and Inspector beyond 'check CloudWatch logs'. (Score > 9.0 = CRITICAL. Check , Q10)
+
+Diagnostic sequence for AWS Security GuardDuty and Inspector issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes. (Score > 9.0 = CRITICAL. Check , Q10)
+
+For AWS Security GuardDuty and Inspector specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue. (Score > 9.0 = CRITICAL. Check , Q10)
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q11 - [TRADE-OFF] Compare AWS Security GuardDuty and Inspector to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS AWS Security GuardDuty and Inspector service landscape and can make informed architectural decisions. (Score > 9.0 = CRITICAL. Check , Q11)
+
+AWS Security GuardDuty and Inspector has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads. (Score > 9.0 = CRITICAL. Check , Q11)
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (Score > 9.0 = CRITICAL. Check , Q11)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (Score > 9.0 = CRITICAL. Check , Q11)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q12 - [ARCHITECTURE] How do you architect a production system using AWS Security GuardDuty and Inspector for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to AWS Security GuardDuty and Inspector. (Score > 9.0 = CRITICAL. Check , Q12)
+
+Multi-region architecture for AWS Security GuardDuty and Inspector: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity. (Score > 9.0 = CRITICAL. Check , Q12)
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems. (Score > 9.0 = CRITICAL. Check , Q12)
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance). (Score > 9.0 = CRITICAL. Check , Q12)
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
 > **Timing:** 5-7 minutes per question for ★★★ keywords.
 
 | Type | Questions |
@@ -726,7 +884,7 @@ aws ec2 run-instances \
   --metadata-options HttpTokens=required,...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This New EC2 at launch: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Immediate response:**
 
@@ -893,7 +1051,7 @@ aws guardduty list-findings \
 # Focus: severity >= 7.0 (HIGH) first
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Focus: severity >= 7.0 (HIGH) first example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 2: Identify known patterns to suppress:**
 
@@ -921,7 +1079,7 @@ aws guardduty create-filter \
   }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Create suppression rule for known pen test: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 3: Group by instance/user:**
 
@@ -979,7 +1137,7 @@ aws ssm send-command \
   --parameters 'commands=["rpm -qa | grep openssl"]'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify package is removed: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Inspector scan trigger:*
 ```bash
@@ -992,7 +1150,7 @@ aws inspector2 create-finding-aggregator \
 aws inspector2 cancel-findings-report ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This confirmed and SSM still stale: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Resolution:* After SSM inventory refresh, Inspector
 re-evaluates the finding. If the vulnerable package
@@ -1108,7 +1266,7 @@ HIGH + any:
   -> Next sprint fix. Track in JIRA.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This confirmed and SSM still stale: example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 *What separates good from great:* The decision is
 risk-based, not binary on severity. Blocking ALL
@@ -1159,7 +1317,7 @@ aws cloudtrail lookup-events \
 AttributeValue=payment-processor \
   --start-time 2024-01-15T02:00:00Z
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This confirmed and SSM still stale: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Found: attacker downloaded 3 files from S3
 (customer payment reference numbers, no raw card data).
@@ -1233,10 +1391,11 @@ ECR Lifecycle Policy:
   (reduces Inspector scan backlog + storage cost)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This confirmed and SSM still stale: example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 **Code: CI step waiting for Inspector:**
 
+{% raw %}
 ```bash
 # After docker push to ECR:
 IMAGE_DIGEST=$(docker inspect \
@@ -1273,8 +1432,9 @@ while [ "$SCAN_STATUS" = "IN_PROGRESS" ] && \
 done
 echo "No CRITICAL findings. Proceeding."
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After docker push to ECR: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* The pipeline fails
 fast on CRITICAL with known exploits, but the decision
@@ -1311,7 +1471,7 @@ aws iam delete-access-key \
   --user-name developer-john
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then delete: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 2: Audit what the credentials could access:**
 
@@ -1325,7 +1485,7 @@ aws cloudtrail lookup-events \
 # If no suspicious activity: scope confirmed clear
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no suspicious activity: scope confirmed clear example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 3: Assess exposure window:**
 
@@ -1351,7 +1511,7 @@ Value=AKIA_YOUR_KEY_EXAMPLE \
 # List of API calls made with this key
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This List of API calls made with this key example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 5: Remediation:**
 
@@ -1391,7 +1551,7 @@ Root (Management Account - no workloads)
               |-- DevAccount, StagingAccount, ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This List of API calls made with this key example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 **SCP hierarchy (non-negotiable constraints):**
 
@@ -1411,7 +1571,7 @@ accounts even by account administrators.
 ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This List of API calls made with this key example demonstrates JSON serialization structure. **KEY MECHANISM:** the JSON parser builds an object tree requiring strict syntax with no trailing commas. **WHY IT MATTERS:** a single syntax error in a JSON config file causes the entire application to fail to start. **TAKEAWAY: always validate JSON config with a linter before deploying.**
 
 **Centralized logging architecture:**
 

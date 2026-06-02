@@ -101,16 +101,22 @@ all three phases complete."
    - ONCE: per ClassLoader instance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Fundamentals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The class holder idiom exploits the JVM's
+> **Code walkthrough:** The class holder idiom exploits the JVM'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > thread-safe, lazy class initialization guarantee. `Holder` class is not
 > initialized until `getInstance()` is called. JVM guarantees only one thread
 > runs the `Holder` initializer. No `synchronized` keyword needed.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Static initializer ordering:
@@ -161,7 +167,7 @@ class Singleton {
 // Shows: exactly when each class is loaded (lazy = when first needed)
 ```
 
-> **Code walkthrough:** The circular initialization example shows a subtle
+> **Code walkthrough:** The circular initialization example shows a subtleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Java bug: when `A` initializes, it reads `B.y`. This triggers `B`'s
 > initialization. `B` needs `A.x`, but `A` is currently being initialized
 > by the SAME thread - the JVM detects this and uses A's current (default/partial)
@@ -214,7 +220,7 @@ isolated ClassLoaders per test class may run static initializers many times.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: ExceptionInInitializerError - static initializer threw an exception.**
-```
+```plaintext
 Symptom: java.lang.ExceptionInInitializerError
 Caused by: java.lang.NullPointerException at MyService.<clinit>(MyService.java:15)
   + NoClassDefFoundError on ALL subsequent uses of MyService
@@ -240,21 +246,21 @@ Fix:
      BEST: Move to instance constructor, throw on missing config at startup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Class loading phases | 2 minutes |
-| Static initializer ordering | 90 seconds |
-| Thread-safe class initialization | 2 minutes |
-| Class holder singleton | 2 minutes |
-| ExceptionInInitializerError | 2 minutes |
-| Class unloading | 2 minutes |
-| Lazy vs eager loading | 90 seconds |
+  | Question Category                | Time to Answer |  
+|--------------------------------|--------------|
+  | Class loading phases             | 2 minutes      |  
+  | Static initializer ordering      | 90 seconds     |  
+  | Thread-safe class initialization | 2 minutes      |  
+  | Class holder singleton           | 2 minutes      |  
+  | ExceptionInInitializerError      | 2 minutes      |  
+  | Class unloading                  | 2 minutes      |  
+  | Lazy vs eager loading            | 90 seconds     |  
 
 ---
 
@@ -277,7 +283,7 @@ references are never used at runtime.
 
 ---
 
-**Q2 (class holder): Why is the class holder singleton pattern thread-safe without synchronized?**
+**Q2 (class holder): Why is the class holder singleton pattern thread-safe witho
 
 A: The JVM specification (JLS 12.4.2) guarantees: if multiple threads attempt
 to initialize the same class simultaneously, all but one are blocked until the
@@ -291,7 +297,7 @@ lock, with automatic happens-before. No `synchronized`, no `volatile` needed.
 Pugh. It's the cleanest lazy singleton in Java. Compare: (1) synchronized getInstance()
 - works but every call acquires lock; (2) double-checked locking with volatile -
 works but verbose; (3) enum singleton - works but prevents lazy init; (4) class
-holder - works, lazy, no synchronization overhead on the fast path. The fast path
+holder - works, lazy, no synchronization overhead on the fast path. The fast pat
 is: `return Holder.INSTANCE` - this is a static field read, no lock, no volatile
 read (the happens-before from initialization covers it).
 
@@ -369,11 +375,11 @@ load and initialize with specific ClassLoader.
 
 *What separates good from great:* `Class.forName("org.postgresql.Driver")` is
 historical JDBC boilerplate. Since Java 6, JDBC 4.0 added ServiceLoader-based
-auto-discovery: any JDBC driver JAR that contains `META-INF/services/java.sql.Driver`
+auto-discovery: any JDBC driver JAR that contains `META-INF/services/java.sql.Dr
 is automatically loaded by `DriverManager` without explicit `Class.forName`.
 Modern code doesn't need it. The ServiceLoader pattern (`java.util.ServiceLoader`)
 is the standard for plugin discovery: define an interface, put implementations
-in `META-INF/services/`, and `ServiceLoader.load(Interface.class)` discovers all.
+in `META-INF/services/`, and `ServiceLoader.load(Interface.class)` discovers all
 
 ---
 
@@ -381,9 +387,9 @@ in `META-INF/services/`, and `ServiceLoader.load(Interface.class)` discovers all
 
 A: Lazy by specification: a class is initialized only when it is first actively used.
 "Active use" triggers: creating an instance (`new Foo()`), calling a static method,
-accessing a static field that's not a compile-time constant, class is the top-level
+accessing a static field that's not a compile-time constant, class is the top-le
 class containing `main()`, or reflection (`Class.forName()`). "Passive use" (does
-NOT trigger): using a subclass, referencing a compile-time constant static field,
+NOT trigger): using a subclass, referencing a compile-time constant static field
 a class name in a type declaration.
 
 *What separates good from great:* Understanding what counts as "active use"
@@ -444,7 +450,7 @@ This distinction matters for lazy initialization and ClassLoader lifecycle.
 >
 > JVM Stack: per-thread, LIFO stack of method frames. Each frame contains:
 > local variable array, operand stack, reference to constant pool. Frame pushed
-> on method entry, popped on return. Default size 256KB-1MB depending on platform.
+> on method entry, popped on return. Default size 256KB-1MB depending on platfor
 > Increase with `-Xss` but every thread uses this memory.
 
 **Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
@@ -470,7 +476,7 @@ office (JNI native code)."
 ### 📘 Concept Explanation
 
 **Memory area details:**
-```
+```plaintext
 HEAP (shared):
   Young Generation:
     Eden: new objects allocated here (TLAB per thread)
@@ -501,13 +507,13 @@ NATIVE METHOD STACK (per-thread):
   Tuning: -XX:MaxJNILocalRefSize
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** `Runtime.getRuntime()` exposes basic heap stats,
+> **Code walkthrough:** `Runtime.getRuntime()` exposes basic heap stats,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > but JMX beans and JFR give more accurate data. The `jcmd VM.native_memory`
 > command gives the complete JVM memory breakdown including off-heap components.
 
@@ -550,7 +556,7 @@ ManagementFactory.getMemoryPoolMXBeans().stream()
 // JVM startup flag: -XX:NativeMemoryTracking=summary
 ```
 
-> **Code walkthrough:** `jcmd VM.native_memory` reveals the full picture:
+> **Code walkthrough:** `jcmd VM.native_memory` reveals the full picture:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the JVM uses much more OS memory than just the Java heap. Code Cache stores
 > JIT-compiled native code (capped by `-XX:ReservedCodeCacheSize`, default
 > 240MB). Thread stacks are outside the heap. GC data structures are separate.
@@ -635,21 +641,21 @@ Fix:
      Better: let MaxRAMPercentage handle it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Five memory areas | 2 minutes |
-| Heap regions | 2 minutes |
-| Metaspace vs PermGen | 2 minutes |
-| JVM Stack frame | 90 seconds |
-| Container memory sizing | 2-3 minutes |
-| Direct buffers | 2 minutes |
-| Code Cache | 2 minutes |
+  | Question Category       | Time to Answer |  
+|-----------------------|--------------|
+  | Five memory areas       | 2 minutes      |  
+  | Heap regions            | 2 minutes      |  
+  | Metaspace vs PermGen    | 2 minutes      |  
+  | JVM Stack frame         | 90 seconds     |  
+  | Container memory sizing | 2-3 minutes    |  
+  | Direct buffers          | 2 minutes      |  
+  | Code Cache              | 2 minutes      |  
 
 ---
 
@@ -665,7 +671,7 @@ Metaspace (-XX:MaxMetaspaceSize), Stack (-Xss).
 Shared: Heap, Metaspace (all threads access the same class definitions and objects).
 Per-thread: JVM Stack, PC Register, Native Method Stack. This is why the Heap
 needs synchronization (GC must pause all threads to collect), while stacks are
-thread-local (no synchronization needed). Thread-safety in Java is about protecting
+thread-local (no synchronization needed). Thread-safety in Java is about protect
 shared heap access - stack variables are inherently thread-safe (each thread has
 its own stack).
 
@@ -712,7 +718,7 @@ JVM versions, on in others).
 **Q4 (TLAB): What is a TLAB?**
 
 A: Thread-Local Allocation Buffer. Each thread has a small private portion of
-Eden pre-allocated for its exclusive use. `new Object()` allocates by incrementing
+Eden pre-allocated for its exclusive use. `new Object()` allocates by incrementi
 a pointer within the TLAB - no locking needed (private to the thread). When TLAB
 fills, the thread requests a new TLAB from the shared Eden (brief locking).
 For typical workloads: 99%+ of allocations use TLAB (no lock), <1% require
@@ -737,11 +743,11 @@ via `((DirectBuffer) buf).cleaner().clean()`), counted against native memory, OO
 if `-XX:MaxDirectMemorySize` exceeded.
 
 *What separates good from great:* Netty's PooledByteBufAllocator uses direct buffers
-with its own slab allocator - avoiding Java heap entirely for network I/O buffers.
+with its own slab allocator - avoiding Java heap entirely for network I/O buffer
 This eliminates: heap GC pressure from buffer objects, CPU overhead of copying
 between heap and kernel buffer, JVM's inability to directly share heap memory
 with OS (heap can move during GC). The result: Netty achieves kernel-bypass
-network I/O efficiency. Diagnosing direct buffer leaks: `jcmd <pid> VM.native_memory`
+network I/O efficiency. Diagnosing direct buffer leaks: `jcmd <pid> VM.native_me
 shows "Direct" usage; `java.nio.BufferPoolMXBean` from JMX gives count and size.
 
 ---
@@ -779,7 +785,7 @@ depending on frame size.
 *What separates good from great:* Tail-call optimization (TCO) would allow
 infinite recursion by reusing the current frame for tail calls. The JVM
 specification does NOT support TCO (unlike JVM-targeting Scala, which manually
-transforms tail-recursive methods into loops at the compiler level via `@tailrec`).
+transforms tail-recursive methods into loops at the compiler level via `@tailrec
 In Java: convert deep recursion to explicit stack (`Deque<State>`) iteration.
 Virtual threads (Java 21): use "continuation stacks" stored in the heap, not
 OS thread stacks. A virtual thread's "stack depth" is limited by heap memory,
@@ -829,7 +835,7 @@ threads without consuming OS memory per thread.
 > fundamental approaches:
 > (1) Mark-and-sweep: mark live objects, sweep (free) unmarked. Problem:
 > fragmentation. (2) Mark-compact: mark, then compact live objects to one end.
-> No fragmentation, but requires more movement. (3) Copying GC: copy live objects
+> No fragmentation, but requires more movement. (3) Copying GC: copy live object
 > to new region, discard old region. Young Gen uses copying (Eden -> Survivor).
 >
 > GC roots: the starting points for reachability tracing. Include: local
@@ -838,7 +844,7 @@ threads without consuming OS memory per thread.
 >
 > Write barriers: when the application modifies a reference (stores an object
 > pointer), the JVM's write barrier records this for the GC. G1 uses remembered
-> sets (per-region reference tracking) via write barriers. Without write barriers:
+> sets (per-region reference tracking) via write barriers. Without write barrier
 > concurrent GC couldn't track reference changes happening during concurrent
 > marking.
 
@@ -846,8 +852,8 @@ threads without consuming OS memory per thread.
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "GC fundamentals - GC roots, reachability tracing, mark/sweep/compact/copy
-algorithms, generational hypothesis, Young vs Old Gen, Minor vs Major GC, stop-the-world."
+**(1) Restate:** "GC fundamentals - GC roots, reachability tracing, mark/sweep/c
+algorithms, generational hypothesis, Young vs Old Gen, Minor vs Major GC, stop-t
 
 **(2) First principles:** "You can't free memory while holding a reference to it.
 GC finds all references (from roots), determines what's reachable, and frees everything
@@ -888,13 +894,13 @@ GENERATIONAL COLLECTION:
   Efficiency: collect only young gen most of the time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Common memory patterns show the generational behavior:
+> **Code walkthrough:** Common memory patterns show the generational behavior:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > short-lived objects (created and discarded in one request) stay in Eden and
 > are collected cheaply. Long-lived objects (caches, Spring beans) are promoted
 > to Old Gen. Understanding this separation is the foundation of GC tuning.
@@ -934,7 +940,7 @@ System.gc(); // HINT to JVM - JVM may ignore it
 // Shows: heap before -> after(max), pause duration
 ```
 
-> **Code walkthrough:** The `-Xlog:gc*` unified logging format (Java 11+)
+> **Code walkthrough:** The `-Xlog:gc*` unified logging format (Java 11+)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > replaces the old `-XX:+PrintGCDetails` and `-XX:+PrintGCDateStamps`.
 > Each GC event shows: pause type (Young=Minor, Full=Major), cause, heap
 > before and after GC, and pause duration. "20M->5M(256M) 3.123ms" means:
@@ -1016,7 +1022,7 @@ Common leak causes found via heap dump:
   - Session objects not invalidated (HTTP sessions)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

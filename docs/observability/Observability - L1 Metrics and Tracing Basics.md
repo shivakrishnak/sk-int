@@ -215,7 +215,7 @@ checkoutLatency.set(durationMs);
 // Meaning: statistically meaningless
 ```
 
-> **Code walkthrough:** Recording latency as a gauge stores only
+> **Code walkthrough:** Recording latency as a gauge stores onlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the last observed value. At 10,000 RPS, this gauge is overwritten
 > 10,000 times per second, so at any query time it represents one
 > request's latency. Averaging this gauge across instances gives
@@ -252,7 +252,7 @@ try (Histogram.Timer timer =
 // combining their histogram bucket counts
 ```
 
-> **Code walkthrough:** The histogram records each observation
+> **Code walkthrough:** The histogram records each observationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > into pre-defined buckets. When 1000 requests have latency
 > between 50ms and 100ms, the le="0.1" bucket's count increases
 > by 1000. Prometheus aggregates these bucket counts across all
@@ -299,7 +299,7 @@ activeConnections.set(pool.getActive());
 // db_active_connections > 90
 ```
 
-> **Code walkthrough:** The counter increments on each request
+> **Code walkthrough:** The counter increments on each requestice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with a status label. PromQL's rate() function computes the
 > per-second rate, handling counter resets (service restarts)
 > correctly. The gauge tracks the current active connection count
@@ -379,7 +379,7 @@ curl -s 'http://prometheus:9090/api/v1/metadata' \
 # If result is "gauge" for a latency metric, wrong type
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If result is "gauge" for a latency metric, wrong type example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Rename the metric (type changes require name changes),
 add a histogram with the same base name and _seconds suffix
@@ -415,7 +415,7 @@ curl -s 'http://prometheus:9090/api/v1/query' \
 # Means all latency is above the highest defined bucket
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Means all latency is above the highest defined bucket example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Redefine buckets with higher boundaries: add 10.0, 30.0
 buckets. Also investigate why all latency is above 5 seconds.
@@ -447,7 +447,7 @@ curl -s 'http://prometheus:9090/api/v1/query' \
 # Any metric > 100,000 series is a cardinality risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any metric > 100,000 series is a cardinality risk example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Remove user_id from the metric label set. Use traces
 and logs to investigate per-user data; metrics are for
@@ -857,7 +857,7 @@ Span fields:
   links:       references to other traces (for async)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Trace Anatomy example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Trace context propagation: when service A calls service B,
 it injects the current trace_id and its own span_id into the
@@ -976,7 +976,7 @@ public ResponseEntity<Order> checkout(
 
 **Example 2: Reading the trace structure**
 
-```
+```plaintext
 Trace ID: 4bf92f3577b34da6
 Root span: POST /checkout [Service A] 0ms -> 850ms
   |-- inventory.check [Service A] 0ms -> 50ms
@@ -992,7 +992,7 @@ Critical path latency: 780ms (Stripe API: 780ms)
 Inventory contribution: 45ms (parallel, off critical path)
 ```
 
-> **Code walkthrough:** Reading the Gantt chart: the root span
+> **Code walkthrough:** Reading the Gantt chart: the root spanice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is 850ms. The inventory.check completes in 50ms and is on the
 > critical path only until payment.capture starts. The payment
 > chain (Service A -> C -> Stripe) is the critical path:
@@ -1070,7 +1070,7 @@ kafka-console-consumer.sh \
 # No traceparent header = broken context propagation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No traceparent header = broken context propagation example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Use OTel Kafka instrumentation that automatically injects
 traceparent into message headers. If using a non-standard
@@ -1101,7 +1101,7 @@ chronyc tracking | grep "System time"
 # Skew > 100ms will cause visible trace anomalies
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Skew > 100ms will cause visible trace anomalies example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Ensure all services use NTP with the same upstream time
 server. Kubernetes pods synchronize to the node clock; ensure
@@ -1133,7 +1133,7 @@ curl 'http://jaeger:16686/api/traces?service=batch-processor' | \
 # Any trace with > 100 spans is probably over-instrumented
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any trace with > 100 spans is probably over-instrumented example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Replace per-item spans with span events on a batch span.
 Record one span for the batch operation, and record per-item
@@ -1531,7 +1531,7 @@ USE Method (for resources)
       metric: counter("db_connection_errors_total")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Instrumentation Fundamentals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Two instrumentation approaches:
 
@@ -1602,7 +1602,7 @@ public class CheckoutController {
 // How do you find out? You guess.
 ```
 
-> **Code walkthrough:** An uninstrumented controller gives
+> **Code walkthrough:** An uninstrumented controller givesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > zero signal during incidents. The only observable signal is
 > whether the HTTP response code is 200 or 500, but that requires
 > already knowing which requests to look at. There is no way to
@@ -1708,7 +1708,7 @@ public class CheckoutController {
 }
 ```
 
-> **Code walkthrough:** The GOOD example implements all three
+> **Code walkthrough:** The GOOD example implements all threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > RED signals. The request counter has a status label (success/error)
 > enabling error rate computation: `rate(checkout.requests_total
 > {status="error"}[5m]) / rate(checkout.requests_total[5m])`.
@@ -1790,7 +1790,7 @@ Diagnostic:
 # has no order.processed, the gap is in the async step
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This has no order.processed, the gap is in the async step example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add a business metric for order creation success:
 `counter("orders_created_total", labels=["status"])` in the
@@ -1823,7 +1823,7 @@ curl -s http://prometheus:9090/api/v1/query \
 # are in the same counter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This are in the same counter example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add a status label to the counter. Deploy the updated
 service. Historical data will not be retroactively corrected,
@@ -1855,7 +1855,7 @@ curl http://elasticsearch:9200/_stats/store | \
 # in a sample of 1000 traces
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This in a sample of 1000 traces example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Replace full SQL query string with a parameterized query
 name: `db.statement="SELECT * FROM orders WHERE id=?"` (safe,

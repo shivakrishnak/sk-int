@@ -136,7 +136,7 @@ Spring Boot startup - auto-config activation:
    (ConditionalOnMissingBean ensures this)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Boot Auto-configuration example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 @ConditionalOnMissingBean is the override mechanism. Auto-configuration always
@@ -191,11 +191,17 @@ public class ManualDataConfig {
 }
 ```
 
-> **Code walkthrough:** This is all the boilerplate Spring Boot auto-
+> **Code walkthrough:** This is all the boilerplate Spring Boot auto-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > configuration eliminates. With spring-boot-starter-data-jpa and
 > application.properties containing spring.datasource.url, Boot creates
 > all of this automatically. The developer adds the starter and writes
 > the properties - nothing more.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Spring Boot auto-configuration in action
@@ -228,7 +234,7 @@ public class CustomDataConfig {
 }
 ```
 
-> **Code walkthrough:** Auto-configuration in practice. The properties file
+> **Code walkthrough:** Auto-configuration in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is all that's needed for a working database connection. The custom DataSource
 > @Bean shows the override mechanism - Boot's @ConditionalOnMissingBean
 > checks if a DataSource bean already exists. Since you defined one, Boot's
@@ -254,7 +260,7 @@ public class CustomDataConfig {
 // GET /actuator/conditions
 ```
 
-> **Code walkthrough:** The --debug flag is the essential auto-configuration
+> **Code walkthrough:** The --debug flag is the essential auto-configurationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > diagnostic tool. It prints every auto-configuration class that was
 > evaluated, whether it matched, and exactly which condition passed or failed.
 > When auto-configuration does something unexpected (or fails to activate
@@ -351,7 +357,7 @@ key spelling.
 
 ---
 
-#### Q1 - What is Spring Boot auto-configuration?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is Spring Boot auto-configuration?**
 
 beans based on classpath content, existing beans, and property values.
 Implementation: @Configuration classes annotated with @Conditional variants
@@ -369,7 +375,7 @@ provides 100+ pre-written configurations and the framework to discover them.
 
 ---
 
-#### Q2 - How does Spring Boot auto-configuration know what to configure?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does Spring Boot auto-configuration know what to configure?**
 
 Two mechanisms work together:
 
@@ -393,7 +399,7 @@ Boot without any registration code in your application.
 
 ---
 
-#### Q3 - How do you override or disable auto-configuration?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you override or disable auto-configuration?**
 
 Three ways:
 
@@ -407,7 +413,7 @@ Three ways:
        DataSourceAutoConfiguration.class
    })
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
    Or in application.properties:
    `spring.autoconfigure.exclude=...DataSourceAutoConfiguration`
@@ -423,7 +429,7 @@ NoSuchBeanDefinitionException when anything tries to inject a DataSource.
 
 ---
 
-#### Q4 - How do you debug which auto-configurations are active?
+**[MID] Q4 - [DEBUGGING] How do you debug which auto-configurations are active?**
 
 Three methods:
 
@@ -447,7 +453,7 @@ are active in a production build to ensure no unexpected feature is enabled.
 
 ---
 
-#### Q5 - What is the difference between @ConditionalOnClass and @ConditionalOnMissingClass?
+**[MID] Q5 - [CONCEPTUAL] What is the difference between @ConditionalOnClass and @ConditionalOnMissingClass?**
 
 @ConditionalOnClass(X.class): configuration activates only if class X IS on
 the classpath. Used to tie auto-configuration to library presence.
@@ -467,7 +473,7 @@ class FallbackSerializerConfig { ... }
 class JacksonSerializerConfig { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Both annotations use String form when there
 is a risk the class might not be on the classpath during compilation of the
@@ -476,7 +482,7 @@ where the class is either present or not.
 
 ---
 
-#### Q6 - What is a Spring Boot starter and how does it relate to auto-configuration?
+**[MID] Q6 - [CONCEPTUAL] What is a Spring Boot starter and how does it relate to auto-configuration?**
 
 A starter is a convenience POM that:
 1. Pulls in the right set of transitive dependencies for a feature
@@ -502,7 +508,7 @@ your library get auto-configuration for free.
 
 ---
 
-#### Q7 - What are the performance implications of auto-configuration?
+**[SENIOR] Q7 - [CONCEPTUAL] What are the performance implications of auto-configuration?**
 
 Auto-configuration has two startup costs:
 
@@ -668,7 +674,7 @@ public @interface SpringBootApplication {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @SpringBootApplication example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **The key insight:**
 The class annotated with @SpringBootApplication defines the component scan
@@ -748,7 +754,7 @@ public class Application {
 }
 ```
 
-> **Code walkthrough:** scanBasePackages explicitly specifies which packages
+> **Code walkthrough:** scanBasePackages explicitly specifies which packagesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to scan - useful for multi-module projects where your code is not in the
 > same package hierarchy as the main class. exclude removes specific auto-
 > configurations - here, DataSourceAutoConfiguration is excluded for a service
@@ -831,7 +837,7 @@ Fix: Ensure there is only one @SpringBootApplication class per module.
 
 ---
 
-#### Q1 - What three annotations does @SpringBootApplication combine?
+**[JUNIOR] Q1 - [CONCEPTUAL] What three annotations does @SpringBootApplication combine?**
 
 1. @Configuration: the annotated class is a source of @Bean definitions.
    Spring processes it with ConfigurationClassPostProcessor.
@@ -853,7 +859,7 @@ by @SpringBootTest to avoid scanning test configurations in production code.
 
 ---
 
-#### Q2 - Why does the placement of the Application class matter?
+**[JUNIOR] Q2 - [CONCEPTUAL] Why does the placement of the Application class matter?**
 
 @ComponentScan (included in @SpringBootApplication) scans the package of the
 annotated class and all its sub-packages. If Application.java is in
@@ -868,7 +874,7 @@ com.example.payment.*       <- scanned
 com.example.user.*          <- scanned
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Violating this convention causes NoSuchBeanDefinitionException for components
 in packages not under the application root.
@@ -880,7 +886,7 @@ the relevant module.
 
 ---
 
-#### Q3 - What is the difference between @SpringBootApplication and @SpringBootTest?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between @SpringBootApplication and @SpringBootTest?**
 
 @SpringBootApplication is used in production code to mark the main entry point.
 @SpringBootTest is a test annotation that creates a full Spring application
@@ -899,7 +905,7 @@ slice of auto-configuration, making tests faster.
 
 ---
 
-#### Q4 - What is proxyBeanMethods = false in @SpringBootApplication?
+**[MID] Q4 - [CONCEPTUAL] What is proxyBeanMethods = false in @SpringBootApplication?**
 
 By default, @Configuration classes are subclassed by CGLIB. This ensures that
 @Bean methods called from other @Bean methods return the singleton bean (not
@@ -927,7 +933,7 @@ may not work as expected - the called @Bean creates a new instance each time.
 
 ---
 
-#### Q5 - How do you scan multiple packages with @SpringBootApplication?
+**[MID] Q5 - [CONCEPTUAL] How do you scan multiple packages with @SpringBootApplication?**
 
 Use the scanBasePackages attribute:
 ```java
@@ -940,7 +946,7 @@ Use the scanBasePackages attribute:
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Or use scanBasePackageClasses for type-safe references:
 ```java
@@ -952,7 +958,7 @@ Or use scanBasePackageClasses for type-safe references:
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 scanBasePackageClasses is safer: it is not affected by package rename
 refactoring since it references a class in the package.
@@ -965,7 +971,7 @@ local to the module it belongs to.
 
 ---
 
-#### Q6 - Can you have multiple @SpringBootApplication classes?
+**[MID] Q6 - [CONCEPTUAL] Can you have multiple @SpringBootApplication classes?**
 
 You can have multiple classes annotated with @SpringBootApplication but you
 should only run one at a time. Each call to SpringApplication.run() creates
@@ -985,7 +991,7 @@ Tests with different configurations get different contexts.
 
 ---
 
-#### Q7 - What is the difference between @SpringBootApplication and @SpringBootConfiguration?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the difference between @SpringBootApplication and @SpringBootConfiguration?**
 
 @SpringBootConfiguration is a specialization of @Configuration with:
 - @Configuration behaviour: the class is a bean definition source
@@ -1165,7 +1171,7 @@ Running: java -jar myapp.jar
   -> Application ready
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Embedded Server example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The embedded server is just another bean in the ApplicationContext. It starts
@@ -1212,7 +1218,7 @@ the Java implementation of the single-container-per-process deployment model.
 // server.compression.mime-types=application/json
 ```
 
-> **Code walkthrough:** The most common embedded server configuration is done
+> **Code walkthrough:** The most common embedded server configuration is doneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > via properties. No Java code needed. server.port=0 is especially useful in
 > integration tests - each test gets a random available port, preventing port
 > conflicts when tests run in parallel.
@@ -1239,7 +1245,7 @@ public class ServerConfig {
 }
 ```
 
-> **Code walkthrough:** For configuration not available via properties,
+> **Code walkthrough:** For configuration not available via properties,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > WebServerFactoryCustomizer provides programmatic access to the server
 > factory before it creates the server. This is how you enable HTTP/2,
 > set SSL configuration, or tune connection pool settings beyond what
@@ -1269,7 +1275,7 @@ public class ServerConfig {
 // and configures JettyServletWebServerFactory instead
 ```
 
-> **Code walkthrough:** Server switching is a dependency change, not a code
+> **Code walkthrough:** Server switching is a dependency change, not a codeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > change. Boot's auto-configuration detects which server factory is available
 > and uses it. This demonstrates the power of the auto-configuration model:
 > switching a fundamental infrastructure component requires zero application
@@ -1358,7 +1364,7 @@ for I/O-bound applications.
 
 ---
 
-#### Q1 - What is an embedded server in Spring Boot?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is an embedded server in Spring Boot?**
 
 An embedded server is a servlet container (Tomcat, Jetty, Undertow) or
 reactive server (Netty) bundled inside the Spring Boot application JAR and
@@ -1380,7 +1386,7 @@ receives that event, the server is already accepting connections.
 
 ---
 
-#### Q2 - How do you change the default Tomcat server to Jetty?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you change the default Tomcat server to Jetty?**
 
 Exclude Tomcat starter, add Jetty starter in pom.xml:
 ```xml
@@ -1400,7 +1406,7 @@ Exclude Tomcat starter, add Jetty starter in pom.xml:
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Zero code changes required. Spring Boot's auto-configuration detects
 JettyServletWebServerFactory on the classpath and uses it.
@@ -1415,7 +1421,7 @@ is small for most applications - choose based on operational familiarity.
 
 ---
 
-#### Q3 - How does graceful shutdown work in Spring Boot?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does graceful shutdown work in Spring Boot?**
 
 Graceful shutdown (Spring Boot 2.3+):
 Configure: `server.shutdown=graceful` in application.properties.
@@ -1434,7 +1440,7 @@ server.shutdown=graceful
 spring.lifecycle.timeout-per-shutdown-phase=30s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Kubernetes deployment spec should set
 terminationGracePeriodSeconds longer than the Spring Boot shutdown timeout.
@@ -1444,7 +1450,7 @@ to 60s but Kubernetes terminationGracePeriodSeconds to 30s.
 
 ---
 
-#### Q4 - What is the difference between a fat JAR and a WAR?
+**[MID] Q4 - [CONCEPTUAL] What is the difference between a fat JAR and a WAR?**
 
 **Fat JAR** (Spring Boot default):
 - Self-contained executable JAR with all dependencies including embedded server
@@ -1470,7 +1476,7 @@ much faster.
 
 ---
 
-#### Q5 - How do you configure Tomcat connection pool and thread settings?
+**[MID] Q5 - [CONCEPTUAL] How do you configure Tomcat connection pool and thread settings?**
 
 ```properties
 # Thread pool
@@ -1487,7 +1493,7 @@ server.compression.enabled=true
 server.compression.min-response-size=2048
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compression example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Choosing max-threads: a general rule is CPU-count * 2 for CPU-bound work;
 for I/O-bound work (database calls, HTTP calls) you can go much higher
@@ -1501,7 +1507,7 @@ without tuning. This is a paradigm shift for thread-per-request servlet model.
 
 ---
 
-#### Q6 - How do you add HTTPS to a Spring Boot embedded server?
+**[SENIOR] Q6 - [MECHANISM] How do you add HTTPS to a Spring Boot embedded server?**
 
 Configure SSL in application.properties:
 ```properties
@@ -1513,7 +1519,7 @@ server.ssl.key-alias=myapp
 server.port=8443
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compression example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For production, prefer externally managed SSL (load balancer, Kubernetes
 ingress controller) over application-managed SSL. Terminating SSL at the
@@ -1527,7 +1533,7 @@ HTTP to HTTPS, a filter (ChannelProcessingFilter) is the standard approach.
 
 ---
 
-#### Q7 - What is the Spring Boot fat JAR structure?
+**[SENIOR] Q7 - [MECHANISM] What is the Spring Boot fat JAR structure?**
 
 ```
 app.jar
@@ -1547,7 +1553,7 @@ app.jar
         |-- LaunchedURLClassLoader.class
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compression example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 JarLauncher is the real Main-Class. It sets up a custom classloader that
 can load classes from nested JARs (JARs inside the fat JAR), then calls

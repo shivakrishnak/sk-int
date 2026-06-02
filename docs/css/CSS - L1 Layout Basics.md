@@ -144,7 +144,7 @@ VISUAL REFERENCE:
                 [ child | child ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Display Property example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -204,7 +204,7 @@ span.badge {
 }
 ```
 
-> **Code walkthrough:** Inline elements ignore `width` and
+> **Code walkthrough:** Inline elements ignore `width` andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `height`. The badge will be as wide as its content, not
 > 20x20px. This is a common confusion for new developers
 > who add size to inline elements and wonder why it doesn't
@@ -270,7 +270,7 @@ span.badge {
 }
 ```
 
-> **Code walkthrough:** Three different "hidden" concepts
+> **Code walkthrough:** Three different "hidden" conceptsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with different accessibility and layout implications.
 > `display: none` is for truly non-existent content.
 > `visibility: hidden` for layout-preserving hide.
@@ -385,7 +385,7 @@ Verify: browser accessibility inspector shows no node.
 
 ---
 
-**Q1: What is the difference between block and inline
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between block and inline**
 elements?** `[JUNIOR]` CONCEPTUAL
 
 *Why they ask:* Foundational CSS knowledge; reveals whether
@@ -430,7 +430,7 @@ HTML elements."
 
 ---
 
-**Q2: When should you use display:none vs
+**[JUNIOR] Q2 - [SCENARIO] When should you use display:none vs**
 visibility:hidden?** `[MID]` COMPARISON
 
 *Why they ask:* Tests accessibility and layout knowledge.
@@ -474,7 +474,7 @@ visibility:hidden?** `[MID]` COMPARISON
 
 ---
 
-**Q3: What is a Block Formatting Context and why does
+**[JUNIOR] Q3 - [MECHANISM] What is a Block Formatting Context and why does**
 it matter?** `[SENIOR]` MECHANISM
 
 *Why they ask:* BFC is the mechanism behind several important
@@ -523,8 +523,7 @@ overflow:hidden?"
 
 ---
 
-**Q4: How does display:flex affect element behavior?**
-`[MID]` MECHANISM
+**[MID] Q4 - [MECHANISM] How does display:flex affect element behavior?**
 
 *Why they ask:* Flex is the primary 1D layout system;
 understanding how it changes the display model matters.
@@ -570,7 +569,7 @@ or its children?"
 
 ---
 
-**Q5: What is the difference between display:none and
+**[MID] Q5 - [TRADE-OFF] What is the difference between display:none and**
 removing an element from the DOM?** `[SENIOR]` COMPARISON
 
 *Why they ask:* Tests understanding of the rendering
@@ -618,8 +617,7 @@ use display:none?"
 
 ---
 
-**Q6: What is display:contents and when is it useful?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is display:contents and when is it useful?**
 
 *Why they ask:* Tests knowledge of lesser-known but useful
 display value.
@@ -665,7 +663,7 @@ with display:contents?"
 
 ---
 
-**Q7: How do you handle display property changes for
+**[SENIOR] Q7 - [MECHANISM] How do you handle display property changes for**
 CSS transitions and animations?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Animating display changes is a common
@@ -888,7 +886,7 @@ tooltips (should hover over other content), fixed headers
 
 **How it works:**
 
-```
+```plaintext
 position: static   (default)
   - normal flow, top/left/right/bottom ignored
 
@@ -917,7 +915,7 @@ position: sticky
   - requires: parent must be taller than sticky element
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Positioning example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -982,7 +980,7 @@ coordinate systems is the minimal solution.
 }
 ```
 
-> **Code walkthrough:** Without a positioned ancestor,
+> **Code walkthrough:** Without a positioned ancestor,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the absolute element finds the initial containing block
 > (essentially the viewport) as its reference. The tooltip
 > will appear at the top-right of the screen, not the
@@ -1012,7 +1010,7 @@ coordinate systems is the minimal solution.
 }
 ```
 
-> **Code walkthrough:** `position: relative` on `.card`
+> **Code walkthrough:** `position: relative` on `.card`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > makes it the containing block. The badge's `top: -8px;
 > right: -8px` positions it relative to the card's border
 > edge. The overlay uses `inset: 0` (the modern shorthand)
@@ -1044,7 +1042,7 @@ coordinate systems is the minimal solution.
 }
 ```
 
-> **Code walkthrough:** A layered z-index strategy:
+> **Code walkthrough:** A layered z-index strategy:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > page content at default (0), sticky header at 100,
 > dropdowns/tooltips at 150, modal at 200. Documenting
 > these as CSS custom properties (`--z-header: 100;
@@ -1140,7 +1138,7 @@ Diagnosis:
 # If it shows "document" or "html" -> no positioned ancestor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If it shows "document" or "html" -> no positioned ancestor example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: add `position: relative` to the intended parent.
 
@@ -1159,7 +1157,7 @@ Diagnosis:
 # DevTools: scroll and watch if position changes in Layout tab
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DevTools: scroll and watch if position changes in Layout tab example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1176,7 +1174,7 @@ Diagnosis:
 # will-change, isolation: isolate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This will-change, isolation: isolate example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: either place elements in the same stacking context,
 or ensure the stacking context containing your element
@@ -1196,8 +1194,7 @@ has a higher z-index.
 
 ---
 
-**Q1: Explain the five CSS position values.** `[JUNIOR]`
-CONCEPTUAL
+**[JUNIOR] Q1 - [CONCEPTUAL] Explain the five CSS position values.** `[JUNIOR]`**
 
 *Why they ask:* Foundation of layout debugging.
 
@@ -1241,8 +1238,7 @@ CONCEPTUAL
 
 ---
 
-**Q2: What causes z-index to not work?** `[SENIOR]`
-DEBUGGING
+**[JUNIOR] Q2 - [DEBUGGING] What causes z-index to not work?** `[SENIOR]`**
 
 *Why they ask:* The most common CSS positioning bug.
 
@@ -1287,7 +1283,7 @@ DEBUGGING
 
 ---
 
-**Q3: How does position:sticky work and why does it
+**[JUNIOR] Q3 - [MECHANISM] How does position:sticky work and why does it**
 sometimes fail?** `[SENIOR]` DEBUGGING
 
 *Why they ask:* Sticky has well-known failure modes that
@@ -1338,8 +1334,7 @@ are non-obvious.
 
 ---
 
-**Q4: How does fixed positioning break inside transforms?**
-`[STAFF]` MECHANISM
+**[STAFF] Q4 - [MECHANISM] How does fixed positioning break inside transforms?**
 
 *Why they ask:* Tests deep knowledge of containing blocks.
 
@@ -1387,7 +1382,7 @@ animated container?"
 
 ---
 
-**Q5: What is the difference between inset and top/right/
+**[MID] Q5 - [TRADE-OFF] What is the difference between inset and top/right/**
 bottom/left?** `[MID]` MECHANISM
 
 *Why they ask:* Tests familiarity with modern CSS shorthand.
@@ -1428,7 +1423,7 @@ bottom/left?** `[MID]` MECHANISM
 
 ---
 
-**Q6: When should you use position:absolute vs Flexbox/Grid
+**[SENIOR] Q6 - [TRADE-OFF] When should you use position:absolute vs Flexbox/Grid**
 for layout?** `[MID]` TRADE-OFF
 
 *Why they ask:* Tests layout architecture judgment.
@@ -1478,7 +1473,7 @@ of using absolute positioning for layout?"
 
 ---
 
-**Q7: How do you build a tooltip that positions above
+**[SENIOR] Q7 - [MECHANISM] How do you build a tooltip that positions above**
 an element?** `[MID]` HANDS-ON
 
 *Why they ask:* Classic absolute positioning use case;
@@ -1722,7 +1717,7 @@ FIX: display: flow-root on parent (BFC)
   div height = float height ✓
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Float and Clear example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1784,7 +1779,7 @@ problems float layout had.
 } /* clearfix hack required */
 ```
 
-> **Code walkthrough:** Float-based layout requires the
+> **Code walkthrough:** Float-based layout requires theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > clearfix hack on the container (or it collapses to 0
 > height), requires matching widths that must add up to
 > 100%, breaks on mobile, and doesn't support equal
@@ -1806,7 +1801,7 @@ problems float layout had.
 }
 ```
 
-> **Code walkthrough:** Text wrapping around an image is
+> **Code walkthrough:** Text wrapping around an image isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the only remaining valid use of float. The image floats
 > left, text flows around it to the right, and the next
 > section uses `clear: both` to ensure it starts below
@@ -1829,7 +1824,7 @@ problems float layout had.
 }
 ```
 
-> **Code walkthrough:** `shape-outside` extends float
+> **Code walkthrough:** `shape-outside` extends floatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to allow text wrapping around non-rectangular shapes.
 > `circle(50%)` makes text flow in a circular path around
 > the image. `shape-margin` adds a gap between the shape
@@ -1919,7 +1914,7 @@ Diagnosis:
 # Children visible but outside parent in box model
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Children visible but outside parent in box model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: `display: flow-root` on the parent. Or if keeping
 legacy: clearfix pseudo-element.
@@ -1950,8 +1945,7 @@ or use `display: flow-root` only on the outer container.
 
 ---
 
-**Q1: What does CSS float do and when do you use it today?**
-`[JUNIOR]` CONCEPTUAL
+**[JUNIOR] Q1 - [CONCEPTUAL] What does CSS float do and when do you use it today?**
 
 *Why they ask:* Tests whether candidate knows modern vs
 legacy CSS approaches.
@@ -1992,7 +1986,7 @@ legacy CSS approaches.
 
 ---
 
-**Q2: Why does a container collapse when all children
+**[JUNIOR] Q2 - [MECHANISM] Why does a container collapse when all children**
 are floated?** `[MID]` MECHANISM
 
 *Why they ask:* BFC and float containment is frequently
@@ -2038,7 +2032,7 @@ misunderstood.
 
 ---
 
-**Q3: What is the difference between clearfix and
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between clearfix and**
 display:flow-root?** `[MID]` COMPARISON
 
 *Why they ask:* Tests knowledge of BFC mechanics and
@@ -2085,8 +2079,7 @@ CSS evolution.
 
 ---
 
-**Q4: What is shape-outside and what does it enable?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What is shape-outside and what does it enable?**
 
 *Why they ask:* Tests knowledge of modern CSS float extension.
 
@@ -2128,7 +2121,7 @@ CSS evolution.
 
 ---
 
-**Q5: A page has an old float layout. It breaks on
+**[MID] Q5 - [MECHANISM] A page has an old float layout. It breaks on**
 mobile. How do you migrate it?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Practical CSS migration skill.
@@ -2175,7 +2168,7 @@ changing layout code?"
 
 ---
 
-**Q6: What does clear:both do?** `[JUNIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What does clear:both do?** `[JUNIOR]` MECHANISM**
 
 *Why they ask:* Associated concept with float.
 
@@ -2218,7 +2211,7 @@ clear:right, and clear:both?"
 
 ---
 
-**Q7: How would you make text wrap around a circular
+**[SENIOR] Q7 - [MECHANISM] How would you make text wrap around a circular**
 image?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Tests both float and shape-outside knowledge.
@@ -2275,6 +2268,83 @@ image?** `[SENIOR]` HANDS-ON
 | Hiring Manager | Frame as legacy migration knowledge |
 | Bar Raiser | Discuss shape-outside as modern float use |
 | Peer Engineer | Talk about migrating a float layout to Flex/Grid |
+
+---
+
+**[MID] Q8 - [DEBUGGING] You inherit a codebase with float-based
+layouts. Pages break on mobile. What is your approach?**
+
+*Why they ask:* Tests real-world migration thinking, not just
+knowledge of what CSS float does.
+
+> **Answer:**
+>
+> Phase 1 - Audit (don't touch yet): use DevTools to identify
+> which elements use float. Browser DevTools shows computed
+> styles. Note: clearing floats with clearfix patterns, parent
+> container height collapses.
+>
+> Phase 2 - Identify the layout purpose: float for text wrapping
+> (valid, keep it) vs float for multi-column layout (replace).
+>
+> Phase 3 - Replace layout floats with Flexbox:
+> - Parent gets `display: flex` (or Grid)
+> - Remove `float` from children
+> - Remove clearfix patterns (no longer needed with Flexbox)
+> - Test: container should now size to content correctly
+>
+> Phase 4 - Mobile fix: Flexbox defaults to row direction
+> on wide screens. Add `flex-wrap: wrap` or a media query
+> to switch to `flex-direction: column` on mobile.
+>
+> Common trap: removing float without removing clearfix,
+> or removing clearfix without adding a BFC, leaves ghost
+> CSS rules that interact unexpectedly with new layouts.
+>
+> *What separates good from great:* Using `display: flow-root`
+> as a temporary measure while migrating. It contains floats
+> immediately with one property change. Then you can migrate
+> each section incrementally without breaking the whole page.
+
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] What is the difference between
+CSS Grid and Flexbox for layout? When do you pick each?**
+
+*Why they ask:* Core layout tool decision. Tests practical
+knowledge beyond "both are layout tools."
+
+> **Answer:**
+>
+> Flexbox: one-dimensional. Items arranged in a row OR
+> a column. Flex-grow/shrink controls how items share space
+> along that axis. Best for: navigation bars, card rows,
+> button groups, any linear sequence of items.
+>
+> Grid: two-dimensional. Items placed in rows AND columns
+> simultaneously. Named areas enable complex layout where
+> items span multiple cells. Best for: page layouts, dashboards,
+> photo grids, any two-dimensional arrangement.
+>
+> The practical heuristic:
+> - "I want items to fill available space in a line" -> Flexbox
+> - "I want items to align to a two-dimensional grid" -> Grid
+>
+> They are complementary, not competitive. A typical page
+> uses Grid for the outer page layout (header, sidebar, main,
+> footer) and Flexbox within each section for its internal
+> arrangement (nav items, card content, button groups).
+>
+> When Grid surprises beginners: implicit track creation.
+> Adding more items than grid rows/columns specified creates
+> new rows automatically. Powerful for dynamic content;
+> confusing until understood.
+>
+> *What separates good from great:* `grid-template-areas`
+> for named layout regions makes CSS self-documenting.
+> `"header header" / "sidebar main"` reads like a wireframe.
+> This is a production best practice for complex layouts that
+> most candidates don't know.
 
 ---
 

@@ -236,7 +236,7 @@ public void processCheckout(Order order) {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern imports Datadog SDK classes
+> **Code walkthrough:** The BAD pattern imports Datadog SDK classesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly into application code. Every service becomes a Datadog
 > customer forever - switching backends requires a code change in
 > every service. The `@Trace` annotation is a Datadog-specific API.
@@ -291,7 +291,7 @@ public class CheckoutService {
 }
 ```
 
-> **Code walkthrough:** The GOOD pattern uses the vendor-neutral OTel
+> **Code walkthrough:** The GOOD pattern uses the vendor-neutral OTelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > API. The import path is `io.opentelemetry.api` - no vendor name
 > appears. The Java agent handles all HTTP/JDBC spans automatically
 > via bytecode instrumentation. Custom spans use `spanBuilder()` and
@@ -360,7 +360,7 @@ service:
       exporters: [prometheusremotewrite]
 ```
 
-> **Code walkthrough:** The Collector pipeline has three stages:
+> **Code walkthrough:** The Collector pipeline has three stages:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > receivers (where data enters), processors (where policy lives),
 > and exporters (where data goes). `memory_limiter` is critical in
 > production - without it a spike in trace volume can OOM the
@@ -491,7 +491,7 @@ kubectl describe pod <collector-pod> -n monitoring \
 curl localhost:8888/metrics | grep tail_sampling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This otelcol_processor_dropped_spans example demonstrates HTTP request from shell using container. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Set `memory_limiter` as the first processor; set
 `limit_mib` to 75% of the pod's memory limit. Scale the
@@ -520,7 +520,7 @@ curl -v http://service-a/api/checkout 2>&1 \
 printenv | grep OTEL_PROPAGATORS
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java agent: OTEL_PROPAGATORS=tracecontext,baggage example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Ensure `OTEL_PROPAGATORS=tracecontext,baggage` in all services.
 For Kafka consumers, propagate context from the message header
@@ -711,7 +711,7 @@ curl -H "traceparent: \
 # If empty in response, the header was stripped upstream
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If empty in response, the header was stripped upstream example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fourth, I check for SDK version mismatch. Mixing OTel Java agent 1.x
 on one service with a 2.x agent on another can cause propagation
@@ -927,7 +927,7 @@ processors:
         - 'attributes["http.route"] == "/health"'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Knowing `memory_limiter` must come
 first in the processor chain (OTel Collector processes in order) and
@@ -1061,21 +1061,21 @@ flowchart TD
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Trace Exemplars
@@ -1293,7 +1293,7 @@ SdkTracerProvider tracerProvider =
 // Engineers stop using exemplars after frustration
 ```
 
-> **Code walkthrough:** The BAD pattern enables exemplars (which happen
+> **Code walkthrough:** The BAD pattern enables exemplars (which happenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > automatically when OTel and Prometheus are configured correctly) while
 > head-sampling 99% of traces. The exemplar links appear in Grafana as
 > clickable diamonds, but clicking most of them produces a "trace not
@@ -1370,7 +1370,7 @@ global:
 # TraceID field: ${__value.raw} -> Tempo trace query
 ```
 
-> **Code walkthrough:** The GOOD pattern uses the OTel SDK's histogram,
+> **Code walkthrough:** The GOOD pattern uses the OTel SDK's histogram,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which automatically attaches the current span's trace ID as an exemplar
 > when the recording happens inside an active span context. The application
 > code does not need to explicitly set the exemplar - the SDK derives it
@@ -1405,7 +1405,7 @@ curl "http://tempo:3100/api/traces/abc123" \
 # If 404: trace was sampled out - fix sampling policy
 ```
 
-> **Code walkthrough:** The verification process has three steps: confirm
+> **Code walkthrough:** The verification process has three steps: confirmice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > exemplars appear in the raw /metrics output (the `# { }` comment line
 > is the OpenMetrics exemplar format), confirm Prometheus retains them
 > via the query_exemplars API, and finally confirm the referenced trace
@@ -1529,7 +1529,7 @@ printenv | grep OTEL_TRACES_SAMPLER
 grep -A5 "latency" otel-collector-config.yaml
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for latency-based policy covering slow requests example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add a latency-based tail sampling policy that keeps 100% of
 slow requests (> 500ms). This ensures that every exemplar that
@@ -1559,7 +1559,7 @@ prometheus --version
 # in the OTel context at the time of record()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This in the OTel context at the time of record() example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Ensure `enable_exemplar_storage: true` in prometheus.yml.
 Verify OTel SDK version >= 1.14 (exemplar support). Confirm
@@ -1955,7 +1955,7 @@ curl "http://tempo:3100/api/traces/$TRACE_ID" | jq '.batches | length'
 # Must return > 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Must return > 0 example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *What separates good from great:* The end-to-end verification script
 is something only engineers who have actually set up and debugged

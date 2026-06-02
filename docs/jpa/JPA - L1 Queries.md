@@ -63,7 +63,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **JPQL syntax and patterns:**
-```
+```plaintext
 BASIC JPQL SYNTAX:
 
   Alias is required in JPQL (unlike SQL WHERE without FROM alias):
@@ -124,7 +124,7 @@ JPQL UPDATE AND DELETE:
   
   // Important: bulk UPDATE/DELETE bypasses first-level cache.
   // After bulk update: cached entities still have old values.
-  // Fix: @Modifying(clearAutomatically = true) -> clears persistence context after.
+  // Fix: @Modifying(clearAutomatically = true) -> clears persistence context...
 
 NAMED QUERIES:
 
@@ -153,7 +153,7 @@ NAMED QUERIES:
   Optional<User> findByEmail(String email);  // Spring looks for User.findByEmail
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L1 Queries example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -253,7 +253,7 @@ pagination).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: JPQL JOIN FETCH + Pageable causes OutOfMemoryError.**
-```
+```plaintext
 Symptom: endpoint with @PageableDefault returns correctly but heap grows unboundedly.
   Eventually: OutOfMemoryError: GC overhead limit exceeded.
   
@@ -284,7 +284,7 @@ Fix - two-query pagination:
   List<User> users = userRepository.findByIdsWithOrders(idPage.getContent());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -371,7 +371,7 @@ Hibernate merges the collections into the existing objects. Total: 2 queries, no
 ### 📘 Concept Explanation
 
 **Criteria API and Specifications:**
-```
+```plaintext
 RAW CRITERIA API:
 
   // Find products by optional category, min price, max price:
@@ -409,7 +409,7 @@ SPRING DATA SPECIFICATIONS (preferred over raw Criteria API):
       
       public static Specification<Product> hasCategory(String category) {
           return (root, query, cb) -> 
-              category == null ? cb.conjunction()  // always-true (ignore this filter)
+              category == null ? cb.conjunction()  // always-true (ignore this...
                                : cb.equal(root.get("category"), category);
       }
       
@@ -473,7 +473,7 @@ METAMODEL GENERATION:
   root.get("category")         // only fails at runtime
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using interface. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -610,7 +610,7 @@ Fix:
   // Subquery: no JOIN on the outer query, no Cartesian product.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -789,7 +789,7 @@ PAGINATION:
   // Separate countQuery: JPA knows what to count (needed for @Query with JOIN).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -908,7 +908,7 @@ Symptom: updating a user in a service method. SQL log shows:
 Root cause: em.merge() triggered by save() on detached entity.
   user = new User(existingId, "New Name");  // detached entity (not loaded from DB)
   userRepository.save(user);
-  // save() -> getId() = existingId (not null) -> isNew() = false -> em.merge().
+  // save() -> getId() = existingId (not null) -> isNew() = false ->...
   // em.merge(): loads current DB state (SELECT), merges changes, generates UPDATE.
 
 Fix option 1: use JPQL bulk update (no SELECT):
@@ -926,7 +926,7 @@ Fix option 2: load, modify, commit (dirty checking, no extra SELECT needed):
   // Total: 1 SELECT + 1 UPDATE. Same as the merge approach but clearer.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

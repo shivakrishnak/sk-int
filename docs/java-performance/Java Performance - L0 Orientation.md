@@ -125,7 +125,7 @@ COMMON TRADE-OFFS:
   CPU-bound: #threads = #CPU cores.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -135,6 +135,12 @@ COMMON TRADE-OFFS:
 > matter more than averages. The timer records each response time; percentiles are calculated over
 > the distribution. A single slow request (p99 spike) would not appear in the average but is
 > immediately visible in the p99 metric.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: measuring average latency (hides tail):
@@ -230,7 +236,7 @@ Fix:
   (3) Update SLA definition to "p99 < 200ms"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -462,7 +468,7 @@ GC LOGGING (always enable in production):
   Watch for: long pauses (> 200ms), high allocation rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -472,6 +478,17 @@ GC LOGGING (always enable in production):
 > shared state, `@Benchmark` marks the method to measure, `@Warmup` and `@Measurement` control
 > the iteration counts. The `Blackhole` prevents dead code elimination (the compiler would otherwise
 > optimize away a result that's never used, making the benchmark measure nothing).
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // JMH BENCHMARK STRUCTURE:
@@ -583,7 +600,7 @@ Root causes:
      at JVM startup.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -754,7 +771,7 @@ WHEN OPTIMIZATION IS NOT JUSTIFIED:
   Not worth it.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -764,6 +781,12 @@ WHEN OPTIMIZATION IS NOT JUSTIFIED:
 > read the flame graph, identify the actual bottleneck, then and only then optimize. The example
 > shows finding serialization as the bottleneck (70% CPU) and switching from JSON to Protobuf
 > - a targeted optimization that directly addresses the measured problem.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PROCESS: measure before optimizing
@@ -885,7 +908,7 @@ Prevention:
   If no profiler evidence: reject the optimization PR as speculation.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

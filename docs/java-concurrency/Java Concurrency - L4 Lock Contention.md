@@ -119,7 +119,7 @@ High contention (threads pile up):
   Throughput: 1 operation / 10ms despite 4 threads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Lock Contention example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **JVM lock optimizations (brief):**
 The JVM applies three lock optimizations for uncontended paths:
@@ -141,7 +141,7 @@ The JVM applies three lock optimizations for uncontended paths:
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example has a coarse-grained lock on an
+> **Code walkthrough:** The BAD example has a coarse-grained lock on anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > entire data structure, serializing all access. The GOOD examples show
 > progressively better techniques: fine-grained lock, lock striping, and
 > finally ConcurrentHashMap which handles striping internally.
@@ -164,7 +164,7 @@ class ContendedCache {
 // Problem: 100 concurrent reads all block each other - no read parallelism
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L4 Lock Contention example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // BETTER: ReadWriteLock - reads parallel, writes exclusive
@@ -189,7 +189,7 @@ class ReadOptimizedCache {
 // Better for read-heavy workloads, but writers still contend
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Lock Contention example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // BEST: ConcurrentHashMap - internal lock striping, no external locks
@@ -211,7 +211,7 @@ class HighThroughputCache {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Lock Contention example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -301,7 +301,7 @@ class BadPair { long x; long y; }
 class GoodPair { long x; long y; }
 // Or: use padded fields (explicit 7 longs of padding)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Detection: async-profiler's `-e itimer` with cache miss analysis, or
 `-XX:+PrintFalseSharingStatistics` (experimental flag).
@@ -358,7 +358,7 @@ synchronized void getConnection() {
 // Threads 2-100 just wait in line
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 The throughput equation: if fraction `s` of execution is serialized
 (in the lock), and fraction `1-s` is parallel:
@@ -400,7 +400,7 @@ N=16:  Speedup = 1/(0.1 + 0.9/16) = 1/0.156 = 6.40x
 N=∞:   Speedup = 1/0.1 = 10x limit (no further improvement)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Applied to contention analysis:
 If profiling shows threads spend 20% of their time blocked on a lock
@@ -437,13 +437,13 @@ jcmd <pid> JFR.start name=lockprofiling \
 # Or open in Java Mission Control
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or open in Java Mission Control example demonstrateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **2. async-profiler - lock mode:**
 ```bash
 ./profiler.sh -d 30 -e lock --lock 100us -f locks.html <pid>
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or open in Java Mission Control example demonstrateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Output: flame graph with lock acquisition time. Shows which methods
 hold contended locks and how long.
@@ -456,7 +456,7 @@ Not precise enough for production measurement.
 ```
 -XX:+UnlockDiagnosticVMOptions -XX:+PrintBiasedLockingStatistics
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or open in Java Mission Control example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Prints biased lock revocation counts (pre-Java 15). High revocation
 count = lock shared across threads (contention). Less useful post-Java 15.
@@ -470,7 +470,7 @@ info.getBlockedCount();  // number of times blocked
 info.getWaitedTime();    // ms spent in wait()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or open in Java Mission Control example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Comparison:**
 | Tool | Overhead | Precision | Production | Best For |
@@ -501,7 +501,7 @@ jcmd <pid> JFR.start name=lock-analysis duration=60s \
   settings=profile filename=/tmp/lock-$(date +%s).jfr
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Capture 60s with JavaMonitorEnter events: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: Parse with jfr tool.**
 ```bash
@@ -512,7 +512,7 @@ jfr print --events jdk.JavaMonitorEnter \
   sort -t= -k2 -rn | head -100
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Analyze with Java Mission Control (JMC).**
 Open JMC → File → Open → select .jfr file.
@@ -531,7 +531,7 @@ Top blocking location:
   com.app.PaymentService.process(PaymentService.java:89) -> 78% of time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This output tells us:
 - A ReentrantLock in PaymentService is the hot lock
@@ -558,7 +558,7 @@ while (file.hasMoreEvents()) {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Custom aggregation can produce a per-lock latency histogram - more
 useful than averages for tail latency analysis.
@@ -571,6 +571,12 @@ A: Strategies from lowest to highest complexity:
 
 **1. Reduce critical section size (most impactful, lowest risk):**
 Move work that doesn't NEED to be synchronized outside the lock.
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: validates and computes INSIDE lock
 synchronized void process(Request req) {
@@ -587,7 +593,7 @@ void process(Request req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **2. Lock striping (partition data, one lock per partition):**
 ```java
@@ -606,7 +612,7 @@ void put(String key, Data data) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **3. Replace with concurrent structures:**
 - `HashMap + synchronized` → `ConcurrentHashMap`
@@ -625,7 +631,7 @@ void addRule(Rule rule) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **5. Thread-local state with periodic aggregation:**
 Each thread has its own local counter. Aggregate to a shared counter
@@ -638,7 +644,7 @@ long total() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Strategy 1 (reduce critical section)
 is the highest ROI action. In practice, 40-60% of lock contention
@@ -704,7 +710,7 @@ class StripedCache<K, V> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print all JavaMonitorEnter events > 1ms, sorted by duration: example demonstrates exception handling using concurrency primitive. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Stripe count choice: powers of 2, minimum 4 × expected concurrent threads.
 With 4 threads and 16 stripes: expected contention per stripe = 4/16 =
@@ -742,7 +748,7 @@ class CounterPair {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // FIX 1: @Contended annotation (Java 8+, requires JVM flag)
@@ -762,14 +768,14 @@ class PaddedManual {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 Enabling `@Contended`:
-```
+```plaintext
 -XX:-RestrictContended  (JDK internals only by default, this opens it up)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Detection:
 - async-profiler with cache-miss events (`-e cache-misses`)
@@ -800,7 +806,7 @@ jcmd <pid> JFR.start name=lock-diag duration=60s \
   settings=profile filename=/tmp/payment-$(date +%s).jfr
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Analyze.**
 JFR JavaMonitorEnter report:
@@ -811,7 +817,7 @@ Blocked threads: 300 unique
 Top stack: PaymentService.checkRateLimit(line:156) -> 92%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Finding: RateLimiter uses a synchronized `LinkedList` to maintain
 a sliding window of request timestamps. All 300 threads contend on
@@ -819,6 +825,12 @@ one `synchronized` block.
 
 **Step 4: Fix the bottleneck.**
 Replace synchronized sliding window with a lock-free data structure:
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: synchronized sliding window (ALL threads contend on one lock)
@@ -858,7 +870,7 @@ class TokenBucketRateLimiter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates mutex locking using thread pool. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **Step 5: Measure after fix.**
 P99: 500ms → 12ms. CPU: 40% → 45% (slightly more CPU, doing real work).
@@ -914,7 +926,7 @@ void updatePoint(double x, double y) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 When to use StampedLock vs ReadWriteLock:
 - Read-heavy (>95% reads, <5% writes): StampedLock optimistic reads are free
@@ -976,7 +988,7 @@ public class LockContention {
 //      -Dexec.args="LockContention -prof gc"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Expected results at 8 threads:
 - `synchronizedGet`: ~8-15M ops/sec (contended lock)
@@ -1013,7 +1025,7 @@ ab -n 100000 -c 100 http://localhost:8080/api/payment
 # 5. Compare total blocking time in JavaMonitorEnter events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. Compare total blocking time in JavaMonitorEnter events example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Option 2: Synthetic micro-benchmark with JMH + contended lock:**
 Vary: number of threads, critical section size, inter-arrival time.
@@ -1037,7 +1049,7 @@ Map<Long, Long> captureBlockedTimes() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. Compare total blocking time in JavaMonitorEnter events example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Key metrics to capture:**
 - Blocking time per lock (JFR)
@@ -1077,7 +1089,7 @@ class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. Compare total blocking time in JavaMonitorEnter ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Issues:
 1. External calls (`sendEmail`, `auditLog`) inside lock: lock held
@@ -1116,7 +1128,7 @@ class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. Compare total blocking time in JavaMonitorEnter events example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Result: zero lock contention on the hot path. All writes are lock-free.
 I/O is decoupled from the request thread.
@@ -1181,12 +1193,12 @@ At 10M TPS / 64 threads = 156K TPS per thread:
   Net overhead: < 0.1% CPU for the counter itself
 
 Comparison:
-  synchronized counter at 10M TPS: serialized, ~10 ns per op -> 100M ops/sec ceiling
+  synchronized counter at 10M TPS: serialized, ~10 ns per op -> 100M ops/sec...
   LongAdder: ~200-400M ops/sec (JMH measured)
   Per-thread local: ~1B ops/sec (cache-hot, no contention)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5. Compare total blocking time in JavaMonitorEnter events example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

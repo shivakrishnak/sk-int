@@ -104,7 +104,7 @@ inconsistency.
    }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Singleton Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Thread-safe implementations in order of preference:
 
@@ -118,7 +118,7 @@ public enum AppConfig {
 // Use: AppConfig.INSTANCE.getDbUrl()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Singleton Pattern example demonstrates Java API usage using enum. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // 2. Initialization-on-demand holder (GOOD: lazy, thread-safe)
@@ -137,7 +137,7 @@ public class Singleton {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Singleton Pattern example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // 3. Double-checked locking (OK with volatile, Java 5+)
@@ -159,7 +159,7 @@ public class Singleton {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Singleton Pattern example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **The key insight:**
 The best Singleton implementations leverage language/runtime guarantees
@@ -217,7 +217,7 @@ public class ConfigManager {
 }
 ```
 
-> **Code walkthrough:** Thread A and Thread B both call `getInstance()`
+> **Code walkthrough:** Thread A and Thread B both call `getInstance()`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > at the same time. Both see `instance == null`. Both create a new
 > `ConfigManager`. Thread A's instance becomes unreachable but Thread B's
 > `ConfigManager` loaded different configuration state. Result: two
@@ -247,12 +247,18 @@ public enum DatabaseConfig {
 // Reflection-safe: cannot call constructor via reflection on enums
 ```
 
-> **Code walkthrough:** Enum Singleton is the canonical modern Java
+> **Code walkthrough:** Enum Singleton is the canonical modern Javaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > implementation. The JVM guarantees one instance per enum constant.
 > It is safe against serialization (which can create a second instance
 > by calling the constructor via `readObject` - Enum bypasses this).
 > It is safe against reflection attacks (cannot invoke constructor
 > on enums). The initialization runs once when the enum class is loaded.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Holder idiom (preferred for lazy initialization)
@@ -276,7 +282,7 @@ public class HeavyResourceManager {
 }
 ```
 
-> **Code walkthrough:** The Holder idiom exploits JVM class loading:
+> **Code walkthrough:** The Holder idiom exploits JVM class loading:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Holder` is loaded the first time `getInstance()` is called, and
 > class loading is guaranteed to be thread-safe. No synchronization
 > overhead on subsequent calls. The inner class is private so external
@@ -577,7 +583,7 @@ ProductA implements Product
 ProductB implements Product
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Factory Method Pattern example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Data flow:
 1. Client creates `ConcreteCreatorA` or `ConcreteCreatorB`
@@ -636,7 +642,7 @@ public class OrderProcessor {
 }
 ```
 
-> **Code walkthrough:** Adding email or push notification means editing
+> **Code walkthrough:** Adding email or push notification means editingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `OrderProcessor`. Every change risks breaking existing behavior.
 > The class violates Open/Closed Principle.
 
@@ -670,7 +676,7 @@ public class EmailOrderProcessor extends OrderProcessor {
 }
 ```
 
-> **Code walkthrough:** `OrderProcessor.process()` never calls `new`
+> **Code walkthrough:** `OrderProcessor.process()` never calls `new`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly. It calls `createNotifier()` which is overridden by each
 > subclass. Adding push notifications: create `PushOrderProcessor`,
 > override `createNotifier()`, zero changes to `OrderProcessor`. The
@@ -1005,7 +1011,7 @@ GoF full Builder (two-class form):
   Product: the constructed object
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Builder Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Builder separates WHAT is needed (the parameters) from HOW it is
@@ -1058,7 +1064,7 @@ public class HttpRequest {
 }
 ```
 
-> **Code walkthrough:** Every time a new optional field is added, the
+> **Code walkthrough:** Every time a new optional field is added, theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > number of constructors required grows. Callers face positional
 > confusion. The anti-pattern escalates: teams start adding `null`
 > to skip parameters - `new HttpRequest(url, "GET", null, null)` -
@@ -1134,7 +1140,7 @@ HttpRequest req = HttpRequest.builder("https://api.example.com", "POST")
     .build();
 ```
 
-> **Code walkthrough:** Four patterns in this builder. (1) Required
+> **Code walkthrough:** Four patterns in this builder. (1) Requiredice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fields passed to the `Builder` constructor, not via setters -
 > you cannot create a builder without them. (2) Optional fields
 > have defaults set in the `Builder` field declarations. (3) `build()`

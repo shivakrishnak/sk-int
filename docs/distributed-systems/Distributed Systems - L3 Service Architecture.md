@@ -111,7 +111,7 @@ Service B Instance 3 (10.0.0.7:8080)
   4. Call 10.0.0.5:8080/orders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Discovery example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Server-side discovery (Kubernetes DNS + Service):**
 
@@ -131,7 +131,7 @@ Service A only knows "orderservice" - never the pod IPs.
 Kubernetes DNS updates automatically on pod changes.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Discovery example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Health checking:**
 
@@ -144,7 +144,7 @@ Registry health check types:
 4. gRPC: implements grpc.health.v1.Health service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Discovery example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Deregistration strategies:**
 
@@ -156,7 +156,7 @@ Failure: health check fails → TTL expires → registry removes
   (typically 30-90 second lag)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Discovery example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Service discovery is a consistency problem: the registry's view
@@ -189,6 +189,12 @@ current addresses."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // SERVICE DISCOVERY WITH SPRING CLOUD EUREKA
@@ -243,7 +249,7 @@ public interface PaymentServiceClient {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern hardcodes the payment
+> **Code walkthrough:** The BAD pattern hardcodes the paymentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > service IP. When the service restarts with a new IP (container
 > scaling event), this code breaks. The GOOD pattern uses Spring
 > Cloud's `@LoadBalanced` RestTemplate. The URL uses the service
@@ -323,15 +329,92 @@ ecosystem? Eureka. Need advanced traffic policies? Service mesh.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Stale endpoints causing requests to terminated pods**
+
+**Symptom:** After a rolling deployment, some requests return
+502/503 for 10-30 seconds. Load balancer health checks pass.
+Logs show requests reaching pods that have already received
+SIGTERM but are still in the Endpoints list.
+
+**Root cause:** Kubernetes endpoint propagation has latency.
+When a pod receives SIGTERM, it may take 5-15 seconds for the
+Endpoints controller to remove it from the EndpointSlice, and
+another 2-5 seconds for kube-proxy to update iptables rules.
+During this window, traffic routes to a terminating pod.
+
+**Diagnosis:**
+```bash
+# Check pod termination state
+kubectl get pods -w | grep Terminating
+# Watch for how long pods stay Terminating
+
+# Check endpoint propagation lag
+kubectl get endpoints <service> -o jsonpath='{.subsets[*].addresses[*].ip}'
+# Compare to: kubectl get pods -l app=<service> -o wide
+# If IPs in endpoints include Terminating pod IPs = stale endpoints
+
+# Check error rate during deployments in metrics
+curl http://prometheus:9090/api/v1/query?query=\
+  'rate(http_server_requests_total{status=~"5.."}[1m])'
+```
+
+> **Code walkthrough:** The endpoint IP comparison reveals stale endpoint entries. KEY MECHANISM: Kubernetes endpoint propagation involves three steps: pod gets SIGTERM, EndpointSlice controller removes the IP (2-10s delay), kube-proxy updates iptables (1-5s delay) - total window 3-15s during which traffic routes to terminating pods. WHY IT MATTERS: every rolling deployment causes a brief error window proportional to the endpoint propagation delay. WHAT BREAKS: connections to terminating pods get connection reset or 502 depending on whether the pod has closed its listener yet. TAKEAWAY: add a `preStop` lifecycle hook with `sleep 5` to drain connections before SIGTERM, and set `terminationGracePeriodSeconds` to cover the full propagation window.
+
+**Fix:** Add `lifecycle.preStop.exec.command: ['sh','-c','sleep 5']`
+to all containers; set `terminationGracePeriodSeconds: 30`;
+configure readiness probe to fail immediately on SIGTERM receipt.
+
+---
+
+**Failure Mode 2 - DNS caching bypassing service discovery updates**
+
+**Symptom:** After a service IP change (e.g., after a service
+recreation), some clients continue routing to the old IP for
+minutes or hours. The new service responds correctly but a
+subset of clients still hit the old (missing) IP.
+
+**Root cause:** JVM or OS-level DNS caching ignores the TTL
+of the Kubernetes service DNS record. JVM's default
+`networkaddress.cache.ttl` is -1 (cache forever) in some
+security configurations.
+
+**Diagnosis:**
+```bash
+# Check JVM DNS cache TTL
+java -XshowSettings:all -version 2>&1 | grep 'networkaddress'
+# Or check security.properties:
+grep 'networkaddress.cache.ttl' $JAVA_HOME/conf/security/java.security
+# Value -1 = cache forever = does not respect DNS TTL
+
+# Check service DNS record TTL in Kubernetes
+nslookup <service>.<namespace>.svc.cluster.local
+# Check TTL field in the answer section
+
+# Force DNS resolution test from within pod
+kubectl exec <pod> -- nslookup <service>
+# Compare IP to current service IP
+kubectl get svc <service> -o jsonpath='{.spec.clusterIP}'
+```
+
+> **Code walkthrough:** The `nslookup` from within the pod reveals if DNS resoluice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+
+**Fix:** Set `-Dnetworkaddress.cache.ttl=60` JVM flag or edit
+`$JAVA_HOME/conf/security/java.security`; use connection pool
+validation on borrow to catch stale connections.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: After a deployment, some requests are still being routed
-to the old (terminating) pod instances, causing errors.
-How do you prevent this?
+**[JUNIOR] Q1 - [MECHANISM] After a deployment, some requests are still being routed to the old (terminating) pod instances, causing errors. How do you prevent this?**
 
-A: The Kubernetes pod is terminating but still in the Endpoints
+The Kubernetes pod is terminating but still in the Endpoints
 list for a brief period. Clients send requests to a pod that
 is no longer serving. Fix: (1) Add a `preStop` hook with a sleep
 (e.g., 5-10 seconds) in the pod spec. This delays the container's
@@ -345,7 +428,7 @@ termination begins), triggering removal from the Endpoints list.
 
 #### Candidate Mistakes
 
-Q: How does Kubernetes Service discovery work?
+**[JUNIOR] Q2 - [MECHANISM] How does Kubernetes Service discovery work?**
 
 **What NOT to say:** "There is a service registry that all
 services call."
@@ -376,21 +459,21 @@ a discovery library or a registry API call."
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Service Mesh and Sidecar Pattern
@@ -506,7 +589,7 @@ Traffic flow:
     - Metrics collection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Mesh and Sidecar Pattern example demonstratice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key capabilities:**
 
@@ -528,7 +611,7 @@ Observability:
   Distributed tracing: Jaeger/Zipkin export
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Mesh and Sidecar Pattern example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Sidecar injection:**
 
@@ -545,7 +628,7 @@ metadata:
 # No changes to application Deployment manifests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No changes to application Deployment manifests example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **The key insight:**
 The service mesh trades operational simplicity for architectural
@@ -636,7 +719,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No changes to application Deployment manifests example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```yaml
 # Mesh policy (YAML - NOT code) handles resilience:
@@ -664,7 +747,7 @@ spec:
       weight: 10  # canary: 10% to v2
 ```
 
-> **Code walkthrough:** The without-mesh version must import and
+> **Code walkthrough:** The without-mesh version must import andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > configure Resilience4j, set up OpenTracing, inject trace headers
 > manually, and handle retries in code. This is roughly 30 lines
 > of infrastructure code for every service call. The with-mesh
@@ -753,11 +836,9 @@ If not: start with a library approach.
 
 #### Production Failures
 
-Q: After enabling Istio, latency for your critical checkout path
-increased from P99 50ms to P99 230ms. What is causing this
-and how do you investigate?
+**[JUNIOR] Q1 - [DEBUGGING] After enabling Istio, latency for your critical checkout path increased from P99 50ms to P99 230ms. What is causing this and how do you investigate?**
 
-A: The Envoy sidecar is adding latency at each hop. In a
+The Envoy sidecar is adding latency at each hop. In a
 checkout path that calls 5 services, 5 pairs of sidecars
 (inbound + outbound) add latency. Investigation: (1) Use
 Jaeger to view the distributed trace for a slow checkout request.
@@ -777,7 +858,7 @@ path).
 
 #### Candidate Mistakes
 
-Q: What is the difference between a service mesh and an API Gateway?
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between a service mesh and an API Gateway?**
 
 **What NOT to say:** "They are the same thing - both route traffic."
 
@@ -868,9 +949,7 @@ self-explanatory from the description.)*
 
 ---
 
-**Q1 (Conceptual): Explain the difference between client-side
-and server-side service discovery. What are the responsibilities
-of each side?**
+**[JUNIOR] Q1 - [MECHANISM] Explain the difference between client-side and server-side service discovery. What are the responsibilities of each side?**
 
 Client-side discovery: the client application contains a registry
 client library. On startup, it downloads and caches the registry.
@@ -902,8 +981,7 @@ must be highly available itself."
 
 ---
 
-**Q2 (Conceptual): How does Kubernetes DNS-based service
-discovery work? What does `kubectl get svc` show?**
+**[JUNIOR] Q2 - [MECHANISM] How does Kubernetes DNS-based service discovery work? What does `kubectl get svc` show?**
 
 Kubernetes DNS works as follows:
 
@@ -935,9 +1013,7 @@ start, kube-proxy updates the rules automatically."
 
 ---
 
-**Q3 (Conceptual): What is a service registry's role in
-health checking, and what is the difference between push-based
-and pull-based health checking?**
+**[JUNIOR] Q3 - [MECHANISM] What is a service registry's role in health checking, and what is the difference between push-based and pull-based health checking?**
 
 The registry's health checking determines which registered
 instances are currently healthy and eligible to receive traffic.
@@ -971,8 +1047,7 @@ instance during this window."
 
 ---
 
-**Q4 (Trade-off): When would you choose Consul over Kubernetes
-native service discovery?**
+**[MID] Q4 - [TRADE-OFF] When would you choose Consul over Kubernetes native service discovery?**
 
 Kubernetes native service discovery (CoreDNS + Service objects)
 is ideal when:
@@ -1000,8 +1075,7 @@ infrastructure (VMs + Kubernetes) exists.
 
 ---
 
-**Q5 (Trade-off): What happens if the service registry becomes
-unavailable? How should clients handle this?**
+**[MID] Q5 - [TRADE-OFF] What happens if the service registry becomes unavailable? How should clients handle this?**
 
 If the registry is unavailable:
 
@@ -1034,9 +1108,7 @@ that makes Eureka, Consul, and Kubernetes viable in production."
 
 ---
 
-**Q6 (Debugging): Service A is failing to connect to Service B.
-Service B has 5 running instances. The error is
-"Connection refused" on every request. How do you debug?**
+**[SENIOR] Q6 - [DEBUGGING] Service A is failing to connect to Service B. Service B has 5 running instances. The error is "Connection refused" on every request. How do you debug?**
 
 Step 1: verify Service B instances are running:
 `kubectl get pods -l app=service-b` - all 5 pods Running?
@@ -1073,10 +1145,7 @@ the issue is network-level (policies, firewalls).
 
 ---
 
-**Q7 (Debugging): After a rolling deployment, some requests to
-Service B are returning stale responses (from the old version).
-Traffic continues to old pods even after new pods are ready.
-How do you investigate?**
+**[SENIOR] Q7 - [DEBUGGING] After a rolling deployment, some requests to Service B are returning stale responses (from the old version). Traffic continues to old pods even after new pods are ready. How do you investigate?**
 
 Old pods are still in the Endpoints list and receiving traffic.
 Investigation:
@@ -1112,8 +1181,7 @@ pod from Endpoints) is the correct solution."
 
 ---
 
-**Q8 (Behavioral): Tell me about a time you debugged a
-service discovery issue in production.**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a time you debugged a service discovery issue in production.**
 
 *(Personalize from experience.)*
 
@@ -1131,8 +1199,7 @@ pods must be ready for 10 seconds before the old ones terminate."
 
 ---
 
-**Q9 (Scale): How does service discovery scale with hundreds
-of services and thousands of instances?**
+**[SENIOR] Q9 - [TRADE-OFF] How does service discovery scale with hundreds of services and thousands of instances?**
 
 The scale challenge: with 200 services and 100 instances each
 (20,000 pods), the registry must handle:
@@ -1242,8 +1309,7 @@ value over the textual description here.)*
 
 ---
 
-**Q1 (Conceptual): Explain the data plane and control plane
-separation in a service mesh. What does each component do?**
+**[JUNIOR] Q1 - [MECHANISM] Explain the data plane and control plane separation in a service mesh. What does each component do?**
 
 Data plane: the collection of all Envoy sidecar proxies deployed
 alongside each service. The data plane handles the ACTUAL traffic
@@ -1273,8 +1339,7 @@ regardless of istiod availability. Only config changes are blocked."
 
 ---
 
-**Q2 (Conceptual): What is the xDS protocol used by Istio and
-Envoy? Why does it matter for service mesh scale?**
+**[JUNIOR] Q2 - [MECHANISM] What is the xDS protocol used by Istio and Envoy? Why does it matter for service mesh scale?**
 
 xDS is a family of discovery services used by the Istio control
 plane to push configurations to Envoy proxies:
@@ -1303,8 +1368,7 @@ can update routing rules in milliseconds without restart."
 
 ---
 
-**Q3 (Conceptual): How does Istio implement mutual TLS without
-any application code changes?**
+**[JUNIOR] Q3 - [MECHANISM] How does Istio implement mutual TLS without any application code changes?**
 
 Istio uses SPIFFE (Secure Production Identity Framework for
 Everyone) to provide workload identity:
@@ -1335,8 +1399,7 @@ Account - no secrets to manage."
 
 ---
 
-**Q4 (Trade-off): What are the production trade-offs of using
-Istio vs. using a library like Resilience4j for resilience?**
+**[MID] Q4 - [TRADE-OFF] What are the production trade-offs of using Istio vs. using a library like Resilience4j for resilience?**
 
 Istio advantages:
 - Polyglot: works for any language without library changes
@@ -1370,7 +1433,7 @@ Application-level code can make this nuanced decision; Istio cannot."
 
 ---
 
-**Q5 (Trade-off): When would you choose Linkerd over Istio?**
+**[MID] Q5 - [TRADE-OFF] When would you choose Linkerd over Istio?**
 
 Linkerd advantages over Istio:
 - Simpler: Linkerd's control plane has fewer components (one
@@ -1402,9 +1465,7 @@ capability but also much more complexity to configure."
 
 ---
 
-**Q6 (Debugging): Envoy sidecar injection is not happening
-for new pods in the 'production' namespace. How do you
-investigate?**
+**[SENIOR] Q6 - [DEBUGGING] Envoy sidecar injection is not happening for new pods in the 'production' namespace. How do you investigate?**
 
 Envoy injection requires the namespace to be labeled for injection
 AND the pod to not opt out.
@@ -1442,9 +1503,7 @@ consideration for the mesh control plane.
 
 ---
 
-**Q7 (Debugging): After an Istio upgrade, services are seeing
-50x traffic increase in latency. How do you isolate whether
-the issue is in the application or in Envoy?**
+**[SENIOR] Q7 - [DEBUGGING] After an Istio upgrade, services are seeing 50x traffic increase in latency. How do you isolate whether the issue is in the application or in Envoy?**
 
 Isolate by comparing latency with and without Envoy:
 
@@ -1483,8 +1542,7 @@ the issue is at the proxy level."
 
 ---
 
-**Q8 (Behavioral): Tell me about a challenge you faced when
-adopting a service mesh (or similar infrastructure layer).**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a challenge you faced when adopting a service mesh (or similar infrastructure layer).**
 
 *(Personalize from experience.)*
 
@@ -1501,8 +1559,7 @@ conservative."
 
 ---
 
-**Q9 (Scale): How does a service mesh perform at 500 services
-and 10,000 instances?**
+**[SENIOR] Q9 - [TRADE-OFF] How does a service mesh perform at 500 services and 10,000 instances?**
 
 Control plane scaling at this size:
 - istiod manages 10,000 Envoy sidecar connections via xDS

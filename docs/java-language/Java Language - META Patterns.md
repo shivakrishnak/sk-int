@@ -65,7 +65,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Feature adoption decision matrix:**
-```
+```plaintext
 FEATURE ADOPTION DECISION FRAMEWORK:
 
   For each new Java feature, ask:
@@ -146,7 +146,7 @@ ANTIPATTERNS IN FEATURE ADOPTION:
   // vs old: if (shape instanceof Circle) { Circle c = (Circle) shape; ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -289,7 +289,7 @@ Diagnosis:
   - Optional: grep for Optional in field declarations.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -399,7 +399,25 @@ stream-with-IO operations. But this is advanced and adds complexity.
 ### 📘 Concept Explanation
 
 **Core Effective Java items applied to modern Java:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 ITEM 1: STATIC FACTORY METHODS OVER CONSTRUCTORS
 
   // BAD: constructor with boolean parameter (what does true mean?):
@@ -499,7 +517,7 @@ ITEM 18: COMPOSITION OVER INHERITANCE
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -510,6 +528,12 @@ ITEM 18: COMPOSITION OVER INHERITANCE
 > calls `add` internally. The composition approach delegates to an internal list instance, giving
 > full control. The lesson: you cannot safely extend a class unless it's designed for extension
 > (documented invariants, empty hook methods).
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: over-engineering with inheritance (fragile):
@@ -660,7 +684,31 @@ A: `CountingList extends ArrayList`: override `add()` and `addAll()`. In `addAll
 ### 📘 Concept Explanation
 
 **API design patterns:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 VALIDATION AT API BOUNDARIES (fail fast):
 
   // BAD: missing validation -> NPE deep inside implementation:
@@ -752,7 +800,7 @@ IMMUTABLE BUILDER PATTERN:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -860,6 +908,12 @@ not achievable by composing existing methods. Not both every time, but at least 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: API returns mutable internal state, causing unexpected mutations.**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 Symptom: Service method returns a list. Caller modifies it.
   Next call to the service sees the modified list (internal state corrupted).
@@ -886,7 +940,7 @@ public List<String> getPermissions(Long userId) {
 // unmodifiableList: wraps the same list (UnsupportedOperationException on mutation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -952,7 +1006,7 @@ class Child extends Parent {
 }
 new Child(42);  // Prints 0, not 42
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is why `final` methods and `final` classes are the safe default: they prevent this class of bug
 entirely. When designing a framework (like Spring's `ApplicationContext` or JUnit's `TestCase`):

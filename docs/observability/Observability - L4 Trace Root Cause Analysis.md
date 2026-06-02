@@ -175,7 +175,7 @@ ROOT CAUSE: N+1 query in PaymentService.validateItems()
 FIX: Batch inventory validation into single query
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Trace Root Cause Analysis example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The root cause span in a distributed trace is almost always the
@@ -265,7 +265,7 @@ represents actual work being done slowly.
 // Checkout service is a victim, not a cause.
 ```
 
-> **Code walkthrough:** The BAD pattern illustrates the most common
+> **Code walkthrough:** The BAD pattern illustrates the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > trace RCA mistake: stopping at the top-level span and blaming the
 > slowest-appearing service. Checkout shows 2300ms, so the engineer
 > debugs checkout. But the trace waterfall shows checkout's own work
@@ -275,6 +275,12 @@ represents actual work being done slowly.
 > in a Java stack trace and concluding the error happened in main().
 
 **Example 2: GOOD - Critical path analysis with self-time calculation**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Systematic critical path analysis
@@ -348,7 +354,7 @@ Root cause identified: db-payment, sequential query loop.
 */
 ```
 
-> **Code walkthrough:** The GOOD pattern implements critical path
+> **Code walkthrough:** The GOOD pattern implements critical pathice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > analysis and self-time calculation. Self time is the key metric:
 > a span whose duration is nearly equal to its self time (not
 > explained by children) is doing slow work itself. A span whose
@@ -359,6 +365,12 @@ Root cause identified: db-payment, sequential query loop.
 > identifying db-payment as the root cause.
 
 **Example 3: TraceQL query for finding N+1 query pattern traces**
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```
 // GOOD: Grafana Tempo TraceQL to find traces
@@ -388,6 +400,7 @@ Root cause identified: db-payment, sequential query loop.
 // and db.statement span attributes in results
 ```
 
+{% raw %}
 ```bash
 # Cross-correlate trace with service logs
 # Once you have trace ID from TraceQL, find logs
@@ -409,8 +422,9 @@ Root cause identified: db-payment, sequential query loop.
 #   inventory.validate(item.getId()); // N+1 HERE
 # }
 ```
+{% endraw %}
 
-> **Code walkthrough:** TraceQL (Grafana Tempo's query language)
+> **Code walkthrough:** TraceQL (Grafana Tempo's query language)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > enables structural queries on trace data - not just filtering by
 > duration but filtering by span count, span attributes, and
 > structural patterns. The query finds traces where payment-service
@@ -422,6 +436,18 @@ Root cause identified: db-payment, sequential query loop.
 > approach alone.
 
 **Example 4: OTel span instrumentation for RCA-ready traces**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Instrumenting for trace RCA - adding span attributes
@@ -490,7 +516,7 @@ public class PaymentService {
 }
 ```
 
-> **Code walkthrough:** The GOOD instrumentation pattern attaches
+> **Code walkthrough:** The GOOD instrumentation pattern attachesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > business attributes (payment amount, method, user tier, item count)
 > directly to the root payment span. When this span appears in a
 > trace investigation, these attributes immediately explain the
@@ -656,7 +682,7 @@ JAVA_TOOL_OPTIONS="-javaagent:opentelemetry-javaagent.jar \
 # If absent: HTTP client in upstream service is not setting headers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If absent: HTTP client in upstream service is not setting headers example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: For Spring services, add `opentelemetry-spring-boot-starter`
 to automatically propagate trace context via `RestTemplate` or
@@ -669,7 +695,7 @@ W3CTraceContextPropagator.getInstance().inject(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If absent: HTTP client in upstream service is not setting headers example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure 2: Trace spans have correct structure but wrong timing**
 
@@ -700,7 +726,7 @@ kubectl debug node/my-node -it --image=busybox \
 # Compare with: date on another node
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare with: date on another node example demonstrates shell script pattern using concurrency primitive. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Ensure NTP synchronization on all nodes (`chrony` or `timesyncd`
 configured). For containerized workloads, verify the container
@@ -730,7 +756,7 @@ curl "http://tempo:3100/api/traces/<traceID>" \
 # add them manually at span creation time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This add them manually at span creation time example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Add code location to manually created spans:
 ```java
@@ -741,7 +767,7 @@ Span span = tracer.spanBuilder("inventory.validate")
     .setAttribute("code.lineno", 247)
     .startSpan();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This add them manually at span creation time example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Alternatively, enable continuous profiling (e.g., Pyroscope) and
 correlate profiles to traces using the trace ID to see the exact
@@ -758,6 +784,12 @@ ERROR but not calling `span.recordException(e)`. The exception detail
 is lost; only the error flag survives.
 
 Diagnosis and Fix:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: Sets error status but loses exception detail
 try {
@@ -780,7 +812,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This add them manually at span creation time example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -942,7 +974,7 @@ kubectl logs -n production checkout-deployment \
   --previous | grep "FATAL\|OOM\|signal"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if the upstream service is actually crashing example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 The fix for Cause 1 (most common): switch from head sampling to
 tail sampling in the OTel Collector. Tail sampling waits for the
@@ -1150,7 +1182,7 @@ W3CTraceContextPropagator.getInstance().inject(
 //          span_id: "producer_span_id"}]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 When context propagation is not configured: the consumer trace is
 completely separate from the producer trace. RCA across the Kafka
@@ -1303,7 +1335,7 @@ curl "http://es:9200/_cat/indices?v&h=index,\
 docs.count,store.size,search.query_time_in_millis"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check hot vs cold data access pattern example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 At 1 billion spans/day with 5 spans per trace = 200 million traces/day.
 Keeping 3 days of hot data = 600 million traces in hot storage.
@@ -1436,7 +1468,7 @@ Step 3 DESIGN (~10 min)
   (ClickHouse on-demand for historical queries)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check hot vs cold data access pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min)
 The critical design decision: tail sampling configuration and the
@@ -1495,7 +1527,7 @@ is sufficient; above this, Tempo Distributed becomes necessary.
 
 **LLD sketch:**
 
-```
+```plaintext
 OTel Collector Pipeline Detail
 =================================
 receivers:
@@ -1543,7 +1575,7 @@ service:
       exporters: [prometheusremotewrite]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This one instrumentation, two backends example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Staff angle:**
 The governance work is what makes this platform usable over 3+ years.

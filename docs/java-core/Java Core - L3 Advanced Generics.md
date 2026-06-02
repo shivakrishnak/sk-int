@@ -98,7 +98,7 @@ void printAll(List<? extends Object> list) { ... }
 void printAll(List<?> list) { ... }  // same: unbounded = ? extends Object
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Advanced Generics example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **PECS applied:**
 ```java
@@ -131,13 +131,13 @@ Collections.copy(dest, src); // T=Integer; dest consumes Integer (super)
                               //            src produces Integer (extends)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Advanced Generics example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The generic method for copying with PECS shows
+> **Code walkthrough:** The generic method for copying with PECS showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > why the wildcards are required. Without wildcards, you'd need exact
 > type match. With PECS, any compatible combination works. The generic
 > stack with wildcard push shows a practical use: a utility method
@@ -180,7 +180,7 @@ void printAll(List<?> list) {
 }
 ```
 
-> **Code walkthrough:** The `copy` method with PECS works because
+> **Code walkthrough:** The `copy` method with PECS works becauseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `List<? extends T>` guarantees we can read T from `src` (the actual
 > type is T or a subtype - safe to use as T). `List<? super T>` guarantees
 > we can write T to `dest` (dest accepts T or more general - T is always
@@ -246,7 +246,7 @@ List<Integer> ints = List.of(1, 2, 3);
 process(ints); // Error: List<Integer> cannot be converted to List<Number>
 // Even though Integer is a Number!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: "cannot be converted" or "incompatible types" error with
 generic collections. Check if the method needs to write to the collection
@@ -284,7 +284,7 @@ sum(List.of(1, 2, 3));     // List<Integer> - Integer extends Number
 sum(List.of(1.0, 2.0));   // List<Double> - Double extends Number
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 A "Consumer" collection is one you WRITE TO (it consumes T values from you):
 ```java
@@ -297,7 +297,7 @@ fill(new ArrayList<Number>(), 5);  // Number list accepts Integer
 fill(new ArrayList<Object>(), 5);  // Object list accepts Integer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 "Neither" - both read and write: use unbounded type parameter `<T>`.
 "Both" contexts: use `<T>` so you have the type name to work with.
@@ -331,7 +331,7 @@ String s = strings.get(0); // ClassCastException! Integer is not String
 // The compile error on line 2 above: "incompatible types"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Arrays DO allow covariance (and regret it):
 ```java
@@ -340,7 +340,7 @@ Object[] oa = sa; // allowed (covariant arrays)
 oa[0] = 42;  // COMPILES but throws ArrayStoreException at runtime!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Java arrays were designed this way before generics, for compatibility
 with pre-generics code (like `Arrays.sort(Object[])`). The runtime check
@@ -371,7 +371,7 @@ printAll(List.of(1, 2, 3));    // OK
 printAll(List.of(new Object())); // OK - any list
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **Checking size, clear, contains with Object:**
 ```java
@@ -383,7 +383,7 @@ int indexOf(List<?> list, Object o) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **instanceof check for raw type:**
 ```java
@@ -393,7 +393,7 @@ if (obj instanceof List) { // can't do instanceof List<String>
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `List<?>` limits you to: read as Object, write null only, call methods
 that don't care about element type (size, clear, isEmpty).
@@ -431,7 +431,7 @@ Use **bounded type parameter `<T extends X>`** when:
 // Both wildcards relate through T
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use **wildcard `? extends X`** when:
 - You only need to use the type once (single parameter position)
@@ -446,7 +446,7 @@ double sum(List<? extends Number> nums) { ... }
 // But wildcard is preferred: simpler, communicates "read-only"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Effective Java (Item 31) calls this
 the "rule of thumb" for wildcards: "use bounded wildcards to increase
@@ -492,7 +492,7 @@ Collections.copy(numbers, integers);
 // After: numbers = [10, 20, 30]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Without PECS, the signature would be `<T> void copy(List<T> dest, List<T> src)`.
 This would require `dest` and `src` to have EXACTLY the same type T.
@@ -535,7 +535,7 @@ private <T> void swapHelper(List<T> list, int i, int j) {
 // The compiler verifies: the '?' in swap is consistent with T in swapHelper
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The compiler performs "wildcard capture" when `swap` calls `swapHelper`:
 the actual type of `?` (unknown at compile time) is captured as T in
@@ -577,7 +577,7 @@ List<Number> getNumbers() { return new ArrayList<>(List.of(1, 2, 3)); }
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Effective Java (Item 31): "Do not use wildcard types as return types."
 Using wildcards in return types leaks the API's implementation complexity
@@ -625,7 +625,7 @@ TreeSet<? super Integer> set = new TreeSet<>(Comparator.naturalOrder());
 // "? extends U": result is U or subtype (safe use as U)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Comparable<? super T>` appears in
 many JDK signatures. It means: T is Comparable to something that T
@@ -667,7 +667,7 @@ List<Number> mixed = Collections.<Number>emptyList(); // explicit T=Number
 // Without explicit: Collections.emptyList() may infer as List<Object>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Java 8 improved type inference
 significantly (target typing). Before Java 8: `Collections.emptyList()`
@@ -787,12 +787,30 @@ Key items: 26 (no raw types), 27 (unchecked warnings), 28 (lists over arrays),
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The InstrumentedSet example (Item 18) is the
+> **Code walkthrough:** The InstrumentedSet example (Item 18) is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > canonical illustration of "favor composition over inheritance". The
 > inheritance version has a subtle bug where `addAll()` counts elements
 > twice because `HashSet.addAll()` internally calls `add()` (which is
 > overridden). The composition version wraps the HashSet and counts
 > at the wrapper level only, avoiding the double-counting bug.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: inheritance for instrumentation (Item 18 - the famous bug):
@@ -857,7 +875,7 @@ User user = User.builder()
     .build(); // validates all required fields at build time
 ```
 
-> **Code walkthrough:** The InstrumentedHashSet bug occurs because
+> **Code walkthrough:** The InstrumentedHashSet bug occurs becauseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `HashSet.addAll()` is implemented by calling `add()` on each element.
 > When you override `add()` and also call `super.addAll()`, the
 > `super.addAll()` calls YOUR overridden `add()`. This is the "self-use"
@@ -936,7 +954,7 @@ Range build() {
     return new Range(min, max);
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: invalid domain objects causing failures far from construction.
 Centralizing validation in `build()` makes the error occur at the source.
@@ -970,7 +988,7 @@ new BigInteger(int, int, Random) // which arg is which?
 BigInteger.probablePrime(bitLength, random) // clear!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Not required to create new object each call (caching):**
 ```java
@@ -979,7 +997,7 @@ Boolean.valueOf(true) // always returns same Boolean.TRUE object
 // constructors MUST create new objects
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Can return any subtype (implementation hiding):**
 ```java
@@ -989,7 +1007,7 @@ List<String> empty = Collections.emptyList(); // java.util.Collections.EmptyList
 // This class is not public - hidden implementation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **4. The returned class can vary based on parameters:**
 ```java
@@ -998,7 +1016,7 @@ EnumSet.noneOf(Day.class)    // may return JumboEnumSet for large enums
 // Optimal implementation chosen for you
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **5. The returned class need not exist when writing the factory:**
 Service Provider Framework pattern: `DriverManager.getConnection(url)`.
@@ -1017,6 +1035,12 @@ these conventions makes the API recognizable to Java programmers.
 A: Use Builder when (Item 2):
 
 **1. Constructor has 4+ parameters (especially optional ones):**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: telescoping constructors
 NutritionFacts cola = new NutritionFacts(240, 8, 100, 0, 35, 27);
@@ -1031,7 +1055,7 @@ NutritionFacts cola = new NutritionFacts.Builder(240, 8) // required
     .build();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **2. JavaBeans pattern would leave object in inconsistent state:**
 ```java
@@ -1042,7 +1066,7 @@ cola.setServings(8);      // still incomplete
 cola.setCalories(100);    // now valid? or not?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Class hierarchy with builders:**
 ```java
@@ -1060,7 +1084,7 @@ class NYPizza extends Pizza {
 // Covariant return types and self-type pattern enable fluent subclass builders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using enum. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Lombok's `@Builder` annotation generates
 the Builder boilerplate at compile time. Spring Boot's configuration
@@ -1094,7 +1118,7 @@ class Car extends Vehicle {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Composition is appropriate:**
 ```java
@@ -1119,7 +1143,7 @@ class TimedLogger implements Logger {
 // without any change to TimedLogger (doesn't break)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The "fragile base class problem": when
 a subclass's behavior breaks after a change to the base class that didn't
@@ -1180,7 +1204,7 @@ public final class DateRange {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Benefits of immutability:**
 - Thread-safe: no synchronization needed (read-only access is always safe)
@@ -1206,6 +1230,18 @@ implementations" mean in practice?**
 A: Declare variables, parameters, and return types using interface types.
 Reserve concrete types for instantiation (and local variables where the
 type is clear from context).
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: concrete types in API
@@ -1240,7 +1276,7 @@ deque.push("first"); // ArrayDeque.push() not in Deque? (it is, via Deque)
 // use ArrayDeque in the variable type
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **WHAT BREAKS: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* This item applies to ALL types, not
 just collections. `InputStream` not `FileInputStream` in method parameters
@@ -1292,7 +1328,7 @@ class ColorPoint extends Point {
 // Fix: don't mix types in equals. Use composition.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The impossibility result (Bloch, citing
 Liskov): you CANNOT extend an instantiable class and add a value component
@@ -1334,7 +1370,7 @@ class Stack<E> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Common sources of obsolete references:**
 1. Caches: entries that are no longer needed but still in the cache.
@@ -1394,7 +1430,7 @@ public final class ImmutablePerson {
 // to enable returning cached instances or subclasses
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `List.copyOf()` (Java 10) creates an
 unmodifiable copy in one call - the defensive copy IN the constructor.
@@ -1424,7 +1460,7 @@ List<String> ls = new ArrayList<>();
 List<Object> lo = ls;  // COMPILE ERROR: correctly rejected!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Arrays are reifiable (runtime type), generics are erased:**
 ```java
@@ -1434,7 +1470,7 @@ List<String>[] lsa = new List<String>[1]; // COMPILE ERROR: generic array!
 // You'd get: List[]   (erased) - type safety lost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Lists provide type safety, arrays don't:**
 ```java
@@ -1443,7 +1479,13 @@ List<String>[] lsa = new List<String>[1]; // COMPILE ERROR: generic array!
 // Prefer compile-time errors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Practical conversion:
@@ -1455,7 +1497,7 @@ T[] array = (T[]) new Object[n]; // need unchecked cast, type safety lost
 List<T> list = new ArrayList<>(n); // no unchecked cast, fully type-safe
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The legitimate uses for arrays in modern
 Java: performance-critical code where boxing overhead of `List<Integer>`

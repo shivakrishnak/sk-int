@@ -463,8 +463,16 @@ title: "{Topic} - {Subtopic}" # quoted when title contains ': '
 parent: "{Topic Name}"        # must match topic index title exactly
 nav_order: N                  # position within topic folder (1-based)
 permalink: /{topic-slug}/{file-slug}/  # kebab-case
+render_with_liquid: false
 ---
 ```
+
+**Liquid Safety (MANDATORY):** Any code block in the file that contains
+`{{ }}` or `{% %}` patterns MUST be wrapped with `{% raw %}` /
+`{% endraw %}` tags placed OUTSIDE the fence (line before opening ` ``` `,
+line after closing ` ``` `). `render_with_liquid: false` alone is
+insufficient - Jekyll's Liquid parser scans content BEFORE checking the
+flag. Validation rule R28 enforces this at pre-commit.
 
 ### Required Frontmatter - Topic Index Files
 

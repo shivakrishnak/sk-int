@@ -1,6 +1,6 @@
 ---
 title: "AI Fundamentals"
-nav_order: 21
+nav_order: 90
 has_children: true
 ---
 

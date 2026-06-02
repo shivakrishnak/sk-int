@@ -77,7 +77,7 @@ After Consumer-3 crashes (rebalance):
   Consumer-7: idle - no partition to assign
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consumer Groups and Competing Consumers example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 RabbitMQ competing consumers:
 ```
@@ -90,7 +90,7 @@ Consumer-A, Consumer-B, Consumer-C all subscribed
   No ordering guarantee across consumers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consumer Groups and Competing Consumers example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 In Kafka, the maximum parallelism for a consumer group equals the number of partitions. This is a design-time constraint: if you anticipate needing 20 parallel consumers, the topic must have at least 20 partitions. You cannot add parallelism beyond the partition count. This is a fundamental difference from RabbitMQ competing consumers, where the queue dynamically distributes to any number of consumers.
@@ -221,51 +221,51 @@ Symptom: consumer lag grows for specific partitions while others are at zero; th
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is a consumer group in Kafka and how is it different from competing consumers in RabbitMQ?"
-- "How does Kafka ensure a message is not processed by two consumers in the same group?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is a consumer group in Kafka and how is it different from competing consumers in RabbitMQ?**
+**[JUNIOR] Q2 - [MECHANISM] How does Kafka ensure a message is not processed by two consumers in the same group?**
 
 🗣️ "A consumer group is a set of consumers identified by a shared group ID that collectively consume a Kafka topic. Kafka's group coordinator assigns each partition to exactly one consumer in the group at any time. Since each message lives in exactly one partition, it can only be delivered to the one consumer that owns that partition. This differs from RabbitMQ competing consumers where messages are distributed from a single queue - there are no partitions, just a shared queue with round-robin delivery."
 
-#### Mechanism
-- "What happens during a Kafka consumer group rebalance?"
-- "How does Kafka partition assignment work when consumers are added or removed?"
+
+**[MID] Q3 - [MECHANISM] What happens during a Kafka consumer group rebalance?**
+**[MID] Q4 - [MECHANISM] How does Kafka partition assignment work when consumers are added or removed?**
 
 🗣️ "When a consumer joins, leaves, crashes, or stops heartbeating, the group coordinator triggers a rebalance. With the eager protocol, all consumers stop processing, revoke all partition assignments, and wait for the coordinator to redistribute all partitions. With the incremental cooperative protocol, only the partitions that need to move are revoked - consumers not involved continue processing. After rebalance, each consumer resumes from its last committed offset on its assigned partitions."
 
-#### Comparison
-- "When would you use Kafka consumer groups over RabbitMQ competing consumers?"
-- "Compare the scaling model of Kafka consumer groups to RabbitMQ competing consumers."
+
+**[SENIOR] Q5 - [TRADE-OFF] When would you use Kafka consumer groups over RabbitMQ competing consumers?**
+**[SENIOR] Q6 - [TRADE-OFF] Compare the scaling model of Kafka consumer groups to RabbitMQ competing consumers.**
 
 🗣️ "Kafka consumer groups are the right choice when you need ordered processing per key, replay capability, or multiple independent consumer types that each need all events. The parallelism ceiling is the partition count - pre-planned. RabbitMQ competing consumers are better when ordering does not matter, you want simpler horizontal scaling without managing partition counts, or you need dynamic scaling that responds immediately to queue depth. The key difference: Kafka scales by partition, RabbitMQ scales by adding consumers dynamically."
 
-#### Scenario
-- "You have a Kafka topic with 10 partitions and a consumer group with 15 consumers - what do you observe?"
-- "How would you scale consumer processing when message volume doubles overnight?"
+
+**[SENIOR] Q7 - [SCENARIO] You have a Kafka topic with 10 partitions and a consumer group with 15 consumers - what do you observe?**
+**[SENIOR] Q8 - [SCENARIO] How would you scale consumer processing when message volume doubles overnight?**
 
 🗣️ "With 10 partitions and 15 consumers: exactly 10 consumers get partition assignments, 5 sit idle. They are connected and heartbeating but receiving no messages. If one active consumer crashes, an idle consumer takes over within the session timeout. To activate all 15, increase partition count to at least 15. When volume doubles: first check consumer lag per partition. If lag grows uniformly, add consumers up to partition count. If lag is concentrated in one or two partitions, investigate those specific consumers - slow processing rather than count is the bottleneck."
 
-#### Debugging
-- "A Kafka consumer group has high lag but consumers appear healthy - what do you investigate?"
-- "Why would adding more consumers to a Kafka group not reduce lag?"
+
+**[SENIOR] Q9 - [DEBUGGING] A Kafka consumer group has high lag but consumers appear healthy - what do you investigate?**
+**[SENIOR] Q10 - [DEBUGGING] Why would adding more consumers to a Kafka group not reduce lag?**
 
 🗣️ "High lag with healthy consumers: first check if lag is growing or stable. Stable high lag means consumers caught up with production rate but never cleared the backlog from a spike. Growing lag means consumers are consistently slower than producers. Check consumer processing time per record. If lag is concentrated on one partition, that consumer has a slow downstream dependency. Adding consumers does not reduce lag if you already have as many consumers as partitions - extras are idle. It also does not help if the bottleneck is a shared downstream service all consumers call."
 
-#### Deep Dive
-- "What is sticky partition assignment and when does it matter?"
-- "How does session.timeout.ms interact with processing time in at-least-once semantics?"
+
+**[SENIOR] Q11 - [MECHANISM] What is sticky partition assignment and when does it matter?**
+**[SENIOR] Q12 - [MECHANISM] How does session.timeout.ms interact with processing time in at-least-once semantics?**
 
 🗣️ "Sticky assignment tries to maintain consumers' previous partition assignments during rebalance. Without it, every rebalance reshuffles all assignments even for consumers not involved. With sticky assignment, stable assignments remain, reducing the number of partitions revoked and reassigned. This matters for stateful consumers with warm partition-local caches. For session.timeout.ms: if a consumer takes longer than the timeout to process a batch, it misses heartbeats and the broker marks it dead, triggering rebalance. The rebalanced consumer redelivers all uncommitted messages - at-least-once duplication. Fix: increase session timeout or use max.poll.records to reduce batch size."
 
-#### Misconception / Trap
-- "Since Kafka replicates data across brokers, you can have unlimited consumers per partition for reliability, right?"
-- "More consumers always means faster processing, right?"
+
+**[MID] Q13 - [MECHANISM] Since Kafka replicates data across brokers, you can have unlimited consumers per partition for reliability, right?**
+**[MID] Q14 - [MECHANISM] More consumers always means faster processing, right?**
 
 🗣️ "Both wrong. Broker replication is for fault tolerance of data, not consumer parallelism. Each partition has one leader - consumers always read from the leader. Multiple consumers on the same partition in the same group is prevented by the group coordinator. Adding a consumer beyond partition count gives zero additional throughput. More consumers do not always mean faster processing: if the bottleneck is a downstream database all consumers write to, adding consumers increases contention and can make things slower. Profile the bottleneck before scaling."
 
-#### Performance & Scalability
-- "What is the throughput ceiling for a Kafka consumer group?"
-- "How does consumer group lag affect end-to-end latency?"
+
+**[STAFF] Q15 - [MECHANISM] What is the throughput ceiling for a Kafka consumer group?**
+**[STAFF] Q16 - [MECHANISM] How does consumer group lag affect end-to-end latency?**
 
 🗣️ "The throughput ceiling: partition count times per-consumer throughput. With 10 partitions and each consumer at 1000 msg/sec, the ceiling is 10,000 msg/sec. To increase the ceiling: add partitions, then add consumers, or increase per-consumer throughput via batch processing. Consumer lag affects latency non-linearly. If a topic produces 5,000 msg/sec and consumes 4,000 msg/sec, lag grows at 1,000 msg/sec. After one hour, lag is 3.6M messages. At 4,000 msg/sec, clearing that lag takes 15 minutes after the produce rate drops - meaning messages produced during the surge have up to 15 minutes of added latency."
 
@@ -361,7 +361,7 @@ key="order-456" -> hashes to partition 4
   Processed independently - no ordering vs order-123
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Ordering Guarantees example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 RabbitMQ single-consumer ordering:
 ```
@@ -374,7 +374,7 @@ Two competing consumers:
   msg2 completes before msg1 -> ordering broken
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Ordering Guarantees example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Global ordering and throughput are mutually exclusive at scale. The practical resolution is entity-scoped ordering: define the entity for which ordering matters and use that as the partition key. Per-entity ordering with full parallel throughput across entities is achievable.
@@ -512,51 +512,51 @@ Symptom: downstream state transitions appear out of order even though the source
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What ordering guarantees does Kafka provide?"
-- "What breaks message ordering in a system using competing consumers?"
+
+**[JUNIOR] Q1 - [MECHANISM] What ordering guarantees does Kafka provide?**
+**[JUNIOR] Q2 - [MECHANISM] What breaks message ordering in a system using competing consumers?**
 
 🗣️ "Kafka guarantees strict ordering within a single partition - messages are consumed in the exact sequence produced to that partition. Across partitions there is no ordering guarantee. In RabbitMQ with competing consumers, ordering breaks because multiple consumers process messages concurrently. Message A to Consumer-1 and message B to Consumer-2 can complete in any relative order. Even with a single consumer, at-least-once redelivery breaks ordering - a NACKed and requeued message can be processed after messages that arrived later."
 
-#### Mechanism
-- "How does Kafka's partition key ensure per-entity message ordering?"
-- "What happens to ordering when a Kafka consumer rebalances?"
+
+**[MID] Q3 - [MECHANISM] How does Kafka's partition key ensure per-entity message ordering?**
+**[MID] Q4 - [MECHANISM] What happens to ordering when a Kafka consumer rebalances?**
 
 🗣️ "Kafka computes: partition = hash(key) % numPartitions. All messages with the same key consistently hash to the same partition. Since a partition is an append-only log, the consumer reads them in offset order. Multiple entities map to different partitions and are processed in parallel. During rebalance: the consumer group stops processing while partition reassignment occurs. The new consumer resumes from the last committed offset on its newly assigned partition. Messages that were in-flight but not committed are redelivered - this is the at-least-once window, handled by idempotency guards."
 
-#### Comparison
-- "Compare ordering guarantees in Kafka, RabbitMQ, and AWS SQS."
-- "When is per-entity ordering sufficient vs when do you need global ordering?"
+
+**[SENIOR] Q5 - [TRADE-OFF] Compare ordering guarantees in Kafka, RabbitMQ, and AWS SQS.**
+**[SENIOR] Q6 - [TRADE-OFF] When is per-entity ordering sufficient vs when do you need global ordering?**
 
 🗣️ "Kafka: ordering within a partition, configurable via partition key. RabbitMQ: ordering within a single-consumer queue; breaks with competing consumers or after NACKs. SQS standard: no ordering guarantee. SQS FIFO: ordering within a message group ID, similar to Kafka partitions. Per-entity ordering is sufficient for virtually all event-driven workflows. Global ordering is only needed when events across entities have causal dependencies - for example, a transfer requiring both accounts to process events in the same global sequence. Most financial systems achieve correctness via idempotency and version checks rather than global ordering."
 
-#### Scenario
-- "Design an order processing system that guarantees all state transitions for a given order are processed in sequence."
-- "How would you handle prioritizing high-value customers while maintaining per-customer ordering?"
+
+**[SENIOR] Q7 - [SCENARIO] Design an order processing system that guarantees all state transitions for a given order are processed in sequence.**
+**[SENIOR] Q8 - [SCENARIO] How would you handle prioritizing high-value customers while maintaining per-customer ordering?**
 
 🗣️ "For order sequencing: use orderId as the Kafka partition key. All events for a given order land on the same partition. Configure the consumer to process records synchronously and commit only after completion. Add idempotency guards using orderId plus event type as a composite key in a deduplication store. For priority consumers: create two topics - orders-priority and orders-standard - or reserve specific partitions for high-value customers and have a dedicated consumer group with more instances on the priority topic."
 
-#### Debugging
-- "A consumer is processing order events out of order - where do you start?"
-- "How do you verify ordering guarantees in a Kafka topic?"
+
+**[SENIOR] Q9 - [DEBUGGING] A consumer is processing order events out of order - where do you start?**
+**[SENIOR] Q10 - [DEBUGGING] How do you verify ordering guarantees in a Kafka topic?**
 
 🗣️ "Out-of-order processing: first check if messages actually arrived in order at the broker using kafka-dump-log.sh to inspect the partition log and verify offset sequence. If the broker log is correct but the consumer processes out of order, check for: parallel async processing inside the consumer before committing, or redelivery after failure without idempotency guards. To verify ordering: check offset sequence with kafka-consumer-groups.sh and compare to expected business event sequence by matching event timestamps with offset numbers."
 
-#### Deep Dive
-- "How does Kafka's idempotent producer preserve ordering under retries?"
-- "What is the relationship between max.in.flight.requests.per.connection and ordering?"
+
+**[SENIOR] Q11 - [MECHANISM] How does Kafka's idempotent producer preserve ordering under retries?**
+**[SENIOR] Q12 - [MECHANISM] What is the relationship between max.in.flight.requests.per.connection and ordering?**
 
 🗣️ "The idempotent producer assigns each producer a Producer ID and each message a monotonically increasing sequence number per partition. The broker tracks the last received sequence number per producer-partition pair. If a retry arrives with the same sequence number as an already-written message, the broker discards the duplicate. Without idempotence, max.in.flight above 1 allows multiple in-flight batches simultaneously - if batch 2 is acknowledged before batch 1's retry, batch 1 ends up after batch 2 in the log. Idempotence with max.in.flight=5 is safe because the broker's sequence number tracking maintains correct order."
 
-#### Misconception / Trap
-- "Single Kafka partition gives strict global ordering so you do not need idempotency, right?"
-- "Ordering and exactly-once delivery are the same thing, right?"
+
+**[MID] Q13 - [MECHANISM] Single Kafka partition gives strict global ordering so you do not need idempotency, right?**
+**[MID] Q14 - [MECHANISM] Ordering and exactly-once delivery are the same thing, right?**
 
 🗣️ "Both wrong. A single partition gives strict partition-level ordering from the broker's perspective, but not from the consumer's. If the consumer processes a message and crashes before committing, the message is redelivered on restart - at the right offset position, but you have now processed some messages twice. Without idempotency, the second processing changes system state incorrectly. Ordering tells you the sequence; idempotency tells you what happens when you see the same sequence element twice. On the second: ordering and exactly-once are orthogonal. You can have in-order delivery with at-least-once semantics (Kafka default), or out-of-order delivery with exactly-once semantics. For stateful consumers you need both."
 
-#### Performance & Scalability
-- "What is the throughput cost of strict per-entity ordering in Kafka?"
-- "How does ordering interact with compression and batching?"
+
+**[STAFF] Q15 - [MECHANISM] What is the throughput cost of strict per-entity ordering in Kafka?**
+**[STAFF] Q16 - [MECHANISM] How does ordering interact with compression and batching?**
 
 🗣️ "Per-entity ordering via partition key has near-zero throughput cost. The partitioner's hash computation is O(1). The throughput ceiling is parallelism-driven: partition count times per-consumer throughput. The only cost is hot partitions - one entity generating dramatically more events than others overloads a single partition. The fix is a compound key with a shard suffix, accepting some ordering relaxation within the entity. For compression and batching: Kafka batches within a partition before writing to disk. Compression is per batch. Ordering is maintained within and across batches on the same partition. With idempotence enabled, multiple in-flight batches are safe because broker sequence number tracking reorders correctly."
 

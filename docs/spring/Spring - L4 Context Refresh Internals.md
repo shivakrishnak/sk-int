@@ -216,7 +216,7 @@ Phase 12: finishRefresh()
     (Kubernetes readiness becomes Ready here)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Context Startup and Refresh example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Circular dependency internals:**
 
@@ -248,7 +248,7 @@ With constructor injection - FAILS:
   or use @Lazy on one constructor parameter.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Phase 5 (BFPP invocation) and Phase 11 (instantiation) are architecturally
@@ -304,7 +304,7 @@ public class DatabaseUrlOverridePostProcessor
 }
 ```
 
-> **Code walkthrough:** BeanFactoryPostProcessor runs in Phase 5, before any
+> **Code walkthrough:** BeanFactoryPostProcessor runs in Phase 5, before anyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > beans are created. At this point, BeanDefinitions are mutable. We retrieve the
 > DataSource BeanDefinition and modify its "url" property value before the
 > DataSource bean is ever instantiated. This is how PropertySourcesPlaceholderConfigurer
@@ -366,7 +366,7 @@ public class TimingInterceptor
 }
 ```
 
-> **Code walkthrough:** BeanPostProcessor.postProcessAfterInitialization runs
+> **Code walkthrough:** BeanPostProcessor.postProcessAfterInitialization runsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > after every bean is fully initialized (after @PostConstruct). Returning a
 > different object replaces the bean in the context - this is exactly how AOP
 > proxies work. AbstractAutoProxyCreator is a BPP that checks every bean for
@@ -419,7 +419,7 @@ public class App {
 // Then: GET /actuator/startup
 ```
 
-> **Code walkthrough:** Spring Boot 2.5+ introduces BufferingApplicationStartup
+> **Code walkthrough:** Spring Boot 2.5+ introduces BufferingApplicationStartupice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which records timing for every startup step. /actuator/startup returns the data.
 > The built-in startup profiling is superior to custom BPPs for diagnosing slow
 > startup - it records phase durations with sub-millisecond precision and requires
@@ -528,7 +528,7 @@ Diagnosis:
 # Enable startup profiling
 spring.main.lazy-initialization=false  # ensure all beans init
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable startup profiling example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Then check /actuator/startup (requires BufferingApplicationStartup).
 Or add -Dspring.jmx.enabled=true and profile with VisualVM.
@@ -543,7 +543,7 @@ Hibernate schema validation on large schemas, too many beans instantiated eagerl
 
 ---
 
-#### Q1 - What is the difference between BeanFactoryPostProcessor and BeanPostProcessor?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between BeanFactoryPostProcessor and BeanPostProcessor?**
 
 **BeanFactoryPostProcessor (BFPP)**:
 - Runs in Phase 5, before any regular beans are instantiated
@@ -573,7 +573,7 @@ with Spring logging the warning about "not eligible for auto-proxying".
 
 ---
 
-#### Q2 - How does Spring handle circular dependencies?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does Spring handle circular dependencies?**
 
 Spring uses a three-level singleton cache in DefaultSingletonBeanRegistry:
 
@@ -616,7 +616,7 @@ or @Lazy on one constructor parameter (deferred proxy creation).
 
 ---
 
-#### Q3 - How does Spring Boot load auto-configurations during context refresh?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does Spring Boot load auto-configurations during context refresh?**
 
 Auto-configurations load during Phase 5 (invokeBeanFactoryPostProcessors)
 through this chain:
@@ -649,7 +649,7 @@ Spring Boot starter, use the new format.
 
 ---
 
-#### Q4 - What is the SmartInitializingSingleton and when does it run?
+**[MID] Q4 - [CONCEPTUAL] What is the SmartInitializingSingleton and when does it run?**
 
 SmartInitializingSingleton is an interface with afterSingletonsInstantiated().
 It runs after ALL singleton beans are fully initialized (at the very end of
@@ -678,7 +678,7 @@ public class RouteRegistry
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable startup profiling example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 SmartInitializingSingleton vs @PostConstruct:
 - @PostConstruct: runs as THIS bean is initialized.
@@ -697,7 +697,7 @@ the most common Spring initialization ordering bug.
 
 ---
 
-#### Q5 - How does lazy initialization affect context startup?
+**[MID] Q5 - [CONCEPTUAL] How does lazy initialization affect context startup?**
 
 spring.main.lazy-initialization=true defers all singleton instantiation
 from startup to first access:
@@ -733,14 +733,14 @@ for Tomcat and scheduled tasks.
 
 ---
 
-#### Q6 - How do you profile slow Spring Boot startup?
+**[MID] Q6 - [CONCEPTUAL] How do you profile slow Spring Boot startup?**
 
 Approach 1 - BufferingApplicationStartup (Spring Boot 2.5+):
 ```java
 app.setApplicationStartup(
     new BufferingApplicationStartup(2048));
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Then GET /actuator/startup (requires Actuator + exposure).
 Returns per-step timing including "spring.beans.instantiate" for each bean.
@@ -749,7 +749,7 @@ Approach 2 - Spring Debug Logging:
 ```properties
 logging.level.org.springframework=DEBUG
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Logs every phase and bean instantiation (verbose - use with -Dlogging only).
 
@@ -765,7 +765,7 @@ Approach 4 - Spring Boot Startup Analyzer (community):
 spring.boot.startup.report=enabled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Quick wins:
 - Exclude unused @ComponentScan packages
@@ -780,7 +780,7 @@ beans (async initialization, lazy loading of caches) has disproportionate impact
 
 ---
 
-#### Q7 - What is the role of ConfigurationClassPostProcessor?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the role of ConfigurationClassPostProcessor?**
 
 ConfigurationClassPostProcessor (CCPP) is the most important BeanFactoryPostProcessor.
 It runs first in Phase 5 and processes ALL configuration metadata:
@@ -811,7 +811,7 @@ beans BEFORE processing the auto-configurations they import.
 
 ---
 
-#### Q8 - How does Spring handle the ContextRefreshedEvent and ApplicationReadyEvent?
+**[SENIOR] Q8 - [CONCEPTUAL] How does Spring handle the ContextRefreshedEvent and ApplicationReadyEvent?**
 
 Two events at the end of startup, with different guarantees:
 
@@ -848,7 +848,7 @@ provides the correct hook. The pod readiness probe should point to
 
 ---
 
-#### Q9 - What is the difference between @ComponentScan and @Import?
+**[SENIOR] Q9 - [CONCEPTUAL] What is the difference between @ComponentScan and @Import?**
 
 **@ComponentScan**:
 - Scans specified packages for @Component, @Service, @Repository, @Controller
@@ -879,7 +879,7 @@ auto-configurations are loaded via ImportSelector rather than component scan.
 
 ---
 
-#### Q10 - How does Spring Boot implement graceful shutdown?
+**[STAFF] Q10 - [HANDS-ON] How does Spring Boot implement graceful shutdown?**
 
 Spring Boot 2.3+ graceful shutdown:
 
@@ -903,7 +903,7 @@ server.shutdown=graceful
 spring.lifecycle.timeout-per-shutdown-phase=30s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Kubernetes preStop hook (aligned with graceful shutdown):
 ```yaml
@@ -912,7 +912,7 @@ lifecycle:
     exec:
       command: ["sh", "-c", "sleep 15"]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The sleep gives Kubernetes time to remove the pod from Service endpoints
 before Spring starts refusing connections.
@@ -926,7 +926,7 @@ endpoint propagation time.
 
 ---
 
-#### Q11 - How do SmartLifecycle beans interact with context startup and shutdown?
+**[STAFF] Q11 - [CONCEPTUAL] How do SmartLifecycle beans interact with context startup and shutdown?**
 
 SmartLifecycle extends Lifecycle and Phased:
 
@@ -968,7 +968,7 @@ public class CacheWarmupLifecycle
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Startup: SmartLifecycle.start() is called in Phase 12 of refresh().
 Beans with lower phase numbers start first.
@@ -987,7 +987,7 @@ the Runnable overload is essential: call runnable.run() only when truly stopped.
 
 ---
 
-#### Q12 - What changed in the Spring context startup model in Spring Boot 3 and Spring Framework 6?
+**[STAFF] Q12 - [CONCEPTUAL] What changed in the Spring context startup model in Spring Boot 3 and Spring Framework 6?**
 
 Several significant changes:
 

@@ -169,7 +169,7 @@ JWKS caching:
   Automatic key rotation support built-in
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Security OAuth2 and JWT example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Spring Security's resource server performs all validation locally using cached
@@ -258,7 +258,7 @@ spring.security.oauth2.resourceserver.jwt
 #   .jwk-set-uri=https://auth.example.com/.well-known/jwks.json
 ```
 
-> **Code walkthrough:** The oauth2ResourceServer().jwt() configuration enables
+> **Code walkthrough:** The oauth2ResourceServer().jwt() configuration enablesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > JWT authentication. Spring auto-configures NimbusJwtDecoder using the issuer-uri's
 > OIDC discovery endpoint. The jwtConverter overrides the default scope-based
 > authority mapping to use Keycloak's "roles" claim instead. hasAuthority("SCOPE_products:read")
@@ -318,7 +318,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** Custom JwtDecoder adds audience validation on top of
+> **Code walkthrough:** Custom JwtDecoder adds audience validation on top ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Spring's defaults (signature, expiry, issuer). The audience claim "aud" specifies
 > which services the token is intended for - validating it prevents token reuse
 > across services (if token for service-A is stolen, it should not work for
@@ -416,7 +416,7 @@ and authorityPrefix.
 
 ---
 
-#### Q1 - How does NimbusJwtDecoder verify a JWT?
+**[JUNIOR] Q1 - [HANDS-ON] How does NimbusJwtDecoder verify a JWT?**
 
 NimbusJwtDecoder (from Nimbus JOSE + JWT library) performs:
 
@@ -456,7 +456,7 @@ cascading JWKS re-fetches.
 
 ---
 
-#### Q2 - How do you configure multi-tenant JWT validation?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you configure multi-tenant JWT validation?**
 
 Multi-tenant: different tenants may use different identity providers (or
 different Keycloak realms). The JWT "iss" claim identifies the issuer.
@@ -499,7 +499,7 @@ private AuthenticationManager createAuthManager(
         authManagerResolver()))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Dynamic multi-tenant (tenants added at runtime):
 ```java
@@ -522,7 +522,7 @@ JwtIssuerAuthenticationManagerResolver
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The JwtIssuerAuthenticationManagerResolver
 reads the "iss" claim WITHOUT validating the JWT (to know which decoder to use).
@@ -533,7 +533,7 @@ the issuer against a known allowlist before creating an AuthenticationManager.
 
 ---
 
-#### Q3 - How do you handle JWT expiry and clock skew?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you handle JWT expiry and clock skew?**
 
 JWT expiry (exp claim) validation:
 
@@ -560,7 +560,7 @@ JwtDecoder jwtDecoder() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Short-lived JWTs + refresh tokens pattern:
 - Access token: 15 minutes (exp)
@@ -582,7 +582,7 @@ all pods use the same NTP server.
 
 ---
 
-#### Q4 - How does Spring OAuth2 client handle service-to-service authentication?
+**[MID] Q4 - [CONCEPTUAL] How does Spring OAuth2 client handle service-to-service authentication?**
 
 For service-to-service calls (no user context, service authenticates itself):
 
@@ -622,7 +622,7 @@ WebClient inventoryClient(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The OAuth2AuthorizedClientManager automatically:
 1. Checks for a cached token for "order-service" client
@@ -639,7 +639,7 @@ RedisTemplate.
 
 ---
 
-#### Q5 - What is the difference between JWT and opaque tokens?
+**[MID] Q5 - [CONCEPTUAL] What is the difference between JWT and opaque tokens?**
 
 **JWT (JSON Web Token)**:
 - Self-contained: claims encoded in token body
@@ -671,7 +671,7 @@ Response: {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Spring configuration for opaque tokens:
 ```java
@@ -684,7 +684,7 @@ Spring configuration for opaque tokens:
             "resource-server-secret")));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The trade-off is revocability vs performance.
 For most microservice APIs, JWT is the right choice: stateless, fast, scales
@@ -696,7 +696,7 @@ within the cache TTL.
 
 ---
 
-#### Q6 - How do you implement token propagation in microservices?
+**[MID] Q6 - [HANDS-ON] How do you implement token propagation in microservices?**
 
 Token propagation: when Service A receives a JWT from a client, it propagates
 the same JWT to downstream Service B.
@@ -736,7 +736,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Spring annotation. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Pattern 2 - Token exchange (RFC 8693):
 Service A exchanges the user JWT for a service-scoped JWT:
@@ -748,7 +748,7 @@ subject_token_type=urn:ietf:params:oauth:token-type:jwt
 requested_token_type=urn:ietf:params:oauth:token-type:jwt
 audience=inventory-service
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Returns a new JWT scoped for inventory-service with user's identity.
 
@@ -761,7 +761,7 @@ what Service B needs. This is the principle of least privilege applied to token 
 
 ---
 
-#### Q7 - How do you test OAuth2-protected endpoints?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you test OAuth2-protected endpoints?**
 
 Spring Security Test provides @WithMockUser which works for basic auth but
 not JWT. For JWT, use SecurityMockMvcRequestPostProcessors:
@@ -804,7 +804,7 @@ class OrderControllerTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The jwt() post-processor creates a JwtAuthenticationToken without actual
 JWT validation - no issuer-uri or JWKS needed in tests.
@@ -818,7 +818,7 @@ Keycloak instance and issue real JWTs.
 
 ---
 
-#### Q8 - How do you extract custom JWT claims for authorization?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you extract custom JWT claims for authorization?**
 
 Standard JWT claims (sub, iss, aud, exp, scope) are handled by Spring
 Security. Custom claims need custom extraction:
@@ -860,7 +860,7 @@ JwtAuthenticationConverter keycloakJwtConverter() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Accessing claims in controllers:
 ```java
@@ -875,7 +875,7 @@ Jwt jwt = (Jwt) SecurityContextHolder.getContext()
     .getAuthentication().getPrincipal();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Different identity providers use different
 claim structures for roles. Auth0 uses "https://{namespace}/roles" custom claims.
@@ -886,7 +886,7 @@ claim formats prevents authorization bugs when switching providers.
 
 ---
 
-#### Q9 - What are the security risks of JWT and how do you mitigate them?
+**[SENIOR] Q9 - [CONCEPTUAL] What are the security risks of JWT and how do you mitigate them?**
 
 Risk 1: Algorithm confusion attacks (alg=none / RS256 vs HS256 confusion)
 Attack: Attacker crafts token with alg=none (no signature) or switches from
@@ -924,7 +924,7 @@ This is becoming the standard for high-security financial APIs.
 
 ---
 
-#### Q10 - How do you handle token refresh in a resource server context?
+**[STAFF] Q10 - [CONCEPTUAL] How do you handle token refresh in a resource server context?**
 
 Resource servers don't handle token refresh - that's the client's responsibility.
 Resource servers only validate the access token they receive.
@@ -955,7 +955,7 @@ Resource server configuration to return proper 401:
     }));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using authentication. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Proactive refresh (client side): refresh the token 30 seconds BEFORE expiry
 to avoid the 401-then-retry latency on API calls.
@@ -969,7 +969,7 @@ is the Auth0/Keycloak-recommended pattern for SPAs that balances security
 
 ---
 
-#### Q11 - How does Spring Authorization Server work?
+**[STAFF] Q11 - [CONCEPTUAL] How does Spring Authorization Server work?**
 
 Spring Authorization Server (spring-authorization-server) is Spring's own
 implementation of an OAuth2 Authorization Server:
@@ -1013,7 +1013,7 @@ public class AuthorizationServerConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Features:
 - Authorization Code flow (with PKCE for SPAs)
@@ -1034,7 +1034,7 @@ on whether you need maximum control vs faster time to production.
 
 ---
 
-#### Q12 - How do you implement a stateless microservice session using JWT?
+**[STAFF] Q12 - [HANDS-ON] How do you implement a stateless microservice session using JWT?**
 
 Traditional sessions are server-side (session ID in cookie, session data in server
 memory). JWT-based "sessions" are stateless:
@@ -1052,7 +1052,7 @@ JWT payload carries session state:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Stateless session lifecycle:
 1. User logs in -> auth server issues JWT

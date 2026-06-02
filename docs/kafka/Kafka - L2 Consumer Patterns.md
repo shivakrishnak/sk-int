@@ -71,7 +71,7 @@ skip unread pages. Exactly-once: atomic bookmark + highlight operation."
 ### 📘 Concept Explanation
 
 **Offset management strategies and their delivery semantics:**
-```
+```plaintext
 AT-LEAST-ONCE (standard approach):
 
   while (running) {
@@ -164,7 +164,7 @@ SEEK OPERATIONS FOR REPLAY:
   // Use case: replay the last 2 hours after a processing bug.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Consumer Patterns example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -217,32 +217,32 @@ public void run() {
 }
 ```
 
-> **Code walkthrough:** `commitAsync()` in the main loop does not block the consumer thread -
-> Kafka sends the commit request in the background, allowing the next `poll()` to run immediately.
-> On shutdown, `WakeupException` is thrown by `consumer.wakeup()` (called from a shutdown hook).
-> The `finally` block calls `commitSync()` - this blocks until the broker acknowledges the last
-> commit, ensuring no un-committed offsets are left behind on a graceful shutdown. The
-> `consumer.close()` also performs a final commit, but making it explicit adds clarity.
+> **Code walkthrough:** `commitAsync()` in the main loop does not block the consice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> Kafka sends the commit request in the background, allowing the next `poll()` t
+> On shutdown, `WakeupException` is thrown by `consumer.wakeup()` (called from a
+> The `finally` block calls `commitSync()` - this blocks until the broker acknow
+> commit, ensuring no un-committed offsets are left behind on a graceful shutdow
+> `consumer.close()` also performs a final commit, but making it explicit adds c
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Offset = position in partition. Committing = telling Kafka "I've processed up to here". Auto-commit:
-> easy but risk of duplicates or loss. Manual `commitSync()` after processing: at-least-once (safe
-> default). `commitAsync()`: faster, non-blocking. Use both: async in loop, sync on close.
+> Offset = position in partition. Committing = telling Kafka "I've processed up 
+> easy but risk of duplicates or loss. Manual `commitSync()` after processing: a
+> default). `commitAsync()`: faster, non-blocking. Use both: async in loop, sync
 
 ---
 
 **Senior / Staff (5+ years):**
-> The seek + external offset store pattern is the foundation of exactly-once with JPA/SQL databases.
-> Store the Kafka offset in the same DB transaction as the business record. On startup: `seek()` to
-> the DB-stored offset. This makes the consumer's progress fully recoverable from the DB state.
-> Kafka's own `__consumer_offsets`: used as a fallback if the DB has no stored offset for the
-> partition. The edge case: new partition added (topic rebalanced). No DB offset for the new
-> partition. Consumer falls back to `auto.offset.reset=earliest` or the Kafka committed offset.
-> Handle in `onPartitionsAssigned`: check DB first, then Kafka committed, then `auto.offset.reset`.
+> The seek + external offset store pattern is the foundation of exactly-once wit
+> Store the Kafka offset in the same DB transaction as the business record. On s
+> the DB-stored offset. This makes the consumer's progress fully recoverable fro
+> Kafka's own `__consumer_offsets`: used as a fallback if the DB has no stored o
+> partition. The edge case: new partition added (topic rebalanced). No DB offset
+> partition. Consumer falls back to `auto.offset.reset=earliest` or the Kafka co
+> Handle in `onPartitionsAssigned`: check DB first, then Kafka committed, then `
 
 ---
 
@@ -250,11 +250,11 @@ public void run() {
 
 **Misconception: "Committing every record individually gives the strongest delivery guarantee."**
 Committing after every single record (`commitSync()` per record) is the most conservative approach
-but not always the strongest from a correctness standpoint. Per-record commits: (1) 100-1000x slower
-than batch commits (one network round-trip per record). (2) Still at-least-once: if the process
-crashes after processing but before the commit, the record is re-delivered. (3) The commit itself
-can fail (`CommitFailedException` if rebalanced out of the group). Stronger guarantee: exactly-once
-by including the offset commit in a database transaction (external offset store). A per-record
+but not always the strongest from a correctness standpoint. Per-record commits: 
+than batch commits (one network round-trip per record). (2) Still at-least-once:
+crashes after processing but before the commit, the record is re-delivered. (3) 
+can fail (`CommitFailedException` if rebalanced out of the group). Stronger guar
+by including the offset commit in a database transaction (external offset store)
 Kafka commit is semantically correct but unnecessarily expensive. Practical rule: commit after each
 batch (`commitSync()` after the `for` loop over a poll batch). For high throughput: `commitAsync()`
 with a sync on shutdown.
@@ -263,13 +263,13 @@ with a sync on shutdown.
 
 ### ⚖️ Comparison Table
 
-| Strategy | Delivery | Speed | Complexity | When |
-|---|---|---|---|---|
-| Auto-commit | At-least-once | Fastest | Lowest | Idempotent consumers only |
-| commitSync() per batch | At-least-once | Moderate | Low | Standard production |
-| commitAsync() + sync close | At-least-once | Fast | Moderate | High throughput |
-| External offset store | Exactly-once | Moderate | High | Financial, no duplicates |
-| Commit before processing | At-most-once | Fast | Low | Acceptable-loss telemetry |
+| Strategy| Delivery| Speed| Complexity| When|
+|------------------|-------------|--------|----------|-------------------------|
+| Auto-commit| At-least-once| Fastest| Lowest| Idempotent consumers only|
+| commitSync() per batch| At-least-once| Moderate| Low| Standard production|
+| commitAsync() + sync close| At-least-once| Fast| Moderate| High throughput|
+| External offset store| Exactly-once| Moderate| High| Financial, no duplicates|
+| Commit before processing| At-most-once| Fast| Low| Acceptable-loss telemetry|
 
 ---
 
@@ -283,7 +283,7 @@ with a sync on shutdown.
 
 **Offset commit and recovery timeline:**
 
-```
+```plaintext
   TIMELINE: commit after processing (at-least-once)
 
   Poll 1:    offsets 0-9 returned
@@ -328,7 +328,7 @@ stateDiagram-v2
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: CommitFailedException - consumer committed after leaving the group.**
-```
+```plaintext
 Symptom: "org.apache.kafka.clients.consumer.CommitFailedException:
   Commit cannot be completed since the consumer is not part of an active group"
 
@@ -362,7 +362,7 @@ Fix:
     // Heartbeat maintained. max.poll.interval.ms timer restarted on each poll.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -462,7 +462,7 @@ Pause: receive no work but stay alive."
 ### 📘 Concept Explanation
 
 **Poll loop internals and control patterns:**
-```
+```plaintext
 WHAT poll() DOES INTERNALLY:
 
   1. Ensure subscribed topics have partition assignments.
@@ -548,7 +548,7 @@ SINGLE-THREADED CONSTRAINT:
     // Fix: reduce max.poll.records or use pause/resume pattern.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -597,11 +597,11 @@ while (running) {
 // processingQueue.take() -> process -> mark offset for commit
 ```
 
-> **Code walkthrough:** The bounded queue acts as a buffer between the Kafka consumer thread and
-> the processing thread pool. When the queue reaches 80% capacity: the consumer pauses (no more
-> records fetched). When the queue drains: the consumer resumes. The `consumer.poll()` continues
-> to run (even when paused) to maintain heartbeat and group membership. This prevents the consumer
-> from being kicked out of the group due to slow processing. The `offer()` with timeout prevents
+> **Code walkthrough:** The bounded queue acts as a buffer between the Kafka conice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> the processing thread pool. When the queue reaches 80% capacity: the consumer 
+> records fetched). When the queue drains: the consumer resumes. The `consumer.p
+> to run (even when paused) to maintain heartbeat and group membership. This pre
+> from being kicked out of the group due to slow processing. The `offer()` with 
 > the consumer thread from blocking indefinitely if the queue is full.
 
 ---
@@ -609,21 +609,21 @@ while (running) {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Poll loop: the main consumer loop. `poll(duration)`: fetches records AND sends heartbeat. Must
-> call poll() regularly (within `max.poll.interval.ms`, default 5 min). Slow processing: call
-> `consumer.pause()` to stop receiving records without leaving the group. Empty poll result:
+> Poll loop: the main consumer loop. `poll(duration)`: fetches records AND sends
+> call poll() regularly (within `max.poll.interval.ms`, default 5 min). Slow pro
+> `consumer.pause()` to stop receiving records without leaving the group. Empty 
 > normal when no new messages. Keep the loop running.
 
 ---
 
 **Senior / Staff (5+ years):**
-> The poll loop is single-threaded by design. KafkaConsumer is not thread-safe. For parallel
-> processing: use a single consumer thread for poll/commit/offset management. Offload CPU-bound
-> work to a thread pool but control flow back to the consumer thread for commits. The hardest
-> part: ensuring commits happen after all in-flight work completes. `Future.get()` on each
-> processing future: blocks the consumer thread until the batch is done. For very slow processing:
-> pause/resume to avoid `max.poll.interval.ms` violations. Spring Kafka `@KafkaListener` with
-> `ConcurrentKafkaListenerContainerFactory` abstracts most of this: configures thread count equal
+> The poll loop is single-threaded by design. KafkaConsumer is not thread-safe. 
+> processing: use a single consumer thread for poll/commit/offset management. Of
+> work to a thread pool but control flow back to the consumer thread for commits
+> part: ensuring commits happen after all in-flight work completes. `Future.get(
+> processing future: blocks the consumer thread until the batch is done. For ver
+> pause/resume to avoid `max.poll.interval.ms` violations. Spring Kafka `@KafkaL
+> `ConcurrentKafkaListenerContainerFactory` abstracts most of this: configures t
 > to partition count (one consumer thread per partition per instance).
 
 ---
@@ -638,20 +638,20 @@ in this case: makes things worse (more records, more processing time, guaranteed
 throughput bottleneck is usually processing speed, not fetch speed. Rule: tune `max.poll.records`
 so that one full batch can be processed within `max.poll.interval.ms / 3` (leave headroom). If
 processing is the bottleneck: parallelize processing (thread pool), not fetch size. Monitor:
-`records-per-request-avg` and `fetch-latency-avg` vs `poll-idle-ratio`. Low `poll-idle-ratio`
+`records-per-request-avg` and `fetch-latency-avg` vs `poll-idle-ratio`. Low `pol
 (consumer spending most time processing, not waiting) = processing is the bottleneck.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Pattern | Use Case | Trade-off |
-|---|---|---|
-| Synchronous poll loop | Simple processing | Easiest, limited parallelism |
-| Async with pause/resume | Slow downstream, backpressure | Complex offset tracking |
-| Thread pool per batch | CPU-bound processing | Must handle commit after all futures done |
-| Multi-consumer (same group) | High partition count | Simpler than multi-thread per consumer |
-| Spring `@KafkaListener` | Spring Boot apps | Abstracted, configurable concurrency |
+| Pattern| Use Case| Trade-off|
+|------|-----------------------------|-----------------------------------------|
+| Synchronous poll loop| Simple processing| Easiest, limited parallelism|
+| Async with pause/resume| Slow downstream, backpressure| Complex offset trackin
+| Thread pool per batch| CPU-bound processing| Must handle commit after all futu
+| Multi-consumer (same group)| High partition count| Simpler than multi-thread p
+| Spring `@KafkaListener`| Spring Boot apps| Abstracted, configurable concurrenc
 
 ---
 
@@ -755,7 +755,7 @@ Fix:
     Avoids rebalance on brief restarts (within session.timeout.ms).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

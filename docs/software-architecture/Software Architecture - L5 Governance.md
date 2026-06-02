@@ -179,7 +179,7 @@ make local decisions but are expected to justify deviations.
 // No one knows why.
 ```
 
-> **Code walkthrough:** Document-only governance fails because
+> **Code walkthrough:** Document-only governance fails becauseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > documents are not enforced and go stale. Email governance fails
 > because follow-through depends on individual vigilance. The
 > architectural standards exist in principle but not in practice.
@@ -355,7 +355,7 @@ Governance health metrics:
 - ARB escalations vs team decision ratio: < 5%: BOTTLENECK
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ADR-011: Async-First Cross-Service Communication example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Shift from centralized approval to federated guardrails.
 Convert the most common ARB decisions into golden path defaults.
@@ -378,7 +378,7 @@ find . -name "pom.xml" -exec grep -h "<artifactId>" {} \; |
 # Multiple message broker libraries = technology proliferation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multiple message broker libraries = technology prolice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Publish an internal technology radar with ADOPT/HOLD rings.
 Parent POM with managed dependency versions: using a non-adopted
@@ -389,13 +389,13 @@ Migrate HOLD technology usage to ADOPT technology on a schedule.
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation | Target |
-|---|---|
-| Time to prep | 30 minutes |
-| Core themes | Golden path, fitness functions, technology radar, architecture forum |
-| Seniority signal | Junior: process; Senior: automated enforcement; Staff: governance as product, metrics |
-| Common trap | Describing ARB as the governance model |
-| Staff differentiator | Governance metrics, theater detection, architecture as product |
+| Preparation| Target|
+|---|--------------------------------------------------------------------------|
+| Time to prep| 30 minutes|
+| Core themes| Golden path, fitness functions, technology radar, architecture fo
+| Seniority signal| Junior: process; Senior: automated enforcement; Staff: gover
+| Common trap| Describing ARB as the governance model|
+| Staff differentiator| Governance metrics, theater detection, architecture as p
 
 ---
 
@@ -722,14 +722,14 @@ platform direction).
 
 Governance responsibilities:
 
-| Responsibility | Staff Engineer | Principal Architect |
-|---|---|---|
-| Service-level ADRs | Owns and decides | Reviews on escalation |
-| Cross-service ADRs | Co-author, advocate | Final decision |
-| Golden path updates | Implements for area | Reviews for consistency |
-| Technology radar | Nominates technologies | Curates radar |
-| Fitness function suite | Implements for area | Sets standards |
-| Architecture forum | Attends, contributes | Facilitates |
+| Responsibility| Staff Engineer| Principal Architect|
+|---|--------------------------------------------|-----------------------------|
+| Service-level ADRs| Owns and decides| Reviews on escalation|
+| Cross-service ADRs| Co-author, advocate| Final decision|
+| Golden path updates| Implements for area| Reviews for consistency|
+| Technology radar| Nominates technologies| Curates radar|
+| Fitness function suite| Implements for area| Sets standards|
+| Architecture forum| Attends, contributes| Facilitates|
 
 "Technical leadership without authority": neither Staff Engineers
 nor Principal Architects have the authority to order engineers
@@ -924,26 +924,25 @@ describe a structured exception process with justification,
 time bounds, and review dates - and distinguish legitimate
 technical justifications from convenience-based exceptions.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Fitness functions, schema registry, ADR process |
-| Hiring Manager | Team-level governance, Conway's Law, organizational design |
-| Bar Raiser | Governance metrics, theater detection, exception process |
-| Peer Engineer | Golden path implementation, ArchUnit rules, forum format |
+| Interviewer Type| Emphasis|
+| Technical Panel| Fitness functions, schema registry, ADR process|
+| Hiring Manager| Team-level governance, Conway's Law, organizational design|
+| Bar Raiser| Governance metrics, theater detection, exception process|
+| Peer Engineer| Golden path implementation, ArchUnit rules, forum format|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Governance Mechanism | Scales To | Enforces | Limitation |
-|---|---|---|---|
-| Architecture Review Board | 5-10 teams | Novel decisions | Bottleneck at 10+ teams |
-| Architecture Principles | Unlimited | Philosophy / direction | Not enforceable automatically |
-| Golden Path | Unlimited | Recommended approach | Requires maintenance; stale if not owned |
-| Fitness Functions | Unlimited | Structural rules | Requires tooling investment |
-| Technology Radar | Unlimited | Technology selection guidance | Cannot block non-compliance without parent POM |
-| Architecture Forum | 30-100 teams | Learnings, ADR decisions | Slow if overloaded |
-| Architecture Champions | Unlimited | Local quality | Requires training investment |
+| Governance Mechanism| Scales To| Enforces| Limitation|
+|---|---|-----------------------|----------------------------------------------|
+| Architecture Review Board| 5-10 teams| Novel decisions| Bottleneck at 10+ team
+| Architecture Principles| Unlimited| Philosophy / direction| Not enforceable au
+| Golden Path| Unlimited| Recommended approach| Requires maintenance; stale if n
+| Fitness Functions| Unlimited| Structural rules| Requires tooling investment|
+| Technology Radar| Unlimited| Technology selection guidance| Cannot block non-c
+| Architecture Forum| 30-100 teams| Learnings, ADR decisions| Slow if overloaded
+| Architecture Champions| Unlimited| Local quality| Requires training investment
 
 ---
 

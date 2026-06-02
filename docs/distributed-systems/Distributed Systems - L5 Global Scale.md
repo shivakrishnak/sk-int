@@ -162,7 +162,7 @@ Level 5 - Data residency enforcement:
          custom shard routing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Global-Scale Distributed System Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The speed-of-light constraint:**
 
@@ -180,7 +180,7 @@ Resolution: serve Tokyo users from a Tokyo (or Singapore) region.
 Any data the Tokyo service needs from NY: asynchronously pre-replicated.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Global-Scale Distributed System Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Active-Active vs. Active-Passive multi-region:**
 
@@ -217,7 +217,7 @@ Active-Active (harder, higher availability):
   route to their home region primary, preventing conflicts)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Global databases (when to use):**
 
@@ -246,7 +246,7 @@ Most applications:
   - 95% of operations stay within one region anyway
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **CDN architecture pattern (most impactful for latency):**
 
@@ -275,7 +275,7 @@ CDN with authentication:
     fetch user-specific data from regional service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Global scale requires a tiered approach. Not all data and
@@ -297,6 +297,12 @@ consistency.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GLOBAL-SCALE PATTERNS - User Data Routing
@@ -419,7 +425,7 @@ public class ProductService {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern ignores geography entirely:
+> **Code walkthrough:** The BAD pattern ignores geography entirely:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > every user hits the same single-region database, causing 170ms
 > RTT for distant users and GDPR violations for EU users. The
 > GOOD `RegionAwareUserService` looks up the user's home region
@@ -599,12 +605,12 @@ GDPR compliance:
 
 Traffic numbers:
   1B users, 300M DAU, 30M concurrent at peak
-  3B feed reads/day → 35,000 reads/sec → 90% CDN hit rate → 3,500 RPS to Feed Service
-  300M posts/day → 3,500 writes/sec → distributed across 5 regions → 700 writes/sec/region
+  3B feed reads/day → 35,000 reads/sec → 90% CDN hit rate → 3,500 RPS to Feed Se
+  300M posts/day → 3,500 writes/sec → distributed across 5 regions → 700 writes/
   Each region: 3,500 RPS reads + 700 writes/sec (very manageable per region)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -705,7 +711,7 @@ grep "GET / HTTP" /var/log/nginx/access.log | \
 # "Cache Miss Rate" spike at the same time = invalidation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Cache Miss Rate" spike at the same time = invalidation example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix 1: staggered cache invalidation. Invalidate CDN regions
 one at a time (5 minutes apart). Not all 250 POPs at once.
@@ -725,7 +731,7 @@ limit_req zone=origin_protect burst=200 nodelay;
 # Others return 429 or serve stale CDN content
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Others return 429 or serve stale CDN content example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -758,7 +764,7 @@ kafka-consumer-groups.sh \
 # "LAG" column: should be < 1000, was 850,000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "LAG" column: should be < 1000, was 850,000 example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix (short-term): for inventory reads specifically, always
 read from primary (no replica):
@@ -782,7 +788,7 @@ public class InventoryService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "LAG" column: should be < 1000, was 850,000 example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix (long-term): inventory depletion is a CP operation.
 Use a globally consistent counter (DynamoDB Global Tables
@@ -816,7 +822,7 @@ aws logs filter-log-events \
 # If results: EU PII in US logs = GDPR violation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If results: EU PII in US logs = GDPR violation example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 1. Immediate: remove all PII from structured log context.
@@ -839,7 +845,7 @@ Fix:
    # Block deployment if PII detected in logs
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block deployment if PII detected in logs example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 ---
 
@@ -858,10 +864,9 @@ Fix:
 
 ---
 
-**Q1 (Clarification) - When does a system "need" to be global?
-What are the triggers?**
+**[JUNIOR] Q1 - [MECHANISM] When does a system "need" to be global? What are the triggers?**
 
-A: Most systems should not be global until they face specific
+Most systems should not be global until they face specific
 triggers. Premature globalization adds enormous complexity for
 no user benefit.
 
@@ -913,10 +918,9 @@ future scale.
 
 ---
 
-**Q2 (Mechanism) - How does GeoDNS work for global routing?
-What are its limitations?**
+**[JUNIOR] Q2 - [MECHANISM] How does GeoDNS work for global routing? What are its limitations?**
 
-A: GeoDNS (Geographic DNS) routes users to different IP
+GeoDNS (Geographic DNS) routes users to different IP
 addresses based on their location:
 
 ```
@@ -933,7 +937,7 @@ DNS resolution:
   TTL: 60-300 seconds (DNS cache duration)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block deployment if PII detected in logs example deice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Route53 latency-based routing:
 ```
@@ -944,7 +948,7 @@ to Route53 resolvers worldwide.
 This is more accurate than geographic lookup alone.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block deployment if PII detected in logs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Limitations:**
 
@@ -996,10 +1000,9 @@ Understanding both approaches and their trade-offs shows architectural depth.
 
 ---
 
-**Q3 (Mechanism) - How does DynamoDB Global Tables handle
-cross-region replication and conflict resolution?**
+**[JUNIOR] Q3 - [MECHANISM] How does DynamoDB Global Tables handle cross-region replication and conflict resolution?**
 
-A: DynamoDB Global Tables provides multi-region, multi-primary
+DynamoDB Global Tables provides multi-region, multi-primary
 replication:
 
 **Replication model:**
@@ -1030,7 +1033,7 @@ Conflict resolution (Last-Writer-Wins by timestamp):
   Result: both regions converge to "Bob" (last writer wins)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block deployment if PII detected in logs example deice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Consistency modes:**
 - Read from any region: eventually consistent (replica may be slightly behind)
@@ -1070,8 +1073,7 @@ Dynamo paper solved with vector clocks. DynamoDB Global Tables
 
 ---
 
-**Q4 (Trade-off) - Compare CDN-edge compute vs. regional
-microservices for personalization.**
+**[MID] Q4 - [TRADE-OFF] Compare CDN-edge compute vs. regional microservices for personalization.**
 
 A:
 
@@ -1122,7 +1124,7 @@ Regional service:
   - Return personalized response
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the hybrid architecture.
 The real production pattern is neither "CDN-only" nor "regional-
@@ -1134,10 +1136,9 @@ and caches results back to the edge for subsequent requests.
 
 ---
 
-**Q5 (Failure / Debugging) - Your EU region is returning stale
-data 3 hours after a global deployment. How do you investigate?**
+**[MID] Q5 - [DEBUGGING] Your EU region is returning stale data 3 hours after a global deployment. How do you investigate?**
 
-A: Structured investigation:
+Structured investigation:
 
 Step 1 - Determine what is stale and since when:
 ```bash
@@ -1153,7 +1154,7 @@ curl https://api.eu-west-1.example.com/products/X | \
 # 3 hours stale: EU replica stopped replicating at 11:00
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 3 hours stale: EU replica stopped replicating at 11:00 example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 2 - Check CDC / replication lag:
 ```bash
@@ -1170,7 +1171,7 @@ kafka-consumer-groups.sh \
 # Shows consumer group LAG
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows consumer group LAG example demonstrates shellice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3 - Root cause: replication stopped due to constraint error:
 ```bash
@@ -1185,7 +1186,7 @@ mysql -h us-primary -e "DESCRIBE products" | grep version_tag
 # → NOT NULL DEFAULT '' (added in deployment)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This → NOT NULL DEFAULT '' (added in deployment) example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 1. Apply schema migration to EU replica first
@@ -1210,12 +1211,17 @@ investigation to events at that timestamp.
 
 ---
 
-**Q6 (Trade-off) - How do you handle time zones and time-based
-data in a global system?**
+**[SENIOR] Q6 - [TRADE-OFF] How do you handle time zones and time-based data in a global system?**
 
-A: Time in global systems is one of the most common sources of bugs:
+Time in global systems is one of the most common sources of bugs:
 
 **Rule 1: Store all timestamps in UTC, always:**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: store in local time zone
 order.setCreatedAt(
@@ -1227,7 +1233,7 @@ order.setCreatedAt(
 // Or as UTC offset: 2024-01-15T14:03:21.000Z
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This → NOT NULL DEFAULT '' (added in deployment) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Rule 2: Display in user's local time zone, not server's:**
 ```javascript
@@ -1245,7 +1251,7 @@ const display = new Intl.DateTimeFormat('ja-JP', {
 // Shows: "2024年1月15日 23:03"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This → NOT NULL DEFAULT '' (added in deployice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Rule 3: Business logic uses UTC; never use local time for scheduling:**
 ```java
@@ -1262,7 +1268,7 @@ public void morningReport() {...}
 // "run_at_utc_hour": 14
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This → NOT NULL DEFAULT '' (added in deployment) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Rule 4: Time-based rate limiting uses sliding windows:**
 ```java
@@ -1273,7 +1279,7 @@ public void morningReport() {...}
 // Redis sliding window rate limiter: no time zone issues
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This → NOT NULL DEFAULT '' (added in deployice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Rule 5: Daylight Saving Time transitions:**
 - DST gaps/overlaps cause "duplicate" hours and "missing" hours
@@ -1291,8 +1297,7 @@ UTC for all scheduling eliminates this class of bug entirely.
 
 ---
 
-**Q7 (Code) - Implement a region-aware database router for
-read/write splitting with staleness control.**
+**[SENIOR] Q7 - [SCENARIO] Implement a region-aware database router for read/write splitting with staleness control.**
 
 A:
 ```java
@@ -1387,7 +1392,7 @@ public class ProductService {
 }
 ```
 
-> **Code walkthrough:** The `RegionAwareRouter` provides three
+> **Code walkthrough:** The `RegionAwareRouter` provides threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > consistency levels per query. STRONG reads always go to the
 > primary (no replica). BOUNDED reads check the current replication
 > lag from the `lagTracker`: if the local replica is within the
@@ -1404,8 +1409,7 @@ public class ProductService {
 
 ---
 
-**Q8 (System Design) - Design a global content moderation system
-for a 500M-user social network.**
+**[SENIOR] Q8 - [DESIGN] Design a global content moderation system for a 500M-user social network.**
 
 A:
 ```
@@ -1462,7 +1466,7 @@ Scale:
     → 500,000 human reviews/day (substantial moderation operation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the separate regional ML models.
 A single global moderation model applies US content norms globally.
@@ -1476,8 +1480,7 @@ in markets with strict content laws.
 
 ---
 
-**Q9 (Production) - What did you learn from operating a multi-region
-system in production? What surprised you?**
+**[SENIOR] Q9 - [SCENARIO] What did you learn from operating a multi-region system in production? What surprised you?**
 
 A:
 "My first multi-region deployment: we expanded a US-only SaaS
@@ -1526,10 +1529,9 @@ courses but is encountered in every enterprise multi-region deployment.
 
 ---
 
-**Q10 (Behavioral) - How do you make the case to your leadership
-for investing in global infrastructure?**
+**[SENIOR] Q10 - [BEHAVIORAL] How do you make the case to your leadership for investing in global infrastructure?**
 
-A: Structure the business case around four dimensions:
+Structure the business case around four dimensions:
 
 **1. Revenue at risk (market entry requirement):**
 "Our EU expansion deal with [Enterprise customer] requires GDPR
@@ -1575,10 +1577,9 @@ cases - not as a soft skill but as an engineering discipline.
 
 ---
 
-**Q11 (Mechanism) - How do you implement data residency enforcement
-at the application layer?**
+**[SENIOR] Q11 - [MECHANISM] How do you implement data residency enforcement at the application layer?**
 
-A: Data residency enforcement prevents personal data from
+Data residency enforcement prevents personal data from
 leaving a designated geographic region.
 
 **Layer 1: Infrastructure controls (prevent by default):**
@@ -1606,7 +1607,7 @@ AWS implementation:
   // EU-origin service cannot store data outside eu-west-1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Layer 2: Data classification tags:**
 ```java
@@ -1627,7 +1628,7 @@ public class UserProfile {
 // endpoint generates a compiler warning
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Layer 3: Application-level routing enforcement:**
 ```java
@@ -1654,7 +1655,7 @@ public class DataResidencyEnforcer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration using Spring annotation. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 **Layer 4: Logging and audit trail:**
 ```java
@@ -1682,7 +1683,7 @@ public class DataAccessAudit {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* the multi-layer enforcement.
 Many teams implement data residency at the infrastructure layer
@@ -1697,8 +1698,7 @@ stored appropriately.
 
 ---
 
-**Q12 (Behavioral) - A customer reports that their EU data was
-accessed from the US. How do you investigate and respond?**
+**[SENIOR] Q12 - [BEHAVIORAL] A customer reports that their EU data was accessed from the US. How do you investigate and respond?**
 
 A:
 "This is a GDPR security incident. The response has both
@@ -1723,7 +1723,7 @@ Immediate actions (first 30 minutes):
      --retention-in-days 365
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Extend log retention for affected period example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Investigation (next 2-4 hours):
 
@@ -1736,7 +1736,7 @@ Step 1: Access logs
    ORDER BY created_at DESC;
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Extend log retention for affected period example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 2: Correlate with infrastructure
    ```bash
@@ -1749,7 +1749,7 @@ Step 2: Correlate with infrastructure
      --region us-east-1
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Was there an unexpected IAM access? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Root cause
    Common causes: debug logging (reviewed earlier), a developer

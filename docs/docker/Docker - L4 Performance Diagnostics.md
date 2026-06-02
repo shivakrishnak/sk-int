@@ -81,6 +81,8 @@ shows a problem."
 ### 📘 Concept Explanation
 
 **docker stats, cgroup files, nsenter, perf, CPU throttle, I/O bottleneck:**
+
+{% raw %}
 ```
 DOCKER STATS INTERPRETATION:
 
@@ -248,16 +250,18 @@ PROFILING WITH PERF:
   # Open flame.svg: width = time spent. Identify hot code paths.
   # No changes to the container needed. perf runs on the host.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No changes to the container needed. perf runs on the host. example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A systematic shell script that runs the
+> **Code walkthrough:** A systematic shell script that runs theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > complete Docker performance diagnostic in sequence.
 
+{% raw %}
 ```bash
 #!/usr/bin/env bash
 # Usage: ./perf-diag.sh <container_name_or_id>
@@ -315,8 +319,9 @@ echo ""
 
 echo "=== Diagnosis complete ==="
 ```
+{% endraw %}
 
-> **Code walkthrough:** The script combines four diagnostic dimensions
+> **Code walkthrough:** The script combines four diagnostic dimensionsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in one pass. `docker stats --no-stream` gives the snapshot view
 > without continuous output. The cgroup CPU stat file provides throttle
 > metrics unavailable in `docker stats`. Memory cgroup files show byte-
@@ -456,7 +461,9 @@ flowchart TD
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Container appears healthy but requests have high P99 latency.**
-```
+
+{% raw %}
+```plaintext
 Symptom: docker stats shows CPU at 40%, memory at 50%. No OOM kills.
   But: application P99 latency is 2 seconds (SLA: 500ms).
   Metrics look fine. Application feels slow.
@@ -503,8 +510,9 @@ Fixes:
   # Lock contention: profile with async-profiler to find the lock.
   # Swap: set --memory-swappiness=0 to disable swap for this container.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Swap: set --memory-swappiness=0 to disable swap for this container. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

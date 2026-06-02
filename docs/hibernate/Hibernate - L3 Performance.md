@@ -133,7 +133,7 @@ Without N+1 (JOIN FETCH):
   = 5 total queries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The N+1 Problem: Detection and Solutions example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 N+1 is invisible in code. The line `orders.forEach(o -> process(o.getItems()))`
@@ -174,7 +174,7 @@ public List<OrderDTO> getOrders() {
 // Silent, no exception, grows with data
 ```
 
-> **Code walkthrough:** `o.getItems()` on each order triggers a lazy
+> **Code walkthrough:** `o.getItems()` on each order triggers a lazyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > load because `items` is a LAZY `@OneToMany` collection. Each call fires
 > a separate SELECT. The code is clean-looking but generates 101 queries
 > for 100 orders. At 10,000 orders, this becomes 10,001 queries per
@@ -205,12 +205,30 @@ public interface OrderRepository
 // One SQL query with LEFT JOIN - all data in single round trip
 ```
 
-> **Code walkthrough:** `LEFT JOIN FETCH o.items` adds the items
+> **Code walkthrough:** `LEFT JOIN FETCH o.items` adds the `items` collection to the SQL query, solving the N+1 problem for that association. **KEY MECHANISM:** Hibernate generates a single JOIN query instead of a separate SELECT per order; the result set contains one row per order-item combination. **WHY IT MATTERS:** eliminates N+1 queries - critical for performance when loading collections. **WHAT BREAKS:** fetching multiple collections simultaneously causes Cartesian product explosion; use separate queries or `@BatchSize` for multiple collections. **TAKEAWAY:** use JOIN FETCH for collections you know you need upfront; never blindly eager-fetch all associations.
 > to the SELECT result set in one query. `DISTINCT` is required because
 > the JOIN produces duplicate Order rows (one per item). Hibernate
 > deduplicates in memory. The query method is named to signal that it
 > loads the association (`WithItems`) - this is the convention that
 > prevents other developers from calling the wrong method.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: @BatchSize for general-purpose N+1 protection
@@ -232,13 +250,19 @@ List<Order> findByCustomerId(Long customerId);
 // Declared at method level, not in JPQL string
 ```
 
-> **Code walkthrough:** `@BatchSize(25)` on the collection changes lazy
+> **Code walkthrough:** `@BatchSize(25)` on the collection changes lazyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > loading from N individual queries to N/25 batch queries. For 100 users,
 > that is 4 queries instead of 100. The global property
 > `default_batch_fetch_size` applies this to all collections application-wide
 > without annotations. `@EntityGraph` at the repository method level is
 > the Spring Data declarative equivalent of JOIN FETCH - cleaner than
 > modifying the JPQL string.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: DTO projection - eliminates entity loading entirely
@@ -347,7 +371,7 @@ log.info("Queries: {}",
     QueryCountHolder.getGrandTotal().getTotal());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Disable OSIV (`spring.jpa.open-in-view=false`), load all
 needed data within `@Transactional`, return DTOs (not entities) from
@@ -366,6 +390,12 @@ Total rows: 100 × 5 items × 3 tags = 1,500 rows.
 each tag row for the same order.
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: Two JOIN FETCHes = cartesian product
 "SELECT DISTINCT o FROM Order o "
@@ -379,7 +409,7 @@ List<Order> findWithItems(Long customerId);
 // Load tags separately with @BatchSize on the collection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -407,7 +437,7 @@ public class UserProfile {
 // No per-row SELECT for profile existence check
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -423,8 +453,7 @@ public class UserProfile {
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-Explain the N+1 problem to someone who has never heard of it.
+**[JUNIOR] Q1 - [MECHANISM] Explain the N+1 problem to someone who has never heard of it.**
 
 *Why they ask:* N+1 is the #1 Hibernate interview topic and
 fundamental to ORM performance.
@@ -444,7 +473,7 @@ for (Order o : orders) {
         o.getItems().size()); // Query 2, 3, 4... N+1
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 With 100 orders, this fires 101 queries: 1 to get all orders,
 then 1 per order to get its items. With 10,000 orders, it is
@@ -470,9 +499,7 @@ why it matters at scale.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-Explain how JOIN FETCH prevents N+1 and when it is NOT the
-right solution.
+**[MID] Q2 - [MECHANISM] Explain how JOIN FETCH prevents N+1 and when it is NOT the right solution.**
 
 *Why they ask:* JOIN FETCH is the standard fix but has limitations.
 
@@ -486,7 +513,7 @@ collection data in the same result set:
        "LEFT JOIN FETCH o.items WHERE o.status = :s")
 List<Order> findWithItems(String s);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Generates one SQL:
 ```sql
@@ -494,7 +521,7 @@ SELECT DISTINCT o.*, i.* FROM orders o
 LEFT JOIN order_items i ON i.order_id = o.id
 WHERE o.status = ?
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 All order and item data comes back in one database round trip.
 Hibernate assembles the collections from the result set.
@@ -526,9 +553,7 @@ table into memory.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-How do you add query count assertions to your test suite to
-catch N+1 regressions automatically?
+**[SENIOR] Q3 - [DEBUGGING] How do you add query count assertions to your test suite to catch N+1 regressions automatically?**
 
 *Why they ask:* Reactive N+1 fixing is less effective than
 automated prevention.
@@ -548,7 +573,7 @@ Setup with Datasource Proxy:
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // TestConfig: wrap DataSource with counting proxy
@@ -595,7 +620,7 @@ void loadOrdersWithItemsShouldFireTwoQueriesMax() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 This test fails if the query count exceeds 2. Any code change that
 introduces N+1 (removes JOIN FETCH, adds a new lazy collection)
@@ -610,11 +635,7 @@ visible and self-documenting.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-You have a user list endpoint that needs to show username,
-email, number of orders, and latest order date for each user.
-You have 50,000 users. What is the most efficient data access
-strategy?
+**[SENIOR] Q4 - [TRADE-OFF] You have a user list endpoint that needs to show username, email, number of orders, and latest order date for each user. You have 50,000 users. What is the most efficient data access strategy?**
 
 *Why they ask:* Tests ability to choose the right tool for
 the access pattern, not just eliminate N+1.
@@ -642,7 +663,7 @@ public record UserSummaryDTO(
 Page<UserSummaryDTO> findUserSummaries(Pageable pageable);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 One SQL query with a LEFT JOIN and GROUP BY. No entity loading,
 no LAZY proxy initialization, no N+1 possible, no cartesian product.
@@ -660,7 +681,7 @@ pageable = PageRequest.of(0, 25,
     Sort.by("orderCount").descending());
 // Maps to ORDER BY COUNT(o.id) DESC
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This requires the JPQL to support the sort field (using the DTO
 property name that maps to the GROUP BY expression).
@@ -675,9 +696,7 @@ query pattern with GROUP BY + COUNT + MAX in one query.
 
 ---
 
-**Q5 [MID] - MECHANISM**
-What is `@Fetch(FetchMode.SUBSELECT)` and how does it differ
-from @BatchSize?
+**[MID] Q5 - [MECHANISM] What is `@Fetch(FetchMode.SUBSELECT)` and how does it differ from @BatchSize?**
 
 *Why they ask:* SUBSELECT is an alternative to BatchSize that is
 less well-known but has different trade-offs.
@@ -696,7 +715,7 @@ WHERE order_id IN (
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 @BatchSize(25) loads collections in groups of 25:
 ```sql
@@ -705,7 +724,7 @@ SELECT * FROM order_items WHERE order_id IN (?,?,?...25)
 -- Additional batches until all are loaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Differences:
 
@@ -734,8 +753,7 @@ collections are accessed) - this is the key trade-off.
 
 ---
 
-**Q6 [STAFF] - ARCHITECTURE**
-How does N+1 manifest in microservices calling each other via REST?
+**[STAFF] Q6 - [DESIGN] How does N+1 manifest in microservices calling each other via REST?**
 
 *Why they ask:* N+1 is not exclusive to Hibernate - it occurs at
 service boundaries too.
@@ -759,7 +777,7 @@ return orders.stream()
 // 100 orders = 100 REST calls to product service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 This is O(N) network round trips - each with 10ms+ latency.
 100 orders = 1,000ms minimum just in network wait.
@@ -778,7 +796,7 @@ return orders.stream()
     .collect(toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Projection: call the order service with a projection that already
 includes the needed product fields (denormalized in the order data
@@ -793,9 +811,7 @@ service-boundary N+1 and the DataLoader/batch solution.
 
 ---
 
-**Q7 [SENIOR] - TRADE-OFF**
-OSIV (Open Session in View) is enabled by default in Spring Boot.
-What is its relationship to N+1 and should you disable it?
+**[SENIOR] Q7 - [TRADE-OFF] OSIV (Open Session in View) is enabled by default in Spring Boot. What is its relationship to N+1 and should you disable it?**
 
 *Why they ask:* OSIV is a controversial default that masks N+1 and
 creates invisible performance issues.
@@ -1016,7 +1032,7 @@ SEQUENCE generator enables batching:
   = 200 round trips + 200 sequence calls
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Batch Processing and JDBC Batch Inserts example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Batch inserts require that Hibernate knows the PK value BEFORE
@@ -1064,7 +1080,7 @@ public class DataImportService {
 }
 ```
 
-> **Code walkthrough:** Persisting in a loop without batch configuration
+> **Code walkthrough:** Persisting in a loop without batch configurationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > has three problems: no JDBC batching (10,000 round trips), L1C growth
 > (all entities held in memory), and a massive dirty-check at flush time.
 > For 500K entities, this is a guaranteed OOM or multi-minute runtime.
@@ -1078,7 +1094,7 @@ spring.jpa.properties.hibernate.order_updates=true
 # enabling batching across multiple entity types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This enabling batching across multiple entity types example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // GOOD: Batch insert with periodic flush/clear
@@ -1108,12 +1124,18 @@ public class DataImportService {
 }
 ```
 
-> **Code walkthrough:** `em.flush()` executes the accumulated SQL batch
+> **Code walkthrough:** `em.flush()` executes the accumulated SQL batchice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to the database without committing. `em.clear()` evicts all entities
 > from the L1C identity map, allowing GC to reclaim their memory.
 > Doing this every `BATCH_SIZE` rows means the L1C never grows beyond
 > 50 entities. The JDBC batch size and the flush interval should match
 > for maximum efficiency.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: StatelessSession for maximum batch performance
@@ -1151,13 +1173,19 @@ public class BulkImportService {
 }
 ```
 
-> **Code walkthrough:** `StatelessSession` is Hibernate's raw batch
+> **Code walkthrough:** `StatelessSession` is Hibernate's raw batchice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > session. It has no L1C (no identity map), no dirty checking, no
 > automatic cascades, no lifecycle callbacks. Each `ss.insert()` goes
 > directly to the JDBC batch buffer. This is the fastest Hibernate-based
 > bulk insert mechanism. The trade-off: no L1C means no `em.find()` cache
 > benefit and no relationship management within the session. Use for
 > pure data loading where only INSERTs are needed.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: @GeneratedValue with SEQUENCE for batching compatibility
@@ -1177,7 +1205,7 @@ public class User {
 // Enables JDBC batching because IDs are known before INSERT
 ```
 
-> **Code walkthrough:** `allocationSize = 50` matches the JDBC batch
+> **Code walkthrough:** `allocationSize = 50` matches the JDBC batchice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > size. Hibernate pre-allocates 50 IDs per sequence call. These IDs
 > are cached in the SessionFactory and assigned locally to each new
 > entity without a database round trip. This means Hibernate can
@@ -1268,7 +1296,7 @@ logging.level.org.hibernate.stat=DEBUG
 # Log shows: "Executing batch size: 1" = batching is disabled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:*
 ```java
@@ -1281,7 +1309,7 @@ logging.level.org.hibernate.stat=DEBUG
     allocationSize = 50) // match batch size
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1300,7 +1328,7 @@ at org.hibernate.engine.spi.EntityEntry...
 Heap dump: millions of User entities in hibernate.internal.SessionImpl$1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:*
 ```java
@@ -1311,7 +1339,7 @@ if (count % BATCH_SIZE == 0) {
 // OR: Use StatelessSession which has no L1C
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1341,7 +1369,7 @@ Step importStep(StepBuilderFactory sbf) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1357,9 +1385,7 @@ Step importStep(StepBuilderFactory sbf) {
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-Why doesn't `@GeneratedValue(strategy = IDENTITY)` work with
-Hibernate batching?
+**[JUNIOR] Q1 - [MECHANISM] Why doesn't `@GeneratedValue(strategy = IDENTITY)` work with Hibernate batching?**
 
 *Why they ask:* This is the #1 batching gotcha and almost
 always comes up.
@@ -1395,7 +1421,7 @@ entities with known IDs and can accumulate them in a JDBC batch.
     allocationSize = 50) // pre-allocates 50 IDs per call
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The trade-off: SEQUENCE creates gaps in IDs (if the app crashes
 after allocating 50 IDs and using 20, the other 30 are lost).
@@ -1408,9 +1434,7 @@ cause, not just "IDENTITY is incompatible."
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What is `StatelessSession` and when should you use it over a
-regular Session?
+**[MID] Q2 - [MECHANISM] What is `StatelessSession` and when should you use it over a regular Session?**
 
 *Why they ask:* StatelessSession is the expert-level batch tool
 that many developers do not know exists.
@@ -1464,7 +1488,7 @@ try (StatelessSession ss = sf.openStatelessSession()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log shows: "Executing batch size: 1" = batching is disabled example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The `ScrollableResults` pattern for
 large result sets - streaming through millions of rows without loading
@@ -1473,9 +1497,7 @@ standard Hibernate bulk processing pattern.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-You enabled `hibernate.jdbc.batch_size=50` but your profiler
-still shows individual INSERTs, not batches. How do you diagnose?
+**[SENIOR] Q3 - [DEBUGGING] You enabled `hibernate.jdbc.batch_size=50` but your profiler still shows individual INSERTs, not batches. How do you diagnose?**
 
 *Why they ask:* Batching can be silently disabled by several
 different causes.
@@ -1493,13 +1515,13 @@ Check 1: ID generation strategy. The most likely cause:
 // Fix: change to SEQUENCE with allocationSize
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 Check 2: Enable Hibernate statistics:
 ```properties
 spring.jpa.properties.hibernate.generate_statistics=true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Log output includes: `Executing batch size: 1` (disabled) or
 `Executing batch size: 50` (enabled). This directly confirms
@@ -1512,13 +1534,13 @@ logging.level.org.hibernate.engine.jdbc.batch=DEBUG
 # vs "Executing insert immediately" (batching disabled)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This vs "Executing insert immediately" (batching disabled) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Check 4: Multiple entity types without order_inserts:
 ```properties
 spring.jpa.properties.hibernate.order_inserts=true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This vs "Executing insert immediately" (batching disabled) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Without this, inserts for different entity types are interleaved,
 preventing JDBC from batching them together.
@@ -1538,9 +1560,7 @@ batching is active regardless of configuration.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-For a data migration of 50 million rows, what are the trade-offs
-between Hibernate batch insert, Spring Batch, and native SQL COPY?
+**[SENIOR] Q4 - [TRADE-OFF] For a data migration of 50 million rows, what are the trade-offs between Hibernate batch insert, Spring Batch, and native SQL COPY?**
 
 *Why they ask:* Tests knowledge of the full tooling spectrum for
 bulk operations.
@@ -1592,8 +1612,7 @@ Spring Batch.
 
 ---
 
-**Q5 [MID] - MECHANISM**
-What does `hibernate.order_inserts=true` do and why is it needed?
+**[MID] Q5 - [MECHANISM] What does `hibernate.order_inserts=true` do and why is it needed?**
 
 *Why they ask:* `order_inserts` is the less-known companion
 to `batch_size`.
@@ -1618,7 +1637,7 @@ JDBC sees alternating tables → cannot batch
 (JDBC batch requires consecutive statements for same table)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This vs "Executing insert immediately" (batching disabled) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With `order_inserts=true`:
 ```
@@ -1632,7 +1651,7 @@ JDBC batches users together, addresses together
 → 2 batches instead of 5 individual inserts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This vs "Executing insert immediately" (batching disabled) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Side effects:
 - If inserts must be ordered for referential integrity (user must
@@ -1651,10 +1670,7 @@ side effect note.
 
 ---
 
-**Q6 [SENIOR] - PRODUCTION**
-A nightly batch job that processes 2 million rows runs in
-production. It used to take 20 minutes but now takes 3 hours.
-What are the failure modes to check?
+**[SENIOR] Q6 - [MECHANISM] A nightly batch job that processes 2 million rows runs in production. It used to take 20 minutes but now takes 3 hours. What are the failure modes to check?**
 
 *Why they ask:* Batch job performance regression diagnosis is
 a real production scenario.
@@ -1673,7 +1689,7 @@ EXPLAIN ANALYZE SELECT * FROM orders WHERE processed = false;
 -- Look for: Seq Scan (bad) vs Index Scan (good)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This vs "Executing insert immediately" (batching disabled) example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Check 2: JDBC batching disabled. If someone changed the ID
 generation strategy to IDENTITY or removed batch configuration,
@@ -1696,7 +1712,7 @@ WHERE NOT granted ORDER BY pid;
 -- Shows blocking locks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This vs "Executing insert immediately" (batching disabled) example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Check 5: Network latency to database. If the database was moved
 to a different availability zone or datacenter, network latency
@@ -1713,9 +1729,7 @@ order of likelihood, with the specific diagnostic command for each.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Describe how you designed or improved a batch processing system
-that needed to handle millions of records reliably.
+**[STAFF] Q7 - [BEHAVIORAL] Describe how you designed or improved a batch processing system that needed to handle millions of records reliably.**
 
 *Why they ask:* Tests real-world experience with production batch design.
 

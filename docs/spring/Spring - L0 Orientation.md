@@ -129,7 +129,7 @@ Your Application Code
   Ready-to-use wired application
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Framework Overview example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 1. You annotate classes with @Component, @Service, @Repository, etc.
 2. Spring scans the classpath and registers these as bean definitions.
@@ -194,7 +194,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This shows the problem Spring solves. OrderService
+> **Code walkthrough:** This shows the problem Spring solves. OrderServiceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > hard-codes new PaymentService(), making it impossible to inject a mock in
 > tests. Any change to PaymentService's constructor breaks every caller.
 > Tight coupling is the exact pain Spring was designed to eliminate.
@@ -221,7 +221,7 @@ public class PaymentService {
 }
 ```
 
-> **Code walkthrough:** @Service marks both classes as Spring beans. Spring
+> **Code walkthrough:** @Service marks both classes as Spring beans. Springice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > detects that OrderService needs a PaymentService, finds the bean in its
 > registry, and injects it at construction time. In tests, you can pass a
 > mock PaymentService directly - no Spring container needed. Constructor
@@ -251,7 +251,7 @@ class OrderServiceTest {
 }
 ```
 
-> **Code walkthrough:** @SpringBootApplication triggers component scanning
+> **Code walkthrough:** @SpringBootApplication triggers component scanningice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of the current package and sub-packages. The test shows why constructor
 > injection is preferred - Mockito creates the service with a mock dependency
 > without starting a Spring context at all. Tests run fast and in complete
@@ -353,7 +353,7 @@ constructor regardless of how the object is created.
 
 ---
 
-#### Q1 - What is Inversion of Control and why does it matter?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is Inversion of Control and why does it matter?**
 
 IoC is the design principle where control of object creation and lifecycle
 is inverted - instead of your code calling `new` to create dependencies,
@@ -375,7 +375,7 @@ architectural level.
 
 ---
 
-#### Q2 - What is the difference between BeanFactory and ApplicationContext?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between BeanFactory and ApplicationContext?**
 
 BeanFactory is the base Spring container - it lazily creates beans on first
 request and provides core DI functionality. ApplicationContext extends
@@ -393,7 +393,7 @@ automatically by SpringApplication based on classpath detection.
 
 ---
 
-#### Q3 - What happens if you define two beans of the same type?
+**[JUNIOR] Q3 - [CONCEPTUAL] What happens if you define two beans of the same type?**
 
 Spring throws NoUniqueBeanDefinitionException at the injection point.
 
@@ -408,7 +408,7 @@ explicit and safer in large codebases.
 
 ---
 
-#### Q4 - How does Spring Boot differ from Spring Framework?
+**[MID] Q4 - [CONCEPTUAL] How does Spring Boot differ from Spring Framework?**
 
 Spring Framework provides the IoC container, DI, AOP, MVC, data access,
 and all core abstractions. It requires explicit configuration.
@@ -427,7 +427,7 @@ and override-able.
 
 ---
 
-#### Q5 - What is the Spring bean lifecycle?
+**[MID] Q5 - [CONCEPTUAL] What is the Spring bean lifecycle?**
 
 The lifecycle phases in order:
 1. Instantiation: Spring calls the constructor.
@@ -448,7 +448,7 @@ are bypassing the proxy.
 
 ---
 
-#### Q6 - Why is constructor injection preferred over field injection?
+**[MID] Q6 - [TRADE-OFF] Why is constructor injection preferred over field injection?**
 
 Three concrete reasons:
 1. Immutability: constructor-injected dependencies can be `final`.
@@ -466,7 +466,7 @@ Field/setter injection silently defers wiring and can hide cycles.
 
 ---
 
-#### Q7 - What is the difference between @Component, @Service,
+**[SENIOR] Q7 - [CONCEPTUAL] What is the difference between @Component, @Service,**
        @Repository, and @Controller?
 
 All four are specializations of @Component - functionally identical for
@@ -623,7 +623,7 @@ Spring (non-invasive):
     // test: new MyBean(mock) <- no container needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The Simplicity Revolution example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 1. EJBs required framework interface inheritance.
 2. EJB tests required deploying to an application server.
@@ -681,12 +681,18 @@ public class OrderBeanEJB2 implements SessionBean {
 // Also requires: ejb-jar.xml + deployment to AppServer to test
 ```
 
-> **Code walkthrough:** This is the EJB 2.x pain Spring eliminated. Every
+> **Code walkthrough:** This is the EJB 2.x pain Spring eliminated. Everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > business method is surrounded by framework lifecycle callbacks with nothing
 > to do with business logic. The class cannot be instantiated without an EJB
 > container. This is "invasive framework" - the framework's concerns leak
 > directly into domain objects, making testing outside the container
 > impossible.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Spring equivalent - pure POJO with one annotation
@@ -716,7 +722,7 @@ class OrderServiceTest {
 }
 ```
 
-> **Code walkthrough:** The Spring service is a plain Java class with one
+> **Code walkthrough:** The Spring service is a plain Java class with oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > annotation. The test creates it with `new` and a mock. No container, no
 > server, no deployment. This millisecond test cycle was the killer feature
 > of Spring in 2003 and remains its core value today. The business logic is
@@ -798,7 +804,7 @@ In Jakarta EE, use CDI (@ApplicationScoped), not Spring annotations.
 
 ---
 
-#### Q1 - Why was Spring created?
+**[JUNIOR] Q1 - [HANDS-ON] Why was Spring created?**
 
 Rod Johnson published "Expert One-on-One J2EE Design and Development" in
 2002 demonstrating that enterprise features (transactions, data access) could
@@ -816,7 +822,7 @@ argument, not accidental success.
 
 ---
 
-#### Q2 - What does "non-invasive framework" mean?
+**[JUNIOR] Q2 - [CONCEPTUAL] What does "non-invasive framework" mean?**
 
 A non-invasive framework does not require your business classes to extend its
 types or implement its interfaces. Your domain objects stay framework-free;
@@ -837,7 +843,7 @@ Spring enforces no coupling at all.
 
 ---
 
-#### Q3 - How did Spring influence the EJB 3.0 specification?
+**[JUNIOR] Q3 - [CONCEPTUAL] How did Spring influence the EJB 3.0 specification?**
 
 EJB 3.0 (JSR-220, 2006) directly adopted Spring's ideas: POJOs with
 annotations instead of interface inheritance, dependency injection via @EJB
@@ -855,7 +861,7 @@ keeps Spring dominant.
 
 ---
 
-#### Q4 - What is the POJO principle in Spring development?
+**[MID] Q4 - [CONCEPTUAL] What is the POJO principle in Spring development?**
 
 POJO (Plain Old Java Object) means a class that does not extend any framework
 class and implements no framework interface beyond what the domain requires. In
@@ -877,7 +883,7 @@ architecture is working as intended.
 
 ---
 
-#### Q5 - What is the key trade-off of Spring's proxy-based approach?
+**[MID] Q5 - [TRADE-OFF] What is the key trade-off of Spring's proxy-based approach?**
 
 Spring implements AOP (and therefore @Transactional, @Async, @Cacheable) by
 wrapping beans in proxy objects - JDK dynamic proxies for interfaces or CGLIB
@@ -901,7 +907,7 @@ programmatically as another option.
 
 ---
 
-#### Q6 - When would you NOT choose Spring?
+**[MID] Q6 - [TRADE-OFF] When would you NOT choose Spring?**
 
 Three legitimate scenarios:
 
@@ -921,7 +927,7 @@ engineering judgment.
 
 ---
 
-#### Q7 - What is Spring's module structure?
+**[SENIOR] Q7 - [ARCHITECTURE] What is Spring's module structure?**
 
 Spring Framework modules:
 - spring-core: IoC container, DI, utilities
@@ -1086,7 +1092,7 @@ Layer 1 - Foundation:
 ──────────────────────────────────────────────────
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Ecosystem Map example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Spring Boot BOM (Bill of Materials) is the glue. It provides curated
@@ -1173,7 +1179,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Four Spring ecosystem projects work together without
+> **Code walkthrough:** Four Spring ecosystem projects work together withoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > explicit wiring code. Spring Data creates an OrderRepository implementation
 > at runtime. Boot auto-configures a DataSource and EntityManagerFactory.
 > Spring Security activates @PreAuthorize processing. Spring MVC routes HTTP
@@ -1305,7 +1311,7 @@ Fix: Use fetch joins in @Query, or @EntityGraph on the repository method.
 
 ---
 
-#### Q1 - Name the main Spring projects and what each does.
+**[JUNIOR] Q1 - [BEHAVIORAL] Name the main Spring projects and what each does.**
 
 Core four every Spring developer needs:
 - Spring Framework: IoC container, AOP, MVC, WebFlux, JDBC template
@@ -1326,7 +1332,7 @@ and Resilience4j circuit breaker.
 
 ---
 
-#### Q2 - What is a Spring Boot starter and how does it work?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is a Spring Boot starter and how does it work?**
 
 A starter is a POM dependency that:
 1. Pulls in the transitive dependencies needed for a feature
@@ -1348,7 +1354,7 @@ imports file, and add appropriate @Conditional annotations.
 
 ---
 
-#### Q3 - What does /actuator provide?
+**[JUNIOR] Q3 - [CONCEPTUAL] What does /actuator provide?**
 
 Spring Boot Actuator exposes production-ready operational endpoints:
 - /actuator/health: liveness and readiness probes (used by Kubernetes)
@@ -1370,7 +1376,7 @@ probe types.
 
 ---
 
-#### Q4 - How does Spring Data simplify data access?
+**[MID] Q4 - [CONCEPTUAL] How does Spring Data simplify data access?**
 
 Spring Data provides repository interfaces with generated implementations.
 You declare the interface and method names; Spring Data generates JPQL/SQL
@@ -1388,7 +1394,7 @@ SELECT with only those columns. Crucial for performance when you only need
 
 ---
 
-#### Q5 - What is Spring Cloud and when do you need it?
+**[MID] Q5 - [CONCEPTUAL] What is Spring Cloud and when do you need it?**
 
 Spring Cloud provides microservice cross-cutting concerns not in Spring Boot:
 - Config Server: centralized configuration management
@@ -1410,7 +1416,7 @@ service discovery or config management which Kubernetes handles natively.
 
 ---
 
-#### Q6 - How does Spring Security integrate with the ecosystem?
+**[MID] Q6 - [ARCHITECTURE] How does Spring Security integrate with the ecosystem?**
 
 Spring Security integrates at the MVC/WebFlux layer via a filter chain
 (servlet filters for MVC, WebFilter for WebFlux). Every incoming request
@@ -1433,7 +1439,7 @@ proxies are not applied there.
 
 ---
 
-#### Q7 - What changed in Spring Boot 3 / Spring Framework 6?
+**[SENIOR] Q7 - [CONCEPTUAL] What changed in Spring Boot 3 / Spring Framework 6?**
 
 Spring Boot 3 (November 2022) - key changes:
 1. Java 17 minimum required.

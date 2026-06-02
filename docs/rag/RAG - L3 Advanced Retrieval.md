@@ -119,7 +119,7 @@ CROSS-ENCODER (reranker):
   Accurate: captures fine-grained relevance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reranking and Cross-Encoders example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Two-stage pipeline:**
 
@@ -137,7 +137,7 @@ Total: 105-520ms vs. 5-20ms without reranker
 Quality improvement: precision@5 often +15-25%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reranking and Cross-Encoders example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Reranker models:**
 
@@ -150,11 +150,16 @@ Cohere Rerank v3                   API     ~200ms   Very high
 Jina Reranker v2                   Both    ~150ms   High
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reranking and Cross-Encoders example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic
@@ -267,7 +272,7 @@ class StubCrossEncoder:
         return scores
 ```
 
-> **Code walkthrough:** The BAD example retrieves
+> **Code walkthrough:** The BAD example retrievesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > top-5 by ANN score alone. ANN scores measure
 > embedding similarity - accurate on average, but
 > can rank less-relevant documents above more-relevant
@@ -742,7 +747,7 @@ ColBERT: sum over query tokens q_i of:
          max over doc tokens d_j of: q_i · d_j
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why ColBERT:
 - Pre-compute document token vectors at index time
@@ -967,7 +972,7 @@ Step-back        LLM generalizes        Overly specific queries
                  concept
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query Transformation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **HyDE (Hypothetical Document Embeddings):**
 
@@ -991,11 +996,16 @@ Intuition: the embedding of "What is X?" is far
            HyDE bridges this gap.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query Transformation example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic
@@ -1151,7 +1161,7 @@ def multi_query_retrieve(
     return all_results[:top_k * 2]
 ```
 
-> **Code walkthrough:** Four transformation techniques
+> **Code walkthrough:** Four transformation techniquesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are implemented separately. `rewrite_query` sends
 > the query to Claude Haiku (fast, cheap) with a
 > system prompt that instructs expansion of abbreviations
@@ -1256,7 +1266,7 @@ system = (
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sort by score and return top-k unique example demonstrates Python code pattern using Kafka messaging. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *Measurement:* Track "unique_docs_per_variant":
 if adding a variant retrieves 0 new unique documents,
@@ -1413,7 +1423,7 @@ User query
   -> Top-K to LLM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The synergy: query transformation improves recall
 (more relevant documents in the candidate set).

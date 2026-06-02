@@ -116,7 +116,7 @@ console.log(a.value);    // undefined!
 module.exports.value = 'b value';
 ```
 
-> **Code walkthrough:** The module wrapper function explains why CJS has
+> **Code walkthrough:** The module wrapper function explains why CJS hasice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `__dirname` and `require` as apparent globals - they're function parameters.
 > The cache creates singletons: every `require('./config')` returns the same
 > object. The circular dependency example shows WHY `a.value` is `undefined`:
@@ -162,6 +162,16 @@ mutations affect all consumers.
 
 ### 💻 Code Example
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: breaking the exports shortcut
 // config.js
@@ -197,7 +207,7 @@ module.exports = function createDB(config) {
 };
 ```
 
-> **Code walkthrough:** `exports = {}` is one of the most common Node.js
+> **Code walkthrough:** `exports = {}` is one of the most common Node.jsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mistakes - produces no error, the module just exports `{}`. `module.exports =`
 > is always safe. The factory pattern for mutable state is a key design
 > principle: when you need independent instances (separate DB connections per
@@ -262,7 +272,7 @@ instantly. Disk I/O happens once per module per process lifetime.
 // one will get {} due to circular resolution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 **Symptom: Stale module state in tests**
 
@@ -278,7 +288,7 @@ beforeEach(() => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using SQL. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -296,7 +306,7 @@ beforeEach(() => {
 
 ---
 
-**Q1: You have a circular dependency where module A imports B and B
+**[JUNIOR] Q1 - [MECHANISM] You have a circular dependency where module A imports B and B**
 imports A. One module gets `undefined`. How do you fix it?** `[MID]`
 DEBUGGING
 
@@ -341,7 +351,209 @@ DEBUGGING
 
 ---
 
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between `exports` and `module.exports`?**
+
+> **Answer:**
+>
+> `exports` is initially a reference to `module.exports`. They point to the same object at module startup. The difference appears when you reassign `exports`:
+>
+> ```javascript
+> // WORKS: adding properties to the shared object
+> exports.greet = () => 'hello';
+> exports.farewell = () => 'bye';
+> // module.exports = { greet: fn, farewell: fn }
+>
+> // BROKEN: reassigning exports breaks the link
+> exports = { greet: () => 'hello' }; // now exports != module.exports
+> // module.exports is still {} - the reassignment is lost
+>
+> // CORRECT: reassign module.exports if you want to export a function or class
+> module.exports = { greet: () => 'hello' };
+> module.exports = class MyClass {};
+> module.exports = function myFunc() {};
+>
+> // Why this matters in practice:
+> // require('./mymodule') returns module.exports, not exports
+> const { greet } = require('./mymodule'); // undefined if exports was reassigned
+> ```
+>
+> Rule: if you want to add to the exported object, use `exports.name = value`. If you want to replace the exported value entirely with a function, class, or different object, use `module.exports = value`.
+>
+> *What separates good from great:* This confusion is why many senior engineers prefer ES modules. The `exports`/`module.exports` dual-reference is a design quirk that has caused countless bugs. In ESM, `export { name }` and `export default value` are unambiguous.
+
 ---
+
+**[JUNIOR] Q3 - [MECHANISM] How does Node.js module caching work, and when does it cause problems?**
+
+> **Answer:**
+>
+> After a module is loaded for the first time, Node.js caches it in `require.cache` keyed by absolute file path. All subsequent `require()` calls for the same module path return the cached `module.exports` without re-executing the file.
+>
+> This means modules are singletons: a module that exports an object exports the SAME object to all importers. Mutations made in one file are visible in all others.
+>
+> ```javascript
+> // config.js
+> module.exports = { debug: false };
+>
+> // file-a.js
+> const config = require('./config');
+> config.debug = true; // mutates the shared object
+>
+> // file-b.js
+> const config = require('./config');
+> console.log(config.debug); // true! (same object as file-a modified)
+> ```
+>
+> Problems caused by caching:
+> 1. **Test pollution**: if tests modify module state, subsequent tests see the modified state
+> 2. **Config mutation**: shared config objects mutated at runtime create hard-to-debug inconsistencies
+>
+> ```javascript
+> // Fix: clone on require
+> module.exports = () => ({ debug: false }); // factory, not singleton
+>
+> // Fix for tests: clear cache between tests
+> beforeEach(() => {
+>   delete require.cache[require.resolve('./config')];
+> });
+> ```
+>
+> *What separates good from great:* The singleton behavior is intentional and useful for shared instances (database connections, loggers). The problem arises when mutable shared state is not intentional. Export factories or use `Object.freeze` on exported config objects to prevent accidental mutation.
+
+---
+
+**[JUNIOR] Q4 - [DEBUGGING] How do you force a module to reload in tests?**
+
+> **Answer:**
+>
+> ```javascript
+> // Clear a single module from cache
+> delete require.cache[require.resolve('./my-module')];
+>
+> // Clear all app modules (keep node_modules)
+> Object.keys(require.cache).forEach(key => {
+>   if (!key.includes('/node_modules/')) {
+>     delete require.cache[key];
+>   }
+> });
+>
+> // Jest: use jest.resetModules() + require inside test
+> beforeEach(() => {
+>   jest.resetModules();
+> });
+>
+> it('loads fresh module', () => {
+>   const myModule = require('./my-module'); // fresh load
+> });
+>
+> // Vitest: use vi.resetModules()
+> // Note: import() in ESM is also cached - no easy reset for ESM
+> ```
+>
+> When using `jest.mock`, jest handles cache reset automatically. Manual cache clearing is only needed when you want to test module initialization behavior (e.g., env variable handling at module load time).
+>
+> *What separates good from great:* Knowing that ESM modules have no equivalent of `require.cache` manipulation - ESM module cache is not programmatically accessible. This is one of the reasons Jest historically used CJS (via Babel transform) rather than native ESM.
+
+---
+
+**[JUNIOR] Q5 - [MECHANISM] How do you use a CJS module from ESM code, and vice versa?**
+
+> **Answer:**
+>
+> **ESM importing CJS (easy):** Static `import` and dynamic `import()` both work for CJS modules. The default export is `module.exports`:
+>
+> ```javascript
+> // ESM importing CJS
+> import legacyLib from './legacy-lib.cjs'; // default = module.exports
+> const { util1, util2 } = legacyLib; // destructure named exports
+>
+> // Or with dynamic import:
+> const { default: legacyLib } = await import('./legacy-lib.cjs');
+> ```
+>
+> **CJS importing ESM (hard):** `require()` is synchronous and cannot import ESM (which supports top-level await). Two workarounds:
+>
+> ```javascript
+> // Option 1: dynamic import() returns a Promise
+> async function getEsmModule() {
+>   const { namedExport } = await import('./esm-module.mjs');
+>   return namedExport;
+> }
+>
+> // Option 2: create a CJS-compatible wrapper
+> // esm-module.cjs
+> const mod = await import('./esm-module.mjs');
+> module.exports = mod; // won't work synchronously!
+>
+> // Option 3 (best): use createRequire in ESM if you need sync access to CJS
+> import { createRequire } from 'module';
+> const require = createRequire(import.meta.url);
+> const cjsMod = require('./legacy.cjs'); // synchronous in ESM
+> ```
+>
+> *What separates good from great:* The ESM->CJS direction is transparent. The CJS->ESM direction is the pain point - it forces async at the call site. This is why pure-ESM packages like `chalk@5` and `got@13` break CJS projects that try to `require()` them.
+
+---
+
+**[JUNIOR] Q6 - [MECHANISM] What is the CommonJS module wrapper function?**
+
+> **Answer:**
+>
+> Before executing a CJS module file, Node.js wraps the file content in a function:
+>
+> ```javascript
+> (function(exports, require, module, __filename, __dirname) {
+>   // Your module code here
+>   // e.g.: const path = require('path');
+> });
+> ```
+>
+> This wrapper function is called with these five arguments - that is where `__dirname`, `__filename`, `require`, `exports`, and `module` come from. They are not globals; they are function parameters.
+>
+> This explains several behaviors:
+> - `var` declared at the top level of a module does NOT become a global variable (it's inside a function scope)
+> - Each module gets its own `require` (used for mocking in tests)
+> - `module.exports` is the return value of `require()`
+>
+> ```javascript
+> // You can see the wrapper using:
+> // node -e "console.log(require('module').wrapper)"
+> // Output:
+> // ['(function (exports, require, module, __filename, __dirname) { ',
+> //  '\n});']
+> ```
+>
+> *What separates good from great:* Understanding the wrapper explains why `this` at the top level of a CJS module is `module.exports` (the initial exports object) rather than `global`. In ESM, `this` at the top level is `undefined` in strict mode.
+
+---
+
+**[JUNIOR] Q7 - [DESIGN] What is the lazy require pattern and when should you use it?**
+
+> **Answer:**
+>
+> The lazy require pattern defers `require()` calls to the first time a function is invoked, rather than executing at module load time.
+>
+> ```javascript
+> // EAGER: loaded at startup regardless of whether it's used
+> const heavy = require('./heavy-computation');
+>
+> module.exports.runHeavy = () => heavy.compute();
+>
+> // LAZY: only loaded when runHeavy is actually called
+> module.exports.runHeavy = () => {
+>   const heavy = require('./heavy-computation'); // cached after first call
+>   return heavy.compute();
+> };
+> ```
+>
+> When to use:
+> 1. **Breaking circular dependencies**: lazy require lets A fully initialize before B tries to access A's exports
+> 2. **Startup performance**: defer loading of heavy optional modules (e.g., a PDF generator only loaded when a PDF is requested)
+> 3. **Optional dependencies**: modules that may or may not be installed
+>
+> Lazy require is still cached after the first call - it is not re-executed on every invocation.
+>
+> *What separates good from great:* The lazy pattern is a code smell when used to break circular dependencies - it signals a design problem. The clean solution is to restructure to remove the cycle. Use lazy require for startup performance or optional modules; refactor circular dependencies properly.
 
 ---
 
@@ -455,7 +667,7 @@ const cjsModule = await import('./legacy.cjs');
 // cjsModule.default = the entire module.exports object
 ```
 
-> **Code walkthrough:** The `.js` extension requirement in Node.js ESM is
+> **Code walkthrough:** The `.js` extension requirement in Node.js ESM isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a common gotcha - bundlers allow omitting it, native Node.js requires it.
 > Static `import` statements are hoisted and resolved before code executes
 > (can't be inside `if` blocks - use dynamic `import()` for conditional
@@ -501,6 +713,16 @@ updates it, importers see the updated value. CJS exports are snapshots of
 
 ### 💻 Code Example
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: mixing CJS require() into ESM file
 // In type:module .js or .mjs file:
@@ -534,7 +756,7 @@ console.log(counter); // 1 - live binding, sees update
 // console.log(counter); // still 0 - copied value at require time
 ```
 
-> **Code walkthrough:** The live binding behavior of ESM is a fundamental
+> **Code walkthrough:** The live binding behavior of ESM is a fundamentalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > difference from CJS. ESM named exports are live references to the variable
 > in the exporting module. When `counter` is updated, all importers see
 > the new value. CJS destructuring copies the value at require time. This
@@ -599,7 +821,7 @@ const pkg = await import('esm-only-package');
 # Or: convert your file to ESM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: convert your file to ESM example demonstrates shell script pattern using async/await. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Symptom: `ERR_MODULE_NOT_FOUND` despite file existing**
 
@@ -612,7 +834,7 @@ import { fn } from './utils.js'; // FIXED
 import cjsMod from './module.cjs';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: convert your file to ESM example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 **Symptom: `SyntaxError: Cannot use import statement outside a module`**
 
@@ -622,7 +844,7 @@ import cjsMod from './module.cjs';
 // Or rename file to .mjs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: convert your file to ESM example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -640,7 +862,7 @@ import cjsMod from './module.cjs';
 
 ---
 
-**Q1: An npm package is ESM-only and your code uses CJS `require`.
+**[JUNIOR] Q1 - [MECHANISM] An npm package is ESM-only and your code uses CJS `require`.**
 How do you handle it?** `[MID]` SYSTEM DESIGN
 
 > **Answer:**
@@ -676,7 +898,201 @@ How do you handle it?** `[MID]` SYSTEM DESIGN
 
 ---
 
+**[JUNIOR] Q2 - [MECHANISM] What are the key differences between ESM and CommonJS?**
+
+> **Answer:**
+>
+> | Aspect | CommonJS (CJS) | ES Modules (ESM) |
+> |--------|----------------|------------------|
+> | Loading | Synchronous | Asynchronous |
+> | Scope | Module wrapper function | True module scope |
+> | Imports | Dynamic, runtime | Static, parse-time |
+> | Exports | Value copy | Live bindings |
+> | Top-level await | Not supported | Supported |
+> | Tree-shaking | Not possible | Possible (static) |
+>
+> Live bindings vs value copy:
+>
+> ```javascript
+> // CJS: exports a copy at require() time
+> // counter.cjs
+> let count = 0;
+> module.exports = { count, increment: () => count++ };
+> // Importing: count is a copy. increment() updates internal count
+> // but the imported 'count' never changes.
+>
+> // ESM: live bindings - the import always reflects current value
+> // counter.mjs
+> export let count = 0;
+> export const increment = () => count++;
+> // Importing: count IS the live binding - reflects every increment
+> ```
+>
+> *What separates good from great:* The live binding behavior in ESM makes circular imports work correctly in many cases where CJS would produce `undefined`. ESM's static imports also enable better IDE support (tree-shaking, type checking) since import relationships are known before code runs.
+
 ---
+
+**[JUNIOR] Q3 - [MECHANISM] How do you enable ES Modules in a Node.js project?**
+
+> **Answer:**
+>
+> Two ways to tell Node.js to use ESM:
+>
+> 1. **File extension**: name files `.mjs` - Node treats them as ESM regardless of package.json
+> 2. **Package-level flag**: add `"type": "module"` to `package.json` - all `.js` files in that package are treated as ESM
+>
+> ```json
+> // package.json
+> {
+>   "name": "my-app",
+>   "type": "module"
+> }
+> ```
+>
+> ```javascript
+> // After type:module, use import/export in .js files:
+> import { readFile } from 'fs/promises';
+> import express from 'express';
+>
+> export const config = { port: 3000 };
+> export default function startServer() {}
+>
+> // To use a CJS file alongside ESM: name it .cjs
+> // require.cjs
+> const legacyCjs = require('./legacy.cjs');
+> ```
+>
+> Common gotcha: in ESM, import paths MUST include the file extension:
+>
+> ```javascript
+> import { helper } from './utils';     // ERROR in Node.js ESM
+> import { helper } from './utils.js';  // CORRECT
+> ```
+>
+> *What separates good from great:* Bundlers (webpack, Vite) resolve imports without extensions - that's a bundler feature, not Node.js behavior. Server-side ESM in Node.js requires explicit `.js` extensions, which surprises developers coming from bundler-heavy frontend workflows.
+
+---
+
+**[JUNIOR] Q4 - [MECHANISM] Why do ES modules enable tree-shaking and CommonJS does not?**
+
+> **Answer:**
+>
+> Tree-shaking is the process of eliminating dead code - exports that are imported by no consumer. It requires knowing the import/export graph statically (before code runs).
+>
+> ESM imports are static: `import { helper } from './utils'` is parsed at module graph construction time, before any code executes. Bundlers can read all imports/exports at build time and remove unused ones.
+>
+> CJS imports are dynamic: `require('./utils')` can appear inside an `if` statement, inside a function, with a computed path. The bundler cannot know which exports will be accessed without executing the code.
+>
+> ```javascript
+> // ESM: statically analyzable - bundler knows 'helper2' is unused
+> import { helper1 } from './utils'; // only helper1 used
+> // bundler eliminates helper2's code from bundle
+>
+> // CJS: dynamic - bundler must include ALL exports
+> const utils = require('./utils');
+> // which properties will be accessed? Unknown until runtime.
+> // bundler includes everything.
+>
+> // Also prevents tree-shaking in CJS:
+> const utils = require(condition ? './a' : './b');
+> // path is dynamic - bundler must include both modules
+> ```
+>
+> *What separates good from great:* For library authors, providing ESM exports via the `exports` field in package.json is essential for consumer bundle size. A large utility library (like lodash) that only exports CJS forces consumers to include the entire library even if they use only one function.
+
+---
+
+**[JUNIOR] Q5 - [MECHANISM] What is top-level await in ESM and when would you use it?**
+
+> **Answer:**
+>
+> Top-level await allows using `await` at the top level of an ES module without wrapping in an async function. The module is not fully initialized until the await resolves.
+>
+> ```javascript
+> // Without top-level await: awkward factory pattern
+> let config;
+> async function init() {
+>   config = await fetchConfig();
+> }
+> await init();
+> export { config }; // still undefined if init() not awaited!
+>
+> // WITH top-level await: clean initialization
+> const config = await fetchConfig();
+> export { config }; // guaranteed to be resolved for all importers
+> ```
+>
+> Use cases:
+> - Async module initialization (database connection, config from remote)
+> - Dynamic conditional imports: `const locale = await import(./locales/${lang}.js)`
+> - Polyfill selection based on async feature detection
+>
+> Important consequences: any module that imports a module with top-level await must also wait. The entire dependency graph pauses until the awaited module resolves. This makes top-level await a potential startup bottleneck.
+>
+> *What separates good from great:* Top-level await is only available in ESM. It is NOT available in CJS modules. This is one of the reasons why an ESM-only package cannot be synchronously `require()`d from CJS - the requiring code cannot wait for the top-level await to resolve.
+
+---
+
+**[JUNIOR] Q6 - [DEBUGGING] Why must you include `.js` extensions in ESM import paths in Node.js?**
+
+> **Answer:**
+>
+> Node.js ESM does NOT perform automatic extension resolution. Unlike bundlers (webpack, Vite) or CommonJS `require()`, Node.js ESM treats import specifiers literally - if you write `./utils`, it looks for a file literally named `utils`, not `utils.js` or `utils/index.js`.
+>
+> This is intentional: ESM is designed to work with HTTP (where URLs are exact) and to be explicit about what is being imported.
+>
+> ```javascript
+> // BROKEN in Node.js ESM:
+> import { helper } from './utils';
+> // Error: Cannot find module './utils'
+>
+> // CORRECT:
+> import { helper } from './utils.js';
+>
+> // TypeScript users: write .js even for .ts files
+> import { helper } from './utils.js'; // TS compiles to .js
+>
+> // For directory index files:
+> import { helper } from './utils/index.js'; // explicit
+> ```
+>
+> *What separates good from great:* TypeScript developers writing ESM must import with `.js` extension even though the source file is `.ts`. TypeScript resolves the `.ts` file while compiling but emits the import as `.js`. Many developers are confused by this - the `.js` extension is correct at both development and production time.
+
+---
+
+**[JUNIOR] Q7 - [MECHANISM] What is the live binding behavior of ESM exports and why does it matter?**
+
+> **Answer:**
+>
+> ESM exports are live bindings - they export a reference to the variable, not a copy of its value. When the exported variable changes, all importers see the new value.
+>
+> ```javascript
+> // counter.mjs
+> export let count = 0;
+> export function increment() { count++; }
+>
+> // main.mjs
+> import { count, increment } from './counter.mjs';
+>
+> console.log(count); // 0
+> increment();
+> console.log(count); // 1 - live binding reflects the change
+>
+> // CJS equivalent: does NOT have live bindings
+> // counter.cjs
+> let count = 0;
+> module.exports = { count, increment: () => count++ };
+>
+> // main.cjs
+> const { count, increment } = require('./counter.cjs');
+> console.log(count); // 0
+> increment();
+> console.log(count); // STILL 0 - count was copied on destructuring
+> ```
+>
+> Live bindings enable patterns like re-exported singleton state and circular imports without undefined values, but can cause confusing behavior if consumers don't expect their imported value to change.
+>
+> *What separates good from great:* Live bindings are why circular imports work in ESM: module A can import from module B before B is fully initialized. The imported binding starts as uninitialized but becomes valid by the time A's code actually accesses it. In CJS, the same circular dependency returns the incomplete `module.exports` immediately.
 
 ---
 
@@ -810,7 +1226,7 @@ console.log(module.paths);
 //   '/node_modules' ]
 ```
 
-> **Code walkthrough:** The `node_modules` walk-up algorithm is the core
+> **Code walkthrough:** The `node_modules` walk-up algorithm is the coreice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of npm's dependency management. `pkg-a` requiring `lodash` finds its own
 > `lodash` in `pkg-a/node_modules/lodash`. This isolation lets packages
 > depend on different versions without conflict. `require.resolve` is the
@@ -888,7 +1304,7 @@ console.log(module.paths);
 // if a different version was explicitly needed
 ```
 
-> **Code walkthrough:** `require.resolve` is essential for debugging
+> **Code walkthrough:** `require.resolve` is essential for debuggingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > module resolution issues without executing the module. The `module.paths`
 > array reveals the complete search order - helpful when a package seems
 > to load the wrong version. The monorepo hoisting behavior is important:
@@ -950,7 +1366,7 @@ symlink resolution issues, or `"exports"` blocking the path.
 # Fix: use the package's public API, or check the new API
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: use the package's public API, or check the new API example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Symptom: Wrong version of package loaded**
 
@@ -961,7 +1377,7 @@ console.log(require.resolve('some-package'));
 // FIX: npm dedupe or add "overrides" to package.json
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: use the package's public API, or check the new API example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 **Symptom: `Cannot find module './config'` but file exists**
 
@@ -974,7 +1390,7 @@ console.log(process.cwd()); // where the process started
 console.log(__dirname);     // where this file is
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: use the package's public API, or check the new API example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ---
 
@@ -992,7 +1408,7 @@ console.log(__dirname);     // where this file is
 
 ---
 
-**Q1: Your app uses two versions of the same npm package and gets strange
+**[JUNIOR] Q1 - [MECHANISM] Your app uses two versions of the same npm package and gets strange**
 behavior. How do you diagnose and fix it?** `[MID]` DEBUGGING
 
 > **Answer:**
@@ -1034,6 +1450,225 @@ behavior. How do you diagnose and fix it?** `[MID]` DEBUGGING
 > versions are semver-compatible. `overrides` forces a version when they
 > aren't - but test thoroughly as you may break a package that needed
 > a specific version for a reason.
+
+---
+
+**[JUNIOR] Q2 - [MECHANISM] Explain the Node.js module resolution algorithm for bare specifiers.**
+
+> **Answer:**
+>
+> For a bare specifier like `require('express')` or `import 'express'`:
+>
+> 1. **Check built-in modules first**: if the specifier matches a Node.js built-in (`fs`, `path`, `http`), return it immediately - no file system search
+> 2. **Walk up the directory tree**: starting from the requiring file's directory, look for `node_modules/express` at each level
+>    - `./node_modules/express`
+>    - `../node_modules/express`
+>    - `../../node_modules/express`
+>    - ... up to filesystem root
+> 3. **First match wins**: the first `node_modules/express` found up the tree is loaded
+>
+> ```bash
+> # Example: /srv/app/src/routes/api.js requires('lodash')
+> # Search order:
+> /srv/app/src/routes/node_modules/lodash
+> /srv/app/src/node_modules/lodash
+> /srv/app/node_modules/lodash  # found here - stop
+> /srv/node_modules/lodash      # (not checked)
+> ```
+>
+> The walk-up enables version isolation: a package at `/srv/app/node_modules/A` can have its own `node_modules/lodash@3` while the root app uses `lodash@4`.
+>
+> *What separates good from great:* Built-in modules always win regardless of what is in `node_modules`. A package named `fs` in `node_modules` will never shadow Node's built-in `fs` in `require('fs')`. This is a security protection - malicious packages cannot hijack built-in module imports.
+
+---
+
+**[JUNIOR] Q3 - [MECHANISM] What is the package.json `exports` field and how does it affect imports?**
+
+> **Answer:**
+>
+> The `exports` field in `package.json` defines the public API of a package. It controls which files can be imported and allows conditional exports (different files for CJS vs ESM, production vs development).
+>
+> ```json
+> // package.json
+> {
+>   "name": "my-lib",
+>   "exports": {
+>     ".": {
+>       "import": "./dist/esm/index.js",
+>       "require": "./dist/cjs/index.js",
+>       "types": "./dist/types/index.d.ts"
+>     },
+>     "./utils": {
+>       "import": "./dist/esm/utils.js",
+>       "require": "./dist/cjs/utils.js"
+>     }
+>   }
+> }
+> ```
+>
+> ```javascript
+> // Consumer:
+> import MyLib from 'my-lib';           // uses esm/index.js
+> const MyLib = require('my-lib');      // uses cjs/index.js
+> import utils from 'my-lib/utils';     // allowed
+>
+> // BLOCKED: accessing internal files not in exports
+> import internal from 'my-lib/src/internal';
+> // Error: ERR_PACKAGE_PATH_NOT_EXPORTED
+> ```
+>
+> *What separates good from great:* The `exports` field is a hard enforcement mechanism - it prevents consumers from depending on internal implementation files that are subject to change. This is how packages maintain stable public APIs while freely restructuring internals.
+
+---
+
+**[JUNIOR] Q4 - [DEBUGGING] How do you use `require.resolve` to debug which file a module loads?**
+
+> **Answer:**
+>
+> `require.resolve(specifier)` runs the module resolution algorithm and returns the absolute path that `require(specifier)` would load, without actually loading the module.
+>
+> ```javascript
+> // Find which version of lodash is loaded
+> console.log(require.resolve('lodash'));
+> // /srv/app/node_modules/lodash/lodash.js
+>
+> // Check if a module exists without loading it
+> try {
+>   require.resolve('optional-dep');
+>   console.log('optional-dep is available');
+> } catch {
+>   console.log('optional-dep not installed');
+> }
+>
+> // Find which file within a package is the entry point
+> console.log(require.resolve('express'));
+> // .../node_modules/express/index.js
+>
+> // Resolve from a specific directory (not the current file):
+> require.resolve('lodash', { paths: ['/other/project'] });
+>
+> // Debug: see entire search path for a module
+> console.log(module.paths);
+> // [
+> //   '/srv/app/src/routes/node_modules',
+> //   '/srv/app/src/node_modules',
+> //   '/srv/app/node_modules',
+> //   ...
+> // ]
+> ```
+>
+> *What separates good from great:* `require.resolve` is the fastest way to diagnose "why is my app loading the wrong version?" - it shows you the exact file without requiring code execution or `console.log` in the module itself.
+
+---
+
+**[JUNIOR] Q5 - [MECHANISM] How does module hoisting work in a monorepo and when does it cause problems?**
+
+> **Answer:**
+>
+> In a monorepo with a workspace package manager (npm workspaces, yarn workspaces, pnpm), packages from workspace packages are hoisted to the root `node_modules`. This means a package required by multiple workspace packages is installed once at the root rather than separately in each package.
+>
+> ```
+> monorepo/
+>   node_modules/
+>     express/       # hoisted - shared by app-a and app-b
+>     lodash@4/      # hoisted
+>   packages/
+>     app-a/
+>       node_modules/
+>         lodash@3/  # NOT hoisted - incompatible version with app-b's lodash@4
+>     app-b/
+>       package.json # requires lodash@4 -> uses root node_modules/lodash
+> ```
+>
+> Problems caused by hoisting:
+> 1. **Phantom dependencies**: a package can `require` a package it did not declare in its own dependencies, because the package was hoisted by another workspace member. This breaks when that workspace member is removed.
+> 2. **Version conflicts**: if two packages need incompatible versions, the incompatible one stays nested.
+>
+> ```bash
+> # pnpm uses a content-addressable store and symlinks
+> # to prevent phantom dependencies - stricter than npm workspaces
+> pnpm install  # each package only accesses its declared deps
+> ```
+>
+> *What separates good from great:* pnpm's non-hoisting approach prevents phantom dependency issues entirely. If you maintain a library that will be consumed by others, test with pnpm or the `--strict` flag to verify your `package.json` declares all actual dependencies.
+
+---
+
+**[JUNIOR] Q6 - [DEBUGGING] What causes `ERR_PACKAGE_PATH_NOT_EXPORTED` and how do you fix it?**
+
+> **Answer:**
+>
+> This error means you are trying to import a subpath from a package that has an `exports` field, but the subpath you are importing is not listed in `exports`.
+>
+> ```javascript
+> // ERROR:
+> import { someUtil } from 'some-package/internal/utils';
+> // Error: Package subpath './internal/utils' is not defined
+> // by 'exports' in .../some-package/package.json
+>
+> // CAUSES:
+> // 1. Package updated its exports field to restrict access
+> // 2. You are importing an internal path that was never part of the API
+> // 3. The package's exports field changed in a new major version
+>
+> // FIXES:
+> // Option 1: Use only the package's public API
+> import { someUtil } from 'some-package'; // root export
+>
+> // Option 2: Check the package's exports field for the right path
+> // cat node_modules/some-package/package.json | grep exports -A 20
+>
+> // Option 3: If the internal is needed, create a wrapper
+> // wrapper.cjs:
+> module.exports = require('some-package/internal/utils');
+> // This only works if the package does not enforce exports
+> ```
+>
+> *What separates good from great:* This error became common after Node.js enforced the `exports` field in version 12+. Many older tutorials and Stack Overflow answers show deep imports that no longer work. Always check the package's README or exports field, not just file paths in `node_modules`.
+
+---
+
+**[JUNIOR] Q7 - [DEBUGGING] How do you inspect Node.js module resolution for debugging?**
+
+> **Answer:**
+>
+> Three techniques for different scenarios:
+>
+> ```javascript
+> // 1. require.resolve: find exact file path
+> console.log(require.resolve('express'));
+> // /srv/app/node_modules/express/index.js
+>
+> // 2. module.paths: see full search path for current file
+> // (run in Node.js REPL or any module file)
+> console.log(module.paths);
+> // ['/srv/app/src/node_modules', '/srv/app/node_modules', ...]
+>
+> // 3. NODE_DEBUG: trace all require calls
+> // NODE_DEBUG=module node app.js
+> // Prints: MODULE: looking for "express" in [...paths...]
+>
+> // 4. npm ls: check installed versions from npm
+> // npm ls express
+> // app@1.0.0 /srv/app
+> // └── express@4.18.2
+>
+> // 5. find: find all copies of a package
+> find node_modules -name "package.json" -path "*/lodash/*" \
+>   | xargs grep '"version"'
+>
+> // 6. node --print: quick resolution check
+> node -e "console.log(require.resolve('lodash'))"
+> ```
+>
+> For ESM resolution debugging:
+>
+> ```bash
+> # --experimental-vm-modules flag shows ESM resolution
+> node --experimental-loader ./debug-loader.mjs app.mjs
+> ```
+>
+> *What separates good from great:* `NODE_DEBUG=module` is the most powerful tool for unexpected resolution issues - it shows every step of the algorithm including which paths were tried and which file was finally loaded. Essential for debugging monorepo and symlink resolution issues.
 
 ---
 

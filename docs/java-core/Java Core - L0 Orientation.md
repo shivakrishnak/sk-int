@@ -122,7 +122,7 @@ web applets) could not be platform-independent. Memory management bugs
    Trade-off: less control vs memory safety
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Java's influence:**
 - C# (2001): direct Java response by Microsoft, very similar design
@@ -135,7 +135,7 @@ web applets) could not be platform-independent. Memory management bugs
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This "Hello World" example shows Java's core
+> **Code walkthrough:** This "Hello World" example shows Java's coreice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > structural requirements. Every Java program starts with a class (the
 > OOP container), a `main` method (the entry point), and uses `System.out`
 > (the JVM's access to the OS standard output stream). The `public static
@@ -153,7 +153,7 @@ public class HelloWorld {           // class is the basic unit
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // Java's type safety at compile time:
@@ -166,7 +166,7 @@ String s = new String("created");
 // No delete/free needed - cannot cause use-after-free bugs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -287,7 +287,7 @@ Java bytecode (.class files)
   Android VM:   compiles to DEX format for Dalvik/ART
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Bytecode advantages:
 - Verified before execution (bytecode verifier): prevents invalid operations
@@ -334,7 +334,7 @@ urls.stream()
 // Modern Java: use RuntimeException wrappers or Vavr's Try
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline uice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Java's design choices made sense
 for 1995 enterprise programming. Some trade-offs aged poorly (verbose
@@ -383,17 +383,17 @@ the same project) makes it a low-risk choice for Java teams.
 ecosystem components.**
 
 A:
-| Layer | Technology | Purpose |
-|---|---|---|
-| Build | Maven, Gradle | Dependency management, compilation, testing |
-| Application framework | Spring Boot | DI, REST, data access |
-| Web | Spring MVC, JAX-RS | HTTP request handling |
-| Persistence | JPA/Hibernate, Spring Data | ORM, database access |
-| Testing | JUnit 5, Mockito, Testcontainers | Unit, mock, integration testing |
-| Messaging | Kafka, RabbitMQ clients | Async message processing |
-| Observability | Micrometer, Prometheus, OpenTelemetry | Metrics, tracing, logging |
-| Security | Spring Security | AuthN, AuthZ |
-| Containers | Docker + Kubernetes | Deployment, scaling |
+| Layer| Technology| Purpose|
+|---|------------------------------|-------------------------------------------|
+| Build| Maven, Gradle| Dependency management, compilation, testing|
+| Application framework| Spring Boot| DI, REST, data access|
+| Web| Spring MVC, JAX-RS| HTTP request handling|
+| Persistence| JPA/Hibernate, Spring Data| ORM, database access|
+| Testing| JUnit 5, Mockito, Testcontainers| Unit, mock, integration testing|
+| Messaging| Kafka, RabbitMQ clients| Async message processing|
+| Observability| Micrometer, Prometheus, OpenTelemetry| Metrics, tracing, loggin
+| Security| Spring Security| AuthN, AuthZ|
+| Containers| Docker + Kubernetes| Deployment, scaling|
 
 *What separates good from great:* The Spring ecosystem has become
 the de facto standard for Java enterprise development. Understanding
@@ -407,17 +407,16 @@ memorizing individual framework APIs.
 improvements from Java 8 to Java 21?**
 
 A:
-| Version | Feature | Significance |
-|---|---|---|
-| Java 8 (2014) | Lambdas, Streams, Optional, java.time | Functional programming in Java |
-| Java 9 (2017) | Module system (Jigsaw), JShell | Strong encapsulation, REPL |
-| Java 11 (2018 LTS) | var in lambdas, HTTP client, String methods | Last free Oracle LTS |
-| Java 14 (2020) | Records (preview) | Immutable data classes, reduced boilerplate |
-| Java 15 (2020) | Sealed classes (preview) | Restricted inheritance hierarchies |
-| Java 16 (2021) | Pattern matching instanceof | Eliminates cast boilerplate |
-| Java 17 (2021 LTS) | Records + Sealed final, sealed classes final | Long-term support baseline |
-| Java 19 (2022) | Virtual threads (preview) | Lightweight concurrency |
-| Java 21 (2023 LTS) | Virtual threads GA, Sequenced Collections | Official lightweight concurrency |
+| Version| Feature| Significance|
+| Java 8 (2014)| Lambdas, Streams, Optional, java.time| Functional programming i
+| Java 9 (2017)| Module system (Jigsaw), JShell| Strong encapsulation, REPL|
+| Java 11 (2018 LTS)| var in lambdas, HTTP client, String methods| Last free Ora
+| Java 14 (2020)| Records (preview)| Immutable data classes, reduced boilerplate
+| Java 15 (2020)| Sealed classes (preview)| Restricted inheritance hierarchies|
+| Java 16 (2021)| Pattern matching instanceof| Eliminates cast boilerplate|
+| Java 17 (2021 LTS)| Records + Sealed final, sealed classes final| Long-term su
+| Java 19 (2022)| Virtual threads (preview)| Lightweight concurrency|
+| Java 21 (2023 LTS)| Virtual threads GA, Sequenced Collections| Official lightw
 
 *What separates good from great:* The LTS version choice drives
 production deployment. Most enterprises are on Java 11 or 17.
@@ -550,7 +549,7 @@ specific engine that runs the code."
 ### 📘 Concept Explanation
 
 **JDK vs JRE vs JVM:**
-```
+```plaintext
 JDK (Java Development Kit)
   |-- JRE (Java Runtime Environment)
   |     |-- JVM (Java Virtual Machine)
@@ -575,7 +574,7 @@ JDK (Java Development Kit)
         jfr     - Java Flight Recorder controller
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Module system (Java 9+):**
 ```java
@@ -588,7 +587,7 @@ module com.myapp {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **JVM distributions comparison:**
 | Distribution | Vendor | License | Use Case |
@@ -604,7 +603,7 @@ module com.myapp {
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example shows the module system introduced
+> **Code walkthrough:** This example shows the module system introducedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in Java 9. The `module-info.java` file explicitly declares what packages
 > the module needs and exposes. The `requires` directive creates a
 > dependency on another module; `exports` makes a package visible to
@@ -628,7 +627,7 @@ module com.company.orders {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```bash
 # Compilation and execution with modules:
@@ -642,7 +641,7 @@ jar --create --file orders.jar --main-class com.company.orders.Main -C out .
 java -classpath orders.jar:lib/* com.company.orders.Main
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run with classpath (legacy/pre-module): example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -698,7 +697,7 @@ Fix (Java 10+): automatic container awareness. Still use:
 ```
 -XX:MaxRAMPercentage=75.0
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run with classpath (legacy/pre-module): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 To set heap to 75% of the container's memory limit. Default is too
 conservative (25%) in some JVM versions.
@@ -870,7 +869,7 @@ A:
 -XX:StartFlightRecording=dumponexit=true,filename=/var/log/jfr/app.jfr
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JFR for continuous profiling (Java 11+): example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The single most important flag is
 `-XX:MaxRAMPercentage=75.0`. Without it, the JVM on Java 10+ auto-
@@ -911,7 +910,7 @@ jlink \
 # RUN export PATH="/opt/jre/bin:$PATH"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RUN export PATH="/opt/jre/bin:$PATH" example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Use cases: container images (smaller base image), embedded devices,
 CLI tools distributed as executables.
@@ -1086,13 +1085,13 @@ if (point instanceof Point(var x, var y)) { // record pattern
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RUN export PATH="/opt/jre/bin:$PATH" example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The example shows the progression of the same
+> **Code walkthrough:** The example shows the progression of the sameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > task (process a list of names) from Java 7 to Java 21, demonstrating
 > how language evolution reduced boilerplate and improved expressiveness
 > at each step. The Java 21 version uses text blocks (Java 15), local
@@ -1135,7 +1134,7 @@ record Person(String name, int age) {}
 // equals, hashCode, toString, getters - ALL auto-generated
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -1194,7 +1193,7 @@ java --illegal-access=warn -jar app.jar 2>&1 | grep "WARNING"
 # Upgrade to version of library that supports your Java version
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Upgrade to version of library that supports your Java version example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -1253,7 +1252,7 @@ Java 9 encapsulated JDK internal packages. Code using `sun.misc.Unsafe`,
 --add-opens java.base/java.lang=ALL-UNNAMED
 --add-opens java.base/sun.nio.ch=ALL-UNNAMED
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Upgrade to version of library that supports your Java version example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Spring Boot 2+ adds these automatically.
 
@@ -1336,7 +1335,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 // vs 1M platform threads = ~1TB (infeasible)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Upgrade to version of library that supports your Java version example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 **2. Sequenced Collections:**
 ```java
@@ -1347,7 +1346,7 @@ list.reversed();   // ["c","b","a"] - reversed view
 list.addFirst("z"); // add at front
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Upgrade to version of library that supports your Java version example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Pattern matching switch (final):**
 ```java
@@ -1358,7 +1357,7 @@ String desc = switch (shape) {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Upgrade to version of library that supports your Java version example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Virtual threads are not a silver
 bullet. They still have the pinning problem (synchronized blocks prevent
@@ -1380,6 +1379,12 @@ response objects, simple tuples.
 Use regular classes for: mutable state, classes that extend other classes,
 complex behavior, entities with lifecycle.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: record for DTO
 record ApiResponse(int status, String body, Instant timestamp) {}
@@ -1391,7 +1396,7 @@ record ApiResponse(int status, String body, Instant timestamp) {}
 record User(Long id, String name) {} // doesn't work with JPA
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Sealed interfaces vs enums:**
 Enums: type = singleton value; limited to pre-defined constants.
@@ -1413,7 +1418,7 @@ String msg = switch (result) {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Sealed interfaces + records +
 pattern matching switch form a "functional union type" pattern in
@@ -1466,6 +1471,12 @@ Java 5.
 a Docker image?**
 
 A:
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```dockerfile
 # GOOD: use specific LTS + specific minor version for reproducibility
 FROM eclipse-temurin:21.0.2_13-jdk-jammy AS builder
@@ -1488,7 +1499,7 @@ ENV JAVA_OPTS="-XX:MaxRAMPercentage=75.0 \
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Essential JVM flags for containers: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key practices:
 - Pin to specific minor version (not just `21`) for reproducibility

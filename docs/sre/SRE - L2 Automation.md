@@ -169,7 +169,7 @@ TOIL AUTOMATION ANTI-PATTERNS
   - Automating decision points that require business context
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Toil Reduction and Automation Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The most common automation mistake is automating a bad process. If the
@@ -209,6 +209,11 @@ be done by software. The SRE team's job is to close the gap between
 ### 💻 Code Example
 
 **Example 1: Automated remediation for known alert pattern**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -286,7 +291,7 @@ def restart_deployment_if_unhealthy(
     return False
 ```
 
-> **Code walkthrough:** The BAD state is 30 minutes of on-call time
+> **Code walkthrough:** The BAD state is 30 minutes of on-call timeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > every 2 weeks for a known, identical remediation. The GOOD approach
 > implements automated remediation with three safety constraints: only
 > acts when restart count is in the expected failure range (3-3), stops
@@ -296,6 +301,12 @@ def restart_deployment_if_unhealthy(
 > The escalation path ensures novel failure modes still reach human judgment.
 
 **Example 2: Self-service access provisioning (class 3 redesign)**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: manual access request process
@@ -338,7 +349,7 @@ deny[reason] {
 }
 ```
 
-> **Code walkthrough:** The BAD approach routes all access requests
+> **Code walkthrough:** The BAD approach routes all access requestsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > through SRE, consuming 15 hours/month of engineering time on class-1
 > (obviously automatable) and class-3 (requires policy) decisions combined.
 > The GOOD approach uses OPA policy-as-code to automate the decisions
@@ -747,7 +758,7 @@ DEPLOYMENT SAFETY CHECKLIST (pre-deploy)
   - Off-hours deploy? (if yes: escalated review required)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Change Management and Deployment Safety in SRE example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The SRE insight on change management: making a bad deploy safe and
@@ -787,6 +798,12 @@ to near zero while maintaining high deployment frequency.
 
 **Example 1: Canary deployment with automated rollback**
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+{% raw %}
 ```python
 # BAD: manual deployment with no canary
 # Engineer deploys to all pods simultaneously.
@@ -852,8 +869,9 @@ spec:
               }[5m]
             ))
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD approach deploys all pods simultaneously,
+> **Code walkthrough:** The BAD approach deploys all pods simultaneously,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > exposing 100% of users to any regression immediately. The GOOD approach
 > uses Argo Rollouts with a defined canary strategy: 5% -> 25% -> 50%
 > -> 100% with 5-minute observation windows at each stage. The analysis
@@ -864,6 +882,11 @@ spec:
 > rollout and decide to proceed or rollback.
 
 **Example 2: Feature flag for high-risk change**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: deploy high-risk payment provider change to
@@ -915,7 +938,7 @@ def process_payment(user_id: str, amount: float) -> dict:
 # No redeploy required. Instant kill switch.
 ```
 
-> **Code walkthrough:** The BAD approach deploys the new payment provider
+> **Code walkthrough:** The BAD approach deploys the new payment providerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to all users immediately. The GOOD approach uses a feature flag to
 > control rollout percentage. Key implementation detail: consistent
 > hashing by user_id ensures the same user always gets the same provider
@@ -1006,7 +1029,7 @@ Does the migration rename or delete a column the
   -> Old code will fail when reading the new schema
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No redeploy required. Instant kill switch. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Expand-contract pattern for database migrations:
 Phase 1 (expand): add column as nullable with default.

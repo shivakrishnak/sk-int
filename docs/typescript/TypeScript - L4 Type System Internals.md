@@ -163,7 +163,7 @@ INFERENCE FAILURE MODES:
   const result = getFirst([]);  // T = never (empty array)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Type Inference Algorithm example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -232,7 +232,7 @@ type FromPromise = Unpack<Promise<boolean>>; // boolean
 type Scalar = Unpack<Date>;                  // Date (unchanged)
 ```
 
-> **Code walkthrough:** The `createTuple` example shows TypeScript 5.0's
+> **Code walkthrough:** The `createTuple` example shows TypeScript 5.0'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `const` type parameter modifier. Without `const`, generic inference
 > widens literals. The `const` modifier tells TypeScript to infer the
 > narrowest possible type - same as adding `as const` at the call site,
@@ -311,7 +311,7 @@ RULE: if callers need explicit type annotations,
       Every explicit T at call sites = library design issue.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -410,7 +410,7 @@ first<string | number>(['hello'], 42);
 // tsc --extendedDiagnostics shows compile time per phase
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using generic type. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -433,8 +433,7 @@ first<string | number>(['hello'], 42);
 
 ---
 
-**Q1: Why does const give a literal type but let gives a widened type?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] Why does const give a literal type but let gives a widened type?**
 
 > **Answer:**
 >
@@ -470,7 +469,7 @@ first<string | number>(['hello'], 42);
 > code - you opt in to literal types via `as const` when needed for
 > discriminants, template literals, or mapped type keys.
 
-**Q2: How does conditional type infer work and why is covariant vs
+**[JUNIOR] Q2 - [MECHANISM] How does conditional type infer work and why is covariant vs**
 contravariant position important?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -508,7 +507,7 @@ contravariant position important?** `[STAFF]` MECHANISM
 > and `{ b: 2 }`, it must accept their intersection. Used in advanced
 > utilities: Object.assign types, function overload merging.
 
-**Q3: What causes TypeScript inference to produce never or unknown
+**[MID] Q3 - [MECHANISM] What causes TypeScript inference to produce never or unknown**
 unexpectedly?** `[SENIOR]` DEBUGGING
 
 > **Answer:**
@@ -552,8 +551,7 @@ unexpectedly?** `[SENIOR]` DEBUGGING
 > Both cases: provide more information via explicit annotations or
 > additional runtime checks.
 
-**Q4: How does overload resolution work for inference?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] How does overload resolution work for inference?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -586,8 +584,7 @@ MECHANISM
 > (`string[]` and `number[]` separately). Putting more specific overloads
 > first ensures they match before the catch-all.
 
-**Q5: What are the performance implications of complex type inference?**
-`[STAFF]` SCALE
+**[STAFF] Q5 - [SCALE] What are the performance implications of complex type inference?**
 
 > **Answer:**
 >
@@ -624,8 +621,7 @@ MECHANISM
 > and name complex inferred types. TypeScript caches named interfaces
 > by identity but re-evaluates inline structural types at each usage.
 
-**Q6: How does control flow analysis narrow types through complex code?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] How does control flow analysis narrow types through complex code?**
 
 > **Answer:**
 >

@@ -115,7 +115,7 @@ Shift 4: From "for loop" to "flatMap"
   Mental model: "for each item, start async process; collect results"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The Async Mental Model for Java Engineers example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Common reasoning errors:**
 
@@ -141,7 +141,7 @@ ERROR 3: "subscribe() returns the result"
   // To get result in sync context: flux.blockFirst() or StepVerifier in tests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The Async Mental Model for Java Engineers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -201,7 +201,7 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 // Read like sync code; virtual thread handles the blocking
 ```
 
-> **Code walkthrough:** Snippet 1 demonstrates the "recipe" mental model:
+> **Code walkthrough:** Snippet 1 demonstrates the "recipe" mental model:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the `Mono` chain is assembled at compile time but executes only when
 > `subscribe()` is called. This is the most fundamental concept shift from
 > sync code. Snippet 3 makes thread switching visible by printing thread names:
@@ -255,7 +255,7 @@ userMono.subscribe(user -> process(user));
 // process() may NOT have been called yet at this line!
 doSomethingElse(); // runs before process() in async context
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The `process` callback runs on whatever thread drives the pipeline to
 completion - potentially AFTER `doSomethingElse()`. To wait for completion
@@ -293,7 +293,7 @@ public Mono<Void> processOrder(Order order) {
 // Spring WebFlux subscribes to the returned Mono
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: add logging before subscribe and after subscribe. If before-log
 appears but "save" log doesn't: subscribe never called.
@@ -306,7 +306,7 @@ appears but "save" log doesn't: subscribe never called.
 
 ---
 
-#### Q1 - What is the difference between cold and hot publishers?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between cold and hot publishers?**
 
 Cold publisher: lazy. No execution until subscribed. Each subscribe = new,
 independent execution.
@@ -323,7 +323,7 @@ coldMono.subscribe(u -> System.out.println("Sub2: " + u.name()));
 // Two HTTP calls made; each subscriber gets independent result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Hot publisher: active, ongoing. Subscribers join existing stream.
 
@@ -339,7 +339,7 @@ hotFlux.subscribe(e -> System.out.println("Sub2: " + e));
 sink.tryEmitNext(new Event("click")); // both subscribers receive this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Most Reactor sources are cold (Mono/Flux
 factory methods, database queries, HTTP calls). `share()` converts cold to
@@ -350,10 +350,16 @@ reconnects without replay (misses historical items).
 
 ---
 
-#### Q2 - How do you read a reactive chain from source to subscriber?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you read a reactive chain from source to subscriber?**
 
 Read right-to-left (from subscribe) for execution order, left-to-right for
 item transformation:
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Reading this chain:
@@ -383,7 +389,7 @@ Flux.range(1, 5)
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Error signals propagate DOWNSTREAM
 (same direction as items). Error handling operators must be positioned
@@ -393,7 +399,7 @@ both item flow (downstream) and error flow (also downstream).
 
 ---
 
-#### Q3 - Why does flatMap execute concurrently but concatMap sequentially?
+**[JUNIOR] Q3 - [SYSTEM DESIGN] Why does flatMap execute concurrently but concatMap sequentially?**
 
 `flatMap`: subscribes to inner publishers AS items arrive. Multiple inner
 publishers active simultaneously.
@@ -426,7 +432,7 @@ Flux.range(1, 100)
 // At most 10 calls in flight; prevents connection pool exhaustion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Default `flatMap` has concurrency =
 `Queues.SMALL_BUFFER_SIZE` = 256 (Reactor default). Under high load with 1000
@@ -437,7 +443,7 @@ previous. Used for "most recent request wins" patterns (search-as-you-type).
 
 ---
 
-#### Q4 - What is the danger of returning void instead of Mono in a reactive service?
+**[MID] Q4 - [CONCEPTUAL] What is the danger of returning void instead of Mono in a reactive service?**
 
 ```java
 // WRONG: void return type
@@ -462,7 +468,7 @@ public Mono<Void> createOrder(@RequestBody OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is one of the most common WebFlux bugs: the developer writes a
 reactive chain but forgets to return it. The method returns void, Spring
@@ -479,7 +485,7 @@ catching the "never executed" case.
 
 ---
 
-#### Q5 - How do you reason about subscribe-time vs assembly-time in Reactor?
+**[MID] Q5 - [CONCEPTUAL] How do you reason about subscribe-time vs assembly-time in Reactor?**
 
 Assembly time: when you chain operators (`.map()`, `.filter()`, etc.).
 No execution. Just building the operator graph.
@@ -519,7 +525,7 @@ willFail.subscribe(
 // Error thrown and handled at subscribe time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The assembly-time vs subscribe-time
 distinction matters for `defer()`:
@@ -532,14 +538,14 @@ Mono<String> mono = Mono.just(capturedNow); // uses captured value
 Mono<String> mono = Mono.defer(
     () -> Mono.just(getCurrentValue())); // evaluated at each subscribe
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use `Mono.defer()` when the source value should be fresh for each
 subscriber (current time, current request context, etc.).
 
 ---
 
-#### Q6 - How do you handle conditional logic in reactive pipelines?
+**[MID] Q6 - [DEBUGGING] How do you handle conditional logic in reactive pipelines?**
 
 Reactive doesn't have `if/else` directly, but several operators fill this role:
 
@@ -579,7 +585,7 @@ userService.findUser(id)
 // Equivalent to: result != null ? result : defaultValue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `switchIfEmpty` vs `defaultIfEmpty`:
 `switchIfEmpty(Mono.just(v))` vs `defaultIfEmpty(v)` are equivalent for
@@ -590,7 +596,7 @@ a plain value. For fallback that requires async work: always use
 
 ---
 
-#### Q7 - What is the mental model for understanding Reactor's subscribe-on vs publish-on?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the mental model for understanding Reactor's subscribe-on vs publish-on?**
 
 Both change which scheduler (thread pool) operators run on, but from
 different directions:
@@ -612,7 +618,7 @@ Pipeline visualization:
   Multiple publishOn: each one shifts the thread for operators after it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // subscribeOn: runs source on bounded-elastic (blocking I/O)
@@ -629,7 +635,7 @@ Flux.fromIterable(rawData)
     .flatMap(item -> dbWrite(item));          // DB write on boundedElastic
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* There's only ONE effective `subscribeOn`
 in a chain (the first one encountered when traversal goes upstream from
@@ -645,17 +651,17 @@ segments, but only one takes effect.
 
 **Reactive operator equivalents for common patterns:**
 
-| Sync pattern | Reactive equivalent | Notes |
-|---|---|---|
-| `return value` | `Mono.just(value)` | Immediate value |
-| `return null` | `Mono.empty()` | No value |
-| `throw ex` | `Mono.error(ex)` | Error signal |
-| `if (x) then a else b` | `flatMap` with conditional | Conditional branch |
-| `value != null ? v : default` | `defaultIfEmpty(default)` | Null alternative |
-| `try-catch` | `onErrorResume(Ex, fn)` | Error recovery |
-| `for (item : list) process(item)` | `flatMap(item -> process(item))` | Async iteration |
-| `a; b; c` (sequential) | `Mono.then(b).then(c)` | Sequential chain |
-| parallel execution | `Mono.zip(a, b, c)` | Parallel + combine |
+| Sync pattern| Reactive equivalent| Notes|
+|--------------------------|--------------------------------|------------------|
+| `return value`| `Mono.just(value)`| Immediate value|
+| `return null`| `Mono.empty()`| No value|
+| `throw ex`| `Mono.error(ex)`| Error signal|
+| `if (x) then a else b`| `flatMap` with conditional| Conditional branch|
+| `value != null ? v : default`| `defaultIfEmpty(default)`| Null alternative|
+| `try-catch`| `onErrorResume(Ex, fn)`| Error recovery|
+| `for (item : list) process(item)`| `flatMap(item -> process(item))`| Async ite
+| `a; b; c` (sequential)| `Mono.then(b).then(c)`| Sequential chain|
+| parallel execution| `Mono.zip(a, b, c)`| Parallel + combine|
 
 ---
 
@@ -844,7 +850,7 @@ Model 3: Virtual threads (Java 21)
   Debugging: easy (full stack traces like Model 1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threading Model Trade-offs Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decision matrix:**
 
@@ -860,7 +866,7 @@ CPU-bound work               OK       Problematic     OK
 Thread pool exhaustion risk  High         None         None
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threading Model Trade-offs Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -915,7 +921,7 @@ public UserProfile getProfile(@PathVariable String id)
 // Code: reads like Model 1; performance like Model 2
 ```
 
-> **Code walkthrough:** All three models solve the same problem. Model 1
+> **Code walkthrough:** All three models solve the same problem. Model 1ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is simplest but sequential (100ms). Model 2 is concurrent (50ms) but
 > requires reactive operators - the parallelism is explicit via `Mono.zip`.
 > Model 3 achieves the same concurrent execution as Model 2 but with
@@ -983,6 +989,11 @@ count higher than expected.
 Cause: virtual thread "pinning" - virtual thread stuck to OS thread due
 to `synchronized` block or JNI native code.
 
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
+
 ```bash
 # Detect pinning: run with JVM flag
 java -Djdk.tracePinnedThreads=full -jar service.jar
@@ -1008,7 +1019,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Fix: replace synchronized with ReentrantLock example demonstrates shell script pattern using concurrency primitive. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **WHAT BREAKS: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common pinning sources: older versions of JDBC drivers (synchronized
 internally), `synchronize(this)` in service classes, `HashMap` with
@@ -1022,7 +1033,7 @@ synchronized wrapper. Check driver versions for virtual-thread safety.
 
 ---
 
-#### Q1 - When would you choose virtual threads over reactive for a new service?
+**[JUNIOR] Q1 - [TRADE-OFF] When would you choose virtual threads over reactive for a new service?**
 
 Choose virtual threads when:
 1. Java 21+ is available
@@ -1040,7 +1051,7 @@ spring:
 # That's it. No code changes required.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This That's it. No code changes required. example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Validation checklist:
 - Run `-Djdk.tracePinnedThreads=full` under load test; fix pinning
@@ -1056,7 +1067,7 @@ Virtual threads enable blocking code to scale; they don't add push-pull semantic
 
 ---
 
-#### Q2 - How do event-loop threads work in Spring WebFlux?
+**[JUNIOR] Q2 - [MECHANISM] How do event-loop threads work in Spring WebFlux?**
 
 WebFlux uses Netty's event-loop as the HTTP server. Each event-loop thread
 handles multiple HTTP connections:
@@ -1079,7 +1090,7 @@ Number of event-loop threads:
   Purpose: map to CPU cores (each thread is single-threaded)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This That's it. No code changes required. example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Critical rule: NEVER block an event-loop thread. One blocked thread
 reduces effective concurrency by 1/16th (on 16-thread setup). 8ms
@@ -1093,7 +1104,7 @@ or migrate to non-blocking I/O. `BlockHound` in staging automates detection.
 
 ---
 
-#### Q3 - How does the virtual thread scheduler work?
+**[MID] Q3 - [MECHANISM] How does the virtual thread scheduler work?**
 
 Virtual threads are managed by `ForkJoinPool.commonPool()` (the carrier thread pool):
 
@@ -1116,7 +1127,7 @@ Pinning (virtualThread stuck to carrier):
   Consequence: reduces concurrency by consuming carrier threads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This That's it. No code changes required. example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Check virtual thread stats programmatically:
@@ -1132,7 +1143,7 @@ long virtualThreadCount =
 // Or use JFR event: jdk.VirtualThreadStart, jdk.VirtualThreadEnd
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This That's it. No code changes required. example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The carrier pool size (# CPU cores)
 is a hard limit. If all carrier threads are pinned (due to synchronized),
@@ -1143,7 +1154,7 @@ of event-loop blocking.
 
 ---
 
-#### Q4 - What is the executor model difference between @Async and virtual threads?
+**[MID] Q4 - [TRADE-OFF] What is the executor model difference between @Async and virtual threads?**
 
 ```java
 // BEFORE Java 21 @Async: fixed thread pool
@@ -1176,7 +1187,7 @@ public class AsyncConfig implements AsyncConfigurer {
 // No pool sizing, no tuning, no queue management
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This That's it. No code changes required. example demonstrates Java API usage using thread pool. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* With virtual threads, the `@Async`
 pool size is irrelevant. But: if `@Async` methods hold resources
@@ -1188,7 +1199,7 @@ still matters; thread count doesn't.
 
 ---
 
-#### Q5 - How do you handle CPU-bound work in each threading model?
+**[SENIOR] Q5 - [MECHANISM] How do you handle CPU-bound work in each threading model?**
 
 CPU-bound work (heavy computation, image processing, data transformation):
 
@@ -1221,7 +1232,7 @@ public Response processImage(byte[] imageData) {
 // Concurrency bounded by CPU cores, not thread count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This That's it. No code changes required. example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* For CPU-bound work, parallelism is
 bounded by CPU cores regardless of threading model. `Schedulers.parallel()`
@@ -1232,7 +1243,7 @@ model choice only matters for I/O-bound work; CPU-bound is always core-bounded.
 
 ---
 
-#### Q6 - How do you size thread pools for pre-Java-21 applications?
+**[SENIOR] Q6 - [MECHANISM] How do you size thread pools for pre-Java-21 applications?**
 
 Thread pool sizing formulas:
 
@@ -1253,7 +1264,7 @@ For mix of I/O and CPU:
   CPU pool: sized for cores (N or N-1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```yaml
 # Spring Boot (application.properties):
@@ -1267,7 +1278,7 @@ spring:
         keep-alive: 60s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Boot (application.properties): example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Thread pool tuning is empirical, not
 theoretical. The formula gives a starting point; load testing reveals
@@ -1279,7 +1290,7 @@ the right size. Metrics to watch:
 
 ---
 
-#### Q7 - What are the trade-offs of mixing blocking and non-blocking code?
+**[SENIOR] Q7 - [TRADE-OFF] What are the trade-offs of mixing blocking and non-blocking code?**
 
 Mixing blocking and non-blocking code in the same application:
 
@@ -1310,7 +1321,7 @@ BEST approach:
   For < Java 21: full reactive migration to R2DBC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Boot (application.properties): example demonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `Schedulers.boundedElastic()` is the
 correct scheduler for wrapping blocking calls in reactive code. It has
@@ -1326,16 +1337,16 @@ Reactor 3.5) - it's unbounded and can create thousands of threads.
 
 **Threading model decision guide:**
 
-| Need | Thread-per-request | Event-loop | Virtual threads |
-|---|---|---|---|
-| Java < 21 | Default choice | For high concurrency | Not available |
-| Java 21+ | Still works | Only if streaming | Preferred default |
-| JDBC / JPA | Native support | Wrap needed | Native support |
-| Streaming + backpressure | No | Only option | No |
-| Debugging | Easy | Hard | Easy |
-| Code complexity | Low | High | Low |
-| Team training needed | Minimal | Significant | Minimal |
-| Max concurrent (I/O bound) | ~500 (200 threads) | ~50,000+ | ~50,000+ |
+| Need| Thread-per-request| Event-loop| Virtual threads|
+|--------------------|------------------|--------------------|-----------------|
+| Java < 21| Default choice| For high concurrency| Not available|
+| Java 21+| Still works| Only if streaming| Preferred default|
+| JDBC / JPA| Native support| Wrap needed| Native support|
+| Streaming + backpressure| No| Only option| No|
+| Debugging| Easy| Hard| Easy|
+| Code complexity| Low| High| Low|
+| Team training needed| Minimal| Significant| Minimal|
+| Max concurrent (I/O bound)| ~500 (200 threads)| ~50,000+| ~50,000+|
 
 ---
 
@@ -1362,7 +1373,7 @@ Event-loop (1 thread, non-blocking):
   Thread never blocks; handles all 10 in same time
 
 Virtual threads (1 carrier, 10 VTs):
-  OS-Thread: [r1 start][unmount VT1][r2 start][unmount VT2]...[I/O1 ready: mount VT1][done]
+  OS-Thread: [r1 start][unmount VT1][r2 start][unmount VT2]...[I/O1 ready: mount
   VT1-10: each blocks on DB; OS thread free throughout
 ```
 
@@ -1525,11 +1536,11 @@ Low concurrency (< 1k): reactive ~= threading -> costs > benefits
 Java 21 services: VThreads ~= reactive throughput -> rarely cross cliff
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When Async Hurts: The Complexity Cliff example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When async hurts: six concrete scenarios:**
 
-```
+```plaintext
 1. CRUD services with low concurrency
    Service: 100 req/s, each takes 20ms, 50 concurrent
    Thread model: 10 threads easily handles this
@@ -1566,7 +1577,7 @@ Java 21 services: VThreads ~= reactive throughput -> rarely cross cliff
    Verdict: async hurts (JPA + blocking = correct; use virtual threads)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When Async Hurts: The Complexity Cliff example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1639,7 +1650,7 @@ public DashboardData getDashboard(String userId) throws Exception {
 // Same 50ms parallel result, simpler code, easy debugging
 ```
 
-> **Code walkthrough:** The comparison of sync vs reactive for simple
+> **Code walkthrough:** The comparison of sync vs reactive for simpleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `getActiveUser` shows the complexity cliff for non-parallel code: the
 > reactive version is nearly twice as long and significantly harder to
 > reason about, with no throughput benefit for a sequential operation.
@@ -1738,7 +1749,7 @@ grep -r "block()\|blockFirst()\|blockLast()\|\.join()" \
 # Option C: selective reactive for specific hot paths only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option C: selective reactive for specific hot paths only example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The "migration back" option (Option B)
 is legitimate. A team that adopted reactive prematurely and is suffering
@@ -1756,12 +1767,12 @@ should not prevent the team from choosing the right tool.
 
 ---
 
-#### Q1 - What is the "reactive tax" and how do you quantify it?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the "reactive tax" and how do you quantify it?**
 
 The reactive tax is the productivity overhead of working with reactive code
 compared to synchronous code for the same functionality:
 
-```
+```plaintext
 Components of the reactive tax:
   1. Code verbosity: ~2x more lines for equivalent logic
   2. Error handling complexity: explicit at every operator
@@ -1786,7 +1797,7 @@ When tax is NOT worth it:
   << 40% productivity overhead for a team of 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option C: selective reactive for specific hot paths only example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The reactive tax varies by team experience.
 An expert reactive team pays 10-20% tax (vs synchronous). A team new to
@@ -1797,7 +1808,7 @@ are expensive to debug.
 
 ---
 
-#### Q2 - When is CompletableFuture better than full reactive?
+**[JUNIOR] Q2 - [TRADE-OFF] When is CompletableFuture better than full reactive?**
 
 CompletableFuture is appropriate when: specific operations benefit from
 async (parallelism) but the rest of the codebase is synchronous.
@@ -1827,7 +1838,7 @@ public DashboardData getDashboard(String userId)
 // CF achieves the parallelism with simpler code
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option C: selective reactive for specific hot paths only example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 CF is appropriate for: (1) targeted parallelism in otherwise sync codebase;
 (2) fire-and-forget operations (`runAsync`); (3) Java < 21 with moderate
@@ -1842,7 +1853,7 @@ throughput benefit from the 20% of endpoints that need it.
 
 ---
 
-#### Q3 - What are the signals that a team should NOT adopt reactive?
+**[JUNIOR] Q3 - [CONCEPTUAL] What are the signals that a team should NOT adopt reactive?**
 
 Red flags for reactive adoption:
 
@@ -1873,7 +1884,7 @@ Red flags for reactive adoption:
    Better: parallel streams, Fork/Join for CPU work
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option C: selective reactive for specific hot paths only example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most authoritative signal: measure
 actual concurrency and I/O wait time in production before deciding.
@@ -1886,7 +1897,7 @@ needed. Data-driven decisions prevent unnecessary reactive adoption.
 
 ---
 
-#### Q4 - How do you debug async code when it fails silently?
+**[MID] Q4 - [DEBUGGING] How do you debug async code when it fails silently?**
 
 Silent failures in async code: operation doesn't execute, no error thrown.
 
@@ -1931,7 +1942,7 @@ BlockHound.install();
 // Any block() in event loop thread: throws BlockingOperationError
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option C: selective reactive for specific hot paths only example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Hooks.onOperatorDebug()` (staging only):
 captures stack traces at assembly time and attaches them to error signals.
@@ -1942,9 +1953,27 @@ overhead - use only in staging or behind a feature flag.
 
 ---
 
-#### Q5 - What are the specific bugs that only occur in async code?
+**[MID] Q5 - [HANDS-ON] What are the specific bugs that only occur in async code?**
 
 Async-specific bugs that don't exist in synchronous code:
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Bug 1: Race condition via shared mutable state
@@ -1984,7 +2013,7 @@ Flux.range(1, 100)
 // config loaded once; result reused
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* These bugs are invisible in unit tests
 that use mocks (mocks return synchronously, no real concurrency). They only
@@ -1995,9 +2024,15 @@ service. Production monitoring of downstream call counts can catch this.
 
 ---
 
-#### Q6 - How does async code affect observability?
+**[MID] Q6 - [HANDS-ON] How does async code affect observability?**
 
 Async code changes how logs, metrics, and traces work:
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Problem 1: MDC (Mapped Diagnostic Context) lost across threads
@@ -2036,7 +2071,7 @@ flux.name("order-processing")
     .metrics(); // registers reactor metrics in Micrometer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Async observability requires tooling
 investment upfront. Teams that adopt reactive without setting up MDC
@@ -2048,7 +2083,7 @@ to "fully observable."
 
 ---
 
-#### Q7 - When is the right time to introduce async patterns in an existing codebase?
+**[SENIOR] Q7 - [ARCHITECTURE] When is the right time to introduce async patterns in an existing codebase?**
 
 Criteria for introducing async into a codebase:
 
@@ -2077,7 +2112,7 @@ Process:
   6. Validate: measure after each phase; confirm improvement
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "async as technical debt" trap:
 teams sometimes add async because "we'll need to scale eventually," then
@@ -2093,15 +2128,15 @@ goals ("be more scalable") lead to premature optimization with no payoff.
 
 **Async benefit vs cost by service type:**
 
-| Service type | Async benefit | Async cost | Verdict |
-|---|---|---|---|
-| Low-traffic CRUD (< 100 RPS) | None | High (complexity) | Avoid |
-| CPU-bound processing | None | High | Avoid |
-| High-concurrency I/O, Java 21 | High (VThreads covers it) | Low (VThreads) | Use VThreads |
-| High-concurrency I/O, Java < 21 | High | High (reactive) | Evaluate carefully |
-| Streaming with backpressure | Mandatory (no alternative) | High | Use reactive |
-| Real-time analytics pipeline | High | Medium | Use reactive |
-| JDBC-heavy, complex queries | Low (VThreads) | Very high (R2DBC) | Use VThreads |
+| Service type| Async benefit| Async cost| Verdict|
+|--------------|--------------------------|-----------------|------------------|
+| Low-traffic CRUD (< 100 RPS)| None| High (complexity)| Avoid|
+| CPU-bound processing| None| High| Avoid|
+| High-concurrency I/O, Java 21| High (VThreads covers it)| Low (VThreads)| Use 
+| High-concurrency I/O, Java < 21| High| High (reactive)| Evaluate carefully|
+| Streaming with backpressure| Mandatory (no alternative)| High| Use reactive|
+| Real-time analytics pipeline| High| Medium| Use reactive|
+| JDBC-heavy, complex queries| Low (VThreads)| Very high (R2DBC)| Use VThreads|
 
 ---
 

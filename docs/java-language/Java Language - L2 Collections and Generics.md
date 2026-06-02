@@ -72,19 +72,19 @@ can file simultaneously."
 ### 📘 Concept Explanation
 
 **Collection interface hierarchy and implementation trade-offs:**
-```
+```plaintext
 JAVA COLLECTIONS HIERARCHY:
 
   Iterable
     Collection
       List
         ArrayList    <- resizable array, O(1) random access, O(n) insert mid
-        LinkedList   <- doubly-linked, O(1) insert/remove by iterator, O(n) access
+        LinkedList   <- doubly-linked, O(1) insert/remove by iterator, O(n)...
         ArrayDeque   <- better than LinkedList for Deque; O(1) both ends
       Set
         HashSet      <- hash table, O(1) add/contains/remove, no order
         LinkedHashSet <- hash table + doubly-linked, insertion order, O(1) ops
-        TreeSet      <- red-black tree, O(log n), sorted (Comparable/Comparator)
+        TreeSet      <- red-black tree, O(log n), sorted (Comparable/Comparator...
         EnumSet      <- bit vector, fastest Set for enum values
       Queue / Deque
         ArrayDeque   <- preferred Queue/Stack implementation
@@ -117,10 +117,10 @@ HASHMAP LOAD FACTOR AND CAPACITY:
   Default load factor: 0.75 (resize when 75% full)
   When resized: capacity doubles, all entries rehashed
   To avoid resizing: new HashMap<>(expectedSize / 0.75 + 1)
-  Java 8+: bucket > 8 entries -> converts to balanced tree (O(log n) worst case)
+  Java 8+: bucket > 8 entries -> converts to balanced tree (O(log n) worst...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Collections and Generics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -129,6 +129,30 @@ HASHMAP LOAD FACTOR AND CAPACITY:
 > **Code walkthrough:** The map operation patterns show idiomatic Java 8+ API usage.
 > The pre-Java 8 boilerplate for map operations is error-prone; the modern API
 > eliminates the null-check dance while being thread-safe for ConcurrentHashMap.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // COLLECTION PATTERNS: modern idiomatic Java
@@ -277,7 +301,7 @@ Prevention: NEVER use mutable objects as HashMap keys.
     - Or: use IdentityHashMap (uses == for equality, System.identityHashCode)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -560,7 +584,7 @@ might deliver non-String letters -> ClassCastException at read time."
 ### 📘 Concept Explanation
 
 **Generic mechanics and wildcard rules:**
-```
+```plaintext
 GENERIC TYPE PARAMETER SYNTAX:
 
   Generic class:
@@ -618,7 +642,7 @@ TYPE ERASURE EFFECTS:
   void process(List<Integer> list) {}  // compile error: same erasure List
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -627,6 +651,12 @@ TYPE ERASURE EFFECTS:
 > **Code walkthrough:** The generic utility method demonstrates type inference and the
 > practical difference between extends and super wildcards. The Stack example shows how
 > to properly design a generic class with correct type constraints.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GENERICS IN PRACTICE
@@ -735,7 +765,7 @@ method declaration. Workaround: use different method names, or use a single meth
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Unchecked cast warning leading to ClassCastException at unexpected location.**
-```
+```plaintext
 Symptom: ClassCastException at line N, but line N is just:
   String s = list.get(0);
   The get() return type is String - why ClassCastException?
@@ -773,7 +803,7 @@ Prevention: compile with -Xlint:unchecked.
   CI: treat all unchecked warnings as build failures (requires code review for any suppression).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -823,7 +853,7 @@ public static <T> void copy(List<? super T> dest, List<? extends T> src) {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `src` produces T (you read from it) -> `? extends T`. `dest` consumes T (you write to it) -> `? super T`. This allows: `copy(new ArrayList<Number>(), new ArrayList<Integer>())`. T=Integer, dest accepts Integer or supertypes (Number works), src provides Integer or subtypes.
 
@@ -853,7 +883,7 @@ private <T> void swapHelper(List<T> list, int i, int j) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* This pattern is used in the JDK's `Collections.swap()`
 implementation. The public API uses a wildcard (flexible for callers), the implementation

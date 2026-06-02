@@ -64,6 +64,12 @@ access. Any component inside can read the value with `useContext`.
 
 **How it works:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```jsx
 import { createContext, useContext, useState, useMemo } from 'react';
 
@@ -133,7 +139,7 @@ function AppProviders({ children }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Context API and useContext example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -145,6 +151,7 @@ instead), (2) Used for frequently changing state (causes widespread re-renders),
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // THE CONTEXT PERFORMANCE PROBLEM:
 const SlowContext = createContext(null);
@@ -192,8 +199,9 @@ function CountProvider({ children }) {
 // Components reading count re-render only when count changes
 // Components calling setCount never re-render from count changes
 ```
+{% endraw %}
 
-> **Code walkthrough:** The performance problem is subtle: the Provider
+> **Code walkthrough:** The performance problem is subtle: the Providerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > creates a new object reference `{ count, setCount }` on every render of
 > `Parent`. React's Context comparison uses `Object.is` - a new object
 > always fails equality, triggering re-renders in ALL consumers even if
@@ -281,8 +289,7 @@ Symptom: `useContext` returns undefined; component throws `Cannot read propertie
 
 ---
 
-**Q1: When would you NOT use Context for shared state?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] When would you NOT use Context for shared state?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -475,7 +482,7 @@ function CartTotal() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This External State Management (Redux, Zustand, Jotai) example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -521,7 +528,7 @@ function LoginButton() {
 }
 ```
 
-> **Code walkthrough:** Zustand collapses Redux's action types, action
+> **Code walkthrough:** Zustand collapses Redux's action types, actionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > creators, and reducer into a single `create()` call. The actions (`login`,
 > `logout`) are co-located with the state they manage. Async actions use
 > regular async/await - no thunk middleware needed. The component receives
@@ -606,8 +613,7 @@ Symptom: components re-render on every store update even when the component's da
 
 ---
 
-**Q1: When would you choose Redux Toolkit over Zustand?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] When would you choose Redux Toolkit over Zustand?** `[SENIOR]`**
 
 > **Answer:**
 >

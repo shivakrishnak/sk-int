@@ -120,7 +120,7 @@ Observability matrix O (np x n):
 System is observable iff rank(O) = n.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Observability Theory and Control Systems example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When rank(O) = n, a unique state trajectory maps to every output
 sequence - the Luenberger observer can converge to exact state:
@@ -134,7 +134,7 @@ Observer (runs alongside real system):
   The correction term L * error drives x_hat -> x
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Observability Theory and Control Systems example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The eigenvalues of (A - LC) determine convergence speed. Pole placement
 selects L so observer converges faster than the real system dynamics.
@@ -224,7 +224,7 @@ public class PaymentService {
 }
 ```
 
-> **Code walkthrough:** This service has four internal state
+> **Code walkthrough:** This service has four internal stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > dimensions but exports only two. When GC overhead spikes or
 > threads park excessively, the exported metrics show no anomaly
 > - the failure is provably undiagnosable from outputs. This is the
@@ -232,6 +232,17 @@ public class PaymentService {
 > missing dimensions before the next incident.
 
 ---
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // GOOD: all four state dimensions exported.
@@ -319,7 +330,7 @@ public class LatencyStateObserver {
 }
 ```
 
-> **Code walkthrough:** This observer maintains an estimated
+> **Code walkthrough:** This observer maintains an estimatedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > system state (expected p99 latency) and continuously corrects
 > it using the gap between prediction and measurement - exactly
 > the Luenberger update law. When the innovation (measurement
@@ -360,7 +371,7 @@ management:
 spring.jvm.native-memory.tracking: summary
 ```
 
-> **Code walkthrough:** The post-mortem reveals that heap metrics
+> **Code walkthrough:** The post-mortem reveals that heap metricsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > looked normal because the crash was caused by native memory growth
 > outside the heap - an unobserved state dimension. The observability
 > matrix was rank-deficient for native memory. After the incident, all
@@ -456,7 +467,7 @@ restore rank coverage?
 
 **Failure 1: Off-heap memory rank deficiency causes silent OOMKill**
 
-```
+```plaintext
 Symptom: Service OOMKills every 72 hours. JVM heap metrics are flat.
   GC activity normal. No prior memory warning in alerts.
 
@@ -481,7 +492,7 @@ Fix: Add off-heap memory as an explicit output dimension.
   The rank deficiency is resolved by adding the missing output.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This github.com/nicholasgasior/jvm-nmt-exporter example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Cross-service causal link hidden by observability rank gap**
 
@@ -511,19 +522,19 @@ Fix: Add TCP retransmit rate and connection wait time as
   visible in the existing monitoring tooling.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or eBPF-based (no agent install needed): example deice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Category | Count | Coverage |
-|---|---|---|
-| Conceptual | 3 | Control theory, rank condition, Luenberger observer |
-| Trade-off | 2 | Formal vs. heuristic, telemetry cost vs. rank coverage |
-| Failure Mode | 2 | Rank deficiency examples, compound failures |
-| Debugging | 1 | Diagnosing rank gaps from incident patterns |
-| Behavioral | 1 | Applying rank analysis to system design |
+| Category| Count| Coverage|
+|---|-------------------|------------------------------------------------------|
+| Conceptual| 3| Control theory, rank condition, Luenberger observer|
+| Trade-off| 2| Formal vs. heuristic, telemetry cost vs. rank coverage|
+| Failure Mode| 2| Rank deficiency examples, compound failures|
+| Debugging| 1| Diagnosing rank gaps from incident patterns|
+| Behavioral| 1| Applying rank analysis to system design|
 
 #### Definition
 - "What does observability mean in control theory?"
@@ -683,24 +694,24 @@ negligible. The bottleneck is not observer state but metric cardinality
 explosion when the state vector includes per-endpoint or per-customer
 dimensions."
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel  | Lead with mechanism. Explain rank and observer math. |
-| Hiring Manager   | Lead with business impact. "Unmonitored = undiagnosable." |
-| Bar Raiser       | Lead with trade-offs. Linear approximation limitations. |
-| Peer Engineer    | Collaborative. "The thing I find useful is the audit checklist..." |
+| Interviewer Type| Emphasis|
+|-----------|------------------------------------------------------------------|
+| Technical Panel| Lead with mechanism. Explain rank and observer math.|
+| Hiring Manager| Lead with business impact. "Unmonitored = undiagnosable."|
+| Bar Raiser| Lead with trade-offs. Linear approximation limitations.|
+| Peer Engineer| Collaborative. "The thing I find useful is the audit checklist.
 
 ---
 
 ### ⚖️ Comparison
 
-| Option | Theoretical Basis | Detects Gaps Formally | Operational Complexity |
-|---|---|---|---|
-| **Observability Rank Framework** | Kalman control theory | Yes - rank deficiency test | High - requires failure mode enumeration |
-| USE/RED Method | Heuristic engineering | No - checklist coverage only | Low - simple to apply |
-| Chaos Engineering | Empirical testing | Yes - by injecting failures | High - requires controlled experiments |
-| SLO-based coverage | Business SLA mapping | Partial - SLO-visible failures | Medium - driven by user impact |
-| Distributed Tracing | Causal graph theory | Partial - flow dimension only | Low - standard instrumentation |
+| Option| Theoretical Basis| Detects Gaps Formally| Operational Complexity|
+|---|---|-----------------------------|----------------------------------------|
+| **Observability Rank Framework**| Kalman control theory| Yes - rank deficiency
+| USE/RED Method| Heuristic engineering| No - checklist coverage only| Low - sim
+| Chaos Engineering| Empirical testing| Yes - by injecting failures| High - requ
+| SLO-based coverage| Business SLA mapping| Partial - SLO-visible failures| Medi
+| Distributed Tracing| Causal graph theory| Partial - flow dimension only| Low -
 
 **The deciding factor:**
 Use observability rank analysis when you need to formally prove that
@@ -887,21 +898,21 @@ version: 1
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # 🔬 OBS-L6-002 - eBPF Kernel Observability
@@ -1001,7 +1012,7 @@ observability with verifier-enforced safety and 1-3% overhead.
 
 **How it works:**
 
-```
+```plaintext
 eBPF Program Lifecycle:
 1. Write BPF program in restricted C
    (bounded loops, no dynamic memory alloc)
@@ -1016,7 +1027,7 @@ eBPF Program Lifecycle:
 9. Userspace reads maps/ring buffer for analysis
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This eBPF Kernel Observability example demonstrates a keice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Hook points used for observability:**
 
@@ -1042,7 +1053,7 @@ Map types used in observability:
 - BPF_MAP_TYPE_RINGBUF: low-latency event streaming (5.8+)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This eBPF Kernel Observability example demonstrates a keice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **CO-RE (Compile Once, Run Everywhere):**
 BTF (BPF Type Format) embeds kernel struct layout information in
@@ -1099,6 +1110,12 @@ it safe to load untrusted (or at least user-authored) code.
 ### 💻 Code Example
 
 **Example 1: kprobe-based syscall latency histogram**
+
+
+```c
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```c
 // BAD: strace-based approach - 5x overhead, cannot
@@ -1162,7 +1179,7 @@ int handle_exit(struct trace_event_raw_sys_exit *ctx) {
 char LICENSE[] SEC("license") = "GPL";
 ```
 
-> **Code walkthrough:** This eBPF program attaches to the stable
+> **Code walkthrough:** This eBPF program attaches to the stableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tracepoints for sys_enter_read and sys_exit_read. It records the
 > kernel timestamp at entry in a per-thread hash map, computes the
 > delta at exit, and increments a log2-bucketed histogram - all inside
@@ -1234,7 +1251,7 @@ print("Profiling... Ctrl-C to dump flamegraph data")
 BPF.kprobe_poll()
 ```
 
-> **Code walkthrough:** The BPF program fires on every 99th CPU clock
+> **Code walkthrough:** The BPF program fires on every 99th CPU clockice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cycle, captures the userspace call stack via get_stackid, and
 > increments a count for that stack ID - all inside the kernel. The
 > sampling frequency of 99 Hz is chosen deliberately to avoid
@@ -1308,7 +1325,7 @@ int uretprobe_exit(struct pt_regs *ctx) {
 char LICENSE[] SEC("license") = "GPL";
 ```
 
-> **Code walkthrough:** This CO-RE uprobe attaches to the Go HTTP
+> **Code walkthrough:** This CO-RE uprobe attaches to the Go HTTPice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > client's roundTrip function without any changes to the Go binary.
 > The entry probe records a timestamp per PID; the return probe
 > computes latency and emits it via the ring buffer. The ring buffer
@@ -1415,7 +1432,7 @@ infrastructure operators in the world.
 
 **Failure 1: BPF verifier rejects program due to complex logic**
 
-```
+```plaintext
 Symptom: bpftrace / bcc script fails at load time:
   "Error loading BPF program: Permission denied"
   or: "BPF verifier: R1 type=map_value expected=fp"
@@ -1440,7 +1457,7 @@ Fix: Simplify loop bounds (use bounded for-loops with constant
   (5.3+ has more permissive loop verification).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check kernel BPF log: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: uprobe symbol resolution fails on stripped binary**
 
@@ -1477,7 +1494,7 @@ Fix (option 3): Use frame pointer-based profiling (no symbols needed)
   and use perf + eBPF frame walker.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This bpftrace can use the .debug file for symbol resolution example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

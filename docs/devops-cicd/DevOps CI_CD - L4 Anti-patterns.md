@@ -303,6 +303,7 @@ jobs:
 
 **GOOD: Modular parallel pipeline with separation of concerns**
 
+{% raw %}
 ```yaml
 # Optimized pipeline with proper stages and gates
 
@@ -408,6 +409,7 @@ jobs:
       - name: Verify production deployment
         run: ./scripts/verify-deployment.sh production
 ```
+{% endraw %}
 
 > **Code walkthrough:** The pipeline has four structural improvements.
 > Stage parallelism: unit tests and Docker build run simultaneously
@@ -531,7 +533,7 @@ HAVING failure_rate_pct BETWEEN 5 AND 95  -- flaky range (not always fails)
 ORDER BY failure_rate_pct DESC;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Example detection rule: flaky test identifier example demonstrates Python code pattern using SQL. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 **Trade-off:**
 Building a CI/CD health system is a 4-6 week investment for a
@@ -770,7 +772,7 @@ HAVING failure_pct BETWEEN 5 AND 95
 ORDER BY failures DESC;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Proxy metric (without per-test tracking): retry-to-pass rate.
 If a CI run fails but passes on retry without any code change,
@@ -972,7 +974,7 @@ git log --since="2 weeks ago" --oneline -- .github/workflows/
 # Expected: find a specific commit that changed the CI pipeline
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Expected: find a specific commit that changed the CI pipeline example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: If no CI config changes, look at test changes.
 ```bash
@@ -982,7 +984,7 @@ git log --since="2 weeks ago" --oneline --diff-filter=A -- \
 # New tests added to a shared database? Timing-sensitive?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This New tests added to a shared database? Timing-sensitive? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Analyze which tests are failing.
 Pull the last 100 CI runs. Which tests appear in failed runs?
@@ -1001,7 +1003,7 @@ HAVING failures_recent > 5 AND failures_before < 2
 ORDER BY failures_recent DESC;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This New tests added to a shared database? Timing-sensitive? example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Common findings for sudden drop:
 - A new integration test was added that uses the shared test database
@@ -1042,6 +1044,8 @@ Deployment strategy: canary with automated rollback.
 - If metrics degrade: rollback to 0% canary (all traffic to previous version)
 
 Pipeline implementation:
+
+{% raw %}
 ```yaml
 deploy-canary:
   steps:
@@ -1074,8 +1078,9 @@ deploy-canary:
           exit 1
         fi
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Automated rollback: remove canary deployment example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Zero-downtime guarantee:
 - Canary uses Istio VirtualService or Argo Rollouts for traffic splitting
@@ -1326,7 +1331,7 @@ Classification at the step level:
     # This handles genuine test flakiness while preserving signal.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This handles genuine test flakiness while preserving signal. example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Infrastructure-level self-healing:
 - Runner OOM: Kubernetes ARC auto-restarts OOM pods with the same job

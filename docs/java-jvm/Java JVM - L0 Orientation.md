@@ -98,13 +98,13 @@ macOS Apple Silicon). Without it: you'd need a different device for each country
    Result: near-native performance after 1-5 seconds of warmup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The compilation pipeline shows how the same source
+> **Code walkthrough:** The compilation pipeline shows how the same sourceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > file produces one bytecode artifact that runs identically on all platforms.
 > The `javap` command is the entry point into understanding what the JVM
 > actually receives - not Java source but a stack-based instruction set.
@@ -142,7 +142,7 @@ public class HelloWorld {
 // - Android ART JVM (modified, different bytecode format)
 ```
 
-> **Code walkthrough:** The bytecode uses a stack-based instruction set:
+> **Code walkthrough:** The bytecode uses a stack-based instruction set:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `getstatic` pushes the `System.out` object onto the stack, `ldc` loads the
 > string constant, `invokevirtual` calls `println()` on the top two stack entries.
 > The x86 native code that the JIT generates for this might use registers directly -
@@ -217,21 +217,21 @@ Fix:
     javac --release 11 App.java   <- restricts to Java 11 API + bytecode
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| WORA explanation | 90 seconds |
-| JVM responsibilities (4) | 2 minutes |
-| JVM vs native compilation trade-offs | 2 minutes |
-| JVM ecosystem languages | 90 seconds |
-| GC purpose in 1 sentence | 30 seconds |
-| JIT in 1 sentence | 30 seconds |
-| UnsupportedClassVersionError | 2 minutes |
+| Question Category| Time to Answer|
+|------------------------------------|--------------------------------|
+| WORA explanation| 90 seconds|
+| JVM responsibilities (4)| 2 minutes|
+| JVM vs native compilation trade-offs| 2 minutes|
+| JVM ecosystem languages| 90 seconds|
+| GC purpose in 1 sentence| 30 seconds|
+| JIT in 1 sentence| 30 seconds|
+| UnsupportedClassVersionError| 2 minutes|
 
 ---
 
@@ -260,7 +260,7 @@ A:
 1. **Execution:** Load bytecode, interpret or JIT-compile to native machine code
 2. **Memory management:** Allocate objects on heap, run GC to reclaim dead objects
 3. **Type safety:** Verify bytecode at load time (no illegal casts, no stack corruption)
-4. **Security:** ClassLoader isolates code sources; module system (Java 9+) encapsulates internals
+4. **Security:** ClassLoader isolates code sources; module system (Java 9+) enca
 
 *What separates good from great:* The bytecode verifier is the JVM's most
 underappreciated component. It runs once at class load time and guarantees:
@@ -277,15 +277,15 @@ binary - the JVM enforces a safety contract.
 
 A:
 
-| Aspect | JVM (Java) | Native (C++, Go, Rust) |
-|---|---|---|
-| Startup time | 1-5 seconds | < 100ms |
-| Peak throughput | Excellent (after warmup) | Excellent |
-| Memory overhead | 50-200MB base | 5-20MB base |
-| GC pauses | Yes (sub-ms to seconds) | None (manual or ref counting) |
-| Safety | Memory safe, type safe | Varies (Rust: safe, C++: unsafe) |
-| WORA | Yes (single JAR) | No (recompile per platform) |
-| Ecosystem | Rich (Maven Central, 500k+ libs) | Good, smaller |
+| Aspect| JVM (Java)| Native (C++, Go, Rust)|
+|------------|--------------------------------|--------------------------------|
+| Startup time| 1-5 seconds| < 100ms|
+| Peak throughput| Excellent (after warmup)| Excellent|
+| Memory overhead| 50-200MB base| 5-20MB base|
+| GC pauses| Yes (sub-ms to seconds)| None (manual or ref counting)|
+| Safety| Memory safe, type safe| Varies (Rust: safe, C++: unsafe)|
+| WORA| Yes (single JAR)| No (recompile per platform)|
+| Ecosystem| Rich (Maven Central, 500k+ libs)| Good, smaller|
 
 *What separates good from great:* The trade-offs are converging. GraalVM
 Native Image eliminates JVM startup overhead (50ms) and reduces memory
@@ -299,10 +299,10 @@ optimization). The pragmatic answer: use JVM for long-running services
 **Q4 (ecosystem): Name three JVM languages and why they target the JVM.**
 
 A:
-1. **Kotlin** (JetBrains, 2016): Null-safe, concise, coroutines, full Java interop.
+1. **Kotlin** (JetBrains, 2016): Null-safe, concise, coroutines, full Java inter
    Targets JVM to reuse all Java libraries and tooling. Android's primary language.
 2. **Scala** (EPFL, 2003): Functional + OOP hybrid, advanced type system, Spark.
-   JVM access to Java ecosystem while providing Haskell-like functional features.
+  JVM access to Java ecosystem while providing Haskell-like functional features.
 3. **Clojure** (Rich Hickey, 2007): Lisp on the JVM, immutable by default,
    STM for concurrency. JVM access + dynamic Lisp + functional purity.
 
@@ -337,7 +337,7 @@ sensitive systems (ZGC and Shenandoah minimize this with sub-ms pauses).
 
 **Q6 (JIT basics): What is JIT compilation?**
 
-A: JIT (Just-In-Time) compilation is the JVM's strategy for achieving near-native
+A: JIT (Just-In-Time) compilation is the JVM's strategy for achieving near-nativ
 performance. The JVM starts by interpreting bytecode (slow). When a method
 is called enough times ("hot"), the JVM compiles it to native machine code
 at runtime. This native code is cached and reused for subsequent calls.
@@ -442,7 +442,7 @@ for different purposes)."
 ### 📘 Concept Explanation
 
 **JVM architecture block diagram:**
-```
+```plaintext
 +--------------------------------------------------+
 | CLASS LOADER SUBSYSTEM                           |
 |  Bootstrap CL -> Extension/Platform CL -> App CL|
@@ -474,13 +474,13 @@ for different purposes)."
 +------------------------------------------+
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The ClassLoader hierarchy can be inspected at
+> **Code walkthrough:** The ClassLoader hierarchy can be inspected atice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > runtime via `getClassLoader()`. The three-tier delegation model prevents
 > application code from replacing core JDK classes. The RuntimeDataAreas
 > breakdown shows where different data lives: primitive locals on the stack,
@@ -528,7 +528,7 @@ public class MemoryDemo {
 }
 ```
 
-> **Code walkthrough:** `getClassLoader()` returning `null` for `String.class`
+> **Code walkthrough:** `getClassLoader()` returning `null` for `String.class`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the JVM's way of indicating the Bootstrap ClassLoader, which is native
 > (C++) and has no Java object representation. The parent delegation model
 > means: when `AppClassLoader` is asked for `java.lang.String`, it delegates
@@ -603,7 +603,7 @@ Diagnosis: the repeating class/method in the stack trace reveals the cycle.
   If a cycle: A -> B -> A: look for the circular call between A and B.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -850,7 +850,7 @@ GraalVM:
   Best for: serverless, CLI tools, startup-sensitive microservices
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -894,7 +894,7 @@ $ java -version
 # OpenJ9: OpenJDK... IBM Semeru Runtime... Eclipse OpenJ9 VM...
 ```
 
-> **Code walkthrough:** The shared class cache (`-Xshareclasses`) is OpenJ9's
+> **Code walkthrough:** The shared class cache (`-Xshareclasses`) is OpenJ9'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > startup optimization: on first run, validated bytecode and JIT-compiled
 > methods are stored in a file. Subsequent JVM instances (including restarts)
 > load from the cache - avoiding bytecode verification and initial JIT overhead.
@@ -952,7 +952,7 @@ source; all distributions below are downstream builds.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: GraalVM Native Image build failure due to missing reflection config.**
-```
+```plaintext
 Error during native image build:
   com.fasterxml.jackson.databind.exc.InvalidDefinitionException:
     No serializer found for class com.example.User
@@ -978,7 +978,7 @@ Fix for Spring Boot 3:
   Custom reflection: add @RegisterReflectionForBinding(MyClass.class)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OpenJ9: OpenJDK... IBM Semeru Runtime... Eclipse OpenJ9 VM... example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1119,7 +1119,7 @@ Decision tree:
     Finance/regulated -> Azul Zulu or Oracle JDK (commercial SLA)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The decision should also consider framework
 support. Quarkus and Micronaut are designed for Native Image (minimal reflection,
@@ -1148,7 +1148,7 @@ try (Context ctx = Context.newBuilder("js")
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* GraalVM polyglot is used in production for:
 (1) legacy integration (Nashorn was removed in Java 15; GraalJS is the JVM JS engine

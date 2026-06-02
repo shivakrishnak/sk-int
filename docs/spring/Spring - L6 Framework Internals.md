@@ -118,7 +118,7 @@ Adapter             HandlerAdapter, MessageConverter
 Composite           ApplicationContext hierarchy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Framework Design Patterns example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Proxy Pattern in depth:**
 
@@ -149,7 +149,7 @@ Proxy limitations:
      -> CGLIB proxy works without interface
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Framework Design Patterns example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Template Method Pattern in depth:**
 
@@ -186,7 +186,7 @@ public <T> T execute(String sql,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Framework Design Patterns example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **The Observer Pattern in depth:**
 
@@ -245,6 +245,12 @@ public class NotificationService {
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: not understanding proxy creates self-call problem
@@ -322,6 +328,12 @@ public class OrderPersistenceService {
 > in a separate service. The clean solution - separate beans - also makes the
 > code more testable and better expresses domain boundaries.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // FactoryBean pattern in Spring
 
@@ -374,7 +386,7 @@ public class AppConfig {
 }
 ```
 
-> **Code walkthrough:** FactoryBean is a factory inside the factory. Spring
+> **Code walkthrough:** FactoryBean is a factory inside the factory. Springice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > recognizes beans that implement FactoryBean<T>. When you inject SomeComplexObject,
 > Spring calls getObject() on the factory. To inject the factory itself (not the
 > product), prefix the name with &: applicationContext.getBean("&complexObjectFactory").
@@ -453,7 +465,7 @@ implementation classes (not final by default).
 
 ---
 
-#### Q1 - Why does Spring default to CGLIB over JDK proxies?
+**[JUNIOR] Q1 - [CONCEPTUAL] Why does Spring default to CGLIB over JDK proxies?**
 
 JDK proxies require the target class to implement an interface:
 ```java
@@ -470,7 +482,7 @@ class OrderService { void placeOrder(); }
 // Post-Spring 5.2: CGLIB by default even with interface
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Spring Boot 2.0+ defaults: `spring.aop.proxy-target-class=true` (CGLIB).
 Reasons for CGLIB default:
@@ -489,7 +501,7 @@ when possible, or understand that CGLIB proxy IS a subclass of the concrete clas
 
 ---
 
-#### Q2 - How does BeanPostProcessor relate to the Decorator pattern?
+**[JUNIOR] Q2 - [ARCHITECTURE] How does BeanPostProcessor relate to the Decorator pattern?**
 
 BeanPostProcessor wraps beans after initialization:
 ```java
@@ -512,7 +524,7 @@ public class PerformanceBeanPostProcessor
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 BeanPostProcessor chain = Decorator chain:
 - AutowiredAnnotationBeanPostProcessor: injects @Autowired fields
@@ -533,7 +545,7 @@ creation - you might have no @Transactional on that bean).
 
 ---
 
-#### Q3 - How does ApplicationEvent vs direct method call compare?
+**[JUNIOR] Q3 - [TRADE-OFF] How does ApplicationEvent vs direct method call compare?**
 
 ```java
 // Direct method call:
@@ -571,7 +583,7 @@ public class OrderService {
 // Testing = mock just ApplicationEventPublisher
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Trade-offs:
 - Event: loose coupling, hard to trace execution flow
@@ -590,7 +602,7 @@ For guaranteed delivery: use Spring Cloud Stream / Kafka.
 
 ---
 
-#### Q4 - How does the Template Method pattern prevent resource leaks in JdbcTemplate?
+**[MID] Q4 - [ARCHITECTURE] How does the Template Method pattern prevent resource leaks in JdbcTemplate?**
 
 JdbcTemplate owns the resource lifecycle:
 ```java
@@ -629,7 +641,7 @@ jdbcTemplate.query(sql, ps -> {
 // The template method pattern guarantees cleanup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* JdbcTemplate's guarantee comes from the
 try/finally structure in its template methods. The connection is acquired
@@ -644,7 +656,7 @@ with zero boilerplate.
 
 ---
 
-#### Q5 - What is the Strategy pattern in Spring Security?
+**[MID] Q5 - [ARCHITECTURE] What is the Strategy pattern in Spring Security?**
 
 Spring Security uses Strategy extensively:
 
@@ -705,7 +717,7 @@ public class ApiKeyAuthenticationProvider
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The Strategy pattern in AuthenticationProvider
 enables pluggable authentication without modifying the framework. The Chain of
@@ -718,7 +730,7 @@ types and reach the correct provider transparently.
 
 ---
 
-#### Q6 - How does Spring's Composite pattern work in ApplicationContext hierarchy?
+**[MID] Q6 - [ARCHITECTURE] How does Spring's Composite pattern work in ApplicationContext hierarchy?**
 
 ```
 ApplicationContext can have a parent:
@@ -744,7 +756,7 @@ Example: two web apps sharing same service layer:
   Services can't inject controllers (wrong direction).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 In Spring Boot, single ApplicationContext is common.
 Multiple contexts: Spring MVC test (WebApplicationContext),
@@ -763,7 +775,7 @@ in the root context.
 
 ---
 
-#### Q7 - How does Spring use the Observer pattern for lifecycle events?
+**[SENIOR] Q7 - [ARCHITECTURE] How does Spring use the Observer pattern for lifecycle events?**
 
 Spring publishes lifecycle events throughout the ApplicationContext lifecycle:
 
@@ -813,7 +825,7 @@ public class LifecycleListener {
 // @PreDestroy: before bean is destroyed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* ContextRefreshedEvent vs ApplicationReadyEvent:
 Both fire after the context is ready. The difference: ContextRefreshedEvent fires
@@ -824,7 +836,7 @@ or CommandLineRunner/ApplicationRunner for post-startup initialization.
 
 ---
 
-#### Q8 - How does the Adapter pattern work in Spring MVC?
+**[SENIOR] Q8 - [ARCHITECTURE] How does the Adapter pattern work in Spring MVC?**
 
 Spring MVC uses HandlerAdapter to support multiple controller styles:
 
@@ -859,7 +871,7 @@ DispatcherServlet.doDispatch() {
 //   the uniform handle() call
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* HandlerAdapter is also where @RequestParam,
 @PathVariable, @RequestBody resolution happens. RequestMappingHandlerAdapter
@@ -872,7 +884,7 @@ a fresh adapter with empty converter lists.
 
 ---
 
-#### Q9 - How would you implement a custom Spring scope using the Scope SPI?
+**[SENIOR] Q9 - [HANDS-ON] How would you implement a custom Spring scope using the Scope SPI?**
 
 ```java
 // Custom scope: "tenant" scope - one bean per tenant ID
@@ -939,7 +951,7 @@ public class TenantDataCache {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Custom scopes are powerful but require careful
 lifecycle management. The TenantScope above leaks memory: if tenantBeans is never
@@ -1081,7 +1093,7 @@ Conditional logic:
   @ConditionalOnProperty: enabled=true in properties?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR (legacy, Spring Boot < 2.7) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Conditional annotations:**
 
@@ -1108,7 +1120,7 @@ Conditional logic:
   -> SpEL-based condition (avoid if possible - hard to test)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR (legacy, Spring Boot < 2.7) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1246,7 +1258,7 @@ class HttpClientAutoConfigTest {
 }
 ```
 
-> **Code walkthrough:** ApplicationContextRunner is the recommended way to test
+> **Code walkthrough:** ApplicationContextRunner is the recommended way to testice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > auto-configuration. It creates lightweight ApplicationContext instances with
 > specific configuration applied. withConfiguration() adds auto-configurations.
 > withPropertyValues() sets properties. withBean() adds pre-existing beans
@@ -1335,7 +1347,7 @@ to run after user @Configuration classes.
 
 ---
 
-#### Q1 - What is the difference between a starter and an auto-configuration module?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between a starter and an auto-configuration module?**
 
 The starter is a convenience POM only. The auto-configure module is the code.
 
@@ -1352,7 +1364,7 @@ spring-boot-autoconfigure (auto-configure)
   -> (all other auto-configurations)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This org.springframework.boot.autoconfigure.AutoConfiguration.imports example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 You can depend directly on spring-boot-autoconfigure if you only want
 the auto-configuration without the starter's dependency management.
@@ -1370,7 +1382,7 @@ POM is usually sufficient.
 
 ---
 
-#### Q2 - How do @AutoConfigureBefore and @AutoConfigureAfter work?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do @AutoConfigureBefore and @AutoConfigureAfter work?**
 
 Auto-configurations can declare ordering relative to each other:
 
@@ -1388,7 +1400,7 @@ public class JdbcTemplateAutoConfiguration {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 JdbcTemplateAutoConfiguration runs AFTER DataSourceAutoConfiguration
 because it needs the DataSource bean to be available.
@@ -1409,7 +1421,7 @@ robustness.
 
 ---
 
-#### Q3 - How does @ConfigurationProperties binding work in starters?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does @ConfigurationProperties binding work in starters?**
 
 ```java
 // Properties class:
@@ -1447,7 +1459,7 @@ mycompany.service.retry.max-attempts=5
 # mycompany.service.timeout: not set, uses default 5000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mycompany.service.timeout: not set, uses default 5000 example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Metadata generation (IDE autocompletion):
 ```xml
@@ -1458,7 +1470,7 @@ Metadata generation (IDE autocompletion):
     <optional>true</optional>
 </dependency>
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mycompany.service.timeout: not set, uses default 5000 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Generates META-INF/spring-configuration-metadata.json at compile time.
 IDE reads this for autocompletion in application.properties.
@@ -1475,7 +1487,7 @@ deep in your library code.
 
 ---
 
-#### Q4 - How do you exclude an auto-configuration?
+**[MID] Q4 - [MECHANISM] How do you exclude an auto-configuration?**
 
 Three approaches:
 ```java
@@ -1498,7 +1510,7 @@ spring.autoconfigure.exclude=\
 class MyTest { }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mycompany.service.timeout: not set, uses default 5000 example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use case for exclusion:
 - Test environments (exclude DataSource, use in-memory or mock)
@@ -1515,7 +1527,7 @@ direct JNDI lookup.
 
 ---
 
-#### Q5 - How does Spring Boot actuator integrate with custom starters?
+**[SENIOR] Q5 - [MECHANISM] How does Spring Boot actuator integrate with custom starters?**
 
 Custom beans can contribute to health, info, and metrics:
 
@@ -1568,7 +1580,7 @@ public class MyServiceAutoConfiguration {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mycompany.service.timeout: not set, uses default 5000 example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* @ConditionalOnClass(HealthIndicator.class)
 ensures the health indicator only activates when actuator is on the classpath.
@@ -1581,7 +1593,7 @@ your starter automatically enables health monitoring without any user configurat
 
 ---
 
-#### Q6 - What happens to auto-configuration ordering in Spring Boot 3?
+**[SENIOR] Q6 - [FAILURE] What happens to auto-configuration ordering in Spring Boot 3?**
 
 Spring Boot 3 changes:
 1. Registration: META-INF/spring.factories deprecated (still works but logs warning)
@@ -1595,7 +1607,7 @@ Spring Boot 3 changes:
    @AutoConfiguration(after = DataSourceAutoConfiguration.class)
    public class JdbcTemplateAutoConfiguration { }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mycompany.service.timeout: not set, uses default 5000 example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 4. Probing: Spring Boot 3 uses DeferredImportSelector with different
    ordering guarantees. @AutoConfiguration classes are processed as a group
@@ -1612,7 +1624,7 @@ spring.factories.
 
 ---
 
-#### Q7 - How do you test that @ConditionalOnMissingBean respects user config?
+**[SENIOR] Q7 - [MECHANISM] How do you test that @ConditionalOnMissingBean respects user config?**
 
 ```java
 // ApplicationContextRunner test for user override:
@@ -1659,7 +1671,7 @@ class ServiceAutoConfigTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The ApplicationContextRunner.withBean() method
 adds a bean as if the user had declared it in their @Configuration. This accurately
@@ -1673,7 +1685,7 @@ constructor.
 
 ---
 
-#### Q8 - How do you add configuration metadata for IDE support?
+**[STAFF] Q8 - [MECHANISM] How do you add configuration metadata for IDE support?**
 
 ```xml
 <!-- In autoconfigure pom.xml -->
@@ -1684,7 +1696,7 @@ constructor.
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Generated at compile time:
 META-INF/spring-configuration-metadata.json
@@ -1712,7 +1724,7 @@ For additional hints not auto-generated:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Result in IDE: typing mycompany.service. in application.properties
 shows autocomplete for all properties with descriptions and types.
@@ -1728,7 +1740,7 @@ lets you add metadata for properties that the annotation processor can't infer
 
 ---
 
-#### Q9 - How would you design a multi-module starter for an internal service client?
+**[STAFF] Q9 - [DESIGN] How would you design a multi-module starter for an internal service client?**
 
 ```
 mycompany-service-spring-boot-starter/
@@ -1756,7 +1768,7 @@ mycompany-service-spring-boot-starter/
     @AutoConfigureMyServiceMock.java   (test auto-config)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Test starter:
 ```java
@@ -1777,7 +1789,7 @@ class OrderServiceTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The test module is the underrated part of a
 good internal starter. Production code using the starter needs test support.

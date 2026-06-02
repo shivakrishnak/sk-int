@@ -79,7 +79,7 @@ Transactional Producer (read-process-write):
   // will not see messages from aborted transactions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exactly-Once Delivery Semantics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Kafka's transactional API achieves exactly-once for Kafka-to-Kafka workflows only. The moment a consumer writes to an external system (database, REST API, file), that write is outside the transaction boundary. External exactly-once requires the external system to participate in the transaction (2PC, outbox pattern, or idempotency key).
@@ -238,51 +238,51 @@ Symptom: producer throws `ProducerFencedException`; consumers in read-committed 
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is exactly-once delivery and why is it hard to achieve?"
-- "How is exactly-once different from at-least-once plus idempotency?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is exactly-once delivery and why is it hard to achieve?**
+**[JUNIOR] Q2 - [MECHANISM] How is exactly-once different from at-least-once plus idempotency?**
 
 🗣️ "Exactly-once means every message produces exactly one state change - no loss, no duplication. It is hard because distributed systems have no way to atomically send a message and receive confirmation in a single operation. Network failures force a choice: retry (risk duplicate) or give up (risk loss). Kafka solves this by tracking a producer ID and sequence number per partition - duplicates are rejected by the broker. For end-to-end exactly-once including the consumer, Kafka transactions atomically couple the consume offset commit with the produce operation. Versus at-least-once plus idempotency: the outcome is the same - no duplicate state changes - but the implementation is different. Kafka transactions enforce it at the broker level; idempotency keys enforce it at the application level. Idempotency keys are simpler and more portable when writing to external systems."
 
-#### Mechanism
-- "Walk me through how Kafka's idempotent producer prevents duplicate messages."
-- "How does Kafka's transactional API achieve exactly-once for stream processing?"
+
+**[MID] Q3 - [MECHANISM] Walk me through how Kafka's idempotent producer prevents duplicate messages.**
+**[MID] Q4 - [MECHANISM] How does Kafka's transactional API achieve exactly-once for stream processing?**
 
 🗣️ "Idempotent producer: when enabled, the broker assigns the producer a Producer ID. Each message sent to a partition gets a monotonically increasing sequence number. The broker tracks the last written sequence per producer-partition pair. If a retry arrives with the same sequence number, the broker discards the duplicate and returns success. If a sequence arrives out of order, the broker rejects it as a sequencing violation. Transactions: the producer calls beginTransaction, sends output records, calls sendOffsetsToTransaction to atomically bind the consumer offset commit to the transaction, then commitTransaction. The broker atomically marks all output records and the consumer offset commit as committed. Consumers reading with isolation.level=read_committed never see records from uncommitted or aborted transactions."
 
-#### Comparison
-- "Compare Kafka transactions, Outbox pattern, and idempotency keys for achieving effectively exactly-once."
-- "When is at-least-once plus idempotency preferable to Kafka transactions?"
+
+**[SENIOR] Q5 - [TRADE-OFF] Compare Kafka transactions, Outbox pattern, and idempotency keys for achieving effectively exactly-once.**
+**[SENIOR] Q6 - [TRADE-OFF] When is at-least-once plus idempotency preferable to Kafka transactions?**
 
 🗣️ "Kafka transactions work only for Kafka-to-Kafka pipelines. They are atomic at the broker level but do not cross system boundaries. The outbox pattern achieves exactly-once for database-to-Kafka by writing the event to an outbox table in the same database transaction as the business change, then a separate process reads the outbox and publishes to Kafka. Idempotency keys work for any external system - database, REST API, filesystem - by including a unique ID in each request that the target uses to deduplicate. At-least-once plus idempotency is preferable to Kafka transactions in almost every case where the output is an external system: simpler implementation, no throughput penalty, more portable. Kafka transactions are justified when you need strict exactly-once semantics for Kafka Streams aggregations or event replication where even temporary inconsistency during a crash is unacceptable."
 
-#### Scenario
-- "Design a payment processing system that requires exactly-once crediting of accounts."
-- "How would you implement exactly-once event replication between two Kafka clusters?"
+
+**[SENIOR] Q7 - [SCENARIO] Design a payment processing system that requires exactly-once crediting of accounts.**
+**[SENIOR] Q8 - [SCENARIO] How would you implement exactly-once event replication between two Kafka clusters?**
 
 🗣️ "For payment account crediting: use at-least-once Kafka delivery with database idempotency key. Each payment event carries a unique paymentId. The consumer checks whether that paymentId has already been processed by querying the payments table. The credit and the idempotency record insertion happen in the same database transaction. This achieves effectively-exactly-once for the database write without Kafka transactions. For cross-cluster replication with exactly-once: use Kafka's MirrorMaker 2 with exactly-once configured via transactional IDs. The replicator reads from the source cluster with read_committed and writes to the target cluster using transactions, atomically advancing both the source offset and the target partition write. This ensures no message is duplicated or lost across clusters even during failures."
 
-#### Debugging
-- "Users are reporting duplicate payment credits - how do you diagnose the root cause?"
-- "How do you verify whether exactly-once is actually working in a Kafka transactional pipeline?"
+
+**[SENIOR] Q9 - [DEBUGGING] Users are reporting duplicate payment credits - how do you diagnose the root cause?**
+**[SENIOR] Q10 - [DEBUGGING] How do you verify whether exactly-once is actually working in a Kafka transactional pipeline?**
 
 🗣️ "Duplicate payment credits: first check the payment processing logs for redelivered Kafka message IDs. The redelivery flag in the message headers and the message offset will be the same if it is a Kafka retry. If duplicates have different Kafka offsets, the producer is duplicating at the source - check idempotent producer configuration. If the same offset appears twice in processing logs, the consumer committed the Kafka offset but crashed before saving to the database - the next startup reprocessed from the last committed offset. Fix: ensure the database idempotency check is inside the same transaction as the business write. To verify transactional pipeline correctness: compare input topic record count with output topic record count - they should match exactly after a defined window. Use Kafka consumer-groups to check committed offsets and verify they advance only with successful transactions."
 
-#### Deep Dive
-- "What are the performance costs of Kafka's exactly-once transactional API?"
-- "How does read_committed isolation level affect consumer throughput?"
+
+**[SENIOR] Q11 - [MECHANISM] What are the performance costs of Kafka's exactly-once transactional API?**
+**[SENIOR] Q12 - [MECHANISM] How does read_committed isolation level affect consumer throughput?**
 
 🗣️ "Transactional producer costs: each beginTransaction and commitTransaction requires a round trip to the transaction coordinator (a specific broker). For high-throughput pipelines, this adds 5-20ms per batch. Additionally, the broker must write transaction markers to the log. Benchmarks typically show 20-50% throughput reduction compared to non-transactional producers at the same settings. Read_committed isolation adds latency on the consumer side: the consumer must wait for the transaction marker (COMMIT or ABORT) before reading records from an open transaction. For producers with large transaction intervals, this adds significant consumer lag. The consumer-visible lag includes in-flight transaction records that it cannot process until committed."
 
-#### Misconception / Trap
-- "If I use Kafka's transactional API, I get end-to-end exactly-once including database writes, right?"
-- "Exactly-once is always worth implementing because duplicates cause bugs - at-least-once is unsafe, right?"
+
+**[MID] Q13 - [MECHANISM] If I use Kafka's transactional API, I get end-to-end exactly-once including database writes, right?**
+**[MID] Q14 - [MECHANISM] Exactly-once is always worth implementing because duplicates cause bugs - at-least-once is unsafe, right?**
 
 🗣️ "Both wrong. Kafka transactions cover Kafka-to-Kafka processing only. The transaction boundary is the Kafka broker. Any write to an external system - database, REST API, cache - is outside the transaction. For database writes, you need either the outbox pattern or application-level idempotency. At-least-once with idempotency is not unsafe - it is the right choice for most systems. Idempotent operations are a fundamental design principle: design your processing so it can handle the same message twice without incorrect outcomes. For most business operations, this is achievable at lower cost than transactions. Exactly-once transactions add real throughput costs and operational complexity. Use them only when the downstream is a Kafka topic and the cost of even temporary inconsistency exceeds the performance penalty."
 
-#### Performance & Scalability
-- "How does Kafka's transactional exactly-once scale with partition count?"
-- "What is the throughput ceiling for a Kafka Streams exactly-once pipeline?"
+
+**[STAFF] Q15 - [MECHANISM] How does Kafka's transactional exactly-once scale with partition count?**
+**[STAFF] Q16 - [MECHANISM] What is the throughput ceiling for a Kafka Streams exactly-once pipeline?**
 
 🗣️ "Each transaction coordinator handles transactions for a subset of partitions (by transactional.id hash). Increasing partition count increases parallelism without increasing coordinator load proportionally - multiple transaction coordinators handle different producers. The throughput ceiling for exactly-once is lower than at-least-once because each transaction requires coordinator round trips. Typical ceiling: 50-200MB/s per Kafka Streams exactly-once instance, versus 200-500MB/s for at-least-once. The practical ceiling is often network-bound rather than transaction-coordinator-bound. Scaling: run multiple Kafka Streams instances with different input partition assignments - each instance manages its own transactions independently."
 
@@ -380,7 +380,7 @@ Consumer:
   COMMIT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Idempotent Consumers example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 2 - Processed events table:
 ```
@@ -397,7 +397,7 @@ Consumer:
   COMMIT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Idempotent Consumers example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 3 - Idempotency key in external API:
 ```
@@ -411,7 +411,7 @@ Idempotency-Key: pay-123
 // No double credit
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Idempotent Consumers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The idempotency check and the business operation must be atomic. If the check succeeds but the application crashes before the business operation, the next retry fails the check (marks it as done) but the work was never done - false idempotency. The check and the work must be in the same database transaction, or you need a state machine that tracks partial completion.
@@ -577,51 +577,51 @@ Symptom: consumer throughput is limited by deduplication check latency, not by p
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is an idempotent consumer and why do you need one?"
-- "What is the difference between a naturally idempotent operation and one that requires a deduplication guard?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is an idempotent consumer and why do you need one?**
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between a naturally idempotent operation and one that requires a deduplication guard?**
 
 🗣️ "An idempotent consumer processes the same message multiple times with the same result as processing it once - no additional side effects after the first processing. You need one because at-least-once delivery means the same message will occasionally arrive twice - during retries, rebalances, or crash recovery. Without idempotency, those redeliveries cause incorrect state: double credits, duplicate emails, repeated API calls. A naturally idempotent operation produces the correct outcome regardless of how many times it is executed - setting a field to a specific value, or an SQL UPSERT. An operation requiring a deduplication guard changes state by a delta - adding, subtracting, sending - and must record whether it has already been applied."
 
-#### Mechanism
-- "Walk me through implementing an idempotent consumer that credits a bank account from Kafka events."
-- "How do you prevent a race condition in the idempotency check?"
+
+**[MID] Q3 - [MECHANISM] Walk me through implementing an idempotent consumer that credits a bank account from Kafka events.**
+**[MID] Q4 - [MECHANISM] How do you prevent a race condition in the idempotency check?**
 
 🗣️ "For idempotent account crediting: each payment event carries a unique paymentId generated by the payment service. The consumer, in a single database transaction, inserts a record into a `processed_payments` table with a unique constraint on `payment_id`. If the INSERT succeeds, the account credit is also applied in the same transaction. If the INSERT fails with a unique constraint violation, the message was already processed - skip the credit and acknowledge the Kafka message. This is atomic because both operations are in the same database transaction. The race condition concern: two consumer instances process the same redelivered message simultaneously. Both check processed_payments, both find it absent, both credit. The unique constraint prevents this: only one INSERT succeeds; the other fails and rolls back its transaction."
 
-#### Comparison
-- "Compare database unique constraint vs Redis SET NX for idempotency deduplication."
-- "When would you use Kafka's transactional API over application-level idempotency?"
+
+**[SENIOR] Q5 - [TRADE-OFF] Compare database unique constraint vs Redis SET NX for idempotency deduplication.**
+**[SENIOR] Q6 - [TRADE-OFF] When would you use Kafka's transactional API over application-level idempotency?**
 
 🗣️ "Database unique constraint is simpler and transactionally consistent with the business operation - the check and the write are atomic. Use it when the consumer writes to a relational database. The limitation is long-term growth: the processed_payments table grows forever unless you partition and purge old entries. Redis SET NX with TTL is faster and has built-in expiry, but is not transactional with the database write - if Redis says it is new but the DB write fails, the Redis key remains set and the next retry is incorrectly skipped. Fix by deleting the Redis key on failure. Use Redis when the consumer writes to non-relational systems or when the volume makes database dedup too slow. Kafka transactions vs idempotency: Kafka transactions are for Kafka-to-Kafka exactly-once where you want broker-level enforcement. Idempotency keys are for external systems. For most practical workloads, idempotency keys are simpler and cover more cases."
 
-#### Scenario
-- "Your order service sends emails from Kafka events and users are getting duplicate emails - how do you fix it?"
-- "How do you implement idempotency in a multi-step saga that creates an order, reserves inventory, and charges payment?"
+
+**[SENIOR] Q7 - [SCENARIO] Your order service sends emails from Kafka events and users are getting duplicate emails - how do you fix it?**
+**[SENIOR] Q8 - [SCENARIO] How do you implement idempotency in a multi-step saga that creates an order, reserves inventory, and charges payment?**
 
 🗣️ "Duplicate emails: add an email-sent deduplication store. Each order confirmation email event carries the orderId and an event type. Before sending, check Redis (or a DB table): has_email_been_sent(orderId, 'order_confirmation'). If yes, skip. If no, send and record. Use a Redis key with TTL of 7 days - longer than the Kafka retention window. For the multi-step saga: each step needs its own idempotency. The saga orchestrator tracks which steps have completed for each orderId. On retry after a crash, it re-reads the saga state, finds the completed steps, and only re-executes the incomplete ones. The inventory reservation step checks whether the reservation already exists. The payment charge step passes the orderId as the idempotency key to the payment API. Each step must be safe to re-execute independently."
 
-#### Debugging
-- "How do you detect whether duplicate processing is occurring in a production consumer?"
-- "An idempotency check is in place but users still report doubles - what do you investigate?"
+
+**[SENIOR] Q9 - [DEBUGGING] How do you detect whether duplicate processing is occurring in a production consumer?**
+**[SENIOR] Q10 - [DEBUGGING] An idempotency check is in place but users still report doubles - what do you investigate?**
 
 🗣️ "Detecting duplicate processing: add a counter metric that increments when the deduplication guard fires. If this counter is zero in production, either no retries are happening (unlikely) or the deduplication code path is not being reached. For order data, compare your processed event count against the unique message ID count - if processed events > unique message IDs, duplication is occurring. Still reporting doubles with idempotency in place: the most common causes I have seen are: (1) the idempotency key is not unique per logical operation - two messages for the same order have the same key, but they are different operations (order.created vs order.updated); (2) the check and the write are not atomic - check passes, application crashes, next retry passes again; (3) the idempotency store has insufficient TTL and the key expired before the message retention window expired, allowing a redelivered message to bypass deduplication."
 
-#### Deep Dive
-- "How do you handle idempotency for operations that interact with external APIs that do not support idempotency keys?"
-- "What is the difference between idempotent consumers and saga compensating transactions?"
+
+**[SENIOR] Q11 - [MECHANISM] How do you handle idempotency for operations that interact with external APIs that do not support idempotency keys?**
+**[SENIOR] Q12 - [MECHANISM] What is the difference between idempotent consumers and saga compensating transactions?**
 
 🗣️ "For external APIs without idempotency support: use an application-level surrogate. Before calling the API, write your intent to a local database with a unique constraint. If you find a record already exists, skip the API call. If no record exists, insert the record and make the API call in sequence - not atomically. The gap between record insertion and API call is an at-most-once window: if you crash there, the record shows it was processed but the API was not called. You need to detect this orphaned state and handle it during recovery. Versus saga compensating transactions: idempotency prevents duplicate forward execution of the same operation. Compensating transactions reverse a successfully executed operation when a later step fails. They are complementary, not alternatives. A saga needs both: idempotency to handle retries of forward steps, and compensating transactions to undo completed steps when the overall saga must abort."
 
-#### Misconception / Trap
-- "If I use UUIDs as idempotency keys, I am protected from all duplicate processing issues, right?"
-- "Idempotency means my consumer is safe to run in parallel - multiple instances can process the same message simultaneously, right?"
+
+**[MID] Q13 - [MECHANISM] If I use UUIDs as idempotency keys, I am protected from all duplicate processing issues, right?**
+**[MID] Q14 - [MECHANISM] Idempotency means my consumer is safe to run in parallel - multiple instances can process the same message simultaneously, right?**
 
 🗣️ "Both wrong. UUIDs protect against duplicates only if the UUID uniquely identifies the business operation AND the check-and-write is atomic. If two message redeliveries use the same UUID but the check happens concurrently in two consumer instances before either writes, both pass the check and both execute the operation. The unique constraint in the database prevents this, but only if you use it and include the right column combination. On parallelism: idempotency means multiple sequential executions produce the same result. It says nothing about concurrent execution. Running two consumer instances simultaneously against the same message without the unique constraint protection causes both to pass the check and both to write. Idempotency solves sequential duplicates; your database's uniqueness constraints solve concurrent duplicates."
 
-#### Performance & Scalability
-- "How do you scale idempotency deduplication to 100,000 messages per second?"
-- "What is the deduplication store's impact on consumer throughput?"
+
+**[STAFF] Q15 - [MECHANISM] How do you scale idempotency deduplication to 100,000 messages per second?**
+**[STAFF] Q16 - [MECHANISM] What is the deduplication store's impact on consumer throughput?**
 
 🗣️ "At 100,000 messages per second with a 7-day TTL: the dedup store holds approximately 60 billion entries. A database unique constraint does not scale here - the lookup time and storage cost are prohibitive. Redis clusters can handle this with memory-efficient key designs. Use a compact key format: base64-encoded message ID. Redis Bloom filter (RedisBloom module) can serve as a probabilistic dedup check - memory-efficient, O(1) lookup, but with a configurable false-positive rate. For financial systems, false positives (incorrectly thinking a message was processed when it was not) are unacceptable - use exact dedup. For analytics or notifications, a 0.01% false positive rate may be acceptable. Throughput impact: a Redis SET NX adds 0.5-2ms of latency per message check. At 100,000 messages/sec, Redis must handle 100,000 SET NX operations per second - achievable with a Redis cluster of 3-5 nodes."
 
@@ -650,7 +650,7 @@ Symptom: consumer throughput is limited by deduplication check latency, not by p
 
 ### 🔥 Field Q&A
 
-#### Production Failures
+
 
 Q: A consumer processed 10,000 payment credits correctly but after a deployment, 500 were double-applied. What failed?
 
@@ -664,7 +664,7 @@ Q: An order processing system intermittently creates duplicate orders. The idemp
 
 A: Kafka message offsets are not stable idempotency keys. When a topic is compacted, offsets change. When messages are replayed from DLQ to the original topic, they get new offsets. When a consumer reprocesses from the beginning (offset reset), the same business event has the same offset but the dedup store may have expired. The idempotency key must be derived from the business event content - the orderId from the message payload - not from broker metadata like offset.
 
-#### Candidate Mistakes
+
 
 Q: What is the wrong way to describe idempotency to an interviewer?
 
@@ -684,7 +684,7 @@ Q: What is the common mistake in multi-step idempotency?
 
 **Say instead:** "Every step that changes external state must have its own idempotency guard. If step one is idempotent and step two is not, a crash between them causes step two to execute twice on retry. I track per-step completion state or use natural idempotency where possible."
 
-#### Questions to Ask the Interviewer
+
 
 Q: "How does your team handle the TTL for idempotency deduplication stores?"
 
@@ -696,7 +696,7 @@ Q: "Is there a natural business key in your events that can serve as the idempot
 *Why:* Business keys are more stable and meaningful than broker metadata; this question signals architectural maturity.
 *If asked back:* "I prefer business-generated UUIDs assigned at event creation time, propagated through all events derived from that business operation."
 
-#### Live Coding Context
+
 
 Coding question template: "Implement an idempotent Kafka consumer that processes payment events and credits accounts. Handle the case where the consumer may crash between any two operations."
 

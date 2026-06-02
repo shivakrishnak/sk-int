@@ -181,7 +181,7 @@ Thanos Architecture (horizontal scale)
      [Grafana]                 <- same PromQL interface
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prometheus at Scale example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Prometheus' remote write protocol is the universal scaling interface.
@@ -268,7 +268,7 @@ Counter.builder("checkout.requests")
 # High-cardinality PromQL queries time out with OOM
 ```
 
-> **Code walkthrough:** The BAD pattern shows the most common
+> **Code walkthrough:** The BAD pattern shows the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cardinality explosion: using a high-cardinality business identifier
 > (user_id) as a Prometheus label. Prometheus creates one time series
 > per unique label combination. With 1 million users, even a single
@@ -324,6 +324,13 @@ groups:
       # Prometheus is not the right tool for per-user data
 ```
 
+
+```promql
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```promql
 # GOOD: PromQL to detect cardinality growth before it's critical
 # Use this as an alert rule
@@ -345,8 +352,9 @@ groups:
       metric was added. Investigate with:
       topk(10, count by (__name__)({__name__!=""}))
 ```
+{% endraw %}
 
-> **Code walkthrough:** The GOOD pattern demonstrates the systematic
+> **Code walkthrough:** The GOOD pattern demonstrates the systematicice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > approach to cardinality crisis: quantify the current series count,
 > identify the top contributors using topk() on `__name__`, confirm
 > which specific label causes the explosion using the label values
@@ -358,6 +366,12 @@ groups:
 > false positives from normal deployment spikes.
 
 **Example 3: Thanos remote write and query setup**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # GOOD: Prometheus configured with remote write to Thanos Receive
@@ -407,7 +421,7 @@ flags:
   - --query.partial-response  # return partial results if a store fails
 ```
 
-> **Code walkthrough:** The remote write configuration ships metrics
+> **Code walkthrough:** The remote write configuration ships metricsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from Prometheus to Thanos Receive with tuned queue settings.
 > `max_shards: 30` enables parallel write channels, preventing
 > remote write backpressure from slowing Prometheus scraping.
@@ -418,6 +432,12 @@ flags:
 > return exactly one result set, not duplicate data.
 
 **Example 4: Recording rules for query performance**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # GOOD: Recording rules for expensive PromQL queries
@@ -469,7 +489,7 @@ groups:
           )
 ```
 
-> **Code walkthrough:** Recording rules are the primary query
+> **Code walkthrough:** Recording rules are the primary queryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > performance optimization for Prometheus at scale. Without them,
 > a Grafana dashboard with 12 panels each running `histogram_quantile`
 > over millions of histogram bucket series spawns 12 concurrent
@@ -643,7 +663,7 @@ du -sh /prometheus/wal/
 # > 5GB WAL at 10M series = 15+ min replay time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This > 5GB WAL at 10M series = 15+ min replay time example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Recovery: do NOT simply restart Prometheus. It will replay the
 WAL, reconstruct 10M series in memory, and OOM again within 2
@@ -666,7 +686,7 @@ metric_relabel_configs:
 # Then fix the label and restore normal retention
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then fix the label and restore normal retention example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Failure 2: Remote write queue saturation - metrics lag or drop**
 
@@ -701,7 +721,7 @@ rate(prometheus_remote_storage_sent_batch_duration_seconds_sum[5m])\
 # > 2s average write latency -> backend is overloaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This > 2s average write latency -> backend is overloaded example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix:
 1. Increase queue capacity and shards in remote_write config:
@@ -744,7 +764,7 @@ for line in sys.stdin:
 # Shows slowest queries - these need recording rules
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This these need recording rules example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Create recording rules for the slowest queries identified
 above. For a `histogram_quantile(0.99, sum by (service, le)
@@ -783,7 +803,7 @@ curl -s "http://thanos-query:10902/metrics" | \
 # If P99 > 5s for store requests: store gateway overloaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If P99 > 5s for store requests: store gateway overloaded example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Ensure the Thanos Sidecar has read access to the Prometheus
 data directory and write access to object storage. The sidecar
@@ -929,7 +949,7 @@ prometheus \
 # Then query: topk(10, count by (__name__)({__name__!=""}))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then query: topk(10, count by (__name__)({__name__!=""})) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Identify and fix the high-cardinality metric. Add a
 `metric_relabel_config` to the scrape config to drop the offending
@@ -941,7 +961,7 @@ metric_relabel_configs:
     action: labeldrop
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Then query: topk(10, count by (__name__)({__name__!=""})) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 3: Start Prometheus with short WAL retention and wait for
 the high-cardinality data to age out:
@@ -955,7 +975,7 @@ prometheus \
 # After 3h, the series count drops, normal operation resumes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 3h, the series count drops, normal operation resumes example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Restore normal retention (15d) and verify series count
 stays low with the relabel config active.
@@ -1460,7 +1480,7 @@ Step 3 DESIGN (~10 min)
   Single pane of glass across all DCs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min)
 Mimir is the correct backend choice for this scale: multi-tenant,

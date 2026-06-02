@@ -138,7 +138,7 @@ Input: "The capital of France is"
     Output: "Paris"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Large Language Models (LLMs) example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The transformer attention mechanism lets every token
 "see" every other token in the context. This is what
@@ -217,7 +217,7 @@ response = client.messages.create(
 print(response.content[0].text)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This BAD: no error handling, no token limits set example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 ```python
 import anthropic
@@ -247,7 +247,7 @@ def call_llm(prompt: str, max_tokens: int = 512) -> str:
         ) from e
 ```
 
-> **Code walkthrough:** The BAD example hardcodes an API
+> **Code walkthrough:** The BAD example hardcodes an APIice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > key (security risk) and has no error handling - any API
 > failure crashes silently. The GOOD example reads the key
 > from an environment variable, wraps in a function with
@@ -972,7 +972,7 @@ Layer 0: Infrastructure
     (GPUs, serving, vector DBs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Generative AI Landscape example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Foundation models (Layer 1) are trained by labs
 (Anthropic, OpenAI, Google, Meta) on massive compute.
@@ -1046,7 +1046,7 @@ def summarize(text: str) -> str:
     return resp.content[0].text
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This BAD: hardcoded model, no provider abstraction example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: provider-agnostic abstraction, easy to swap
@@ -1083,7 +1083,7 @@ provider: LLMProvider = ClaudeProvider()
 result = provider.complete("Summarize: ...")
 ```
 
-> **Code walkthrough:** The BAD example hardcodes the model
+> **Code walkthrough:** The BAD example hardcodes the modelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and provider, making it painful to switch vendors or upgrade
 > models. The GOOD example wraps the provider behind an
 > abstraction - a single interface change swaps Claude for
@@ -1730,7 +1730,7 @@ AI-Enabled Product:
   (+ observability, cost tracking, fallback)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AI for Software Engineers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1826,7 +1826,7 @@ Format: numbered list. Be concise and specific."""
     return response.content[0].text
 ```
 
-> **Code walkthrough:** This uses Claude as an automated
+> **Code walkthrough:** This uses Claude as an automatedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > code review tool. The system prompt constrains the output
 > to a structured review format (numbered list, specific
 > categories) - without this constraint, the model gives

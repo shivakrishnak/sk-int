@@ -134,7 +134,7 @@ User: "Research our top 3 competitors and
   Done. (5+ LLM calls, 4 tool calls)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AI Agents vs LLM Chatbots example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -231,7 +231,7 @@ def run_agent(goal: str) -> str:
     return "Agent did not complete within iteration limit"
 ```
 
-> **Code walkthrough:** The chatbot function makes one
+> **Code walkthrough:** The chatbot function makes oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > LLM call and returns. The agent `run_agent` function
 > is a loop: send the goal and all messages to the LLM,
 > check the stop reason, and continue if the model wants
@@ -707,9 +707,14 @@ AGENT ARCHITECTURE:
   -> Repeat (up to max iterations)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Architecture Overview example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Tool design principles:**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # Tool description is the prompt that tells the
@@ -737,7 +742,7 @@ AGENT ARCHITECTURE:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Tells the LLM: when to use it, what it returns example demonstrates Python code pattern using SQL. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 **Memory types summary:**
 
@@ -748,7 +753,7 @@ SEMANTIC:        Domain knowledge (vector store / KB)
 PROCEDURAL:      How-to knowledge (system prompt, tools)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tells the LLM: when to use it, what it returns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -852,7 +857,7 @@ class SimpleAgent:
         return "Agent reached iteration limit without completing."
 ```
 
-> **Code walkthrough:** `SimpleAgent` implements all
+> **Code walkthrough:** `SimpleAgent` implements allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > four components. The system prompt and tools are
 > passed at construction (component 2: tools, component
 > 1: LLM configuration). The `messages` list is the
@@ -1366,7 +1371,7 @@ Direct SDK:
   - Good for: simple agents, custom needs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AI Agent Frameworks example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When frameworks help:**
 
@@ -1457,7 +1462,7 @@ graph.add_edge("tools", "llm")
 agent = graph.compile()
 ```
 
-> **Code walkthrough:** The direct SDK version
+> **Code walkthrough:** The direct SDK versionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is minimal and fully explicit - you see exactly
 > what the agent is doing at every step. The LangGraph
 > version models the same agent as a typed state machine:
@@ -1678,7 +1683,7 @@ def web_search(query: str) -> str:
     return search_api(query)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 The `@tool` decorator extracts the docstring as
 the description and the function signature as the

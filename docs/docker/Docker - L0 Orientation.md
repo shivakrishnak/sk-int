@@ -199,7 +199,7 @@ python app.py
 # 3 hours debugging "it works on my machine"
 ```
 
-> **Code walkthrough:** The traditional deployment script fails
+> **Code walkthrough:** The traditional deployment script failsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > because it relies on the host environment matching the expected
 > configuration. The `pip install` command installs the right
 > packages but cannot control whether Python 3.8 or 3.9 is installed.
@@ -236,7 +236,7 @@ USER appuser
 CMD ["python", "app.py"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Run as non-root user (security best practice) example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```bash
 # Build: create an image from the Dockerfile
@@ -251,7 +251,7 @@ docker run --publish 8080:8080 --name myapp myapp:v1.0.0
 # on Ubuntu Linux in production
 ```
 
-> **Code walkthrough:** The Dockerfile specifies exactly which Python
+> **Code walkthrough:** The Dockerfile specifies exactly which Pythonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > version (3.9-slim-bullseye) to use - not "whatever Python is installed"
 > but a pinned, reproducible base image. The two-step COPY pattern
 > (requirements.txt first, then application code) enables Docker's
@@ -446,7 +446,7 @@ Image layer 3 (read-only) ← COPY . . (application code)
 Image layer 2 (read-only) ← RUN pip install requirements
 Image layer 1 (read-only) ← FROM python:3.9-slim
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This on Ubuntu Linux in production example demonstrates ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When a container reads a file, it first checks its writable layer.
 If not found, it reads from the image layers. When a container
@@ -519,22 +519,28 @@ differs between machines.
 
 Step 1: Establish environment equivalence.
 Are you actually running the same image? Check:
+
+{% raw %}
 ```bash
 docker inspect mycontainer --format '{{.Image}}'
 # production: sha256:abc123...
 # developer: sha256:abc123...  # must match
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This developer: sha256:abc123...  # must match example dice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If digests differ, the images are different (a `latest` tag or
 rebuild produced a different image).
 
 Step 2: Check environment variables.
+
+{% raw %}
 ```bash
 docker inspect mycontainer --format '{{.Config.Env}}'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+{% endraw %}
+> **Code walkthrough:** This developer: sha256:abc123...  # must match example dice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Production may have different env vars than local. A missing
 database URL, a different API key, a different MODE=production
@@ -544,12 +550,15 @@ Step 3: Check volume mounts.
 A developer running with `--volume $(pwd):/app` (local code mounted)
 is not testing the built image. Production runs the code in the
 image. Verify:
+
+{% raw %}
 ```bash
 docker inspect mycontainer --format '{{.Mounts}}'
 # Should be empty or only data volumes (no source code mounts)
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Should be empty or only data volumes (no source code mounts) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Check resource limits.
 Production may have memory limits set. The container OOMs but
@@ -559,17 +568,20 @@ docker stats mycontainer
 # Watch for MEM USAGE approaching MEM LIMIT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Watch for MEM USAGE approaching MEM LIMIT example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: Check architecture.
 Developer on Apple Silicon (ARM64) builds an ARM64 image. Production
 is AMD64. The image runs correctly but with Rosetta emulation
 locally and natively in production (or refuses to run entirely).
+
+{% raw %}
 ```bash
 docker inspect mycontainer --format '{{.Architecture}}'
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Watch for MEM USAGE approaching MEM LIMIT example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The correct first question:
 "Is this the same image digest?" Not "is this the same tag?" Tags
@@ -598,12 +610,14 @@ jobs:
           docker build --target test -t myapp:test .
           docker run myapp:test mvn test
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run tests inside the application's container image example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The build environment is the Dockerfile itself - reproducible
 and version-controlled.
 
 Package stage - create the deployment artifact:
+
+{% raw %}
 ```yaml
       - name: Build production image
         run: |
@@ -614,12 +628,15 @@ Package stage - create the deployment artifact:
             .
           docker push ghcr.io/myorg/myapp:${{ github.sha }}
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+{% endraw %}
+> **Code walkthrough:** This Run tests inside the application's container image example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The image tag includes the Git SHA - the image is the deployable
 artifact, immutable and content-addressable.
 
 Deploy stage - run the artifact:
+
+{% raw %}
 ```yaml
       - name: Deploy to production
         run: |
@@ -627,8 +644,9 @@ Deploy stage - run the artifact:
           kubectl set image deployment/myapp \
             myapp=ghcr.io/myorg/myapp:${{ github.sha }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes: update the deployment to use the new imice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The three-stage flow: build → package → deploy. Docker makes each
 stage reproducible: the same Dockerfile always produces the same
@@ -707,21 +725,21 @@ their implications.
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Containers vs Virtual Machines
@@ -797,7 +815,7 @@ selecting the right isolation mechanism.
 **Architecture comparison:**
 
 Virtual Machine stack:
-```
+```plaintext
 Application Code
 Libraries / Runtime
 Guest OS (kernel + userspace)
@@ -806,10 +824,10 @@ Host OS
 Physical Hardware
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Containers vs Virtual Machines example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Container stack:
-```
+```plaintext
 Application Code
 Libraries / Runtime
 Container Runtime (namespace/cgroup management)
@@ -817,7 +835,7 @@ Host OS Kernel (shared)
 Physical Hardware
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Containers vs Virtual Machines example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The key difference: the guest OS layer. VMs have it; containers
 do not. The container's process talks directly to the host kernel,
@@ -897,7 +915,7 @@ vagrant up myapp-vm  # 45-90 seconds boot time
 # VM uses 4GB RAM to run a 100MB web application
 ```
 
-> **Code walkthrough:** The VM approach allocates a full OS (4GB)
+> **Code walkthrough:** The VM approach allocates a full OS (4GB)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for a web application that uses 100MB. The 40:1 overhead ratio
 > is the density problem. At 100 services, VMs require 400GB of RAM
 > for OS overhead alone.
@@ -930,7 +948,7 @@ docker stats --no-stream | grep webserver
 # Containers: 32GB / 128MB per container = 250 containers
 ```
 
-> **Code walkthrough:** The container density advantage is dramatic
+> **Code walkthrough:** The container density advantage is dramaticice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in practice. Ten containers start in under one second because each
 > container is just a process fork with namespace setup - no OS boot.
 > The 128MB memory limit per container allocates the application's
@@ -1209,6 +1227,8 @@ you are seeing both layers. If the overhead is primarily one layer,
 investigate that layer.
 
 Tools:
+
+{% raw %}
 ```bash
 # CPU performance profiling
 perf stat -p $(docker inspect --format '{{.State.Pid}}' mycontainer)
@@ -1223,8 +1243,9 @@ docker run -v /tmp/test:/data myapp  # Host filesystem
 docker run myapp  # Overlay2 filesystem
 fio --name=test --filename=/data/test --size=1G --rw=write
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Disk I/O: overlay2 vs volume example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The overlay2 disk I/O overhead
 for write-heavy workloads. The overlay2 copy-on-write mechanism
@@ -1484,7 +1505,7 @@ kubelet (Kubernetes) → CRI → containerd → runc → container
 kubelet (Kubernetes) → CRI → CRI-O → runc → container
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The OCI Standard and Container Runtime Ecosystem example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Docker is a developer tool layer above the OCI standards. The image
@@ -1520,7 +1541,7 @@ docker run --network=none myapp
 # This works in Docker but syntax may differ in Podman/containerd
 ```
 
-> **Code walkthrough:** Docker build flags that use BuildKit-specific
+> **Code walkthrough:** Docker build flags that use BuildKit-specificice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > features (like `--secret`) are not part of the OCI Image Spec. They
 > work in Docker but may not work in Buildah, Kaniko, or other OCI-
 > compliant build tools. Writing portable Dockerfiles means using
@@ -1559,7 +1580,7 @@ ctr run ghcr.io/myorg/myapp:v1.0.0 myapp-instance
 # containerd's CLI (ctr) runs the same OCI image as Docker
 ```
 
-> **Code walkthrough:** The OCI compatibility chain is demonstrated
+> **Code walkthrough:** The OCI compatibility chain is demonstratedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > across three different runtimes (Docker, Podman, containerd's ctr).
 > All three pull and run the same image from the same registry because
 > they all implement the OCI Image Spec and OCI Distribution Spec.
@@ -1725,7 +1746,7 @@ kubelet
   → Linux kernel (namespaces, cgroups)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This containerd's CLI (ctr) runs the same OCI image as Docker example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why dockershim was removed: Docker Engine does not implement CRI
 natively. Kubernetes maintained a shim (dockershim) that translated
@@ -1768,7 +1789,7 @@ SHA256 hash (the digest). The manifest references layers by digest:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The digest IS the address. When pulling an image, the client
 downloads the manifest (identified by tag), then downloads each
@@ -1882,7 +1903,7 @@ containerd
   → shim exits
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why this matters for debugging: `ps aux | grep shim` shows one
 shim process per running container on the host. If a container
@@ -1929,7 +1950,7 @@ The OCI Image Index (formerly Docker Manifest List):
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When the client (Docker, containerd) pulls `nginx:latest`, it
 resolves the tag to the image index. The client then selects the
@@ -1949,7 +1970,7 @@ docker buildx build \
 # Pushes to the registry as a multi-platform image
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pushes to the registry as a multi-platform image exice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The QEMU emulation: when building for a non-native platform (AMD64
 building ARM64), Docker uses QEMU user-mode emulation. This is
@@ -1982,7 +2003,7 @@ kubectl describe pod mypod -n mynamespace
 #   ... (error message tells you why)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ... (error message tells you why) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common error messages and their causes:
 - `401 Unauthorized` → missing or invalid registry credentials
@@ -2001,7 +2022,7 @@ docker manifest inspect ghcr.io/myorg/myapp:v1.0.0
 #   → credentials or network issue on the Kubernetes node
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This → credentials or network issue on the Kubernetes noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Check image pull secrets.
 ```bash
@@ -2012,7 +2033,7 @@ kubectl get pod mypod -o yaml | grep imagePullSecrets
 # Verify the pod references the correct secret
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify the pod references the correct secret example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Test from the Kubernetes node directly.
 ```bash
@@ -2023,7 +2044,7 @@ crictl pull ghcr.io/myorg/myapp:v1.0.0
 # Check: firewall rules, NAT, proxy configuration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check: firewall rules, NAT, proxy configuration example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: Architecture mismatch.
 ```bash
@@ -2033,7 +2054,7 @@ docker manifest inspect ghcr.io/myorg/myapp:v1.0.0 | grep architecture
 # Use multi-platform build if architecture mismatch
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use multi-platform build if architecture mismatch example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The Docker Hub rate limit issue
 in CI. Docker Hub anonymous pull limit: 100 pulls per 6 hours per

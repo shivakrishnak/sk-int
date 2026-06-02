@@ -95,11 +95,11 @@ Default frame (when ORDER BY is specified):
   (This is why SUM with ORDER BY gives a running total)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ROW_NUMBER, RANK, LAG, LEAD example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 **Function reference:**
 
-```
+```plaintext
 Ranking:
   ROW_NUMBER()     unique sequential integer per partition
   RANK()           rank with gaps for ties
@@ -119,7 +119,7 @@ Aggregate (as window):
   SUM, AVG, COUNT, MIN, MAX applied over the window
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ROW_NUMBER, RANK, LAG, LEAD example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -162,7 +162,7 @@ WHERE rn <= 3;
 -- No correlated subquery. O(n log n) total.
 ```
 
-> **Code walkthrough:** The BAD correlated subquery computes the rank of
+> **Code walkthrough:** The BAD correlated subquery computes the rank ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > each order by counting how many orders for the same customer are newer -
 > this requires a full index scan per order, O(N) total inner queries.
 > The GOOD window function computes `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC)`:
@@ -252,7 +252,7 @@ FROM orders
 ORDER BY created_at;
 ```
 
-> **Code walkthrough:** Three different OVER clauses in one SELECT. The
+> **Code walkthrough:** Three different OVER clauses in one SELECT. Theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > running total partitions by date (resets to 0 each day) and orders by
 > time (accumulates through the day). `ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`
 > makes the SUM cumulative up to the current row. The 7-row moving average
@@ -348,7 +348,7 @@ AVG(amount) OVER (
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 **Failure: Partition too large for memory in window function execution**
 
@@ -364,7 +364,7 @@ the working set, or partition the data by an additional column.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the execution order of window functions relative to other clauses?**
+**[JUNIOR] Q1 - [MECHANISM] What is the execution order of window functions relative to other clauses?**
 
 🗣️ "Execution order: FROM -> JOIN -> WHERE -> GROUP BY -> HAVING -> window functions
 -> SELECT -> DISTINCT -> ORDER BY -> LIMIT. Key: window functions execute
@@ -374,7 +374,7 @@ operate on grouped rows; (3) you cannot filter on a window function result
 in WHERE - the window function has not been evaluated yet. The workaround:
 place the window function in a CTE or subquery, then filter in the outer query."
 
-**Q2: What is the difference between ROWS and RANGE frame modes?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between ROWS and RANGE frame modes?**
 
 🗣️ "ROWS: physical rows. `ROWS BETWEEN 3 PRECEDING AND CURRENT ROW` includes
 exactly the 3 rows before the current row plus the current row (4 rows total).
@@ -386,7 +386,7 @@ For equal ORDER BY values: RANGE includes all tied rows in the 'current' window.
 For numerical calculations like moving averages: ROWS is usually what you want
 (precise row count). For time-based windows: RANGE (or GROUPS in PG11+) is appropriate."
 
-**Q3: How does FILTER clause work with window functions?**
+**[JUNIOR] Q3 - [MECHANISM] How does FILTER clause work with window functions?**
 
 🗣️ "`FILTER (WHERE condition)` can be applied to aggregate window functions:
 `SUM(amount) FILTER (WHERE status = 'PAID') OVER (PARTITION BY customer_id)`.
@@ -397,7 +397,7 @@ is more readable. Applicable to: SUM, COUNT, AVG, MIN, MAX in window context.
 Not applicable to: ranking functions (ROW_NUMBER, RANK) - they do not take
 a value argument."
 
-**Q4: How do you deduplicate rows using ROW_NUMBER?**
+**[MID] Q4 - [MECHANISM] How do you deduplicate rows using ROW_NUMBER?**
 
 🗣️ "Classic deduplication pattern: assign ROW_NUMBER over a partition by
 the key columns, ordered by the preferred row (e.g., most recent update).
@@ -411,7 +411,7 @@ This keeps the most recently updated row per customer_id. Alternative:
 simpler but less flexible). ROW_NUMBER approach: portable, explicit, allows
 filtering multiple results per group."
 
-**Q5: How would you compute a 30-day rolling revenue for each day?**
+**[MID] Q5 - [MECHANISM] How would you compute a 30-day rolling revenue for each day?**
 
 🗣️ "`SELECT date, revenue,
 SUM(revenue) OVER (ORDER BY date ROWS BETWEEN 29 PRECEDING AND CURRENT ROW)
@@ -423,7 +423,7 @@ use `RANGE BETWEEN INTERVAL '29 days' PRECEDING AND CURRENT ROW` to include
 all rows within the 30-day date range regardless of row count.
 For a moving average: `AVG(revenue) OVER (ORDER BY date ROWS BETWEEN 29 PRECEDING AND CURRENT ROW)`."
 
-**Q6: What is the difference between FIRST_VALUE and LAG for getting the previous value?**
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between FIRST_VALUE and LAG for getting the previous value?**
 
 🗣️ "`LAG(col, n)`: accesses the value n rows before the current row in the window order. Simple, efficient.
 `FIRST_VALUE(col) OVER (PARTITION BY group ORDER BY date ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`:
@@ -434,7 +434,7 @@ of the year: `FIRST_VALUE(revenue) OVER (PARTITION BY EXTRACT(YEAR FROM month) O
 LAG with n=1 accesses only the immediately preceding row. FIRST_VALUE accesses
 the beginning of the frame."
 
-**Q7: How do window functions perform compared to self-joins for time-series comparisons?**
+**[SENIOR] Q7 - [TRADE-OFF] How do window functions perform compared to self-joins for time-series comparisons?**
 
 🗣️ "Self-join: `FROM sales s1 JOIN sales s2 ON s1.product_id = s2.product_id AND s2.month = s1.month - INTERVAL '1 month'`.
 Both tables are scanned/indexed, joined. Cost: O(n log n) with indexes, O(n^2) without.
@@ -446,7 +446,7 @@ Merge Join node (two table accesses). Window function shows a WindowAgg node
 OVER ORDER BY) - the sort is O(n log n). For already-sorted data (index on
 (product_id, month)): window function can use an index scan with no explicit sort."
 
-**Q8: What are named windows and when are they useful?**
+**[SENIOR] Q8 - [MECHANISM] What are named windows and when are they useful?**
 
 🗣️ "Named windows: define a window specification once and reference it by name.
 `SELECT ..., ROW_NUMBER() OVER w, RANK() OVER w, SUM(amount) OVER w
@@ -459,7 +459,7 @@ readable (the window logic is named). Useful when: three or more window
 functions use the same partition/order. Note: named windows cannot extend
 other named windows (you cannot `WINDOW w2 AS (w ORDER BY col2)`)."
 
-**Q9: How do you handle NULL values in LAG and LEAD?**
+**[SENIOR] Q9 - [MECHANISM] How do you handle NULL values in LAG and LEAD?**
 
 🗣️ "`LAG(col, 1, default_value)`: the third argument is the default to return
 when there is no preceding row (i.e., the first row in the partition has no
@@ -579,7 +579,7 @@ Rules:
   - Add WHERE depth < N to prevent infinite loops on cyclic data
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hierarchical Data Queries example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Termination:**
 
@@ -592,7 +592,7 @@ Cycle guard pattern:
   WHERE NOT (child.id = ANY(visited_path))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hierarchical Data Queries example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -697,7 +697,7 @@ WITH RECURSIVE upward AS (
 SELECT name, level FROM upward ORDER BY level;
 ```
 
-> **Code walkthrough:** The downward traversal (find all reports) starts
+> **Code walkthrough:** The downward traversal (find all reports) startsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from a specific manager (anchor = `WHERE id = :manager_id`) and recursively
 > finds all employees whose `manager_id` matches the current level's IDs.
 > The upward traversal (find the management chain to CEO) works in reverse:
@@ -737,7 +737,7 @@ GROUP BY c.name
 ORDER BY c.name;
 ```
 
-> **Code walkthrough:** Bill of materials traversal accumulates quantities
+> **Code walkthrough:** Bill of materials traversal accumulates quantitiesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > multiplicatively: `bom.quantity * cp.quantity`. If the top component needs
 > 2 of sub-component A, and sub-component A needs 3 of part X: the total
 > is 2 * 3 = 6 of part X. The GROUP BY aggregates across all paths to the
@@ -845,13 +845,13 @@ CREATE INDEX CONCURRENTLY idx_categories_parent_id
 -- Without this: each recursive level does a Seq Scan.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between recursion in recursive CTEs and application-side recursion?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between recursion in recursive CTEs and application-side recursion?**
 
 🗣️ "Application-side recursion: query the database for each level separately
 (N+1 per level). For a 10-level tree: 10 round trips. Each round trip
@@ -864,7 +864,7 @@ step; (3) result set returned atomically (consistent snapshot).
 Use application-side recursion only when: the graph is very large and only
 a small portion needs to be traversed (stop condition based on application logic)."
 
-**Q2: How does PostgreSQL implement recursive CTE execution internally?**
+**[JUNIOR] Q2 - [MECHANISM] How does PostgreSQL implement recursive CTE execution internally?**
 
 🗣️ "PostgreSQL uses a working table (a temporary buffer). Step 1: execute the
 anchor member, store results in the working table and the final result table.
@@ -876,7 +876,7 @@ Step 4: return the accumulated final result. Memory: the working table is
 in-memory if it fits; spills to disk for large results. The recursive CTE
 is always materialized - no inlining or predicate pushdown into it."
 
-**Q3: How do you find the shortest path between two nodes using a recursive CTE?**
+**[JUNIOR] Q3 - [MECHANISM] How do you find the shortest path between two nodes using a recursive CTE?**
 
 🗣️ "For an unweighted graph: BFS (breadth-first search) finds the shortest path.
 A recursive CTE does breadth-first traversal naturally.
@@ -893,7 +893,7 @@ First row returned (ORDER BY hops LIMIT 1) is the shortest path.
 For weighted graphs: Dijkstra's algorithm needs specific ordering within
 the recursion, which recursive CTEs cannot efficiently enforce."
 
-**Q4: What is a closure table and when would you use it over a recursive CTE?**
+**[MID] Q4 - [SCENARIO] What is a closure table and when would you use it over a recursive CTE?**
 
 🗣️ "A closure table stores all ancestor-descendant pairs.
 `CREATE TABLE category_closure (ancestor_id, descendant_id, depth)`.
@@ -907,7 +907,7 @@ subtree queries, (2) large hierarchies (10,000+ nodes), (3) low write
 frequency relative to reads. Use recursive CTE when: (4) simple setup,
 (5) infrequent tree queries, (6) hierarchy depth is shallow."
 
-**Q5: How do you implement a path enumeration alternative to recursive CTEs?**
+**[MID] Q5 - [MECHANISM] How do you implement a path enumeration alternative to recursive CTEs?**
 
 🗣️ "Path enumeration: store the full path string in each row.
 `categories: id, path_string, name`.
@@ -919,7 +919,7 @@ Benefits: simple queries, fast with GiST index. Costs: path must be
 maintained on every write (update when reparenting), maximum path length
 limit. Best for: read-heavy hierarchies with rare restructuring."
 
-**Q6: What happens when a recursive CTE encounters a cycle in the data?**
+**[SENIOR] Q6 - [FAILURE] What happens when a recursive CTE encounters a cycle in the data?**
 
 🗣️ "Without cycle protection: the recursive member keeps matching rows
 indefinitely (A -> B -> A -> B -> ...). The working table grows without bound.
@@ -932,7 +932,7 @@ Terminates at max depth. (2) Visited array: `ARRAY[id]` in anchor,
 detection automatically. For production data that might have cycles
 (user-generated hierarchies): always add cycle detection."
 
-**Q7: How do you paginate through a large recursive CTE result?**
+**[SENIOR] Q7 - [MECHANISM] How do you paginate through a large recursive CTE result?**
 
 🗣️ "Recursive CTEs cannot have LIMIT in the recursive member. But the
 final query can have LIMIT and OFFSET. Caveat: the full recursive traversal

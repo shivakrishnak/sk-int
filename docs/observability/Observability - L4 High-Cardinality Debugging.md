@@ -181,7 +181,7 @@ Step 6: Open trace in Tempo
   -> Root cause: missing timeout for EU bank API
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High-Cardinality Debugging example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Pre-aggregated time-series databases (Prometheus) cannot support
@@ -270,7 +270,7 @@ histogram_quantile(0.99,
 # -> Investigation is blocked. Need different tool.
 ```
 
-> **Code walkthrough:** The BAD pattern shows three dead ends when
+> **Code walkthrough:** The BAD pattern shows three dead ends whenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > trying to use Prometheus for high-cardinality debugging. You cannot
 > add user_id as a label (TSDB explosion). You cannot see the
 > enterprise+eu-central+sepa combination because no single label
@@ -323,7 +323,7 @@ free      | card           | eu-west-1   | 0.2      | 152
 */
 ```
 
-> **Code walkthrough:** The GOOD pattern stores OTel span attributes
+> **Code walkthrough:** The GOOD pattern stores OTel span attributesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in ClickHouse (via the OTLP ClickHouse exporter) and queries them
 > with SQL. The key is the GROUP BY on three attributes simultaneously -
 > this is impossible in Prometheus at this cardinality but takes
@@ -335,6 +335,12 @@ free      | card           | eu-west-1   | 0.2      | 152
 > SEPA+EU-central subset.
 
 **Example 3: OTel SDK - Capturing business attributes for high-cardinality investigation**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Instrumenting with business attributes that enable
@@ -432,7 +438,7 @@ service:
       exporters: [otlp/tempo, clickhouse]
 ```
 
-> **Code walkthrough:** The Java service enriches each checkout span
+> **Code walkthrough:** The Java service enriches each checkout spanice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with business attributes (user_tier, payment_method, cart_item_count)
 > that are meaningful for incident investigation. These attributes are
 > NOT added as Prometheus labels (that would cause cardinality explosion)
@@ -489,7 +495,7 @@ def bubble_up(events, slow_filter, attributes):
 # payment_method=sepa_debit (2.8x)
 ```
 
-> **Code walkthrough:** BubbleUp automates the high-cardinality
+> **Code walkthrough:** BubbleUp automates the high-cardinalityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > investigation workflow. Instead of manually writing GROUP BY queries
 > for each attribute combination, BubbleUp computes the correlation
 > score for every attribute value simultaneously and ranks by how
@@ -657,7 +663,7 @@ WHERE Timestamp > now() - INTERVAL 1 HOUR" \
 # If spans_with_user_tier is 0 -> spans lack the attribute
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If spans_with_user_tier is 0 -> spans lack the attribute example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add business attribute instrumentation to the service using
 the OTel API. Use `Span.current().setAttribute(key, value)` at the
@@ -696,7 +702,7 @@ ORDER BY occurrences DESC
 -- UserTier     | 3000   <- legacy service uses camelCase
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If spans_with_user_tier is 0 -> spans lack the attribute example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: Enforce OTel semantic convention naming in the OTel Collector
 using the `transform` processor to normalize attribute names before
@@ -713,7 +719,7 @@ processors:
               where attributes["user_tier"] != nil
           - delete_key(attributes, "user_tier")
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Normalize user tier attribute name example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Long-term: add OTel attribute naming convention to the API contract
 tests and PR review checklist.
@@ -742,7 +748,7 @@ WHERE ServiceName = 'checkout'
 -- If this shows "scan millions of rows" -> missing sort key
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Normalize user tier attribute name example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: Create a materialized view in ClickHouse that pre-extracts
 common investigation attributes as first-class columns (not in the
@@ -763,7 +769,7 @@ WHERE ServiceName = 'checkout';
 -- Investigation queries on this table: sub-second
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Normalize user tier attribute name example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Failure 4: Tail sampling drops slow traces before ClickHouse receives them**
 
@@ -794,7 +800,7 @@ grep -A20 "tail_sampling" otel-collector-config.yaml
 # not {threshold_ms: 2000} (too high, misses 500ms traces)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This not {threshold_ms: 2000} (too high, misses 500ms traces) example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Lower the latency policy threshold in the tail sampling
 configuration. Verify the latency policy executes before the
@@ -925,7 +931,7 @@ curl "http://tempo:3100/api/traces/<traceID>" \
       select(.name | contains("checkout")) |
       .attributes[] | select(.key | contains("user"))'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This not {threshold_ms: 2000} (too high, misses 500ms traces) example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 If no user-related attributes appear: the application code is not
 setting them. I check the service code for OTel span attribute
@@ -942,7 +948,7 @@ processors:
       - key: "user.*"
         action: delete  # This deletes all user.* attrs!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In Collector config, look for: example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 A PII scrubbing rule that's too broad deletes legitimate business
 attributes. I need to be more specific: delete `user.email` and
@@ -1046,7 +1052,7 @@ WHERE user_tier = 'enterprise'
 ORDER BY Duration DESC LIMIT 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In Collector config, look for: example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 9:24am: I open the top trace in Tempo. The checkout span shows 2.3s
 total. Inside: a `payment.validate_items` span takes 2.1s. Inside
@@ -1136,7 +1142,7 @@ LIMIT 30
 SETTINGS max_threads = 8; -- parallel query execution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Optimization for sub-second response on large tables:
 - Use a materialized view that extracts common attributes as
@@ -1490,7 +1496,7 @@ Visualization + Alerting:
   ClickHouse: investigation queries (Grafana Explore)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min):
 High-cardinality debugging is the differentiating capability here.
@@ -1572,7 +1578,7 @@ OTel Collector Gateway Pipeline
      +--[clickhouse exporter]    -> ClickHouse (events)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Staff angle:**
 The platform ownership question: who owns the ClickHouse cluster?

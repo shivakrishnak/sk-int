@@ -181,7 +181,7 @@ INCIDENT COMMANDER ROLE
   Declares mitigation and resolution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Incident Response Lifecycle example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Mitigation and resolution are explicitly separate phases. Mitigation
@@ -220,6 +220,11 @@ response). These five needs map directly to the five lifecycle phases.
 ### 💻 Code Example
 
 **Example 1: Incident severity classification script**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: severity classified subjectively in Slack
@@ -265,7 +270,7 @@ print(f"Severity: {severity.name}")
 # Severity: P1 (core broken + 45% affected)
 ```
 
-> **Code walkthrough:** The BAD approach classifies severity in Slack
+> **Code walkthrough:** The BAD approach classifies severity in Slackice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with subjective language, leading to inconsistent responses. The
 > GOOD approach derives severity from SLI data: error rate, affected
 > user percentage, and core feature status. This makes classification
@@ -274,6 +279,11 @@ print(f"Severity: {severity.name}")
 > engineer receives the page, reducing triage time.
 
 **Example 2: Incident timeline logging**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # BAD: timeline reconstructed from Slack after the incident
@@ -310,7 +320,7 @@ curl -X POST \
   -d '{"note": {"content": "Rollback to v2.4.1 initiated"}}'
 ```
 
-> **Code walkthrough:** The BAD approach relies on engineers
+> **Code walkthrough:** The BAD approach relies on engineersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > remembering to post timeline updates in Slack after the fact.
 > Post-incident timeline reconstruction is notoriously incomplete
 > and unreliable. The GOOD approach uses structured timeline logging:
@@ -397,7 +407,7 @@ the time of the delay?"
 If yes: mitigation-first principle was not followed.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This POST /incidents/{id}/notes: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Add to the incident response checklist (first item after
 triage): "Can we mitigate now? What is the fastest mitigation?
@@ -431,7 +441,7 @@ If answer: "Nobody, everyone was just debugging"
   -> no IC, parallel work uncoordinated.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This POST /incidents/{id}/notes: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Designate an IC immediately at P1+ declaration. The IC
 does not need to be the most senior person. Their first action:
@@ -465,7 +475,7 @@ If management override is common:
   classification authority is unclear.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This POST /incidents/{id}/notes: example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Implement the objective severity classification matrix
 (error rate, affected user percentage, core feature broken).
@@ -1048,7 +1058,7 @@ BLAMELESS PRINCIPLE
   - "The code review process did not check for Z"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Postmortem Culture and Blameless Retrospectives example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The action items are the return on investment of the postmortem.
@@ -1089,6 +1099,11 @@ prerequisite for psychological safety in postmortems.
 ### 💻 Code Example
 
 **Example 1: Postmortem action item tracking**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: postmortem action items in a Google Doc
@@ -1159,7 +1174,7 @@ print(f"Created: {ticket}")
 # Output: Created: SRE-1247
 ```
 
-> **Code walkthrough:** The BAD approach tracks action items in a
+> **Code walkthrough:** The BAD approach tracks action items in aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > document that nobody is accountable to, with no automated reminders
 > or completion verification. The GOOD approach creates Jira tickets
 > with assignees, due dates, labels, and automated sprint integration.
@@ -1170,6 +1185,11 @@ print(f"Created: {ticket}")
 > capability (more detection items = good learning).
 
 **Example 2: Postmortem metrics dashboard**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # Postmortem health tracking
@@ -1228,7 +1248,7 @@ def analyze_postmortem_health(postmortems: list) -> dict:
     return metrics
 ```
 
-> **Code walkthrough:** Postmortem health tracking quantifies whether
+> **Code walkthrough:** Postmortem health tracking quantifies whetherice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the postmortem practice is producing real improvements. The key
 > metrics: draft delay (should be < 3 days while the incident is fresh),
 > action item completion rate (target > 70%, if lower the practice is
@@ -1320,7 +1340,7 @@ the postmortem meeting:
 If "no" to any: culture is not blameless.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Health assessment example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* The most senior person in the postmortem meeting must
 model blameless behavior by explicitly redirecting individual-
@@ -1361,7 +1381,7 @@ Track completion rate:
 If < 70%: action items are not being followed through.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Health assessment example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Postmortem action items flagged "High" priority must be
 included in the next sprint as non-negotiable. Moderate priority
@@ -1402,7 +1422,7 @@ Action item: add "minimum review time" to the
   change management checklist.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Health assessment example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Train postmortem facilitators to push the Five Whys until
 a process or system failure is identified. "Code had a bug" is

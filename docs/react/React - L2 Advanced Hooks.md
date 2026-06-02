@@ -77,6 +77,12 @@ Without memoization, every render:
 
 **How they work:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```jsx
 import { useMemo, useCallback, memo } from 'react';
 
@@ -147,7 +153,7 @@ function Label({ text }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This useMemo and useCallback Optimization example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -205,7 +211,7 @@ function Parent() {
 // or if the callback is a dep in another memoized hook
 ```
 
-> **Code walkthrough:** The DataGrid example shows genuine `useMemo` value:
+> **Code walkthrough:** The DataGrid example shows genuine `useMemo` value:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sorting a large array is O(n log n) - expensive for 1000+ rows. Without
 > memoization, typing in an unrelated search input (which causes the parent
 > to re-render) would re-sort the entire table on each keystroke. The
@@ -291,7 +297,7 @@ Symptom: callback reads a stale value from when it was created; editing a form f
 
 ---
 
-**Q1: Explain the relationship between useCallback, React.memo, and
+**[JUNIOR] Q1 - [MECHANISM] Explain the relationship between useCallback, React.memo, and**
 re-renders.** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -524,7 +530,7 @@ function SearchInput() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Custom Hooks example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -565,7 +571,7 @@ test('useCounter increments and resets', () => {
 // Hooks can be tested in isolation without a real component
 ```
 
-> **Code walkthrough:** `renderHook` from React Testing Library creates a
+> **Code walkthrough:** `renderHook` from React Testing Library creates aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > minimal component wrapper that renders the hook. `result.current`
 > contains the hook's return value. `act()` wraps state updates to ensure
 > React processes them before assertions. This pattern tests the hook's
@@ -652,8 +658,7 @@ Symptom: two instances of the same component that use the same custom hook do no
 
 ---
 
-**Q1: Design a useAsync hook for handling async operations.** `[SENIOR]`
-LIVE CODING
+**[JUNIOR] Q1 - [SCENARIO] Design a useAsync hook for handling async operations.** `[SENIOR]`**
 
 > **Answer:**
 >

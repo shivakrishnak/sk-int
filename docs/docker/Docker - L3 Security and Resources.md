@@ -240,13 +240,13 @@ DOCKER SOCKET SECURITY:
   # No Docker socket access needed.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This No Docker socket access needed. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A hardened `docker run` command and its
+> **Code walkthrough:** A hardened `docker run` command and itsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Kubernetes security context equivalent.
 
 ```bash
@@ -303,7 +303,7 @@ docker run \
 > and a read-only filesystem. In Kubernetes: PSP (deprecated) is
 > replaced by Pod Security Admission (PSA). Enforce the `restricted`
 > profile in production namespaces: it enforces all of the above.
-> `kubectl label namespace production pod-security.kubernetes.io/enforce=restricted`.
+> `kubectl label namespace production pod-security.kubernetes.io/enforce=restric
 > Teams with legacy workloads that don't pass `restricted`: use
 > `baseline` (no privileged, no hostPath, no host network) as an
 > intermediate step.
@@ -330,15 +330,15 @@ read-only, seccomp, non-root. These must be explicitly applied.
 
 ### ⚖️ Comparison Table
 
-| Security Control | What It Prevents | Performance Impact | Complexity |
-|---|---|---|---|
-| Non-root user | Post-exploitation escalation | Zero | Low |
-| cap-drop ALL | Capability-based escalation | Negligible | Low |
-| --no-new-privileges | setuid escalation | Negligible | Low |
-| Read-only filesystem | Post-exploitation writes | Zero | Medium |
-| seccomp | Dangerous syscall exploitation | <1% CPU | Medium |
-| AppArmor | File access, network raw | <1% CPU | High |
-| Rootless Docker | Daemon compromise → host escape | Low-medium | High |
+| Security Control| What It Prevents| Performance Impact| Complexity|
+|----------------|-------------------------------|------------------|----------|
+| Non-root user| Post-exploitation escalation| Zero| Low|
+| cap-drop ALL| Capability-based escalation| Negligible| Low|
+| --no-new-privileges| setuid escalation| Negligible| Low|
+| Read-only filesystem| Post-exploitation writes| Zero| Medium|
+| seccomp| Dangerous syscall exploitation| <1% CPU| Medium|
+| AppArmor| File access, network raw| <1% CPU| High|
+| Rootless Docker| Daemon compromise → host escape| Low-medium| High|
 
 ---
 
@@ -357,7 +357,7 @@ read-only, seccomp, non-root. These must be explicitly applied.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Container exits immediately after adding --cap-drop=ALL.**
-```
+```plaintext
 Symptom: Container starts then exits with "Operation not permitted"
   or "Permission denied" errors in docker logs.
   Or: application works without --cap-drop but exits with it.
@@ -376,7 +376,7 @@ Diagnosis:
   # "Operation not permitted" in app logs -> capability check
   
   # Run strace to find which syscall fails:
-  docker run --cap-add=SYS_PTRACE --cap-drop=ALL myapp strace myapp 2>&1 | grep EPERM
+  docker run --cap-add=SYS_PTRACE --cap-drop=ALL myapp strace myapp 2>&1 |...
   # Shows exact syscall that returned EPERM.
   
   # Check capability requirements with capsh:
@@ -397,7 +397,7 @@ Fixes:
   HEALTHCHECK CMD nc -z localhost 3000 || exit 1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This no cap_net_raw needed. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -503,7 +503,9 @@ person's 4K video streaming kills everyone else's connection."
 ### 📘 Concept Explanation
 
 **Memory, CPU, PID, JVM container awareness, K8s requests/limits:**
-```
+
+{% raw %}
+```plaintext
 MEMORY LIMITS:
 
   # Set hard memory limit:
@@ -644,14 +646,15 @@ MONITORING RESOURCE LIMITS:
   # Or in pod describe:
   kubectl describe pod myapp-abc-xyz | grep -i oom
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in pod describe: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Diagnosing and fixing JVM heap misconfiguration
+> **Code walkthrough:** Diagnosing and fixing JVM heap misconfigurationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in a containerized Spring Boot application.
 
 ```bash
@@ -698,7 +701,7 @@ spec:
 # JAVA_TOOL_OPTIONS: picked up by JVM automatically (no Dockerfile change).
 ```
 
-> **Code walkthrough:** `JAVA_TOOL_OPTIONS` is a standard environment
+> **Code walkthrough:** `JAVA_TOOL_OPTIONS` is a standard environmentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > variable that the JVM reads on startup. It doesn't require modifying
 > the Dockerfile or the startup command. `UseContainerSupport` tells
 > the JVM to read the cgroup memory limit (`/sys/fs/cgroup/memory/
@@ -831,7 +834,7 @@ Fix:
   to suggest appropriate requests based on actual usage.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No more BestEffort QoS in the namespace. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

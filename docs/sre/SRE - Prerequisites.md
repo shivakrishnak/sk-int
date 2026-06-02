@@ -161,7 +161,7 @@ CASCADE FAILURE
   Defense: circuit breaker, bulkhead, timeout
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Systems Failure Modes example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Timeouts are mandatory, not optional. Without a timeout, every
@@ -284,7 +284,7 @@ jstack <pid> | grep -A5 "BLOCKED\|WAITING" | \
   head -40
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for blocked threads example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:* Add explicit timeouts on all outbound calls. Add
 circuit breakers. Use bulkhead pattern to isolate thread
@@ -310,7 +310,7 @@ etcdctl endpoint status --cluster -w table
 # Divergence confirms split-brain occurred
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Divergence confirms split-brain occurred example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Implement fencing tokens. Any write to storage must
 include a monotonically increasing token; old tokens are
@@ -340,7 +340,7 @@ grep "retry attempt" service.log | \
   awk '{print $1}' | uniq -c | head -20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for synchronized retry in logs example demonstrates shell script pattern using concurrency primitive. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Exponential backoff with full jitter on all retries.
 Circuit breakers to stop retrying when error rate exceeds
@@ -497,7 +497,7 @@ t=30s: service-A latency p99: 80ms -> 8000ms
 t=35s: service-C error rate: 0% -> 60%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for synchronized retry in logs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Root cause is always upstream of t=0. I check: what changed in
 service-B before t=0? Deployment, config change, database slow
@@ -789,7 +789,7 @@ PROCESS
   KEY: fd count vs ulimit
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Linux Operations and Systems Monitoring example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The /proc filesystem is the kernel's live state exposed as files.
@@ -829,6 +829,11 @@ to derive diagnostics without memorizing every flag.
 
 **Example 1: Structured incident triage (wrong vs right)**
 
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
+
 ```bash
 # BAD: checking only one metric in isolation
 top
@@ -846,7 +851,7 @@ echo "=== OOM EVENTS ===" && \
   dmesg | grep -i "oom\|killed" | tail -5
 ```
 
-> **Code walkthrough:** This script collects all four resource
+> **Code walkthrough:** This script collects all four resourceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > dimensions in one pass. `uptime` provides load average for trend
 > context. `ps aux --sort=-%cpu` identifies the specific process.
 > `iostat -xz 1 3` takes 3 samples over 3 seconds to catch
@@ -879,7 +884,7 @@ ss -s
 #   Fix: find and fix the connection leak.
 ```
 
-> **Code walkthrough:** `ss -s` gives a connection state summary
+> **Code walkthrough:** `ss -s` gives a connection state summaryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in one command. TIME_WAIT accumulation is normal but thousands
 > indicate connection churn that should be addressed with
 > connection pooling. CLOSE_WAIT is always a bug: it means the
@@ -908,7 +913,7 @@ vmstat 1 5
 ps aux --sort=-%mem | head -5
 ```
 
-> **Code walkthrough:** `free -m` shows "available" which includes
+> **Code walkthrough:** `free -m` shows "available" which includesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reclaimable page cache and is the correct health indicator, not
 > "free". A system with 200 MB free but 3 GB in cache is healthy.
 > Swap activity (si/so in vmstat) above zero means the system is
@@ -995,7 +1000,7 @@ dmesg | grep -i "oom\|out of memory\|killed"
 kubectl top pods --containers | grep <service>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check memory trend before kill example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Increase memory limit if usage is legitimate, or find
 and fix the memory leak. For JVM: add
@@ -1026,7 +1031,7 @@ iostat -xz 1
 iotop -o -d 1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find which process owns the I/O example demonstrates shell script pattern using async/await. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Move application logs to a separate volume. Switch to
 async logging. Use faster storage (NVMe). Reduce I/O by
@@ -1057,7 +1062,7 @@ cat /proc/<pid>/limits | grep "open files"
 ss -tunp state close-wait | grep <pid>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find CLOSE_WAIT connections (connection leak) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Find the code path opening connections without closing.
 Use try-with-resources (Java) or with statement (Python). Add
@@ -1204,7 +1209,7 @@ Third, in production when tools are restricted: watch VmRSS:
 ```
 watch -n 5 grep VmRSS /proc/<pid>/status
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find CLOSE_WAIT connections (connection leak) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If VmRSS grows steadily with stable workload, the leak is confirmed
 and I can escalate to heap dump analysis in a staging replica.
@@ -1246,7 +1251,7 @@ The safer production alternative is eBPF-based tools like bpftrace:
 bpftrace -e 'tracepoint:syscalls:sys_enter_fsync
 { printf("%s\n", comm); }'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find CLOSE_WAIT connections (connection leak) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This identifies fsync callers with minimal overhead because
 aggregation happens in kernel space.
@@ -1282,7 +1287,7 @@ ls -la /proc/<pid>/fd | tail -20
 # File entries all same path = file handle leak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This File entries all same path = file handle leak example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Temporary fix: `ulimit -n 65536` in the shell, then restart the
 service to apply. For systemd services: add `LimitNOFILE=65536`
@@ -1335,7 +1340,7 @@ cat /proc/<pid>/status | grep VmRSS
 cat /proc/loadavg
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Load average without uptime example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 This also matters for observability architecture: Prometheus node
 exporter reads /proc paths and exposes them as metrics. Custom
@@ -1518,7 +1523,7 @@ DEPLOYMENT STRATEGIES
     Cost: mixed versions run simultaneously
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CI/CD and Deployment Pipeline Basics example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Deployment strategy determines blast radius. Blue-green contains
@@ -1562,6 +1567,12 @@ escape tests.
 
 **Example 1: GitHub Actions CI pipeline (wrong vs right)**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```yaml
 # BAD: no caching, no test separation, slow
 name: CI
@@ -1599,7 +1610,7 @@ jobs:
           path: target/*.jar
 ```
 
-> **Code walkthrough:** The BAD version runs all tests without
+> **Code walkthrough:** The BAD version runs all tests withoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > dependency caching, re-downloading every library and running slow
 > integration tests before fast unit tests. The GOOD version caches
 > Maven dependencies (saves 2-5 minutes per build), runs fast unit
@@ -1632,7 +1643,7 @@ spec:
       stableService: payment-service-stable
 ```
 
-> **Code walkthrough:** This Argo Rollouts spec sends 5% of traffic
+> **Code walkthrough:** This Argo Rollouts spec sends 5% of trafficice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to the new version initially. After 5 minutes, an AnalysisTemplate
 > checks the error rate SLI against the SLO threshold. If the error
 > rate exceeds the threshold, Argo automatically rolls back to the
@@ -1721,7 +1732,7 @@ kubectl rollout undo deployment/service-name
 kubectl rollout status deployment/service-name
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify status example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Redesign deployment pipeline to include rollback as a
 first-class concern. Blue-green: traffic switch. Canary: automated
@@ -1750,7 +1761,7 @@ kubectl get analysisrun -n <namespace>
 # Test passes 85-95% of runs = definitively flaky
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test passes 85-95% of runs = definitively flaky example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Quarantine flaky tests immediately - move to a separate
 suite that does not block deployment. Fix the non-determinism
@@ -1777,7 +1788,7 @@ kubectl get pods -o wide | grep <service>
 cat db_migration.log | grep -i "error\|failed"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check migration log example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Use the expand-contract pattern. Phase 1: add column as
 nullable (backward compatible). Phase 2: deploy new code. Phase 3:

@@ -133,13 +133,23 @@ FUNCTION FEATURES:
     quadruple(5);  // 20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Functions and Arrow Functions example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Arrow function this binding vs regular function**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: regular function loses 'this' in callback
@@ -192,7 +202,7 @@ const activeNames = users
 // ['Alice']
 ```
 
-> **Code walkthrough:** The `Timer` class shows the core arrow function
+> **Code walkthrough:** The `Timer` class shows the core arrow functionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > value: `setInterval`'s callback needs `this.seconds`, but a regular
 > function's `this` is determined by the caller (setInterval calls it
 > without context, so `this` is undefined in strict mode). Arrow functions
@@ -259,7 +269,7 @@ this.el.addEventListener('click', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -277,7 +287,7 @@ this.el.addEventListener('click', () => {
 
 ---
 
-**Q1: What is the difference between function declaration,
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between function declaration,**
 expression, and arrow function?** `[JUNIOR]` COMPARISON
 
 > **Answer:**
@@ -501,13 +511,18 @@ CLOSURE MEMORY:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Closures example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Module pattern with private state**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: global state exposed, can be mutated externally
@@ -560,7 +575,7 @@ multipliers[0](4);  // 8  (double)
 multipliers[1](4);  // 12 (triple)
 ```
 
-> **Code walkthrough:** The counter module pattern uses an IIFE
+> **Code walkthrough:** The counter module pattern uses an IIFEice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (immediately-invoked function expression) to create a scope that
 > executes once and returns an object. `count` is trapped in the IIFE's
 > scope, accessible only to the three methods. External code has no
@@ -627,7 +642,7 @@ for (let i = 0; i < 3; i++) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ---
 
@@ -645,7 +660,7 @@ for (let i = 0; i < 3; i++) {
 
 ---
 
-**Q1: Implement a counter using a closure.** `[JUNIOR]` IMPLEMENTATION
+**[JUNIOR] Q1 - [MECHANISM] Implement a counter using a closure.** `[JUNIOR]` IMPLEMENTATION**
 
 > **Answer:**
 >
@@ -775,7 +790,7 @@ The difficulty: `this` changes with calling pattern, not definition location.
 
 **How it works:**
 
-```
+```plaintext
 FOUR this BINDING RULES (priority: 4 > 3 > 2 > 1):
 
 1. DEFAULT BINDING (lowest):
@@ -840,7 +855,7 @@ PRIORITY: new > bind > call/apply > obj.method() > fn()
 Arrow: bypasses all (lexical from definition)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This this Binding example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -910,7 +925,7 @@ class DataService {
 }
 ```
 
-> **Code walkthrough:** Method extraction (`const fn = person.sayName`)
+> **Code walkthrough:** Method extraction (`const fn = person.sayName`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the most common way `this` is accidentally lost. The method is
 > now just a function reference with no object context - calling it
 > triggers default binding (`undefined` in strict mode). The bind fix
@@ -983,7 +998,7 @@ arr.forEach(obj.process);             // this lost
 arr.forEach(x => obj.process(x));     // fixed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ---
 
@@ -1001,7 +1016,7 @@ arr.forEach(x => obj.process(x));     // fixed
 
 ---
 
-**Q1: What are call, apply, and bind?** `[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [MECHANISM] What are call, apply, and bind?** `[JUNIOR]` COMPARISON**
 
 > **Answer:**
 >

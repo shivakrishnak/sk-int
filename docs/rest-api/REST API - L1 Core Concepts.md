@@ -64,7 +64,7 @@ Safe = no side effects (read-only)
 Idempotent = N identical calls = 1 call result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTTP Methods in REST APIs example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Idempotency is the property that enables safe retries. In distributed systems, network timeouts are common - you send a request but don't receive the response (was it processed?). If the operation is idempotent (PUT, DELETE), you can safely retry: calling it again produces the same result. If it's not idempotent (POST), retrying risks duplicates. This is why the payment industry invented idempotency keys: turn a POST (non-idempotent) into an effectively idempotent operation by deduplicating on the key.
@@ -194,49 +194,49 @@ Fix: Implement idempotency keys. Client generates UUID before sending: `Idempote
 | Trade-off | 2 min | 1 |
 | Design | 2 min | 1 |
 
-#### Q1 - "What is the difference between safe and idempotent HTTP methods?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "What is the difference between safe and idempotent HTTP methods?"**
 > "Safe means the operation has no side effects - calling it doesn't change server state. GET, HEAD, and OPTIONS are safe. Safe methods can be called freely by infrastructure without concern for unintended state changes. Idempotent means calling the method N times produces the same result as calling it once. GET, PUT, DELETE, HEAD, and OPTIONS are idempotent. POST is neither safe nor idempotent. The distinction matters for retry logic and caching. Infrastructure (CDNs, caches) caches GET because it's safe. Clients retry PUT and DELETE on failure because idempotency guarantees no side effects from retrying. Clients must not retry POST automatically because it might create duplicate records. The corner cases: DELETE is idempotent - deleting a resource that doesn't exist returns 404 (resource gone) both the first and second time. The client achieves the goal (resource is absent) either way. PUT is idempotent - sending the same PUT twice results in the same state. PATCH is tricky - it depends on the operation: setting a field to a specific value is idempotent; incrementing a counter by 1 is not."
 
 *What separates good from great:* "The corner case about PATCH idempotency (setting a value vs. incrementing) shows precise understanding. Many candidates say PATCH is idempotent - it's not always."
 
 ---
 
-#### Q2 - "How do you implement idempotent POST requests?"
+**[JUNIOR] Q2 - [HANDS-ON] "How do you implement idempotent POST requests?"**
 > "Idempotent POST via idempotency keys. Protocol: client generates a UUID before sending the request and includes it as a header. Server checks if this key was already processed. If yes: return the stored response without re-executing. If no: execute and store the result keyed by the idempotency key. Implementation in Java/Spring: store processed idempotency keys in Redis with TTL (24 hours is typical). Key: `idempotency:{uuid}`, value: serialized response body + status code. Use Redis SETNX (set-if-not-exists) with a short lock TTL to handle concurrent duplicate requests - only one processing allowed per key. Client side: generate UUID before the request, retry on timeout/failure with the same UUID. On success: clear the stored key after the response is confirmed received (optional - TTL handles cleanup). Production considerations: key storage must be durable (Redis AOF persistence or database). Key deduplication window must be longer than client retry window (client retries for 5 minutes, store keys for 24 hours). Stripe's API reference implementation: `Idempotency-Key` header with 24-hour window."
 
 *What separates good from great:* "SETNX (or SET NX) for distributed locking when two concurrent duplicates arrive simultaneously is the production detail. Without this, two concurrent requests with the same key can both pass the 'key exists?' check and both execute."
 
 ---
 
-#### Q3 - "When should you use PUT vs PATCH?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "When should you use PUT vs PATCH?"**
 > "Use PUT when the client has the complete resource and wants to replace it entirely. Use PATCH when the client wants to modify specific fields without knowing or sending the complete resource. The practical tiebreaker: who owns the resource shape? If the client constructs the resource from scratch and knows all fields, PUT. If the client receives the resource from the server and modifies some fields, PATCH. Concurrency safety: PATCH is safer for concurrent clients. If two clients both GET the same resource, modify different fields, and send back their changes: PUT (last write wins) may clobber one client's changes. PATCH only touches declared fields. For PUT, use optimistic locking via ETag: client includes `If-Match: abc123` header, server rejects with 412 Precondition Failed if the resource changed since the client read it. For PATCH format: RFC 7396 JSON Merge Patch (`Content-Type: application/merge-patch+json`) is simple - send a JSON object with the fields to change. RFC 6902 JSON Patch is more powerful but more complex - send an array of operations (add, remove, replace, move, copy, test)."
 
 *What separates good from great:* "Knowing the specific RFC numbers (7396 for Merge Patch, 6902 for JSON Patch) and their trade-offs shows depth. The optimistic locking via ETag + If-Match for PUT is a production pattern most candidates miss."
 
 ---
 
-#### Q4 - "A client is calling your POST endpoint and getting duplicate orders on timeout. How do you fix it without changing the client?"
+**[MID] Q4 - [CONCEPTUAL] "A client is calling your POST endpoint and getting duplicate orders on timeout. How do you fix it without changing the client?"**
 > "Without changing the client: the server must detect and deduplicate the retry. Options: (1) Natural deduplication: if two identical orders (same items, same user, same amount) within a 30-second window are a business impossibility, reject the second as a duplicate (return 200 with the first order instead of creating a new one). Risk: false positives if legitimate identical orders can occur. (2) Request fingerprint: hash the request body + user ID + timestamp-window (floor to 5-second bucket). Store seen fingerprints for 30 seconds. Reject if fingerprint seen before. Risk: hash collisions, legitimate retries rejected. (3) Client IP + endpoint throttle: if the same IP calls POST /orders more than 3 times in 10 seconds, treat after the first as a retry. Return the first successful response. Risk: NAT / shared IP false positives. Long-term fix: require the client to send an idempotency key. Soft migration: if no idempotency key is present, the server uses fingerprinting as a fallback. When clients start sending the key, the server uses it. This allows gradual migration."
 
 *What separates good from great:* "The graduated migration approach (fingerprinting as fallback when no idempotency key is present, key takes priority when sent) is the production answer for systems with existing clients that cannot change immediately."
 
 ---
 
-#### Q5 - "Should you use 200 or 204 for a successful DELETE?"
+**[MID] Q5 - [CONCEPTUAL] "Should you use 200 or 204 for a successful DELETE?"**
 > "Both are acceptable, but they have different semantics. 204 No Content: the operation succeeded, there is nothing to return. This is the most semantically correct - what would you return after deleting a resource? The deleted resource no longer exists. A simple `204 No Content` with no body is clean and correct. 200 OK with the deleted resource: some APIs return the deleted resource in the response. Useful if the client might want to display 'item X was deleted' with the item's name. Useful if the client needs the data for undo functionality. 200 OK with empty body: incorrect - don't return empty body with 200. Use 204 No Content if there's nothing to return. My recommendation: 204 for most DELETE operations. 200 with the deleted resource if the client has a UX need for the deleted data (undo, confirmation display). Never 200 with empty body. Edge case: deleting a resource that was already deleted. Two approaches: 404 Not Found (correct - resource doesn't exist), or 204 No Content (idempotent response - the goal was to delete it, it is deleted). I prefer the idempotent 204 approach: it simplifies client logic (no need to handle 404 on DELETE as a special case)."
 
 *What separates good from great:* "The idempotency argument for returning 204 on 'already deleted' resources is a production-pragmatic choice that simplifies client logic. Knowing both the 'correct' (404) and 'pragmatic' (204 idempotent) approaches and being able to argue for each shows engineering judgment."
 
 ---
 
-#### Q6 - "How do HTTP methods interact with CORS preflight?"
+**[MID] Q6 - [CONCEPTUAL] "How do HTTP methods interact with CORS preflight?"**
 > "CORS (Cross-Origin Resource Sharing) preflight is triggered for 'non-simple' requests. Simple requests: GET, HEAD, POST with standard content types (application/x-www-form-urlencoded, multipart/form-data, text/plain). Non-simple (triggers preflight): any request with PUT, PATCH, DELETE, or POST with Content-Type: application/json. For non-simple requests, the browser first sends an OPTIONS request (the preflight): `OPTIONS /users/123 HTTP/1.1; Origin: https://app.example.com; Access-Control-Request-Method: DELETE`. The server responds with the allowed origins, methods, and headers: `Access-Control-Allow-Origin: https://app.example.com; Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE`. If the preflight succeeds, the browser sends the actual DELETE request. Implication for REST API design: CORS must be configured to allow the HTTP methods your API uses. Many CORS bugs come from server CORS config allowing GET and POST but forgetting DELETE and PATCH. The fix: configure CORS to explicitly allow all methods your API uses. In Spring: `@CrossOrigin(methods = {GET, POST, PUT, PATCH, DELETE})` or global configuration via WebMvcConfigurer."
 
 *What separates good from great:* "Knowing that PUT, PATCH, DELETE always trigger preflight (because they're non-simple) while GET doesn't is the specific detail that helps debug CORS issues. The Spring configuration example makes it actionable."
 
 ---
 
-#### Q7 - "Why shouldn't you use POST for a search endpoint?"
+**[SENIOR] Q7 - [CONCEPTUAL] "Why shouldn't you use POST for a search endpoint?"**
 > "POST for search is a common mistake. The problem: HTTP caches (CDN, reverse proxy, browser) only cache GET and HEAD responses by default. POST responses are not cached. A search endpoint that processes the same query 1000 times per second (high traffic, common search terms) requires the origin server to process every single request when implemented as POST. With GET (/search?q=shoes&category=women), the CDN can cache the response for 60 seconds and serve thousands of requests per second with zero origin load. The argument for POST search: queries can be complex (large JSON body with many filters, facets, sort options) that don't fit in a URL. Counter-argument: most search APIs use GET with query parameters fine. Elasticsearch's Query DSL uses POST (/index/_search with JSON body) because of query complexity, but this is the exception. The pragmatic rule: if the query fits in a URL (up to ~2048 characters), use GET for cacheability. If the query is complex enough to require a JSON body, POST is justified - but document the caching implications and add application-layer caching if needed."
 
 *What separates good from great:* "Mentioning Elasticsearch's specific exception (POST for search because of query complexity) shows real-world knowledge while still clearly articulating the general rule. The practical URL length limit (~2048 chars) gives candidates a concrete decision threshold."
@@ -333,7 +333,7 @@ Status Code Classes:
   504 Gateway Tmout- upstream timeout
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTTP Status Codes example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The 401/403 distinction is subtle but important. 401 Unauthorized means "I don't know who you are - authenticate first." 403 Forbidden means "I know who you are, and you're not allowed." The naming is confusing (401 is authentication, 403 is authorization), but the distinction matters: 401 prompts the client to log in, 403 tells the user they don't have permission. Returning 403 for unauthenticated requests is a security best practice (don't reveal whether a resource exists to unauthenticated users).
@@ -454,49 +454,49 @@ Fix: Return 503 for server errors, not 200. 5xx responses are not cached by defa
 | Debugging | 2 min | 1 |
 | Trade-off | 2 min | 1 |
 
-#### Q1 - "What is the difference between 401 and 403?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "What is the difference between 401 and 403?"**
 > "401 Unauthorized means the request lacks valid authentication credentials - 'I don't know who you are.' The server expects the client to authenticate (send a valid JWT, API key, or Basic auth header). Despite the name 'Unauthorized,' it's actually about authentication. 403 Forbidden means the server knows who you are (authentication succeeded) but you're not allowed to perform this action. Despite the name 'Forbidden,' it's actually about authorization. The naming confusion (401=auth, 403=authz) is historical. The practical HTTP consequence: 401 responses typically include a `WWW-Authenticate` header telling the client HOW to authenticate. 403 has no such header - you're authenticated, just not permitted. Security best practice: some teams return 403 for all cases (both unauthenticated and unauthorized) to avoid revealing whether a resource exists. If an unauthenticated user requests GET /admin/users and gets 401, they know the /admin/users endpoint exists. If they get 403 (or 404), they learn nothing. This is particularly important for sensitive resource paths."
 
 *What separates good from great:* "The security best practice of returning 403 (or 404) for unauthenticated requests to sensitive paths to avoid information leakage is what separates a developer who has thought about API security from one who just uses the codes correctly."
 
 ---
 
-#### Q2 - "How do you choose between 400, 422, and 409 for error responses?"
+**[JUNIOR] Q2 - [TRADE-OFF] "How do you choose between 400, 422, and 409 for error responses?"**
 > "The three have distinct semantics: 400 Bad Request: the HTTP request itself is malformed. The JSON body can't be parsed, a required header is missing, the URL format is invalid. The client must fix the request structure. 422 Unprocessable Entity: the request is well-formed (valid JSON, correct headers) but the data fails business validation. Email address is invalid, required field is missing, value is out of range. The client must fix the data values. 409 Conflict: the request is valid and the data is correct, but it conflicts with the current state of the server. Trying to create a user with an email that already exists. Optimistic lock failure (version mismatch). Trying to transition an order to a state that's not valid from the current state (e.g., 'ship' a canceled order). Decision tree: can I parse the request? No -> 400. Can I validate the data? No -> 422. Does the data conflict with server state? Yes -> 409. Is everything fine? -> 2xx. Using these consistently lets clients handle errors appropriately: 400 = fix your HTTP request, 422 = show validation error to user, 409 = resolve the conflict (retry with latest version, present 'email taken' error)."
 
 *What separates good from great:* "The decision tree (can I parse? can I validate? does it conflict?) is a memorable and practical framework. Giving concrete examples for each (optimistic lock failure for 409) makes the distinction tangible."
 
 ---
 
-#### Q3 - "A monitoring alert fires for elevated 500 rate on your API. What do you do?"
+**[JUNIOR] Q3 - [PRODUCTION] "A monitoring alert fires for elevated 500 rate on your API. What do you do?"**
 > "Immediate triage: check the 500 rate across all endpoints. Is it one endpoint or broad? Check if the timing correlates with a recent deployment (look at deployment logs or feature flags). Narrow the scope: `kubectl logs -l app=myapi --tail=100 | grep 'ERROR\|Exception'` or check ELK/Splunk for exception stack traces in the time window. If the 500s started after deployment: rollback the deploy first (fastest recovery), investigate root cause after traffic is restored. If not deployment-related: look at the exception type. NullPointerException - logic bug, probably recent code change. DatabaseException or Connection refused - database issue (check RDS/Postgres metrics, connection pool exhaustion). External service timeout - check calls to payment processor, email service, third-party APIs. HttpStatus 502 from internal calls - upstream microservice is down. Monitoring improvement: 500 should carry an error ID that maps to a specific log entry (correlation ID). Log at ERROR level with: endpoint, user_id, request_id, stack trace, upstream service name (if applicable). This allows instant root cause identification from the alert payload."
 
 *What separates good from great:* "The rollback first for deployment-correlated incidents is the right operational priority (restore service, investigate after). Checking connection pool exhaustion and upstream service timeouts shows production experience with the real causes of 500 spikes."
 
 ---
 
-#### Q4 - "Should you return 404 or 403 when an authenticated user tries to access a resource they don't own?"
+**[MID] Q4 - [CONCEPTUAL] "Should you return 404 or 403 when an authenticated user tries to access a resource they don't own?"**
 > "Security best practice: return 404. The argument for 403: it's more honest - the resource exists, you just can't access it. The argument for 404: you don't want to confirm to the requester that the resource exists. If user A owns resource /documents/456 and user B tries to access it, returning 403 confirms that /documents/456 exists and belongs to someone. An attacker can enumerate all IDs and determine which ones exist. Returning 404 prevents this information leakage - user B learns nothing about the existence of resource 456. This matters more for some resources than others. For a social media post marked as private: leaking existence is relatively low risk. For medical records or financial documents: leaking existence is a compliance issue. My default: return 404 for ownership failures on sensitive resources. Return 403 for permission failures on clearly-existing public resources (e.g., GET /admin/config when you're not an admin). Document the choice in API documentation so clients know what 404 can mean in context."
 
 *What separates good from great:* "The distinction between 'resource is sensitive' (use 404 to hide existence) and 'resource is publicly known to exist' (use 403 for authorization failure) shows nuanced security thinking. This is the kind of decision made during threat modeling."
 
 ---
 
-#### Q5 - "What does 202 Accepted mean and when do you use it?"
+**[MID] Q5 - [CONCEPTUAL] "What does 202 Accepted mean and when do you use it?"**
 > "202 Accepted means: I received your request, I'm working on it, but I haven't finished yet. The request has been queued for async processing. When to use it: long-running operations (video transcoding, report generation, batch processing) that would exceed HTTP timeout if processed synchronously. Notification dispatch (email, SMS) that involves third parties with variable latency. Idempotent operations that are safe to retry if the client doesn't receive confirmation. The 202 response should include in the body: a resource URL to poll for status (or a webhook callback option), an estimated completion time, a unique job ID. Example: POST /video/transcode returns 202 with body `{jobId: "abc123", status: "queued", checkStatusAt: "/jobs/abc123"}`. Client polls GET /jobs/abc123 to check status. Completion returns 200 with `{status: "completed", outputUrl: "..."}`. The alternative to polling: webhooks (server calls the client when done). Webhooks require the client to expose an HTTP endpoint, which isn't always possible. 202 + polling is the universal fallback."
 
 *What separates good from great:* "The response body format for 202 (job ID + poll URL + estimated time) and the discussion of webhooks as an alternative shows you've designed async APIs in production. The 'universal fallback' comment about polling shows practical thinking."
 
 ---
 
-#### Q6 - "How do clients know when to retry on 503 vs 429?"
+**[MID] Q6 - [CONCEPTUAL] "How do clients know when to retry on 503 vs 429?"**
 > "Both 503 (Service Unavailable) and 429 (Too Many Requests) suggest retrying later, but with different strategies. 503 Service Unavailable: the server is temporarily down for maintenance or overloaded. The server may include `Retry-After` header (seconds or HTTP-date for when to retry). If no Retry-After: exponential backoff starting at 1 second, doubling each retry, with jitter (random +/- 50% to prevent thundering herd), capped at 60 seconds. 429 Too Many Requests: the client is sending too fast. The server should include `Retry-After` header. The client must wait the specified duration. If no Retry-After: slow down significantly - the client is the source of the problem. For 429, exponential backoff is too slow to recover - the client should wait the full Retry-After duration, not binary search. The difference in client behavior: 503 = server problem, retry after brief wait, it should resolve soon. 429 = client problem, wait the specified time, then reduce request rate going forward. Circuit breaker behavior: 503s trigger the circuit to open (stop sending requests). 429s don't trigger circuit opening - the service is up, the client is just too fast. Rate limiting library should track 429s separately from 5xx errors."
 
 *What separates good from great:* "The nuance about circuit breakers (503 opens circuit, 429 doesn't) is a production detail that most candidates miss. The jitter recommendation for 503 backoff shows understanding of thundering herd."
 
 ---
 
-#### Q7 - "Why is returning 200 with an error body a problem?"
+**[SENIOR] Q7 - [CONCEPTUAL] "Why is returning 200 with an error body a problem?"**
 > "Returning 200 with `{error: true, message: '...'}` is called the 'HTTP 200 is the new 500' anti-pattern. Five specific problems: (1) CDN caching: CDNs cache 200 responses. An error response cached by Cloudflare is served to all subsequent clients even after the error is fixed. (2) Monitoring gaps: alerting on 5xx rate catches nothing. The error rate appears as 0% while clients receive errors. (3) Client retry logic: clients that retry on 5xx don't retry on 200. Error responses reach the client without retry. (4) Load balancer health checks: load balancers route away from servers returning 5xx. Servers returning 200+error look healthy and keep receiving traffic. (5) HTTP client libraries: libraries that throw exceptions on 4xx/5xx (like Spring's RestTemplate with a ResponseErrorHandler) don't throw on 200 - client code never sees the error. The root cause: developers learned to return 200 because "the HTTP layer worked, the business logic failed." But REST says HTTP codes ARE the business outcome communication channel - that's the uniform interface."
 
 *What separates good from great:* "Enumerating the five specific consequences (CDN caching, monitoring, retry logic, load balancer health, library exceptions) rather than just saying 'it's wrong' shows you've seen all five of these failure modes in production."
@@ -591,7 +591,7 @@ POST /orders/456/cancel
 POST /users/123/verify-email
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Actions (sub-resource when action doesn't map to CRUD) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The URL should read like a path through a hierarchy of resources, not like a function call. `/users/123/orders/456/items` reads: "user 123's order 456's items." A client who has never seen this API before can infer what this path means. This is the uniform interface constraint in practice.
@@ -613,6 +613,12 @@ The web uses hierarchical URLs to identify documents: `/category/subcategory/doc
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Verb-based URLs (common mistake)
@@ -721,49 +727,49 @@ Fix: Treat URLs as immutable contracts after release. For changes: (1) Keep the 
 | Debugging | 2 min | 1 |
 | Trade-off | 2 min | 1 |
 
-#### Q1 - "How do you handle actions that don't fit CRUD in REST URL design?"
+**[JUNIOR] Q1 - [ARCHITECTURE] "How do you handle actions that don't fit CRUD in REST URL design?"**
 > "REST's uniform interface is optimized for CRUD on resources. Actions that don't map to CRUD are the hardest design decision in REST URL design. Three approaches: (1) Model the action as a resource: the action creates a resource. 'Publish a post' becomes `POST /posts/{id}/publications` (creates a Publication resource). 'Cancel an order' becomes `POST /orders/{id}/cancellations`. The resources model the history of actions. Benefit: cacheable, REST-pure. Cost: can feel contrived for simple state changes. (2) Sub-resource action: `POST /orders/{id}/cancel`. Simple, readable, clearly intentional. Not pure REST (verb in URL) but widely used. (3) State transition via PATCH: `PATCH /orders/{id}` with body `{status: canceled}`. Pure REST, but conflates pure data updates with business logic actions. My rule: PATCH for pure state updates with no side effects (update the name field). Sub-resource POST for actions with business side effects (cancellation triggers refund, notification, inventory release). Either approach is fine as long as it's consistent."
 
 *What separates good from great:* "The distinction between 'pure state change' (PATCH is fine) and 'action with business side effects' (sub-resource POST is cleaner) is the judgment call that separates someone who has thought about API design from someone who picked one pattern and applied it everywhere."
 
 ---
 
-#### Q2 - "How do you design pagination URLs for a REST API?"
+**[JUNIOR] Q2 - [ARCHITECTURE] "How do you design pagination URLs for a REST API?"**
 > "Two pagination strategies with different URL designs: (1) Offset pagination: `GET /orders?page=2&size=20` or `GET /orders?offset=40&limit=20`. Simple. Clients can jump to any page. Works well for small to medium datasets where items are stable. URL is bookmarkable. Problem: inconsistent results if items are added/deleted during pagination (items can skip or repeat). (2) Cursor pagination: `GET /orders?cursor=eyJpZCI6MTAwfQ==&size=20`. The cursor is an opaque token encoding the last-seen position (base64 of `{id: 100, created_at: ...}`). The server queries items with `WHERE id > 100`. Stable pagination: no skipping/repeating even with concurrent inserts/deletes. No random access (can't jump to page 5). Best for: real-time feeds, infinite scroll, export operations. Response should include pagination metadata: `{data: [...], meta: {total: 500, nextCursor: "...", prevCursor: "...", hasNext: true}}`. Or use Link header (RFC 5988): `Link: </orders?cursor=abc>;rel="next", </orders?cursor=xyz>;rel="prev"`. GitHub uses Link header pagination."
 
 *What separates good from great:* "Explaining WHY cursor pagination prevents the skipping/repeating problem (INSERT during pagination with offset causes items to shift) shows you understand the limitation, not just the terminology."
 
 ---
 
-#### Q3 - "Should collection URLs be plural or singular? Why?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "Should collection URLs be plural or singular? Why?"**
 > "Always plural. `/users` not `/user`. The collection URL represents a collection of resources. The plural form is consistent with the English language: a collection of users is 'users.' When you GET `/users`, you get multiple users. When you POST `/users`, you create one user in the collection. Singular is confusing: GET `/user` - which user? The specific instance URL is `/users/{id}` - the collection is plural, the instance has an ID. The consistency rule: keep the same base noun throughout: `GET /users/{id}` (not `/user/{id}` for instance vs `/users` for collection). This symmetry makes the API predictable. The only exception: singleton resources - resources with only one instance per context. `GET /users/{id}/profile` - a user has exactly one profile. `/profile` could be singular. But even here, pluralizing (`/profiles`) is more consistent if profiles might someday support multiple instances. The rule of thumb: when in doubt, pluralize. You can always have one item in a plural collection. You can't cleanly expand a singular resource to a collection without a breaking URL change."
 
 *What separates good from great:* "The singleton resource exception (one profile per user) is a nuanced case that shows deeper knowledge. The 'future-proof' argument (a singular resource can't cleanly expand to a collection) is the practical justification beyond convention."
 
 ---
 
-#### Q4 - "How do you version a REST API URL?"
+**[MID] Q4 - [CONCEPTUAL] "How do you version a REST API URL?"**
 > "URI versioning: include the version in the URL path. `/v1/users`, `/v2/users`. Simplest to implement and test. Most widely used (Stripe `/v1/`, GitHub `/v2020-01-01/`). Cache-friendly (different URLs cache independently). Visible in logs and proxies. The alternatives: header versioning (`Accept: application/vnd.myapp.v2+json`) - clean URLs but cannot be tested with a browser or curl without extra flags. Query parameter versioning (`/users?version=2`) - easy to test but pollutes query string. My recommendation: URI versioning for public APIs. It is the most universally understood pattern and requires zero client configuration to test. What 'versioning' means: a new major version when you make breaking changes (remove fields, rename fields, change semantics). Additive changes (add new fields, add new endpoints) don't require a version bump. RFC 8594 Sunset header: add `Sunset: "2027-01-01"` to v1 responses when v2 is available. Clients that monitor HTTP headers can auto-detect deprecation. Keep v1 running until sunset date."
 
 *What separates good from great:* "Knowing what constitutes a breaking change (removal vs. addition) and the RFC 8594 Sunset header for deprecation communication shows you've managed API lifecycle in production."
 
 ---
 
-#### Q5 - "How do you handle search in a REST API?"
+**[MID] Q5 - [CONCEPTUAL] "How do you handle search in a REST API?"**
 > "Search in REST: use GET with query parameters. `GET /products?q=blue+shoes&category=footwear&min_price=50&sort=price_asc`. This is correct REST (GET = read, no side effects, cacheable). URL design for complex filters: flat query parameters for simple filters (field=value). For complex filters (range, nested conditions): `GET /products?filter[price][gte]=50&filter[price][lte]=200` (bracket notation, used by JSON:API). Or: POST /search with JSON body (used by Elasticsearch). The caching trade-off: GET searches are cacheable at CDN/proxy level. POST searches are not. For high-traffic, common searches: GET is significantly more scalable. For rare, complex searches with large filter bodies: POST is pragmatic. Full-text search: typically delegate to Elasticsearch, Solr, or Algolia. The REST API acts as a proxy: `GET /products/search?q=blue+shoes` calls the search backend. Don't expose search engine query syntax directly in the URL (leaks implementation, breaks if you change backends)."
 
 *What separates good from great:* "The caching trade-off (GET for common searches = CDN cacheable, POST for complex searches = not cacheable) is the production-relevant consideration. Mentioning search backend delegation and not exposing query syntax shows architectural thinking."
 
 ---
 
-#### Q6 - "What are the naming anti-patterns to avoid in REST URL design?"
+**[MID] Q6 - [ARCHITECTURE] "What are the naming anti-patterns to avoid in REST URL design?"**
 > "Six anti-patterns: (1) Verbs in URLs: `/getUser`, `/createOrder`, `/deleteProduct`. The HTTP method is the verb. (2) Mixed case or underscores: `/paymentMethods` or `/payment_methods`. Use lowercase kebab-case: `/payment-methods`. (3) File extensions: `/users.json`, `/products.xml`. Use Accept header for content type negotiation, not file extensions. (4) Implementation details: `/mysql/users`, `/v1_2_3/users`, `/internal/users`. URLs are contracts - internal details should not leak. (5) CRUD action names in paths: `/users/123/update`, `/orders/456/delete`. Use the HTTP method, not path segments. (6) Query parameters for resource identity: `/user?id=123`. Use path parameters for identity (`/users/123`), query parameters for optional filtering. The litmus test: can I learn the API's structure by looking at the URL? If yes, the naming is good. If I need documentation to understand what each URL segment means, the naming is poor."
 
 *What separates good from great:* "The 'litmus test' framing (can you understand the URL without documentation?) is a memorable heuristic. The point about file extensions and content negotiation is often missed - it's the correct REST approach using Accept headers."
 
 ---
 
-#### Q7 - "How do you design URLs for a multi-tenant REST API?"
+**[SENIOR] Q7 - [ARCHITECTURE] "How do you design URLs for a multi-tenant REST API?"**
 > "Multi-tenant URL design: two main patterns. (1) Tenant in subdomain: `https://tenant-a.api.example.com/users`. Clean, enables per-tenant SSL certificates, DNS-level routing, and completely isolated infrastructure. Complex to implement (certificate management, DNS, routing rules). Used by Salesforce, Zendesk, Shopify. (2) Tenant in URL path: `https://api.example.com/tenants/{tenantId}/users` or `https://api.example.com/{tenantSlug}/users`. Simple to implement. Tenant isolation is at the application layer (extract tenantId from URL, apply in query). Easier to operate (one certificate, one endpoint). Used by GitHub (github.com/{org}/{repo}). The security concern: tenant ID in URL must be validated on every request. The authenticated user must have access to the tenant specified in the URL. Failing to validate this creates insecure direct object reference (IDOR) vulnerabilities - a user from Tenant A accessing Tenant B's data by changing the tenant ID. For internal APIs: put tenant ID in a header or JWT claim rather than the URL. This prevents clients from accidentally constructing cross-tenant requests."
 
 *What separates good from great:* "Naming the IDOR vulnerability (insecure direct object reference) from OWASP as a specific risk of tenant IDs in URLs shows security awareness. The recommendation to use headers/JWT for internal APIs (prevents cross-tenant URL construction accidents) is a production-safety insight."

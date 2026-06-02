@@ -85,7 +85,7 @@ Duration        - "3 hours 30 minutes" (time-based amount)
 Period          - "2 years 3 months 5 days" (date-based amount)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 DateTime and Records example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Creating and manipulating:**
 ```java
@@ -106,18 +106,24 @@ LocalDate endOfMonth = today.with(TemporalAdjusters.lastDayOfMonth());
 LocalDate nextMonday = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 DateTime and Records example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The timezone conversion example is the most
+> **Code walkthrough:** The timezone conversion example is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common production use case: store as Instant (UTC), display in user's
 > timezone. The wrong approach (storing LocalDateTime without timezone)
 > creates ambiguity: does "2024-01-15 14:30" mean UTC, IST, or EST?
 > The Duration vs Period distinction catches many newcomers - Duration
 > for time gaps, Period for calendar date differences.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: SimpleDateFormat is not thread-safe:
@@ -160,7 +166,7 @@ LocalDate nextBusinessDay = LocalDate.now()
 // For proper business day calculation: use a library like ThreeTenExtra
 ```
 
-> **Code walkthrough:** `Duration.toMinutesPart()` (Java 9) returns
+> **Code walkthrough:** `Duration.toMinutesPart()` (Java 9) returnsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the minutes component (0-59), NOT total minutes. `Duration.toMinutes()`
 > returns total minutes (270 for 4h 30m). Common mistake: using
 > `toMinutes()` to display the "minutes part" of a 4h30m duration and
@@ -226,7 +232,7 @@ LocalDateTime ldt = dstDay.atTime(dailyTime);
 ZonedDateTime zdt = ldt.atZone(nyZone);
 // Result: 03:30 AM (adjusted forward by 1 hour) - surprise!
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: appointments appearing 1 hour off on DST transition days.
 Use `ZonedDateTime.ofStrict(ldt, offset, zone)` to get an exception
@@ -281,7 +287,7 @@ repository.save(event.withTimestamp(Instant.now()));
 // Or: ZonedDateTime.toInstant() before storing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The database storage decision is critical.
 TIMESTAMP in SQL stores a moment in time (UTC-equivalent). Java's `Instant`
@@ -330,7 +336,7 @@ Instant plus24h = now.toInstant().plus(Duration.ofHours(24)); // adds 24h
 // Most users expect "tomorrow 3pm" = same wall clock time tomorrow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `plusDays(1)` vs `plus(24h)` choice
 is significant for user-facing scheduling. `ZonedDateTime.plusDays(1)` adds
@@ -381,7 +387,7 @@ String s = DTF.format(date); // same result, method on formatter
 LocalDate parsed = LocalDate.parse("2024-01-15", DTF);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `ThreadLocal<SimpleDateFormat>`
 workaround was the pre-Java 8 standard for shared date formatting. With
@@ -436,7 +442,7 @@ Period.of(1, 2, 3); // 1 year, 2 months, 3 days
 Period.parse("P1Y2M3D"); // ISO-8601 period format
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `Duration` vs `Period` distinction
 matters in banking and finance: a loan with "3 month term" uses `Period.ofMonths(3)` (calendar months, different number of days). An SLA
@@ -482,7 +488,7 @@ Instant eventInstant = Instant.parse("2024-03-10T07:30:00Z");
 // This is always 07:30 UTC, regardless of DST
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* DST bugs are the most common datetime
 production issues. They manifest as: appointments shifted by 1 hour,
@@ -534,7 +540,7 @@ java.sql.Timestamp ts = Timestamp.from(instant);  // Instant -> SQL Timestamp
 Instant inst = ts.toInstant();                     // SQL Timestamp -> Instant
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 *What separates good from great:* PostgreSQL stores TIMESTAMP WITH TIME ZONE
 as UTC internally (converts from local time at insert). TIMESTAMP WITHOUT
@@ -584,7 +590,7 @@ String s = ldt.format(newFmt);
 // 3. Convert back to legacy types at output boundaries if needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The migration strategy is architectural:
 don't mix `Date` and `java.time` in the same domain model. Define conversion
@@ -627,7 +633,7 @@ TemporalAdjuster nextBusinessDay = temporal -> {
 LocalDate nextBD = today.with(nextBusinessDay);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `TemporalAdjusters` enables a clean,
 composable way to express business date logic without raw date arithmetic.
@@ -669,7 +675,7 @@ LocalDate result = processDate(date); // original date unchanged
 // processDate cannot modify date (immutable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `java.time` was designed by the same
 team that wrote Joda-Time (the de facto replacement for Calendar before
@@ -683,14 +689,14 @@ mechanical: `org.joda.time.LocalDate` -> `java.time.LocalDate`, etc.
 
 ### ⚖️ Comparison Table
 
-| Type | Has Date | Has Time | Has Timezone | Use When |
-|---|---|---|---|---|
-| `LocalDate` | Yes | No | No | Birthdays, deadlines |
-| `LocalTime` | No | Yes | No | Business hours, alarms |
-| `LocalDateTime` | Yes | Yes | No | Schedule without TZ |
-| `OffsetDateTime` | Yes | Yes | Fixed offset | DB with offset TZ |
-| `ZonedDateTime` | Yes | Yes | Full TZ rules | User-facing events |
-| `Instant` | UTC only | UTC only | UTC | Timestamps, storage |
+| Type| Has Date| Has Time| Has Timezone| Use When|
+|----------------|--------|--------|-------------|----------------------|
+| `LocalDate`| Yes| No| No| Birthdays, deadlines|
+| `LocalTime`| No| Yes| No| Business hours, alarms|
+| `LocalDateTime`| Yes| Yes| No| Schedule without TZ|
+| `OffsetDateTime`| Yes| Yes| Fixed offset| DB with offset TZ|
+| `ZonedDateTime`| Yes| Yes| Full TZ rules| User-facing events|
+| `Instant`| UTC only| UTC only| UTC| Timestamps, storage|
 
 ---
 
@@ -726,7 +732,7 @@ mechanical: `org.joda.time.LocalDate` -> `java.time.LocalDate`, etc.
 
 **3 minutes (Senior):**
 > Records are ideal for DTOs, value objects, immutable domain concepts.
-> Compact canonical constructor for validation: `record Range(int min, int max) {
+> Compact canonical constructor for validation: `record Range(int min, int max) 
 > Range { if (min > max) throw new IllegalArgumentException(); } }`.
 > Records can implement interfaces but cannot extend classes (implicitly
 > extend Record). Can have static fields and methods, instance methods,
@@ -736,7 +742,7 @@ mechanical: `org.joda.time.LocalDate` -> `java.time.LocalDate`, etc.
 > Example: `sealed interface Expr permits Num, Add, Mul` with records for
 > each case. Pattern matching evaluates exhaustively (compiler warns if
 > case missed). This enables interpreter patterns without reflection.
-> Java 21 `instanceof` pattern: `if (shape instanceof Circle c && c.radius() > 5)`.
+> Java 21 `instanceof` pattern: `if (shape instanceof Circle c && c.radius() > 5
 
 **Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
@@ -790,7 +796,7 @@ record Point(double x, double y) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Sealed types:**
 ```java
@@ -803,7 +809,7 @@ record Triangle(double base, double height) implements Shape {}
 // No other class can implement Shape (compile error)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Pattern matching:**
 ```java
@@ -818,13 +824,13 @@ double area(Shape shape) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The expression evaluator example shows records +
+> **Code walkthrough:** The expression evaluator example shows records +ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sealed interface + pattern matching working together as algebraic data
 > types. The compiler verifies exhaustiveness: if you add a new subtype to
 > Expr without adding a case in eval(), it's a compile error. This is the
@@ -880,7 +886,7 @@ String json = """
     """.formatted(user.name(), user.email(), user.age());
 ```
 
-> **Code walkthrough:** Record deconstruction patterns (`case Num(double v)`)
+> **Code walkthrough:** Record deconstruction patterns (`case Num(double v)`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are Java 21 preview, stable in 21. They bind the record components
 > directly in the case label without calling `expr.value()`. This makes
 > recursive algorithms over expression trees extremely clean. The compiler
@@ -951,7 +957,7 @@ record User(Long id, String name) {} // won't work with Hibernate!
 class UserEntity { Long id; String name; /* getters/setters */ }
 record UserDTO(Long id, String name) {} // immutable view
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: `InstantiationException` or `NoSuchMethodException` from Hibernate
 when trying to use records as entities.
@@ -1010,7 +1016,7 @@ record UserDTO(String name, String email) {}
 // ObjectMapper.readValue(json, UserDTO.class) works!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Records changed the "standard" for small
 data classes. Before records: Lombok `@Value` (immutable) or `@Data` (mutable).
@@ -1052,7 +1058,7 @@ double describe(Shape s) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Sealed types are the Java equivalent of
 Rust's enums with data, Haskell's ADTs, or Kotlin's sealed classes. They
@@ -1100,7 +1106,7 @@ switch (s) {
 } // statements can silently ignore cases - prefer expressions!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The exhaustiveness checking is only
 guaranteed for SWITCH EXPRESSIONS (not statements) and only when the
@@ -1150,7 +1156,7 @@ record Snapshot(List<String> items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The compact canonical constructor is
 the preferred form: it's concise and makes the intent clear (validation/
@@ -1209,7 +1215,7 @@ record Color(int r, int g, int b) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Records being unable to extend other
 classes is by design: they ARE the "product type" (all components, all
@@ -1259,7 +1265,7 @@ String display = fold(findUser(42L),
     error -> "Error: " + error);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* ADTs with sealed types and pattern
 matching represent a fundamental shift in how Java handles heterogeneous
@@ -1339,7 +1345,7 @@ void process(Object obj) {
 // Matching on list contents requires external iteration (no built-in list deconstruction yet)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Deconstruction patterns eliminate the
 common pattern of matching a record type then immediately extracting
@@ -1394,7 +1400,7 @@ String result = switch (status) {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Switch expressions (Java 14, standard)
 are always preferred over switch statements for assignments - the compiler

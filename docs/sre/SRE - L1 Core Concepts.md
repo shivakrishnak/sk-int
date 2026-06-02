@@ -167,7 +167,7 @@ MEASUREMENT POINT CHOICES
   Synthetic:    probes from outside, controlled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Level Indicator (SLI) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 An SLI must be chosen for its relevance to user experience, not
@@ -210,6 +210,12 @@ of day or traffic volume).
 
 **Example 1: SLI measurement in Prometheus (wrong vs right)**
 
+
+```promql
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```promql
 # BAD: measuring internal infrastructure metric
 # (not user-visible)
@@ -229,7 +235,7 @@ sum(rate(http_requests_total[5m]))
 # Output: 0.9995 = 99.95% availability SLI
 ```
 
-> **Code walkthrough:** The BAD query measures server CPU - easy
+> **Code walkthrough:** The BAD query measures server CPU - easyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to query but not what users experience. The GOOD query computes
 > the availability SLI as the ratio of 2xx responses to all responses
 > over a rolling 5-minute window. `rate()` computes per-second rate
@@ -260,7 +266,7 @@ sum(rate(http_request_duration_seconds_count[5m]))
 # Output: 0.987 = 98.7% of requests in < 200ms
 ```
 
-> **Code walkthrough:** The wrong approach uses histogram_quantile
+> **Code walkthrough:** The wrong approach uses histogram_quantileice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which gives a latency value at a percentile - not an SLI ratio.
 > The correct SLI uses the `le="0.2"` (less than or equal to 0.2
 > seconds) bucket from the histogram, which counts all requests that
@@ -287,7 +293,7 @@ count(data_pipeline_lag_seconds)
 # IF (freshness SLI < 0.98) for 10 minutes
 ```
 
-> **Code walkthrough:** Freshness SLI applies the same good/total
+> **Code walkthrough:** Freshness SLI applies the same good/totalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ratio pattern to data recency. The numerator counts measurements
 > where the pipeline lag is under the threshold (300 seconds = 5
 > minutes). The denominator is total measurements. This SLI is
@@ -379,7 +385,7 @@ probe_success{job="blackbox",target="api.service.com"}
 # DNS or CDN failure: probe cannot reach server
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DNS or CDN failure: probe cannot reach server example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Add external synthetic monitoring (Prometheus Blackbox
 Exporter, Pingdom, Datadog Synthetic) to capture failures the
@@ -411,7 +417,7 @@ sum(rate(http_requests_total{
 }[5m]))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exclude health checks from SLI example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Exclude health checks, synthetic probes, and monitoring
 traffic from the SLI denominator. Document the exclusion.
@@ -807,7 +813,7 @@ REMEDY CALCULATION (common example)
   Credit = % of affected month's subscription
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Level Agreement (SLA) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The SLA is the floor, not the target. An SRE team that aims to
@@ -918,7 +924,7 @@ Current SLI 99.5% vs SLA 99.99%
 = error budget exhausted 60x faster than allowed.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Add SRE review as a gate to the sales process. No
 enterprise SLA above current SLO tier without SRE sign-off
@@ -950,7 +956,7 @@ increase(http_requests_total{status=~"2.."}[28d])
 # If results differ: monitoring gap identified
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If results differ: monitoring gap identified example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Implement SLA-specific measurement matching the contractual
 calculation exactly.

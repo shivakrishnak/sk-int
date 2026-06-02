@@ -119,7 +119,7 @@ Sentence-window    Store by sentence,       When granularity matters
                    retrieve with context   (Q&A, precise retrieval)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Document Chunking example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Chunk size impact:**
 
@@ -140,7 +140,7 @@ SWEET SPOT (256-1024 tokens):
   - Practical context window use
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Document Chunking example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Overlap:**
 
@@ -159,11 +159,16 @@ With 25% overlap:
   (Answer spanning boundary: retrieved by Chunk 1 or 2)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Document Chunking example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import re, anthropic
@@ -257,7 +262,7 @@ def verify_chunk_coverage(
     }
 ```
 
-> **Code walkthrough:** The BAD example uses Python
+> **Code walkthrough:** The BAD example uses Pythonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > string slicing - fast but destroys sentence and
 > paragraph boundaries. A chunk can end mid-word or
 > mid-sentence. The GOOD example tries separators
@@ -388,7 +393,7 @@ With overlap: Chunk B starts with "December 31, 2025.
 At that point..." -> complete answer.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Production: verify chunk quality example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Typical overlap: 10-20% of chunk size. More overlap
 = better context preservation but more storage
@@ -463,7 +468,7 @@ Query time:
   Return parent chunks to LLM (more context)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to use:
 - Answers in a small chunk but context needed from
@@ -836,7 +841,7 @@ Vector: [0.78, 0.23, -0.44, ..., -0.12]  <- different
 Cosine similarity: 0.12
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Embeddings for Retrieval example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Cosine similarity:**
 
@@ -865,11 +870,16 @@ TRAINING: what the model was optimized for
   Multilingual: cross-language retrieval
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Embeddings for Retrieval example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic
@@ -989,7 +999,7 @@ def check_embedding_quality(
     }
 ```
 
-> **Code walkthrough:** The BAD example uses keyword
+> **Code walkthrough:** The BAD example uses keywordice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > overlap (set intersection on lowercased words).
 > A query "my payment isn't working" shares almost
 > no words with "resolving checkout failures" even
@@ -1572,7 +1582,7 @@ Why approximate: greedy navigation can miss
   some truly nearest vectors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Databases example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Vector DB operations:**
 
@@ -1586,7 +1596,7 @@ delete       Remove vector by id
 query        Metadata-only query (no vector search)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Databases example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Filtering options:**
 
@@ -1601,7 +1611,7 @@ Post-filtering: ANN search first, then filter results.
                 if many top-K are filtered out.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Databases example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1736,7 +1746,7 @@ def bad_sql_vector_search(
     return []  # stub
 ```
 
-> **Code walkthrough:** `setup_vector_store` creates
+> **Code walkthrough:** `setup_vector_store` createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a Qdrant collection with the vector dimension matching
 > the embedding model. DIMENSION MISMATCH is the most
 > common setup error: using 1024 dims with a 1536-dim
@@ -1840,7 +1850,7 @@ has no vectors.
 # If results appear: filter is the problem
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If results appear: filter is the problem example demonstrates context manager. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 *Fix:* Log vector count after indexing. Verify
 query vector dimension = index dimension. For

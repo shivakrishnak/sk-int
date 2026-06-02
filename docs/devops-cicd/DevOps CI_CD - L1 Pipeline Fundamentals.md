@@ -194,7 +194,7 @@ pipeline:
 # - No parallel test execution within stages
 ```
 
-> **Code walkthrough:** This sequential design wastes time on
+> **Code walkthrough:** This sequential design wastes time onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > independent checks. Lint, security scan, and unit tests can all
 > run after compilation finishes - none depends on the others.
 > Running them sequentially adds 18 unnecessary minutes to every
@@ -203,6 +203,7 @@ pipeline:
 
 **GOOD: Parallel stages with fan-out/fan-in pattern**
 
+{% raw %}
 ```yaml
 # .github/workflows/pipeline.yml
 # Fan-out: independent stages run in parallel
@@ -290,8 +291,9 @@ jobs:
           docker build -t myregistry/myapp:${{ steps.tag.outputs.tag }} .
           docker push myregistry/myapp:${{ steps.tag.outputs.tag }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** The fan-out/fan-in pattern is the key
+> **Code walkthrough:** The fan-out/fan-in pattern is the keyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > optimization. After `compile` passes, three jobs run simultaneously:
 > `unit-tests`, `code-quality`, and `security-scan`. None depends
 > on the others. The `build-artifact` job uses `needs:
@@ -493,7 +495,7 @@ build-artifact:
   # starts only when ALL three succeed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This starts only when ALL three succeed example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The trade-off: fan-out stages consume more CI infrastructure
 concurrently. Running three parallel jobs uses three runners
@@ -711,6 +713,8 @@ the build job can be downloaded and scanned in the security job.
 
 Stage outputs for decision-making: jobs can export output variables
 that subsequent jobs consume:
+
+{% raw %}
 ```yaml
 # Stage A sets the image tag
 steps:
@@ -720,8 +724,9 @@ steps:
 # Stage B (needs: [stage-a]) consumes it
 run: deploy.sh ${{ needs.stage-a.outputs.sha }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stage B (needs: [stage-a]) consumes it example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The critical design: pass the artifact identifier (Docker image tag,
 JAR version) from the build stage to all downstream stages. Every
@@ -952,7 +957,7 @@ deploy-production:
 # This completely breaks the build-once-test-once guarantee.
 ```
 
-> **Code walkthrough:** Both anti-patterns break the fundamental
+> **Code walkthrough:** Both anti-patterns break the fundamentalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > artifact guarantee. The `latest` tag is mutable - it points to
 > different code at different times, making deployments
 > non-deterministic. Rebuilding per environment means production
@@ -962,6 +967,7 @@ deploy-production:
 
 **GOOD: Immutable SHA-tagged artifacts, promoted through environments**
 
+{% raw %}
 ```yaml
 # .github/workflows/ci-cd.yml
 name: CI/CD with Immutable Artifacts
@@ -1033,8 +1039,9 @@ jobs:
             myapp=${{ secrets.ECR_REGISTRY }}/myapp:${TAG} \
             --namespace production
 ```
+{% endraw %}
 
-> **Code walkthrough:** The commit SHA-based tag (`git rev-parse
+> **Code walkthrough:** The commit SHA-based tag (`git rev-parseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > --short HEAD`) is immutable: the same 8-character hex will always
 > refer to the same Git state. This tag flows through all three jobs
 > via the `outputs` mechanism - staging and production both deploy
@@ -1391,7 +1398,7 @@ In the CI pipeline:
     cosign attach sbom --sbom sbom.json myapp:$TAG
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Attach to ECR image as OCI artifact example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Understanding that SBOM generation
 is only valuable if you also have a process to act on the information.
@@ -1724,7 +1731,7 @@ api.key=sk-live-abc123xyz456  // In Git, in the Docker image
 # - Drift between environments goes undetected
 ```
 
-> **Code walkthrough:** This represents one of the most critical
+> **Code walkthrough:** This represents one of the most criticalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > security failures in software development. Secrets in source code
 > are accessible to every developer who has ever cloned the repo,
 > every historical commit, and every pulled Docker image. GitHub's
@@ -1785,7 +1792,7 @@ spec:
                   key: DATABASE_PASSWORD
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sensitive config from Secret (never in Git) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```yaml
 # Helm values per environment - controls config, not the image
@@ -1806,7 +1813,7 @@ resources:
   requests: { cpu: "500m", memory: "1Gi" }
 ```
 
-> **Code walkthrough:** The ExternalSecret operator fetches actual
+> **Code walkthrough:** The ExternalSecret operator fetches actualice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > secret values from Vault at runtime and creates a Kubernetes Secret
 > - the secret value never appears in Git or in the Docker image.
 > The Deployment references the Kubernetes Secret by name, injecting

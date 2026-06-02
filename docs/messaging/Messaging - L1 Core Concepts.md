@@ -102,7 +102,7 @@ Producer    Queue              Consumers
               |---msg3------------>| Worker A
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Queues and Topics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Multiple producers can write to the same queue.
 - Multiple consumers (competing consumers) read from the same queue.
@@ -119,7 +119,7 @@ Publisher    Topic             Subscribers
     |           |--event copy----->| Notification Service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Queues and Topics example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - One publisher sends to a topic.
 - All subscribed consumers receive an independent copy.
@@ -195,7 +195,7 @@ class TaskConsumer {
 }
 ```
 
-> **Code walkthrough:** Multiple instances of `TaskConsumer` can be
+> **Code walkthrough:** Multiple instances of `TaskConsumer` can beice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > deployed. RabbitMQ distributes messages round-robin across instances.
 > Each `TaskPayload` goes to exactly one instance - this is competing
 > consumers. The `durable=true` queue survives broker restarts. The
@@ -255,7 +255,7 @@ class InventoryConsumer {
 }
 ```
 
-> **Code walkthrough:** Both `BillingConsumer` and `InventoryConsumer`
+> **Code walkthrough:** Both `BillingConsumer` and `InventoryConsumer`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > receive every `OrderEvent` independently because they have different
 > `groupId` values. Adding a new consumer group (say, `analytics-service`)
 > receives all historical events from the beginning if using
@@ -343,7 +343,7 @@ curl -u guest:guest http://localhost:15672/api/queues/%2F/task.queue \
 # Expected: > 0 and growing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Expected: > 0 and growing example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add more consumer instances. Ensure consumer instances are
 stateless so multiple can run simultaneously.
@@ -361,7 +361,7 @@ kafka-consumer-groups.sh \
 # Look for one partition with large LAG, others at 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for one partition with large LAG, others at 0 example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Root cause: Partition key has low cardinality (e.g., all messages have
 the same key, or a few hot keys dominate).
@@ -391,7 +391,7 @@ Fix: Use manual ACK mode. ACK only after successful processing.
 | System design | 5m+ | Designing with queues vs. topics |
 | Staff-level | 10m+ | Partition design, scaling |
 
-**Q1 [JUNIOR]: What is a competing consumers pattern?**
+**[JUNIOR] Q1 - [MECHANISM] What is a competing consumers pattern?**
 
 🗣️ "Competing consumers is when multiple consumer instances all read
 from the same queue. Each message goes to exactly one consumer - they
@@ -407,7 +407,7 @@ Kafka distributes by partition assignment."
 *What separates good from great:* Mentioning that consumers must be
 stateless for the pattern to work correctly.
 
-**Q2 [JUNIOR]: How does Kafka implement both queue and topic patterns?**
+**[JUNIOR] Q2 - [DESIGN] How does Kafka implement both queue and topic patterns?**
 
 🗣️ "Kafka uses consumer groups to implement both. Within a single
 consumer group, Kafka assigns each partition to exactly one consumer in
@@ -423,7 +423,7 @@ why Kafka is so versatile."
 *What separates good from great:* Explaining both patterns in one
 coherent explanation rather than treating them as separate.
 
-**Q3 [MID]: What determines message ordering in Kafka?**
+**[MID] Q3 - [MECHANISM] What determines message ordering in Kafka?**
 
 🗣️ "Message ordering in Kafka is guaranteed within a partition, not
 across partitions. All messages with the same key go to the same
@@ -439,8 +439,7 @@ a single partition - which means one consumer and no parallelism."
 *What separates good from great:* Explaining the trade-off between
 ordering and parallelism, not just where ordering is guaranteed.
 
-**Q4 [MID]: What happens to a Kafka consumer group when a consumer
-crashes?**
+**[MID] Q4 - [MECHANISM] What happens to a Kafka consumer group when a consumer crashes?**
 
 🗣️ "Kafka detects the crash when the consumer stops sending heartbeats
 within `session.timeout.ms` (default 10 seconds). Kafka triggers a
@@ -456,7 +455,7 @@ and partitions."
 *What separates good from great:* Mentioning the brief processing pause
 during rebalance and the at-least-once reprocessing implication.
 
-**Q5 [SENIOR]: How do you design partition keys for a Kafka topic?**
+**[SENIOR] Q5 - [DESIGN] How do you design partition keys for a Kafka topic?**
 
 🗣️ "The partition key serves two purposes: routing related messages to
 the same partition (for ordering) and distributing load evenly across
@@ -473,7 +472,7 @@ matters more than load balancing."
 *What separates good from great:* Presenting the conflict between
 ordering and load balancing, not just recommending one key strategy.
 
-**Q6 [SENIOR]: When would you add partitions to an existing Kafka topic?**
+**[SENIOR] Q6 - [TRADE-OFF] When would you add partitions to an existing Kafka topic?**
 
 🗣️ "You add partitions when consumer lag is growing and the bottleneck
 is partition count - not enough partitions to feed all available consumers.
@@ -490,8 +489,7 @@ topics. For key-based topics: plan partition count at topic creation.
 *What separates good from great:* Identifying the key-based ordering
 disruption risk when adding partitions, not just the mechanical process.
 
-**Q7 [STAFF]: How do you design a fan-out architecture for a high-traffic
-event stream?**
+**[STAFF] Q7 - [DESIGN] How do you design a fan-out architecture for a high-traffic event stream?**
 
 🗣️ "The fan-out design question is about how many consumers should
 share one topic versus having their own. Three patterns. Single topic,
@@ -686,7 +684,7 @@ Producer                  Consumer
     (load balanced, one consumer per message)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Point-to-Point vs Publish-Subscribe example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Message sits in queue until a consumer is available.
 - First available consumer (competing consumers) claims the message.
@@ -704,7 +702,7 @@ Publisher    Topic           Subscribers
     (each subscriber receives an independent copy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Point-to-Point vs Publish-Subscribe example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Publisher sends to a topic (or exchange in RabbitMQ).
 - Broker delivers a copy to each registered subscriber.
@@ -774,7 +772,7 @@ class PdfGenerationConsumer {
 }
 ```
 
-> **Code walkthrough:** `concurrency = "3-5"` creates 3-5 listener
+> **Code walkthrough:** `concurrency = "3-5"` creates 3-5 listenerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > threads per consumer instance. Deploy multiple instances of this
 > service for more parallelism. Each `PdfRequest` is processed by
 > exactly one thread, in one instance. Failed generation retries via
@@ -946,7 +944,7 @@ lag across all groups, not just your own.
 | System design | 5m+ | Choosing pattern for a design |
 | Staff-level | 10m+ | Event schema, fat vs thin events |
 
-**Q1 [JUNIOR]: What is the difference between P2P and pub/sub?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between P2P and pub/sub?**
 
 🗣️ "Point-to-point: one producer, one queue, one consumer receives the
 message. The message is processed by exactly one consumer and deleted.
@@ -961,8 +959,7 @@ message; pub/sub guarantees all consumers get every message."
 *What separates good from great:* The last sentence - explicitly stating
 the guarantee each pattern provides.
 
-**Q2 [JUNIOR]: When should you use pub/sub instead of direct HTTP calls
-to notify multiple services?**
+**[JUNIOR] Q2 - [MECHANISM] When should you use pub/sub instead of direct HTTP calls to notify multiple services?**
 
 🗣️ "Pub/sub over HTTP fan-out when: you want the publisher to not know
 about subscribers (loose coupling), the subscriber list changes (adding
@@ -978,7 +975,7 @@ do not affect others."
 *What separates good from great:* Explaining that pub/sub enables the
 publisher to be closed for modification but open for extension.
 
-**Q3 [MID]: What is a fat event vs. a thin event in pub/sub?**
+**[MID] Q3 - [MECHANISM] What is a fat event vs. a thin event in pub/sub?**
 
 🗣️ "A fat event contains all the data subscribers might need: order ID,
 customer details, product list, price, shipping address. Subscribers do
@@ -996,8 +993,7 @@ data that all subscribers always need; omit data that only some need."
 *What separates good from great:* Presenting the trade-off rather than
 declaring one approach correct.
 
-**Q4 [MID]: How do you handle a slow subscriber in pub/sub
-without affecting fast subscribers?**
+**[MID] Q4 - [MECHANISM] How do you handle a slow subscriber in pub/sub without affecting fast subscribers?**
 
 🗣️ "In properly designed pub/sub, a slow subscriber does not affect
 fast subscribers - they are independent. In Kafka, each consumer group
@@ -1015,8 +1011,7 @@ other queues."
 *What separates good from great:* Identifying the indirect disk-fill
 risk in Kafka even though subscribers are logically independent.
 
-**Q5 [SENIOR]: How do you evolve an event schema in pub/sub without
-breaking subscribers?**
+**[SENIOR] Q5 - [MECHANISM] How do you evolve an event schema in pub/sub without breaking subscribers?**
 
 🗣️ "Schema evolution in pub/sub must be backward-compatible because you
 cannot update all subscribers simultaneously. Three rules. First,
@@ -1036,8 +1031,7 @@ support."
 breaking (not just additive changes) and naming schema registry as
 the tooling.
 
-**Q6 [SENIOR]: How would you implement event-driven choreography
-using pub/sub?**
+**[SENIOR] Q6 - [DESIGN] How would you implement event-driven choreography using pub/sub?**
 
 🗣️ "Choreography means each service reacts to events without a central
 coordinator. Example: order processing. Order service publishes
@@ -1056,7 +1050,7 @@ This is the saga pattern."
 *What separates good from great:* Identifying the observability and
 compensation challenges of choreography, not just the benefits.
 
-**Q7 [STAFF]: When would you choose orchestration over choreography?**
+**[STAFF] Q7 - [TRADE-OFF] When would you choose orchestration over choreography?**
 
 🗣️ "Choreography is the default for simple event-driven flows where
 each service is independent and the flow is short. Use orchestration
@@ -1248,7 +1242,7 @@ Producer:
 5. Handle publish failure (circuit breaker, DLQ for publish failures)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Producers and Consumers example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **How consumers work:**
 
@@ -1262,7 +1256,7 @@ Consumer:
 6. On NACK: broker requeues or sends to DLQ
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Producers and Consumers example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The decoupling between producer and consumer is maintained by the message
@@ -1315,7 +1309,7 @@ class BadOrderProducer {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern discards the Future returned by
+> **Code walkthrough:** The BAD pattern discards the Future returned byice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `kafka.send()`. If the broker is unavailable, the send fails silently.
 > If the broker crashes between receiving and persisting the message,
 > the message is lost. No retry, no logging, no circuit breaking.
@@ -1351,7 +1345,7 @@ class ReliableOrderProducer {
 }
 ```
 
-> **Code walkthrough:** The GOOD pattern attaches a callback to the
+> **Code walkthrough:** The GOOD pattern attaches a callback to theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > send Future. On success: the broker confirmed the message is persisted.
 > On failure: log the error and optionally rethrow to trigger the caller's
 > transaction rollback. For critical events, the failure callback should
@@ -1494,7 +1488,7 @@ Diagnosis:
 producer.getMetrics()  # look for record-error-rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check KafkaProducer config: example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Set `acks=all` for critical topics. Add callback error handling
 to the producer. Log publish failures prominently.
@@ -1527,7 +1521,7 @@ curl -u guest:guest \
   | jq '.[].prefetch_count'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This check per-consumer delivery count example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Set `prefetch=1` for fair dispatch (each consumer gets one
 message at a time). Or set a small prefetch like 10-20. This ensures
@@ -1545,8 +1539,7 @@ messages are distributed to all available consumers.
 | System design | 5m+ | Producer reliability patterns |
 | Staff-level | 10m+ | Outbox pattern, schema evolution |
 
-**Q1 [JUNIOR]: What is the difference between manual and auto ACK
-in a consumer?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between manual and auto ACK in a consumer?**
 
 🗣️ "Auto-ACK means the broker marks the message as delivered (and
 removes it from the queue) as soon as it sends it to the consumer,
@@ -1562,7 +1555,7 @@ where losing a message is acceptable, like metrics collection."
 *What separates good from great:* Connecting ACK timing to the
 message loss vs. redelivery trade-off.
 
-**Q2 [JUNIOR]: What is a message schema and why does it matter?**
+**[JUNIOR] Q2 - [MECHANISM] What is a message schema and why does it matter?**
 
 🗣️ "A message schema defines the structure of a message: field names,
 types, and required vs. optional fields. It is the contract between
@@ -1578,7 +1571,7 @@ registry enforces compatibility rules before any producer can publish."
 *What separates good from great:* Explaining backward compatibility
 rules, not just what a schema is.
 
-**Q3 [MID]: What is the transactional outbox pattern and why is it needed?**
+**[MID] Q3 - [MECHANISM] What is the transactional outbox pattern and why is it needed?**
 
 🗣️ "The problem: you write a database record and need to publish an
 event atomically. If you write the DB record then publish to the broker,
@@ -1596,8 +1589,7 @@ be idempotent."
 *What separates good from great:* Explaining why both naive orderings
 fail (DB-first and broker-first) and why the outbox pattern solves it.
 
-**Q4 [MID]: How do you handle schema versioning between producers
-and consumers?**
+**[MID] Q4 - [MECHANISM] How do you handle schema versioning between producers and consumers?**
 
 🗣️ "Use a schema registry (Confluent Schema Registry or Apicurio) with
 compatibility mode set to BACKWARD. BACKWARD compatibility means new
@@ -1613,8 +1605,7 @@ a schema registry in production - it provides no enforcement."
 *What separates good from great:* Explaining BACKWARD compatibility
 mode and why it enables independent deployments.
 
-**Q5 [SENIOR]: How do you debug a consumer that is processing messages
-but producing wrong results?**
+**[SENIOR] Q5 - [DEBUGGING] How do you debug a consumer that is processing messages but producing wrong results?**
 
 🗣️ "Five-step debug approach. First, confirm the consumer is receiving
 the right messages - add detailed logging of the raw payload before
@@ -1632,8 +1623,7 @@ reprocessing historical events."
 *What separates good from great:* Providing a five-step ordered
 approach rather than a list of possible causes.
 
-**Q6 [SENIOR]: What happens when a producer and consumer disagree
-on message encoding?**
+**[SENIOR] Q6 - [MECHANISM] What happens when a producer and consumer disagree on message encoding?**
 
 🗣️ "The consumer fails to deserialize the message. Depending on error
 handling, the message is either retried (requeued), dead-lettered after
@@ -1651,8 +1641,7 @@ compatibility in a staging environment first."
 *What separates good from great:* Diagnosing the symptoms (consumer
 lag grows, DLQ fills) and recommending rollback as the immediate fix.
 
-**Q7 [STAFF]: How do you design a high-throughput producer that
-does not lose messages?**
+**[STAFF] Q7 - [DESIGN] How do you design a high-throughput producer that does not lose messages?**
 
 🗣️ "Three layers of reliability. First layer: broker acknowledgment.
 Use `acks=all` in Kafka (all in-sync replicas confirm write). This

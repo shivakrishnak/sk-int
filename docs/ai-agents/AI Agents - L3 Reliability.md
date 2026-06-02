@@ -135,7 +135,7 @@ CATEGORY 4: LOOP FAILURES
        termination criteria, handle all stop_reasons
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Failure Modes and Debugging example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Debugging workflow:**
 
@@ -148,7 +148,7 @@ CATEGORY 4: LOOP FAILURES
 6. Validate: re-run with same inputs, verify fix
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Failure Modes and Debugging example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -390,7 +390,7 @@ def run_agent_with_diagnostics(
     return trace
 ```
 
-> **Code walkthrough:** `AgentTrace` captures the full
+> **Code walkthrough:** `AgentTrace` captures the fullice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > execution record - every iteration with its token
 > count, stop_reason, tool calls, and errors. This
 > is the debugging artifact: `to_debug_report()` prints
@@ -547,7 +547,7 @@ logger.info({
 })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Key fields for debugging:
 - `context_tokens`: is context growing toward limit?
@@ -632,7 +632,7 @@ def retry_tool(fn, args, max_attempts=3):
             return f"Tool error (not retriable): {e}"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition using error handling. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Permanent failures: don't retry. Return a meaningful
 error message to the LLM immediately.
@@ -791,7 +791,7 @@ Design patterns:
      "reason": "Tool X unavailable"}
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 (4) Fallback chain: if the primary approach fails,
     automatically try a simpler approach:
@@ -843,7 +843,7 @@ def chaos_tool_wrapper(fn, failure_rate=0.1):
     return wrapped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Run chaos tests in staging before production deployment.
 Review which failure injections the agent handles
@@ -1065,7 +1065,7 @@ RELIABILITY:
   Metric: variance across runs, P99 behavior
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Testing and Evaluation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Test suite taxonomy:**
 
@@ -1091,7 +1091,7 @@ ADVERSARIAL TESTS:
   Purpose: confirm safety
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Testing and Evaluation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1106,6 +1106,7 @@ at production volumes.
 
 ### 💻 Code Example
 
+{% raw %}
 ```python
 import anthropic, json
 from dataclasses import dataclass
@@ -1252,8 +1253,9 @@ def run_test_suite(
     )
     return results
 ```
+{% endraw %}
 
-> **Code walkthrough:** The evaluator uses a separate
+> **Code walkthrough:** The evaluator uses a separateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > LLM call (claude-sonnet for evaluation quality) with
 > a structured scoring prompt. Four criteria (accuracy,
 > helpfulness, safety, efficiency) are scored independently
@@ -1494,7 +1496,7 @@ test_agent:
   on_failure: block_merge
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CI pipeline (pseudocode) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Safety tests (adversarial, scope): require 100% pass.
 One scope violation in a PR = block. Quality tests

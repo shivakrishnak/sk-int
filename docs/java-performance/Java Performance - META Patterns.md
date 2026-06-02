@@ -67,14 +67,14 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Systematic investigation framework:**
-```
+```plaintext
 PERFORMANCE INVESTIGATION DECISION TREE:
 
   START: Symptom observed (latency spike, low throughput, OOM)
   
   STEP 1: Is this a baseline regression?
     Yes: recent deployment? -> check Git log, revert.
-    Yes: gradual over time? -> memory leak, data growth, connection pool exhaustion.
+    Yes: gradual over time? -> memory leak, data growth, connection pool...
     No: always been this way? -> architectural bottleneck.
   
   STEP 2: What type of resource is constrained?
@@ -141,7 +141,7 @@ PERFORMANCE INVESTIGATION DECISION TREE:
 BOTTLENECK IDENTIFICATION BY SYMPTOM:
 
   | Symptom                     | Likely Cause           | Tool                         |
-  |-----------------------------|------------------------|------------------------------|
+  |-----------------------------|------------------------|---------------------...
   | High CPU, low GC            | Hot compute code       | async-profiler cpu            |
   | High CPU, high GC           | Excessive allocation   | async-profiler alloc          |
   | Low CPU, high latency       | Blocking I/O or lock   | thread dump, JFR lock        |
@@ -152,7 +152,7 @@ BOTTLENECK IDENTIFICATION BY SYMPTOM:
   | Latency spikes irregularly  | GC or external service | JFR comprehensive            |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -200,7 +200,7 @@ often misses them.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Performance optimization effort produces no measurable improvement.**
-```
+```plaintext
 Symptom: Spent 2 weeks optimizing a "slow" method identified by code review.
   No measurable improvement after the optimization.
   P99 latency: same before and after.
@@ -227,7 +227,7 @@ Fix - process:
   requires distributed tracing instead of local profiling.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -314,6 +314,24 @@ usage (object pooling reduces allocation but pools too large). Holistic validati
 ### 📘 Concept Explanation
 
 **JMH and benchmark validity:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 JMH BENCHMARK PITFALLS:
 
@@ -365,7 +383,7 @@ JMH BENCHMARK PITFALLS:
   
   @Benchmark
   public String goodWithState(BenchmarkState state) {
-      return state.map.get(state.key);  // state.key is variable -> no constant folding
+      return state.map.get(state.key);  // state.key is variable -> no...
   }
   
   3. WARM-UP:
@@ -413,7 +431,7 @@ JMH BENCHMARK PITFALLS:
     Then validate in production (A/B test or canary deployment with metrics).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -518,7 +536,7 @@ benchmark is the most common source of incorrect performance claims in Java code
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: JMH benchmark shows 5ns but production performance is 500ns.**
-```
+```plaintext
 Symptom: JMH benchmark: 5ns/op for the method.
   Production profiling (async-profiler): same method: 500ns on average.
   100x discrepancy.
@@ -552,7 +570,7 @@ Approach - validate correctly:
     The bottleneck is elsewhere.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -766,7 +784,7 @@ LOAD TEST GATE:
   If assertions fail: deploy blocked. Alert to dev team.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare: fail if any benchmark degrades > 10%: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -814,7 +832,7 @@ real-world issues that no staging test can reproduce.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Performance regression deployed to production undetected for 2 weeks.**
-```
+```plaintext
 Symptom: Users report "the app has been slow lately."
   P99 latency: gradually increased from 100ms to 800ms over 2 weeks.
   Throughput: dropped from 2,000 RPS to 800 RPS.
@@ -848,7 +866,7 @@ Fix - immediate:
      Threshold: must not increase > 10% vs baseline.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare: fail if any benchmark degrades > 10%: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

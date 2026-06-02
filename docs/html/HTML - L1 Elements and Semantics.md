@@ -129,7 +129,7 @@ ATTRIBUTES:
   lang="en"          → language of element content
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Elements and Tags example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -196,7 +196,7 @@ role (name), properties (attributes), scope (start to end tags).
 </script>
 ```
 
-> **Code walkthrough:** Void elements cannot have closing tags
+> **Code walkthrough:** Void elements cannot have closing tagsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > or content - their meaning is fully in the tag and attributes.
 > Boolean attributes are one of HTML's most counterintuitive
 > behaviors: `disabled="false"` does NOT disable=false; it enables
@@ -232,7 +232,7 @@ role (name), properties (attributes), scope (start to end tags).
 </script>
 ```
 
-> **Code walkthrough:** `data-*` attributes bridge HTML and
+> **Code walkthrough:** `data-*` attributes bridge HTML andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > JavaScript without polluting the element's standard attributes.
 > The `dataset` API converts kebab-case to camelCase automatically.
 > Values are always strings (parse numbers with `Number()`).
@@ -307,7 +307,7 @@ Fix:
   element.setAttribute('disabled', '');      // also disabled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -325,8 +325,7 @@ Fix:
 
 ---
 
-**Q1: What is the difference between an element and a tag?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between an element and a tag?**
 
 *Why they ask:* Precision of HTML vocabulary.
 
@@ -357,8 +356,7 @@ Fix:
 
 ---
 
-**Q2: How do boolean attributes work in HTML?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How do boolean attributes work in HTML?** `[JUNIOR]`**
 
 *Why they ask:* Common gotcha in dynamic HTML generation.
 
@@ -408,7 +406,7 @@ MECHANISM
 
 ---
 
-**Q3: When should you use `data-*` attributes vs other approaches
+**[JUNIOR] Q3 - [TRADE-OFF] When should you use `data-*` attributes vs other approaches**
 for storing JavaScript-accessible metadata?** `[SENIOR]` SCENARIO
 
 *Why they ask:* Architecture question about HTML-JavaScript integration.
@@ -426,6 +424,7 @@ for storing JavaScript-accessible metadata?** `[SENIOR]` SCENARIO
 > - Machine-readable information not appropriate for visible text
 >
 > ```html
+> <!-- BAD: see prior example above (data-* for metadata -->...) -->
 > <!-- GOOD: data-* for metadata -->
 > <button data-user-id="123"
 >         data-confirm="Are you sure?"
@@ -456,7 +455,7 @@ for storing JavaScript-accessible metadata?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q4: What is the global `tabindex` attribute and how does
+**[MID] Q4 - [MECHANISM] What is the global `tabindex` attribute and how does**
 it affect keyboard navigation?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Keyboard accessibility knowledge test.
@@ -508,7 +507,7 @@ it affect keyboard navigation?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q5: What is the difference between `hidden` attribute and
+**[MID] Q5 - [TRADE-OFF] What is the difference between `hidden` attribute and**
 `display:none`?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Tests knowledge of HTML attributes vs CSS.
@@ -556,8 +555,7 @@ it affect keyboard navigation?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q6: What is the content model of HTML elements?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is the content model of HTML elements?** `[SENIOR]`**
 
 *Why they ask:* Advanced HTML spec knowledge.
 
@@ -603,8 +601,7 @@ MECHANISM
 
 ---
 
-**Q7: What are global attributes and which are most important?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q7 - [MECHANISM] What are global attributes and which are most important?**
 
 *Why they ask:* Vocabulary test for HTML attributes.
 
@@ -649,6 +646,54 @@ MECHANISM
 > it to select the correct voice/language pronunciation. Missing
 > `lang="en"` means French content might be read with English
 > pronunciation. Screen reader testing often surfaces this.
+
+
+---
+
+**[MID] Q8 - [TRADE-OFF] When would you choose `<section>` vs `<div>` for grouping content?**
+
+*Why they ask:* Tests semantic HTML judgment.
+
+`<section>` signals a self-contained thematic grouping
+that warrants its own entry in a document outline -
+a chapter, a tab panel, a news article section.
+It implies the content could stand alone with a heading.
+`<div>` is a generic container with no semantic meaning -
+use it when grouping purely for styling or scripting
+purposes where no semantic relationship exists.
+The test: if you removed the element and kept its
+children, would the document's outline change? If yes,
+use `<section>` (or `<article>`, `<aside>`, etc.).
+If no, use `<div>`. Common mistake: wrapping every
+styled region in `<section>` bloats the document outline
+and confuses screen readers.
+
+*What separates good from great:* The "document outline"
+test - checking whether the heading hierarchy makes sense
+with a tool like the HTML5 Outline Algorithm.
+
+---
+
+**[SENIOR] Q9 - [DEBUGGING] A screen reader announces "region" unexpectedly on a section of your page. How do you fix it?**
+
+*Why they ask:* Tests accessibility debugging skills.
+
+`<section>` with an `aria-label` or `aria-labelledby`
+attribute is exposed as a "region" landmark to screen
+readers. If unlabeled, most screen readers ignore it
+as a landmark. The "unexpected region" announcement
+means a `<section>` has an `aria-label`. Check the
+HTML: is the region announcement helpful (main content
+sections should be landmarks) or noise (sidebar links,
+decorative wrappers)? Fix: remove `aria-label` from
+sections that should not be landmarks, or replace with
+`<div>`. For intentional landmarks, ensure the label
+is descriptive ("Related articles", not "section 2").
+
+*What separates good from great:* Using a screen reader
+(NVDA, VoiceOver) rather than only static analysis -
+announcing issues only appear in actual AT usage.
+
 
 ---
 
@@ -849,7 +894,7 @@ COMMON SEMANTIC ELEMENTS AND THEIR ROLES:
   <del>/<ins> → Deleted/inserted text in document revision
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Semantic HTML example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -922,7 +967,7 @@ regions that users can navigate directly.
 </div>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: semantic HTML with proper roles -->
@@ -956,7 +1001,7 @@ regions that users can navigate directly.
 </body>
 ```
 
-> **Code walkthrough:** The semantic version creates a rich
+> **Code walkthrough:** The semantic version creates a richice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > document outline automatically: Banner landmark (`<header>`),
 > main navigation landmark (`<nav>`), main content landmark
 > (`<main>`), content region with heading (`<section>`). Screen
@@ -1041,7 +1086,7 @@ Common root causes:
 Fix: audit with axe DevTools (Chrome extension) → fix violations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1059,8 +1104,7 @@ Fix: audit with axe DevTools (Chrome extension) → fix violations
 
 ---
 
-**Q1: What makes an element "semantic"?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What makes an element "semantic"?** `[JUNIOR]`**
 
 *Why they ask:* Foundation concept that generates follow-up questions.
 
@@ -1093,8 +1137,7 @@ DEFINITION
 
 ---
 
-**Q2: How do semantic elements affect ARIA?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How do semantic elements affect ARIA?** `[SENIOR]`**
 
 *Why they ask:* Connects HTML semantics to accessibility spec.
 
@@ -1144,8 +1187,7 @@ MECHANISM
 
 ---
 
-**Q3: How should heading hierarchy work on a page?** `[JUNIOR]`
-SCENARIO
+**[JUNIOR] Q3 - [SCENARIO] How should heading hierarchy work on a page?** `[JUNIOR]`**
 
 *Why they ask:* Document structure knowledge.
 
@@ -1159,6 +1201,7 @@ SCENARIO
 > be SKIPPED (no `<h1>` directly to `<h3>`).
 >
 > ```html
+> <!-- BAD: see prior example above (logical hierarchy -->...) -->
 > <!-- GOOD: logical hierarchy -->
 > <h1>Web Development Guide</h1>
 >   <h2>HTML</h2>
@@ -1193,7 +1236,7 @@ SCENARIO
 
 ---
 
-**Q4: When should you use `<aside>`?** `[JUNIOR]` SCENARIO
+**[MID] Q4 - [SCENARIO] When should you use `<aside>`?** `[JUNIOR]` SCENARIO**
 
 *Why they ask:* Common semantic element misuse.
 
@@ -1246,8 +1289,7 @@ SCENARIO
 
 ---
 
-**Q5: What is the `<figure>` element and when should you use it?**
-`[JUNIOR]` SCENARIO
+**[JUNIOR] Q5 - [SCENARIO] What is the `<figure>` element and when should you use it?**
 
 *Why they ask:* Tests semantic element knowledge beyond the basics.
 
@@ -1298,7 +1340,7 @@ SCENARIO
 
 ---
 
-**Q6: How does the `<time>` element work?** `[JUNIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] How does the `<time>` element work?** `[JUNIOR]` MECHANISM**
 
 *Why they ask:* Underused element that shows semantic depth.
 
@@ -1347,7 +1389,7 @@ SCENARIO
 
 ---
 
-**Q7: What is the difference between `<strong>` and `<b>`,
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between `<strong>` and `<b>`,**
 `<em>` and `<i>`?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Tests semantic understanding of text elements.
@@ -1440,21 +1482,21 @@ SCENARIO
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Block vs Inline Elements
@@ -1591,7 +1633,7 @@ CSS DISPLAY OVERRIDE:
   a { display: inline-block; width: 200px; }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block vs Inline Elements example demonstrates a keyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1663,7 +1705,7 @@ span.icon {
 }
 ```
 
-> **Code walkthrough:** Setting `width` and `height` on an inline
+> **Code walkthrough:** Setting `width` and `height` on an inlineice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > element does nothing - inline elements size to their content.
 > Setting top/bottom margins on inline elements also does nothing
 > (they are ignored). `display: inline-block` is the fix: the
@@ -1745,25 +1787,25 @@ Whitespace between inline-block elements:
   OR:  use Flexbox instead (no whitespace issue)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Block vs inline definition | 1-2 min | New line + width |
-| Margin behavior on inline | 2 min | top/bottom ignored |
-| inline-block use case | 2 min | Hybrid display |
-| CSS display override | 1-2 min | Content model vs display |
-| Whitespace between inline-blocks | 2 min | Debugging knowledge |
-| Block formatting context | 3 min | BFC creation |
-| display: contents | 2-3 min | Advanced display value |
+| Scenario| Recommended Time| Key Signal|
+|---------|-------------------------------------------|------------------------|
+| Block vs inline definition| 1-2 min| New line + width|
+| Margin behavior on inline| 2 min| top/bottom ignored|
+| inline-block use case| 2 min| Hybrid display|
+| CSS display override| 1-2 min| Content model vs display|
+| Whitespace between inline-blocks| 2 min| Debugging knowledge|
+| Block formatting context| 3 min| BFC creation|
+| display: contents| 2-3 min| Advanced display value|
 
 ---
 
-**Q1: What are the main differences between block and inline
+**[JUNIOR] Q1 - [MECHANISM] What are the main differences between block and inline**
 elements?** `[JUNIOR]` DEFINITION
 
 *Why they ask:* Foundation CSS layout question.
@@ -1804,8 +1846,7 @@ elements?** `[JUNIOR]` DEFINITION
 
 ---
 
-**Q2: Why does margin-top have no effect on a `<span>`?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] Why does margin-top have no effect on a `<span>`?**
 
 *Why they ask:* Common CSS gotcha reveals box model understanding.
 
@@ -1858,8 +1899,7 @@ elements?** `[JUNIOR]` DEFINITION
 
 ---
 
-**Q3: What is a Block Formatting Context (BFC)?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] What is a Block Formatting Context (BFC)?** `[SENIOR]`**
 
 *Why they ask:* Advanced CSS layout question.
 
@@ -1882,9 +1922,9 @@ MECHANISM
 > What creates a BFC:
 > - `float: left | right`
 > - `position: absolute | fixed`
-> - `display: inline-block | flex | grid | table-cell`
-> - `overflow: hidden | scroll | auto` (not `visible`)
-> - `contain: layout | paint | strict | content`
+ > - `display: inline-block| flex| grid| table-cell`
+ > - `overflow: hidden| scroll| auto` (not `visible`)
+ > - `contain: layout| paint| strict| content`
 > - `display: flow-root` (explicitly creates BFC, no side effects)
 >
 > Practical use - clearfix without the hack:
@@ -1906,7 +1946,7 @@ MECHANISM
 
 ---
 
-**Q4: What are replaced elements and how do they differ from
+**[MID] Q4 - [MECHANISM] What are replaced elements and how do they differ from**
 regular inline elements?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Deeper box model knowledge.
@@ -1957,8 +1997,7 @@ regular inline elements?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q5: What is `display: contents` and when would you use it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] What is `display: contents` and when would you use it?**
 
 *Why they ask:* Tests knowledge of newer display values.
 
@@ -2008,7 +2047,7 @@ regular inline elements?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q6: How does whitespace between inline-block elements cause
+**[SENIOR] Q6 - [MECHANISM] How does whitespace between inline-block elements cause**
 layout bugs?** `[SENIOR]` FAILURE
 
 *Why they ask:* Real CSS debugging scenario.
@@ -2031,7 +2070,7 @@ layout bugs?** `[SENIOR]` FAILURE
 >
 > ```css
 > nav a { display: inline-block; }
-> /* Result: small gaps between Home | About | Contact
+ > /* Result: small gaps between Home| About| Contact
 >    (the newlines and spaces in HTML become spaces in render) */
 > ```
 >
@@ -2067,8 +2106,7 @@ layout bugs?** `[SENIOR]` FAILURE
 
 ---
 
-**Q7: What is vertical alignment in inline context?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is vertical alignment in inline context?** `[SENIOR]`**
 
 *Why they ask:* Common CSS debugging frustration.
 
@@ -2119,14 +2157,66 @@ MECHANISM
 > (`align-items: center`) produces better visual alignment than
 > `vertical-align: middle`.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | BFC + replaced elements |
-| Hiring Manager | Practical layout debugging |
-| Bar Raiser | display: contents + inline-block whitespace |
-| Peer Engineer | margin/width on inline elements |
+**[MID] Q8 - [MECHANISM] How does the CSS `display` property override HTML block vs inline semantics?**
+
+*Why they ask:* Tests CSS/HTML interaction understanding.
+
+HTML defines default display values (block for `<div>`,
+inline for `<span>`), but CSS `display` overrides them
+completely. `<div>` with `display: inline` behaves as
+inline. `<span>` with `display: block` behaves as block.
+This separation matters: `<a>` is inline by default,
+but `display: block` on navigation links is common for
+full-width click targets. The HTML semantic meaning
+(what the element is) is independent of its visual
+behavior (how it looks). One important constraint
+remains even with CSS override: inline elements cannot
+contain block elements in HTML source (the parser will
+auto-close the inline element). This is a parsing rule,
+not a rendering rule.
+
+*What separates good from great:* The parser constraint -
+knowing that `<span><div>content</div></span>` is invalid
+HTML even if CSS makes both display: block.
+
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] When should you use `display: inline-block` versus `display: flex` for horizontal layout?**
+
+*Why they ask:* Tests layout decision making.
+
+`inline-block` aligns elements as inline (flowing with
+text) while giving them block properties (width, height,
+padding). Use it for: inline elements needing explicit
+dimensions (icon+text combos, small badges), text-flow
+layouts where elements should wrap with text.
+`flex` creates a flex formatting context with explicit
+directional control. Use it for: navigation bars,
+button groups, card rows - any layout requiring
+alignment control (`align-items`, `justify-content`),
+gap control, or wrapping at specific breakpoints.
+Performance: negligible difference. Decision: if you
+need the elements to flow with surrounding text,
+`inline-block`. If you need layout control independent
+of text flow, `flex`.
+
+*What separates good from great:* Knowing that
+`inline-block` elements have a whitespace sensitivity
+problem (spaces in HTML source create gaps) that
+`flex` does not.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|--------------------------------|-------------------------------------------|
+| Technical Panel| BFC + replaced elements|
+| Hiring Manager| Practical layout debugging|
+| Bar Raiser| display: contents + inline-block whitespace|
+| Peer Engineer| margin/width on inline elements|
 
 ---
 

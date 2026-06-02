@@ -109,7 +109,7 @@ fs module APIs:
     - Anywhere the event loop must remain available
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This File System API (fs) example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -165,7 +165,7 @@ async function ensureDir(filePath) {
 // EMFILE - too many open files (OS limit)
 ```
 
-> **Code walkthrough:** `loadConfig` shows defensive file reading:
+> **Code walkthrough:** `loadConfig` shows defensive file reading:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > catching `ENOENT` (file not found) and returning defaults rather than
 > crashing is the right default for optional config files. Parsing errors
 > are re-thrown with context. `atomicWrite` solves a real production
@@ -237,7 +237,7 @@ await Promise.all(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ---
 
@@ -364,13 +364,18 @@ Stream types and data flow:
       }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Streams and Piping example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Production) - File processing with streams:**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 import { createReadStream, createWriteStream } from 'fs';
@@ -426,7 +431,7 @@ for await (const chunk of readable) {
 }
 ```
 
-> **Code walkthrough:** `pipeline` from `stream/promises` is the modern
+> **Code walkthrough:** `pipeline` from `stream/promises` is the modernice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > replacement for `.pipe()`. It automatically handles errors and cleanup
 > across all streams in the chain - if gzip throws, the read and write
 > streams are properly closed. The old `.pipe()` doesn't propagate errors,
@@ -489,6 +494,11 @@ stream chaining, or listen for 'error' on every stream individually.
 Cause: Using `readFile` instead of streams, or accumulating chunks
 in an array before processing.
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: accumulates all chunks:
 const chunks = [];
@@ -503,7 +513,7 @@ for await (const chunk of stream) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration using Stream. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -581,6 +591,12 @@ packets, file contents, cryptographic output, and protocol data.
 
 **How it works:**
 
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 Buffer basics:
 
@@ -634,7 +650,7 @@ Buffer basics:
     or fill immediately after allocUnsafe.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Buffer and Encoding example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -685,7 +701,7 @@ console.log(buf.toString('latin1')); // 'Ã©' - mojibake!
 // Always decode with the SAME encoding used to encode
 ```
 
-> **Code walkthrough:** `readFile` without an encoding option returns
+> **Code walkthrough:** `readFile` without an encoding option returnsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a `Buffer`, not a string. This is intentional: for binary files
 > (images, PDFs, executables), you don't want string encoding at all.
 > `createHash().update(buffer)` accepts Buffer directly, which is more
@@ -757,7 +773,7 @@ const data = await readFile('file.txt', 'utf8'); # explicit
 # NOT: readFile('file.txt') then toString() without encoding
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This NOT: readFile('file.txt') then toString() without encoding example demonstrates shell script pattern using async/await. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Always specify encoding explicitly. Never assume ASCII.
 

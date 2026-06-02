@@ -165,7 +165,7 @@ COMMIT;
 -- Either both happen, or neither.
 ```
 
-> **Code walkthrough:** The BAD version runs two separate auto-commit
+> **Code walkthrough:** The BAD version runs two separate auto-commitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > statements. A crash between them leaves account 1 debited and account 2
 > uncredited. The GOOD version wraps both in `BEGIN...COMMIT`. If the server
 > crashes after BEGIN but before COMMIT: the WAL records that the transaction
@@ -314,7 +314,7 @@ Set `idle_in_transaction_session_timeout` to auto-kill them.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between a dirty read, non-repeatable read, and phantom read?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between a dirty read, non-repeatable read, and phantom read?**
 
 🗣️ "Dirty read: Transaction T1 reads data that T2 has modified but not
 yet committed. If T2 rolls back: T1 has used data that never existed.
@@ -326,7 +326,7 @@ query and gets an extra row - a 'phantom' that appeared. Each isolation
 level prevents: READ COMMITTED prevents dirty reads. REPEATABLE READ
 prevents dirty and non-repeatable reads. SERIALIZABLE prevents all three."
 
-**Q2: How does PostgreSQL implement isolation without traditional locking for reads?**
+**[JUNIOR] Q2 - [MECHANISM] How does PostgreSQL implement isolation without traditional locking for reads?**
 
 🗣️ "PostgreSQL uses MVCC (Multi-Version Concurrency Control). Instead of
 locking rows for reads: each row has a version with a transaction ID range
@@ -338,7 +338,7 @@ Result: readers never block writers, writers never block readers.
 Concurrent writes to the same row: PostgreSQL takes a row-level lock on the
 existing version (for the UPDATE). The new version is only visible after commit."
 
-**Q3: What happens when two transactions try to UPDATE the same row?**
+**[JUNIOR] Q3 - [FAILURE] What happens when two transactions try to UPDATE the same row?**
 
 🗣️ "Transaction T1 UPDATEs row X: acquires a row-level exclusive lock.
 Transaction T2 tries to UPDATE the same row X: T2 is blocked, waiting for T1's
@@ -349,7 +349,7 @@ operations (serialization conflict). Under REPEATABLE READ: T2 may see an
 error: 'could not serialize access due to concurrent update' if T1 and T2
 have a conflicting update pattern. The application must handle the retry."
 
-**Q4: What is a savepoint and when would you use it?**
+**[MID] Q4 - [SCENARIO] What is a savepoint and when would you use it?**
 
 🗣️ "A savepoint is a named marker within a transaction. `SAVEPOINT sp1`.
 If an error occurs: you can roll back to the savepoint (`ROLLBACK TO sp1`)
@@ -361,7 +361,7 @@ continue with N+1. Without savepoints: any error rolls back all 10,000
 records. With savepoints: only the failing record is skipped. JDBC: `conn.setSavepoint()`.
 Spring: `TransactionDefinition.PROPAGATION_NESTED` uses a savepoint."
 
-**Q5: What is an optimistic lock vs. a pessimistic lock and when should you use each?**
+**[MID] Q5 - [SCENARIO] What is an optimistic lock vs. a pessimistic lock and when should you use each?**
 
 🗣️ "Pessimistic lock: lock the row when reading it, preventing others from
 modifying it until you commit. `SELECT ... FOR UPDATE`. Guarantees no
@@ -375,7 +375,7 @@ entity uses optimistic locking. Optimistic is better for most web applications
 (most users do not conflict); pessimistic is better for financial operations
 where conflicts are frequent and costly."
 
-**Q6: How do you handle transaction management in a Spring application?**
+**[SENIOR] Q6 - [MECHANISM] How do you handle transaction management in a Spring application?**
 
 🗣️ "Spring's `@Transactional` annotation declaratively wraps the method
 in a transaction. The Spring proxy begins a transaction before the method,
@@ -389,7 +389,7 @@ RuntimeException and Error, not checked exceptions).
 Anti-pattern: calling a `@Transactional` method from within the same bean
 (no proxy interception) - use PROPAGATION_REQUIRES_NEW only via a proxy call."
 
-**Q7: What is the two-phase commit (2PC) protocol?**
+**[SENIOR] Q7 - [MECHANISM] What is the two-phase commit (2PC) protocol?**
 
 🗣️ "Two-phase commit is a distributed transaction protocol for atomicity
 across multiple databases or services. Phase 1 (Prepare): the coordinator
@@ -578,7 +578,7 @@ ROLLBACK;
 -- accounts table is unchanged.
 ```
 
-> **Code walkthrough:** The BAD version uses auto-commit mode: each UPDATE
+> **Code walkthrough:** The BAD version uses auto-commit mode: each UPDATEice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and INSERT is its own transaction. A crash between them permanently
 > decrements inventory without creating an order. The GOOD version wraps
 > both in `BEGIN...COMMIT`. If either statement fails: the error puts the
@@ -586,6 +586,28 @@ ROLLBACK;
 > changes are rolled back. The `AND quantity > 0` guard prevents negative
 > inventory. The ROLLBACK example shows the aborted-transaction state:
 > after `1/0` causes an error, the transaction cannot proceed until ROLLBACK.
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // JAVA + SPRING: @Transactional rollback
@@ -619,7 +641,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The BAD method has no transaction. If `insertOrder`
+> **Code walkthrough:** The BAD method has no transaction. If `insertOrder`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > throws after `decrementStock` succeeds: stock is decremented but no order
 > is created. The GOOD method uses `@Transactional` - Spring's AOP proxy
 > starts a transaction before the method and commits on normal return.
@@ -746,7 +768,7 @@ BEGIN;
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between auto-commit and explicit transactions in JDBC?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between auto-commit and explicit transactions in JDBC?**
 
 🗣️ "Auto-commit (default): each call to `executeUpdate()` or `executeQuery()`
 is wrapped in its own transaction. The database commits immediately after
@@ -758,7 +780,7 @@ inventory decrement), batch inserts (better performance - one commit for
 thousands of rows vs. one commit per row). Always call `conn.rollback()` in
 the catch block and restore auto-commit mode in finally."
 
-**Q2: What is connection pool transaction management and why does it matter?**
+**[JUNIOR] Q2 - [MECHANISM] What is connection pool transaction management and why does it matter?**
 
 🗣️ "Connection pools (HikariCP, c3p0) reuse connections. When a connection
 is returned to the pool: any open transaction must be handled. HikariCP:
@@ -771,7 +793,7 @@ this via a validation query and discards the connection. In Spring with
 it begins the transaction before the method, commits or rolls back after,
 and returns the connection to the pool in a clean state."
 
-**Q3: How does PostgreSQL handle an error mid-transaction?**
+**[JUNIOR] Q3 - [MECHANISM] How does PostgreSQL handle an error mid-transaction?**
 
 🗣️ "In PostgreSQL: once an error occurs in an explicit transaction (BEGIN...),
 the transaction enters ABORTED state. All subsequent SQL statements are
@@ -783,7 +805,7 @@ from accidentally proceeding after an error with a half-changed state.
 To handle errors without rolling back the entire transaction: use SAVEPOINT
 and ROLLBACK TO SAVEPOINT to roll back only the failed part."
 
-**Q4: What is the difference between ROLLBACK and ROLLBACK TO SAVEPOINT?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between ROLLBACK and ROLLBACK TO SAVEPOINT?**
 
 🗣️ "ROLLBACK (without SAVEPOINT): rolls back all changes made since BEGIN.
 The transaction ends. A new transaction must be started with BEGIN.
@@ -796,7 +818,7 @@ if it fails roll back just that part and try an alternative).
 In JDBC: `conn.rollback(Savepoint sp)` rolls back to the savepoint;
 `conn.releaseSavepoint(sp)` removes the savepoint."
 
-**Q5: How does implicit transaction mode in frameworks differ from explicit?**
+**[MID] Q5 - [MECHANISM] How does implicit transaction mode in frameworks differ from explicit?**
 
 🗣️ "JPA EntityManager: `persist()`, `merge()`, `remove()` queue changes.
 No SQL is sent until `flush()` or transaction commit. `flush()` sends
@@ -809,7 +831,7 @@ The difference: with JPA, you can call `merge()` then change the entity
 again before commit, and JPA detects all changes in one flush.
 With JDBC: each `executeUpdate()` is a separate database round trip."
 
-**Q6: What is read-only transaction optimization?**
+**[SENIOR] Q6 - [MECHANISM] What is read-only transaction optimization?**
 
 🗣️ "`@Transactional(readOnly = true)` in Spring signals a read-only transaction.
 Effects: (1) Spring informs the JPA flush mode - entities are not dirty-checked
@@ -823,7 +845,7 @@ it is a hint, not an enforcement. If you accidentally call a write method
 inside a `readOnly` transaction, the write may succeed (or be rejected by the
 replica if routed there)."
 
-**Q7: How do you handle distributed transactions across microservices?**
+**[SENIOR] Q7 - [MECHANISM] How do you handle distributed transactions across microservices?**
 
 🗣️ "Two-phase commit (2PC): coordinator asks all services to prepare,
 then commits all or aborts all. Problem: blocking protocol - if coordinator

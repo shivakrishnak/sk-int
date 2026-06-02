@@ -102,7 +102,7 @@ java.lang.NullPointerException: null
   at reactor.core.publisher.FluxOnAssembly...
   ... 20 more reactor internal frames ...
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 None of these frames reference your code. You cannot tell which `map`,
 which `flatMap`, or which lambda threw.
@@ -122,7 +122,7 @@ Error at assembly point 3 (map throws NullPointerException):
   With Hooks.onOperatorDebug(): stack includes assembly site line number
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Diagnostic tool comparison:**
 
@@ -137,7 +137,7 @@ checkpoint("name", true) | MED  | NO (staging)| Named + assembly
 .metrics()          | LOW       | YES        | Micrometer metrics
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Checkpoint strategy:**
 Add checkpoints at the BOUNDARIES of your logic:
@@ -155,7 +155,7 @@ Flux.fromIterable(ids)
     .subscribe(...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Error message with checkpoint:
 ```
@@ -166,7 +166,7 @@ Original Stack Trace:
   ...your code...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Reactor metrics integration (Micrometer):**
 
@@ -185,7 +185,7 @@ Flux<Order> orders = orderService.getOrders()
     // orders.pipeline.latency: timer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Context propagation:**
 In reactive pipelines, ThreadLocal doesn't work for context (e.g., MDC).
@@ -202,7 +202,7 @@ Mono.deferContextual(ctx -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging and Diagnostics example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -283,7 +283,7 @@ Mono.deferContextual(ctx ->
     }).doFinally(s -> MDC.remove("traceId")));
 ```
 
-> **Code walkthrough:** Pattern 1 shows the recommended checkpoint strategy:
+> **Code walkthrough:** Pattern 1 shows the recommended checkpoint strategy:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > place checkpoints at stage boundaries so error traces name the failing
 > stage. This is the single most impactful debugging improvement with minimal
 > overhead. Pattern 2 shows `Hooks.onOperatorDebug()` - STAGING ONLY due to
@@ -397,7 +397,7 @@ Flux.fromIterable(orders)
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: heap dump analysis with jmap / JDK Flight Recorder. Look for
 many instances of `FluxFlatMap`, `MonoFlatMap`, etc. in old gen with no
@@ -407,7 +407,7 @@ Hooks.onNextDropped(v -> log.warn("Dropped: {}", v));
 // Alerts when onNext fires after cancellation (potential leak signal)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -417,7 +417,7 @@ Hooks.onNextDropped(v -> log.warn("Dropped: {}", v));
 
 ---
 
-#### Q1 - Why are Reactor stack traces unhelpful by default?
+**[JUNIOR] Q1 - [DEBUGGING] Why are Reactor stack traces unhelpful by default?**
 
 Reactive execution separates two phases: assembly (building the operator
 chain) and execution (running the pipeline when subscribed).
@@ -432,7 +432,7 @@ Flux<Order> pipeline = Flux.fromIterable(ids)  // <- assembled here
 pipeline.subscribe(handler);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 When `transform(o)` throws at execution time, the stack trace shows:
 ```
@@ -444,7 +444,7 @@ NullPointerException
   at reactor.core.publisher.FluxSubscribeOnCallable.call
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The top frame might be your code, but: (1) which `map` was it? You may
 have many in the pipeline. (2) Which `flatMap` triggered it? (3) Was it
@@ -461,7 +461,7 @@ and `checkpoint()` are the production paths.
 
 ---
 
-#### Q2 - How does checkpoint() work internally?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does checkpoint() work internally?**
 
 `checkpoint("name")` inserts an `FluxOnAssembly` (or `MonoOnAssembly`)
 operator into the pipeline that captures optional assembly information.
@@ -474,9 +474,9 @@ Two checkpoint modes:
 When an error propagates upstream through the pipeline, each `FluxOnAssembly`
 node appends its name to the error's "observed at" chain:
 
-```
+```plaintext
 Error propagation through pipeline:
-  source -> flatMap -> checkpoint("post-service") -> map -> checkpoint("post-transform")
+  source -> flatMap -> checkpoint("post-service") -> map -> checkpoint("post-tr...
 
 If map() throws:
   Error reaches checkpoint("post-transform")
@@ -489,7 +489,7 @@ If map() throws:
      *__checkpoint ⇢ post-service"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Reading the output: the FIRST checkpoint in the observed list is the
 closest to where the error occurred (most specific). The LAST is furthest
@@ -505,7 +505,7 @@ checkpoint at stage boundaries (every 5-10 operators), not on every operator.
 
 ---
 
-#### Q3 - What is ReactorDebugAgent and when should you use it?
+**[JUNIOR] Q3 - [DEBUGGING] What is ReactorDebugAgent and when should you use it?**
 
 ReactorDebugAgent is a Java instrumentation agent (`reactor-tools` artifact)
 that bytecode-instruments Reactor classes at load time to capture assembly
@@ -520,7 +520,7 @@ stack traces for ALL operators automatically.
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Application startup (before any Reactor pipelines built):
@@ -529,7 +529,7 @@ ReactorDebugAgent.init();
 ReactorDebugAgent.processExistingClasses();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 How it works:
 1. When Reactor publisher classes are loaded, the agent transforms their
@@ -553,14 +553,14 @@ conditionally via a JVM flag:
 ```
 -Dreactor.tools.agent=true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This allows infrastructure teams to enable it for specific pods during
 incident investigation without code changes or redeployment.
 
 ---
 
-#### Q4 - How do you implement retry with backoff in production?
+**[MID] Q4 - [PRODUCTION] How do you implement retry with backoff in production?**
 
 ```java
 // Exponential backoff with jitter (production-standard)
@@ -583,7 +583,7 @@ Mono<Response> callWithRetry(Request req) {
 // Non-retriable: propagates immediately without retrying
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Key parameters:
 - `maxAttempts`: total attempts (including first)
@@ -603,7 +603,7 @@ Never retry: 4xx client errors, business logic exceptions.
 
 ---
 
-#### Q5 - How do you measure latency of reactive pipelines?
+**[MID] Q5 - [CONCEPTUAL] How do you measure latency of reactive pipelines?**
 
 Three approaches:
 
@@ -618,7 +618,7 @@ Flux<Result> results = sourceFlux
     // pipeline.name.onNext.delay (time between onNext signals)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Manual timing with `doOnNext`/`doOnSubscribe`:**
 ```java
@@ -638,7 +638,7 @@ Mono<Response> timed = service.call()
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Micrometer Observation (Spring Boot 3+ / Micrometer 1.10+):**
 ```java
@@ -649,7 +649,7 @@ Mono<Response> observed = Observation.createNotStarted(
 // Automatically creates spans + metrics + logs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `.metrics()` on a Flux measures the
 time from subscription to completion (end-to-end latency). For
@@ -661,7 +661,7 @@ than they're consumed, the distribution shifts right.
 
 ---
 
-#### Q6 - How does backpressure manifests in production issues?
+**[MID] Q6 - [PRODUCTION] How does backpressure manifests in production issues?**
 
 Common production backpressure failures:
 
@@ -670,7 +670,7 @@ Common production backpressure failures:
 reactor.core.Exceptions$OverflowException:
     Queue is full: capacity 256
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cause: `flatMap` with unlimited concurrency producing faster than downstream
 consumes. `flatMap` has a default queue of 256 elements. Overflow triggers
@@ -684,14 +684,14 @@ flux.flatMap(item -> processItem(item)) // unbounded
 flux.flatMap(item -> processItem(item), 16) // max 16 concurrent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. `MissingBackpressureException`**
-```
+```plaintext
 reactor.core.Exceptions$OverflowException:
     Could not emit tick N due to lack of requests
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Cause: `Flux.interval()` or hot publisher emitting faster than subscriber
 requests. Default `subscribe()` with no explicit request = `Long.MAX_VALUE`
@@ -708,7 +708,7 @@ flux.onBackpressureBuffer(1000,
 flux.onBackpressureLatest() // keep only most recent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Subscription hanging (no `request` call)**
 If a custom Subscriber never calls `request(n)`, the publisher never emits.
@@ -723,7 +723,7 @@ faster than downstream consumes.
 
 ---
 
-#### Q7 - What is operator fusion and how does it affect debugging?
+**[SENIOR] Q7 - [DEBUGGING] What is operator fusion and how does it affect debugging?**
 
 Operator fusion is a Reactor optimization where adjacent operators are
 merged into a single subscriber to avoid the overhead of separate
@@ -741,7 +741,7 @@ With macro-fusion:
   -> 1 subscriber object, inline execution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Types:
 - `Fuseable`: interface for operators that can participate in fusion
@@ -770,7 +770,7 @@ Flux.range(1, 100)
     .subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Fusion can be observed in profiler flame
 graphs: fused pipelines show a single frame, non-fused show a chain of
@@ -782,7 +782,7 @@ not per operator.
 
 ---
 
-#### Q8 - How do you implement circuit breakers in reactive pipelines?
+**[SENIOR] Q8 - [HANDS-ON] How do you implement circuit breakers in reactive pipelines?**
 
 Using Resilience4j Reactor integration:
 
@@ -817,7 +817,7 @@ cb.getEventPublisher()
             e.getStateTransition().getToState()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The circuit breaker OPEN state fires
 `CallNotPermittedException` immediately, WITHOUT calling the underlying
@@ -830,7 +830,7 @@ require different responses (retry vs fallback vs error page).
 
 ---
 
-#### Q9 - How does Reactor's error handling differ from Java try-catch?
+**[SENIOR] Q9 - [CONCEPTUAL] How does Reactor's error handling differ from Java try-catch?**
 
 Reactive error handling principles:
 
@@ -851,7 +851,7 @@ Reactive error handling:
   // May be on different thread
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key reactive error operators:
 
@@ -880,7 +880,7 @@ flux.onErrorComplete(IOException.class);
 // Converts error to onComplete; downstream sees empty stream
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Error type specificity matters. Using
 `onErrorResume(Exception.class, ...)` catches ALL exceptions including
@@ -892,7 +892,7 @@ the class-based form for complex recovery logic.
 
 ---
 
-#### Q10 - How do you test reactive pipelines?
+**[STAFF] Q10 - [CONCEPTUAL] How do you test reactive pipelines?**
 
 **StepVerifier: the primary testing tool:**
 ```java
@@ -924,7 +924,7 @@ StepVerifier.withVirtualTime(
     .verify();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `StepVerifier.create()` subscribes with
 `Long.MAX_VALUE` demand (unbounded). For testing backpressure:
@@ -936,7 +936,7 @@ StepVerifier.create(flux, 0) // request 0 initially
     .expectNextCount(4)
     .verifyComplete();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The `StepVerifier.create(publisher, initialDemand)` overload lets you
 test backpressure behavior by controlling how many elements are requested
@@ -944,7 +944,7 @@ at each step.
 
 ---
 
-#### Q11 - How do you handle timeouts in reactive pipelines?
+**[STAFF] Q11 - [CONCEPTUAL] How do you handle timeouts in reactive pipelines?**
 
 Three timeout patterns:
 
@@ -973,7 +973,7 @@ Mono<Response> withFallback =
             // fallback Mono used when timeout fires
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Timeout scheduling: `timeout()` uses `Schedulers.parallel()` by default.
 Customize:
@@ -981,7 +981,7 @@ Customize:
 .timeout(Duration.ofSeconds(5), Schedulers.single())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* When `timeout()` fires, it CANCELS the
 upstream source. This sends a cancel signal upstream, allowing resources
@@ -994,7 +994,7 @@ implement `Subscription.cancel()` to clean up resources on cancellation.
 
 ---
 
-#### Q12 - What metrics should you monitor for a reactive service?
+**[STAFF] Q12 - [PRODUCTION] What metrics should you monitor for a reactive service?**
 
 **Core Reactor pipeline metrics (from `.metrics()`):**
 
@@ -1021,7 +1021,7 @@ resilience4j.circuitbreaker.failure_rate > 0.5
 resilience4j.circuitbreaker.calls.duration p99 increasing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Production alerting strategy:**
 ```
@@ -1038,7 +1038,7 @@ BACKPRESSURE -> onBackpressureDrop events increasing?
              -> flatMap concurrency too high for downstream?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Correlation between reactive metrics
 and infrastructure metrics. A `latency` spike that correlates with
@@ -1054,14 +1054,14 @@ with downstream dependency health checks and infrastructure metrics.
 
 **Reactor debugging tools by environment:**
 
-| Tool | Production | Staging | Dev | Overhead | Detail |
-|---|---|---|---|---|---|
-| `checkpoint("name")` | YES | YES | YES | Minimal | Stage names |
-| `checkpoint("name", true)` | NO | YES | YES | Medium | Stage + stack |
-| `ReactorDebugAgent` | YES* | YES | YES | 10-30% | Full assembly |
-| `Hooks.onOperatorDebug()` | NO | YES | YES | 2-10x | Full assembly |
-| `.log()` | Limited | YES | YES | Medium | Per-signal |
-| `.metrics()` | YES | YES | YES | Low | Counters/timers |
+| Tool| Production| Staging| Dev| Overhead| Detail|
+|--------------------------|----------|-------|---|--------|---------------|
+| `checkpoint("name")`| YES| YES| YES| Minimal| Stage names|
+| `checkpoint("name", true)`| NO| YES| YES| Medium| Stage + stack|
+| `ReactorDebugAgent`| YES*| YES| YES| 10-30%| Full assembly|
+| `Hooks.onOperatorDebug()`| NO| YES| YES| 2-10x| Full assembly|
+| `.log()`| Limited| YES| YES| Medium| Per-signal|
+| `.metrics()`| YES| YES| YES| Low| Counters/timers|
 
 *With caution and monitoring
 

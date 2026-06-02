@@ -135,7 +135,7 @@ Phase 5: Tighten (Month 4+)
   Goal: 0 @ts-expect-error, 0 explicit any
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating JavaScript to TypeScript at Scale example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Dependency graph strategy:**
 
@@ -157,7 +157,7 @@ WHY: converting a leaf gives immediate type info to its consumers.
 TOOL: madge --image deps.png src/ (visualize the graph)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating JavaScript to TypeScript at Scale example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key tsconfig options:**
 
@@ -174,7 +174,7 @@ TOOL: madge --image deps.png src/ (visualize the graph)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating JavaScript to TypeScript at Scale example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -217,9 +217,14 @@ TOOL: madge --image deps.png src/ (visualize the graph)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Example 2 (Wrong vs Right) - Migration approaches:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: Big bang rewrite (fails at scale)
@@ -253,7 +258,7 @@ export async function getUser(id: string): Promise<User | null> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition using SQL. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 **Example 3 (Production) - Migration tracking in CI:**
 
@@ -339,7 +344,7 @@ console.log(
 );
 ```
 
-> **Code walkthrough:** The CI tracking script enforces the ratchet
+> **Code walkthrough:** The CI tracking script enforces the ratchetice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > pattern: migration metrics can only improve (or hold), never
 > regress. `jsFiles > baseline.jsFiles` catches new JavaScript files
 > being added. `tsExpectErrors > baseline.tsExpectErrors` catches
@@ -386,7 +391,7 @@ Governance:
   - "Migration tax": 20% of sprint capacity reserved
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -534,7 +539,7 @@ NEW TypeScript files from day one (before migration is complete):
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -567,7 +572,7 @@ Map the dependency graph:
 npx madge --image deps.png src/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Count modules by layer: leaves (no consumers), middle, roots.
 Identify "hot" files (highest change frequency in git log).
@@ -580,7 +585,7 @@ Enable coexistence:
 { "allowJs": true, "checkJs": false, "strict": false }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Install `@types/*` for all dependencies.
 
@@ -591,7 +596,7 @@ Run ts-migrate on leaf modules (utils, constants, types directories):
 npx ts-migrate migrate src/utils src/types src/constants
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Result: These directories compile as TypeScript with @ts-expect-error
 annotations. Track count: this is the baseline.

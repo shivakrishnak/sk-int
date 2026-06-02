@@ -155,7 +155,7 @@ Security Platform
   - Certificate management (Cert-Manager)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Platform Engineering and Internal Developer Platforms example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -191,7 +191,7 @@ spec:
           # Missing: secrets management
 ```
 
-> **Code walkthrough:** Two files maintained independently by each
+> **Code walkthrough:** Two files maintained independently by eachice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of 50 feature teams. The CI/CD pipeline is missing security
 > gates (no SAST, no image scanning, no secret detection). The
 > Kubernetes manifest has no resource limits (one runaway pod
@@ -201,7 +201,9 @@ spec:
 > the organization has 200 differently configured deployments, most
 > of them incorrectly configured.
 
+{% raw %}
 ```yaml
+# BAD: see prior example above (Platform team provides golden ...)
 # GOOD: Platform team provides golden path templates
 
 # Service creation via Backstage (developer experience)
@@ -274,8 +276,9 @@ observability:               # Platform auto-wires
   tracingEnabled: true       # Jaeger agent injection
   logFormat: structured      # Centralized log ingestion
 ```
+{% endraw %}
 
-> **Code walkthrough:** The feature team does not write any of
+> **Code walkthrough:** The feature team does not write any ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > this directly. The Backstage scaffolder generates the CI/CD
 > pipeline referencing reusable platform workflows. The security
 > gates workflow (SAST, SCA, image scanning) is maintained by
@@ -358,7 +361,7 @@ Platform health metrics:
 - Time to create a new service using platform: > 30 min: FRICTION
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This platform defaults, team overrides only what matters example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Treat platform as a product. Assign a platform product
 manager. Conduct quarterly user research interviews with feature

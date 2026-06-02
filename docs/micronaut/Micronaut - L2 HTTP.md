@@ -163,7 +163,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** @Controller("/api/v1/orders")
+> **Code walkthrough:** @Controller("/api/v1/orders")ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sets the base path. The {id:\\d+} path pattern
 > uses regex to constrain the path variable to digits
 > only - enforced at compile-time route generation.
@@ -173,6 +173,45 @@ public class OrderController {
 > Publisher<OrderDto> with TEXT_EVENT_STREAM content
 > type - Netty handles the async streaming without
 > blocking a thread.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut HTTP routing maps incoming HTTP requests to
+controller methods based on URL path patterns, HTTP methods,
+and content types. Routes are compiled at build time into
+an efficient lookup structure, not assembled at runtime.
+
+**How it works:**
+
+`@Controller("/api/users")` marks a class as handling all
+requests under `/api/users`. Method-level annotations
+specify the route:
+- `@Get("/{id}")` - GET /api/users/{id}
+- `@Post` - POST /api/users
+- `@Put("/{id}")` - PUT /api/users/{id}
+- `@Delete("/{id}")` - DELETE /api/users/{id}
+
+Parameter binding (resolved at compile time):
+- `@PathVariable String id` - from URL path `{id}`
+- `@QueryValue Optional<String> filter` - from ?filter=
+- `@Body UserRequest request` - from request body (JSON)
+- `@Header("Authorization") String token` - from HTTP header
+
+Return types:
+- Plain POJO → serialized to JSON with 200 OK
+- `HttpResponse<T>` → full control over status/headers
+- `Mono<T>` (reactive) → async response
+
+**Why it matters:**
+
+Compile-time route compilation means: route conflicts are
+detected at build time (not startup), routing is O(1)
+(not linear scan), and route metadata is available for
+documentation generation without running the app.
 
 ---
 
@@ -188,6 +227,94 @@ Reactive return types (Publisher/Flux) keep the thread
 free during I/O. @Error at method level handles
 specific exceptions for this controller without polluting
 the global error handler."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Path variable names in @Get("/{id}")
+must match the Java parameter name.**
+
+Micronaut resolves path variable binding by MATCHING the
+name in the path template (`{id}`) to the parameter name
+(`@PathVariable String id`) OR to `@PathVariable("id")`.
+Without `@PathVariable`, Micronaut infers the binding from
+the parameter name. With Java's default compilation (no
+`-parameters` flag), parameter names may be stripped; add
+`-parameters` to the Micronaut compiler plugin, or use
+explicit `@PathVariable("id")` to avoid ambiguity. Without
+either, path binding silently fails in some JVM versions.
+
+**Misconception 2: @Controller classes must be stateless.**
+
+Like Spring's `@RestController`, Micronaut `@Controller`
+classes are `@Singleton` by default - one instance shared
+across all requests. Mutable instance fields are a data race
+in concurrent environments. However, INJECTED dependencies
+(services, repositories) are safe if those dependencies are
+themselves thread-safe singletons. The controller class itself
+should be stateless (no request-specific instance variables)
+even though it is a singleton.
+
+**Misconception 3: Micronaut's @Controller automatically
+handles CORS for all endpoints.**
+
+CORS (Cross-Origin Resource Sharing) must be explicitly
+configured in Micronaut. Without configuration, cross-origin
+requests fail with browser CORS errors. Configure CORS in
+`application.yml` under `micronaut.server.cors.configurations.*`.
+Each configuration specifies allowed origins, methods, and
+headers. Enabling `cors.single-header: true` is necessary
+for some client configurations. CORS headers are NOT added
+by `@Controller` automatically.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: 404 Not Found for controller endpoint
+that should exist, with no error message.**
+
+Symptom: `GET /api/users` returns 404 even though the
+controller exists and the method appears correct. Root
+cause: route not registered due to: package not under
+application root (APT did not process it), wrong path
+prefix combination (controller prefix + method path
+concatenation mismatch), or HTTP method mismatch (annotated
+`@Get` but called with `POST`). Diagnosis: enable route
+logging (`micronaut.router=DEBUG`) at startup to list all
+registered routes. Fix: check the logged routes match
+the expected path; verify the controller is in an APT-
+processed package.
+
+**Failure Mode 2: @Body binding fails silently for
+requests with URL-encoded form data.**
+
+Symptom: controller `@Body UserRequest user` receives
+a null or empty object when the client sends
+`Content-Type: application/x-www-form-urlencoded`.
+Root cause: `@Body` with a POJO attempts JSON deserialization;
+URL-encoded form data requires `@Body Map<String, Object>` or
+`@Part` parameter annotations. Diagnosis: log the raw
+Content-Type header and body in a filter. Fix: use
+`@Body Map<String, Object>` for form data; or add the
+`micronaut-multipart` dependency and use `@Part` for
+individual form fields.
+
+**Failure Mode 3: Route conflict not detected at
+build time causes one route to shadow another.**
+
+Symptom: `GET /users/profile` returns the response for
+`GET /users/{id}` (with id="profile") instead of the
+dedicated profile endpoint. Root cause: both routes match
+the URL but the parameterized route `{id}` is resolved
+first. Diagnosis: list routes in debug mode to see
+resolution order; test with a known numeric ID and the
+"profile" path. Fix: restructure the API to use distinct
+paths that cannot conflict (`/users/me/profile` vs
+`/users/{id}`); Micronaut resolves static segments before
+parameterized ones, but specific overlaps must be avoided
+through API design.
 
 ---
 
@@ -218,7 +345,7 @@ public OrderDto findById(@PathVariable Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Micronaut matches the request Accept header to a
 registered serializer. JSON: Jackson (or Micronaut
@@ -419,7 +546,7 @@ public class RawOrderClient {
 }
 ```
 
-> **Code walkthrough:** The declarative client interface
+> **Code walkthrough:** The declarative client interfaceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is compiled to an implementation class at build time.
 > @Client("${service.inventory.url}") resolves the URL
 > from config. The reactive variant (Single<T>) makes
@@ -427,6 +554,55 @@ public class RawOrderClient {
 > multiplier implements exponential backoff - 500ms,
 > 1000ms, 2000ms between retries. @Fallback provides
 > the circuit-open behavior when @CircuitBreaker trips.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut's Declarative HTTP Client allows defining HTTP API
+calls as Java interfaces with annotations, similar to OpenFeign
+in Spring Cloud. The implementation (actual HTTP calls) is
+generated at compile time by Micronaut's APT.
+
+**How it works:**
+
+```java
+@Client("https://api.example.com")
+interface UserClient {
+    @Get("/users/{id}")
+    User getUser(@PathVariable String id);
+
+    @Post("/users")
+    User createUser(@Body UserRequest request);
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Micronaut generates a concrete implementation of this
+interface at compile time. The implementation uses Micronaut's
+`HttpClient` internally. Inject `UserClient` like any other
+Micronaut bean - no instantiation code needed.
+
+Configuration: `@Client` can reference a service ID
+(`@Client("user-service")`) which resolves via service
+discovery (Consul, Eureka, Kubernetes). Or use a literal URL.
+
+Reactive support: return `Mono<User>` or `Flowable<User>`
+for non-blocking calls. Blocking return types are wrapped
+automatically.
+
+Retry and circuit breaker: combine `@Client` with
+`@Retryable` and `@CircuitBreaker` annotations for
+resilience policies.
+
+**Why it matters:**
+
+Generated at compile time: no runtime reflection, GraalVM
+compatible. Built-in load balancing for service discovery.
+Cleaner code than manually building HTTP requests.
 
 ---
 
@@ -442,6 +618,95 @@ communication with minimal code. For non-blocking:
 return Single<T> or Flux<T> - Micronaut uses reactive
 Netty underneath. @Fallback provides graceful degradation
 when the circuit opens."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: @Client("http://...") always uses
+the literal URL as the service endpoint.**
+
+`@Client` with a literal URL uses that URL as a static
+endpoint. But `@Client("user-service")` uses SERVICE
+DISCOVERY to resolve the URL dynamically. In a Kubernetes
+environment with Micronaut Kubernetes support, "user-service"
+resolves to the in-cluster service DNS. With Consul enabled,
+it queries Consul for service instances. Without service
+discovery configured, `@Client("user-service")` fails at
+startup with "Unknown host." Understand which mode your
+client is using.
+
+**Misconception 2: Declarative client methods can return
+any Java type and it will be deserialized automatically.**
+
+Automatic deserialization works for: simple POJOs (with
+Jackson), `Map<String, Object>`, `List<T>` of simple types,
+`HttpResponse<T>` for full response access, and reactive
+types wrapping these. It does NOT work for: polymorphic
+types without `@JsonTypeInfo` configuration, types with
+constructor parameters and no default constructor (add
+`@Introspected` + `@JsonCreator`), or types in third-party
+JARs without Jackson annotations. Test your client with
+actual API responses in integration tests.
+
+**Misconception 3: HTTP client errors (4xx, 5xx) throw
+exceptions automatically.**
+
+By default, Micronaut's HTTP client throws `HttpClientResponseException`
+for 4xx and 5xx responses. But the EXACT behavior depends on
+the error response body format. If the server returns a 4xx
+with a JSON body, Micronaut attempts to deserialize it; if
+deserialization fails, the original `HttpClientResponseException`
+is thrown. For 5xx responses, connection errors throw
+different exception types. Write explicit error handling and
+test each error case.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Declarative client fails at startup
+with "No bean of type UserClient found."**
+
+Symptom: startup fails when `UserClient` is injected in
+another bean. Root cause: `UserClient` interface is not in
+a package processed by APT; or the generated implementation
+class is not being created because the `micronaut-http-client`
+dependency is missing from the module's dependencies; or
+`@Client` annotation is missing. Diagnosis: check if
+`$UserClient$Intercepted.class` exists in build output.
+Fix: add `implementation "io.micronaut:micronaut-http-client"`
+to the module's dependencies; verify APT configuration.
+
+**Failure Mode 2: Reactive client results in memory
+leak because Publisher is never subscribed.**
+
+Symptom: heap grows over time; network connections are
+opened but never fully closed. Root cause: declarative client
+returns `Mono<T>` or `Flowable<T>`, but the caller creates
+the reactive type (triggering HTTP call) but never subscribes
+to it (never reads the result). In reactive programming,
+Publishers are lazy - they execute only when subscribed.
+If the Publisher is created but discarded, the HTTP call
+may open a connection and leak it. Diagnosis: connection
+pool metrics show connections never returned to pool.
+Fix: always subscribe to reactive client results; use
+`block()` if synchronous behavior is needed in non-reactive
+code.
+
+**Failure Mode 3: Client follows redirects silently,
+bypassing authentication headers.**
+
+Symptom: authenticated API calls succeed initially but fail
+after a service redirect; or sensitive data is sent to an
+unexpected host due to redirect following. Root cause: HTTP
+301/302 redirects are followed by default; the new request
+may strip or re-include the `Authorization` header depending
+on configuration. Diagnosis: enable HTTP client logging
+(`micronaut.http.client=DEBUG`) to see redirect following.
+Fix: configure `micronaut.http.client.follow-redirects: false`
+for sensitive endpoints; or verify that the redirect
+destination is in your expected domain before following.
 
 ---
 
@@ -487,7 +752,7 @@ public class AuthHeaderFilter
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The filter intercepts ALL outgoing client requests
 matching "/**". Adds the Bearer token header before
@@ -615,6 +880,18 @@ waits at each step."
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: Blocking code on Netty event loop
 @Get("/{id}")
@@ -680,7 +957,7 @@ public Single<ProcessResult> processOrder(
 }
 ```
 
-> **Code walkthrough:** The BAD case calls JDBC on
+> **Code walkthrough:** The BAD case calls JDBC onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the Netty event loop - blocks the I/O thread, degrades
 > throughput. @Blocking offloads to a worker thread pool
 > (safe for JDBC). The reactive version returns Single<T>
@@ -688,6 +965,50 @@ public Single<ProcessResult> processOrder(
 > and continues when data arrives. The combined reactive
 > chain (checkStock → charge → create) runs entirely
 > non-blocking via flatMap composition.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Reactive HTTP is the pattern of writing HTTP
+controllers and clients that use reactive programming models
+(Reactive Streams: `Publisher<T>`, `Mono<T>`, `Flux<T>`)
+to handle concurrent requests without blocking threads.
+
+**How it works:**
+
+Micronaut's Netty server is non-blocking. A controller method
+returning a reactive type tells Micronaut: "don't wait for
+this result on the current thread; send the response when
+the publisher completes."
+
+```java
+@Get("/{id}")
+Mono<User> getUser(String id) {
+    return userRepository.findById(id);  // non-blocking DB call
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Execution: Netty I/O thread calls `getUser`, gets a `Mono`
+back immediately (not the result), and becomes free to handle
+other requests. When the DB call completes (on a DB I/O
+thread), the `Mono` emits the result. Micronaut's response
+writer subscribes to the `Mono` and writes the response bytes
+to the network.
+
+Supported reactive libraries: Project Reactor (`Mono`/`Flux`),
+RxJava 2/3 (`Single`/`Observable`/`Flowable`), JDK 9+
+`Flow.Publisher`.
+
+**Why it matters:**
+
+One Netty I/O thread can handle thousands of in-flight
+requests concurrently (while they wait for I/O). Without
+reactive, each blocking request ties up one thread.
 
 ---
 
@@ -703,6 +1024,92 @@ client), or @Blocking for legacy JDBC code. @Blocking
 uses a separate thread pool - doesn't block the event
 loop but still occupies a thread. For true non-blocking:
 R2DBC reactive database + reactive HTTP client chain."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Reactive programming automatically
+makes an application faster for all workloads.**
+
+Reactive HTTP is faster under HIGH CONCURRENCY with I/O-bound
+operations. For CPU-bound operations or low-concurrency
+scenarios, reactive adds overhead (scheduler context
+switching, operator chain overhead) with no benefit. A
+sequential batch processing job that does CPU-heavy work
+is NOT faster in reactive mode - it may be slower. Use
+reactive for: high-concurrency API gateways, streaming
+responses, parallel fanout requests to multiple services.
+
+**Misconception 2: You can block inside a reactive chain
+if you execute it on a different thread.**
+
+Blocking inside a reactive chain (even on a dedicated thread)
+can cause issues: the Netty event loop cannot be blocked ever
+(even indirectly), and blocking a reactor scheduler thread
+defeats the purpose of the reactive model. The CORRECT
+pattern: use `Mono.fromCallable(() -> blockingOperation()
+).subscribeOn(Schedulers.boundedElastic())` to explicitly
+execute blocking code on a bounded-elastic thread pool
+designed for blocking operations. Never block on the default
+reactor or Netty scheduler.
+
+**Misconception 3: Reactive HTTP clients and blocking
+HTTP clients are interchangeable in Micronaut.**
+
+Reactive clients (returning `Mono<T>`) and blocking clients
+(returning `T` directly) have different characteristics.
+Reactive clients do not block; they compose with the
+reactive pipeline. Blocking clients MUST run on blocking
+thread pools (not event loops). Mixing blocking HTTP client
+calls in a reactive pipeline without `subscribeOn(Schedulers.
+boundedElastic())` will block the event loop and cause
+cascading failures under load.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Event loop blocked by blocking
+reactive operation causes request queuing and timeouts.**
+
+Symptom: under load, response times increase linearly with
+request rate; thread dump shows all Netty worker threads in
+WAITING state. Root cause: controller or reactive chain is
+calling a blocking operation (JDBC, Thread.sleep, blocking
+HTTP) on the Netty event loop thread. Diagnosis: thread dump
+during load test; look for Netty worker threads (`reactor-http-nio-*`)
+in WAITING or TIMED_WAITING states waiting for locks/I/O.
+Fix: annotate controller with `@ExecuteOn(TaskExecutors.IO)`
+or wrap blocking calls in `Mono.fromCallable().subscribeOn
+(Schedulers.boundedElastic())`.
+
+**Failure Mode 2: Reactive stream never completes because
+error handling missing - request hangs indefinitely.**
+
+Symptom: some HTTP requests never receive a response; they
+hang until client timeout. Root cause: reactive chain has
+no error handling; an exception causes the stream to error,
+but without `onErrorResume` or `onErrorReturn`, the error
+is not converted to an HTTP response. Micronaut may not
+always catch unhandled reactive errors. Diagnosis: add
+`doOnError(e -> log.error("...", e))` to the reactive chain.
+Fix: always add `.onErrorResume(e -> Mono.just(errorResponse(e)))`
+or handle errors in the reactive chain.
+
+**Failure Mode 3: Backpressure not applied causes
+memory overflow when consuming streaming endpoints.**
+
+Symptom: application runs out of memory when consuming a
+streaming response (`Flux<Event>`) faster than it can
+process events. Root cause: the reactive consumer does not
+implement backpressure - it requests `Long.MAX_VALUE` events
+(unbounded demand), overwhelmed by the source publishing
+events faster than they can be consumed. Diagnosis: heap dump
+shows event objects accumulating in the reactive buffer.
+Fix: apply backpressure operators: `limitRate(N)` on the
+`Flux`, `bufferTimeout`, or use `flatMap` with `concurrency`
+limit instead of unlimited parallel processing.
 
 ---
 
@@ -750,7 +1157,7 @@ public Flux<OrderDto> exportOrders() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 For file downloads or large exports: consider chunking
 and cursor-based streaming rather than loading all
@@ -944,7 +1351,7 @@ public class TenantFilter
 }
 ```
 
-> **Code walkthrough:** The logging filter wraps the
+> **Code walkthrough:** The logging filter wraps theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > chain.proceed() in a reactive map - response modification
 > happens inside map() on the returned publisher. Mutating
 > the request (adding a header) before chain.proceed()
@@ -954,6 +1361,53 @@ public class TenantFilter
 > the chain. The filter order ensures logging filter
 > runs after security (HIGHEST_PRECEDENCE is lowest
 > number = first).
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Server Filters (also called HTTP Filters) are
+components that intercept HTTP requests and responses before
+they reach controllers (request filters) or after controllers
+produce responses (response filters). They implement
+cross-cutting HTTP concerns: authentication, rate limiting,
+request logging, response compression, correlation ID injection.
+
+**How it works:**
+
+Implement `HttpServerFilter` or annotate a method with
+`@Filter` + pattern:
+
+```java
+@Filter("/api/**")
+@Singleton
+class AuthFilter implements HttpServerFilter {
+    @Override
+    Publisher<MutableHttpResponse<?>> doFilter(
+        HttpRequest<?> request, ServerFilterChain chain) {
+        // Check auth header
+        if (!isAuthorized(request)) {
+            return Mono.just(HttpResponse.unauthorized());
+        }
+        return chain.proceed(request);  // Continue to controller
+    }
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Filters are ordered by `@Order` annotation. The filter chain
+is: inbound filters (in order) → controller → outbound filters
+(in reverse order). Filters can short-circuit (return early)
+without calling `chain.proceed()`.
+
+**Why it matters:**
+
+Centralizes cross-cutting HTTP concerns. Prevents duplicated
+authentication code across controllers. Enables middleware-
+style composition similar to Express.js or ASP.NET middleware.
 
 ---
 
@@ -972,12 +1426,94 @@ for authentication failures."
 
 ---
 
+### ⚠️ Common Misconceptions
+
+**Misconception 1: @Filter with a pattern applies to ALL
+requests matching the pattern, including error responses.**
+
+`@Filter` applies to the inbound request path. If a controller
+throws an exception and Micronaut serves an error response,
+the filter IS invoked for the original request but the
+response transformation in the filter may not apply to
+error responses returned via `@Error` handlers. Filters
+that need to process error responses should check the
+response status in their response handling logic.
+
+**Misconception 2: Filters and AOP interceptors are
+equivalent and interchangeable.**
+
+Filters operate at the HTTP layer (before routing) and can
+access raw `HttpRequest`/`HttpResponse` objects, URL paths,
+and HTTP headers. AOP interceptors operate at the Java method
+level after routing occurs and can access method parameters
+and return types. They are complementary: use filters for
+HTTP-level concerns (authentication, rate limiting, CORS);
+use AOP for method-level concerns (transaction, caching,
+retry).
+
+**Misconception 3: Calling chain.proceed() multiple times
+in a filter processes the request twice.**
+
+`chain.proceed()` returns a `Publisher`. Calling it creates
+a Publisher that represents the remaining filter chain
+execution. If you subscribe to it twice (call `subscribe()` or
+`block()` twice), the request may be processed twice. In
+reactive filters, always subscribe to `chain.proceed()` only
+once within the filter logic. Using `flatMap` rather than
+`subscribe()` ensures single subscription.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Filter executes but cannot modify
+request body because body is streamed.**
+
+Symptom: filter reads `request.getBody(String.class)` to
+inspect or modify the request body, but subsequent processing
+receives an empty body. Root cause: reading the request body
+consumes the underlying input stream; subsequent components
+(other filters, controller binding) cannot read it again.
+Diagnosis: add logging before and after body read; check
+if the controller receives an empty body. Fix: use
+`request.getBody(byte[].class)` and then re-create a new
+request with the bytes re-set; Micronaut provides utilities
+for request body caching in filters.
+
+**Failure Mode 2: Filter pattern "/api/**" does not
+match "/api" (without trailing slash).**
+
+Symptom: requests to `/api` bypass the authentication filter
+while `/api/users` is correctly filtered. Root cause: the Ant
+path pattern `/api/**` matches `/api/anything` but not `/api`
+(the empty path after `/api/`). Diagnosis: test with exact
+URL `/api` (no trailing slash or path segment). Fix: use
+`/api*` or specify both `/api` and `/api/**` as patterns;
+or implement the filter matching logic to handle root paths
+explicitly.
+
+**Failure Mode 3: Filter-added request attributes not
+available in downstream controller.**
+
+Symptom: security principal set by an auth filter via
+`request.setAttribute("principal", user)` is not available
+when `@Controller` method accesses `HttpRequest.getAttribute()`.
+Root cause: some Micronaut versions or filter configurations
+create a new request wrapper for each filter, potentially
+losing attributes set on the previous wrapper. Diagnosis:
+log the request identity (object hashCode) at each filter
+and the controller. Fix: use Micronaut's `ServerRequestContext.
+currentRequest()` for cross-thread context; or use a thread-
+local propagation mechanism for security contexts.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
-| Experience | Time | Depth |
-|---|---|---|
-| Senior | 5 min | Filter implementation, chain.proceed, ordering |
-| Staff | 8 min | Reactive chain, request mutation, security integration |
+| Experience| Time| Depth|
+|----------|-----|------------------------------------------------------|
+| Senior| 5 min| Filter implementation, chain.proceed, ordering|
+| Staff| 8 min| Reactive chain, request mutation, security integration|
 
 ---
 
@@ -1009,7 +1545,7 @@ public OrderDto findById(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using gice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Alternatively, use @RequestScope beans:
 ```java
@@ -1020,7 +1556,7 @@ public class RequestContext {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Filter sets requestContext.setTenantId(tenantId).
 Controller or service injects @RequestScope RequestContext.
@@ -1143,6 +1679,45 @@ is a programmable phone book with health checks."
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Service Discovery is the mechanism by which a Micronaut
+service locates other services by logical name rather than
+hard-coded URLs. Micronaut integrates with multiple service
+registry backends: Consul, Eureka, Kubernetes DNS, and
+AWS ELB/ECS.
+
+**How it works:**
+
+Registration: at startup, Micronaut registers the service
+with the configured registry (Consul PUT request with service
+ID, address, port, health check URL). Deregistration happens
+on shutdown.
+
+Discovery: `@Client("user-service")` triggers a lookup in
+the registry before making HTTP calls. The resolved URL
+changes as instances come and go. Client-side load balancing
+distributes requests across healthy instances using the
+`LoadBalancer` interface (default: round-robin).
+
+Kubernetes mode: Micronaut discovers services via Kubernetes
+DNS (`http://user-service.namespace.svc.cluster.local`).
+No registry is needed - Kubernetes DNS is the source of truth.
+
+Health filtering: only HEALTHY service instances (health check
+passing in Consul) are included in the discovery results.
+Failed health checks remove instances from the pool.
+
+**Why it matters:**
+
+Eliminates hard-coded service URLs from configuration.
+Enables zero-downtime deployments (deregister before stopping).
+Provides automatic load distribution across instances.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "@Client with a service name instead of a URL
@@ -1154,6 +1729,93 @@ service name. Kubernetes DNS handles discovery natively.
 No Consul or Eureka needed. For multi-cluster or
 hybrid: Consul provides cross-cluster discovery with
 health-check integration."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Service discovery and load balancing
+eliminate the need for a Kubernetes Service resource.**
+
+In Kubernetes, Micronaut's service discovery and Kubernetes
+Service resources serve complementary purposes. Kubernetes
+Services provide stable DNS names and stable cluster-IP
+addresses. Micronaut's service discovery provides CLIENT-
+SIDE load balancing and health-aware routing. In most
+Kubernetes deployments, you want BOTH: Kubernetes Service
+for cluster networking, and either Micronaut discovery
+or a service mesh for advanced load balancing. Using only
+Micronaut discovery in Kubernetes bypasses Kubernetes' own
+health checking and service routing.
+
+**Misconception 2: Consul health checks automatically
+remove unhealthy pods from the service mesh.**
+
+Consul health checks update the service's health status in
+Consul's registry. Micronaut's service discovery will stop
+routing to unhealthy instances. BUT: there is a delay between
+a pod becoming unhealthy and Consul marking it as failed
+(depends on health check interval and retry configuration).
+During this window, requests may still be sent to the
+unhealthy pod. Design for this: implement circuit breakers
+(`@CircuitBreaker`) as a complementary resilience pattern.
+
+**Misconception 3: Micronaut auto-registers with service
+discovery in any cloud environment.**
+
+Auto-registration requires explicit configuration. Micronaut
+does not automatically register with Consul or Eureka without
+enabling the integration: `consul.client.registration.enabled:
+true` or `eureka.client.registration.enabled: true`. In
+Kubernetes, the Micronaut Kubernetes integration must be
+configured. Without explicit registration, `@Client("service-name")`
+will fail with "No instances of service [name] available."
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Service discovery flapping causes
+intermittent request failures during deployments.**
+
+Symptom: during rolling deployments, a percentage of requests
+fail with "No instances available" or connection refused.
+Root cause: old instances are deregistered and new instances
+are not yet registered (or not yet healthy), creating a window
+with no available instances. Diagnosis: monitor Consul's
+service instance count during deployments. Fix: implement a
+pre-registration health check that ensures the new instance
+passes its own health check before the deployment proceeds;
+use Kubernetes readiness probes to delay registration until
+the pod is ready; use `@CircuitBreaker` to handle temporary
+unavailability.
+
+**Failure Mode 2: Stale service instances remain in
+Consul after pod crashes (no graceful shutdown).**
+
+Symptom: service discovery returns instances that no longer
+exist; HTTP requests to those instances timeout. Root cause:
+crashed pods cannot send Consul deregistration; TTL-based
+health checks mark them as failed eventually, but the window
+of stale instances can be minutes. Diagnosis: compare Consul
+service instances with running Kubernetes pods. Fix: configure
+shorter Consul health check intervals and fail threshold
+(TTL: 30s, deregister-critical-service-after: 1m); use
+Consul's TTL-based health (pod must send heartbeat) rather
+than HTTP health check (more reliable for crash detection).
+
+**Failure Mode 3: Client-side load balancing does not
+recover after a transient service outage.**
+
+Symptom: after all instances of a downstream service
+temporarily fail and then recover, the client continues
+returning errors even after healthy instances are available.
+Root cause: `@CircuitBreaker` opened during the outage and
+has not yet entered the half-open state to test recovery.
+Diagnosis: monitor circuit breaker state metrics. Fix: tune
+circuit breaker reset timeout (`reset: 5s`) to match expected
+recovery time; implement health check feedback to actively
+close the circuit when health checks pass.
 
 ---
 
@@ -1199,7 +1861,7 @@ micronaut:
         deregister-critical-service-after: 3m
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Health check propagation
 delay and @Retryable as the mitigation.

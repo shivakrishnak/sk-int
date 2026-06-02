@@ -111,7 +111,7 @@ Error isolation:
   before combining -> prevents cascade failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Chaining and Combining CompletableFutures example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 `allOf` returns `CompletableFuture<Void>` - no result. To collect results
@@ -189,7 +189,7 @@ CompletableFuture<Response> mixed =
     });
 ```
 
-> **Code walkthrough:** Pattern 1 is the canonical fan-out: submit all calls
+> **Code walkthrough:** Pattern 1 is the canonical fan-out: submit all callsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as futures in a list, `allOf` waits for all, then stream-collect via
 > non-blocking `join()`. Pattern 2 adds error isolation: each future wraps in
 > `exceptionally` returning a fallback, so allOf never fails. Pattern 3 uses
@@ -273,7 +273,7 @@ CompletableFuture.allOf(uf, of, pf)
         build(uf.join(), of.join(), pf.join()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Diagnosis: add distributed tracing spans to each service call. Sequential
 spans (no time overlap on the trace) confirm sequential chaining.
@@ -286,7 +286,7 @@ spans (no time overlap on the trace) confirm sequential chaining.
 
 ---
 
-#### Q1 - How do you build a resilient fan-out with partial results?
+**[JUNIOR] Q1 - [HANDS-ON] How do you build a resilient fan-out with partial results?**
 
 Three resilience levels:
 
@@ -305,7 +305,7 @@ CompletableFuture.allOf(resilient.toArray(new CF[0]))
         .map(CF::join).toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 **Level 3 - separate success/failure tracking:**
 ```java
@@ -320,7 +320,7 @@ List<CF<Outcome>> tracked = ids.stream()
 // Caller can split into successes and failures
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Level 3 enables partial-success responses:
 "3 of 5 services responded; 2 degraded." The `handle` bifunction is the key
@@ -329,7 +329,7 @@ allOf always completes normally with full visibility into mixed outcomes.
 
 ---
 
-#### Q2 - Why is join() safe inside allOf's thenApply?
+**[JUNIOR] Q2 - [CONCEPTUAL] Why is join() safe inside allOf's thenApply?**
 
 `join()` blocks the calling thread if the future is not yet complete. Inside
 `allOf.thenApply`, all component futures are guaranteed complete because:
@@ -347,7 +347,7 @@ CompletableFuture.allOf(f1, f2, f3)
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 This is the standard typed result collection pattern since allOf returns
 `CF<Void>` with no direct access to component results.
@@ -359,7 +359,7 @@ fallbacks before combining.
 
 ---
 
-#### Q3 - How do you implement per-future timeouts in fan-out?
+**[JUNIOR] Q3 - [HANDS-ON] How do you implement per-future timeouts in fan-out?**
 
 `completeOnTimeout` per branch (Java 9+):
 
@@ -378,7 +378,7 @@ CompletableFuture.allOf(timed.toArray(new CF[0]))
         .map(CF::join).toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 `completeOnTimeout` vs `orTimeout`: completeOnTimeout gives a fallback value
 (chain continues normally). orTimeout throws TimeoutException (chain goes
@@ -391,7 +391,7 @@ timeouts are frequent.
 
 ---
 
-#### Q4 - How do you model a dependency graph with CompletableFutures?
+**[MID] Q4 - [CONCEPTUAL] How do you model a dependency graph with CompletableFutures?**
 
 Map the DAG structure to CF composition:
 
@@ -416,7 +416,7 @@ CF<E> e = c.thenCombine(d,
 // E starts when C and D both done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The JVM schedules execution automatically - no explicit thread management.
 
@@ -427,12 +427,12 @@ the chain. This is a design-time verification, not a runtime check.
 
 ---
 
-#### Q5 - How does parallel fan-out compare to sequential for latency?
+**[MID] Q5 - [TRADE-OFF] How does parallel fan-out compare to sequential for latency?**
 
 Sequential (thenCompose chain): total = sum(all latencies).
 Parallel (allOf): total = max(all latencies).
 
-```
+```plaintext
 5 independent 40ms service calls:
   Sequential: 5 x 40 = 200ms
   Parallel:   max(40,40,40,40,40) = 40ms
@@ -444,7 +444,7 @@ Heterogeneous: 10ms, 50ms, 30ms, 20ms, 40ms:
   Savings: 100ms (67% reduction)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Resource cost: parallel fan-out uses N concurrent threads, potentially
 spiking downstream load. Sequential is a deliberate backpressure technique
@@ -457,7 +457,7 @@ timeout deadline rather than blocking the entire combined result.
 
 ---
 
-#### Q6 - What is the performance impact of N futures on a fixed pool?
+**[MID] Q6 - [CONCEPTUAL] What is the performance impact of N futures on a fixed pool?**
 
 With a pool of M threads and N futures (N > M):
 ```
@@ -471,7 +471,7 @@ Batch 10 (90-99): starts t=450ms, completes t=500ms
 allOf total: 500ms (not 50ms as expected for parallel!)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 allOf submits all N tasks immediately with no concurrency control. The pool
 queuing produces a staircase effect.
@@ -484,7 +484,7 @@ Flux.fromIterable(ids)
     .collectList();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* A high-RPS service with large fan-out
 multiplies pool pressure: 200 RPS x 10-future fan-out = 2000 tasks/second.
@@ -492,7 +492,7 @@ Monitor `executor.queued` metric before response time degrades.
 
 ---
 
-#### Q7 - How do you propagate cancellation to branches in allOf?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you propagate cancellation to branches in allOf?**
 
 allOf has no built-in cancellation propagation. Manual approach:
 
@@ -506,7 +506,7 @@ combined.whenComplete((v, ex) -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Java 21+ proper solution - Structured Concurrency:
 ```java
@@ -523,7 +523,7 @@ try (var scope =
 // Scope exit cancels all remaining subtasks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Even `cancel(true)` on a CF does not
 interrupt a running task - it only marks the future as cancelled. Structured
@@ -532,7 +532,7 @@ task cancellation, not just future state marking.
 
 ---
 
-#### Q8 - How do you collect failed and successful results separately?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you collect failed and successful results separately?**
 
 Use `handle` on each branch to produce a uniform outcome container:
 
@@ -559,7 +559,7 @@ CompletableFuture.allOf(tracked.toArray(new CF[0]))
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 `handle` always produces a value (never throws), so allOf always completes
 normally. The caller has full visibility into the mixed outcome.
@@ -571,7 +571,7 @@ try-catch or Optional branching in the collection step.
 
 ---
 
-#### Q9 - How does CF fan-out compare to Reactor Flux.flatMap?
+**[SENIOR] Q9 - [TRADE-OFF] How does CF fan-out compare to Reactor Flux.flatMap?**
 
 | Feature | allOf + stream | Flux.flatMap(fn, n) |
 |---|---|---|
@@ -598,7 +598,7 @@ Flux.fromIterable(ids)
     .collectList();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline uice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Semaphore + CF pattern has a nested
 deadlock risk: a thread holding the semaphore starts an inner async operation
@@ -611,13 +611,13 @@ count, not threads, so it is deadlock-safe by design.
 
 **Fan-out combination methods:**
 
-| Method | Futures | Result | Error behavior | Use case |
-|---|---|---|---|---|
-| `thenCombine(CF<B>, fn)` | 2 | CF<C> typed | Fails if either fails | Two typed parallel results |
-| `allOf(CF<?>...)` | N | CF<Void> | Fails if any fails | N parallel, manual collect |
-| `anyOf(CF<?>...)` | N | CF<Object> | First completes wins | Race/redundancy |
-| allOf + per-branch fallback | N | never fails | Per-branch fallback | Resilient fan-out |
-| `Flux.flatMap(fn, n)` | N dynamic | Flux<T> | onErrorResume | Bounded concurrent stream |
+| Method| Futures| Result| Error behavior| Use case|
+|-------|---------|-----------|---------------------|--------------------------|
+| `thenCombine(CF<B>, fn)`| 2| CF<C> typed| Fails if either fails| Two typed par
+| `allOf(CF<?>...)`| N| CF<Void>| Fails if any fails| N parallel, manual collect
+| `anyOf(CF<?>...)`| N| CF<Object>| First completes wins| Race/redundancy|
+| allOf + per-branch fallback| N| never fails| Per-branch fallback| Resilient fa
+| `Flux.flatMap(fn, n)`| N dynamic| Flux<T>| onErrorResume| Bounded concurrent s
 
 ---
 
@@ -631,7 +631,7 @@ count, not threads, so it is deadlock-safe by design.
 
 **Fan-out latency comparison:**
 
-```
+```plaintext
 Sequential (thenCompose):
   t: 0    50   100  150  200
      [A][--B--][C][--D--][E]   Total = sum = 200ms
@@ -794,7 +794,7 @@ BodyHandlers:
   ofFile(path)     -> saves body to file
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java HttpClient Async API example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 sendAsync does NOT throw for HTTP 4xx/5xx - only for network errors
@@ -877,7 +877,7 @@ CompletableFuture<OrderId> createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** The static `CLIENT` is reused across all requests -
+> **Code walkthrough:** The static `CLIENT` is reused across all requests -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > creating a new client per request is expensive and bypasses connection
 > pooling. Pattern 1 shows the mandatory status code check: `statusCode() / 100
 > != 2` catches all non-2xx responses, since sendAsync never throws for HTTP
@@ -965,7 +965,7 @@ CLIENT.sendAsync(req, BodyHandlers.ofString())
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Extract as a reusable utility to enforce status checks everywhere:
 ```java
@@ -979,7 +979,7 @@ static <T> Function<HttpResponse<String>, T> parseChecked(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -989,7 +989,7 @@ static <T> Function<HttpResponse<String>, T> parseChecked(
 
 ---
 
-#### Q1 - What are the main differences between HttpURLConnection and HttpClient?
+**[JUNIOR] Q1 - [COMPARISON] What are the main differences between HttpURLConnection and HttpClient?**
 
 `HttpURLConnection` (Java 1.1): synchronous only, verbose manual InputStream
 management, HTTP/1.1 only, not thread-safe (one instance per request).
@@ -1013,7 +1013,7 @@ CLIENT.sendAsync(req, BodyHandlers.ofString())
     .thenAccept(r -> process(r.body())); // async, clean
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `URL.openConnection()` caches connections
 globally - this causes contention in multi-threaded code. HttpClient's
@@ -1022,7 +1022,7 @@ configurable per service.
 
 ---
 
-#### Q2 - How do you configure connect and request timeouts?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you configure connect and request timeouts?**
 
 Connect timeout (client builder - applies to all requests):
 ```java
@@ -1031,7 +1031,7 @@ HttpClient client = HttpClient.newBuilder()
     .build();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Request timeout (per request):
 ```java
@@ -1040,7 +1040,7 @@ HttpRequest req = HttpRequest.newBuilder()
     .uri(uri).GET().build();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 On timeout: CF completes exceptionally with `HttpTimeoutException`.
 Handle with `exceptionally` or `handle`:
@@ -1055,7 +1055,7 @@ sendAsync(req, BodyHandlers.ofString())
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Request timeout starts when `sendAsync`
 is called. For requests reusing pooled connections, connect timeout is
@@ -1064,7 +1064,7 @@ wait on unreachable hosts; request timeout prevents slow-response hangs.
 
 ---
 
-#### Q3 - How do BodyHandlers and BodyPublishers work?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do BodyHandlers and BodyPublishers work?**
 
 `BodyHandlers` decode the response body:
 - `ofString()`: full body as String (charset from Content-Type)
@@ -1093,7 +1093,7 @@ CLIENT.sendAsync(req, BodyHandlers.ofInputStream())
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `ofInputStream()` requires closing the
 InputStream after reading. If not closed, the underlying connection is not
@@ -1101,7 +1101,7 @@ returned to the pool, causing connection exhaustion over time.
 
 ---
 
-#### Q4 - How do you implement retry logic?
+**[MID] Q4 - [DEBUGGING] How do you implement retry logic?**
 
 ```java
 CF<HttpResponse<String>> sendWithRetry(
@@ -1135,7 +1135,7 @@ private CF<HttpResponse<String>> retryAfterDelay(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Only retry transient errors:
 retry 500/502/503/504. Never retry 400/401/403/404 (caller errors).
@@ -1144,7 +1144,7 @@ operations. Add jitter to retry delays to prevent synchronized retry storms.
 
 ---
 
-#### Q5 - How does sendAsync integrate with Project Reactor?
+**[MID] Q5 - [BEHAVIORAL] How does sendAsync integrate with Project Reactor?**
 
 ```java
 // CF -> Mono bridge (not lazy - CF starts immediately)
@@ -1166,7 +1166,7 @@ Flux.fromIterable(userIds)
     .collectList();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For Spring WebFlux: use WebClient directly (no bridging):
 ```java
@@ -1178,7 +1178,7 @@ Mono<User> user = webClient.get()
     .bodyToMono(User.class);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Mono.fromFuture(cf)` is not lazy if the
 CF was already created - the HTTP request is already in-flight. For true
@@ -1187,7 +1187,7 @@ This matters when the Mono is assembled eagerly but subscribed lazily.
 
 ---
 
-#### Q6 - How does HTTP/2 change the connection model?
+**[MID] Q6 - [CONCEPTUAL] How does HTTP/2 change the connection model?**
 
 HTTP/1.1: one request per connection. 100 concurrent requests = 100 TCP
 connections. Connection pool limits concurrency.
@@ -1208,7 +1208,7 @@ CLIENT.sendAsync(req, BodyHandlers.discarding())
         log.info("Protocol: {}", r.version()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* HTTP/2 stream limits (default 100 per
 RFC). When stream limit is reached, HttpClient creates a new connection.
@@ -1217,7 +1217,7 @@ concurrent requests = H2. 100 connections = H1.1.
 
 ---
 
-#### Q7 - How do you handle authentication with token refresh?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you handle authentication with token refresh?**
 
 ```java
 class AuthHttpClient {
@@ -1252,7 +1252,7 @@ class AuthHttpClient {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using authentication. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Key: retry only once on 401. If refreshed token still returns 401, that is
 a permissions problem - not a token expiry. More retries cause infinite loops.
@@ -1264,7 +1264,7 @@ issuing duplicate refresh requests.
 
 ---
 
-#### Q8 - When would you choose WebClient over HttpClient?
+**[SENIOR] Q8 - [TRADE-OFF] When would you choose WebClient over HttpClient?**
 
 | Scenario | WebClient | HttpClient |
 |---|---|---|
@@ -1287,7 +1287,7 @@ in the pipeline without bridging overhead.
 
 ---
 
-#### Q9 - How do you test code that uses sendAsync?
+**[SENIOR] Q9 - [HANDS-ON] How do you test code that uses sendAsync?**
 
 Three strategies:
 
@@ -1301,7 +1301,7 @@ when(gateway.fetchUser("1"))
     .thenReturn(completedFuture(User.of("1", "Alice")));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 2. MockWebServer (integration tests - OkHttp library):
 ```java
@@ -1318,7 +1318,7 @@ assertThat(r.statusCode()).isEqualTo(200);
 server.shutdown();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. Testing retry behavior:
 ```java
@@ -1329,7 +1329,7 @@ server.enqueue(new MockResponse().setResponseCode(200)
 // sendWithRetry should succeed on attempt 3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **
 
 *What separates good from great:* Test the status-code check explicitly:
 enqueue a 503 response and assert the CF completes exceptionally with
@@ -1342,16 +1342,16 @@ responses would succeed silently and the test would pass for the wrong reason.
 
 **Java async HTTP clients:**
 
-| Feature | Java HttpClient | OkHttp | Spring WebClient |
-|---|---|---|---|
-| Built-in | Yes (Java 11+) | No | No (Spring) |
-| Async API | sendAsync (CF) | Callback + CF | Mono/Flux native |
-| HTTP/2 | Yes | Yes | Yes (Netty) |
-| Streaming | ofInputStream | ResponseBody | Flux<DataBuffer> |
-| Interceptors | None | addInterceptor | ExchangeFilterFunction |
-| Retry | Manual | Interceptor | retryWhen() |
-| Android | No | Yes | No |
-| Best for | Non-Spring Java | Android/non-Spring | Spring WebFlux |
+| Feature| Java HttpClient| OkHttp| Spring WebClient|
+|------------|---------------|------------------|----------------------|
+| Built-in| Yes (Java 11+)| No| No (Spring)|
+| Async API| sendAsync (CF)| Callback + CF| Mono/Flux native|
+| HTTP/2| Yes| Yes| Yes (Netty)|
+| Streaming| ofInputStream| ResponseBody| Flux<DataBuffer>|
+| Interceptors| None| addInterceptor| ExchangeFilterFunction|
+| Retry| Manual| Interceptor| retryWhen()|
+| Android| No| Yes| No|
+| Best for| Non-Spring Java| Android/non-Spring| Spring WebFlux|
 
 ---
 

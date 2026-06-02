@@ -73,7 +73,7 @@ DECISION TREE:
   │   ├─ YES -> Use JPA (@Transactional, managed entities)
   │   └─ NO  -> Use JPA with DTO projection (no entity lifecycle overhead)
   └─ NO: Is it a bulk operation (1000+ rows)?
-      ├─ YES -> Use JdbcTemplate.batchUpdate() or native SQL (COPY for PostgreSQL)
+      ├─ YES -> Use JdbcTemplate.batchUpdate() or native SQL (COPY for...
       └─ NO: Is it a reporting/aggregation query?
           ├─ YES -> Use native SQL or JPQL with GROUP BY, projections
           └─ NO: Does it need DB-specific features (JSONB, window functions)?
@@ -110,7 +110,7 @@ WHEN TO USE JDBCTEMPLATE (spring-jdbc):
         "SELECT category, COUNT(*), SUM(price) " +
         "FROM products GROUP BY category HAVING COUNT(*) > 100 " +
         "ORDER BY COUNT(*) DESC",
-        (rs, row) -> new CategoryStats(rs.getString(1), rs.getLong(2), rs.getBigDecimal(3)));
+        (rs, row) -> new CategoryStats(rs.getString(1), rs.getLong(2),...
     // JPA can do this, but JPQL becomes verbose.
     // Native SQL: cleaner, DB optimizer has full context.
   
@@ -132,13 +132,13 @@ NATIVE SQL WITHIN JPA (best of both worlds):
   public interface ProductRepository extends JpaRepository<Product, Long> {
       
       // PostgreSQL JSONB query:
-      @Query(value = "SELECT * FROM products WHERE metadata @> :filter\\:\\:jsonb",
+  @Query(value = "SELECT * FROM products WHERE metadata @> :filter\\:\\:jsonb",
              nativeQuery = true)
       List<Product> findByMetadata(@Param("filter") String jsonFilter);
       
       // ON CONFLICT DO UPDATE (upsert):
       @Modifying
-      @Query(value = "INSERT INTO products (id, name, price) VALUES (:id, :name, :price) " +
+      @Query(value = "INSERT INTO products (id, name, price) VALUES (:id, :name,
                      "ON CONFLICT (id) DO UPDATE SET name = :name, price = :price",
              nativeQuery = true)
       void upsert(@Param("id") Long id, @Param("name") String name,
@@ -146,7 +146,7 @@ NATIVE SQL WITHIN JPA (best of both worlds):
       
       // Window function for ranking:
       @Query(value = "SELECT p.*, " +
-                     "RANK() OVER (PARTITION BY category ORDER BY price DESC) AS price_rank " +
+  "RANK() OVER (PARTITION BY category ORDER BY price DESC) AS price_rank " +
                      "FROM products p",
              nativeQuery = true)
       List<Object[]> findWithPriceRank();
@@ -169,7 +169,7 @@ MIXING IN SAME SERVICE:
       @Transactional
       public Order createOrder(CreateOrderRequest req) {
           Order order = new Order(req.customerId());
-          req.items().forEach(item -> order.addItem(item.productId(), item.qty(), item.price()));
+          req.items().forEach(item -> order.addItem(item.productId(),...
           return orderRepository.save(order);  // JPA: cascade + dirty check
       }
       
@@ -180,7 +180,7 @@ MIXING IN SAME SERVICE:
               "       SUM(total_amount) AS revenue, COUNT(*) AS order_count " +
               "FROM orders WHERE EXTRACT(YEAR FROM created_at) = ? " +
               "GROUP BY 1 ORDER BY 1",
-              (rs, n) -> new MonthlySummary(rs.getInt(1), rs.getBigDecimal(2), rs.getLong(3)),
+  (rs, n) -> new MonthlySummary(rs.getInt(1), rs.getBigDecimal(2),...
               year);
       }
       
@@ -198,7 +198,7 @@ MIXING IN SAME SERVICE:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -288,7 +288,7 @@ manually when Spring Data `save()` would work). Choose the tool by the operation
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Large result set loaded via JPA causes OOM on reporting endpoint.**
-```
+```plaintext
 Symptom: GET /reports/daily-summary causes OutOfMemoryError.
   Heap dump: 500K Order entities + OrderItem entities in the JPA session.
 
@@ -303,13 +303,13 @@ Fix: switch to JDBC aggregation:
   List<Object[]> getDailySummaryNative(Instant start, Instant end);
   
   // Or JdbcTemplate:
-  jdbcTemplate.query("SELECT DATE(created_at)...", (rs, n) -> new DailySummary(...));
+  jdbcTemplate.query("SELECT DATE(created_at)...", (rs, n) -> new...
   
   // Returns N rows (one per day), not 500K entities.
   // Heap: constant (N summary rows, typically < 365).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -400,7 +400,7 @@ with the JPA write model for correctness and the SQL read model for performance.
 ### 📘 Concept Explanation
 
 **Repository vs Active Record in JPA applications:**
-```
+```plaintext
 REPOSITORY PATTERN (Spring Data JPA - standard):
 
   // Entity: pure domain object, no persistence knowledge:
@@ -520,7 +520,7 @@ CHOOSING BETWEEN THEM (decision factors):
     "Fake AR" (injecting repository into entity): anti-pattern. Don't do it.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **WHAT BREAKS: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -615,7 +615,7 @@ advantage of Active Record diminishes quickly as the codebase grows beyond trivi
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: @Autowired in @Entity causes NullPointerException.**
-```
+```plaintext
 Symptom: User.activate() calls userRepository.save(this) and throws NPE.
   userRepository is null despite @Autowired annotation.
 
@@ -650,7 +650,7 @@ Fix: remove @Autowired from entities entirely.
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -882,7 +882,7 @@ TRANSACTION ROLLBACK MECHANICS:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -979,7 +979,7 @@ constraint checks. Use H2 only for pure JPQL tests that don't use DB-specific fe
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Tests pass in CI (H2) but fail in production (PostgreSQL constraint violation).**
-```
+```plaintext
 Symptom: CI: all 500 tests pass. Production deploy: HTTP 500 error.
   Logs: "ERROR: null value in column 'email' of relation 'users' violates not-null constraint"
 
@@ -1007,7 +1007,7 @@ Fix:
     Constraint violations caught 100% of the time.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

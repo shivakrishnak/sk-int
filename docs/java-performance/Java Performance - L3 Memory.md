@@ -67,7 +67,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Object layout in memory and cache optimization:**
-```
+```plaintext
 JAVA OBJECT MEMORY LAYOUT:
 
   Plain object (JDK 17, 64-bit, -XX:+UseCompressedOops default):
@@ -98,7 +98,7 @@ JAVA OBJECT MEMORY LAYOUT:
 COMPRESSED OOPS (Compressed Ordinary Object Pointers):
   -XX:+UseCompressedOops (default for heap < 32GB)
   Object references: stored as 32-bit offsets (instead of 64-bit addresses)
-  Benefit: cuts reference size in half -> smaller object footprint -> better cache utilization
+  Benefit: cuts reference size in half -> smaller object footprint -> better...
   
   Disabled if -Xmx > 32GB: references become 64-bit again.
   Impact: same number of objects takes ~50% more memory -> more GC pressure.
@@ -172,7 +172,7 @@ OBJECT LAYOUT TOOLS:
     Helps: identify inefficient layouts, verify @Contended effect
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Memory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -181,6 +181,12 @@ OBJECT LAYOUT TOOLS:
 > **Code walkthrough:** The false sharing benchmark demonstrates the problem and the fix. The
 > padded counter achieves near-linear scaling with thread count; the unpadded version may be
 > SLOWER with more threads due to cache line contention.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // FALSE SHARING DEMONSTRATION AND FIX:
@@ -345,7 +351,7 @@ Fix:
     // Scales linearly: 8 threads = ~8x throughput
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -475,7 +481,19 @@ high-frequency services): measurable impact.
 ### 📘 Concept Explanation
 
 **Off-heap patterns and lifecycle management:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 OFF-HEAP MEMORY TYPES:
 
   1. DirectByteBuffer (ByteBuffer.allocateDirect(N)):
@@ -592,7 +610,7 @@ OFF-HEAP MEMORY SIZING AND MONITORING:
     (Not the same as heap OOM - requires direct memory monitoring)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -601,6 +619,12 @@ OFF-HEAP MEMORY SIZING AND MONITORING:
 > **Code walkthrough:** The comparison between heap and direct IO buffers shows the zero-copy
 > benefit concretely. The pooling pattern avoids the allocation and deallocation overhead for
 > high-frequency IO operations.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // OFF-HEAP IO PATTERN COMPARISON:
@@ -771,7 +795,7 @@ Fix:
      the JVM limit is too low (not a fix for the underlying leak).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

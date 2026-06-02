@@ -111,7 +111,7 @@ API Gateway vs Load Balancer vs Service Mesh:
   Service Mesh: internal facing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Gateway Pattern example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **BFF (Backend for Frontend) pattern:**
 
@@ -145,7 +145,7 @@ BFF Solution:
     Aggregates/transforms as needed for that client
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Gateway Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -251,7 +251,7 @@ public class JwtAuthFilter
 }
 ```
 
-> **Code walkthrough:** Spring Cloud Gateway's RouteLocator defines routing rules
+> **Code walkthrough:** Spring Cloud Gateway's RouteLocator defines routing rulesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as a Java DSL. The order-service route strips the `/api` prefix before forwarding
 > (service doesn't need to know about the gateway path). The circuit breaker filter
 > wraps the call: if order-service fails, the gateway calls the fallback endpoint
@@ -304,7 +304,7 @@ public class MobileDashboardBff {
 }
 ```
 
-> **Code walkthrough:** The Mobile BFF aggregates two service calls in parallel
+> **Code walkthrough:** The Mobile BFF aggregates two service calls in parallelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (Mono.zip = run both simultaneously, wait for both). It transforms the full
 > Product model into a compact ProductSummary with only the fields mobile needs.
 > This BFF is owned by the mobile team: they control the response shape.
@@ -368,7 +368,7 @@ downstream services.
 
 ---
 
-#### Q1 - How does an API Gateway handle authentication vs authorization?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does an API Gateway handle authentication vs authorization?**
 
 ```
 Authentication (who are you?):
@@ -407,7 +407,7 @@ Authorization (what can you do?):
             only the order service can check user_id == order.user_id
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The gateway should enforce minimum viable
 authorization: reject unauthenticated requests (401) and enforce role-based
@@ -420,7 +420,7 @@ category?" The service knows "are you allowed to do this specific operation?"
 
 ---
 
-#### Q2 - How do you implement API versioning at the gateway?
+**[JUNIOR] Q2 - [HANDS-ON] How do you implement API versioning at the gateway?**
 
 API versioning: support multiple API versions simultaneously.
 
@@ -464,7 +464,7 @@ Version migration:
     Downside: transformation logic in gateway (tight coupling)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The cleanest versioning strategy: maintain
 one current API version in services; let the gateway handle version translation
@@ -477,7 +477,7 @@ Run both service versions. Monitor adoption to know when to sunset old versions.
 
 ---
 
-#### Q3 - How does the API Gateway handle service discovery?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does the API Gateway handle service discovery?**
 
 ```
 Static routing (hardcoded):
@@ -520,7 +520,7 @@ Kubernetes native (service name):
     }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* In Kubernetes environments, Kubernetes-native
 service discovery (ClusterIP Service + DNS) is sufficient for most cases. Adding
@@ -533,7 +533,7 @@ or in multi-cloud environments where Kubernetes services don't span clusters.
 
 ---
 
-#### Q4 - How do you handle API Gateway performance at high scale?
+**[MID] Q4 - [ARCHITECTURE] How do you handle API Gateway performance at high scale?**
 
 API Gateway performance tuning:
 
@@ -580,7 +580,7 @@ Performance patterns:
   Tune: max connections per backend
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The JWT caching optimization is significant
 at scale and commonly overlooked. JWT validation is CPU-intensive but deterministic
@@ -595,7 +595,7 @@ list only holds actively revoked tokens (typically very few at any moment).
 
 ---
 
-#### Q5 - What is the circuit breaker pattern at the gateway level?
+**[MID] Q5 - [ARCHITECTURE] What is the circuit breaker pattern at the gateway level?**
 
 Gateway circuit breaker: protect the gateway from cascading failures.
 
@@ -638,7 +638,7 @@ Spring Cloud Gateway circuit breaker:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The circuit breaker at the gateway level is
 the last line of defense for external clients. Service-level circuit breakers
@@ -652,7 +652,7 @@ have bugs discovered at the worst moment (production incident).
 
 ---
 
-#### Q6 - How do you handle API security at the gateway?
+**[MID] Q6 - [CONCEPTUAL] How do you handle API security at the gateway?**
 
 Security layers at the API Gateway:
 
@@ -698,7 +698,7 @@ Security layers at the API Gateway:
   Retention: 90 days (security incident investigation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* JWT algorithm confusion attack: if your
 gateway accepts both RS256 (asymmetric) and HS256 (symmetric), an attacker can
@@ -712,7 +712,7 @@ expected algorithm in the validation configuration; never auto-detect.
 
 ---
 
-#### Q7 - How do you implement a GraphQL API Gateway?
+**[SENIOR] Q7 - [HANDS-ON] How do you implement a GraphQL API Gateway?**
 
 GraphQL gateway aggregates multiple services into one schema.
 
@@ -760,7 +760,7 @@ Performance:
     Return all reviews in one query
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Apollo Federation is the production-proven
 solution for multi-team GraphQL at scale. The key architectural constraint: each
@@ -774,7 +774,7 @@ break clients.
 
 ---
 
-#### Q8 - How does API Gateway observability work?
+**[SENIOR] Q8 - [CONCEPTUAL] How does API Gateway observability work?**
 
 Observability at the API Gateway layer:
 
@@ -826,7 +826,7 @@ Three pillars for API Gateway:
     Bottleneck identified: DB (not service or gateway)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The distributed trace from gateway to service
 to database is the key tool for latency diagnosis. Without distributed tracing,
@@ -839,7 +839,7 @@ not optional. A service that doesn't propagate traces breaks the full chain view
 
 ---
 
-#### Q9 - What are the trade-offs between API Gateway and Service Mesh?
+**[SENIOR] Q9 - [TRADE-OFF] What are the trade-offs between API Gateway and Service Mesh?**
 
 ```
 API Gateway:
@@ -881,7 +881,7 @@ Decision framework:
   >50 services + canary/traffic management: service mesh essential
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The service mesh vs API gateway conflation
 is common. Key distinction: API Gateway is for external consumers; service mesh
@@ -1048,7 +1048,7 @@ Sliding Window Counter:
   Accuracy: within ~0.003% error rate (empirically measured)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rate Limiting example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1161,7 +1161,7 @@ public class RateLimitFilter
 }
 ```
 
-> **Code walkthrough:** The Lua script runs atomically in Redis. It reads the
+> **Code walkthrough:** The Lua script runs atomically in Redis. It reads theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > current token state (tokens, last_refill_time) from a Redis hash. It calculates
 > how many tokens have been added since the last request (elapsed * refill_rate).
 > If sufficient tokens: consume 1, update state, return "allowed." If insufficient:
@@ -1230,7 +1230,7 @@ Mitigation: local in-process fallback rate limiter (approximate) when Redis is d
 
 ---
 
-#### Q1 - How do you rate limit by user tier (free vs paid)?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you rate limit by user tier (free vs paid)?**
 
 Tiered rate limiting: different limits per user/plan.
 
@@ -1273,7 +1273,7 @@ Implementation approaches:
     No separate lookup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* JWT-embedded rate limits are the cleanest
 approach for most SaaS products. The plan is baked into the token at login time.
@@ -1286,11 +1286,11 @@ systems and checked on every request via Redis.
 
 ---
 
-#### Q2 - How do you handle distributed rate limiting across multiple data centers?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you handle distributed rate limiting across multiple data centers?**
 
 Multi-datacenter rate limiting: coordinating counters across regions.
 
-```
+```plaintext
 Problem:
   User in US: makes 60 requests to US datacenter
   User in EU: same user makes 60 requests to EU datacenter
@@ -1330,7 +1330,7 @@ Option 4: Approximate global (async sync):
   Good enough for most use cases (not financial APIs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* For most SaaS products: regional rate limits
 (option 3) are sufficient. Users don't route through multiple datacenters unless
@@ -1343,7 +1343,7 @@ If no: regional limits are simpler and more resilient.
 
 ---
 
-#### Q3 - What HTTP headers should a rate-limited API response include?
+**[JUNIOR] Q3 - [CONCEPTUAL] What HTTP headers should a rate-limited API response include?**
 
 Standard rate limit headers:
 
@@ -1390,7 +1390,7 @@ Client behavior (expected):
   Exponential backoff: if 429 again, double wait time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Retry-After header is the most important
 for good client behavior. Without it: clients either retry immediately (creating
@@ -1404,11 +1404,11 @@ per tier and the window duration.
 
 ---
 
-#### Q4 - How does rate limiting interact with client retry logic?
+**[MID] Q4 - [DEBUGGING] How does rate limiting interact with client retry logic?**
 
 Retry + rate limiting interaction creates thundering herd risk:
 
-```
+```plaintext
 Scenario without proper retry:
   All clients hit rate limit simultaneously (traffic spike)
   All get 429
@@ -1443,7 +1443,7 @@ Server-side guidance:
     -> Retries after 429 naturally spread out
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The combination of server-side Retry-After
 with client-side jitter is the standard solution. The server tells clients
@@ -1457,7 +1457,7 @@ traffic drops below the limit.
 
 ---
 
-#### Q5 - How do you rate limit based on cost instead of request count?
+**[MID] Q5 - [CONCEPTUAL] How do you rate limit based on cost instead of request count?**
 
 Cost-based rate limiting: different operations have different "weights."
 
@@ -1497,7 +1497,7 @@ Stripe's approach:
   API key has "read capacity" and "write capacity" limits
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cost-based rate limiting is important for
 AI/ML API monetization. OpenAI uses token-count-based rate limiting (tokens = words
@@ -1512,11 +1512,11 @@ consuming the entire rate limit budget.
 
 ---
 
-#### Q6 - How do you build rate limiting for a multi-tenant API?
+**[MID] Q6 - [HANDS-ON] How do you build rate limiting for a multi-tenant API?**
 
 Multi-tenant rate limiting: fair resource allocation across tenants.
 
-```
+```plaintext
 Requirements:
   Tenant isolation: Tenant A's heavy usage doesn't affect Tenant B
   Fair allocation: each tenant gets their contracted limit
@@ -1554,7 +1554,7 @@ Rate limit response with tenant context:
                   Try again in 60 seconds."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The error message must tell the user WHICH
 limit was hit and WHAT they can do about it. "User's personal limit exceeded:
@@ -1567,7 +1567,7 @@ tenants right-size their plans.
 
 ---
 
-#### Q7 - How do you implement rate limiting for login/auth endpoints?
+**[SENIOR] Q7 - [DEBUGGING] How do you implement rate limiting for login/auth endpoints?**
 
 Auth endpoint rate limiting: security-critical, different from API rate limiting.
 
@@ -1611,7 +1611,7 @@ Login rate limiting (brute force prevention):
   Legitimate user (forgot password): brief delay is acceptable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Account lockout must include an unlock mechanism.
 "5 failures = locked forever" creates a DOS attack vector: attacker locks all
@@ -1625,11 +1625,11 @@ logins per minute from a new IP, or >10 failures for the same account in 5 minut
 
 ---
 
-#### Q8 - How does rate limiting work in Kubernetes with Envoy/Istio?
+**[SENIOR] Q8 - [CONCEPTUAL] How does rate limiting work in Kubernetes with Envoy/Istio?**
 
 Kubernetes-native rate limiting with service mesh:
 
-```
+```plaintext
 Istio + Envoy rate limiting:
 
 Option 1: Local rate limiting (per-pod):
@@ -1676,7 +1676,7 @@ Option 3: Gateway-level (most practical):
     nginx.ingress.kubernetes.io/limit-whitelist: "10.0.0.0/8"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Local rate limiting per pod is simple but
 doesn't provide true per-user limiting across the cluster. If you run 10 pods
@@ -1691,7 +1691,7 @@ sufficient.
 
 ---
 
-#### Q9 - How do you test rate limiting implementation?
+**[SENIOR] Q9 - [HANDS-ON] How do you test rate limiting implementation?**
 
 Rate limiting testing strategy:
 
@@ -1732,7 +1732,7 @@ Chaos tests:
   Redis slow (50ms): does rate limit add 50ms to all requests?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The concurrent correctness test is the most
 important. Without it: a race condition in the rate limiter might allow 2x the

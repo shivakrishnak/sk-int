@@ -146,7 +146,7 @@ QUALITY ATTRIBUTE TRADE-OFF MAP
       "Every QA improvement has a cost"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Non-Functional Requirements and Quality Attributes example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Architecture tactics by quality attribute:**
 
@@ -183,7 +183,7 @@ public class PaymentController {
 // No architecture tactic enforces availability.
 ```
 
-> **Code walkthrough:** The controller has no architecture tactics
+> **Code walkthrough:** The controller has no architecture tacticsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for the quality attributes that matter for payment processing:
 > no timeout (one slow downstream hangs all threads), no circuit
 > breaker (cascading failure risk), no rate limiting (one abusive
@@ -253,7 +253,7 @@ public class PaymentController {
 //   timeoutDuration: 2s           # 2s P99 requirement
 ```
 
-> **Code walkthrough:** Each annotation maps to a specific quality
+> **Code walkthrough:** Each annotation maps to a specific qualityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > attribute tactic: `@Timed` instruments latency percentiles (P50,
 > P95, P99) against the 2s requirement, `@CircuitBreaker` implements
 > the availability tactic (fail-fast when the downstream service
@@ -332,7 +332,7 @@ curl -s https://api.example.com/metrics |
 # p99=8.1 - but what is the requirement?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This but what is the requirement? example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:* Quality Attribute Workshop (QAW) before the next major
 architecture decision. Produce concrete scenarios with measurable
@@ -607,7 +607,7 @@ static final ArchRule circuitBreakerRule =
         .because("All Feign clients must have circuit breakers");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For performance:
 ```java
@@ -623,7 +623,7 @@ void paymentProcessingLatencyUnder2Seconds() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For security:
 ```java
@@ -635,7 +635,7 @@ static final ArchRule noDirectDbInControllers =
         .resideInPackage("..repository..");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For maintainability:
 ```java
@@ -646,7 +646,7 @@ static final ArchRule noCycles =
         .beFreeOfCycles();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 These run in the CI/CD pipeline. A QA violation fails the build.
 
@@ -717,7 +717,7 @@ Structure: Root ("Utility") -> QA categories -> QA sub-categories
 (H/M/L) importance to business x (H/M/L) difficulty to achieve.
 
 Example utility tree:
-```
+```plaintext
 Utility
   Performance
     Latency
@@ -734,7 +734,7 @@ Utility
       -> "PCI DSS compliance for payment data" (H, H)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 High-importance, high-difficulty scenarios are the architecture
 drivers - they require specific structural decisions and must be
@@ -832,7 +832,7 @@ for rate in 1000 2000 5000 10000; do
 done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find the throughput knee example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Architecture tactics: caching (reduce load on databases), async
 processing (decouple slow work from critical path), CDN (reduce
@@ -887,7 +887,7 @@ static final ArchRule domainIndependence =
         .resideInPackage("..infrastructure..");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find the throughput knee example demonstrates Java ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Maintainability anti-patterns: God Classes (cyclomatic complexity
 > 50), circular dependencies (nothing can change without breaking
@@ -944,25 +944,25 @@ vs specific QA scenarios with difficulty ratings, the active-active
 decision explicitly justified by the 99.99% requirement, and a
 quantified outcome.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | QA trade-offs, architecture tactics, fitness functions |
-| Hiring Manager | QA Workshop process, stakeholder management |
-| Bar Raiser | Error budget, CAP theorem, utility tree |
-| Peer Engineer | Concrete implementation: circuit breakers, metrics |
+| Interviewer Type| Emphasis|
+|----------------|------------------------------------------------------|
+| Technical Panel| QA trade-offs, architecture tactics, fitness functions|
+| Hiring Manager| QA Workshop process, stakeholder management|
+| Bar Raiser| Error budget, CAP theorem, utility tree|
+| Peer Engineer| Concrete implementation: circuit breakers, metrics|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| QA | Tactics | Conflicts With | Measurement |
-|---|---|---|---|
-| Availability | Redundancy, circuit breaker, retry | Consistency (CAP) | Error rate, uptime % |
-| Performance | Caching, async, CDN, sharding | Security (encryption overhead), maintainability | P50/P95/P99 latency, throughput |
-| Security | Defense in depth, mTLS, RBAC | Performance (auth latency), maintainability (complexity) | Vulnerability scan, OWASP compliance |
-| Maintainability | Modularization, dependency inversion, testing | Performance (abstraction overhead) | Coupling metrics, cyclomatic complexity |
-| Scalability | Horizontal scaling, stateless design | Consistency (distributed coordination) | Throughput under load, scaling linearity |
-| Reliability | Idempotency, fault isolation, chaos engineering | Performance (redundant processing) | MTTR, error rate, recovery time |
+| QA| Tactics| Conflicts With| Measurement|
+|---|---|-----------------------------|----------------------------------------|
+| Availability| Redundancy, circuit breaker, retry| Consistency (CAP)| Error rat
+| Performance| Caching, async, CDN, sharding| Security (encryption overhead), ma
+| Security| Defense in depth, mTLS, RBAC| Performance (auth latency), maintainab
+| Maintainability| Modularization, dependency inversion, testing| Performance (a
+| Scalability| Horizontal scaling, stateless design| Consistency (distributed co
+| Reliability| Idempotency, fault isolation, chaos engineering| Performance (red
 
 ---
 

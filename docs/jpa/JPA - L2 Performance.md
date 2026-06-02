@@ -117,7 +117,7 @@ INTERFACE PROJECTION:
   s.getEmail();
   
   // Closed vs open projections:
-  // Closed: all getters map to entity fields -> Hibernate generates targeted SELECT.
+  // Closed: all getters map to entity fields -> Hibernate generates targeted...
   // Open: uses @Value or SpEL -> Hibernate loads the full entity
   // (open projection defeats the purpose).
   // Always use closed projections: no @Value/SpEL.
@@ -185,7 +185,7 @@ NAMED QUERIES:
   //   Difference: small (milliseconds). Startup validation is the bigger benefit.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Performance example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -269,7 +269,7 @@ columns. Rule: if you need computed values in a projection, compute them in the 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Interface projection generates full entity SELECT despite seeming optimized.**
-```
+```plaintext
 Symptom: changed entity loading to interface projection. No SQL improvement.
   SQL log shows: SELECT u.* FROM users ... (all columns still selected).
 
@@ -297,7 +297,7 @@ Fix: remove @Value. Compute in DTO class instead:
   // Closed interface: only entity field getters. No @Value.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
@@ -494,7 +494,7 @@ BULK INSERT WITH NATIVE SQL:
   // COPY (PostgreSQL): ~0.5 seconds (for truly massive loads)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This batch_versioned_data=true: also batch UPDATE for versioned entities (@Version) example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -632,7 +632,7 @@ Fix:
     Verify steady-state memory (not growing).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

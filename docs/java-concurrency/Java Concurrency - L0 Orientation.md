@@ -110,7 +110,7 @@ Thread B:         [work]--[wait I/O]------[work]
 Thread C:                 [work]----------[work]
 CPU core: [AAAA][BBBB][CCCC][AAAA][BBBB][CCCC]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The JVM creates a Java Thread backed by an OS native thread. The OS
 scheduler uses preemptive time-slicing to assign threads to CPU cores.
@@ -162,7 +162,7 @@ every file read has that 10,000x gap to fill.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example shows the two ways to create threads
+> **Code walkthrough:** This example shows the two ways to create threadsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in Java and the fundamental shared-state problem that makes concurrency
 > non-trivial. The BAD example ignores the race condition on `counter`.
 > The GOOD example uses `AtomicInteger` to eliminate the race. The key
@@ -196,7 +196,7 @@ public class UnsafeCounter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L0 Orientation example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // GOOD: atomic counter using java.util.concurrent.atomic
@@ -226,7 +226,7 @@ public class SafeCounter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java API usage using concurrency primitive. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -440,7 +440,7 @@ CompletableFuture.allOf(a, b, c).join();
 // Total latency: max(50, 30, 20) = 50ms instead of 100ms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This cuts latency by 50% and reduces thread blocking time. In a
 high-throughput system, this means your thread pool handles 2x more
@@ -703,7 +703,7 @@ job processors all require handling multiple tasks simultaneously.
 Threads provide the OS-level mechanism for this multiplexing.
 
 **How it works:**
-```
+```plaintext
 JVM Process
   +------ Shared Heap (all objects) --------+
   |  Thread 1    Thread 2    Thread 3        |
@@ -716,7 +716,7 @@ JVM Process
     CPU Core 0     CPU Core 1    CPU Core 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Thread creation in Java:
 1. `new Thread(runnable).start()` - JVM calls `pthread_create()` (Linux)
@@ -771,7 +771,7 @@ concurrent execution unit.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example shows the pitfall of extending
+> **Code walkthrough:** The BAD example shows the pitfall of extendingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Thread directly - it makes the class non-reusable and ties business
 > logic to infrastructure. The GOOD example separates concerns: Runnable
 > holds the logic, Thread holds the execution context. The production
@@ -790,7 +790,7 @@ public class BadWorker extends Thread {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **WHAT BREAKS: always specify executor on thenApplyAsync to control thread context.**
 
 ```java
 // GOOD: implement Runnable to separate logic from execution
@@ -817,7 +817,7 @@ t.start();
 t.join();                      // wait for completion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // PRODUCTION: use ExecutorService - manages pooling and lifecycle
@@ -839,7 +839,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 ---
 
@@ -1044,7 +1044,7 @@ scheduler.scheduleAtFixedRate(() -> {
 }, 0, 30, TimeUnit.SECONDS);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool managementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The critical detail: `scheduleAtFixedRate` silently stops if the
 task throws an unchecked exception. You must wrap the task body in
@@ -1332,7 +1332,7 @@ by default, with production-grade lifecycle and error handling.
 **How it works:**
 The ecosystem layers from low-level to high-level:
 
-```
+```plaintext
 Level 1 (Language):
   synchronized, volatile, final
 
@@ -1356,7 +1356,7 @@ Level 4 (Third-party):
   Testing: jcstress, Awaitility
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The concurrent collections (`ConcurrentHashMap`, `BlockingQueue`) are
@@ -1402,7 +1402,7 @@ type-safe, well-tested higher-level abstractions.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example shows the progression from Era 1
+> **Code walkthrough:** This example shows the progression from Era 1ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (raw threads with race conditions) to Era 2 (ExecutorService with
 > futures and concurrent collections) to Era 3 (CompletableFuture
 > pipelines). Each version solves the same problem - processing a
@@ -1425,7 +1425,7 @@ for (Thread t : threads) t.join(); // manual lifecycle
 // results may be corrupt - ArrayList not thread-safe
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // ERA 2 (Java 5+): ExecutorService with concurrent collection
@@ -1442,7 +1442,7 @@ for (Future<?> f : futures) f.get(); // propagates exceptions
 exec.shutdown();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using thread pool. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // ERA 3 (Java 8+): CompletableFuture pipeline - idiomatic
@@ -1462,7 +1462,7 @@ List<String> results = futures.stream()
 exec.shutdown();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 ---
 
@@ -1803,7 +1803,7 @@ try (var scope = new StructuredTaskScope.ShutdownOnFailure()) {
 // When scope exits: all forked tasks are guaranteed complete/cancelled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **
 
 Key properties:
 - If any subtask fails, all others are cancelled (ShutdownOnFailure)

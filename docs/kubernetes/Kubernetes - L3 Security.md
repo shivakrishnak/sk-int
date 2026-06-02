@@ -95,7 +95,7 @@ rules:
   verbs: ["get", "list"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RBAC: Role-Based Access Control example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **ClusterRole** (cluster-scoped): same structure as Role but applies cluster-wide OR
 can be used as a reusable template for namespace-level bindings.
@@ -111,7 +111,7 @@ rules:
 # No namespace field = cluster-scoped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No namespace field = cluster-scoped example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **RoleBinding** (namespace-scoped): attaches a Role OR ClusterRole to subjects within
 one namespace.
@@ -132,7 +132,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No namespace field = cluster-scoped example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **ClusterRoleBinding**: attaches a ClusterRole to subjects CLUSTER-WIDE.
 ```yaml
@@ -148,7 +148,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No namespace field = cluster-scoped example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **ServiceAccounts:**
 Every pod needs an identity for API server calls. ServiceAccount provides this.
@@ -180,7 +180,7 @@ roleRef:
   name: metrics-reader
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bind minimal permissions example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Common verbs:** `get`, `list`, `watch`, `create`, `update`, `patch`, `delete`,
 `deletecollection`, `exec` (for pods/exec), `portforward` (for pods/portforward).
@@ -201,7 +201,7 @@ metadata:
     eks.amazonaws.com/role-arn: arn:aws:iam::123456789:role/s3-reader
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bind minimal permissions example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -263,6 +263,12 @@ roleRef:
   kind: ClusterRole
   name: deployer
   apiGroup: rbac.authorization.k8s.io
+```
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
 ```
 
 ```yaml
@@ -511,7 +517,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 3: RoleBinding in the TARGET namespace (where ConfigMaps are) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The pod in `team-a` using `config-reader-sa` can now read ConfigMaps in `shared-config`
 namespace. It cannot read ConfigMaps in `team-b` or any other namespace.
@@ -550,7 +556,7 @@ rules:
 # Explicitly NOT included: secrets (use separate role), RBAC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Explicitly NOT included: secrets (use separate role), RBAC example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 2 - RoleBindings per namespace (one per team):
 ```yaml
@@ -567,7 +573,7 @@ roleRef:
   name: namespace-developer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bind developer ClusterRole to team-a group in team-a namespace example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 3 - Automated binding via Namespace controller:
 When a new namespace is created with label `managed-by: team`, an admission webhook
@@ -685,7 +691,7 @@ Step 1: create IAM role with trust policy for the ServiceAccount:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bind developer ClusterRole to team-a group in team-a namespace example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: annotate the ServiceAccount:
 ```yaml
@@ -697,7 +703,7 @@ metadata:
     eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT:role/s3-reader
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bind developer ClusterRole to team-a group in team-a namespace example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 3: pod automatically gets projected token:
 When a pod uses this ServiceAccount, EKS mutating webhook injects:
@@ -744,7 +750,7 @@ rules:
   resourceNames: ["my-specific-secret"] # ONLY this one Secret
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bind developer ClusterRole to team-a group in team-a namespace example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This allows the pod to read `my-specific-secret` but NOT list all Secrets and NOT
 read any other Secret.
@@ -786,7 +792,7 @@ for ns in $(kubectl get ns -o name | cut -d/ -f2); do
 done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Loop through all SA in all namespaces example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Tools: `rbac-lookup` (Fairwinds), `rakkess`, `kubectl-who-can` - all query RBAC
 and show which subjects have specific permissions.
@@ -834,16 +840,16 @@ rules:
   resources: ["deployments"]
   verbs: ["get", "patch", "list"]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Loop through all SA in all namespaces example demonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
-Created per-namespace RoleBindings for each deployment namespace. Tested pipeline.
+Created per-namespace RoleBindings for each deployment namespace. Tested pipelin
 
-Hour 3 - Investigation: reviewed audit logs for the 6-month window for any anomalous
+Hour 3 - Investigation: reviewed audit logs for the 6-month window for any anoma
 API calls from that ServiceAccount. No evidence of compromise. Documented as "unintended
 privilege, no evidence of abuse."
 
 Prevention:
-1. OPA Gatekeeper policy: block any new ClusterRoleBinding to `cluster-admin` unless
+1. OPA Gatekeeper policy: block any new ClusterRoleBinding to `cluster-admin` un
    the binding is in an approved list (cluster-admin group members only).
 2. Weekly RBAC audit script emailing security team.
 3. Added RBAC review to PR checklist for any Kubernetes manifest changes.
@@ -857,33 +863,33 @@ continues in parallel.
 
 ### ⚖️ Comparison Table
 
-| | Role | ClusterRole | RoleBinding | ClusterRoleBinding |
-|---|---|---|---|---|
-| Scope | Namespace | Cluster | Namespace | Cluster |
-| Grants access to | Resources in one NS | Resources in all NS or cluster-scoped | Subject within one NS | Subject cluster-wide |
-| Use for | NS-local permissions | Reusable templates, cluster resources | Scoped team access | Infrastructure components |
-| With ClusterRole | N/A | Define permission set | Scope a CR to one NS | Apply CR cluster-wide |
+|| Role| ClusterRole| RoleBinding| ClusterRoleBinding|
+|---|---|----------------------|---------------------|-------------------------|
+| Scope| Namespace| Cluster| Namespace| Cluster|
+| Grants access to| Resources in one NS| Resources in all NS or cluster-scoped| 
+| Use for| NS-local permissions| Reusable templates, cluster resources| Scoped t
+| With ClusterRole| N/A| Define permission set| Scope a CR to one NS| Apply CR c
 
 **Decision tree:**
 
 - Cluster-scoped resources (nodes, PVs)? -> ClusterRole + ClusterRoleBinding
-- Infrastructure component (Prometheus, autoscaler)? -> ClusterRole + ClusterRoleBinding
-- Team/dev access to specific namespace? -> ClusterRole + RoleBinding per namespace
+- Infrastructure component (Prometheus, autoscaler)? -> ClusterRole + ClusterRol
+- Team/dev access to specific namespace? -> ClusterRole + RoleBinding per namesp
 - App calling API in its own namespace? -> Role + RoleBinding in same namespace
-- App calling API in ANOTHER namespace? -> ClusterRole + RoleBinding in target namespace
+- App calling API in ANOTHER namespace? -> ClusterRole + RoleBinding in target n
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: ★★☆ keyword - multi-tenant RBAC architecture and policy-as-code enforcement
+*(Omit: ★★☆ keyword - multi-tenant RBAC architecture and policy-as-code enforcem
 covered at L4 and L5 levels.)*
 
 ---
 
 ### 📊 Diagram
 
-```
+```plaintext
 RBAC authorization flow:
 
   kubectl / pod API call
@@ -1030,7 +1036,7 @@ spec:
       type: RuntimeDefault     # default seccomp filter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pod Security: SecurityContext and Pod Security Admission example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Container-level SecurityContext (overrides pod-level):
 ```yaml
@@ -1048,7 +1054,7 @@ spec:
         type: RuntimeDefault
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pod Security: SecurityContext and Pod Security Admission example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Key SecurityContext fields:**
 
@@ -1088,7 +1094,7 @@ metadata:
     pod-security.kubernetes.io/audit: restricted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Level: privileged, baseline, restricted example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Policy levels:
 
@@ -1192,7 +1198,7 @@ metadata:
     pod-security.kubernetes.io/enforce: privileged
 ```
 
-> **Code walkthrough:** The BAD example uses nginx:latest which runs as root by
+> **Code walkthrough:** The BAD example uses nginx:latest which runs as root byice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > default - a compromised nginx process has full root access inside the container and
 > potentially on the host if other protections fail. The GOOD example implements all
 > restricted PSA requirements: non-root user, no privilege escalation, read-only
@@ -1302,7 +1308,7 @@ volumes:
 - {name: tmp, emptyDir: {}}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This System namespace: privileged (monitoring, network plugins need root) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Failure 3: PSA enforce blocks system component pods**
 
@@ -1486,7 +1492,7 @@ USER appuser  # ALL processes in container run as UID 1000
 # Expected: uid=1000(appuser) gid=1000(appgroup)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Expected: uid=1000(appuser) gid=1000(appgroup) example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2 - Remove unnecessary setuid binaries:
 ```dockerfile
@@ -1495,7 +1501,7 @@ Step 2 - Remove unnecessary setuid binaries:
 RUN chmod a-s /usr/bin/ping /usr/bin/traceroute 2>/dev/null || true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remove ones not needed: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3 - Use distroless base images (minimal attack surface):
 ```dockerfile
@@ -1506,7 +1512,7 @@ COPY target/app.jar /app/app.jar
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Runs as UID 65532 (nonroot) by default example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 - Verify with container security scanners:
 ```bash
@@ -1518,7 +1524,7 @@ docker run --rm api:1.0 id
 # Should NOT return uid=0(root)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Should NOT return uid=0(root) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Distroless images are the gold standard for production.
 They contain only the runtime and application (no shell, no package manager, no utilities).
@@ -1578,7 +1584,7 @@ kubectl label namespace production \
 # Look in API server audit logs for violations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look in API server audit logs for violations example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Or use a dry-run approach:
 ```bash
@@ -1586,7 +1592,7 @@ kubectl label namespace production \
   pod-security.kubernetes.io/enforce=restricted --dry-run=server
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look in API server audit logs for violations example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2 - Identify violations by type.
 Most common: missing `allowPrivilegeEscalation: false`, root user, no seccomp.
@@ -1607,14 +1613,14 @@ containers:
     capabilities: {drop: ["ALL"]}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look in API server audit logs for violations example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 4 - Enable `warn` mode:
 ```bash
 kubectl label namespace production \
   pod-security.kubernetes.io/warn=restricted
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look in API server audit logs for violations example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Developers see warnings but pods are not rejected. Fix remaining warnings.
 
@@ -1695,12 +1701,12 @@ kubectl patch deployment <name> -n <ns> --type='json' \
       {"op":"add","path":"/spec/template/spec/containers/0/securityContext",
        "value":{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]}}}]'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look in API server audit logs for violations examplice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Applied to all 40. Tested in staging, deployed to production in rolling updates.
 
 Week 4 - Non-root image migration for 8 deployments:
-Built custom base images with non-root users. Deployed in canary (10% traffic) to verify.
+Built custom base images with non-root users. Deployed in canary (10% traffic) t
 Promoted to 100% after 24 hours of stable operation.
 
 Week 5 - Security exceptions for 2 vendor containers:
@@ -1712,8 +1718,8 @@ Applied `enforce: restricted` to all application namespaces except `legacy`.
 Zero violations at enforce time.
 
 *What separates good from great:* The automated patch script for the "easy fix" category
-was the highest-leverage action. 40 deployments patched in 2 hours vs weeks of manual
-YAML editing. The security exception namespace (`baseline`) for truly non-compliant
+was the highest-leverage action. 40 deployments patched in 2 hours vs weeks of m
+YAML editing. The security exception namespace (`baseline`) for truly non-compli
 vendor containers is pragmatic: don't let perfect be the enemy of good. Isolate
 exceptions, document them, and revisit when vendors update.
 
@@ -1721,32 +1727,32 @@ exceptions, document them, and revisit when vendors update.
 
 ### ⚖️ Comparison Table
 
-| SecurityContext Field | What it prevents | PSA Level |
-|---|---|---|
-| runAsNonRoot: true | Root process in container | restricted |
-| allowPrivilegeEscalation: false | setuid/sudo escalation | restricted |
-| readOnlyRootFilesystem: true | Container filesystem modification | Not required by PSA |
-| capabilities.drop: [ALL] | Linux capability abuse | restricted |
-| seccompProfile: RuntimeDefault | Dangerous syscall execution | restricted |
-| privileged: false (default) | Full host kernel access | baseline |
+| SecurityContext Field| What it prevents| PSA Level|
+|------------------------|---------------------------------|-------------------|
+| runAsNonRoot: true| Root process in container| restricted|
+| allowPrivilegeEscalation: false| setuid/sudo escalation| restricted|
+| readOnlyRootFilesystem: true| Container filesystem modification| Not required 
+| capabilities.drop: [ALL]| Linux capability abuse| restricted|
+| seccompProfile: RuntimeDefault| Dangerous syscall execution| restricted|
+| privileged: false (default)| Full host kernel access| baseline|
 
 **PSA Level Comparison:**
 
-| | Privileged | Baseline | Restricted |
-|---|---|---|---|
-| Privileged containers | Allowed | Blocked | Blocked |
-| Host namespaces | Allowed | Blocked | Blocked |
-| Root user | Allowed | Allowed | Blocked |
-| seccomp required | No | No | Yes (RuntimeDefault) |
-| allowPrivEsc | Allowed | Allowed | Must be false |
-| Drop capabilities | No | Partial | ALL required |
-| Use for | kube-system | Legacy apps | Production apps |
+|| Privileged| Baseline| Restricted|
+|---|---------------------------------|-------------------|--------------------|
+| Privileged containers| Allowed| Blocked| Blocked|
+| Host namespaces| Allowed| Blocked| Blocked|
+| Root user| Allowed| Allowed| Blocked|
+| seccomp required| No| No| Yes (RuntimeDefault)|
+| allowPrivEsc| Allowed| Allowed| Must be false|
+| Drop capabilities| No| Partial| ALL required|
+| Use for| kube-system| Legacy apps| Production apps|
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: ★★☆ keyword - runtime security architecture (Falco, OPA/Kyverno policy engine)
+*(Omit: ★★☆ keyword - runtime security architecture (Falco, OPA/Kyverno policy e
 and supply chain security covered at L4 level.)*
 
 ---

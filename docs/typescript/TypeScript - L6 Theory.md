@@ -47,7 +47,7 @@ class Vector { x = 0; y = 0; z = 0; }
 const p: Point = new Vector(); // OK - Vector has all Point properties
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structural vs Nominal Typing example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 `Vector` is compatible with `Point` despite no explicit `implements
 Point` declaration. TypeScript checks shape, not declaration.
@@ -60,7 +60,7 @@ class Vector implements Point { ... }
 // Vector has x, y properties
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structural vs Nominal Typing example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 TypeScript's structural typing is by design for JavaScript
 compatibility - existing JS libraries don't declare TypeScript
@@ -138,7 +138,7 @@ Why excess property check exists:
   Without it, typos in option objects silently do nothing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structural vs Nominal Typing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Implications:**
 
@@ -187,7 +187,7 @@ serialize(new Order(['item1']));  // OK - Order has toJSON()
 serialize({ toJSON: () => '{}' }); // OK - anonymous object works too
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structural vs Nominal Typing example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 **Example 2 (Wrong vs Right) - Accidental structural compatibility:**
 
@@ -214,9 +214,14 @@ const orderId: OrderId = { id: 'ord_123', [__brand]: 'OrderId' };
 getUser(orderId); // ERROR: [__brand] types differ
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structural vs Nominal Typing example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 **Example 3 (Wrong vs Right) - Excess property checking:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 interface Config {
@@ -241,7 +246,7 @@ const config2: Config = opts;  // OK - no error on stale object
 // This is the excess property check limitation
 ```
 
-> **Code walkthrough:** Structural typing makes TypeScript compatible
+> **Code walkthrough:** Structural typing makes TypeScript compatibleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with JavaScript patterns - any object with the right shape satisfies
 > an interface without needing an explicit `implements` declaration.
 > The excess property check on fresh object literals is a pragmatic
@@ -505,7 +510,7 @@ TypeScript's deliberate unsoundness:
      // An implementation can accept Animal where string expected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Type System Soundness example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key insight:**
 
@@ -526,7 +531,7 @@ strictFunctionTypes: true (part of strict)
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Type System Soundness example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -562,7 +567,7 @@ p.print("hello");  // Runtime: "hello".forEach is not a function
 const q: DataPrinter = new CSVPrinter(); // ERROR (contravariant)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Type System Soundness example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 **Example 2 (Wrong vs Right) - readonly unsoundness:**
 
@@ -594,7 +599,7 @@ const config = createConfig('localhost', 3000);
 // TypeError: Cannot assign to read only property 'host'
 ```
 
-> **Code walkthrough:** TypeScript's `readonly` prevents direct
+> **Code walkthrough:** TypeScript's `readonly` prevents directice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > property assignment at compile time but has no runtime enforcement.
 > The `as any` cast bypasses the compile-time check. `Object.freeze()`
 > is the JavaScript runtime mechanism that actually prevents mutation -

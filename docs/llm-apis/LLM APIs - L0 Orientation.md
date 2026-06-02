@@ -134,7 +134,7 @@ Frameworks:
   (orchestrate the Foundation APIs above)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM API Landscape example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key comparison dimensions:**
 
@@ -219,7 +219,7 @@ def ask_gemini(question: str) -> str:
 # Differences: SDK shape, token limits, pricing.
 ```
 
-> **Code walkthrough:** All three providers follow
+> **Code walkthrough:** All three providers followice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the same fundamental pattern: create a client with
 > an API key, specify a model, pass a message, receive
 > text. The Anthropic SDK uses `messages.create()`
@@ -326,7 +326,7 @@ class AnthropicClient(LLMClient):
 # OpenAIClient. Application code unchanged.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OpenAIClient. Application code unchanged. example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 ---
 
@@ -572,6 +572,11 @@ $50,000+ unauthorized charges in hours.
 Secure handling:
 
 1. Never hard-code keys in source code:
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # BAD: key in source (leaks via git history)
 client = anthropic.Anthropic(
@@ -585,7 +590,7 @@ client = anthropic.Anthropic(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: key from environment variable example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 2. Never commit keys to git:
    - `.env` files must be in `.gitignore`
@@ -772,7 +777,7 @@ RESPONSE:
   usage: {input_tokens: 28, output_tokens: 3}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Claude API Overview example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Claude model tiers:**
 
@@ -882,7 +887,7 @@ def ask_with_usage(question: str) -> dict:
     }
 ```
 
-> **Code walkthrough:** Four patterns in increasing
+> **Code walkthrough:** Four patterns in increasingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > complexity. The minimal call shows the essential
 > three parameters: model, max_tokens, messages.
 > The sentiment classifier shows how `system` prompt
@@ -966,6 +971,11 @@ setting `max_tokens=256` for a task that generates
 long outputs. Use 4096 as the default unless you
 specifically need short responses.
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # BAD: will truncate long analysis
 msg = client.messages.create(
@@ -985,7 +995,7 @@ if msg.stop_reason == "max_tokens":
     print("WARN: response truncated", file=sys.stderr)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: generous limit, check stop reason example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 ---
 
@@ -1145,7 +1155,7 @@ msg = client.messages.create(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: generous limit, check stop reason example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Savings calculation: 10,000 RPD * 5,000-token system
 prompt = 50M input tokens/day. Without caching:
@@ -1216,7 +1226,7 @@ client.messages.create(
 # Claude: "I don't know your name - you haven't told me."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This you haven't told me." example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Claude does not know your name because the conversation
 where you said "My name is Alex" was never included.
@@ -1261,7 +1271,7 @@ result = client.beta.messages.count_tokens(
 print(f"System prompt: {result.input_tokens} tokens")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tokenize to get actual count example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 (3) Check conversation history growth. After N turns,
     history could be 10,000+ tokens.
@@ -1282,7 +1292,7 @@ print(json.dumps({
 }), file=sys.stderr)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tokenize to get actual count example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "Token count logging
 from day one prevents month-end billing surprises."
@@ -1452,7 +1462,7 @@ Response
   - Agent: tool calls (file read/write, terminal)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitHub Copilot Overview example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Three modes in detail:**
 
@@ -1557,7 +1567,7 @@ def parse_user_from_json(json_str: str) -> dict:
 # 6. Fix any failures
 ```
 
-> **Code walkthrough:** Copilot doesn't have a Python
+> **Code walkthrough:** Copilot doesn't have a Pythonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > API - this illustrates HOW to work with it effectively.
 > The docstring is the primary mechanism for guiding
 > inline completion: a complete docstring with input

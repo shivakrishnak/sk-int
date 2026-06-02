@@ -131,7 +131,7 @@ Enterprise    10M+        1M+          Global replication
                                        Dedicated GPU clusters
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Architecture Decisions at Scale example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Index topology options:**
 
@@ -161,7 +161,7 @@ TENANT-PARTITIONED INDEX:
   Scales with tenant count, not doc count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Architecture Decisions at Scale example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Embedding strategy at scale:**
 
@@ -189,7 +189,7 @@ LATE INTERACTION (ColBERT):
   Best for high-value, latency-tolerant retrieval
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Architecture Decisions at Scale example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -398,7 +398,7 @@ class FederatedRAGSystem:
         return result
 ```
 
-> **Code walkthrough:** Three components compose a
+> **Code walkthrough:** Three components compose aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > federated RAG system. `DomainRouter` classifies
 > each query to a domain-specific index using Claude
 > Haiku (fast, cheap). `QueryCache` provides exact-match
@@ -668,7 +668,7 @@ Verification stage
   - Confirm expected content is retrieved
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Advantages:
 - Each stage scales independently (more embedding
@@ -814,7 +814,7 @@ Read path (local first):
               -> LLM call (regional endpoint)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Consistency model: eventual consistency for the
 vector store. New/updated documents are visible
@@ -1045,21 +1045,19 @@ Add: function signature, file path, module as metadata.
 **(4) Mixed context assembly:**
 
 When the context includes multiple modalities,
-label each type clearly:
-```
-[Text from page 5]:
-...
+label each type clearly in the LLM prompt:
 
-[Table from page 7] (caption: Quarterly revenue):
-| Q1 | Q2 | Q3 |
-...
+    [Text from page 5]:
+    <chunk text here>
 
-[Code example]:
-```python
-...
-```
+    [Table from page 7] (caption: Quarterly revenue):
+    | Q1 | Q2 | Q3 |
+    <table rows here>
 
-> **Code walkthrough:** The ellipsis here represents a structured
+    [Code example]:
+    <python code here>
+
+> **Code walkthrough:** The structure above represents a typedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > document extraction pipeline that converts mixed-type documents
 > (PDFs with tables, images, code blocks) into typed chunks.
 > By labeling each chunk with its type and a caption, the LLM
@@ -1249,7 +1247,7 @@ API Gateway (auth, rate limiting, JWT)
   -> Structured response
 ```
 
-> **Code walkthrough:** This architecture diagram maps the full
+> **Code walkthrough:** This architecture diagram maps the fullice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > enterprise RAG pipeline. The ingestion path enforces PII
 > redaction (Presidio) before embeddings reach the vector store,
 > making compliance auditable at a single choke-point. The query

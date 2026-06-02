@@ -124,7 +124,7 @@ instanceof check:
   typeof Dog                  → 'function' (it's still a function)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ES6 Classes and Inheritance example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -211,7 +211,7 @@ console.log(d instanceof Animal); // true (prototype chain)
 // d.#name → SyntaxError: private fields are truly private
 ```
 
-> **Code walkthrough:** Private fields (`#name`) are WeakMap-backed
+> **Code walkthrough:** Private fields (`#name`) are WeakMap-backedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and inaccessible outside the class body - not just a naming
 > convention. `super()` must be called before any `this` access in
 > derived constructors; the JS engine enforces this. Static methods
@@ -219,6 +219,11 @@ console.log(d instanceof Animal); // true (prototype chain)
 > via `Dog.create()`, not `d.create()`.
 
 **Example 2: Composition vs inheritance**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: deep inheritance - tight coupling, fragile base class problem
@@ -252,7 +257,7 @@ class ValidatableUser extends Validatable(User) {}
 class FullUser extends Serializable(Validatable(User)) {}
 ```
 
-> **Code walkthrough:** The mixin pattern (a function that takes a
+> **Code walkthrough:** The mixin pattern (a function that takes aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > base class and returns an extended class) enables multiple behavior
 > composition without deep hierarchies. `Serializable` and `Validatable`
 > are independent behaviors that can be mixed into any class.
@@ -295,7 +300,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** Extending `Error` properly requires calling
+> **Code walkthrough:** Extending `Error` properly requires callingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `super(message)` to set `this.message` and capture the stack trace.
 > Setting `this.name = this.constructor.name` gives the correct class
 > name in error output rather than "Error". This pattern enables
@@ -619,7 +624,7 @@ Resolution differences:
        import './math' → Node.js resolves (with some rules)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Modules (ESM and CommonJS) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -694,7 +699,7 @@ import defaultExport, { PI, add } from './math.mjs';
 const data = await fetch('/api/data').then(r => r.json());
 ```
 
-> **Code walkthrough:** CJS uses `module.exports` as an export
+> **Code walkthrough:** CJS uses `module.exports` as an exportice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > object and `require()` for synchronous imports. ESM uses named
 > `export` declarations and `import` statements. The key behavioral
 > difference: CJS runs the module and assigns the result to a variable
@@ -730,7 +735,7 @@ console.log(count); // STILL 0 - count was copied at require time
 // To observe: const mod = require('./counter.cjs'); mod.count
 ```
 
-> **Code walkthrough:** ESM named exports are live bindings - the
+> **Code walkthrough:** ESM named exports are live bindings - theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > importing module has a live reference to the binding in the exporting
 > module. When `increment()` updates `count`, all importers see the
 > new value immediately. CJS destructuring copies the value at require
@@ -772,7 +777,7 @@ const esmModule = require('./esm-lib.mjs'); // ERROR
 // }
 ```
 
-> **Code walkthrough:** The `exports` map in package.json enables
+> **Code walkthrough:** The `exports` map in package.json enablesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > conditional exports - bundlers use the `import` condition, Node.js
 > CJS uses `require`. Dual-package publishing solves the CJS/ESM
 > interop problem for library authors by shipping both formats.

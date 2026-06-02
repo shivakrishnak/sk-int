@@ -122,7 +122,7 @@ Mutation:
   (= layout thrashing if in a loop)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DOM Manipulation and Query API example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -163,6 +163,11 @@ invalidation is inherent in the layout tree design.
 
 **Example 1: textContent vs innerHTML (security)**
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: innerHTML with user content - XSS vector
 // name = '<img src=x onerror=alert(document.cookie)>'
@@ -174,7 +179,7 @@ document.getElementById('greeting').textContent =
   'Hello, ' + name; // safe - no HTML parsing
 ```
 
-> **Code walkthrough:** `innerHTML` parses the string as HTML,
+> **Code walkthrough:** `innerHTML` parses the string as HTML,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > executing any embedded handlers in user-controlled data. `textContent`
 > escapes everything as plain text and never parses HTML. Default to
 > `textContent` for any runtime data; use `innerHTML` only for
@@ -196,7 +201,7 @@ elements.forEach((el, i) => {
 });
 ```
 
-> **Code walkthrough:** Each layout-read property forces the browser
+> **Code walkthrough:** Each layout-read property forces the browserice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to synchronously recalculate layout because the preceding write may
 > have invalidated cached values. Batching reads first causes one
 > layout calculation; batching writes causes one invalidation. This
@@ -222,7 +227,7 @@ items.forEach(item => {
 ul.appendChild(fragment); // single DOM insertion, one reflow
 ```
 
-> **Code walkthrough:** A DocumentFragment is an off-screen container
+> **Code walkthrough:** A DocumentFragment is an off-screen containerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > not attached to the live document tree. Node insertions into it
 > cause no layout recalculations. The single `appendChild` of the
 > fragment moves all children into the DOM in one operation, one
@@ -530,7 +535,7 @@ Delegated handler on ul fires (bubble phase):
   event.target.closest('li') → walks up → returns li
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Bubbling, Capturing, and Delegation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -571,6 +576,11 @@ the target fires.
 
 **Example 1: Event delegation with closest()**
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: O(n) listeners, breaks for dynamically added items
 items.forEach(item => {
@@ -595,7 +605,7 @@ items.forEach(item => {
 });
 ```
 
-> **Code walkthrough:** One listener on `<ul>` handles all current
+> **Code walkthrough:** One listener on `<ul>` handles all currentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and future list items. `closest('li')` walks up the DOM from the
 > actual click target (which may be a child element) to find the
 > nearest `<li>` ancestor. `ul.contains(li)` prevents false matches
@@ -623,7 +633,7 @@ link.addEventListener('click', (event) => {
 });
 ```
 
-> **Code walkthrough:** `stopPropagation` contains events within a
+> **Code walkthrough:** `stopPropagation` contains events within aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > component - clicking inside the modal does not trigger the overlay
 > close handler. `preventDefault` cancels the browser's built-in
 > reaction (navigation, form submit, checkbox toggle) while the event
@@ -631,6 +641,11 @@ link.addEventListener('click', (event) => {
 > purposes, though they are often confused.
 
 **Example 3: Passive listeners for scroll performance**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: browser must wait for handler before scrolling
@@ -658,7 +673,7 @@ el.addEventListener('keydown', handleKey,
 controller.abort();
 ```
 
-> **Code walkthrough:** `{ passive: true }` tells the browser the
+> **Code walkthrough:** `{ passive: true }` tells the browser theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > handler will never call `preventDefault`, allowing immediate scroll
 > on the compositor thread without waiting for JavaScript. This is
 > the fix for scroll jank on mobile touchstart/touchmove listeners.

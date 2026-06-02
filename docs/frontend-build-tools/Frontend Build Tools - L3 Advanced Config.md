@@ -110,7 +110,7 @@ Persistent cache (webpack 5+):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Advanced Webpack Configuration Patterns example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -193,7 +193,7 @@ module.exports = merge(base, {
 });
 ```
 
-> **Code walkthrough:** The base config holds everything shared: entry,
+> **Code walkthrough:** The base config holds everything shared: entry,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > resolve aliases (making `@` an import shortcut), file type loaders,
 > and HTML plugin. The prod config uses `merge()` to extend the base
 > with production-specific additions: contenthash for caching, CSS
@@ -221,8 +221,9 @@ module.exports = merge(base, {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
+{% raw %}
 ```yaml
 # .github/workflows/build.yml - cache webpack build cache in CI
 - name: Cache webpack
@@ -239,8 +240,9 @@ module.exports = merge(base, {
   # First run: full build (30s)
   # Subsequent runs with unchanged deps: 5-10s (from cache)
 ```
+{% endraw %}
 
-> **Code walkthrough:** Filesystem caching persists webpack's module
+> **Code walkthrough:** Filesystem caching persists webpack's moduleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > graph and transformed module results between runs. The first CI build
 > creates the cache; subsequent builds with no changes to dependencies
 > or config files use the cache. `buildDependencies.config` lists files
@@ -482,7 +484,7 @@ Turborepo task pipeline (turbo.json):
   # Only builds web and its changed transitive deps
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Only builds web and its changed transitive deps example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -504,7 +506,7 @@ packages:
   - 'apps/*'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pnpm-workspace.yaml (root) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```json
 // packages/ui/package.json
@@ -527,7 +529,7 @@ packages:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pnpm-workspace.yaml (root) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```json
 // apps/web/package.json
@@ -540,7 +542,7 @@ packages:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pnpm-workspace.yaml (root) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```bash
 # Install all packages from root:
@@ -563,7 +565,7 @@ npx turbo run build
 # Total: ~100ms instead of ~30s
 ```
 
-> **Code walkthrough:** pnpm workspaces with `workspace:*` creates
+> **Code walkthrough:** pnpm workspaces with `workspace:*` createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > an internal dependency that resolves to the local package version.
 > No publishing required - changes in `@myapp/ui` are immediately
 > available to `web`. The `exports` field in ui's package.json supports
@@ -601,7 +603,7 @@ npx turbo run build
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Total: ~100ms instead of ~30s example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```bash
 # Remote caching setup (Vercel Remote Cache):
@@ -619,7 +621,7 @@ npx turbo run build --filter=...[HEAD^1]
 # and their dependents
 ```
 
-> **Code walkthrough:** The `dependsOn: ["^build"]` pattern means
+> **Code walkthrough:** The `dependsOn: ["^build"]` pattern meansice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > "build all dependencies first" (`^` = dependencies). Turborepo
 > analyzes the dependency graph and runs builds in parallel where
 > possible. Remote caching via Vercel (or self-hosted with Turborepo

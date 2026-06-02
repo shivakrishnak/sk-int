@@ -133,7 +133,7 @@ Visual regression testing workflow:
       Chromatic: story parameters to disable dynamic content
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Visual Regression Testing (Chromatic, Percy) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -197,7 +197,7 @@ test('dashboard page visual snapshot', async ({ page }) => {
 });
 ```
 
-> **Code walkthrough:** Chromatic integrates with Storybook by
+> **Code walkthrough:** Chromatic integrates with Storybook byice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > capturing each exported story as a visual snapshot in the cloud.
 > The `pauseAnimationAtEnd: true` parameter pauses CSS animations at
 > their final state, preventing flaky snapshots from capturing
@@ -429,7 +429,7 @@ axe-core analysis:
       }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Accessibility Testing with axe-core example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -437,6 +437,12 @@ axe-core analysis:
 
 **Example (Wrong vs Right) - Common accessibility violations:**
 
+
+```typescript
+// BAD: using any defeats type safety
+```
+
+{% raw %}
 ```typescript
 // BAD: common accessibility violations
 function LoginForm() {
@@ -509,8 +515,9 @@ test('login page passes axe', async ({ page }) => {
   });
 });
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD example has three violations: an input
+> **Code walkthrough:** The BAD example has three violations: an inputice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with no associated label (critical - screen readers can't announce
 > the field's purpose), a button with no accessible name (critical),
 > and an image with no alt text (serious). The GOOD example uses
@@ -610,7 +617,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 **Layer 2 - Component tests (CI, per PR):**
 ```typescript
@@ -621,14 +628,14 @@ test('has no a11y violations', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 **Layer 3 - E2E tests (CI, key pages):**
 ```typescript
 // Run axe on login, signup, dashboard, checkout pages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 **Layer 4 - Manual testing (sprint cadence):**
 - Keyboard navigation (Tab, Shift+Tab, Enter, Escape, Arrow keys)

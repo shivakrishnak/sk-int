@@ -97,7 +97,7 @@ WHERE tablename = 'orders';
 -- histogram_bounds: bucket boundaries for the rest
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Statistics, Cardinality, and Plan Selection example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Statistics target:**
 
@@ -116,7 +116,7 @@ ANALYZE orders;  -- recompute with higher target
 -- WHERE status = 'PENDING' (rare) vs 'COMPLETED' (common)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Statistics, Cardinality, and Plan Selection example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ---
 
@@ -162,7 +162,7 @@ VACUUM ANALYZE orders;
 -- Optimizer chose Bitmap Heap Scan (correct for large result)
 ```
 
-> **Code walkthrough:** The `rows=3` estimate vs `rows=98432` actual is a
+> **Code walkthrough:** The `rows=3` estimate vs `rows=98432` actual is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > 32,000x estimation error. The optimizer chose an Index Scan, which is
 > optimal for 3 rows (few random I/Os) but terrible for 98,432 rows (98,432
 > random I/Os - much worse than a sequential scan). After `ANALYZE`:
@@ -198,7 +198,7 @@ SELECT * FROM pg_stats_ext
 WHERE statistics_name = 'stat_orders_status_priority';
 ```
 
-> **Code walkthrough:** The optimizer assumes columns are statistically
+> **Code walkthrough:** The optimizer assumes columns are statisticallyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > independent when computing multi-predicate selectivity. In reality:
 > `status` and `priority` are correlated (URGENT orders are almost always
 > PENDING). The optimizer multiplies the individual selectivities, underestimating
@@ -297,13 +297,13 @@ ALTER TABLE orders SET (
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How does the query optimizer use column histograms?**
+**[JUNIOR] Q1 - [MECHANISM] How does the query optimizer use column histograms?**
 
 🗣️ "Histogram: a bucket representation of column value distribution. For a
 `created_at` column with values spanning 1 year: the histogram divides
@@ -317,7 +317,7 @@ the skewed case: the top-N values and their exact frequencies are stored
 separately. The optimizer checks MCVs first, then falls back to histogram
 for non-MCV values."
 
-**Q2: What are plan-affecting PostgreSQL configuration settings?**
+**[JUNIOR] Q2 - [MECHANISM] What are plan-affecting PostgreSQL configuration settings?**
 
 🗣️ "Key settings: `enable_seqscan` (bool, default on): enables sequential scans.
 `enable_indexscan`, `enable_bitmapscan`: enable respective scan types.
@@ -332,7 +332,7 @@ index scans are cheaper (cached I/Os). Correct setting: OS RAM minus database
 RAM: often `0.5 * total_RAM`. `work_mem`: memory per sort/hash operation.
 More work_mem: optimizer chooses in-memory Hash Join over disk-spilling Merge Join."
 
-**Q3: How does PostgreSQL handle the join order selection for 4+ table queries?**
+**[JUNIOR] Q3 - [MECHANISM] How does PostgreSQL handle the join order selection for 4+ table queries?**
 
 🗣️ "For up to `join_collapse_limit` (default 8) tables: the optimizer uses dynamic
 programming to evaluate join orders. For N tables: O(N!) possible orderings.
@@ -345,7 +345,7 @@ to restrict reordering (trust the query order); (2) use CTEs to force intermedia
 results (PostgreSQL pre-13 always materialized CTEs as barriers); (3) explicit
 `SET join_collapse_limit = 1` to test the written query order."
 
-**Q4: How do you diagnose a case where EXPLAIN shows a good plan but actual execution is slow?**
+**[MID] Q4 - [DEBUGGING] How do you diagnose a case where EXPLAIN shows a good plan but actual execution is slow?**
 
 🗣️ "Four causes: (1) Statistics are stale: EXPLAIN uses statistics; actual execution
 uses real data. If statistics are days old, EXPLAIN's cost estimates are wrong.
@@ -360,7 +360,7 @@ is an outlier. Check if the query is fast with different parameters.
 Fix: extended statistics, increased statistics_target, or a custom plan per parameter
 value (disable plan caching for that query: `SET plan_cache_mode = force_custom_plan`)."
 
-**Q5: What is a generic plan vs. a custom plan in PostgreSQL?**
+**[MID] Q5 - [MECHANISM] What is a generic plan vs. a custom plan in PostgreSQL?**
 
 🗣️ "For prepared statements (parameterized queries): PostgreSQL first executes 5 times
 using a custom plan (plan generated for the specific parameter values). On the 6th
@@ -373,7 +373,7 @@ status='PENDING' (rare) gets the same plan as status='COMPLETED' (common). The w
 plan for 1% of queries. Fix: `SET plan_cache_mode = force_custom_plan` for that
 session, or use `EXECUTE` (instead of prepared statements) to always re-plan."
 
-**Q6: How do query hints in pg_hint_plan work?**
+**[SENIOR] Q6 - [MECHANISM] How do query hints in pg_hint_plan work?**
 
 🗣️ "`pg_hint_plan` extension (not built-in): allows SQL-comment-based hints.
 `/*+ IndexScan(orders idx_orders_customer) */` forces an index scan on orders
@@ -386,7 +386,7 @@ where the optimizer consistently makes the wrong choice despite correct statisti
 Never use hints as permanent solutions: they become stale when data distribution
 or indexes change. Always investigate why the optimizer made the wrong choice."
 
-**Q7: How do you tune autovacuum to keep statistics fresh for a high-churn table?**
+**[SENIOR] Q7 - [MECHANISM] How do you tune autovacuum to keep statistics fresh for a high-churn table?**
 
 🗣️ "Default autovacuum thresholds: `autovacuum_analyze_scale_factor=0.20` (trigger
 after 20% of rows changed). For a 10M-row table: 2M changes trigger ANALYZE.
@@ -511,7 +511,7 @@ CREATE TABLE orders_default
 -- Can be analyzed/vacuumed independently.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Range, List, and Hash Partitioning example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 ---
 
@@ -565,7 +565,7 @@ DROP TABLE orders_q1_2024;
 -- Instant: no row-by-row DELETE, no VACUUM needed.
 ```
 
-> **Code walkthrough:** Without partitioning: `WHERE created_at >= '2024-07-01'`
+> **Code walkthrough:** Without partitioning: `WHERE created_at >= '2024-07-01'`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > on a 500M-row table scans the entire table even with an index (the index range
 > scan still reads 500M index entries to find the matching 10M). With range
 > partitioning: the planner evaluates the partition bounds at plan time.
@@ -608,7 +608,7 @@ ALTER TABLE customers_eu
 -- GDPR compliance: EU data stays in EU tablespace.
 ```
 
-> **Code walkthrough:** List partitioning by `region` enables two things:
+> **Code walkthrough:** List partitioning by `region` enables two things:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (1) Query pruning: a query for US customers only touches `customers_us`.
 > (2) Physical data placement: each partition can be on a different tablespace
 > (different disks or storage locations). For GDPR compliance: EU customer data
@@ -702,7 +702,7 @@ EXPLAIN (ANALYZE, TIMING) SELECT * FROM orders WHERE created_at > '2024-01-01';
 -- High planning time with many partitions = constraint evaluation overhead.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: PostgreSQL 12+ has improved partition pruning. Keep partition count under 1000.
 For time-series: monthly or quarterly partitions (not daily).
@@ -711,7 +711,7 @@ For time-series: monthly or quarterly partitions (not daily).
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is partition pruning and when does it NOT work?**
+**[JUNIOR] Q1 - [MECHANISM] What is partition pruning and when does it NOT work?**
 
 🗣️ "Partition pruning: the planner removes irrelevant partitions from the execution plan.
 For range partition on `created_at`: `WHERE created_at > '2024-01-01'` - planner
@@ -723,7 +723,7 @@ prepared statements with parameters may disable pruning at plan time (but enable
 at execution time - `enable_partition_pruning=on` for runtime pruning). PostgreSQL 12+:
 `enable_partition_pruning=on` enables both plan-time and execution-time pruning."
 
-**Q2: How do you manage partition creation for ongoing time-series data?**
+**[JUNIOR] Q2 - [MECHANISM] How do you manage partition creation for ongoing time-series data?**
 
 🗣️ "Manual partition creation: create future partitions in advance. For a monthly
 partition scheme: create the next 3 months at the beginning of each month.
@@ -737,7 +737,7 @@ For production: set up pg_partman at table creation time, before data arrives.
 Monitoring: alert if the partition for the next period does not exist (inserts
 would fail or go to DEFAULT)."
 
-**Q3: How does partitioning interact with foreign keys?**
+**[JUNIOR] Q3 - [MECHANISM] How does partitioning interact with foreign keys?**
 
 🗣️ "PostgreSQL supports foreign key references TO a partitioned table (the FK
 references the parent). Rows are stored in the correct partition.
@@ -752,7 +752,7 @@ a partitioned products table: both sides can be partitioned. Practical limitatio
 ON DELETE CASCADE on a large partitioned table can be very slow (cascades through
 all partitions). Consider using application-level soft-delete instead."
 
-**Q4: What is the difference between declarative partitioning and inheritance partitioning?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between declarative partitioning and inheritance partitioning?**
 
 🗣️ "Inheritance partitioning (pre-PG10): manual. Define a parent table, child tables
 inherit columns. Manually add CHECK constraints and exclusion constraints for pruning.
@@ -765,7 +765,7 @@ in declarative (each partition has its own index). Inheritance: can have global 
 (but they are slower). Recommendation: always use declarative partitioning for new tables.
 Migrate inheritance partitions to declarative when possible."
 
-**Q5: How do sub-partitioning work and when should you use it?**
+**[MID] Q5 - [SCENARIO] How do sub-partitioning work and when should you use it?**
 
 🗣️ "Sub-partitioning: a partition is itself partitioned. Example: orders partitioned
 by year (range), each year partition sub-partitioned by region (list).
@@ -778,7 +778,7 @@ data isolation is by region (GDPR: each partition in its own tablespace).
 Overhead: planning time increases with depth. Keep the partition tree flat
 (max 2 levels) for practical use."
 
-**Q6: How does parallel query work with partitioned tables?**
+**[SENIOR] Q6 - [MECHANISM] How does parallel query work with partitioned tables?**
 
 🗣️ "PostgreSQL can execute partition scans in parallel (PG11+ parallel append).
 For `SELECT COUNT(*) FROM orders WHERE status = 'PENDING'` with no partition key filter:
@@ -791,7 +791,7 @@ Also: `VACUUM` on a partitioned table can run in parallel (each partition is a
 separate VACUUM job). Maintenance parallelism is a key operational benefit for
 large partitioned tables. Configure: `max_parallel_maintenance_workers` for vacuum."
 
-**Q7: How do you migrate an existing large unpartitioned table to a partitioned scheme?**
+**[SENIOR] Q7 - [MECHANISM] How do you migrate an existing large unpartitioned table to a partitioned scheme?**
 
 🗣️ "Step 1: create the new partitioned table with a different name:
 `CREATE TABLE orders_new (...) PARTITION BY RANGE (created_at)`.

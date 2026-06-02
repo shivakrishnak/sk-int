@@ -119,13 +119,22 @@ Node.js weaknesses:
   Less mature ecosystem for heavy computation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why Node.js Exists example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Recognition) - Non-blocking vs blocking pattern:**
+
+
+```javascript
+// BAD: not awaiting async operations
+function saveUser(user) {
+    db.save(user); // async call not awaited
+    return { success: true }; // returns before save completes
+}
+```
 
 ```javascript
 // BAD: synchronous/blocking - blocks event loop
@@ -154,7 +163,7 @@ async function processFile() {
 }
 ```
 
-> **Code walkthrough:** `readFileSync` blocks the Node.js process
+> **Code walkthrough:** `readFileSync` blocks the Node.js processice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > until the file is fully read. During this time, no other requests
 > can be processed. `readFile` with a callback delegates the I/O to
 > the operating system, immediately returns, and the event loop continues
@@ -352,7 +361,7 @@ JavaScript runtime environments comparison:
     Browsers: ESM natively (no require())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node.js vs Browser JavaScript example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -401,7 +410,7 @@ import express from 'express';
 export function myFunction() {}
 ```
 
-> **Code walkthrough:** `typeof process !== 'undefined'` detects Node.js
+> **Code walkthrough:** `typeof process !== 'undefined'` detects Node.jsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > without throwing ReferenceError if process doesn't exist (browser).
 > `typeof window !== 'undefined'` detects browser environment. These
 > checks enable isomorphic code (runs in both) but should be used
@@ -596,7 +605,7 @@ npm dependency management:
     All: never commit to git (.gitignore node_modules/)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This npm Ecosystem Overview example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -638,9 +647,19 @@ npm dependency management:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This npm Ecosystem Overview example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Example (Wrong vs Right) - Security practices:**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # BAD: committing node_modules
@@ -669,7 +688,7 @@ npm audit fix
 npm audit fix --force  # review before using
 ```
 
-> **Code walkthrough:** `package.json` serves two purposes: defining
+> **Code walkthrough:** `package.json` serves two purposes: definingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the project metadata and scripting. `private: true` prevents accidental
 > publish. `"type": "module"` enables ESM throughout the package.
 > `scripts` defines runnable commands: `npm run dev`, `npm run build`.

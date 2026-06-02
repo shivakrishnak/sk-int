@@ -120,7 +120,7 @@ MODULE TYPES:
   
   3. AUTOMATIC MODULE: JAR on module path, no module-info.java
      - Module name derived from JAR filename:
-       guava-32.0.0-jre.jar -> module name: guava (via MANIFEST.MF Automatic-Module-Name
+       guava-32.0.0-jre.jar -> module name: guava (via MANIFEST.MF...
        or fallback to JAR name transformation)
      - Exports ALL packages
      - Requires ALL named modules AND reads unnamed module
@@ -177,7 +177,7 @@ COMMON COMPILER/RUNTIME FLAGS:
   java --show-module-resolution ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Module System example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -321,15 +321,15 @@ inaccessible via `import` / compilation. Both restrictions together provide true
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Application fails with InaccessibleObjectException after upgrading to Java 17.**
-```
+```plaintext
 Symptom: Existing application that worked on Java 11 fails on Java 17 with:
   java.lang.reflect.InaccessibleObjectException: 
     Unable to make field private final java.util.TreeMap ... accessible:
     module java.base does not "opens java.util" to unnamed module
 
 Root cause:
-  Java 9-16: --illegal-access=permit (default): allows deep reflection with warnings
-  Java 16:   --illegal-access=deny (new default): breaks illegal reflective access
+  Java 9-16: --illegal-access=permit (default): allows deep reflection with...
+  Java 16:   --illegal-access=deny (new default): breaks illegal reflective...
   Java 17:   --illegal-access removed entirely: illegal access always throws
   
   A library (Hibernate, Jackson, older Spring version) uses reflection to access
@@ -370,7 +370,7 @@ Prevention:
   for library compatibility matrix.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -470,7 +470,7 @@ COPY --from=builder /opt/jre /opt/jre
 COPY --from=builder /app/build/libs/app.jar /app/app.jar
 ENTRYPOINT ["/opt/jre/bin/java", "-jar", "/app/app.jar"]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stage 2: runtime example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This pattern: (1) the build image has the full JDK, (2) the runtime image has only the custom JRE.
 Size comparison: full `eclipse-temurin:21-jre` = ~200MB. Custom jlinked JRE = 60-100MB. A 100-140MB

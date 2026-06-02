@@ -96,7 +96,7 @@ Node.js decision tree:
     Upgrade path               -> Test with node@next before release
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node.js Decision Framework example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -160,7 +160,7 @@ app.get('/users/:id', {
 //   - Needs to be distributed across workers
 ```
 
-> **Code walkthrough:** The Fastify example shows its key differentiator:
+> **Code walkthrough:** The Fastify example shows its key differentiator:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > JSON Schema-based validation and serialization at the framework level.
 > Fastify compiles the schema to a JIT-optimized validator and serializer,
 > making both input validation and output serialization significantly
@@ -351,13 +351,21 @@ Async pattern decision matrix:
     First success?           -> Promise.any([...])
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async Pattern Selection example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Production) - Async patterns by use case:**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // Pattern 1: Paginated API with async generator (lazy):
@@ -410,7 +418,7 @@ const [user, orders, preferences] = await Promise.all([
 ]);
 ```
 
-> **Code walkthrough:** The async generator pattern is powerful for
+> **Code walkthrough:** The async generator pattern is powerful forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > paginated data: it fetches pages on demand as the consumer iterates.
 > `yield*` spreads the array into individual yields. If the consumer
 > `break`s early (like finding a specific user), only the pages needed
@@ -484,7 +492,7 @@ console.log('Pool idle:', pool.idleCount,
   'total:', pool.totalCount, 'waiting:', pool.waitingCount);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -620,7 +628,7 @@ Scale mental model layers:
       -> Fix: reduce concurrent connections, backpressure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node.js at Scale Mental Model example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -689,7 +697,7 @@ process.on('SIGINT', () => shutdown('SIGINT'));
 await app.listen({ port: process.env.PORT ?? 3000, host: '0.0.0.0' });
 ```
 
-> **Code walkthrough:** This template encodes production-readiness
+> **Code walkthrough:** This template encodes production-readinessice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > decisions. `host: '0.0.0.0'` is required for Kubernetes containers
 > (not `localhost` which only accepts loopback connections). Connection
 > pool `max: 20` prevents overwhelming PostgreSQL (typical limit:
@@ -771,7 +779,7 @@ ORDER BY mean_exec_time DESC
 LIMIT 10;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: Reduce pool size per instance, add PgBouncer (connection pooler),
 add Redis caching for hot reads, add read replicas.

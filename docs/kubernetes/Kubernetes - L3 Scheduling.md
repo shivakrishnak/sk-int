@@ -120,7 +120,7 @@ affinity:
           values: [us-east-1a]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SOFT: prefer but not required example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Pod Anti-affinity (spread replicas):**
 ```yaml
@@ -133,7 +133,7 @@ affinity:
       topologyKey: kubernetes.io/hostname  # spread across nodes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HARD: never put two replicas on the same node example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Taints and Tolerations:**
 ```yaml
@@ -148,7 +148,7 @@ tolerations:
   effect: "NoSchedule"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pod toleration (in pod spec) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Taint effects:
 - `NoSchedule`: new pods without toleration don't schedule here
@@ -164,7 +164,7 @@ topologySpreadConstraints:
   labelSelector:
     matchLabels: {app: my-app}
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pod toleration (in pod spec) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 More precise than pod anti-affinity for zone spreading: controls SKEW (max difference
 in replica count across zones) rather than binary co-location rules.
@@ -185,7 +185,7 @@ but surprises teams.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Complete scheduling configuration for a production
+> **Code walkthrough:** Complete scheduling configuration for a productionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > high-availability deployment: zone spreading, node affinity for SSD nodes,
 > and a GPU node pool with taints.
 
@@ -455,7 +455,7 @@ A: Taints and tolerations implement the "dedicated node pool" pattern:
      effect: NoSchedule
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GPU workload with affinity + toleration example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 4. BUT toleration alone doesn't force ML pods to ML nodes - it just allows it.
    The pod could still schedule on non-ML nodes. Add nodeAffinity for that:
@@ -470,7 +470,7 @@ A: Taints and tolerations implement the "dedicated node pool" pattern:
              values: [ml]
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 5. Result: ML node rejects non-ML pods (taint); ML pods are required to go to
    ML nodes (affinity) and allowed to (toleration). Complete isolation both ways.
@@ -496,7 +496,7 @@ topologySpreadConstraints:
     matchLabels: {app: my-service}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 With `maxSkew: 1` and 6 replicas across 3 zones: target is 2 per zone. The constraint
 ensures no zone has more than 1 more pod than any other zone. With 3 zones and
@@ -621,7 +621,7 @@ Architecture:
              values: [team-a]
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Auto-injected for namespace team-a example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 4. Namespace labels drive the webhook: `kubectl label namespace team-a tenant=team-a`
 
@@ -660,7 +660,7 @@ topologySpreadConstraints:
     matchLabels: {app: payment-api}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Auto-injected for namespace team-a example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This implements strict 3-zone HA: the service only runs if all 3 AZs are available.
 If zone-c fails, new pods are blocked (not re-distributed to 2 zones). Fails closed:
@@ -686,7 +686,7 @@ spec:
   nodeSelector:
     gpu: "true"   # pod MUST run on node with label gpu=true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Auto-injected for namespace team-a example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Simple, but only supports equality matching, always required (no soft version).
 
@@ -712,7 +712,7 @@ affinity:
           values: [A100, H100]    # prefer high-end GPUs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Auto-injected for namespace team-a example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Use nodeSelector only for simple, always-required constraints.
 Use nodeAffinity for everything else.
@@ -959,7 +959,7 @@ resources:
 # (no resources block - use only for fault-tolerant batch)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This use only for fault-tolerant batch) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **CPU behavior:**
 - `cpu: "1"` = 1 vCPU = 1000m (millicores)
@@ -997,7 +997,7 @@ spec:
       memory: "128Mi"
     type: Container
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This use only for fault-tolerant batch) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Automatically applied to containers that don't set resources.
 
@@ -1005,7 +1005,7 @@ Automatically applied to containers that don't set resources.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Resource configuration for production services showing
+> **Code walkthrough:** Resource configuration for production services showingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > QoS class selection and Java JVM memory sizing.
 
 ```yaml
@@ -1085,7 +1085,7 @@ spec:
             memory: "2Gi"  # 2x request: headroom for GC + metaspace
 ```
 
-> **Code walkthrough:** The BAD example has no resources - on a traffic spike, the
+> **Code walkthrough:** The BAD example has no resources - on a traffic spike, theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > container can consume 100% of node CPU/memory and starve other pods. The Burstable
 > API shows the "request = baseline, limit = peak" pattern. The Guaranteed payment
 > gateway has requests == limits: pod gets an exclusive CPU slice, won't be throttled
@@ -1313,7 +1313,7 @@ resources:
     memory: "2Gi"  # Xmx(1Gi) + Metaspace(256M) + Code(256M) + buffer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* The `-XX:NativeMemoryTracking=summary` JVM flag
 plus `jcmd <pid> VM.native_memory` shows exactly how JVM allocates native memory.
@@ -1336,7 +1336,7 @@ Step 2: check throttling metrics in Prometheus.
 rate(container_cpu_cfs_throttled_periods_total{pod="<name>"}[5m])
 / rate(container_cpu_cfs_periods_total{pod="<name>"}[5m])
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 = throttle percentage. > 25% = significant throttling.
 
@@ -1376,7 +1376,7 @@ spec:
     type: Container
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 2 - ResourceQuota per namespace (total namespace caps):
 ```yaml
@@ -1392,7 +1392,7 @@ spec:
     persistentvolumeclaims: "20"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 3 - VPA in recommendation mode:
 ```yaml
@@ -1402,7 +1402,7 @@ spec:
   updatePolicy:
     updateMode: "Off"  # recommendation only
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 VPA watches actual usage and recommends right-sized requests. Monthly review:
 "team X's service requests 4 CPUs, actual P90 is 0.8 CPUs." Teams right-size
@@ -1548,15 +1548,15 @@ resources:
     memory: "3Gi"   # P99 * 1.5 for GC headroom
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration patice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
-Week 3 - Validation: monitored for 1 week. CPU throttle dropped to 5%. No OOM kills.
+Week 3 - Validation: monitored for 1 week. CPU throttle dropped to 5%. No OOM ki
 P99 latency improved from 380ms to 120ms. Node OOM events: zero.
 
-Week 4 - Fine-tuned: payment gateway is critical path, changed to Guaranteed QoS:
+Week 4 - Fine-tuned: payment gateway is critical path, changed to Guaranteed QoS
 `cpu: "2" / requests.cpu: "2"` to eliminate remaining 5% throttle.
 
-Result: zero OOM events for 6 months. P99 latency SLO (< 200ms) consistently met.
+Result: zero OOM events for 6 months. P99 latency SLO (< 200ms) consistently met
 
 *What separates good from great:* GC-aware memory headroom is critical for Java
 services. Setting limit = P99 is not enough because GC can temporarily double
@@ -1567,29 +1567,29 @@ GC spikes without excessive over-allocation.
 
 ### ⚖️ Comparison Table
 
-| | Guaranteed | Burstable | BestEffort |
-|---|---|---|---|
-| Definition | requests == limits | requests < limits | no requests/limits |
-| CPU throttling | None (at dedicated limit) | Yes (when above request) | Yes (no guarantee) |
-| Eviction priority | Last | Middle | First |
-| Performance | Predictable | Variable under load | Unpredictable |
-| Efficiency | Lower (reserved > used) | Higher (request=typical) | Highest (wasteful) |
-| Use case | Latency-sensitive | General workloads | Batch/test |
+|| Guaranteed| Burstable| BestEffort|
+|--------|-------------------------|------------------------|------------------|
+| Definition| requests == limits| requests < limits| no requests/limits|
+| CPU throttling| None (at dedicated limit)| Yes (when above request)| Yes (no g
+| Eviction priority| Last| Middle| First|
+| Performance| Predictable| Variable under load| Unpredictable|
+| Efficiency| Lower (reserved > used)| Higher (request=typical)| Highest (wastef
+| Use case| Latency-sensitive| General workloads| Batch/test|
 
 **Request sizing guide:**
 
-| Metric | Request | Limit |
-|---|---|---|
-| CPU | P90 usage (5-min average) | 2-4x request |
-| Memory | P90 usage | 1.5-2x request |
-| Memory (Java) | P90 + Xmx headroom | Xmx + 512Mi minimum |
-| Memory (database) | P90 + 30% buffer | 1.1-1.25x request |
+| Metric| Request| Limit|
+|-----------------|-------------------------|------------------------|
+| CPU| P90 usage (5-min average)| 2-4x request|
+| Memory| P90 usage| 1.5-2x request|
+| Memory (Java)| P90 + Xmx headroom| Xmx + 512Mi minimum|
+| Memory (database)| P90 + 30% buffer| 1.1-1.25x request|
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: ★★☆ keyword - cluster capacity planning and resource governance architecture
+*(Omit: ★★☆ keyword - cluster capacity planning and resource governance architec
 covered at L4 HPA and Autoscaling.)*
 
 ---

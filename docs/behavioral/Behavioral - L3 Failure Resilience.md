@@ -148,7 +148,7 @@ FAILURE NARRATION ARC
     prevented Y from happening."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Failure Stories and Resilience Narratives example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 > **The failure story structure walkthrough:** The opening ownership
 > statement is the most critical sentence - it signals psychological
@@ -304,8 +304,7 @@ Have three stories prepared:
 
 ---
 
-**Q1: Tell me about your biggest professional failure.**
-`[ALL]` SCENARIO
+**[ALL] Q1 - [SCENARIO] Tell me about your biggest professional failure.**
 
 > **Answer using STAR:**
 >
@@ -342,7 +341,7 @@ Have three stories prepared:
 
 ---
 
-**Q2: Tell me about a time you received critical feedback that
+**[JUNIOR] Q2 - [MECHANISM] Tell me about a time you received critical feedback that**
 was hard to hear.** `[MID+]` SCENARIO
 
 > **Answer using STAR:**
@@ -379,8 +378,7 @@ was hard to hear.** `[MID+]` SCENARIO
 
 ---
 
-**Q3: Describe a project that did not succeed. What happened?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q3 - [SCENARIO] Describe a project that did not succeed. What happened?**
 
 > **Answer using STAR:**
 >
@@ -416,7 +414,145 @@ was hard to hear.** `[MID+]` SCENARIO
 
 ---
 
+**[ALL] Q4 - [SCENARIO] Tell me about a time you missed a deadline. What happened?**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** On a feature release with a hard external
+> commitment, I underestimated the integration complexity with
+> a third-party payment provider. The original estimate assumed
+> the vendor API would behave as documented.
+>
+> **T (Task):** I was the engineer responsible for the integration
+> and for communicating status to the product manager and client
+> success team.
+>
+> **A (Action):** At the midpoint, I identified the API had
+> undocumented rate limits and an inconsistent error response
+> format that required defensive handling code not in my estimate.
+> I waited three days before escalating, thinking I could close
+> the gap. That delay was the mistake - when I finally raised it,
+> there was no time for scope negotiation. I owned the miss
+> directly in the retro: "I knew at day 7 we were in trouble
+> and I should have flagged it at day 7, not day 10."
+>
+> **R (Result):** We missed the commitment by five days. The PM
+> was frustrated not by the delay itself, but by the late notice.
+> I changed my working agreement with PMs: any estimate risk
+> visible more than 2 days out gets flagged same day, even if
+> I believe I can recover. In the following six months I had
+> three similar risks - all flagged early, all managed without
+> missed commitments.
+>
+> *What separates good from great:* Separating "the delay" from
+> "the late communication." Interviewers are testing whether
+> you understand that the damage from missing a deadline comes
+> mostly from the surprise, not the days themselves.
+
 ---
+
+**[SENIOR] Q5 - [SCENARIO] Tell me about a technical decision you regret.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** Three years ago I chose a NoSQL document
+> store for a product that started as flexible schema but
+> evolved into a heavily relational query pattern over 18 months.
+>
+> **T (Task):** I was the architect for the backend. My decision
+> was based on team familiarity and early write-heavy requirements.
+>
+> **A (Action):** I did not model the query access patterns beyond
+> the initial MVP use case. I optimized for write throughput at
+> launch without pressure-testing the assumption that query
+> patterns would stay simple. When the product added cross-entity
+> reporting, we were running multi-collection aggregations that
+> were order-of-magnitude slower than equivalent SQL joins.
+>
+> **R (Result):** Eighteen months after launch, we ran a
+> three-sprint migration to a relational database for the
+> reporting layer. The migration cost more in engineering time
+> than a relational design would have cost upfront.
+>
+> What I changed: I now sketch the expected query access
+> patterns at year 1 AND year 2 before making storage decisions.
+> The data model that works for MVP often fails at product-market
+> fit scale.
+>
+> *What separates good from great:* Framing the regret as a
+> process failure ("I did not model future query patterns")
+> not just a technology choice. The interviewer is testing
+> whether you have identified a transferable lesson, not just
+> whether you picked the wrong database.
+
+---
+
+**[SENIOR] Q6 - [SCENARIO] Describe a time your approach to a problem turned out to be wrong.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** I was optimizing a high-frequency batch job
+> that processed 10 million records nightly. My first approach
+> was to parallelize the processing across threads within the
+> application tier, assuming the bottleneck was CPU.
+>
+> **T (Task):** Reduce nightly job time from 4 hours to under
+> 1 hour to meet a new SLA requirement.
+>
+> **A (Action):** I implemented parallel processing using a
+> thread pool, added metrics, and deployed to staging. Job
+> time improved by 20%, not the 4x I expected. I had assumed
+> the wrong bottleneck. Adding more threads caused database
+> connection pool exhaustion and lock contention - the real
+> bottleneck was database write throughput, not CPU. I went
+> back to the data and profiled the actual I/O wait time.
+> The correct solution was micro-batching writes and switching
+> from row-by-row inserts to bulk insert statements.
+>
+> **R (Result):** The revised approach reduced job time from
+> 4 hours to 45 minutes. The lesson: measure before optimizing.
+> Multithreading an I/O-bound workload does not help; it makes
+> contention worse.
+>
+> *What separates good from great:* Naming the specific wrong
+> assumption ("I assumed CPU bottleneck without measuring").
+> The ability to recognize a wrong hypothesis quickly and
+> reframe the problem is the actual skill being evaluated.
+
+---
+
+**[SENIOR] Q7 - [SCENARIO] Tell me about a time you failed a team member.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** A junior engineer on my team was struggling
+> with the complexity of an area of the codebase she had been
+> assigned to. She was spending more time asking for help than
+> making progress, which I attributed to lack of initiative.
+>
+> **T (Task):** I was her technical lead and had an informal
+> mentorship responsibility.
+>
+> **A (Action):** Instead of having a direct conversation about
+> what she needed, I reduced my interaction, assuming she needed
+> to develop independence. I was wrong. In her quarterly check-in
+> with my manager, she mentioned feeling unsupported and unclear
+> on expectations. When I finally had a 1:1 focused on her
+> experience, I learned she had been unclear on priorities and
+> was afraid to appear incompetent by asking too many questions.
+> The problem was my failure to set explicit expectations and
+> create psychological safety - not her lack of independence.
+>
+> **R (Result):** We reset the working relationship with clear
+> expectations and a structured weekly check-in. Her velocity
+> and confidence improved significantly over the next quarter.
+> I missed two months of mentoring effectively because I
+> diagnosed the wrong problem.
+>
+> *What separates good from great:* Owning the diagnostic
+> failure ("I attributed the symptom to the wrong cause"),
+> not just the outcome. Senior engineers are expected to
+> diagnose people problems as rigorously as technical ones.
 
 ---
 
@@ -582,7 +718,7 @@ STORY STRUCTURE FOR PRESSURE QUESTIONS:
    practice as a result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Growth Mindset Under Pressure example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 > **The growth mindset structure walkthrough:** The "honest initial
 > reaction" is the section most candidates skip. Saying "my first
@@ -738,7 +874,7 @@ the growth response - those are the most credible.
 
 ---
 
-**Q1: Tell me about a time you had to change your approach
+**[JUNIOR] Q1 - [MECHANISM] Tell me about a time you had to change your approach**
 significantly mid-project.** `[SENIOR]` SCENARIO
 
 > **Answer using STAR:**
@@ -774,7 +910,7 @@ significantly mid-project.** `[SENIOR]` SCENARIO
 
 ---
 
-**Q2: Describe a time when you had to learn a completely new
+**[JUNIOR] Q2 - [MECHANISM] Describe a time when you had to learn a completely new**
 technology or domain under time pressure.** `[MID+]` SCENARIO
 
 > **Answer using STAR:**
@@ -805,6 +941,178 @@ technology or domain under time pressure.** `[MID+]` SCENARIO
 > explicitly ("I identified the three highest-stakes decisions
 > first") rather than just describing that you learned quickly.
 > Specific strategy signals metacognitive maturity.
+
+---
+
+**[SENIOR] Q3 - [MECHANISM] How do you respond when you realize mid-execution that your plan is wrong?**
+
+> **Answer:**
+>
+> The moment I recognize the plan is wrong, I stop optimizing
+> execution and switch to diagnosis mode. There are two separate
+> questions: (1) how wrong is it? (still recoverable, or
+> fundamentally broken?) and (2) what is the cost of stopping
+> vs continuing?
+>
+> My response pattern:
+>
+> **Step 1 - Name it explicitly to myself.** "The plan is
+> wrong" is a complete sentence. Engineers often spend energy
+> finding ways the plan could still work rather than accepting
+> the evidence in front of them.
+>
+> **Step 2 - Quantify the damage of continuing vs stopping.**
+> Sometimes continuing for 2 more days to gather more data is
+> rational. Sometimes every hour of continuation is technical
+> debt. The answer shapes the urgency of the pivot.
+>
+> **Step 3 - Communicate before you have the full answer.**
+> "I think we have a problem with the approach. I am still
+> diagnosing. I will have a full picture in 2 hours." Waiting
+> until you have the solution delays the people around you
+> who need to plan.
+>
+> **Step 4 - Present the revised plan with the original error
+> as context.** "Here is what we assumed, here is what we now
+> know, here is the new plan."
+>
+> *What separates good from great:* The fastest path through a
+> wrong plan is admitting it is wrong. Engineers who protect
+> their original estimates under disconfirming evidence create
+> the largest failures. The skill is not avoiding wrong plans;
+> it is detecting and pivoting out of them fast.
+
+---
+
+**[MID] Q4 - [SCENARIO] Tell me about a time when a mentor, peer, or direct report changed how you think about something significant.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** I was about to make a database schema
+> decision I was confident about. A junior engineer on the team
+> asked one question: "What happens to this query when the
+> tenant_id cardinality hits 100,000?"
+>
+> **T (Task):** This was a design review. I was the senior
+> engineer presenting the proposal.
+>
+> **A (Action):** My first reaction was mild defensiveness -
+> I had designed schemas before. Then I actually modeled the
+> query with high cardinality and found the index would degrade
+> to a full scan at the scale we expected in 18 months.
+> The junior engineer had identified a failure mode I had
+> not considered. I revised the design.
+>
+> **R (Result):** The revised schema held under production load
+> at scale. I now include a "what fails first at 10x scale"
+> question in every design review I run, regardless of who
+> is in the room.
+>
+> *What separates good from great:* Crediting the source of
+> the insight, including when the source is junior to you.
+> Great engineers are not threatened by being wrong in review.
+> They are threatened by being wrong in production.
+
+---
+
+**[ALL] Q5 - [MECHANISM] How do you stay technically current in a fast-moving field?**
+
+> **Answer:**
+>
+> I distinguish between staying current and staying relevant.
+> Staying current means tracking everything new. Staying relevant
+> means tracking what will matter for the decisions I will face
+> in the next 6-12 months. I optimize for the latter.
+>
+> My specific practices:
+>
+> **1. Anchor on problems, not tools.** When a new technology
+> appears, I ask: "What problem does this solve, and how does
+> it compare to what I already use for that problem?" This
+> filters signal from noise.
+>
+> **2. 30-minute weekly review.** I scan three to four
+> engineering blogs (specific to my stack and distributed
+> systems) weekly. I flag anything that overlaps with a
+> current problem I am working on.
+>
+> **3. Production postmortems as curriculum.** High-quality
+> public postmortems (Cloudflare, Stripe, PagerDuty) teach
+> more about system design failure modes than any tutorial.
+>
+> **4. Find the skeptics.** When a technology is widely hyped,
+> I specifically seek out the critics and the "why we moved
+> away from X" posts. They carry more information density.
+>
+> *What separates good from great:* The engineers who stay most
+> current are not the ones who read the most - they are the
+> ones who connect new information to current problems fastest.
+> Learning without application is forgetting.
+
+---
+
+**[SENIOR] Q6 - [SCENARIO] Tell me about a time you had to deliver something under significant time or resource pressure.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** We had a security vulnerability reported
+> in a third-party dependency used across 12 microservices.
+> The vendor's advisory rated it critical. Our security team
+> gave us 72 hours to patch or provide a mitigation plan.
+>
+> **T (Task):** I was the lead on the response. The team had
+> other active sprint commitments.
+>
+> **A (Action):** First hour: I assessed the actual exploitability
+> in our specific deployment context. Five of the 12 services
+> were in internal-only networks and not exploitable via the
+> described attack vector. I documented this and got security
+> team sign-off to deprioritize those five. That left seven
+> services. I ranked them by exposure level and assigned one
+> engineer per service for the patch and test cycle. I ran
+> a 15-minute sync every 12 hours to unblock dependencies.
+>
+> **R (Result):** All seven high-risk services patched and
+> deployed within 48 hours. The five lower-risk services
+> patched in the following sprint. No security incident.
+>
+> *What separates good from great:* The first move was
+> risk stratification, not uniformly treating all 12 services
+> as equal priority. Under time pressure, the ability to
+> quickly differentiate high and low risk is what separates
+> a controlled response from a chaotic one.
+
+---
+
+**[MID] Q7 - [SCENARIO] Tell me about a time you received feedback that changed your behavior, not just your knowledge.**
+
+> **Answer using STAR:**
+>
+> **S (Situation):** In a 360 review, three peers noted
+> independently that I had a tendency to jump to solutions
+> in conversations before the problem was fully stated.
+>
+> **T (Task):** I needed to change a behavior pattern I had
+> not consciously recognized.
+>
+> **A (Action):** I set a specific mechanical rule: in any
+> technical discussion, I would ask at least two questions
+> before proposing anything. I practiced this explicitly for
+> four weeks, even when I felt confident I already knew the
+> answer. In several cases, the second question revealed a
+> constraint that would have made my first instinct wrong.
+>
+> **R (Result):** Follow-up feedback at the next review cycle
+> noted improved listening. More practically: I avoided two
+> significant design errors in that quarter that I would have
+> made under the old pattern.
+>
+> *What separates good from great:* Behavioral change requires
+> a specific mechanism, not just intention. "I will try to
+> listen better" is not a plan. "I will ask two questions before
+> proposing" is a plan. Interviewers score on whether you
+> have a concrete behavioral change story, not a vague
+> improvement narrative.
 
 ---
 

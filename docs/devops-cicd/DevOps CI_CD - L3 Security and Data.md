@@ -141,7 +141,7 @@ CI job starts
   → credentials expire automatically when job completes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secrets Management in Pipelines example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Short-lived credentials limit the blast radius of any compromise.
@@ -219,7 +219,7 @@ jobs:
 # 4. Password in psql command line = visible in OS process list
 ```
 
-> **Code walkthrough:** This example exhibits all four common
+> **Code walkthrough:** This example exhibits all four commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > credential exposure patterns. The `.env` file in Git is the most
 > catastrophic - Git history is permanent, and services like
 > TruffleHog or GitHub's secret scanning will detect it. The long-
@@ -288,7 +288,7 @@ jobs:
           flyway migrate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DATABASE_URL in environment, not in process list example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```hcl
 # AWS IAM: Trust policy for GitHub OIDC
@@ -317,7 +317,7 @@ jobs:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prevents other repos from assuming this role example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Application runtime secret injection via AWS SDK
@@ -356,7 +356,7 @@ public class DatabaseConfig {
 }
 ```
 
-> **Code walkthrough:** OIDC authentication requires only the IAM
+> **Code walkthrough:** OIDC authentication requires only the IAMice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > role ARN (not a secret) in the workflow file. The trust policy
 > condition `StringLike: repo:myorg/myrepo:ref:refs/heads/main` is
 > the critical security gate - it restricts which GitHub repository
@@ -641,7 +641,7 @@ git reflog expire --expire=now --all
 git gc --prune=now --aggressive
 git push origin --force --all
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Note: this does not remove the commit from GitHub's cache immediately.
 Contact GitHub support to purge cached views.
@@ -722,7 +722,7 @@ trufflehog git file://./myrepo --only-verified --json
 # --json: machine-parseable output for SIEM integration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --json: machine-parseable output for SIEM integration example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 GitHub Secret Scanning (if on GitHub):
 GitHub automatically scans all commits and surfaces detected secrets
@@ -742,7 +742,7 @@ gh api /repos/:owner/:repo/actions/runs --jq '.workflow_runs[].id' |
   done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --json: machine-parseable output for SIEM integration example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Signs of an active secret exploit in CloudTrail (check after
 finding a potentially leaked AWS key):
@@ -753,7 +753,7 @@ aws cloudtrail lookup-events \
   --start-time "2024-01-01T00:00:00Z" \
   --query 'Events[?EventName!=`AssumeRole`].[EventTime,EventName,SourceIPAddress]'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --json: machine-parseable output for SIEM integration example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Unusual source IPs, EC2 instance creation, IAM user creation, or
 data export calls are indicators of active exploit.
@@ -800,7 +800,7 @@ path "secret/data/production/payment-service/*" {
 # - any write operations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - any write operations example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4: Vault Agent Sidecar injects secrets.
 The Vault Agent runs as an init container and a sidecar. It:
@@ -1124,7 +1124,7 @@ ALTER TABLE users DROP COLUMN legacy_user_id;
 -- Affects all requests for any still-running old version
 ```
 
-> **Code walkthrough:** Column renames and drops are the two most
+> **Code walkthrough:** Column renames and drops are the two mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common causes of deployment-related database incidents. Both break
 > running application instances that still reference the old column
 > name. In a rolling deployment with 10 pods, pods 1-5 might be
@@ -1171,7 +1171,7 @@ BEGIN
 END $$;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ```sql
 -- After backfill is complete (verify: WHERE email IS NULL count = 0)
@@ -1186,7 +1186,7 @@ ALTER TABLE users
   CHECK (email <> '');
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ```sql
 -- DEPLOY new app version (reads email, writes to both)
@@ -1196,7 +1196,7 @@ ALTER TABLE users DROP COLUMN email_address;
 -- Now safe: no running app instance references email_address
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ```java
 // Application code during transition (writes to both columns)
@@ -1229,7 +1229,7 @@ public class User {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```yaml
 # Flyway configuration in CI/CD pipeline
@@ -1250,7 +1250,7 @@ public class User {
   # Application deployment only proceeds if migrations succeed
 ```
 
-> **Code walkthrough:** The three-step expand-contract migration
+> **Code walkthrough:** The three-step expand-contract migrationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > spans three separate deployments. Step 1 (expand) adds the new
 > column - this is backward-compatible because the old app ignores
 > new columns. The batched backfill avoids a full table lock by
@@ -1525,7 +1525,7 @@ Why the naive approach is wrong:
 ALTER TABLE orders
   ADD COLUMN order_region VARCHAR(20) NOT NULL DEFAULT 'US';
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 On PostgreSQL before version 11: this rewrites the entire table (full
 copy), acquires an exclusive lock for the duration. 300 million rows
@@ -1546,7 +1546,7 @@ Step 1: Add nullable column (instant - no table lock, no row write):
 ALTER TABLE orders ADD COLUMN order_region VARCHAR(20);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 2: Set default for future inserts (instant):
 ```sql
@@ -1554,7 +1554,7 @@ ALTER TABLE orders
   ALTER COLUMN order_region SET DEFAULT 'US';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 3: Backfill in batches (hours, but non-blocking):
 ```sql
@@ -1578,7 +1578,7 @@ BEGIN
 END $$;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 4: Add NOT NULL constraint (after backfill completes):
 ```sql
@@ -1592,7 +1592,7 @@ ALTER TABLE orders
 ALTER TABLE orders VALIDATE CONSTRAINT orders_region_not_null;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 *What separates good from great:* The `ADD CONSTRAINT ... NOT VALID`
 pattern allows adding the constraint logically without validating
@@ -1667,7 +1667,7 @@ LIMIT 10;
 -- A row with success = false is the failed migration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Check the migration error in the application or CI logs. Flyway
 logs the exact SQL that failed and the database error message.
@@ -1691,7 +1691,7 @@ DELETE FROM flyway_schema_history
 -- Re-run flyway migrate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 If the migration is partially applied (not idempotent):
 - Check what the migration actually did before failing
@@ -1747,7 +1747,7 @@ Apply V20240115001 to APAC
 Verify all regions at same schema version
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 2 - Deploy new app code region by region:
 ```
@@ -1758,14 +1758,14 @@ Monitor for 30 minutes
 Deploy new app to APAC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 3 - Apply contract migration after ALL regions running new code:
 ```
 Apply V20240115003 (DROP COLUMN) to all regions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The migration pipeline must enforce this ordering. A contract
 migration that drops a column before all regions have deployed the

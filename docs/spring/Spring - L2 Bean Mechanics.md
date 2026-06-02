@@ -147,7 +147,7 @@ WEBSOCKET (web only)
   - 1 instance per WebSocket session
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bean Scopes example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The prototype-in-singleton problem is the most important scope gotcha.
@@ -254,7 +254,7 @@ public class SecurityService {
 }
 ```
 
-> **Code walkthrough:** The request-scoped bean stores per-request state
+> **Code walkthrough:** The request-scoped bean stores per-request stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > safely. The key is proxyMode = TARGET_CLASS - Spring injects a CGLIB proxy
 > into the singleton SecurityService. When the singleton calls requestCtx
 > methods, the proxy looks up the actual RequestContext for the CURRENT request
@@ -306,7 +306,7 @@ public class ImportServiceCorrect {
 }
 ```
 
-> **Code walkthrough:** The prototype-in-singleton trap is illustrated and
+> **Code walkthrough:** The prototype-in-singleton trap is illustrated andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fixed. The broken ImportService gets ONE CsvParser instance injected at
 > startup. Since CsvParser maintains a mutable errors list, errors from
 > previous imports accumulate. The fix uses ObjectFactory<CsvParser> which
@@ -397,7 +397,7 @@ RequestContextHolder.setRequestAttributes() to simulate a request in tests.
 
 ---
 
-#### Q1 - What are the Spring bean scopes?
+**[JUNIOR] Q1 - [CONCEPTUAL] What are the Spring bean scopes?**
 
 Five built-in scopes:
 1. **Singleton** (default): one instance per ApplicationContext. Shared
@@ -419,7 +419,7 @@ that destroys and recreates beans on config refresh.
 
 ---
 
-#### Q2 - What is the difference between singleton and prototype scope?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between singleton and prototype scope?**
 
 Singleton:
 - One instance per ApplicationContext
@@ -444,7 +444,7 @@ you MUST close them yourself. Spring will not do it.
 
 ---
 
-#### Q3 - How do you inject a prototype bean into a singleton?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you inject a prototype bean into a singleton?**
 
 The naive approach (direct injection) gives you one prototype instance,
 created at singleton startup - defeating the purpose of prototype scope.
@@ -457,7 +457,7 @@ Three correct approaches:
    // In method: factory.getObject() returns fresh instance
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **@Lookup method injection**:
    ```java
@@ -468,7 +468,7 @@ Three correct approaches:
        @Lookup public abstract MyPrototype createPrototype();
    }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
    Spring generates a CGLIB subclass implementing createPrototype()
    as a getBean() call.
@@ -482,7 +482,7 @@ want to be explicit about getting a new instance at the call site.
 
 ---
 
-#### Q4 - How does proxyMode work for request and session scoped beans?
+**[MID] Q4 - [CONCEPTUAL] How does proxyMode work for request and session scoped beans?**
 
 When you declare a request-scoped bean, Spring needs to inject it into singleton
 beans. The problem: the singleton is created at startup, but request-scoped
@@ -501,7 +501,7 @@ request's real instance via RequestContextHolder (ThreadLocal).
 public class RequestContext { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ScopedProxyMode.TARGET_CLASS: CGLIB proxy for concrete classes.
 ScopedProxyMode.INTERFACES: JDK proxy for interfaces.
@@ -516,7 +516,7 @@ mechanism explains many Spring behaviours.
 
 ---
 
-#### Q5 - What is the @RefreshScope in Spring Cloud?
+**[MID] Q5 - [CONCEPTUAL] What is the @RefreshScope in Spring Cloud?**
 
 @RefreshScope is a custom Spring scope that allows beans to be refreshed
 (destroyed and recreated) when configuration changes.
@@ -542,7 +542,7 @@ using Environment.getProperty() always get fresh values without @RefreshScope.
 
 ---
 
-#### Q6 - What is the Application scope and when would you use it?
+**[MID] Q6 - [CONCEPTUAL] What is the Application scope and when would you use it?**
 
 Application scope creates one bean instance per ServletContext. In a standard
 Spring Boot application with one embedded server, application scope is
@@ -565,7 +565,7 @@ cannot. For greenfield Spring Boot applications, this distinction does not matte
 
 ---
 
-#### Q7 - How do you declare a custom scope?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you declare a custom scope?**
 
 ```java
 // 1. Implement the Scope interface
@@ -607,7 +607,7 @@ public class TenantScopeConfig {
 public class TenantConfig { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Custom scopes unlock powerful patterns:
 per-tenant isolation, per-job state in batch processing, per-WebSocket session
@@ -617,7 +617,7 @@ to implement.
 
 ---
 
-#### Q8 - What happens when a singleton bean depends on a wider-scoped bean
+**[SENIOR] Q8 - [CONCEPTUAL] What happens when a singleton bean depends on a wider-scoped bean**
        (request/session)?
 
 Without proxyMode on the narrower-scoped bean: Spring throws BeanCreationException
@@ -639,7 +639,7 @@ dependency direction.
 
 ---
 
-#### Q9 - How do you test beans with non-singleton scopes?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you test beans with non-singleton scopes?**
 
 For request-scoped beans in tests:
 
@@ -660,7 +660,7 @@ For request-scoped beans in tests:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **@SpringBootTest(webEnvironment=MOCK)**: creates a mock web environment
    with request scope support.
@@ -834,7 +834,7 @@ Bean Lifecycle (singleton bean, full sequence):
      c) @Bean(destroyMethod = "cleanup") custom method
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bean Lifecycle example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Step 6 is the critical insight. AOP proxies wrap your bean AFTER initialization.
@@ -986,7 +986,7 @@ public class LifecycleDemo
 // 8. DisposableBean.destroy
 ```
 
-> **Code walkthrough:** This demonstrates all callback types in order. In
+> **Code walkthrough:** This demonstrates all callback types in order. Inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > practice, you should only use @PostConstruct and @PreDestroy (standard
 > annotations). InitializingBean and DisposableBean are Spring-specific
 > interfaces that increase coupling. BeanNameAware is only for infrastructure
@@ -1067,7 +1067,7 @@ listener:
 public void initWithTransaction() { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 **Failure 2: @PostConstruct blocking startup**
 Symptom: Application startup takes very long; @PostConstruct is loading large
@@ -1080,7 +1080,7 @@ Fix: Use ApplicationReadyEvent with async execution for non-critical warm-up:
 public void warmUpCache() { ... } // Runs in a thread pool
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure 3: @PreDestroy not called for prototype beans**
 Symptom: Resources (connections, file handles) not released for prototype beans.
@@ -1096,7 +1096,7 @@ try-with-resources, or use DisposableBeanAdapter and manage it explicitly.
 
 ---
 
-#### Q1 - What is the full Spring bean lifecycle?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the full Spring bean lifecycle?**
 
 Complete sequence for a singleton bean:
 1. Constructor (object created, fields null)
@@ -1120,7 +1120,7 @@ object). When other beans inject this bean, they receive the proxy.
 
 ---
 
-#### Q2 - What is the difference between @PostConstruct and @Bean(initMethod)?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between @PostConstruct and @Bean(initMethod)?**
 
 Both run after dependency injection. The difference:
 
@@ -1145,7 +1145,7 @@ in new code - it's Spring-specific and @PostConstruct achieves the same result.
 
 ---
 
-#### Q3 - Why does @Transactional not work in @PostConstruct?
+**[JUNIOR] Q3 - [CONCEPTUAL] Why does @Transactional not work in @PostConstruct?**
 
 The AOP proxy that implements @Transactional is created in BeanPostProcessor
 post-initialization (step 8 in lifecycle). @PostConstruct runs at step 5 -
@@ -1164,7 +1164,7 @@ public void transactionalInit() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ApplicationReadyEvent fires after full context refresh including proxy creation.
 
@@ -1175,7 +1175,7 @@ result is the same: the proxy is bypassed.
 
 ---
 
-#### Q4 - What is a BeanPostProcessor and when would you write one?
+**[MID] Q4 - [HANDS-ON] What is a BeanPostProcessor and when would you write one?**
 
 A BeanPostProcessor is a Spring extension point that processes every bean
 instance before and after initialization. It receives every bean in the context
@@ -1203,7 +1203,7 @@ dependency is available.
 
 ---
 
-#### Q5 - What is the BeanFactoryPostProcessor and how is it different from BeanPostProcessor?
+**[MID] Q5 - [CONCEPTUAL] What is the BeanFactoryPostProcessor and how is it different from BeanPostProcessor?**
 
 BeanFactoryPostProcessor (BFPP) operates on BeanDefinitions BEFORE any bean
 instance is created. BeanPostProcessor (BPP) operates on bean INSTANCES during
@@ -1231,7 +1231,7 @@ use BFPP. If you need to wrap or validate bean instances, use BPP.
 
 ---
 
-#### Q6 - What happens if @PostConstruct throws an exception?
+**[MID] Q6 - [CONCEPTUAL] What happens if @PostConstruct throws an exception?**
 
 If @PostConstruct throws, Spring throws BeanCreationException and the entire
 application context refresh fails. The application does not start.
@@ -1255,7 +1255,7 @@ not just NullPointerException.
 
 ---
 
-#### Q7 - What is the order of initialization callbacks?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the order of initialization callbacks?**
 
 Within one bean, the order is:
 1. @PostConstruct method (may have multiple - all called)
@@ -1278,7 +1278,7 @@ If you want one bean to initialize before another, declare an explicit
 
 ---
 
-#### Q8 - What is @DependsOn and when do you use it?
+**[SENIOR] Q8 - [CONCEPTUAL] What is @DependsOn and when do you use it?**
 
 @DependsOn forces Spring to initialize one bean before another, even when
 there is no @Autowired dependency between them. This is for implicit dependencies
@@ -1305,7 +1305,7 @@ public Flyway flyway() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* @DependsOn is a code smell in most cases.
 Implicit dependencies that require @DependsOn usually indicate a design issue:
@@ -1315,7 +1315,7 @@ global registries.
 
 ---
 
-#### Q9 - How does ApplicationReadyEvent differ from ContextRefreshedEvent
+**[SENIOR] Q9 - [CONCEPTUAL] How does ApplicationReadyEvent differ from ContextRefreshedEvent**
        for post-startup initialization?
 
 ContextRefreshedEvent:

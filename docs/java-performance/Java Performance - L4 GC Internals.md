@@ -68,7 +68,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **G1 GC cycle in detail:**
-```
+```plaintext
 HEAP LAYOUT:
 
   Default: 2048 regions of equal size.
@@ -195,7 +195,7 @@ G1 FULL GC TRIGGERS:
     -XX:+DisableExplicitGC (prevent application from triggering Full GC)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 GC Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -204,6 +204,12 @@ G1 FULL GC TRIGGERS:
 > **Code walkthrough:** The GC tuning flags and GC log analysis show how to diagnose G1 behavior
 > from GC logs. The humongous object fix shows the ByteBuffer pooling pattern to avoid frequent
 > concurrent marking triggers.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // G1 GC CONFIGURATION FOR PRODUCTION:
@@ -338,14 +344,14 @@ Diagnosis:
   Before the full GC: look at "Old:" size in previous young GC logs.
   Is Old growing rapidly between concurrent marking cycles?
   
-  If Old grows: objects are being promoted (short-lived objects surviving young GC).
-  Check: -XX:+PrintTenuringDistribution (shows object age distribution at each young GC).
-  If many objects are at max tenuring threshold: long-lived short-lived objects (design issue).
+  If Old grows: objects are being promoted (short-lived objects surviving young 
+  Check: -XX:+PrintTenuringDistribution (shows object age distribution at each y
+  If many objects are at max tenuring threshold: long-lived short-lived objects 
 
 Fix options:
   1. Lower IHOP (trigger concurrent marking earlier):
      -XX:InitiatingHeapOccupancyPercent=25  (instead of 45)
-     Concurrent marking starts earlier -> mixed GC reclaims Old before it fills.
+     Concurrent marking starts earlier -> mixed GC reclaims Old before it...
   
   2. Increase heap:
      If Old gen is genuinely full (live objects, not garbage):
@@ -362,7 +368,7 @@ Fix options:
      The objects retaining old gen growth: those are the leak.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

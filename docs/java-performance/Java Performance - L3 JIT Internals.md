@@ -66,7 +66,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **C2 optimization pipeline and interaction effects:**
-```
+```plaintext
 INLINING PREREQUISITES:
 
   Method eligible for inlining if:
@@ -142,7 +142,7 @@ LOOP OPTIMIZATIONS:
       for (int i = 0; i < 100; i += 4) {
           sum += a[i] + a[i+1] + a[i+2] + a[i+3];
       }
-    Benefit: reduces loop overhead (4 increments + 4 condition checks -> 1 each)
+    Benefit: reduces loop overhead (4 increments + 4 condition checks -> 1...
     
   SIMD vectorization:
     Source: for (int i = 0; i < 8; i++) { c[i] = a[i] + b[i]; }
@@ -183,13 +183,13 @@ WHEN C2 FAILS TO OPTIMIZE:
   Failure 4: Object escapes via lambda capture:
     Point p = new Point(x, y);
     list.stream().map(e -> compute(p, e))...  // p captured in lambda
-    The lambda captures p -> p may escape via the lambda -> no scalar replacement.
+    The lambda captures p -> p may escape via the lambda -> no scalar...
     Fix: extract values before the lambda:
     int px = p.x, py = p.y;  // primitives don't "escape" in the heap sense
     list.stream().map(e -> compute(px, py, e))...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 JIT Internals example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -198,6 +198,24 @@ WHEN C2 FAILS TO OPTIMIZE:
 > **Code walkthrough:** The series of examples shows how to write code that enables C2's
 > optimization chain. The canonical escape analysis example and the Lambda capture fix
 > show concrete patterns with JMH-verifiable allocation reductions.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // ENABLING ESCAPE ANALYSIS AND SCALAR REPLACEMENT:
@@ -361,7 +379,7 @@ Diagnosis (step by step):
     gc.alloc.rate.norm should drop to 0 B/op.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -591,7 +609,7 @@ CODE CACHE FULL DIAGNOSIS:
     proliferation (lambdas that create many unique lambda instances).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -724,7 +742,7 @@ classes loaded. "CodeCache is full" message -> too many methods compiled -> incr
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: After a hot deployment, performance degrades permanently until the next restart.**
-```
+```plaintext
 Symptom: After deploying a new JAR (hot-reload via OSGi or Spring DevTools),
   performance drops by 50-70% and doesn't recover.
   JVM log: no explicit error.
@@ -732,7 +750,7 @@ Symptom: After deploying a new JAR (hot-reload via OSGi or Spring DevTools),
 Root cause: DeoptimizationCascade after class loading.
   New classes loaded -> invalidate C2 assumptions:
   C2 compiled methods that assumed "only one implementation of Interface I."
-  New plugin loaded a second implementation -> all those C2 methods deoptimized.
+  New plugin loaded a second implementation -> all those C2 methods...
   They fall back to interpreter, re-profile, re-compile.
   Recompilation takes seconds to minutes for large applications.
   
@@ -760,7 +778,7 @@ Diagnosis:
   Blue-green: fresh JVM process for each deployment (proper warmup, clean state).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

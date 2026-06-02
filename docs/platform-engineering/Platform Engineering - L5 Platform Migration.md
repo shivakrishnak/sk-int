@@ -7,6 +7,16 @@ permalink: /platform-engineering/l5-platform-migration/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Legacy to IDP Migration Strategy](#legacy-to-idp-migration-strategy) | |
+
+---
+
+
 # Legacy to IDP Migration Strategy
 
 ---
@@ -192,7 +202,7 @@ Phase 3: Legacy Decommission (months 18-36)
     - Complete remaining migrations with emergency support
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Legacy to IDP Migration Strategy example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The strangler fig pattern applied:**
 
@@ -302,7 +312,7 @@ class MigrationTracker:
         ][:max_count]
 ```
 
-> **Code walkthrough:** The migration tracker encodes the incremental
+> **Code walkthrough:** The migration tracker encodes the incrementalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > migration strategy in code: services are categorized by tier (risk
 > level), and lighthouse candidates are Tier 2/3 services in pending
 > state. Tier 1 services cannot be lighthouse candidates because they
@@ -377,7 +387,7 @@ echo "IDP request rate:    $idp_req_rate req/s"
 echo "=== Validation complete. Review findings before cutover. ==="
 ```
 
-> **Code walkthrough:** The parallel validation script automates the
+> **Code walkthrough:** The parallel validation script automates theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > key checks during the "run both in parallel" phase: health endpoint
 > verification, response body comparison, and Prometheus metric sanity
 > check. The script is intentionally simple - it runs in CI and catches
@@ -551,7 +561,7 @@ kubectl exec -it <pod> -n <idp-namespace> -- \
 # Prometheus exporter overhead: negligible for most services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prometheus exporter overhead: negligible for most services example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common causes: IDP has CPU limits that are tighter than the legacy
 deployment (throttling under load), service mesh sidecar overhead
@@ -571,7 +581,7 @@ same AZ as its primary downstream dependencies.
 
 ---
 
-#### Q1 - How do you assess an organization's readiness for IDP migration?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you assess an organization's readiness for IDP migration?**
 
 Migration readiness assessment has three dimensions: technical,
 organizational, and platform maturity.
@@ -636,7 +646,7 @@ services owned by teams that have dissolved). The assessment phase is
 
 ---
 
-#### Q2 - How do you select and run the lighthouse migration program?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you select and run the lighthouse migration program?**
 
 Lighthouse selection criteria:
 
@@ -689,7 +699,7 @@ teams to migrate with minimal platform team support.
 
 ---
 
-#### Q3 - How do you handle Tier 1 critical service migrations?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you handle Tier 1 critical service migrations?**
 
 Tier 1 critical services (authentication, payment processing, core
 data stores) require a migration approach that the standard playbook
@@ -740,7 +750,7 @@ incidents.
 
 ---
 
-#### Q4 - How do you manage the parallel running period (operating both systems)?
+**[MID] Q4 - [ARCHITECTURE] How do you manage the parallel running period (operating both systems)?**
 
 The parallel running period is the most expensive phase of migration:
 the platform team operates two systems simultaneously, infrastructure
@@ -793,7 +803,7 @@ without mandate.
 
 ---
 
-#### Q5 - How do you handle migration rollback when the IDP causes a production incident?
+**[MID] Q5 - [PRODUCTION] How do you handle migration rollback when the IDP causes a production incident?**
 
 Migration rollback is not a failure - it is the safety mechanism that
 allows incremental migration to be low-risk.
@@ -824,7 +834,7 @@ kubectl annotate deployment payment-api \
   rollback-reason="production-incident-YYYY-MM-DD"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This it contains the evidence) example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 **Post-rollback investigation:**
 
@@ -856,7 +866,7 @@ fixed" minimizes customer impact.
 
 ---
 
-#### Q6 - How do you communicate migration status and timelines to the organization?
+**[SENIOR] Q6 - [MECHANISM] How do you communicate migration status and timelines to the organization?**
 
 Migration communication requires different messages for different audiences.
 
@@ -900,7 +910,7 @@ requests to migrate.
 
 ---
 
-#### Q7 - How do you handle services that cannot migrate due to technical incompatibilities?
+**[SENIOR] Q7 - [MECHANISM] How do you handle services that cannot migrate due to technical incompatibilities?**
 
 Some services have requirements that the IDP does not support:
 privileged containers, GPU scheduling, stateful workloads with complex
@@ -958,7 +968,7 @@ the platform roadmap; Tier C exceptions inform the decommission plan.
 
 ---
 
-#### Q8 - How do you maintain service reliability during migration?
+**[STAFF] Q8 - [MECHANISM] How do you maintain service reliability during migration?**
 
 Migrations create production risk. Managing that risk requires
 discipline in the migration approach.
@@ -1006,7 +1016,7 @@ parallel run, not evaluated subjectively during it. Subjective evaluation
 
 ---
 
-#### Q9 - What is the organizational change management dimension of IDP migration?
+**[STAFF] Q9 - [MECHANISM] What is the organizational change management dimension of IDP migration?**
 
 Technical migrations fail for organizational, not technical, reasons.
 The organizational change management dimension is as important as the
@@ -1064,7 +1074,7 @@ permanent exception - is the approach that resolves the impasse.
 
 ---
 
-#### Q10 - How do you run the legacy system decommission phase?
+**[STAFF] Q10 - [MECHANISM] How do you run the legacy system decommission phase?**
 
 Decommission is the most politically complex phase of migration.
 
@@ -1125,7 +1135,7 @@ blockers ("we didn't have time").
 
 ---
 
-#### Q11 - How do you measure migration success beyond service count?
+**[STAFF] Q11 - [MECHANISM] How do you measure migration success beyond service count?**
 
 Service count (services migrated / total) is necessary but not sufficient
 to measure migration success.
@@ -1162,7 +1172,7 @@ is the only system the team uses for all infrastructure operations.
 
 ---
 
-#### Q12 - How do you manage a migration that is behind schedule?
+**[STAFF] Q12 - [MECHANISM] How do you manage a migration that is behind schedule?**
 
 Migration behind schedule is common. The response must be proportionate
 to the cause.

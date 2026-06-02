@@ -114,7 +114,7 @@ EXCEPTION HANDLING:
               if (attempt == maxRetries - 1) throw e;
               // Wait with exponential backoff:
               try {
-                  Thread.sleep(50L * (1L << attempt));  // 50ms, 100ms, 200ms...
+                  Thread.sleep(50L * (1L << attempt));  // 50ms, 100ms,...
               } catch (InterruptedException ie) {
                   Thread.currentThread().interrupt();
                   throw new RuntimeException(ie);
@@ -163,7 +163,7 @@ OPTIMISTIC LOCKING FOR DETACHED ENTITIES (REST API pattern):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Locking example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -259,7 +259,7 @@ and update the root version whenever any child entity changes.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Optimistic lock exception in UI - user sees "conflict" on every save.**
-```
+```plaintext
 Symptom: users frequently see 409 Conflict errors even when editing different fields.
   Multiple users editing the same product at the same time: frequent failures.
 
@@ -291,7 +291,7 @@ Solution options:
    Simpler conflict resolution (no exception, just wait).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -378,7 +378,13 @@ catches the version conflict. Business logic must handle the state conflict sepa
 ### 📘 Concept Explanation
 
 **Pessimistic lock modes and deadlock prevention:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 PESSIMISTIC LOCKING WITH @LOCK:
 
   // Repository method with pessimistic lock:
@@ -465,7 +471,7 @@ LOCK TIMEOUT:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -585,7 +591,7 @@ Fix:
   Or: reduce the number of concurrent locks by redesigning the flow.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -72,6 +72,18 @@ match the resulting UI tree, reducing cognitive load.
 
 **How it works:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```jsx
 // JSX TO JS COMPILATION:
 // This JSX:
@@ -143,7 +155,7 @@ const Container = 'div';  // capitalize
 <Container />           // GOOD: treated as component
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This JSX and React Elements example demonstrates variable declaration using container. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -187,7 +199,7 @@ return <div>{count > 0 && <span>Items: {count}</span>}</div>;
 return <div>{count ? <span>Items: {count}</span> : null}</div>;
 ```
 
-> **Code walkthrough:** The `onClick={handleClick()}` bug is extremely
+> **Code walkthrough:** The `onClick={handleClick()}` bug is extremelyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common for beginners - the parentheses cause the function to execute
 > during render and the return value (likely undefined) is passed as the
 > handler. React calls it on click and nothing happens (or throws because
@@ -261,8 +273,7 @@ Symptom: component renders old data after state/props update; re-render does not
 
 ---
 
-**Q1: What is the purpose of `$$typeof` on React elements?** `[STAFF]`
-SECURITY
+**[JUNIOR] Q1 - [SECURITY] What is the purpose of `$$typeof` on React elements?** `[STAFF]`**
 
 > **Answer:**
 >
@@ -367,6 +378,13 @@ UIs by combining simpler components through props.
 
 **How it works:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```jsx
 // BASIC PROPS:
 function Avatar({ src, alt, size = 48 }) {
@@ -429,8 +447,9 @@ function Input({ label, ...inputProps }) {
   );
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Props and Component Composition example demonstrates ES6 class syntax using SQL. **KEY MECHANISM:** class syntax is syntactic sugar over prototype chains; methods go on Class.prototype. **WHY IT MATTERS:** instanceof fails across different window/realm boundaries in browser environments. **WHAT BREAKS: classes are prototype-based; for plain data objects, use factory functions.**
 
 **Why it matters:**
 
@@ -443,6 +462,12 @@ most powerful composition primitive - master it.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // COMMON MISTAKE: prop drilling anti-pattern
@@ -481,7 +506,7 @@ function Header({ children }) {
 // Layout and Header don't know about user - clean separation
 ```
 
-> **Code walkthrough:** The prop drilling version forces `Layout` and
+> **Code walkthrough:** The prop drilling version forces `Layout` andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Header` to accept and pass through `user` even though they never
 > use it. Any change to the `user` shape requires updating all intermediate
 > components. The composition version inverts this: `App` (which knows
@@ -555,8 +580,7 @@ Symptom: component accepts many boolean props (`isLarge`, `isDisabled`, `isPrima
 
 ---
 
-**Q1: How do you solve prop drilling without Context?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] How do you solve prop drilling without Context?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -747,7 +771,7 @@ function SearchResults() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This State with useState example demonstrates async/await Promise resolution using React hook. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -793,7 +817,7 @@ function Timer() {
 }
 ```
 
-> **Code walkthrough:** The stale closure is one of the most common React
+> **Code walkthrough:** The stale closure is one of the most common Reactice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > bugs. When `useEffect` runs with `[]` deps, it captures the initial
 > value of `count` (0) in the closure for `setInterval`. Every tick calls
 > `setCount(0 + 1)` = `setCount(1)`, and React sets it to 1 - but then
@@ -866,7 +890,7 @@ Symptom: slow render performance traced to a complex computation happening on ev
 
 ---
 
-**Q1: Why does calling setState multiple times in the same event handler
+**[JUNIOR] Q1 - [MECHANISM] Why does calling setState multiple times in the same event handler**
 only cause one re-render?** `[SENIOR]` MECHANISM
 
 > **Answer:**

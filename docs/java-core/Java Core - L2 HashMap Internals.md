@@ -97,7 +97,7 @@ TreeNode<K,V> extends Node<K,V>:
   boolean red
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 HashMap Internals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **put(k, v) algorithm:**
 ```
@@ -129,13 +129,13 @@ TreeNode<K,V> extends Node<K,V>:
    resize()   // double capacity, rehash all entries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 HashMap Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The pre-sizing example shows the correct formula
+> **Code walkthrough:** The pre-sizing example shows the correct formulaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to avoid any resize operations. The hash DoS attack example explains
 > why Java 8 added treeification. The thread-safety failure shows why
 > concurrent HashMap access without synchronization corrupts state in
@@ -174,7 +174,7 @@ safeCounter.compute("key", (k, v) -> v == null ? 1 : v + 1); // atomic
 safeCounter.merge("key", 1, Integer::sum); // atomic add
 ```
 
-> **Code walkthrough:** `computeIfAbsent`, `compute`, and `merge` are
+> **Code walkthrough:** `computeIfAbsent`, `compute`, and `merge` areice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > atomic operations in `ConcurrentHashMap` - they execute atomically
 > on the affected bucket without external synchronization. `merge("key",
 > 1, Integer::sum)` atomically sets the value to 1 if absent, or
@@ -241,7 +241,7 @@ Map<BadKey, String> map = new HashMap<>();
 // All entries land in bucket 0: one bucket with n entries
 // get() walks the whole bucket: O(log n) with treeification
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: `jstack` thread dump showing threads spending time in
 `HashMap.getEntry()`; heap dump showing one bucket with thousands
@@ -316,7 +316,7 @@ list. Java 8: singly-linked list until 8 nodes, then red-black tree.
 Bucket 3: [entry(k1,v1)] -> [entry(k2,v2)] -> null  (linked list)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **get() on a collision bucket:**
 1. Compute bucket index
@@ -399,13 +399,13 @@ void resize() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Java 8 resize optimization:**
 New bucket index = old index OR (old index + oldCapacity).
 Since capacity doubles (power of 2), only 1 new bit is added to the
 bucket calculation. No need to recompute hash:
-```
+```plaintext
 old capacity = 16 (0001 0000)
 new capacity = 32 (0010 0000)
 new bit = hash & oldCapacity (the bit that changed)
@@ -413,7 +413,7 @@ if new bit == 0: new index = old index
 if new bit == 1: new index = old index + oldCapacity
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The default 0.75 load factor is a
 good empirical compromise. For read-heavy, memory-available caches:
@@ -460,7 +460,7 @@ chm.put(k1, v1); // locks bucket[i]
 chm.get(k2);     // no lock (volatile read) - parallel with puts!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* ConcurrentHashMap's `size()` method
 returns an approximate count (uses the internal `CounterCell` accumulator,
@@ -487,7 +487,7 @@ Thread B: put("counter", 6)   // +1, overwrites A's write
 // Expected: 7. Actual: 6. Lost update.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **2. ConcurrentModificationException:**
 Thread A iterates; Thread B puts (changes modCount).
@@ -529,7 +529,7 @@ config.put("timeout", 2);
 // HashMap would give random order
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Use case 2: LRU Cache skeleton**
 ```java
@@ -544,7 +544,7 @@ Map<String, Object> lruCache = new LinkedHashMap<>(16, 0.75f, true) {
 // get() moves entry to end (most recent); removeEldestEntry evicts head
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Use case 3: JSON serialization order**
 JSON object properties have no required order, but tools
@@ -568,6 +568,12 @@ for enum keys?**
 A: `EnumMap` uses a plain array indexed by the enum ordinal. No hashing,
 no collision, no boxing.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 enum Day { MON, TUE, WED, THU, FRI, SAT, SUN }
 
@@ -585,7 +591,7 @@ schedule.put(Day.FRI, "Retrospective");
 // Iteration: always in enum declaration order (predictable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java API usage using enum. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **When to use EnumMap:**
 - Map keys are always from a known enum
@@ -624,7 +630,7 @@ Map<String, User> guavaMap = Maps.newHashMapWithExpectedSize(1000);
 // Guava uses (expected * 4 / 3) + 1 = same formula
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Why round up to power of 2?**
 HashMap requires capacity to be a power of 2 for the `(n-1) & hash`
@@ -678,7 +684,7 @@ map.get(null);           // returns "value"
 map.containsKey(null);   // true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Implementation:
 ```java
@@ -690,7 +696,7 @@ static final int hash(Object key) {
 // null -> hash = 0 -> bucket[0]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **ConcurrentHashMap does NOT allow null keys or null values.**
 Reason: in concurrent access, `map.get(key) == null` is ambiguous:
@@ -720,7 +726,7 @@ static final int hash(Object key) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Why needed:** Bucket index uses only the lower bits of the hash:
 `(capacity - 1) & hash`. For a 16-bucket table: only 4 bits matter.
@@ -741,7 +747,7 @@ h ^ (h >>> 16) = 0xFFFF_FFFE
 // Low 4 bits: 0001 -> 1110 (changed by upper bits)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* This secondary hash is a practical
 engineering compromise. A full cryptographic hash would give near-perfect
@@ -755,14 +761,14 @@ a strong signal in senior-level interviews.
 
 ### ⚖️ Comparison Table
 
-| Map Type | Order | Null key | Thread-safe | Get O | Add O | Use When |
-|---|---|---|---|---|---|---|
-| HashMap | None | One | No | O(1) avg | O(1) avg | General use |
-| LinkedHashMap | Insert/access | One | No | O(1) avg | O(1) avg | LRU, ordered output |
-| TreeMap | Sorted | No | No | O(log n) | O(log n) | Sorted key range queries |
-| EnumMap | Enum order | No | No | O(1) | O(1) | Enum key maps |
-| ConcurrentHashMap | None | No | Yes | O(1) avg | O(1) avg | Concurrent access |
-| Hashtable | None | No | Yes (global) | O(1) avg | O(1) avg | Legacy only |
+| Map Type| Order| Null key| Thread-safe| Get O| Add O| Use When|
+|---|---------|--------|------------|--------|--------|------------------------|
+| HashMap| None| One| No| O(1) avg| O(1) avg| General use|
+| LinkedHashMap| Insert/access| One| No| O(1) avg| O(1) avg| LRU, ordered output
+| TreeMap| Sorted| No| No| O(log n)| O(log n)| Sorted key range queries|
+| EnumMap| Enum order| No| No| O(1)| O(1)| Enum key maps|
+| ConcurrentHashMap| None| No| Yes| O(1) avg| O(1) avg| Concurrent access|
+| Hashtable| None| No| Yes (global)| O(1) avg| O(1) avg| Legacy only|
 
 ---
 
@@ -851,7 +857,7 @@ class Temperature implements Comparable<Temperature> {
 // Now: Collections.sort(temps), TreeSet, PriorityQueue all work
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Comparator - external/multiple orderings:**
 ```java
@@ -863,17 +869,23 @@ Comparator<Person> byAgeDesc = byAge.reversed();
 Comparator<Person> nullsLast = Comparator.nullsLast(byAge);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD comparison using subtraction is a famous
+> **Code walkthrough:** The BAD comparison using subtraction is a famousice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Java bug - integer overflow causes wrong ordering. The correct approach
 > uses `Integer.compare()` or `Double.compare()` for numeric types. The
 > multi-criteria sort example shows how `Comparator.comparing().thenComparing()`
 > chains build readable, composed comparators without custom classes.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: subtraction comparator (overflow bug):
@@ -911,7 +923,7 @@ withNulls.sort(Comparator.nullsLast(Comparator.naturalOrder()));
 // [a, b, c, null, null]
 ```
 
-> **Code walkthrough:** The `reversed()` call reverses the entire
+> **Code walkthrough:** The `reversed()` call reverses the entireice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > composed comparator chain. If you want `dept` ascending and `salary`
 > descending independently, use `thenComparingInt(e -> -e.salary())`
 > (negate to reverse) rather than `.reversed()`. The null-safe comparators
@@ -981,7 +993,7 @@ set.add(new CIString("Hello"));
 set.add(new CIString("hello")); // compareTo returns 0 -> "already exists"!
 set.size(); // 1, not 2 - "hello" was rejected
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: TreeSet/TreeMap not containing expected elements; check
 if compareTo and equals are consistent.
@@ -1034,7 +1046,7 @@ people.sort(byName);              // sort by name
 people.sort(byAge.thenComparing(byName)); // by age, then name
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Comparable/Comparator split is
 a design choice about where ordering logic belongs. If ordering is
@@ -1076,7 +1088,7 @@ A: `compareTo()` must satisfy four properties:
 // Double.compareTo handles NaN correctly; < operator does not
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Violating transitivity causes
 undefined behavior in sorting algorithms. Java's `TimSort` may
@@ -1119,7 +1131,7 @@ Comparator<Integer> correct3 = (a, b) -> Integer.compare(a, b);
 // (x < y) ? -1 : ((x == y) ? 0 : 1) - no overflow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The subtraction comparator works
 for small bounded values (ages 0-150, scores 0-100) because overflow
@@ -1162,7 +1174,7 @@ emps.stream()
 // null Carol 70000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Alternatively using explicit reversed:
 ```java
@@ -1174,7 +1186,7 @@ Comparator<Employee> comp2 =
         Comparator.comparingInt(Employee::salary).reversed());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `.reversed()` method reverses
 the ENTIRE comparator up to that point. If you chain `.comparing().thenComparing().reversed()`, all criteria are reversed. To reverse
@@ -1205,7 +1217,7 @@ set.contains("hello"); // true
 // regardless of what equals() says
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The Javadoc for `Comparable` says: "It is strongly recommended, but
 not strictly required, that `(x.compareTo(y) == 0) == x.equals(y)`."
@@ -1243,7 +1255,7 @@ Collections.sort(strs); // [Apple, banana, cherry] (uppercase before lowercase)
 strs.sort(String.CASE_INSENSITIVE_ORDER); // [Apple, banana, cherry]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* String's natural order is lexicographic
 based on Unicode code points. This means uppercase letters come before
@@ -1286,7 +1298,7 @@ maxHeap.offer(3); maxHeap.offer(1); maxHeap.offer(5);
 maxHeap.poll(); // 5 (max element)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `PriorityQueue` is min-heap by default
 (natural order). For max-heap: `new PriorityQueue<>(Comparator.reverseOrder())`.
@@ -1328,7 +1340,7 @@ people.stream()
     .collect(Collectors.toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Database query results frequently
 contain null values for optional fields. Any stream sort on such data
@@ -1380,7 +1392,7 @@ staff.stream().sorted(comp2).forEach(System.out::println);
 // Alice (non-manager, 3 years)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* When negating for descending order
 (`e -> -e.yearsOfService()`), be aware of integer overflow for

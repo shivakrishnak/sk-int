@@ -91,7 +91,7 @@ Application (System) ClassLoader
   - getSystemClassLoader() returns this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 ClassLoader example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Delegation model (parent-first):**
 ```java
@@ -105,7 +105,7 @@ Application (System) ClassLoader
 //   2. App: search classpath -> found! load and define.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 ClassLoader example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Creating a custom ClassLoader:**
 ```java
@@ -132,17 +132,23 @@ class IsolatingClassLoader extends ClassLoader {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 ClassLoader example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The plugin isolation pattern is the core use case
+> **Code walkthrough:** The plugin isolation pattern is the core use caseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for custom ClassLoaders. Each plugin gets its own ClassLoader instance.
 > Classes loaded by one plugin's ClassLoader are invisible to another plugin
 > (different ClassLoader = different class identity). The URLClassLoader
 > is the built-in flexible ClassLoader that loads from URLs (files, jars, http).
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: loading plugin with application ClassLoader (breaks isolation)
@@ -204,7 +210,7 @@ class HotReloader {
 // Use case: development tools, scripting engines, test frameworks
 ```
 
-> **Code walkthrough:** `URLClassLoader(jars, parentLoader)` - the parent
+> **Code walkthrough:** `URLClassLoader(jars, parentLoader)` - the parentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > determines what is "shared" vs "isolated". If parent is Application CL:
 > all application classes are shared; only plugin-specific JARs are isolated.
 > If parent is Bootstrap CL: only JDK classes are shared, everything else
@@ -267,7 +273,7 @@ classes to shadow JDK classes.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: ClassLoader memory leak in web container.**
-```
+```plaintext
 Symptom: java.lang.OutOfMemoryError: Metaspace (or PermGen in Java 7)
          grows after each Tomcat hot-redeploy
 
@@ -284,7 +290,7 @@ Common culprits and fixes:
      - Symptom: DriverManager holds reference to driver class loaded by webapp CL
      - Fix: deregister in ServletContextListener.contextDestroyed():
        DriverManager.getDrivers().asIterator().forEachRemaining(d -> {
-           if (d.getClass().getClassLoader() == this.getClass().getClassLoader())
+           if (d.getClass().getClassLoader() == this.getClass().getClassLoader(...
                DriverManager.deregisterDriver(d);
        });
 
@@ -298,7 +304,7 @@ Common culprits and fixes:
             webapp objects in JDK static caches
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Retained Heap" of old loaders = what's leaking example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -343,7 +349,7 @@ Application (System) ClassLoader
   - Default for most code
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Retained Heap" of old loaders = what's leaking example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Verify the hierarchy:
@@ -362,7 +368,7 @@ System.out.println(java.sql.Driver.class.getClassLoader()); // Platform
 System.out.println(MyApp.class.getClassLoader());   // Application
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Retained Heap" of old loaders = what's leaking example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Java 9 module system changed class
 loading internals significantly. In Java 8: three `sun.misc.Launcher$*`
@@ -419,7 +425,7 @@ protected Class<?> findClass(String name) throws ClassNotFoundException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Retained Heap" of old loaders = what's leaking example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* The `synchronized(getClassLoadingLock(name))`
 is critical: class loading is serialized per class name within each
@@ -469,7 +475,7 @@ com.example.Service s = (com.example.Service) obj2; // ClassCastException!
 // Note: TWO different loaders mentioned for the SAME class name = CL issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Retained Heap" of old loaders = what's leaking example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* This ClassCastException is the classic
 "what class is it really?" production issue in application servers and OSGi.
@@ -516,7 +522,7 @@ ClassLoader netLoader = new URLClassLoader(
 // Modern use: OSGi bundles loaded from Maven repositories
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Java agents (`java.lang.instrument.Instrumentation`)
 use ClassLoader-based bytecode transformation. The `ClassFileTransformer`
@@ -561,7 +567,7 @@ Reference chain types that cause leaks:
    new Timer(true).schedule(...) // daemon thread, but holds webapp reference
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Diagnosis:
 ```bash
@@ -579,7 +585,7 @@ jmap -dump:live,format=b,file=heap.hprof <pid>
 # started a thread named [xyz] but has failed to stop it"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This started a thread named [xyz] but has failed to stop it" example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Production Tomcat environments deploy
 the same application repeatedly (CI/CD, config changes). Without proper
@@ -628,7 +634,7 @@ ServiceLoader<SomeService> loader = ServiceLoader.load(SomeService.class);
 loader.forEach(service -> service.process(data));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This started a thread named [xyz] but has failed to stop it" example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The module system's impact on ClassLoading
 was one of the most disruptive changes in Java's history. Pre-Java 9 tools
@@ -685,7 +691,7 @@ try (URLClassLoader ucl2 = new URLClassLoader(jars, parent)) {
 // ucl2.close() called automatically
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This started a thread named [xyz] but has failed to stop it" example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `ucl.close()` on Windows is critical:
 open JAR files are locked by the OS. If you hot-deploy (replace the JAR
@@ -736,7 +742,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This started a thread named [xyz] but has failed to stop it" example demonstrates exception handling using container. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The Thread Context ClassLoader solves
 the "inverse delegation" problem. Normally delegation goes UP (child asks
@@ -783,7 +789,7 @@ Key rule: if A and B both import com.example.api from Bundle API,
 they share the SAME Class objects -> no ClassCastException!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* OSGi's "wired imports" model solves the
 ClassCastException problem through controlled sharing. Only ONE bundle "owns"
@@ -844,7 +850,7 @@ class HotReloadService {
 //         supports field/method addition via bytecode hacks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using SQL. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* Hot reload in production (not just development)
 is the foundation of enterprise Java hot-deploy. Application servers (JBoss/WildFly,
@@ -892,7 +898,7 @@ System.out.println("Same? " +
 // 4. Ensure both sides use the same ClassLoader for shared types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The interface-based solution is the
 architectural recommendation: define APIs (interfaces) in a parent ClassLoader,
@@ -952,7 +958,7 @@ Optional<StorageBackend> first = ServiceLoader
 // If TCCL doesn't have access to S3Backend.jar -> ClassNotFoundException -> skipped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using interface. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* ServiceLoader is Java's built-in plugin
 discovery mechanism. JDBC drivers, JCE providers, JAX-RS implementations,
@@ -1056,7 +1062,7 @@ flowchart TD
 > class loading in each plugin's ClassLoader to add cross-cutting concerns.
 > Results flow back through the shared interface types (loaded by SharedAPI CL),
 > preventing ClassCastExceptions. The router maintains the mapping of plugin
-> ID to ClassLoader, handling lifecycle (load on first request, close on undeploy).
+> ID to ClassLoader, handling lifecycle (load on first request, close on undeplo
 
 ---
 

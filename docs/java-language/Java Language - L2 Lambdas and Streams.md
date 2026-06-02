@@ -139,19 +139,25 @@ LAMBDA CAPTURE RULES:
   
   // Workaround: use an array (mutable container):
   int[] counter = {0};
-  Runnable r3 = () -> counter[0]++;  // OK: counter reference is final, array content is not
+  Runnable r3 = () -> counter[0]++;  // OK: counter reference is final, array...
   // But: unsafe in concurrent code!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Lambdas and Streams example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example demonstrates the practical progression from
+> **Code walkthrough:** This example demonstrates the practical progression fromice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > anonymous classes to lambdas to method references, showing how each step reduces
 > boilerplate while preserving the same semantics.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // EVOLUTION: anonymous class -> lambda -> method reference
@@ -272,7 +278,7 @@ use `collect()` with a mutable accumulator, not lambda capture of a mutable vari
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Counter increment in parallel stream lambda produces wrong result.**
-```
+```plaintext
 Symptom: After processing 1000 items in a parallel stream,
   the counter shows 870 (not 1000).
 
@@ -312,7 +318,7 @@ Rule: avoid stateful lambdas in parallel streams.
   or by using terminal operations that handle parallelism (collect, reduce, count)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -618,7 +624,7 @@ TERMINAL (EAGER, CONSUME STREAM):
   min(Comparator)             <- Optional<T>: minimum
   max(Comparator)             <- Optional<T>: maximum
   sum() / average()           <- IntStream/LongStream/DoubleStream only
-  forEach(Consumer)           <- side effects (order: guaranteed for seq, not parallel)
+  forEach(Consumer)           <- side effects (order: guaranteed for seq, not...
   forEachOrdered(Consumer)    <- preserves encounter order even in parallel
   toArray()                   <- Object[] or typed
 
@@ -632,12 +638,12 @@ COLLECTORS:
   counting()                     -> Long
   summingInt/Long/Double(toInt)  -> sum as primitive
   averagingInt/Long/Double       -> average as Double
-  summarizingInt(toInt)          -> IntSummaryStatistics (count, sum, min, max, avg)
+  summarizingInt(toInt)          -> IntSummaryStatistics (count, sum, min,...
   collectingAndThen(collector, finisher) -> applies finisher after collect
   mapping(mapper, downstream)    -> map then collect
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -646,6 +652,24 @@ COLLECTORS:
 > **Code walkthrough:** This example shows common stream patterns from basic to advanced,
 > including the groupingBy downstream collector pattern that replaces complex loop-based
 > aggregation code.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // STREAM PIPELINE PATTERNS
@@ -726,7 +750,7 @@ long count = orders.stream()
 // Remove peek before production (overhead, not for business logic)
 ```
 
-> **Code walkthrough:** The `groupingBy` with downstream collector is the most
+> **Code walkthrough:** The `groupingBy` with downstream collector is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > versatile stream aggregation pattern, replacing nested map-of-list manual construction
 > with a single declarative expression. The `flatMap` pattern is essential for working
 > with collections of collections. The parallel stream `collect` vs `forEach` safety
@@ -818,7 +842,7 @@ Prevention: any time a field might be null and you're using it as a
   Code review: check all classifier functions in groupingBy for potential null returns.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

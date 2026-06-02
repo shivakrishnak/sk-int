@@ -130,7 +130,7 @@ NODE.JS EVENT LOOP PHASES:
     then Promise callbacks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Event Loop and Microtask Queue example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -168,6 +168,11 @@ event loop lag translates directly to tail latency (p99, p999).
 ### 💻 Code Example
 
 **Execution order and starvation patterns**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // EXECUTION ORDER PUZZLE (common interview question):
@@ -233,7 +238,7 @@ function processInChunks(items, chunkSize = 100) {
 }
 ```
 
-> **Code walkthrough:** The execution order puzzle demonstrates the
+> **Code walkthrough:** The execution order puzzle demonstrates theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > core event loop algorithm. After `END`, the stack is empty. Microtask
 > queue has: 'promise 1'. It runs, prints 'promise 1', schedules
 > 'setTimeout 3' (macrotask), and queues 'promise 2' (microtask).
@@ -326,7 +331,7 @@ EVENT LOOP LAG MONITORING:
   }, 5000).unref();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -426,7 +431,7 @@ setInterval(() => {
 // clinic flame -- node app.js
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -449,7 +454,7 @@ setInterval(() => {
 
 ---
 
-**Q1: What is the difference between microtasks and macrotasks in the
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between microtasks and macrotasks in the**
 JavaScript event loop?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -503,7 +508,7 @@ JavaScript event loop?** `[SENIOR]` MECHANISM
 > This can occur in retry logic with recursive Promises. Fix: use
 > `setTimeout` for periodic operations, not recursive Promises.
 
-**Q2: Why does blocking the JavaScript event loop affect ALL users
+**[JUNIOR] Q2 - [MECHANISM] Why does blocking the JavaScript event loop affect ALL users**
 of a Node.js server?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -545,7 +550,7 @@ of a Node.js server?** `[STAFF]` SYSTEM-DESIGN
 > for that duration?" Typical answer: `JSON.parse` of large payload,
 > sync crypto, or catastrophic regex.
 
-**Q3: Trace the execution order:**
+**[MID] Q3 - [MECHANISM] Trace the execution order:**
 ```javascript
 async function main() {
   console.log('A');
@@ -557,7 +562,7 @@ async function main() {
 main();
 console.log('D');
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 `[SENIOR]` DEBUGGING
 
@@ -585,7 +590,7 @@ console.log('D');
 > `await requestAnimationFrame()` synchronizes with the browser
 > render cycle.
 
-**Q4: What is queueMicrotask and when would you use it instead of
+**[MID] Q4 - [SCENARIO] What is queueMicrotask and when would you use it instead of**
 Promise.resolve().then()?** `[MID]` MECHANISM
 
 > **Answer:**
@@ -644,7 +649,7 @@ Promise.resolve().then()?** `[MID]` MECHANISM
 > batch scheduler uses this pattern to batch multiple `setState` calls
 > into a single re-render.
 
-**Q5: How does the Node.js event loop differ from the browser event
+**[MID] Q5 - [MECHANISM] How does the Node.js event loop differ from the browser event**
 loop?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -707,7 +712,7 @@ loop?** `[SENIOR]` MECHANISM
 > is why Node.js serves thousands of concurrent connections with almost
 > zero idle CPU: it's sleeping at the OS level between events.
 
-**Q6: What is process.nextTick and when should you use or avoid it?**
+**[SENIOR] Q6 - [SCENARIO] What is process.nextTick and when should you use or avoid it?**
 `[SENIOR]` TRADE-OFF
 
 > **Answer:**
@@ -766,7 +771,7 @@ loop?** `[SENIOR]` MECHANISM
 > to run in between. The Node.js core team has discussed deprecating
 > `process.nextTick` multiple times because of these footguns.
 
-**Q7: How do Web Workers and Worker Threads differ from the event loop?**
+**[SENIOR] Q7 - [MECHANISM] How do Web Workers and Worker Threads differ from the event loop?**
 `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -835,7 +840,7 @@ loop?** `[SENIOR]` MECHANISM
 > clone (copies data). For high-throughput scenarios: use transfer
 > to avoid doubling memory usage.
 
-**Q8: What happens when you have a Promise rejection with no handler?**
+**[SENIOR] Q8 - [FAILURE] What happens when you have a Promise rejection with no handler?**
 `[MID]` FAILURE-MODE
 
 > **Answer:**
@@ -892,7 +897,7 @@ loop?** `[SENIOR]` MECHANISM
 > ESLint rule `no-floating-promises` (from `eslint-plugin-promise`)
 > catches these statically.
 
-**Q9: How does requestAnimationFrame fit into the browser event loop?**
+**[SENIOR] Q9 - [MECHANISM] How does requestAnimationFrame fit into the browser event loop?**
 `[SENIOR]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -960,7 +965,7 @@ loop?** `[SENIOR]` MECHANISM
 > with layout batching is the foundation of performant browser animation
 > and the virtual DOM diffing pattern.
 
-**Q10: What is the difference between a long task and event loop
+**[SENIOR] Q10 - [TRADE-OFF] What is the difference between a long task and event loop**
 blocking from a performance perspective?** `[STAFF]` PERFORMANCE
 
 > **Answer:**
@@ -1027,8 +1032,7 @@ blocking from a performance perspective?** `[STAFF]` PERFORMANCE
 > task scheduling - the same mechanism React's concurrent mode uses
 > internally to interrupt long renders for user input.
 
-**Q11: How would you debug a Node.js server with high event loop lag?**
-`[STAFF]` DEBUGGING
+**[STAFF] Q11 - [DEBUGGING] How would you debug a Node.js server with high event loop lag?**
 
 > **Answer:**
 >
@@ -1103,7 +1107,7 @@ blocking from a performance perspective?** `[STAFF]` PERFORMANCE
 > object pooling, reducing allocations in hot paths, and monitoring GC
 > metrics with `--trace-gc` or perf_hooks GC entries.
 
-**Q12: What is the Scheduling API (scheduler.postTask) and how does
+**[STAFF] Q12 - [MECHANISM] What is the Scheduling API (scheduler.postTask) and how does**
 it improve on setTimeout for task management?** `[STAFF]` ADVANCED
 
 > **Answer:**

@@ -615,7 +615,26 @@ YAML FRONTMATTER:
   status: draft
   sd: false     ← set true to include System Design for non-★★★ entries
   version: 1
+  render_with_liquid: false   ← REQUIRED in every content file
   ---
+
+LIQUID SAFETY (MANDATORY):
+  The `render_with_liquid: false` flag is REQUIRED but INSUFFICIENT.
+  Jekyll's Liquid parser scans content BEFORE checking the flag and
+  emits warnings/exceptions for `{{ }}` and `{% %}` patterns.
+  ANY code fence containing these patterns MUST be wrapped:
+
+  {% raw %}
+  ```
+  ... code with {{ }} or {% %} patterns ...
+  ```
+  {% endraw %}
+
+  Place `{% raw %}` on the line BEFORE the opening ``` fence.
+  Place `{% endraw %}` on the line AFTER the closing ``` fence.
+  Tags are consumed by Liquid and do NOT appear in rendered output.
+  Validation rule R28 enforces this at pre-commit.
+  Run `_fix_liquid_raw.ps1` (workspace root) to auto-fix a file.
 
 TITLE LINE:
   # [ICON] [ID] — [KEYWORD NAME]

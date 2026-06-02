@@ -146,7 +146,7 @@ OBJECT ON HEAP:
   [balance: 8 bytes]           <- double value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 OOP Basics example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -155,6 +155,12 @@ OBJECT ON HEAP:
 > **Code walkthrough:** The equals/hashCode contract is the most commonly broken rule
 > in Java classes. This example shows the correct implementation pattern and what breaks
 > when the contract is violated.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // EQUALS/HASHCODE: correct vs broken
@@ -316,7 +322,7 @@ Root prevention: code review rule:
    a documented concurrency analysis comment."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -610,7 +616,7 @@ PASS BY VALUE DEMONSTRATION:
   // Caller's StringBuilder: unchanged (local copy replaced, not caller's ref)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -774,7 +780,7 @@ Rule: If a method accepts a collection for validation, analysis, or
   intentional: "@param orders the list to clean in place".
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -933,7 +939,7 @@ Dog dog = new Dog().setName("Rex").setBreed("Labrador");
 // Without covariant return: new Dog().setName("Rex")
 //   returns Animal (not Dog), can't call .setBreed()
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This pattern is used in Lombok's @Builder and many fluent APIs. The key insight:
 covariant return types enable the builder and fluent interface patterns in Java
@@ -1017,7 +1023,13 @@ house. The less glass: the more freedom to renovate inside without disturbing ne
 ### 📘 Concept Explanation
 
 **Access modifier reference table:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 ACCESS MODIFIER RULES:
 
 Modifier     Same Class   Same Package   Subclass   Other Package
@@ -1092,7 +1104,7 @@ ENCAPSULATION PATTERNS:
       .build();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **WHAT BREAKS: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
@@ -1101,6 +1113,12 @@ ENCAPSULATION PATTERNS:
 > **Code walkthrough:** The defensive copy pattern is critical for encapsulation with
 > mutable objects. Without defensive copies, even private fields can be mutated by callers
 > who hold a reference to the same mutable object.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // ENCAPSULATION WITH MUTABLE FIELDS: defensive copies
@@ -1254,7 +1272,7 @@ Fix:
 
   Option B: Return a copy
     public List<User> getUsers() {
-        return new ArrayList<>(users);  // mutable copy, changes don't affect internal
+        return new ArrayList<>(users);  // mutable copy, changes don't affect...
     }
 
   Option C: Return unmodifiable copy (Java 10+)
@@ -1275,7 +1293,7 @@ Best practice: APIs that expose collections should return:
   NEVER: the direct reference to internal mutable state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -1440,7 +1458,7 @@ record UserProfile(String email, List<String> roles) {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The compact constructor: parameter names are the same as component names. Reassigning
 a parameter in the compact constructor: changes what gets stored. This is the correct

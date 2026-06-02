@@ -75,7 +75,7 @@ MICROSERVICES:
   Failure: isolated to the failed service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What Are Microservices and Why They Emerged example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Microservices are primarily an organizational pattern, not a technical one. Conway's Law: organizations build systems that mirror their communication structures. A microservices architecture enables teams to be as independent as their services. The technical benefits (independent scaling, deployment) follow from the organizational decision.
@@ -142,56 +142,49 @@ Fix: Each service must own its data exclusively. No shared databases. Decompose 
 | Scenario | 3 min | 1 |
 | Misconception | 2 min | 1 |
 
-#### Q1
-**"What problem were microservices originally designed to solve?"**
+**[JUNIOR] Q1 - [DESIGN] What problem were microservices originally designed to solve?**
 > "The organizational and deployment scaling problem of large monolithic applications. As a monolith grows, teams become bottlenecked: a change to the user module requires deploying the entire application including the order and inventory modules, even if those were unchanged. Multiple teams changing the same codebase create conflicts. Testing the full application before each deployment slows release velocity. Microservices were discovered by teams at Amazon, eBay, and Netflix who needed to scale organizations to hundreds of engineers shipping independently."
 
 *What separates good from great:* "Add: the famous Amazon 'two pizza team' rule - if two pizzas can't feed the team, the team is too large. A microservice should be ownable by a two-pizza team. This organizational constraint, not a technical metric, defines the right service size."
 
 ---
 
-#### Q2
-**"What is the difference between microservices and a modular monolith?"**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between microservices and a modular monolith?**
 > "A modular monolith has clean module boundaries (separate packages, clear interfaces) but is deployed as a single artifact. A microservices architecture deploys each service independently. The operational difference: a modular monolith makes module changes easy (in-process, low overhead), but you still redeploy everything. Microservices allow independent deployment but add network overhead and distributed systems complexity. A modular monolith is often the right intermediate step before microservices: establish domain boundaries first, ensure modules can evolve independently, then extract to separate services when deployment independence becomes the binding constraint."
 
 *What separates good from great:* "The modular monolith is underrated. If your team of 20 engineers can ship 5 times a day with a well-organized monolith, microservices may not add value. Measure your actual deployment frequency and coordination overhead before migrating."
 
 ---
 
-#### Q3
-**"Give examples of good vs bad microservice decomposition."**
+**[MID] Q3 - [TRADE-OFF] Give examples of good vs bad microservice decomposition.**
 > "Good: OrderService (owns all order lifecycle: create, update, fulfill), InventoryService (owns stock levels and reservations), UserService (owns user identity and preferences). Each maps to a clear business domain, has its own database, and can be developed and deployed by one team. Bad: DatabaseLayer (an abstraction over all databases), UserValidationService (validates user input for other services), SharedUtils (common code used by all services). These decompose at the technical layer, not the business domain. The DatabaseLayer is called by every service, creating a shared dependency. If it changes, everything breaks."
 
 *What separates good from great:* "The smell of bad decomposition: when a 'microservice' is always deployed with other services. If UserValidationService must be deployed whenever UserService deploys, they are not independent. Real independence means each service can be deployed, scaled, and failed without affecting the others."
 
 ---
 
-#### Q4
-**"When would you recommend NOT using microservices?"**
+**[MID] Q4 - [SCENARIO] When would you recommend NOT using microservices?**
 > "Three situations: (1) Small team (fewer than 15 engineers) - the operational overhead of service discovery, distributed tracing, container orchestration, and API versioning consumes too much of a small team's capacity. (2) Early-stage product with an unstable domain - microservice boundaries are hard to change once established and other services depend on them. A startup that pivots will need to restructure its domain model; restructuring microservice boundaries is much harder than restructuring a monolith's modules. (3) Team without operational maturity (no CI/CD, no containerization, no observability) - microservices will fail in production in hard-to-diagnose ways without distributed tracing and solid deployment automation."
 
 *What separates good from great:* "The strongest argument against premature microservices: you lose the ability to refactor across service boundaries. In a monolith, moving a function from module A to module B is a compile-time refactor. In microservices, it is an API change that requires coordinating with all consumers. Wait until the domain is stable enough that your boundaries are correct before extracting services."
 
 ---
 
-#### Q5
-**"What is Conway's Law and how does it relate to microservices?"**
+**[SENIOR] Q5 - [MECHANISM] What is Conway's Law and how does it relate to microservices?**
 > "Conway's Law (1968): 'Organizations which design systems are constrained to produce designs which are copies of the communication structures of those organizations.' A company with 3 backend teams and 1 frontend team will build an architecture with 3 backend services and 1 frontend. The implication for microservices: your service boundaries will naturally reflect your organizational boundaries. If you want a clean microservice architecture, start by organizing teams around business domains, not technical layers. Amazon reorganized into autonomous two-pizza teams before they built their services architecture. The services followed the teams, not the other way around."
 
 *What separates good from great:* "The Inverse Conway Maneuver: deliberately design your organizational structure to match the desired service architecture. Create a 'Checkout Team' that owns all checkout services, a 'Catalog Team' that owns all catalog services. When teams are aligned with service boundaries, microservices work as intended. When teams span service boundaries (one team owns parts of 5 different services), the services become coupled."
 
 ---
 
-#### Q6
-**"How do microservices relate to domain-driven design?"**
+**[SENIOR] Q6 - [DESIGN] How do microservices relate to domain-driven design?**
 > "DDD provides the vocabulary and method for finding microservice boundaries. A bounded context (DDD) maps directly to a microservice: it is a boundary within which a domain model is internally consistent. The Order domain has its own definition of 'Product' (a line item with a price at purchase time). The Catalog domain has its own definition of 'Product' (current attributes, pricing). These are different models of the same real-world concept. Putting them in separate services (bounded contexts) prevents one model from polluting the other. The ubiquitous language (DDD) defines the vocabulary within each bounded context - the terms used in code should match terms used by the business domain experts for that context."
 
 *What separates good from great:* "The hardest part of applying DDD to microservices: identifying where context boundaries should be. The technique: event storming (workshop where domain experts and developers map business events on a timeline). Events that naturally cluster around a responsibility suggest a bounded context. Multiple events owned by the same team that cannot be separated suggest a service boundary."
 
 ---
 
-#### Q7
-**"What is a distributed monolith and how is it worse than a regular monolith?"**
+**[SENIOR] Q7 - [MECHANISM] What is a distributed monolith and how is it worse than a regular monolith?**
 > "A distributed monolith is an application that was decomposed into separate processes (calling itself microservices) but maintains tight coupling: shared databases, synchronous call chains where 5 services must all be up for any request to succeed, or deployment order dependencies. It is worse than a monolith because: it has all the complexity of distributed systems (network failures, service discovery, tracing) with none of the independence benefits. Services cannot be deployed independently (they have version dependencies). A single service failure can cascade. Debugging a distributed monolith is much harder than debugging a monolith because the call stack spans processes. The distributed monolith is the most common failure mode of microservices adoption."
 
 *What separates good from great:* "The litmus test for distributed monolith: randomly kill one service and measure the blast radius. If killing service A causes service B, C, and D to fail, you have tight coupling. True microservices have blast radius limited to one service and its immediate consumers."
@@ -286,7 +279,7 @@ MICROSERVICES REQUEST FLOW:
   Benefit: each service scales and deploys independently
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Monolith vs Microservices Trade-offs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The difference is not technical - it is organizational. The right architecture is the one that allows your team structure to operate efficiently. Small teams: monolith. Large organizations needing independent deployment: microservices.
@@ -310,7 +303,7 @@ MODULAR MONOLITH:
     as a separate service with minimal refactoring
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Monolith vs Microservices Trade-offs example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -417,56 +410,49 @@ Fix: Add a timeout on all cross-service calls (no more than 1-2 seconds). Add a 
 | Debugging | 3 min | 1 |
 | Misconception | 2 min | 1 |
 
-#### Q1
-**"Name three things a monolith does better than microservices."**
+**[JUNIOR] Q1 - [MECHANISM] Name three things a monolith does better than microservices.**
 > "One: ACID transactions. A monolith can wrap any operation in a database transaction. No saga patterns, no outbox, no eventual consistency. Two: debugging. A monolith crash produces a single stack trace. A microservices failure produces distributed logs across 5 services. Three: initial development speed. A junior engineer can add a feature to a monolith by adding a method call. Adding a feature to microservices may require: defining a new API endpoint, writing serialization code, updating interface contracts, and handling the new failure mode."
 
 *What separates good from great:* "A fourth: refactoring across module boundaries. In a monolith, moving a function from Module A to Module B is a compiler-guided refactor. In microservices, it requires a new API, a migration period where both APIs work, coordination with consuming services, and eventual deprecation. This is why establishing correct service boundaries before extracting services is critical."
 
 ---
 
-#### Q2
-**"A startup with 10 engineers wants to build with microservices from the start to be scalable. What do you advise?"**
+**[JUNIOR] Q2 - [MECHANISM] A startup with 10 engineers wants to build with microservices from the start to be scalable. What do you advise?**
 > "Strong advice against. With 10 engineers, the operational overhead of microservices consumes a significant fraction of the team's capacity: maintaining CI/CD pipelines per service, service discovery, distributed tracing, inter-service authentication, and API versioning. None of this builds product features. Start with a well-structured monolith using clean module boundaries. When team size exceeds 20-25 engineers and deployment coordination becomes a bottleneck, extract the most contended services. The product will also likely change significantly in the first year - domain boundaries that seemed clear may need restructuring. Restructuring a modular monolith is easy. Restructuring microservice boundaries requires API migrations and consumer coordination."
 
 *What separates good from great:* "Amazon, Netflix, and Google all started as monoliths. They extracted services when the organizational need arose. The right time for microservices is when team coordination costs more than distributed systems complexity. For most startups, this point is years in the future."
 
 ---
 
-#### Q3
-**"How do you measure whether a monolith-to-microservices migration was successful?"**
+**[MID] Q3 - [MECHANISM] How do you measure whether a monolith-to-microservices migration was successful?**
 > "Three metrics: deployment frequency (did independent services actually deploy more often?), lead time for changes (does the changed service deploy faster without waiting for other teams?), and mean time to restore (when a service fails, how fast is it isolated and recovered vs the monolith's full outage?). These are the DORA metrics applied specifically to the migration. Anti-metric: do not measure by number of services created. Creating 50 services from a monolith does not indicate success - it indicates decomposition. Success is demonstrated by teams shipping faster and independently."
 
 *What separates good from great:* "Also measure the blast radius of failures. If killing one service causes 10 others to fail, the migration created a distributed monolith and the failure mode is worse than the original. Blast radius should decrease as services become more independent."
 
 ---
 
-#### Q4
-**"What is the strangler fig pattern and when do you use it?"**
+**[MID] Q4 - [MECHANISM] What is the strangler fig pattern and when do you use it?**
 > "The strangler fig pattern is a migration strategy: instead of rewriting the monolith from scratch, you route specific functionality to a new microservice while the monolith still handles everything else. An API gateway sits in front of both. Over time, more functionality is 'strangled' from the monolith to new services until the monolith handles nothing and can be decommissioned. Use it when: the monolith is too large to rewrite from scratch, the team needs to continue shipping features during the migration, and you want to validate each extracted service before committing. The name comes from the strangler fig tree that grows around a host tree and eventually replaces it."
 
 *What separates good from great:* "The strangler fig requires an API gateway or facade from day one. Without it, clients call the monolith directly and you cannot transparently route requests to new services. The gateway is not optional infrastructure - it is the mechanism that makes the pattern work."
 
 ---
 
-#### Q5
-**"How do you handle data sharing between services when migrating from a monolith?"**
+**[SENIOR] Q5 - [MECHANISM] How do you handle data sharing between services when migrating from a monolith?**
 > "Data separation is the hardest part of microservices migration. The monolith's single database contains tables that are used by what will become multiple services. Approach: first, establish logical database ownership by identifying which service 'owns' each table - no table should be writable by more than one service. Second, add physical separation gradually: start by assigning schema prefixes (order_schema, inventory_schema) to identify ownership, then enforce through access controls. Third, when a service is extracted, it gets its own physical database. The old data must be migrated. Critical constraint: during the transition, avoid cross-service database queries. If Service A needs data owned by Service B, it calls Service B's API - not Service B's database table. This is the most violated rule in microservices migrations."
 
 *What separates good from great:* "Shared database is the most insidious coupling. Two services sharing a database table means: a schema change in the shared table requires coordination between both services. You cannot deploy them independently. The first step of any migration: identify and eliminate direct cross-service database access."
 
 ---
 
-#### Q6
-**"Design the architecture for a mid-size e-commerce company (50 engineers, 3 teams) migrating from a monolith."**
+**[SENIOR] Q6 - [DESIGN] Design the architecture for a mid-size e-commerce company (50 engineers, 3 teams) migrating from a monolith.**
 > "Three teams maps to three bounded contexts. Team 1 (catalog and search): CatalogService, SearchService. Team 2 (ordering and payments): OrderService, PaymentService. Team 3 (fulfillment and logistics): FulfillmentService, ShippingService. Start with the services under most deployment pressure - which team is currently blocked most often by needing to coordinate deploys? Extract that service first using the strangler fig pattern: add an API gateway, route the contested endpoint to the new service, validate, then proceed. Data separation follows team ownership: Team 1 owns the product catalog database; Team 2 owns orders and payments; Team 3 owns shipment tracking. Cross-team data access is via API, never via database."
 
 *What separates good from great:* "Do not extract all 6 services simultaneously. Extract the highest-value service first (the one causing the most deployment coordination pain), operate it as a microservice for 3-6 months, learn what went wrong, then apply those lessons to the next extraction. Parallel extraction across all teams at once multiplies risk without proportional benefit."
 
 ---
 
-#### Q7
-**"What happens to ACID transactions when you move to microservices?"**
+**[SENIOR] Q7 - [FAILURE] What happens to ACID transactions when you move to microservices?**
 > "ACID transactions do not cross service boundaries. When OrderService and InventoryService are separate services, there is no transaction that atomically updates both. The patterns that replace it: Saga (sequence of local transactions with compensating transactions on failure), outbox pattern (persist the intent to call another service as an event in the same database transaction, process asynchronously), and two-phase commit (distributed transaction protocol - rarely used due to complexity and performance cost). For most microservices workflows, the Saga pattern with idempotent operations is the practical choice: each step has a compensating action that undoes its effect if a later step fails."
 
 *What separates good from great:* "The architectural implication: in a monolith, you could implement any business rule as a database constraint (foreign key, check constraint). In microservices, cross-service business rules can only be enforced eventually. If a business rule says 'an order cannot be placed for a product that does not exist in the catalog,' you cannot enforce this with a database constraint - only with an API call that may fail or be out of date."
@@ -563,7 +549,7 @@ EACH SERVICE NEEDS:
   - Graceful shutdown (SIGTERM handling)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Microservices Ecosystem and Supporting Infrastructure example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The infrastructure does not come free. Kubernetes, Istio, Jaeger, Prometheus, and a CI/CD system for 50 services represent significant platform engineering investment. This is why microservices require a platform engineering team - the infrastructure cost must be amortized across many services to be worthwhile.
@@ -621,56 +607,49 @@ Fix: Scale CoreDNS replicas (kubectl scale deployment coredns -n kube-system --r
 | Scenario | 5 min | 2 |
 | Comparison | 2 min | 1 |
 
-#### Q1
-**"What is the minimum infrastructure required to run two microservices in production?"**
+**[JUNIOR] Q1 - [MECHANISM] What is the minimum infrastructure required to run two microservices in production?**
 > "Minimum viable production: container runtime (Docker or containerd), container orchestration (Kubernetes or at minimum Docker Compose for small scale), an API gateway or reverse proxy (Nginx, Traefik) for external routing, centralized structured logging with correlation IDs (cannot debug distributed failures without it), and a basic metrics system (Prometheus + Grafana or cloud-provider equivalent). Health check endpoints on both services (/health for liveness, /ready for readiness) are required by Kubernetes. Without any of these, production operations become very difficult. Distributed tracing (Jaeger) is strongly recommended even for 2 services - add it from the start rather than retrofitting."
 
 *What separates good from great:* "The most commonly skipped item: centralized logging with trace ID correlation. Teams often start with service-local logs and discover they cannot trace a request across services. Retrofitting trace IDs into all log statements is painful. Build it in from the start."
 
 ---
 
-#### Q2
-**"How does Kubernetes service discovery work?"**
+**[JUNIOR] Q2 - [MECHANISM] How does Kubernetes service discovery work?**
 > "Kubernetes assigns each Service resource a stable cluster-internal DNS name in the format service-name.namespace.svc.cluster.local. When a pod needs to call another service, it uses this DNS name (or just service-name within the same namespace). CoreDNS (Kubernetes' internal DNS server) resolves the name to a ClusterIP. kube-proxy on each node maintains iptables rules that load-balance connections to the ClusterIP across the healthy pods backing the service. The process is transparent to the application - it just calls order-service and Kubernetes handles routing to the correct pod. When pods scale up, the service automatically routes to new pods. When pods fail, they are removed from the service endpoints."
 
 *What separates good from great:* "The service resource creates a stable virtual IP (ClusterIP) even as the underlying pods come and go. This is why you connect to service-name, not to individual pod IPs - pod IPs change on every restart. The service IP is stable for the lifetime of the Service resource."
 
 ---
 
-#### Q3
-**"What is the difference between Prometheus and distributed tracing, and when do you need each?"**
+**[MID] Q3 - [TRADE-OFF] What is the difference between Prometheus and distributed tracing, and when do you need each?**
 > "Prometheus is a time-series metrics system: it records numeric measurements (request rate, error rate, latency percentiles, CPU usage) over time. Used for dashboards, alerting, and understanding system health trends. Distributed tracing records the complete journey of individual requests through multiple services. It shows which service added latency, where an error occurred, and how services call each other. You need both, for different purposes. Prometheus answers: 'Is the system healthy? Is latency rising? Is the error rate normal?' Distributed tracing answers: 'This specific request took 5 seconds - where did it spend that time? What service calls did it make?'"
 
 *What separates good from great:* "OpenTelemetry is the emerging standard that unifies all three observability signals (traces, metrics, logs) with a single SDK and export format. Start new services with OpenTelemetry rather than separate Jaeger and Prometheus clients - you get all three signals with one integration and can switch backends without code changes."
 
 ---
 
-#### Q4
-**"Design an observability stack for 50 microservices."**
+**[MID] Q4 - [DESIGN] Design an observability stack for 50 microservices.**
 > "Three pillars: metrics, logs, traces. Metrics: Prometheus scrapes each service's /metrics endpoint. Grafana visualizes. Alert on service-level objectives (SLOs): error rate < 0.1%, p99 latency < 500ms. Alert on symptoms (high error rate) not causes (CPU high - CPU is a cause, often misleading). Logs: structured JSON logging in every service. Fluentd or Filebeat ships logs to Elasticsearch or Loki. Log entries include: trace ID, service name, environment, request ID. All 50 services feed the same logging system. Traces: OpenTelemetry SDK in each service automatically instruments HTTP calls and outbound database queries. Jaeger or Tempo stores traces. All three are correlated via trace ID - you can click a metric spike, find the traces for that time window, and jump to the relevant log entries."
 
 *What separates good from great:* "The most important design decision: correlating all three signals with the same trace ID. When you see a p99 latency spike in Prometheus, you click through to Jaeger and see the slow traces. From the trace, you click the error span and see the associated log lines. This navigation chain is what makes the observability stack valuable rather than three separate systems."
 
 ---
 
-#### Q5
-**"What is an API gateway and what responsibilities should it NOT have?"**
+**[SENIOR] Q5 - [MECHANISM] What is an API gateway and what responsibilities should it NOT have?**
 > "An API gateway provides: routing (incoming requests to the correct backend service), authentication verification (validate JWT tokens, OAuth tokens), rate limiting, SSL termination, and sometimes request/response transformation. It should NOT have: business logic. An API gateway that validates whether an order is allowed based on business rules is doing work that belongs in the Order service. It should not store state (it should be stateless and horizontally scalable). It should not perform complex data aggregation (that is the Backend-for-Frontend pattern in a dedicated service). The temptation is to add logic to the gateway for convenience. Every piece of business logic in the gateway is logic that cannot be tested in isolation and creates a tight coupling between the gateway and the business domain."
 
 *What separates good from great:* "The API gateway is infrastructure, not a product team's concern. It should be owned and operated by the platform team. Business teams should be able to add routing rules declaratively (CRD in Kubernetes, configuration in Kong) without modifying gateway code. When a business team needs to modify gateway source code to add a feature, it has leaked business logic into infrastructure."
 
 ---
 
-#### Q6
-**"How does a CI/CD pipeline per microservice work without creating 50 separate pipelines to maintain?"**
+**[SENIOR] Q6 - [MECHANISM] How does a CI/CD pipeline per microservice work without creating 50 separate pipelines to maintain?**
 > "Pipeline-as-code with shared templates. Pattern: each service repository contains a minimal pipeline configuration (reference to a shared pipeline template + service-specific variables). The shared template is maintained by the platform team and defines: build (docker build), test (unit + integration), push to registry, deploy to staging, integration tests in staging, deploy to production (if tests pass). Service teams only configure: service name, port, environment-specific variables. When the platform team updates the shared template (e.g., adds a security scan step), all 50 services automatically pick up the change. Tools: GitHub Actions reusable workflows, GitLab CI templates, or Argo Workflows shared templates. ArgoCD for GitOps-based deployment: the pipeline updates a Helm values file in a GitOps repo; ArgoCD detects the change and reconciles the cluster state."
 
 *What separates good from great:* "The platform team should own and version the shared pipeline template like a product. New steps (SAST scan, license check) are added to the template and rolled out to all services. Service teams focus on writing service code, not maintaining CI/CD infrastructure. This is the 'golden path' pattern for developer platforms."
 
 ---
 
-#### Q7
-**"What is GitOps and how does it apply to microservices deployment?"**
+**[SENIOR] Q7 - [MECHANISM] What is GitOps and how does it apply to microservices deployment?**
 > "GitOps is a deployment model where the desired state of the cluster is stored in a Git repository, and an automated agent (ArgoCD, Flux) continuously reconciles the cluster to match the repository state. The workflow: a developer merges a change. The CI pipeline builds the new Docker image and pushes to the registry. The pipeline updates the image tag in the GitOps repository (a Helm values file or Kubernetes manifest). ArgoCD detects the Git change and deploys the new version to the cluster. Benefits: Git becomes the audit log of all deployments (who deployed what, when, and what changed). Rollback is a Git revert followed by auto-deployment. Cluster state is always reproducible from the Git repository. The 'drift detection' feature: if someone manually changes a resource in the cluster, ArgoCD detects the drift and either alerts or auto-reverts to the Git state."
 
 *What separates good from great:* "GitOps requires discipline: the GitOps repository must be the single source of truth. No manual kubectl apply in production. No 'quick fixes' applied directly to the cluster. If someone bypasses the GitOps flow for an emergency, they must immediately commit the same change to the repository to prevent the agent from reverting their fix."

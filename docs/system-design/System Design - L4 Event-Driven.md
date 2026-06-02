@@ -114,7 +114,7 @@ Benefits:
   Event-driven integration: publish events to other services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Sourcing and CQRS example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **CQRS architecture:**
 
@@ -155,7 +155,7 @@ With CQRS:
     Trade-off: read may show stale data briefly after write
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Sourcing and CQRS example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -321,7 +321,7 @@ public class OrderQueryService {
 }
 ```
 
-> **Code walkthrough:** The projection handler is the glue between write and read
+> **Code walkthrough:** The projection handler is the glue between write and readice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sides. It listens to events from the event store (Axon: @EventHandler, Kafka
 > topic, or event bus). When OrderPlacedEvent arrives: it creates a denormalized
 > OrderSummary (optimized for list queries) in PostgreSQL AND a Redis cache entry
@@ -441,7 +441,7 @@ writes. Alert on: consumer lag > 1000 events (or lag > acceptable staleness wind
 
 ---
 
-#### Q1 - What problem does Event Sourcing solve that traditional CRUD can't?
+**[JUNIOR] Q1 - [CONCEPTUAL] What problem does Event Sourcing solve that traditional CRUD can't?**
 
 ```
 Problems with CRUD state model:
@@ -478,7 +478,7 @@ What CRUD still beats Event Sourcing at:
   Storage: events grow without bound vs current state (static size)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "storage grows without bound" concern is
 real at scale. An order aggregate might have 10-20 events over its lifetime.
@@ -491,11 +491,11 @@ events stay hot. (3) event store partitioning: different retention per aggregate
 
 ---
 
-#### Q2 - How do you handle eventual consistency in CQRS from a user experience perspective?
+**[JUNIOR] Q2 - [BEHAVIORAL] How do you handle eventual consistency in CQRS from a user experience perspective?**
 
 Eventual consistency in CQRS UI: the read model lags behind the write model.
 
-```
+```plaintext
 Problem:
   User: places order (command side processes, writes event)
   User: immediately navigates to "my orders" page
@@ -540,7 +540,7 @@ Design principle:
   Others: accept eventual consistency (background refresh)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Optimistic UI approach (client manages
 its own state locally) is the most user-friendly solution and doesn't add
@@ -554,7 +554,7 @@ state. Rare, but must be handled gracefully.
 
 ---
 
-#### Q3 - How do you evolve event schemas over time?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you evolve event schemas over time?**
 
 Event schema evolution: events are immutable and permanent - changes are hard.
 
@@ -604,7 +604,7 @@ Breaking changes to avoid:
   Always add, never remove or rename.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The discipline of "always add, never remove
 or rename" fields in events is the non-negotiable rule for event sourcing at scale.
@@ -618,11 +618,11 @@ a breaking change is made accidentally, and replaying history fails.
 
 ---
 
-#### Q4 - How do you handle GDPR and the "right to be forgotten" with Event Sourcing?
+**[MID] Q4 - [CONCEPTUAL] How do you handle GDPR and the "right to be forgotten" with Event Sourcing?**
 
 GDPR + Event Sourcing tension: immutable events vs right to erasure.
 
-```
+```plaintext
 Problem:
   Event Sourcing: events are immutable and permanent
   GDPR: user can request deletion of their personal data
@@ -666,7 +666,7 @@ Solutions:
   Tradeoff: simpler than crypto-shredding, but breaks event completeness
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Crypto-shredding is the production pattern
 recommended by Martin Kleppmann and used by companies like Zalando (who published
@@ -680,7 +680,7 @@ your personal information in our event logs." This is legally defensible.
 
 ---
 
-#### Q5 - How do you design snapshots for Event Sourcing?
+**[MID] Q5 - [ARCHITECTURE] How do you design snapshots for Event Sourcing?**
 
 Snapshots: optimization for aggregates with long event histories.
 
@@ -734,7 +734,7 @@ Snapshot versioning:
     Or: upcaster for snapshots (same as events)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Snapshot invalidation after code deployment
 is the operational gotcha. If you deploy new aggregate code that changes state
@@ -748,11 +748,11 @@ applying a new event handler to an old-format snapshot.
 
 ---
 
-#### Q6 - How does Event Sourcing interact with microservices?
+**[MID] Q6 - [CONCEPTUAL] How does Event Sourcing interact with microservices?**
 
 Event Sourcing in microservices: events as integration contracts.
 
-```
+```plaintext
 Domain events vs integration events:
   Domain events: internal to aggregate (OrderAggregate.ItemAdded)
     Purpose: rebuild state within the aggregate
@@ -800,7 +800,7 @@ Event publishing patterns:
   OrderPlaced -> InventoryReserveFailed: cancel order + notify customer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Transactional Outbox pattern solves the
 dual-write problem: writing to the event store AND publishing to Kafka in the same
@@ -813,7 +813,7 @@ pattern used by companies like Grab, Uber for their domain event pipelines.
 
 ---
 
-#### Q7 - How do you build a projection efficiently for billions of events?
+**[SENIOR] Q7 - [HANDS-ON] How do you build a projection efficiently for billions of events?**
 
 Large-scale projection building: performance at extreme event volumes.
 
@@ -859,7 +859,7 @@ Optimization strategies:
   Zero downtime, no impact on running system
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The key insight for large-scale projection
 rebuild is that you don't have to rebuild from event zero. If you have
@@ -872,11 +872,11 @@ add new ones: snapshot-based rebuild is 100x faster than full history replay.
 
 ---
 
-#### Q8 - What is a Saga and how does it manage distributed transactions?
+**[SENIOR] Q8 - [CONCEPTUAL] What is a Saga and how does it manage distributed transactions?**
 
 Saga: long-running distributed transaction using events and compensations.
 
-```
+```plaintext
 Problem with 2-Phase Commit (2PC) in microservices:
   2PC: all services lock resources until coordinator commits
   Microservices: services owned by different teams, different DBs
@@ -944,7 +944,7 @@ Orchestration Saga (centralized):
     }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using async/await. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Saga compensating transactions must be
 idempotent. If the compensation command is sent twice (retry due to network issue):
@@ -959,7 +959,7 @@ manual intervention for edge cases.
 
 ---
 
-#### Q9 - How do you test Event Sourcing systems?
+**[SENIOR] Q9 - [ARCHITECTURE] How do you test Event Sourcing systems?**
 
 Testing Event Sourcing: given/when/then format matches the model.
 
@@ -1033,7 +1033,7 @@ Integration/acceptance testing:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The aggregate unit test pattern (Given/When/Then)
 is the key testing technique for Event Sourcing. Unlike mock-based unit tests,
@@ -1048,11 +1048,11 @@ process the event).
 
 ---
 
-#### Q10 - What are the costs and when should you NOT use Event Sourcing?
+**[STAFF] Q10 - [CONCEPTUAL] What are the costs and when should you NOT use Event Sourcing?**
 
 Event Sourcing is not always the right choice.
 
-```
+```plaintext
 Real costs:
 
 1. Eventual consistency complexity:
@@ -1095,7 +1095,7 @@ When Event Sourcing is the right choice:
   Time-series analysis (how did state evolve?)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "auditability is a core feature" criterion
 is the most reliable indicator for Event Sourcing. Financial applications (every
@@ -1110,7 +1110,7 @@ context (not for the whole system at once).
 
 ---
 
-#### Q11 - How does Event Sourcing support temporal queries?
+**[STAFF] Q11 - [CONCEPTUAL] How does Event Sourcing support temporal queries?**
 
 Temporal queries: "What was the state at time T?"
 
@@ -1159,7 +1159,7 @@ Audit log projection (natural use):
   Possible only because of Event Sourcing (events are authoritative)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Temporal queries are the "killer app" of Event
 Sourcing for regulated industries. "What was the patient's medication at 3pm on
@@ -1172,7 +1172,7 @@ Sourcing's complexity for these domains even if no other benefit were present.
 
 ---
 
-#### Q12 - Design an event-sourced e-commerce order system for 1M orders/day.
+**[STAFF] Q12 - [ARCHITECTURE] Design an event-sourced e-commerce order system for 1M orders/day.**
 
 System design: high-scale event-sourced order processing.
 
@@ -1228,7 +1228,7 @@ Monitoring:
   Alert: consumer lag > 5000 events (projection falling behind)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The projection scaling independence is the
 architectural strength. Each projection consumer (order-list, analytics, search)

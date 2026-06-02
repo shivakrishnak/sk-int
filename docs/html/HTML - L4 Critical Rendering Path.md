@@ -295,7 +295,7 @@ THE CRITICAL PATH METRIC:
   First Paint: RTT2 or RTT3 (JS doesn't block)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -368,7 +368,7 @@ without violating the browser's correctness guarantees.
 </html>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: optimized CRP -->
@@ -436,7 +436,7 @@ without violating the browser's correctness guarantees.
 </html>
 ```
 
-> **Code walkthrough:** The optimized page eliminates three CRP
+> **Code walkthrough:** The optimized page eliminates three CRPice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > bottlenecks. Inline critical CSS removes the CSS network round
 > trip for above-fold styles - the render tree can be built using
 > only inline styles, allowing a first paint before `/full-styles.css`
@@ -452,20 +452,20 @@ without violating the browser's correctness guarantees.
 
 ### ⚖️ Comparison Table
 
-| Property Type | Triggers | GPU? | Cost | Example Properties |
-|---|---|---|---|---|
-| Layout (reflow) | Layout + Paint + Composite | No | High | width, height, top, left, font-size, padding |
-| Paint | Paint + Composite | No | Medium | background, color, border-style, box-shadow |
-| Compositing only | Composite | Yes | Low | transform, opacity |
+| Property Type| Triggers| GPU?| Cost| Example Properties|
+|---|---|---|---------------------|--------------------------------------------|
+| Layout (reflow)| Layout + Paint + Composite| No| High| width, height, top, lef
+| Paint| Paint + Composite| No| Medium| background, color, border-style, box-sha
+| Compositing only| Composite| Yes| Low| transform, opacity|
 
-| Resource Type | Blocks Parsing | Blocks Rendering | Fix |
-|---|---|---|---|
-| CSS (external) | No | YES | Inline critical, async non-critical |
-| Script (no defer) | YES | YES (via CSS) | Add defer or async |
-| Script (defer) | No | No | Default choice |
-| Script (async) | No | No | Independent scripts only |
-| Images | No | No | Preload LCP image |
-| Fonts | No | Partially (FOIT) | preload + font-display |
+| Resource Type| Blocks Parsing| Blocks Rendering| Fix|
+|---|---------------------|----------------|-----------------------------------|
+| CSS (external)| No| YES| Inline critical, async non-critical|
+| Script (no defer)| YES| YES (via CSS)| Add defer or async|
+| Script (defer)| No| No| Default choice|
+| Script (async)| No| No| Independent scripts only|
+| Images| No| No| Preload LCP image|
+| Fonts| No| Partially (FOIT)| preload + font-display|
 
 ---
 
@@ -568,7 +568,7 @@ Analysis steps:
     should appear earlier in timeline
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Symptom: layout thrashing causing janky scroll/animation**
 
@@ -617,37 +617,37 @@ Or: use requestAnimationFrame to batch writes:
 Libraries: fastdom.js formalizes read/write batching
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Six CRP stages in order | 3-4 min | Sequence mastery |
-| Why CSS is render-blocking | 3 min | CSSOM + FOUC reasoning |
-| CSS before script creates hidden block | 3 min | Subtle interaction |
-| Layout vs paint vs composite | 3 min | Rendering cost tiers |
-| Layout thrashing - diagnosis and fix | 4-5 min | Production debugging |
-| Inline critical CSS strategy | 3-4 min | CRP optimization |
-| Preload scanner mechanics | 3 min | How browser parallelizes |
-| Layer promotion and will-change | 3-4 min | GPU compositing |
-| content-visibility and its effect on CRP | 3 min | Modern CRP |
-| Measuring CRP performance | 3-4 min | Tools + metrics |
-| LCP optimization from CRP perspective | 3-5 min | Core Web Vitals |
-| Script loading and CRP blocking chain | 4 min | defer/async CRP effect |
-| requestAnimationFrame and compositing | 3 min | Frame timing |
-| Server-side streaming and CRP | 4 min | SSR optimization |
-| HTTP/103 Early Hints and CRP | 3 min | Pre-HTML hints |
-| Speculative/lookahead parsing | 3 min | Preload scanner |
-| CRP in mobile/slow networks | 3 min | Real-world constraints |
-| CSS architecture for CRP (critical + async) | 3-4 min | Build strategy |
-| transform vs top/left for animation | 3 min | Compositing vs layout |
+| Scenario| Recommended Time| Key Signal|
+|-----|-----------------------------------------------|------------------------|
+| Six CRP stages in order| 3-4 min| Sequence mastery|
+| Why CSS is render-blocking| 3 min| CSSOM + FOUC reasoning|
+| CSS before script creates hidden block| 3 min| Subtle interaction|
+| Layout vs paint vs composite| 3 min| Rendering cost tiers|
+| Layout thrashing - diagnosis and fix| 4-5 min| Production debugging|
+| Inline critical CSS strategy| 3-4 min| CRP optimization|
+| Preload scanner mechanics| 3 min| How browser parallelizes|
+| Layer promotion and will-change| 3-4 min| GPU compositing|
+| content-visibility and its effect on CRP| 3 min| Modern CRP|
+| Measuring CRP performance| 3-4 min| Tools + metrics|
+| LCP optimization from CRP perspective| 3-5 min| Core Web Vitals|
+| Script loading and CRP blocking chain| 4 min| defer/async CRP effect|
+| requestAnimationFrame and compositing| 3 min| Frame timing|
+| Server-side streaming and CRP| 4 min| SSR optimization|
+| HTTP/103 Early Hints and CRP| 3 min| Pre-HTML hints|
+| Speculative/lookahead parsing| 3 min| Preload scanner|
+| CRP in mobile/slow networks| 3 min| Real-world constraints|
+| CSS architecture for CRP (critical + async)| 3-4 min| Build strategy|
+| transform vs top/left for animation| 3 min| Compositing vs layout|
 
 ---
 
-**Q1: What are the six stages of the Critical Rendering Path
+**[JUNIOR] Q1 - [MECHANISM] What are the six stages of the Critical Rendering Path**
 and what does each do?** `[JUNIOR]` DEFINITION
 
 *Why they ask:* Foundation question for all CRP topics.
@@ -715,8 +715,7 @@ and what does each do?** `[JUNIOR]` DEFINITION
 
 ---
 
-**Q2: Why is CSS render-blocking? Can you make it non-blocking?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] Why is CSS render-blocking? Can you make it non-blocking?**
 
 *Why they ask:* Core CRP understanding question.
 
@@ -797,12 +796,12 @@ and what does each do?** `[JUNIOR]` DEFINITION
 
 ---
 
-**Q3: How does JavaScript interact with the CRP? What is the
+**[MID] Q3 - [MECHANISM] How does JavaScript interact with the CRP? What is the**
 CSS-before-script blocking chain?** `[SENIOR]` MECHANISM
 
 *Why they ask:* The most subtle and commonly misunderstood CRP behavior.
 
-*Likely follow-up:* "What does defer do differently from async in the context of CRP?"
+*Likely follow-up:* "What does defer do differently from async in the context of
 
 > **Answer:**
 >
@@ -882,8 +881,7 @@ CSS-before-script blocking chain?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q4: What is layout thrashing and how do you diagnose and fix it?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q4 - [SCENARIO] What is layout thrashing and how do you diagnose and fix it?**
 
 *Why they ask:* Production performance engineering.
 
@@ -996,8 +994,7 @@ CSS-before-script blocking chain?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q5: What is the Preload Scanner and why does it matter for CRP?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] What is the Preload Scanner and why does it matter for CRP?**
 
 *Why they ask:* Advanced CRP knowledge.
 
@@ -1066,7 +1063,7 @@ CSS-before-script blocking chain?** `[SENIOR]` MECHANISM
 >    or add `<link rel="preload" href="/hero.jpg" as="image">`.
 >
 > *What separates good from great:* The preload scanner is the
-> main reason why resource ordering in `<head>` matters. A `<link rel="preload">`
+> main reason why resource ordering in `<head>` matters. A `<link rel="preload">
 > that appears BEFORE the `<script>` that blocks parsing gives
 > the preload scanner a chance to start the fetch before parsing
 > is blocked. A preload AFTER the parser-blocking script is only
@@ -1076,7 +1073,7 @@ CSS-before-script blocking chain?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q6: What is the difference between `transform` and `top/left`
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between `transform` and `top/left`**
 for animations?** `[SENIOR]` MECHANISM
 
 *Why they ask:* CSS rendering performance.
@@ -1167,8 +1164,7 @@ for animations?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q7: How do you measure CRP performance and set improvement targets?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q7 - [SCENARIO] How do you measure CRP performance and set improvement targets?**
 
 *Why they ask:* Measurement discipline.
 
@@ -1223,19 +1219,19 @@ for animations?** `[SENIOR]` MECHANISM
 > getLCP(metric => {
 >   console.log('LCP:', metric.value);
 >   // value in ms
->   // Good: < 2500
+>   // Pass: < 2500
 >   // Needs improvement: 2500 - 4000
 >   // Poor: > 4000
 >   sendToAnalytics(metric);
 > });
 >
 > // LCP threshold (Google CWV):
-> // Good: <= 2500ms
+> // Pass: <= 2500ms
 > // Needs improvement: 2500-4000ms
 > // Poor: > 4000ms
 >
 > // FCP threshold:
-> // Good: <= 1800ms
+> // Pass: <= 1800ms
 > // Needs improvement: 1800-3000ms
 > // Poor: > 3000ms
 > ```
@@ -1272,8 +1268,7 @@ for animations?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q8: How does inline critical CSS work and how do you generate it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q8 - [MECHANISM] How does inline critical CSS work and how do you generate it?**
 
 *Why they ask:* Most impactful single CRP optimization.
 
@@ -1375,8 +1370,7 @@ for animations?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q9: What is the impact of third-party scripts on the CRP?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q9 - [SCENARIO] What is the impact of third-party scripts on the CRP?**
 
 *Why they ask:* Real-world complexity; third-party scripts are
 a major source of CRP degradation.
@@ -1482,8 +1476,7 @@ a major source of CRP degradation.
 
 ---
 
-**Q10: What is render-blocking font loading and how do you fix it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q10 - [MECHANISM] What is render-blocking font loading and how do you fix it?**
 
 *Why they ask:* Fonts are a common, often overlooked CRP issue.
 
@@ -1592,8 +1585,7 @@ a major source of CRP degradation.
 
 ---
 
-**Q11: How does streaming HTML response affect CRP?** `[SENIOR]`
-MECHANISM
+**[STAFF] Q11 - [MECHANISM] How does streaming HTML response affect CRP?** `[SENIOR]`**
 
 *Why they ask:* Server-side performance strategy.
 
@@ -1640,7 +1632,7 @@ MECHANISM
 >     <!DOCTYPE html>
 >     <html>
 >     <head>
->       <link rel="preload" href="/product-hero.jpg" as="image" fetchpriority="high">
+>  <link rel="preload" href="/product-hero.jpg" as="image" fetchpriority="high">
 >       <link rel="stylesheet" href="/styles.css">
 >       <title>Product Page</title>
 >     </head>
@@ -1712,7 +1704,7 @@ MECHANISM
 
 ---
 
-**Q12: How do you optimize the CRP for above-the-fold rendering
+**[STAFF] Q12 - [MECHANISM] How do you optimize the CRP for above-the-fold rendering**
 in a high-traffic production site?** `[SENIOR]` SCENARIO
 
 *Why they ask:* System-level optimization question.
@@ -1809,12 +1801,12 @@ in a high-traffic production site?** `[SENIOR]` SCENARIO
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | 6 stages, render-blocking chain |
-| Hiring Manager | LCP impact, business metrics |
-| Bar Raiser | Preload scanner, streaming SSR, 103 Early Hints |
-| Peer Engineer | Layout thrashing fix, transform vs top/left |
+| Interviewer Type| Emphasis|
+|------------------------------|-----------------------------------------------|
+| Technical Panel| 6 stages, render-blocking chain|
+| Hiring Manager| LCP impact, business metrics|
+| Bar Raiser| Preload scanner, streaming SSR, 103 Early Hints|
+| Peer Engineer| Layout thrashing fix, transform vs top/left|
 
 ---
 
@@ -1899,7 +1891,7 @@ MEASUREMENT + ITERATION:
   - Review: CrUX data monthly, compare against competitors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Expected results with this architecture:**
 

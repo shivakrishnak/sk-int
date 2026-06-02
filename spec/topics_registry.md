@@ -47,6 +47,16 @@ This file is the **single source of truth** for the keyword generation rubric an
 | GraalVM | docs/graalvm/ | incomplete | GraalVM ecosystem, native-image AOT, SubstrateVM, polyglot engine, Truffle framework, and Spring Boot/Quarkus/Micronaut native integration (10 files, 34 keywords) |
 | Micronaut | docs/micronaut/ | incomplete | Micronaut framework, AOT compilation, HTTP client/server, data access, cloud-native patterns, and production deployment (10 files, 43 keywords) |
 | Quarkus | docs/quarkus/ | incomplete | Quarkus framework, Panache, reactive extensions, cloud-native deployment, GraalVM native image, and production depth (10 files, 43 keywords) |
+| Data Structures | docs/data-structures/ | planned | Arrays, linked lists, trees, graphs, heaps, hash tables, tries, B-trees, skip lists, bloom filters, and amortized analysis |
+| Algorithms | docs/algorithms/ | complete | Sorting, searching, dynamic programming, greedy, graph algorithms, string algorithms, complexity analysis, and problem-solving frameworks |
+| Operating Systems | docs/operating-systems/ | planned | Processes, threads, memory management, virtual memory, scheduling, file systems, IPC, synchronization, and container isolation primitives |
+| Computer Networks | docs/computer-networks/ | planned | TCP/IP, HTTP/2/3, DNS, TLS, WebSockets, load balancing, CDN, network debugging, and protocol design |
+| Git | docs/git/ | planned | Version control, branching strategies, rebasing, merge conflicts, hooks, monorepo workflows, and Git internals (objects, packfiles) |
+| Linux | docs/linux/ | planned | Shell scripting, process management, file permissions, systemd, networking tools, performance diagnosis, kernel tuning, and eBPF |
+| Testing | docs/testing/ | planned | JUnit 5, Mockito, integration testing, Testcontainers, TDD/BDD, contract testing, mutation testing, and test architecture at scale |
+| Security | docs/security/ | complete | OWASP Top 10, authentication/authorization, cryptography, secrets management, threat modeling, zero-trust, and compliance frameworks |
+| NoSQL | docs/nosql/ | complete | MongoDB, Redis, DynamoDB, Cassandra, data modeling patterns, CAP theorem applied, polyglot persistence, and LSM-tree internals |
+| GraphQL | docs/graphql/ | active | Schema design, resolvers, DataLoader, subscriptions, federation, persisted queries, and GraphQL vs REST decision frameworks |
 
 ## Level Coverage Rubric (MANDATORY)
 

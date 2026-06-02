@@ -108,7 +108,7 @@ function UserProfile({ user, messages }) {
 // Developer describes WHAT to show, not HOW to update
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why React Exists example demonstrates JavaScript pattern using SQL. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 **Why it matters:**
 
@@ -171,7 +171,7 @@ function Counter() {
 // No manual dependency tracking required
 ```
 
-> **Code walkthrough:** The imperative version requires the developer to
+> **Code walkthrough:** The imperative version requires the developer toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > manually list every DOM element that depends on `count`. When a new
 > dependency appears, you must remember to add it to the update function.
 > The React version defines the UI as a formula: what the output looks
@@ -244,8 +244,7 @@ Symptom: project started with Create React App (now deprecated and unmaintained)
 
 ---
 
-**Q1: Why did Facebook create React instead of using an existing framework?**
-`[JUNIOR]` HISTORY
+**[JUNIOR] Q1 - [MECHANISM] Why did Facebook create React instead of using an existing framework?**
 
 > **Answer:**
 >
@@ -406,7 +405,7 @@ function List({ items }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual DOM and Reconciliation Philosophy example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -427,6 +426,12 @@ optimizing DOM operations automatically.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // THE KEY PROP: most common virtual DOM misuse
@@ -462,7 +467,7 @@ function TodoList({ todos }) {
 // Input values stay with their data
 ```
 
-> **Code walkthrough:** The index-as-key bug is one of the most common
+> **Code walkthrough:** The index-as-key bug is one of the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > React mistakes. When items are reordered or inserted at the start of
 > the list, index keys shift: item that was at index 0 becomes index 1.
 > React thinks index-0 changed (because the data at that index is now
@@ -537,8 +542,7 @@ Symptom: state changes do not trigger re-renders; UI is stale after what appears
 
 ---
 
-**Q1: Why should you never use array index as the key prop?** `[JUNIOR]`
-FAILURE
+**[JUNIOR] Q1 - [FAILURE] Why should you never use array index as the key prop?** `[JUNIOR]`**
 
 > **Answer:**
 >
@@ -648,7 +652,7 @@ build tooling to the ecosystem.
 
 **Ecosystem map:**
 
-```
+```plaintext
 REACT ECOSYSTEM MAP:
 
   CORE:
@@ -699,7 +703,7 @@ REACT ECOSYSTEM MAP:
     esbuild/swc               - transpilation (fast)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Ecosystem Overview example demonstrates a key concept in practice using React hook. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decision framework:**
 
@@ -721,7 +725,7 @@ REACT ECOSYSTEM MAP:
 // E2E -> Playwright (preferred) or Cypress
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Ecosystem Overview example demonstrates React state management using React hook. **KEY MECHANISM:** useState returns [state, setter]; setter triggers a re-render with the new value. **WHY IT MATTERS:** calling setter during render causes infinite loop; setState is asynchronous - stale closures read old values. **TAKEAWAY: use functional updates (setState(prev => ...)) when next state depends on previous.**
 
 **Why it matters:**
 
@@ -780,7 +784,7 @@ function LoginForm({ onSubmit }) {
 }
 ```
 
-> **Code walkthrough:** TanStack Query manages all async data fetching
+> **Code walkthrough:** TanStack Query manages all async data fetchingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > concerns (loading states, error states, caching, background refetch)
 > with a single `useQuery` hook - replacing manual `useState`/`useEffect`
 > patterns for server data. Zustand's `create` function defines a store
@@ -853,7 +857,7 @@ Symptom: network tab shows hundreds of identical API requests; performance degra
 
 ---
 
-**Q1: How do you choose between Next.js and Vite for a new React
+**[JUNIOR] Q1 - [SCENARIO] How do you choose between Next.js and Vite for a new React**
 project?** `[SENIOR]` DECISION
 
 > **Answer:**

@@ -130,7 +130,7 @@ STEP 5: I/O investigation
   Fix: increase pool size, add circuit breaker, add caching
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -237,7 +237,7 @@ pause time and generates false leads.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Performance issue that changes after investigation (Heisenbug).**
-```
+```plaintext
 Symptom: production JVM shows 500ms P99 latency spikes
   Staging: cannot reproduce (all latency < 50ms)
   Added logging: spikes disappeared in production
@@ -280,7 +280,7 @@ Lesson: in performance debugging, the investigation method itself can change
   - Synchronous tracing (any tracing that writes synchronously to disk/network)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find: largest retained objects, ClassLoader leaks, duplicate strings example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -545,13 +545,13 @@ DECISION FLOWCHART:
   5. None of the above? -> G1 default
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The GC selection validation script shows the before/after
+> **Code walkthrough:** The GC selection validation script shows the before/afterice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > measurement process. Changing GC without measurement is guessing; measurement is how
 > you know if the change helped.
 
@@ -692,7 +692,7 @@ Fix:
     Note: still experimental in JDK 21, expected GA in JDK 25
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stall duration = GC latency spike duration = SLA impact example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -961,10 +961,10 @@ LAYER 3: Continuous JFR (always-on, incident post-mortem)
     jfr print --events jdk.ExecutionSample incident.jfr  <- CPU profile
     jfr print --events jdk.GarbageCollection incident.jfr  <- GC timeline
     jfr print --events jdk.JavaMonitorEnter incident.jfr  <- lock contention
-    jfr print --events jdk.ObjectAllocationInNewTLAB incident.jfr  <- allocators
+    jfr print --events jdk.ObjectAllocationInNewTLAB incident.jfr  <-...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1110,7 +1110,7 @@ you if the business logic is working.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Production incident: service degraded, no useful observability to diagnose.**
-```
+```plaintext
 Scenario: service P99 latency spikes from 50ms to 2000ms
   No JFR running ("we didn't set it up")
   No custom business metrics ("just the default spring actuator")
@@ -1147,13 +1147,13 @@ Prevention (to be set up before next incident):
   Incident runbook:
     Step 1: jcmd <pid> JFR.dump name=continuous filename=/tmp/incident_<timestamp>.jfr
     Step 2: kubectl cp <pod>:/tmp/incident_*.jfr ./  (retrieve from pod)
-    Step 3: jfr print --events jdk.ExecutionSample,jdk.GarbageCollection incident.jfr
+    Step 3: jfr print --events jdk.ExecutionSample,jdk.GarbageCollection...
     Step 4: analyze
 
   Cost: < 2% CPU overhead (JFR continuous) + < 1% (GC logs) = trivial
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -162,7 +162,7 @@ MITIGATION WITHOUT PROMISES (named functions):
   // Flatter structure but harder to follow the flow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Callbacks and Callback Hell example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -222,7 +222,7 @@ async function loadUserProfile(userId) {
 }
 ```
 
-> **Code walkthrough:** The deeply nested version demonstrates callback
+> **Code walkthrough:** The deeply nested version demonstrates callbackice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > hell: five levels of indentation, error handling repeated at each
 > level, and the overall flow is hard to read because you must trace
 > from the outermost function inward. The named function version flattens
@@ -300,7 +300,7 @@ const readFileAsync = (path, encoding) =>
 // Now: await readFileAsync('config.json', 'utf8')
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -318,8 +318,7 @@ const readFileAsync = (path, encoding) =>
 
 ---
 
-**Q1: What is inversion of control in the context of callbacks?**
-`[MID]` CONCEPT
+**[MID] Q1 - [CONCEPT] What is inversion of control in the context of callbacks?**
 
 > **Answer:**
 >
@@ -558,7 +557,7 @@ MICROTASK QUEUE:
     // Sync -> microtasks -> macrotasks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Promises and Promise Chaining example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -634,7 +633,7 @@ withTimeout(fetchUser(userId), 5000)
 // If fetchUser takes > 5 seconds: "Timeout after 5000ms"
 ```
 
-> **Code walkthrough:** The sequential approach chains `.then()` calls,
+> **Code walkthrough:** The sequential approach chains `.then()` calls,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > passing intermediate results via bundle objects `{ user, posts }`.
 > Each step waits for the previous before starting - total time equals
 > the sum. The parallel approach uses `Promise.all` to start
@@ -719,7 +718,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -737,8 +736,7 @@ process.on('unhandledRejection', (reason, promise) => {
 
 ---
 
-**Q1: What happens when an error is thrown inside a .then callback?**
-`[MID]` MECHANISM
+**[MID] Q1 - [MECHANISM] What happens when an error is thrown inside a .then callback?**
 
 > **Answer:**
 >

@@ -123,13 +123,18 @@ Spy on existing method:
   spy.mockRestore(); // restore original implementation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Mocking with Jest (jest.mock, spies, stubs) example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Mock cleanup:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: mock state accumulates across tests
@@ -173,7 +178,7 @@ test('shows user name after load', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Mocking with Jest (jest.mock, spies, stubs) example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **WHAT BREAKS: prefer type guards over type assertions for safe narrowing of union types.**
 
 **Example (Production) - Module mock with factory:**
 
@@ -226,7 +231,7 @@ test('logs error to console on API failure', async () => {
 });
 ```
 
-> **Code walkthrough:** The BAD example uses a `jest.fn()` declared
+> **Code walkthrough:** The BAD example uses a `jest.fn()` declaredice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in module scope - mock state (call count, recorded args) accumulates
 > across tests because there is no reset. `clearMocks: true` in
 > jest.config.js automatically clears mock state between tests.
@@ -490,13 +495,18 @@ MSW v2 architecture:
   afterAll(() => server.close());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Mocking HTTP Requests with MSW example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Library mock vs MSW:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: mocking fetch directly (library-coupled, brittle)
@@ -549,7 +559,7 @@ test('shows error when API fails', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Mocking HTTP Requests with MSW example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **WHAT BREAKS: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 **Example (Production) - Shared handlers and msw.config.ts:**
 
@@ -726,7 +736,7 @@ test('shows error on network failure', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Using `HttpResponse.error()` to
 simulate actual network failures (connection refused, DNS failure)

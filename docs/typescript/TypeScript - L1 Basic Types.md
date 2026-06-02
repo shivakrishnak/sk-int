@@ -162,7 +162,7 @@ NEVER IN EXHAUSTIVE CHECKS:
   // This catches missing cases at compile time!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Primitive Types example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -189,6 +189,11 @@ a union. `unknown` at API boundaries forces explicit handling.
 ### 💻 Code Example
 
 **Type annotations, inference, and special types in practice**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // PRIMITIVE TYPES:
@@ -243,7 +248,7 @@ type Role = typeof ROLES[number];  // 'admin' | 'user' | 'viewer'
 // Adding a role to ROLES automatically updates the type
 ```
 
-> **Code walkthrough:** The `never` exhaustive check pattern is one
+> **Code walkthrough:** The `never` exhaustive check pattern is oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of TypeScript's most powerful patterns. By assigning `shape` to a
 > `never` variable in the `default` case, we get a compile error if
 > any case is not handled. When `'pending'` is added to `Status`, the
@@ -309,6 +314,11 @@ for function callbacks.
 
 **Non-null assertion causing runtime crashes:**
 
+
+```typescript
+// BAD: using any defeats type safety
+```
+
 ```typescript
 // SYMPTOM: TypeScript passes but runtime crashes with null reference
 // CAUSE: overuse of non-null assertion operator (!)
@@ -331,7 +341,7 @@ element.addEventListener('click', handleSubmit);
 // Only proceeds if element exists
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -349,8 +359,7 @@ element.addEventListener('click', handleSubmit);
 
 ---
 
-**Q1: What is the difference between 'any' and 'unknown'?** `[MID]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between 'any' and 'unknown'?** `[MID]`**
 
 > **Answer:**
 >
@@ -376,7 +385,7 @@ MECHANISM
 > only during migration or for third-party types that are genuinely
 > unusable. ESLint `@typescript-eslint/no-explicit-any` enforces this.
 
-**Q2: What is the 'never' type and how do you use it for exhaustive
+**[JUNIOR] Q2 - [MECHANISM] What is the 'never' type and how do you use it for exhaustive**
 checks?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -406,7 +415,7 @@ checks?** `[SENIOR]` MECHANISM
 > This prevents the common "we added a new value to the enum but
 > forgot to update the switch statement" production bug.
 
-**Q3: What are literal types and how do they differ from their
+**[JUNIOR] Q3 - [MECHANISM] What are literal types and how do they differ from their**
 primitive parent types?** `[MID]` MECHANISM
 
 > **Answer:**
@@ -602,7 +611,7 @@ WHEN TO USE EACH:
     - Simple object shapes with no need for declaration merging
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Interfaces and Type Aliases example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -683,7 +692,7 @@ type Pet = Animal & { owner: string };
 // Same result, different syntax
 ```
 
-> **Code walkthrough:** The discriminated union `ApiResult<T>` pattern
+> **Code walkthrough:** The discriminated union `ApiResult<T>` patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > shows where type aliases are essential: this 3-way union cannot be
 > expressed as an interface. In each `switch` branch, TypeScript narrows
 > the type - `result.data` is only accessible in the `'success'` branch
@@ -768,7 +777,7 @@ interface String {
 //       *.d.ts file with a clear comment explaining the augmentation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 ---
 
@@ -786,8 +795,7 @@ interface String {
 
 ---
 
-**Q1: Can a type alias extend an interface and vice versa?** `[MID]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] Can a type alias extend an interface and vice versa?** `[MID]`**
 
 > **Answer:**
 >
@@ -823,8 +831,7 @@ MECHANISM
 > consumers - assuming you don't use declaration merging, which is
 > interface-only.
 
-**Q2: What are index signatures and when do you use them?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What are index signatures and when do you use them?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -865,8 +872,7 @@ MECHANISM
 > better than an index signature because TypeScript knows keys might
 > be absent (`.get()` returns `V | undefined`).
 
-**Q3: What does 'readonly' do and when should you use it?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] What does 'readonly' do and when should you use it?** `[JUNIOR]`**
 
 > **Answer:**
 >
@@ -1071,7 +1077,7 @@ ENUM PITFALLS:
   // Fine for string enums; numeric enums are less readable in JSON
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enums and Literal Types example demonstrates a key concept in practice using enum. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -1149,7 +1155,7 @@ if (level >= LogLevel.Warning) {
 }
 ```
 
-> **Code walkthrough:** The numeric enum pitfall is significant: TypeScript
+> **Code walkthrough:** The numeric enum pitfall is significant: TypeScriptice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > allows any `number` to be assigned to a numeric enum type. This is
 > a design quirk for historical compatibility. String enums (`'ACTIVE'`)
 > don't have this problem - TypeScript requires the exact string value.
@@ -1244,7 +1250,7 @@ type Direction = 'N' | 'S';
 export const Direction = { North: 'N', South: 'S' } as const;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition using enum. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -1262,8 +1268,7 @@ export const Direction = { North: 'N', South: 'S' } as const;
 
 ---
 
-**Q1: What is the problem with numeric enums in TypeScript?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What is the problem with numeric enums in TypeScript?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -1293,8 +1298,7 @@ MECHANISM
 > a runtime validation. For pure TypeScript code: use string enums or
 > literal unions.
 
-**Q2: How do you create a type that represents all values of an object?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] How do you create a type that represents all values of an object?**
 
 > **Answer:**
 >
@@ -1334,8 +1338,7 @@ MECHANISM
 > eliminates the maintenance burden of keeping a separate enum in sync
 > with a lookup object.
 
-**Q3: When would you use a regular enum over a literal union?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q3 - [TRADE-OFF] When would you use a regular enum over a literal union?** `[SENIOR]`**
 
 > **Answer:**
 >

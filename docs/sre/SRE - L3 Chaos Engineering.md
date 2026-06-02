@@ -175,7 +175,7 @@ CHAOS EXPERIMENT TYPES (ordered by risk level)
     Full dependency outage
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Chaos Engineering Principles and Practice example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The highest-value chaos experiments are the ones that disprove a
@@ -210,6 +210,12 @@ without clear recovery.
 ### 💻 Code Example
 
 **Example 1: Kubernetes pod failure chaos experiment**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: No chaos experiment ever run on pod failure.
@@ -270,7 +276,7 @@ spec:
         data: "200"
 ```
 
-> **Code walkthrough:** The BAD state is an unvalidated assumption
+> **Code walkthrough:** The BAD state is an unvalidated assumptionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > about Kubernetes pod recovery. The GOOD experiment uses LitmusChaos
 > to kill 33% of pods (1 of 3) every 10 seconds for 30 seconds while
 > continuously checking HTTP availability. The steady-state probe runs
@@ -281,6 +287,11 @@ spec:
 > rolling restart latency.
 
 **Example 2: Dependency timeout chaos experiment**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -388,7 +399,7 @@ def run_latency_injection_experiment(
     }
 ```
 
-> **Code walkthrough:** This experiment injects 5-second network latency
+> **Code walkthrough:** This experiment injects 5-second network latencyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (simulating a slow downstream dependency) using Linux tc (traffic control)
 > and measures the service's error rate and latency during the injection.
 > The hypothesis: the service handles dependency latency gracefully with
@@ -802,7 +813,7 @@ PRR OUTCOMES
     -> Service not approved until gaps resolved
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Production Readiness Review (PRR) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The PRR is most effective when it is not a gate controlled by the SRE
@@ -830,6 +841,12 @@ rather than a full PRR.
 
 **Example 1: PRR checklist automation**
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+{% raw %}
 ```python
 # BAD: PRR conducted manually from a Google Doc
 # checklist. Different reviewers check different things.
@@ -965,8 +982,9 @@ def generate_prr_report(
         ]
     }
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD approach relies on a manual checklist
+> **Code walkthrough:** The BAD approach relies on a manual checklistice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that is inconsistently applied. The GOOD approach automates the PRR
 > by querying Prometheus for required metrics and AlertManager for required
 > alert configurations. Critical failures (missing observability or alerting)

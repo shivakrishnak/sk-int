@@ -77,7 +77,7 @@ AZ-1 failure:
   Data loss: 0 (ISR replicas are up to date)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging High Availability and Disaster Recovery example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Rack awareness configuration:
 ```
@@ -94,7 +94,7 @@ Topic creation with rack-aware replica assignment:
   # different racks (AZs) when rack config is set
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This different racks (AZs) when rack config is set example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 MirrorMaker 2 for DR:
 ```
@@ -116,7 +116,7 @@ Failover steps:
    RPO: seconds (replication lag at time of failure)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This different racks (AZs) when rack config is set example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 HA and DR are different failure scenarios requiring different solutions. HA handles broker-level and AZ-level failures within a cluster (automatic recovery, seconds). DR handles region-level failures (manual or semi-automated failover, minutes). Design both independently.
@@ -325,7 +325,7 @@ kafka-topics.sh --bootstrap-server kafka:9092 \
 # Look for: OutOfDisk, NetworkException, GC pause
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: OutOfDisk, NetworkException, GC pause example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: increase producer `delivery.timeout.ms` to 120000 to survive the election window. Recover or replace the failed broker. Monitor ISR recovery.
 
@@ -352,7 +352,7 @@ kafka-consumer-groups.sh \
 # Primary: 100 MB/s -> MM2 must process 100 MB/s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Primary: 100 MB/s -> MM2 must process 100 MB/s example demonstrates HTTP request from shell using Kafka messaging. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: scale MM2 Connect workers, increase task count in connector config, or address DR cluster performance issues.
 
@@ -384,7 +384,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 | Scale | 3 min | 1-2 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - Definition
+**[JUNIOR] Q1 - [CONCEPTUAL] Definition**
 **"What is the difference between high availability and disaster recovery for Kafka?"**
 
 *What to say:*
@@ -394,7 +394,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q2 - Mechanism
+**[JUNIOR] Q2 - [CONCEPTUAL] Mechanism**
 **"Walk me through what happens step by step when a Kafka broker fails."**
 
 *What to say:*
@@ -404,7 +404,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q3 - Comparison
+**[JUNIOR] Q3 - [CONCEPTUAL] Comparison**
 **"Compare Kafka's MirrorMaker 2 to Confluent Cluster Linking for disaster recovery."**
 
 *What to say:*
@@ -414,7 +414,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q4 - Scenario
+**[MID] Q4 - [CONCEPTUAL] Scenario**
 **"Design a Kafka deployment for an e-commerce platform that requires 99.99% availability and RPO under 30 seconds."**
 
 *What to say:*
@@ -424,7 +424,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q5 - Debugging
+**[MID] Q5 - [DEBUGGING] Debugging**
 **"Your Kafka cluster is healthy but producers are experiencing 5-second latency spikes every 30 minutes. What is causing this?"**
 
 *What to say:*
@@ -434,7 +434,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q6 - Deep Dive
+**[MID] Q6 - [CONCEPTUAL] Deep Dive**
 **"Explain how KRaft (KIP-500) changes Kafka's metadata management and HA properties."**
 
 *What to say:*
@@ -444,7 +444,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q7 - Scenario
+**[SENIOR] Q7 - [CONCEPTUAL] Scenario**
 **"You need to perform a zero-downtime upgrade of a Kafka cluster from version 2.8 to 3.4. Walk me through the process."**
 
 *What to say:*
@@ -454,7 +454,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q8 - Behavioral
+**[SENIOR] Q8 - [CONCEPTUAL] Behavioral**
 **"Tell me about a Kafka availability incident you were involved in or investigated."**
 
 *What to say (structure):*
@@ -464,7 +464,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q9 - Scale
+**[SENIOR] Q9 - [ARCHITECTURE] Scale**
 **"How does Kafka HA change when you scale from 3 to 30 brokers across multiple regions?"**
 
 *What to say:*
@@ -474,7 +474,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q10 - Misconception
+**[STAFF] Q10 - [CONCEPTUAL] Misconception**
 **"Our Kafka cluster has 3 brokers and replication factor 3, so we have no single point of failure, right?"**
 
 *What to say:*
@@ -484,7 +484,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q11 - Deep Dive
+**[STAFF] Q11 - [CONCEPTUAL] Deep Dive**
 **"What is the unclean leader election and when would you enable it despite the data loss risk?"**
 
 *What to say:*
@@ -494,7 +494,7 @@ Fix: This requires manual reconciliation. Identify which cluster was the designa
 
 ---
 
-#### Q12 - Edge Case
+**[STAFF] Q12 - [CONCEPTUAL] Edge Case**
 **"What happens to Kafka consumers during a leader election - do they lose messages?"**
 
 *What to say:*
@@ -562,7 +562,7 @@ If cross-region write latency is not acceptable:
   Accept RPO=milliseconds (not truly 0).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key design decisions:**
 1. RPO=0 strictly requires synchronous replication - no async solution guarantees zero data loss

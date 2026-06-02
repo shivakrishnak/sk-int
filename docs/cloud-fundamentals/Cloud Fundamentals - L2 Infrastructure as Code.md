@@ -109,7 +109,7 @@ IaC:
     -> "Works in dev" always reproducible in prod
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Infrastructure as Code Fundamentals example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Terraform State Machine:**
 
@@ -128,11 +128,17 @@ REPLACEMENT WARNING:
     -> Solution: use target flag or prevent_destroy lifecycle
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Infrastructure as Code Fundamentals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```hcl
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```hcl
 # BAD: Hard-coded, no reuse, no environments
@@ -211,7 +217,7 @@ terraform {
 }
 ```
 
-> **Code walkthrough:** The BAD example has a hardcoded AMI ID
+> **Code walkthrough:** The BAD example has a hardcoded AMI IDice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that is region-specific and becomes stale as security patches
 > are released. The GOOD example uses a data source to always
 > fetch the latest Amazon Linux 2023 AMI. The validation block
@@ -301,7 +307,7 @@ for rc in plan['resource_changes']:
 # Check which attribute triggered replacement
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check which attribute triggered replacement example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Use -target for non-destructive changes first.
 Take a manual snapshot. Apply the destructive change separately.
@@ -325,7 +331,7 @@ terraform force-unlock LOCK_ID
 aws dynamodb scan --table-name terraform-state-lock
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for stale lock: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -339,8 +345,7 @@ aws dynamodb scan --table-name terraform-state-lock
 | Debugging | 1 | Diagnosing plan vs apply divergence |
 | Behavioral | 2 | Production drift, greenfield IaC adoption |
 
-**Q1. What is the difference between declarative and imperative
-IaC, and why does declarative win for cloud infrastructure?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between declarative and imperative IaC, and why does declarative win for cloud infrastructure?**
 
 Imperative IaC (scripts, Ansible): you describe the steps to reach
 the desired state. "Create bucket, set ACL, attach policy." The tool
@@ -371,7 +376,7 @@ but overusing it indicates design problems in the module structure.
 
 ---
 
-**Q2. What is infrastructure drift and why is it dangerous?**
+**[JUNIOR] Q2 - [DESIGN] What is infrastructure drift and why is it dangerous?**
 
 Drift: divergence between the infrastructure described in IaC code
 and the actual state of the live infrastructure. Common causes:
@@ -401,7 +406,7 @@ terraform show -json plan.tfplan | \
   jq '.resource_changes[] | select(.change.actions != ["no-op"])'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In CI: run terraform plan daily, alert on exit code 2 example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Implementing scheduled drift
 detection in CI (daily plan + alert on drift) rather than discovering
@@ -410,7 +415,7 @@ drift found by scheduled detection is a planned remediation.
 
 ---
 
-**Q3. What is idempotency in IaC and what breaks it?**
+**[JUNIOR] Q3 - [FAILURE] What is idempotency in IaC and what breaks it?**
 
 Idempotency: applying the same IaC code multiple times produces the
 same result as applying it once. The second and subsequent runs
@@ -442,7 +447,7 @@ resource "aws_s3_bucket" "app" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stable name unless vpc_id changes example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that idempotency is not
 guaranteed by declaring resources - it requires avoiding all
@@ -451,8 +456,7 @@ attributes that cause perpetual drift in plan output.
 
 ---
 
-**Q4. DEBUGGING: Your `terraform apply` fails with a state lock
-error. How do you safely resolve it?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Your `terraform apply` fails with a state lock error. How do you safely resolve it?**
 
 ```bash
 # Error message:
@@ -482,7 +486,7 @@ terraform plan  # confirm state is consistent
 terraform apply
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 4: After unlock, run plan before apply: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Never running `force-unlock`
 without first confirming the lock holder is dead. A concurrent
@@ -492,7 +496,7 @@ Confirmation requires checking CI logs, not just the lock timestamp.
 
 ---
 
-**Q5. How do you handle secrets in IaC code safely?**
+**[MID] Q5 - [SCENARIO] How do you handle secrets in IaC code safely?**
 
 Secrets (passwords, API keys, TLS certificates) must never appear
 in plaintext in Terraform code or state files.
@@ -508,7 +512,7 @@ resource "aws_db_instance" "main" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Still stored in state! (see Pattern 2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 2 - Set sensitive flag + encrypt state:
 ```hcl
@@ -526,7 +530,7 @@ terraform {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The value IS stored in state. Use encrypted S3 + KMS for state: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pattern 3 - Generate and store in Secrets Manager (not in state):
 ```hcl
@@ -536,7 +540,7 @@ resource "aws_secretsmanager_secret_rotation" "db" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Terraform only manages the existence of the secret example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that Terraform state files
 contain all resource attribute values in plaintext JSON by default,
@@ -545,7 +549,7 @@ with KMS is non-optional when secrets are managed through Terraform.
 
 ---
 
-**Q6. TRADE-OFF: When is IaC not worth the overhead?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: When is IaC not worth the overhead?**
 
 IaC adds overhead: learning curve, state management, tooling setup,
 CI/CD integration, code review for infrastructure changes.
@@ -574,8 +578,7 @@ becoming a bottleneck that slows down exploration phases.
 
 ---
 
-**Q7. What is a Terraform workspace and when should you use it
-(and avoid it)?**
+**[SENIOR] Q7 - [SCENARIO] What is a Terraform workspace and when should you use it (and avoid it)?**
 
 Terraform workspaces: multiple named state files within a single
 backend configuration. `terraform workspace new staging` creates a
@@ -595,7 +598,7 @@ Workspace limitations:
   # Conditional logic in IaC = complexity antipattern
   ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conditional logic in IaC = complexity antipattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Preferred alternative (Terragrunt or directory-per-env):
 ```
@@ -607,7 +610,7 @@ infra/
     prod/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conditional logic in IaC = complexity antipattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Each environment directory has its own state and variables.
 No `terraform.workspace` conditionals in module code.
@@ -619,8 +622,7 @@ environment-specific conditionals that make the codebase fragile.
 
 ---
 
-**Q8. How do you implement and manage sensitive data in
-Terraform output values?**
+**[SENIOR] Q8 - [SCENARIO] How do you implement and manage sensitive data in Terraform output values?**
 
 ```hcl
 # Mark outputs as sensitive:
@@ -640,7 +642,7 @@ DB_PASS=$(terraform output -raw db_password)
 export DB_PASS  # do not echo or log this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In CI pipeline: use sensitive variable in subsequent steps: example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Better pattern: avoid outputting secrets from Terraform entirely.
 Instead, store the secret in Secrets Manager and output the
@@ -654,7 +656,7 @@ output "db_secret_arn" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This does not expose the value example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Secret ARN pattern. It
 avoids sensitive outputs entirely while still giving downstream
@@ -663,8 +665,7 @@ never in Terraform state or CI logs.
 
 ---
 
-**Q9. BEHAVIORAL: You discover production infrastructure differs
-from your Terraform code. How do you handle this?**
+**[SENIOR] Q9 - [DESIGN] BEHAVIORAL: You discover production infrastructure differs from your Terraform code. How do you handle this?**
 
 Step 1: Assess scope of drift:
 ```bash
@@ -674,7 +675,7 @@ terraform show -json drift.tfplan | \
   {resource: .address, actions: .change.actions}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This does not expose the value example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Categorize the drift:
 - Security-related drift (IAM changes, security groups): treat as
@@ -887,7 +888,7 @@ const bucket = new Bucket(this, 'MyBucket', {
 // L2 construct sets sensible defaults
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Terraform vs CloudFormation vs CDK example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -972,7 +973,7 @@ export class AppStack extends cdk.Stack {
 }
 ```
 
-> **Code walkthrough:** This CDK stack deploys a complete
+> **Code walkthrough:** This CDK stack deploys a completeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > 3-tier architecture in ~60 lines. The L3 construct
 > `ApplicationLoadBalancedFargateService` provisions an ALB,
 > target group, ECS service, task definition, and IAM roles
@@ -1057,7 +1058,7 @@ aws cloudformation continue-update-rollback \
 aws cloudformation delete-stack --stack-name my-stack
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Skip the problematic resource during rollback: example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -1081,7 +1082,7 @@ terraform {
 # This pins exact provider hashes for reproducibility
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This pins exact provider hashes for reproducibility example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1095,8 +1096,7 @@ terraform {
 | Debugging | 1 | CloudFormation stuck stack |
 | Behavioral | 2 | Multi-cloud adoption, test strategy |
 
-**Q1. When would you choose Terraform over AWS CloudFormation
-for a new AWS project?**
+**[JUNIOR] Q1 - [SCENARIO] When would you choose Terraform over AWS CloudFormation for a new AWS project?**
 
 Choose Terraform when:
 - Multi-cloud resources: e.g., AWS + Cloudflare + PagerDuty in one
@@ -1131,7 +1131,7 @@ weeks or months.
 
 ---
 
-**Q2. What is AWS CDK and how does it relate to CloudFormation?**
+**[JUNIOR] Q2 - [MECHANISM] What is AWS CDK and how does it relate to CloudFormation?**
 
 CDK (Cloud Development Kit) is a programming framework that generates
 CloudFormation templates. You write TypeScript, Python, Java, or Go
@@ -1143,7 +1143,7 @@ CDK architecture:
 CDK Code (TypeScript) -> cdk synth -> CFN template.json -> cfn deploy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This pins exact provider hashes for reproducibility example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Advantages over raw CloudFormation:
 - Real programming language: loops, conditionals, functions, types
@@ -1166,8 +1166,7 @@ CDK limitations from blocking you.
 
 ---
 
-**Q3. What is the Terraform provider model and what makes it
-powerful for infrastructure management?**
+**[JUNIOR] Q3 - [DESIGN] What is the Terraform provider model and what makes it powerful for infrastructure management?**
 
 Terraform providers are plugins that map HCL resource declarations
 to API calls. Each provider manages a specific platform:
@@ -1196,7 +1195,7 @@ resource "cloudflare_record" "web" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Single plan/apply manages both: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The dependency graph is the key feature: Terraform resolves `value =
 aws_instance.web.public_ip` and automatically creates the EC2
@@ -1215,8 +1214,7 @@ should always be committed to prevent provider hash drift.
 
 ---
 
-**Q4. DEBUGGING: A CloudFormation stack is stuck in
-UPDATE_ROLLBACK_FAILED. How do you fix it?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: A CloudFormation stack is stuck in UPDATE_ROLLBACK_FAILED. How do you fix it?**
 
 ```bash
 # State: UPDATE_ROLLBACK_FAILED
@@ -1246,7 +1244,7 @@ aws cloudformation import-resources \
   --stack-name my-stack ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Either import it into CFN or recreate it with correct config. example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Knowing that `--resources-to-skip`
 is the correct lever for UPDATE_ROLLBACK_FAILED, not deleting and
@@ -1255,8 +1253,7 @@ cross-stack references (other stacks that Export/Import from this one).
 
 ---
 
-**Q5. What makes `terraform plan` safer than direct `terraform apply`,
-and what are its limitations as a safety net?**
+**[MID] Q5 - [MECHANISM] What makes `terraform plan` safer than direct `terraform apply`, and what are its limitations as a safety net?**
 
 `terraform plan` generates a change set showing exactly what will
 be created, modified, or destroyed before any change is made.
@@ -1284,8 +1281,7 @@ between the PR plan comment and the apply step.
 
 ---
 
-**Q6. TRADE-OFF: Terraform manual state management vs CloudFormation
-managed state. What are the specific risks of each?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: Terraform manual state management vs CloudFormation managed state. What are the specific risks of each?**
 
 Terraform state risks:
 - State corruption: concurrent applies without DynamoDB locking
@@ -1317,8 +1313,7 @@ recovery for Terraform state prevents the "lost state" scenario.
 
 ---
 
-**Q7. What is the CDK Constructs Library and what advantage does
-it provide over raw CloudFormation?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the CDK Constructs Library and what advantage does it provide over raw CloudFormation?**
 
 CDK has three levels of constructs:
 
@@ -1342,7 +1337,7 @@ CDK has three levels of constructs:
   });
   ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Either import it into CFN or recreate it with correct config. example demonstrates TypeScript pattern using container. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 L2/L3 constructs encode AWS best practices: S3 buckets block public
 access by default, IAM roles use least privilege, security groups
@@ -1355,7 +1350,7 @@ documents. This makes least-privilege trivial.
 
 ---
 
-**Q8. How do you test IaC code for Terraform and CloudFormation?**
+**[SENIOR] Q8 - [SCENARIO] How do you test IaC code for Terraform and CloudFormation?**
 
 Terraform testing:
 ```bash
@@ -1375,7 +1370,7 @@ terraform plan -out=plan.json
 terraform show -json plan.json | opa eval -d policy.rego
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Policy-as-code: OPA or Sentinel example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 CloudFormation testing:
 ```bash
@@ -1395,7 +1390,7 @@ template.hasResourceProperties('AWS::S3::Bucket', {
 # run integration tests, then destroy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This run integration tests, then destroy example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Testing in a dedicated test
 AWS account, not the dev account. Real integration tests that
@@ -1404,8 +1399,7 @@ misses (IAM policy evaluation, cross-service interactions).
 
 ---
 
-**Q9. BEHAVIORAL: Your team wants to adopt Terraform for
-a multi-cloud strategy across AWS and GCP. What do you recommend?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: Your team wants to adopt Terraform for a multi-cloud strategy across AWS and GCP. What do you recommend?**
 
 Phase 1: Foundation (weeks 1-4)
 - Set up Terraform backend: S3 + DynamoDB (or Terraform Cloud

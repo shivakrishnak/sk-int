@@ -144,7 +144,7 @@ Signs you SHOULD migrate:
   - Regulatory requirement (GDPR: data isolation by user)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Monolith to Distributed System Migration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Strangler Fig pattern:**
 
@@ -186,7 +186,7 @@ Phase 4: Decommission monolith
   - Delete monolith codebase (celebration milestone)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Monolith to Distributed System Migration example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Database decomposition strategy:**
 
@@ -221,7 +221,7 @@ Step 4: Cross-domain data queries (now impossible with FK)
   - Materialized views: pre-join data in read model (CQRS)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Conway's Law and organizational alignment:**
 
@@ -247,7 +247,7 @@ Amazon's "two-pizza teams" is this maneuver: small, autonomous
 teams → service-per-team → microservices naturally.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The technical challenges of monolith-to-microservices migration
@@ -262,6 +262,12 @@ but none of the benefits.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // MONOLITH TO MICROSERVICES - STRANGLER FIG IN PRACTICE
@@ -358,7 +364,7 @@ public class MonolithUserServiceDualWrite {
 // Only cut over when both are identical
 ```
 
-> **Code walkthrough:** The BAD approach attempts to rewrite
+> **Code walkthrough:** The BAD approach attempts to rewriteice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > all 150,000 lines at once, a "big bang" that historically
 > fails for systems of this complexity. The GOOD pattern implements
 > the Strangler Fig incrementally: the API Gateway routes all
@@ -556,7 +562,7 @@ Expected outcomes:
   - Payments: isolated blast radius (payment outage ≠ full outage)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -653,7 +659,7 @@ grep -r "datasource.url" services/*/src/main/ | \
 # Other service URLs appearing = shared DB violation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Other service URLs appearing = shared DB violation example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: enforce service boundary rules:
 - No service may read/write another service's database
@@ -688,7 +694,7 @@ diff old_users.csv new_users.csv
 # Shows missing user IDs in new DB
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows missing user IDs in new DB example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix (immediate): reconciliation script to copy missing users
 from old DB to new DB. Fix (process): before any data migration
@@ -728,7 +734,7 @@ jaeger-query service=order-service \
 # because it was a local method call in monolith)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This because it was a local method call in monolith) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: replace synchronous call chain with asynchronous orchestration:
 - Order creation: write order (local DB), return to user
@@ -755,10 +761,9 @@ Fix: replace synchronous call chain with asynchronous orchestration:
 
 ---
 
-**Q1 (Clarification) - When should you NOT migrate from a
-monolith to microservices?**
+**[JUNIOR] Q1 - [MECHANISM] When should you NOT migrate from a monolith to microservices?**
 
-A: Most systems should not be microservices. The migration
+Most systems should not be microservices. The migration
 makes sense only when the monolith's pain points exceed
 the operational cost of microservices.
 
@@ -813,10 +818,9 @@ cheap rather than expensive.
 
 ---
 
-**Q2 (Mechanism) - How does the Strangler Fig pattern work?
-Walk through the steps for extracting a service.**
+**[JUNIOR] Q2 - [MECHANISM] How does the Strangler Fig pattern work? Walk through the steps for extracting a service.**
 
-A: The Strangler Fig is an incremental extraction pattern
+The Strangler Fig is an incremental extraction pattern
 that allows a service to be extracted from a monolith without
 a big-bang rewrite. Named after the fig vine that grows around
 a tree and eventually replaces it.
@@ -870,7 +874,7 @@ If step 5 shows a bug: route 100% back to monolith.
 If step 3 shows data mismatch: fix dual-write, restart.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This because it was a local method call in monolith) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the shadow mode (step 4).
 Most engineers know the dual-write pattern. The shadow mode
@@ -884,10 +888,9 @@ unit tests.
 
 ---
 
-**Q3 (Trade-off) - Compare Saga choreography vs. orchestration
-for distributed transactions during migration.**
+**[JUNIOR] Q3 - [TRADE-OFF] Compare Saga choreography vs. orchestration for distributed transactions during migration.**
 
-A: Distributed transactions replace ACID transactions after
+Distributed transactions replace ACID transactions after
 service extraction. Two patterns:
 
 **Choreography (event-driven):**
@@ -906,7 +909,7 @@ Compensating transactions (rollback):
   InsufficientStock → PaymentService listens → refunds payment
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This because it was a local method call in monolith) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to choose choreography:
 - Simple sagas with clear linear flow
@@ -937,7 +940,7 @@ All saga state: stored in OrderOrchestrator
 Can query orchestrator: "what is the state of order X?"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to choose orchestration:
 - Complex sagas with conditional logic and multiple outcomes
@@ -967,10 +970,9 @@ spend 6 months debugging invisible saga states.
 
 ---
 
-**Q4 (Failure / Debugging) - After extracting the Payment Service,
-you notice intermittent double charges. How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] After extracting the Payment Service, you notice intermittent double charges. How do you diagnose?**
 
-A: Systematic investigation of double charges after service extraction:
+Systematic investigation of double charges after service extraction:
 
 Step 1 - Confirm the scope:
 ```sql
@@ -984,7 +986,7 @@ ORDER BY charge_count DESC;
 -- How many? What time pattern?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 2 - Trace the payment flow:
 ```bash
@@ -995,7 +997,7 @@ jaeger-query service=payment-service \
 # Look for: overlapping timestamps = concurrent calls
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: overlapping timestamps = concurrent calls example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Check Saga/retry logic:
 ```bash
@@ -1006,7 +1008,7 @@ grep "ORD-12345" /var/log/payment-service/*.log
 # Two successes = idempotency key missing or wrong
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Two successes = idempotency key missing or wrong example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4 - Root cause: Saga retry without idempotency key:
 ```java
@@ -1031,7 +1033,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Two successes = idempotency key missing or wrong example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Fix: add idempotency key to all payment calls. Key = orderId
 (or orderId + attemptNumber if multiple legitimate charges
@@ -1049,10 +1051,9 @@ financial operations in distributed systems.
 
 ---
 
-**Q5 (Trade-off) - What are the organizational prerequisites
-for a successful microservices migration?**
+**[MID] Q5 - [TRADE-OFF] What are the organizational prerequisites for a successful microservices migration?**
 
-A: Technical prerequisites are well-documented. Organizational
+Technical prerequisites are well-documented. Organizational
 prerequisites are the actual reason migrations fail:
 
 **1. "You build it, you run it" culture (DevOps ownership):**
@@ -1104,10 +1105,9 @@ ownership characteristics that make microservices work in practice.
 
 ---
 
-**Q6 (Behavioral) - Describe how you led or participated in
-a microservices migration. What was the hardest part?**
+**[SENIOR] Q6 - [BEHAVIORAL] Describe how you led or participated in a microservices migration. What was the hardest part?**
 
-A: Example structure:
+Example structure:
 
 "At [company], we migrated a 4-year-old Spring Boot monolith
 (~120k lines, 25 engineers, single daily deployment window)
@@ -1164,10 +1164,9 @@ technical to systemic.
 
 ---
 
-**Q7 (Production) - How do you handle database schema migrations
-across a distributed system without downtime?**
+**[SENIOR] Q7 - [SCENARIO] How do you handle database schema migrations across a distributed system without downtime?**
 
-A: Distributed schema migrations require a strategy that is
+Distributed schema migrations require a strategy that is
 backward compatible across multiple deployment versions:
 
 **The expand-contract pattern (zero-downtime):**
@@ -1243,7 +1242,7 @@ Timeline:
 // Incompatible schema change: deployment blocked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This consumer-driven contract example demonstrates schema governance using Pact and Avro registry. **KEY MECHANISM:** the consumer defines what fields it needs; the provider runs the contract as a test on every build, failing if the API shape breaks the contract. **WHY IT MATTERS:** prevents silent breaking changes from propagating across service boundaries without detection. **WHAT BREAKS:** without contract testing, provider changes break consumers only at integration or production time - too late. **TAKEAWAY:** register schemas and run contract tests in CI; treat schema compatibility as a first-class deployment gate.
 
 *What separates good from great:* the expand-contract pattern
 with explicit phases. Many engineers know "add nullable column
@@ -1321,7 +1320,7 @@ Key risk mitigation for bidding extraction:
   No cutover during peak season (holiday sales)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the risk-adjusted extraction
 order. Most engineers would extract the core business logic
@@ -1394,7 +1393,7 @@ Dependency management:
   Upgrading: upgrade BOM, all services adopt on their next release.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the "different User in each
 service" insight. One of the most common mistakes after a

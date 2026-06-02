@@ -141,7 +141,7 @@ L2C Entry:
   (column values, not Java objects - thread-safe)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate Caching: First and Second Level Cache example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 L2C stores column values (a data array), not Java objects. Each
@@ -226,13 +226,25 @@ public class ProductCategory {
 }
 ```
 
-> **Code walkthrough:** `@Cache(usage = READ_ONLY)` is ideal for
+> **Code walkthrough:** `@Cache(usage = READ_ONLY)` is ideal forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > truly immutable data like currency codes. Hibernate never needs
 > to coordinate writes. `READ_WRITE` for categories that are changed
 > occasionally (adding a new category) - Hibernate uses soft-locking
 > to coordinate cache updates with DB writes. The `@Cache` on the
 > collection caches the collection of IDs; individual products need
 > their own `@Cache` annotation.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Checking cache effectiveness with statistics
@@ -257,7 +269,7 @@ public CommandLineRunner cacheStats(
 }
 ```
 
-> **Code walkthrough:** Cache effectiveness should be measured, not
+> **Code walkthrough:** Cache effectiveness should be measured, notice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > assumed. The Hibernate Statistics API provides hit/miss/put counts
 > per region. A cache with less than 50% hit rate is wasting coordination
 > overhead. A cache with 90%+ hit rate is providing significant value.
@@ -349,7 +361,7 @@ spring.jpa.properties.hibernate.cache.region.factory_class=
 # This is LOCAL only - wrong for multi-node
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This wrong for multi-node example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Switch to a distributed cache:
 ```properties
@@ -360,7 +372,7 @@ spring.jpa.properties.hibernate.cache.region.factory_class=
 spring.jpa.properties.hibernate.cache.use_second_level_cache=false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR disable L2C and use Redis @Cacheable at service layer example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -406,9 +418,7 @@ Use it only for truly static query results (navigation, config).
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is the difference between the first-level and second-level
-cache in Hibernate?
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between the first-level and second-level cache in Hibernate?**
 
 *Why they ask:* Basic cache knowledge is expected in any
 Hibernate interview.
@@ -443,8 +453,7 @@ map after each batch to release accumulated entities.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What is the READ_WRITE concurrency strategy and when do you use it?
+**[MID] Q2 - [MECHANISM] What is the READ_WRITE concurrency strategy and when do you use it?**
 
 *Why they ask:* Concurrency strategy selection is the critical
 L2C configuration decision.
@@ -488,9 +497,7 @@ and why READ_WRITE has higher coordination overhead.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-Your L2 cache hit rate is 15%. You expected 90%. What are
-the causes and how do you diagnose?
+**[SENIOR] Q3 - [DEBUGGING] Your L2 cache hit rate is 15%. You expected 90%. What are the causes and how do you diagnose?**
 
 *Why they ask:* A configured cache with low hit rate is a
 common production issue.
@@ -522,7 +529,7 @@ long misses = stats.getMissCount();
 long evictions = stats.getEvictionCount(); // too high?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR disable L2C and use Redis @Cacheable at service layer example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Cause 3: TTL too short. The cache TTL is shorter than the read
 frequency for this entity. If requests for Country codes arrive
@@ -541,9 +548,7 @@ deciding whether a cache is providing value vs. adding overhead.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-When would you use Spring's `@Cacheable` instead of
-Hibernate's `@Cache`?
+**[SENIOR] Q4 - [TRADE-OFF] When would you use Spring's `@Cacheable` instead of Hibernate's `@Cache`?**
 
 *Why they ask:* Tests awareness of the two caching layers and
 when each is appropriate.
@@ -590,9 +595,7 @@ multiple entities.
 
 ---
 
-**Q5 [MID] - MECHANISM**
-What is the Hibernate query cache and how is it different from
-entity L2C?
+**[MID] Q5 - [MECHANISM] What is the Hibernate query cache and how is it different from entity L2C?**
 
 *Why they ask:* The query cache is a separate and often confused
 component.
@@ -626,7 +629,7 @@ Second execution (same params):
   → No SQL needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The invalidation rule: the query cache for a region is invalidated
 whenever ANY entity in that table changes. This is table-level
@@ -641,10 +644,7 @@ disappointment for tables with any significant write activity.
 
 ---
 
-**Q6 [SENIOR] - PRODUCTION**
-How do you configure and tune Hibernate L2C for a product
-catalog with 50,000 products, 500 categories, and 1,000
-requests per second?
+**[SENIOR] Q6 - [MECHANISM] How do you configure and tune Hibernate L2C for a product catalog with 50,000 products, 500 categories, and 1,000 requests per second?**
 
 *Why they ask:* Tests ability to size and configure L2C for
 a real use case.
@@ -662,7 +662,7 @@ public class Category {
     // Accessed on every page; 500 entries = trivial cache size
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Ehcache config: 1,000 max entries, TTL 1 hour, TTI 30 minutes.
 Expected: 95%+ hit rate after warm-up.
@@ -677,7 +677,7 @@ public ProductDetailDTO getProductDetail(String slug) {
     // loads product, categories, images - expensive join query
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 TTL: 5 minutes for product details. Explicit eviction on product
 update. Cache only product details, not inventory counts.
@@ -703,9 +703,7 @@ recommendation for extreme scale.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Tell me about a time you made a wrong L2C configuration decision
-and what you learned from it.
+**[STAFF] Q7 - [BEHAVIORAL] Tell me about a time you made a wrong L2C configuration decision and what you learned from it.**
 
 *Why they ask:* Tests intellectual honesty and learning from mistakes.
 
@@ -909,7 +907,7 @@ em.createQuery(query).getResultList()
 SQL: SELECT * FROM users WHERE [only active predicates]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Criteria API and Dynamic Queries example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Predicates are composable: `cb.and(p1, p2)`, `cb.or(p1, p2)`,
@@ -959,7 +957,7 @@ public List<User> search(String name, String email) {
 }
 ```
 
-> **Code walkthrough:** String concatenation of JPQL/SQL is dangerous
+> **Code walkthrough:** String concatenation of JPQL/SQL is dangerousice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (SQL injection if user input reaches the query), brittle (syntax errors
 > at runtime not compile time), and hard to test. Never concatenate
 > user input into query strings.
@@ -1011,13 +1009,23 @@ public class UserSearchRepository {
 }
 ```
 
-> **Code walkthrough:** Predicates are added to the list only when the
+> **Code walkthrough:** Predicates are added to the list only when theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > filter value is non-null. The LIKE predicate uses a bound parameter
 > (not concatenated into the SQL), preventing injection. The JOIN for
 > role is also conditional - only added when role filter is present,
 > avoiding an unnecessary JOIN in queries without role filter. The
 > dynamic sort uses a `Path` object (not a string) to reference the
 > sort column.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // GOOD: Spring Data Specification (wraps Criteria API)
@@ -1063,7 +1071,7 @@ Specification<User> spec =
 userRepository.findAll(spec, PageRequest.of(0, 20));
 ```
 
-> **Code walkthrough:** Spring Data `Specification` wraps the Criteria
+> **Code walkthrough:** Spring Data `Specification` wraps the Criteriaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > lambda in a composable, testable unit. Each Specification is an
 > independent predicate builder (one responsibility). They compose with
 > `.and()` and `.or()`. When the parameter is null, the Specification
@@ -1154,7 +1162,7 @@ public static Specification<User> hasRole(String role) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1187,7 +1195,7 @@ per entity if accessed.
 @EntityGraph(attributePaths = {"roles"})
 List<User> findAll(Specification<User> spec);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This applies both the Specification filter AND the EntityGraph
 eager loading in one query.
@@ -1206,8 +1214,7 @@ eager loading in one query.
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-Why would you use the Criteria API instead of a JPQL string?
+**[JUNIOR] Q1 - [MECHANISM] Why would you use the Criteria API instead of a JPQL string?**
 
 *Why they ask:* Tests understanding of when programmatic queries
 are necessary.
@@ -1233,7 +1240,7 @@ if (name != null) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The query has exactly the WHERE clauses that apply.
 
@@ -1254,9 +1261,7 @@ alternatives (Specification, QueryDSL) as solutions to those downsides.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-How does Spring Data JPA's `Specification` interface work and
-what problem does it solve compared to raw Criteria API?
+**[MID] Q2 - [MECHANISM] How does Spring Data JPA's `Specification` interface work and what problem does it solve compared to raw Criteria API?**
 
 *Why they ask:* Specification is the preferred production pattern
 for dynamic queries.
@@ -1271,7 +1276,7 @@ Predicate toPredicate(Root<T> root,
     CriteriaQuery<?> query, CriteriaBuilder cb);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 It wraps one Criteria predicate in a composable, testable unit.
 Spring Data JPA calls `toPredicate` when building the query, passing
@@ -1296,7 +1301,7 @@ Specification<User> spec = active.and(adminRole.or(managerRole));
 userRepo.findAll(spec);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Problem 3 - Testability. Each Specification can be unit-tested
 in isolation by calling `toPredicate` with a mock or real
@@ -1315,7 +1320,7 @@ public interface UserRepository
 //       count(Specification), findAll(Specification, Pageable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The composability example showing
 `.and().or()` chaining - this is the feature that makes Specifications
@@ -1323,9 +1328,7 @@ genuinely more powerful than raw Criteria predicates.
 
 ---
 
-**Q3 [SENIOR] - COMPARISON**
-Compare Spring Data Specification, QueryDSL, and raw Criteria API.
-When would you choose each?
+**[SENIOR] Q3 - [TRADE-OFF] Compare Spring Data Specification, QueryDSL, and raw Criteria API. When would you choose each?**
 
 *Why they ask:* Tests awareness of the ecosystem and trade-off
 thinking.
@@ -1365,7 +1368,7 @@ return query.from(user)
     .orderBy(user.name.asc())
     .fetch();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Much more readable than Criteria API. The Q-classes (`QUser`)
 are generated from entity classes by the APT annotation processor.
@@ -1380,9 +1383,7 @@ real familiarity.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-Criteria API returns wrong results for a search that combines
-OR conditions. What are the common causes?
+**[SENIOR] Q4 - [DEBUGGING] Criteria API returns wrong results for a search that combines OR conditions. What are the common causes?**
 
 *Why they ask:* Boolean predicate logic errors are a common
 Criteria API bug.
@@ -1401,7 +1402,7 @@ q.where(cb.and(predicates.toArray(new Predicate[0])));
 // cb.and() with empty array = TRUE predicate
 // = no WHERE clause = returns ALL entities
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is usually correct (no filters = return all), but if the
 intent was "return nothing when no filters provided," it is wrong.
@@ -1422,7 +1423,7 @@ predicates.add(cb.or(
 ));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: enable SQL logging and inspect the generated SQL.
 The SQL directly shows the AND/OR structure. Compare to the
@@ -1441,15 +1442,14 @@ void shouldReturnOnlyActiveUsers() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The empty predicate list corner
 case (`cb.and(empty array) = TRUE`) and the explicit test pattern.
 
 ---
 
-**Q5 [MID] - MECHANISM**
-How do JPA Metamodel classes improve Criteria API type safety?
+**[MID] Q5 - [MECHANISM] How do JPA Metamodel classes improve Criteria API type safety?**
 
 *Why they ask:* Tests knowledge of compile-time type checking in JPA.
 
@@ -1474,7 +1474,7 @@ public class User_ {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Usage in Criteria API:
 ```java
@@ -1487,7 +1487,7 @@ root.get(User_.email) // typo = compile error
 // return type is checked by compiler
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The Metamodel class is generated by adding the APT annotation
 processor to the build:
@@ -1500,7 +1500,7 @@ processor to the build:
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that the return type of
 `root.get(User_.email)` is checked by the compiler - you cannot
@@ -1508,10 +1508,7 @@ accidentally compare a String field to an Integer.
 
 ---
 
-**Q6 [STAFF] - ARCHITECTURE**
-How would you design the persistence layer for a search API
-that has 15 optional filter parameters, multiple sort options,
-and pagination?
+**[STAFF] Q6 - [DESIGN] How would you design the persistence layer for a search API that has 15 optional filter parameters, multiple sort options, and pagination?**
 
 *Why they ask:* Tests end-to-end design for a real use case.
 
@@ -1527,7 +1524,7 @@ public interface ProductRepository
             JpaSpecificationExecutor<Product> {}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Specification factory:
 ```java
@@ -1542,7 +1539,7 @@ public class ProductSpecifications {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Service layer assembles specs and applies pagination:
 ```java
@@ -1560,7 +1557,7 @@ public Page<ProductDTO> search(SearchRequest req, Pageable p) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For the sort options, use Spring Data's `Sort` and `Pageable`
 (passed directly to `findAll(spec, pageable)`). The sort field
@@ -1579,9 +1576,7 @@ vague "when you need better search."
 
 ---
 
-**Q7 [MID] - PRODUCTION**
-Your search API's pagination is slow on large datasets.
-Page 1 is fast, page 1000 is slow. What is the problem?
+**[MID] Q7 - [MECHANISM] Your search API's pagination is slow on large datasets. Page 1 is fast, page 1000 is slow. What is the problem?**
 
 *Why they ask:* Tests knowledge of database pagination performance.
 
@@ -1606,7 +1601,7 @@ ORDER BY name LIMIT 20 OFFSET 19980;
 -- Shows: "Rows Removed by Filter: 19980"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Solutions:
 
@@ -1618,7 +1613,7 @@ Keyset pagination (for sequential page navigation):
     "ORDER BY p.name LIMIT 20")
 List<Product> findNextPage(@Param("lastName") String lastName);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This avoids OFFSET entirely. Performance is O(1) regardless of
 page number. Limitation: cannot jump to arbitrary page numbers.

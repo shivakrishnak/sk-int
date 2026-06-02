@@ -166,7 +166,7 @@ function UpdateUser({ userId }: { userId: string }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frontend Async Architecture Patterns example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 ```typescript
 // PATTERN 3: WebSocket with RxJS for real-time data
@@ -206,7 +206,7 @@ class WebSocketService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frontend Async Architecture Patterns example demonstrates type alias definition using error handling. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 **The key insight:**
 The architectural insight of modern server state managers:
@@ -269,7 +269,7 @@ const fetchUser = (id: string) => async (dispatch) => {
 // Cache invalidation: manual dispatch of INVALIDATE_USER
 ```
 
-> **Code walkthrough:** The Redux async pattern (thunks or sagas)
+> **Code walkthrough:** The Redux async pattern (thunks or sagas)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requires ~100 lines per entity type for the full loading/error/
 > success cycle. Every component using users data must coordinate
 > through this store. Cache invalidation requires explicit action
@@ -342,7 +342,7 @@ const useUIStore = create<UIState>(set => ({
 // Server state: cached, stale-while-revalidate, auto-sync
 ```
 
-> **Code walkthrough:** The query factory pattern (`userQueries.detail(id)`)
+> **Code walkthrough:** The query factory pattern (`userQueries.detail(id)`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > returns both the `queryKey` and `queryFn` as a unit. This ensures
 > the key and fetcher are always in sync - a common source of bugs
 > in manual implementations. The `onSuccess` handler directly
@@ -405,7 +405,7 @@ the server rejects the action.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Stale data shown after mutation**
-```
+```plaintext
 Symptom: user updates their name, UI shows old name until refresh
 Cause: mutation succeeded but query cache not invalidated
 Diagnosis:
@@ -417,11 +417,11 @@ Fix:
   2. Background: queryClient.invalidateQueries(parentKey)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Waterfall fetches (N+1 problem in React)**
 ```
-Symptom: page loads in 4 sequential requests: route -> user -> posts -> comments
+Symptom: page loads in 4 sequential requests: route -> user -> posts ->...
 Cause: each component fetches in useEffect after parent renders
 Fix:
   // React 19 + Suspense: prefetch in route loader
@@ -434,7 +434,7 @@ Fix:
   // Components render with data already in cache: no loading states
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -449,8 +449,7 @@ Fix:
 | Design | 2 | Query key design, real-time architecture |
 | Behavioral | 1 | Migrating from Redux to TanStack Query |
 
-**Q1. What is the difference between server state and client
-state, and why does it matter architecturally?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between server state and client state, and why does it matter architecturally?**
 
 Server state: data fetched from a server. Properties:
 - Shared (other users may change it)
@@ -486,8 +485,7 @@ consistent. These require different architectures.
 
 ---
 
-**Q2. How does TanStack Query's query key system work and
-what are the design patterns?**
+**[JUNIOR] Q2 - [DESIGN] How does TanStack Query's query key system work and what are the design patterns?**
 
 Query keys are the cache identifiers. They are arrays.
 TanStack Query uses deep equality for matching.
@@ -512,7 +510,7 @@ queryClient.invalidateQueries({ queryKey: keys.details() });
 // Invalidates: only user detail queries, not list queries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 This pattern (from TanStack Query docs) provides fine-grained
 invalidation. After creating a user: invalidate `keys.lists()`.
@@ -526,8 +524,7 @@ DRY and ensures consistency.
 
 ---
 
-**Q3. When would you choose WebSocket over SSE, and what
-are the trade-offs?**
+**[JUNIOR] Q3 - [TRADE-OFF] When would you choose WebSocket over SSE, and what are the trade-offs?**
 
 | Feature | WebSocket | SSE |
 |---------|-----------|-----|
@@ -557,8 +554,7 @@ For simple server push, SSE is operationally simpler.
 
 ---
 
-**Q4. How do you architect an offline-first data layer
-for a Progressive Web App?**
+**[MID] Q4 - [DESIGN] How do you architect an offline-first data layer for a Progressive Web App?**
 
 Three-layer architecture:
 1. **Network layer**: TanStack Query (or similar) for
@@ -591,7 +587,7 @@ const queryClient = new QueryClient({
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Data flow:
 1. Online: TanStack Query fetches from server, updates IDB
@@ -606,7 +602,7 @@ control eviction, not TanStack Query's internal GC.
 
 ---
 
-**Q5. How do you handle real-time updates with TanStack Query?**
+**[MID] Q5 - [MECHANISM] How do you handle real-time updates with TanStack Query?**
 
 TanStack Query is pull-based (fetch on demand). Real-time
 push updates require integrating the push mechanism with the
@@ -648,7 +644,7 @@ ws.onmessage = (event) => {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using React hook. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 *What separates good from great:* The two patterns: (1) `setQueryData`
 for known changes (no network round trip), (2) `invalidateQueries`
@@ -658,8 +654,7 @@ data fresh.
 
 ---
 
-**Q6. How do you implement request deduplication in a
-React application?**
+**[SENIOR] Q6 - [SCENARIO] How do you implement request deduplication in a React application?**
 
 TanStack Query deduplicates automatically: multiple components
 using the same query key within a `staleTime` window share
@@ -688,7 +683,7 @@ const user = await deduplicatedFetch(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 For React without TanStack Query: the custom hook approach
 ensures only one fetch per key per render cycle:
@@ -703,7 +698,7 @@ function useFetchDeduped<T>(key: string, fetcher: () => Promise<T>) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using generic type. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* The difference between
 deduplication (same request in same time window) and caching
@@ -712,8 +707,7 @@ The manual pattern provides deduplication only.
 
 ---
 
-**Q7. How do you handle authentication tokens in async
-data architectures?**
+**[SENIOR] Q7 - [DESIGN] How do you handle authentication tokens in async data architectures?**
 
 Token refresh strategy with TanStack Query:
 
@@ -748,7 +742,7 @@ async function handleTokenRefresh(queryClient: QueryClient) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Deduplicating the refresh
 request. Without deduplication, if 10 concurrent requests
@@ -758,8 +752,7 @@ reusing the result.
 
 ---
 
-**Q8. What is the stale-while-revalidate caching pattern
-and how does TanStack Query implement it?**
+**[SENIOR] Q8 - [SCENARIO] What is the stale-while-revalidate caching pattern and how does TanStack Query implement it?**
 
 Stale-while-revalidate: serve stale data immediately (fast
 user experience), then fetch fresh data in the background,
@@ -783,7 +776,7 @@ const { data } = useQuery({
 // isLoading: true ONLY on first fetch (no cached data)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 The visual result: user sees immediately-rendered (possibly
 stale) data. Data silently updates when server responds. No
@@ -797,7 +790,7 @@ page - poor UX. Show spinners only on `isLoading`.
 
 ---
 
-**Q9. How do you implement infinite scroll with TanStack Query?**
+**[SENIOR] Q9 - [SCENARIO] How do you implement infinite scroll with TanStack Query?**
 
 ```typescript
 function InfinitePostList() {
@@ -846,7 +839,7 @@ function InfinitePostList() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using React hook. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 *What separates good from great:* The `IntersectionObserver`
 pattern for trigger: it fires when the sentinel element
@@ -857,8 +850,7 @@ a page is already being fetched.
 
 ---
 
-**Q10. How do you migrate a Redux-based application to
-TanStack Query?**
+**[SENIOR] Q10 - [MECHANISM] How do you migrate a Redux-based application to TanStack Query?**
 
 Incremental migration strategy:
 
@@ -894,8 +886,7 @@ while maintaining deliverables.
 
 ---
 
-**Q11. How do you design a query key schema for a large
-application?**
+**[SENIOR] Q11 - [DESIGN] How do you design a query key schema for a large application?**
 
 Standardized key schema prevents cache mismatches and enables
 fine-grained invalidation:
@@ -930,7 +921,7 @@ queryClient.invalidateQueries({ queryKey: queryKeys.posts.byUser(userId) });
 queryClient.setQueryData(queryKeys.posts.detail(postId).queryKey, updated);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using SQL. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 *What separates good from great:* The `as const` assertion on
 key arrays gives TypeScript the exact tuple type. This prevents
@@ -939,8 +930,7 @@ between query keys and invalidation keys at compile time.
 
 ---
 
-**Q12. Describe your ideal frontend async architecture for
-a complex B2B SaaS application.**
+**[SENIOR] Q12 - [DESIGN] Describe your ideal frontend async architecture for a complex B2B SaaS application.**
 
 Requirements: real-time data, offline capability, complex forms,
 role-based access, multi-tenant.
@@ -1039,7 +1029,7 @@ Data flows:
   Offline mutation -> IDB queue -> SW sync when online
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The WebSocket -> `setQueryData`
 bridge. Real-time updates flow into the query cache, not

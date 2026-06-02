@@ -194,7 +194,7 @@ Distributed Tracing (Micrometer Tracing):
   Visualization: trace timeline shows all hops
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Microservices with Spring Cloud example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 In Kubernetes deployments, many Spring Cloud components become redundant.
@@ -268,7 +268,7 @@ public class InventoryClientFallbackFactory
 }
 ```
 
-> **Code walkthrough:** @FeignClient generates a Spring bean that makes HTTP calls
+> **Code walkthrough:** @FeignClient generates a Spring bean that makes HTTP callsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to "inventory-service" (resolved via service registry or Kubernetes DNS).
 > The FallbackFactory receives the cause exception, enabling context-aware fallbacks.
 > The circuit breaker name maps to Resilience4j configuration. When the circuit is
@@ -350,7 +350,7 @@ public class InventoryService {
 }
 ```
 
-> **Code walkthrough:** Resilience4j emits events for state transitions. Listening
+> **Code walkthrough:** Resilience4j emits events for state transitions. Listeningice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to CircuitBreakerOnStateTransitionEvent allows alerting when a circuit opens
 > (indicating a failing downstream service). TaggedCircuitBreakerMetrics binds
 > circuit breaker metrics to Micrometer - state (0=CLOSED, 1=OPEN, 2=HALF_OPEN)
@@ -446,7 +446,7 @@ than upstream service timeout.
 
 ---
 
-#### Q1 - What is the circuit breaker pattern and how does Resilience4j implement it?
+**[JUNIOR] Q1 - [ARCHITECTURE] What is the circuit breaker pattern and how does Resilience4j implement it?**
 
 Circuit breaker is a resiliency pattern that prevents cascade failures by
 stopping calls to a failing service:
@@ -481,7 +481,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exponential backoff: 500, 1000, 2000ms example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Configuration (count-based window):
 ```yaml
@@ -492,7 +492,7 @@ resilience4j.circuitbreaker.instances
   waitDurationInOpenState: 30s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exponential backoff: 500, 1000, 2000ms example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Configuration (time-based window):
 ```yaml
@@ -501,7 +501,7 @@ Configuration (time-based window):
   failureRateThreshold: 50
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exponential backoff: 500, 1000, 2000ms example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* The minimumNumberOfCalls threshold prevents
 false-positive circuit opening during startup. If the first 2 calls fail (during
@@ -512,7 +512,7 @@ should be much smaller than normal concurrency.
 
 ---
 
-#### Q2 - How do you implement OpenFeign with load balancing and circuit breaker?
+**[JUNIOR] Q2 - [HANDS-ON] How do you implement OpenFeign with load balancing and circuit breaker?**
 
 Full Feign setup:
 
@@ -562,7 +562,7 @@ public class FeignConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Load balancing: Spring Cloud LoadBalancer resolves "inventory-service" to
 list of instances (from Eureka, Consul, or Kubernetes).
@@ -577,7 +577,7 @@ circuit breaker timeout so the circuit breaker measures HTTP timeouts correctly.
 
 ---
 
-#### Q3 - What is Spring Cloud Gateway and how does it differ from Nginx?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is Spring Cloud Gateway and how does it differ from Nginx?**
 
 Spring Cloud Gateway is a programmatic API gateway built on Spring WebFlux
 (reactive, non-blocking):
@@ -618,7 +618,7 @@ public class GatewayConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 vs Nginx:
 - Nginx: static configuration (nginx.conf), high-performance C proxy
@@ -639,7 +639,7 @@ routing logic that would require Nginx modules or Lua scripting.
 
 ---
 
-#### Q4 - How does distributed tracing work with Micrometer Tracing?
+**[MID] Q4 - [CONCEPTUAL] How does distributed tracing work with Micrometer Tracing?**
 
 Micrometer Tracing (Spring Boot 3+, replaces Spring Cloud Sleuth):
 
@@ -676,7 +676,7 @@ HTTP Request from browser:
         [Service C: 0003, 20ms]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Spring Boot 3 setup:
 ```xml
@@ -696,7 +696,7 @@ management.tracing.sampling.probability=0.1  # 10% (prod)
 spring.zipkin.base-url=http://zipkin:9411
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Sampling is critical for production tracing.
 100% sampling = 1 trace record per request = significant overhead at scale.
@@ -708,7 +708,7 @@ backend.
 
 ---
 
-#### Q5 - What is Spring Cloud Config Server and when is it needed?
+**[MID] Q5 - [CONCEPTUAL] What is Spring Cloud Config Server and when is it needed?**
 
 Spring Cloud Config Server provides centralized externalized configuration:
 
@@ -732,7 +732,7 @@ Config Client (all microservices)
   Config Server values override local
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Setup (Config Server):
 ```yaml
@@ -746,7 +746,7 @@ spring:
           search-paths: '{application}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Setup (Config Client):
 ```properties
@@ -755,7 +755,7 @@ spring.application.name=order-service  # determines config file
 spring.profiles.active=prod
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Live refresh (@RefreshScope):
 ```java
@@ -766,7 +766,7 @@ public class FeatureController {
     private boolean newCheckoutEnabled;
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 POST /actuator/refresh -> beans recreated with new config values.
 Spring Cloud Bus: broadcast refresh to all instances via Kafka/RabbitMQ.
@@ -789,7 +789,7 @@ pattern: structure in Git, secrets in Vault.
 
 ---
 
-#### Q6 - How do you implement health-based service routing in Spring Cloud?
+**[MID] Q6 - [HANDS-ON] How do you implement health-based service routing in Spring Cloud?**
 
 Load balancer health-aware routing ensures traffic only reaches healthy instances:
 
@@ -804,7 +804,7 @@ eureka:
       enabled: true  # Use /actuator/health for Eureka status
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Spring Cloud LoadBalancer with health filter:
 ```java
@@ -827,7 +827,7 @@ public class LoadBalancerConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The gap between Eureka deregistration and
 load balancer cache update can cause brief routing to dead instances. Eureka's
@@ -838,7 +838,7 @@ and load balancer propagation. The solution: graceful shutdown (preStop hook + s
 
 ---
 
-#### Q7 - How do you handle distributed transaction failures in microservices?
+**[SENIOR] Q7 - [PRODUCTION] How do you handle distributed transaction failures in microservices?**
 
 Distributed transactions (Saga pattern):
 
@@ -860,7 +860,7 @@ OrderSaga (orchestrator):
     Compensation: Mark order as failed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Choreography (event-driven):**
 ```
@@ -875,7 +875,7 @@ OrderCreated event
     Previous services listen and compensate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Spring doesn't provide a saga framework, but:
 - Axon Framework: orchestration sagas with @SagaOrchestrationStart
@@ -890,7 +890,7 @@ Same key = same result. Store processed keys in Redis (TTL = max retry window).
 
 ---
 
-#### Q8 - What is Spring Cloud Bus and how does it work?
+**[SENIOR] Q8 - [CONCEPTUAL] What is Spring Cloud Bus and how does it work?**
 
 Spring Cloud Bus links all instances of all services to a message broker (Kafka,
 RabbitMQ). It enables broadcasting events across all service instances.
@@ -906,7 +906,7 @@ Use case: Config refresh broadcast
 6. All @RefreshScope beans are recreated with new config
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Alternative: Spring Cloud Config Monitor + webhook
 ```
@@ -915,7 +915,7 @@ Git webhook -> Config Server /monitor endpoint
 -> All instances refresh
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Bus also enables:
 - Custom event broadcasting between services
@@ -931,7 +931,7 @@ reloading.
 
 ---
 
-#### Q9 - How do you implement rate limiting with Spring Cloud Gateway?
+**[SENIOR] Q9 - [HANDS-ON] How do you implement rate limiting with Spring Cloud Gateway?**
 
 Spring Cloud Gateway's RequestRateLimiter filter:
 
@@ -975,7 +975,7 @@ public KeyResolver userKeyResolver() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Algorithm: Token bucket. replenishRate tokens added per second. burstCapacity is
 the max tokens. Each request consumes tokens. No tokens -> 429 Too Many Requests.
@@ -992,7 +992,7 @@ The two are complementary, not redundant.
 
 ---
 
-#### Q10 - What is the bulkhead pattern and how does it prevent cascade failures?
+**[STAFF] Q10 - [ARCHITECTURE] What is the bulkhead pattern and how does it prevent cascade failures?**
 
 Bulkhead isolates failures to prevent one failing service from consuming all
 resources and causing other services to fail:
@@ -1008,7 +1008,7 @@ resilience4j.bulkhead.instances
   maxConcurrentCalls: 25
   maxWaitDuration: 500ms  # wait for slot
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 If 25 calls are concurrent to inventory-service, call 26 waits 500ms
 then throws BulkheadFullException. Caller's fallback invoked.
@@ -1021,7 +1021,7 @@ resilience4j.thread-pool-bulkhead.instances
   coreThreadPoolSize: 2
   queueCapacity: 25
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using thread pool. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Inventory-service calls run in a dedicated 4-thread pool.
 Other services use the main thread pool (no contamination).
@@ -1035,7 +1035,7 @@ on the calling thread, not the bulkhead pool.
 
 ---
 
-#### Q11 - How does service-to-service authentication work in Spring Cloud?
+**[STAFF] Q11 - [CONCEPTUAL] How does service-to-service authentication work in Spring Cloud?**
 
 Options:
 
@@ -1063,7 +1063,7 @@ WebClient inventoryWebClient(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Option 3: mTLS (mutual TLS):**
 Each service presents a client certificate.
@@ -1079,7 +1079,7 @@ secure pattern but requires an authorization server that supports token exchange
 
 ---
 
-#### Q12 - What are the trade-offs between synchronous and asynchronous communication in microservices?
+**[STAFF] Q12 - [TRADE-OFF] What are the trade-offs between synchronous and asynchronous communication in microservices?**
 
 **Synchronous (REST/gRPC):**
 - Caller waits for response

@@ -1,6 +1,6 @@
 ---
 title: "Design Patterns"
-nav_order: 4
+nav_order: 22
 has_children: true
 ---
 

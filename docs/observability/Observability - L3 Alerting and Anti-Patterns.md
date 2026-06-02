@@ -251,7 +251,7 @@ groups:
           # 100 errors at 1,000,000 RPS is noise
 ```
 
-> **Code walkthrough:** The BAD pattern uses absolute thresholds on
+> **Code walkthrough:** The BAD pattern uses absolute thresholds onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > machine metrics and an absolute error count without denominator.
 > CPU > 80% fires during normal GC and batch operations; engineers
 > receive this alert 10+ times per week and learn to ignore it. The
@@ -262,6 +262,13 @@ groups:
 
 **Example 2: GOOD - Multi-window multi-burn-rate SLI alerting**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # GOOD: Multi-window multi-burn-rate alerting
 # Based on Google SRE Workbook Chapter 5
@@ -354,8 +361,9 @@ groups:
           runbook_url: >
             https://wiki/checkout-error-budget-burn
 ```
+{% endraw %}
 
-> **Code walkthrough:** The GOOD pattern uses recording rules to
+> **Code walkthrough:** The GOOD pattern uses recording rules toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > pre-compute error ratios, reducing Prometheus query cost. The fast
 > burn alert requires BOTH the 1h rate AND the 5m rate to exceed the
 > threshold - this prevents false positives from 1-minute transient
@@ -368,6 +376,7 @@ groups:
 
 **Example 3: P99 latency SLI alert with percentile tracking**
 
+{% raw %}
 ```yaml
 # Latency SLI alerting: P99 burn rate
 # SLO: P99 < 500ms for 99.5% of requests
@@ -409,8 +418,9 @@ groups:
             exceeding 500ms SLO threshold. Budget burning
             at 14x sustainable rate.
 ```
+{% endraw %}
 
-> **Code walkthrough:** The latency SLI alert uses a histogram-based
+> **Code walkthrough:** The latency SLI alert uses a histogram-basedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > approach: it measures the fraction of requests landing WITHIN the
 > SLO threshold bucket (le="500"), then inverts to get the breach
 > fraction. This is more accurate than `histogram_quantile()` for
@@ -536,7 +546,7 @@ inhibit_rules:
     # SLI alerts when database is the root cause
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SLI alerts when database is the root cause example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Fix: Configure Alertmanager inhibition rules for shared
 infrastructure failures. Group related alerts in Alertmanager
@@ -564,7 +574,7 @@ sum(rate(http_requests_total[1h]))
 # Lower threshold or reduce the for: duration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Lower threshold or reduce the for: duration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Use the Google SRE Workbook alert parameters: 14x for fast
 burn with `for: 2m`, 2x for slow burn with `for: 15m`. Start
@@ -740,7 +750,7 @@ the error ratio at the outage time:
 sum(rate(http_requests_total{status=~"5.."}[5m]))
   / sum(rate(http_requests_total[5m]))
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Lower threshold or reduce the for: duration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If the error rate was 0%, the issue was an upstream proxy absorbing
 errors (returning cached responses or fallback). The SLI was
@@ -755,7 +765,7 @@ multiplier was during the outage:
 # If result was 8 and threshold was 14, alert didn't fire
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If result was 8 and threshold was 14, alert didn't fire example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Check the `for:` duration. If the outage lasted 8 minutes
 and the alert has `for: 10m`, the condition was true for less than
@@ -985,7 +995,7 @@ and
 > (14 * 0.001)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threshold = 14 * 0.001 = 0.014 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 To avoid duplicating this for every service, I use recording rules
 that pre-compute the error ratio per job, then a parametric alert
@@ -1001,7 +1011,7 @@ fallback to avoid division-by-zero when traffic drops to zero
 / (sum(rate(requests[1h])) or vector(1))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Threshold = 14 * 0.001 = 0.014 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The division-by-zero handling is
 a production detail that candidates who have actually deployed these
@@ -1176,7 +1186,7 @@ incidents. Recognizing these patterns prevents them.
 
 **How it works (the key anti-patterns):**
 
-```
+```plaintext
 Anti-Pattern Taxonomy
 ========================
 
@@ -1230,7 +1240,7 @@ FALSE CONFIDENCE ANTI-PATTERNS:
      Fix: Multi-region synthetic probes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Observability Anti-Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The most dangerous anti-pattern is false confidence - having
@@ -1315,7 +1325,7 @@ public class CheckoutController {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern adds `user_id` as a Prometheus
+> **Code walkthrough:** The BAD pattern adds `user_id` as a Prometheusice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > metric label. Prometheus creates one time series per unique combination
 > of label values. With 1 million users, this single counter creates
 > 1 million time series, one per user per status value. Prometheus'
@@ -1342,6 +1352,7 @@ public class CheckoutController {
         @RequestHeader("X-User-Id") String userId,
         @RequestBody Order order
     ) {
+        // BAD: see prior example above (Only low-cardinality labels on...)
         // GOOD: Only low-cardinality labels on metrics
         // These labels have < 100 unique values each
         registry.counter(
@@ -1370,7 +1381,7 @@ public class CheckoutController {
 }
 ```
 
-> **Code walkthrough:** The GOOD pattern enforces the fundamental
+> **Code walkthrough:** The GOOD pattern enforces the fundamentalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > observability rule: low-cardinality data belongs in metrics, high-
 > cardinality data belongs in traces (or logs). Metrics have only
 > `payment_method` and `region` as labels - both have fewer than 20
@@ -1383,6 +1394,13 @@ public class CheckoutController {
 
 **Example 3: BAD vs GOOD - Average vs percentile latency SLI**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # BAD: Average latency as the SLI
 # Hides the tail experience completely
@@ -1434,8 +1452,9 @@ groups:
             P99 latency is {{ $value }}ms.
             1% of users experiencing > 500ms latency.
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD alert uses `avg()` to compute mean
+> **Code walkthrough:** The BAD alert uses `avg()` to compute meanice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > latency. A bimodal distribution (99% of requests at 50ms, 1% at
 > 5000ms) produces an average around 100ms - well below the 200ms
 > threshold. The 1% of users experiencing 5-second latency are
@@ -1572,7 +1591,7 @@ prometheus_tsdb_head_series
 # Prometheus recommends < 10M; alert at 8M
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prometheus recommends < 10M; alert at 8M example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Identify the high-cardinality label using the topk cardinality
 query. Add an `attributes` processor in the OTel Collector to drop
@@ -1609,7 +1628,7 @@ histogram_quantile(0.99,
 # Returns 7500ms - invisible to average dashboard
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This invisible to average dashboard example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Replace average latency with P99 in all SLI dashboards.
 Change alert rules to use `histogram_quantile(0.99)`.
@@ -1640,7 +1659,7 @@ grep "level" fluentd-config.yaml | head -20
 # If no level filter: ERROR logs are also sampled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no level filter: ERROR logs are also sampled example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Change to level-aware sampling in the log shipper:
 ```yaml
@@ -1655,7 +1674,7 @@ Fix: Change to level-aware sampling in the log shipper:
 </filter>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override for high-severity levels: example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -1725,7 +1744,7 @@ head series metric before and after restart:
 ```promql
 prometheus_tsdb_head_series
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override for high-severity levels: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If this shows 50M+ and grows over time, it's a cardinality explosion.
 
@@ -1733,7 +1752,7 @@ Next, I find the culprit metric:
 ```promql
 topk(10, count by (__name__)({__name__=~".+"}))
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override for high-severity levels: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This shows the 10 metrics with the most time series. The offending
 metric will be orders of magnitude larger than others.
@@ -1743,7 +1762,7 @@ series), I find the high-cardinality label:
 ```promql
 count(http_requests_total) by (label_name)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override for high-severity levels: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 I run this for each label. The one with 10M unique values is the
 culprit (usually user_id, session_id, or request_id).
@@ -1759,7 +1778,7 @@ label names. Add a Prometheus alert:
 ```promql
 prometheus_tsdb_head_series > 8000000
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override for high-severity levels: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 firing at 8M time series (before the 10M OOM threshold).
 
@@ -2033,7 +2052,7 @@ prometheus_tsdb_head_series
 # Warning: > 5M; Critical: > 8M; OOM likely: > 10M
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Warning: > 5M; Critical: > 8M; OOM likely: > 10M example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: Find the highest-cardinality metrics:
 ```promql
@@ -2044,7 +2063,7 @@ topk(10,
 # The exploded metric will be 100x larger than others
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The exploded metric will be 100x larger than others example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Find which label drives the cardinality:
 ```promql
@@ -2054,7 +2073,7 @@ count(my_metric) by (label_two)
 # The label with count 1M+ is the high-cardinality one
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The label with count 1M+ is the high-cardinality one example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4: Sample the offending label values to confirm:
 ```promql
@@ -2062,7 +2081,7 @@ group by (label_two)(my_metric)
 # Returns distinct values - will be user IDs, UUIDs, etc.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This will be user IDs, UUIDs, etc. example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 5: Estimate time to OOM at current growth rate:
 ```promql
@@ -2071,7 +2090,7 @@ rate(prometheus_tsdb_head_series[1h])
 # At 1000 new series/second, 10M cap hit in ~2.8 hours
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This At 1000 new series/second, 10M cap hit in ~2.8 hours example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Armed with the metric name and label name, I add the drop rule to
 the OTel Collector `attributes` processor and redeploy. New series

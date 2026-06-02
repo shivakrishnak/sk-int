@@ -1,6 +1,6 @@
 ---
 title: "Quarkus"
-nav_order: 10
+nav_order: 43
 has_children: true
 ---
 

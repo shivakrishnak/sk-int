@@ -91,7 +91,7 @@ JIT compilation is the local warehouse that pre-assembles popular items
   - Attributes (LineNumberTable, LocalVariableTable, SourceFile, etc.)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key bytecodes (opcodes):**
 ```
@@ -105,13 +105,13 @@ Returns:          ireturn, areturn, return (void)
 Type conversions: i2l (int to long), checkcast, instanceof
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Reading bytecode via `javap -c -verbose` is a practical
+> **Code walkthrough:** Reading bytecode via `javap -c -verbose` is a practicalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > debugging skill. The `invokevirtual` vs `invokeinterface` distinction matters
 > for understanding why interface calls historically had a small overhead: JVM
 > must search the interface method table (itable) rather than use a fixed offset
@@ -168,7 +168,7 @@ cr.accept(new ClassVisitor(Opcodes.ASM9, cw) {
 byte[] instrumentedBytecode = cw.toByteArray();
 ```
 
-> **Code walkthrough:** The `aload_0` loads `this` (local variable 0)
+> **Code walkthrough:** The `aload_0` loads `this` (local variable 0)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > onto the operand stack. `dup` duplicates it so it can be used both for
 > `getfield` (read `count`) and `putfield` (write `count`). The JVM's
 > operand stack is typed (int, long, object reference). The verifier ensures
@@ -223,6 +223,12 @@ for at least 1-2 seconds of execution before measuring throughput.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: benchmarks report wrong performance due to no JVM warmup.**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD benchmark: no warmup
 public static void main(String[] args) {
@@ -246,7 +252,7 @@ public void benchmarkMethod() {
 // (dead code elimination)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -293,7 +299,7 @@ Tier 4: C2 Full Optimization
   - Deoptimization if speculation fails
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Checking JIT compilation activity:
@@ -312,7 +318,7 @@ Tier 4: C2 Full Optimization
 // Profile reveals: 99.9% of calls use ProcessorImpl -> speculative inline
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The C2 JIT uses "type profiles" collected
 at tier 3: at each virtual call site, the JVM tracks which concrete types
@@ -349,7 +355,7 @@ Performance:
   - Stateless lambdas: singleton (one instance ever)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Stateless lambda: singleton (no capture)
@@ -362,7 +368,7 @@ Runnable r = () -> System.out.println(message); // captures message
 // New Runnable instance for each call to this code with different message
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The lambda as `invokedynamic` decision
 was made to future-proof the JVM: the bootstrap method determines at runtime
@@ -419,7 +425,7 @@ synchronized(localObject) { // localObject never shared -> lock elided!
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* Escape analysis explains why Stream
 pipelines on small datasets are often faster than expected despite creating
@@ -472,7 +478,7 @@ try (Context ctx = Context.create()) {
 // Result: AOT performance closer to JIT peaks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The JIT vs Native Image trade-off is
 deployment context-dependent. Long-running services (application servers,
@@ -531,7 +537,7 @@ public static void premain(String args, Instrumentation inst) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The distinction between compile-time
 (AspectJ ctw), load-time (AspectJ ltw, Java agent), and runtime (CGLIB,
@@ -579,7 +585,7 @@ Monitoring:
   # Analyze: look for "Deoptimization" events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze: look for "Deoptimization" events example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Type pollution is a real performance
 concern in polymorphic code. A method that processes `List<T>` items
@@ -623,7 +629,7 @@ Attributes:
   RuntimeInvisibleAnnotations: CLASS retention annotations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze: look for "Deoptimization" events example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The `StackMapTable` attribute (mandatory
 since Java 7) precomputes the type state of the operand stack and local
@@ -671,7 +677,7 @@ javap -c -verbose -p com.example.Foo | grep -A 5 "invoke"
 // Shows all method invocations: verify instrumentation injected correctly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze: look for "Deoptimization" events example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Production debugging without source code:
 if a production JVM crashes or hangs, you have: (1) thread dumps (`jstack`),
@@ -724,7 +730,7 @@ class MyHints implements RuntimeHintsRegistrar {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze: look for "Deoptimization" events example dice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The closed-world assumption is both the
 power and the limitation of Native Image. The closed world enables aggressive
@@ -742,13 +748,13 @@ generation by recording all dynamic accesses during test runs.
 
 ### ⚖️ Comparison Table
 
-| Execution Mode | Startup | Peak Throughput | Memory | Reflection | Dynamic Class Loading |
-|---|---|---|---|---|---|
-| Interpreter (tier 0) | Fast | Slowest (10-100x) | Lowest | Full | Full |
-| C1 JIT (tier 1-3) | Medium | Medium | Medium | Full | Full |
-| C2 JIT (tier 4) | Slow (warmup) | Best | Medium+ | Full | Full |
-| GraalVM JIT | Slow (warmup) | Best (better C2) | Medium+ | Full | Full |
-| Native Image (AOT) | Milliseconds | Good (no warmup) | Lowest | Config required | No |
+| Execution Mode| Startup| Peak Throughput| Memory| Reflection| Dynamic Class Lo
+|---|----------|-----------------|-------|---------------|---------------------|
+| Interpreter (tier 0)| Fast| Slowest (10-100x)| Lowest| Full| Full|
+| C1 JIT (tier 1-3)| Medium| Medium| Medium| Full| Full|
+| C2 JIT (tier 4)| Slow (warmup)| Best| Medium+| Full| Full|
+| GraalVM JIT| Slow (warmup)| Best (better C2)| Medium+| Full| Full|
+| Native Image (AOT)| Milliseconds| Good (no warmup)| Lowest| Config required| N
 
 ---
 
@@ -786,10 +792,10 @@ generation by recording all dynamic accesses during test runs.
 > Parametric polymorphism: `List<T>` works for any T.
 > Variance in type systems: how does `List<Dog>` relate to `List<Animal>`?
 > Invariant (Java generics): no relationship.
-> Covariant (arrays, `? extends`): Dog[] IS-A Animal[]; `List<? extends Animal>` accepts `List<Dog>`.
+> Covariant (arrays, `? extends`): Dog[] IS-A Animal[]; `List<? extends Animal>`
 > Contravariant (`? super`): `List<? super Dog>` accepts `List<Animal>`.
 >
-> Java arrays are covariant (historical, pre-generics): `Dog[] dogs = new Dog[5]; Animal[] animals = dogs; animals[0] = new Cat(); // ArrayStoreException!`.
+> Java arrays are covariant (historical, pre-generics): `Dog[] dogs = new Dog[5]
 > Arrays check at runtime; generics check at compile time. This is why
 > generics were introduced: compile-time type safety without runtime checks.
 >
@@ -834,7 +840,7 @@ PECS: Producer Extends, Consumer Super
   - "consuming" = writing to the collection  -> use ? super
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Type erasure:**
 ```java
@@ -850,13 +856,13 @@ TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
 // Jackson uses this for deserialization with generic types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The array covariance example demonstrates Java's
+> **Code walkthrough:** The array covariance example demonstrates Java'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > "historical mistake" - covariant arrays cause `ArrayStoreException` at
 > runtime, not at compile time. Generics were designed to catch this at
 > compile time. The PECS `copy()` method from `Collections` is the canonical
@@ -908,7 +914,7 @@ Collections.copy(dest, source); // T=Integer
 // source is List<Integer> (extends Integer): can provide Integer (produce)
 ```
 
-> **Code walkthrough:** `List<? extends Number>` captures the UPPER bound:
+> **Code walkthrough:** `List<? extends Number>` captures the UPPER bound:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the list contains SOME type that IS-A Number. You can safely read elements
 > as Number (they're guaranteed to be at least Number). You can't add (you
 > don't know the exact type: is it `List<Integer>` or `List<Double>`?).
@@ -988,7 +994,7 @@ String s = strings.get(0); // ClassCastException: Integer cannot be cast to Stri
 User user = deserialize(json, User.class); // type-safe
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1048,7 +1054,7 @@ class Dog extends Animal {
 // doesn't enforce it as override; it's a new overloaded method
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* LSP is the foundation of correct inheritance.
 The "Square extends Rectangle" example is the canonical LSP violation: both
@@ -1103,7 +1109,7 @@ dogs.sort(byName); // works! byName can compare Animals, Dogs are Animals
 // T=Dog, Comparator<? super Dog> accepts Comparator<Animal>, Comparator<Object>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Variance in type theory has a precise
 formulation: covariant types can be substituted in output positions (return
@@ -1157,7 +1163,7 @@ addAll(strings, 42); // compiles, ArrayStoreException at runtime!
 // addAll(strings, 42); // COMPILE ERROR: T=String, 42 is Integer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The array covariance decision is a
 compromise between expressiveness (sorting works for all arrays) and safety
@@ -1219,7 +1225,7 @@ instanceof T; // COMPILE ERROR: T erased
 T.class; // COMPILE ERROR: no such class at runtime
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The "super type token" pattern (common in
 Jackson's `TypeReference<T>`) works by creating an ANONYMOUS subclass that
@@ -1230,7 +1236,7 @@ TypeReference<List<String>> typeRef = new TypeReference<List<String>>() {};
 // Signature preserved in bytecode!
 Type type = typeRef.getClass().getGenericSuperclass(); // TypeReference<List<String>>
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is how Jackson, Gson, and Spring's `ParameterizedTypeReference` provide
 generic type info to their APIs. Type erasure creates an asymmetry: types
@@ -1281,7 +1287,7 @@ Method m = obj.getClass().getMethod("run"); // runtime structural check
 if (m != null) m.invoke(obj); // "duck typing" via reflection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Nominal vs structural typing is a fundamental
 type system design choice with real engineering trade-offs. Nominal typing
@@ -1338,7 +1344,7 @@ void swap(List<?> list, int i, int j) {
 //   (can't return ? extends T; T is not nameable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The "wildcard capture" pattern is how
 `Collections.swap()` is implemented in the JDK. The public API takes `List<?>`
@@ -1380,7 +1386,7 @@ Runnable r = (Runnable & Serializable) () -> System.out.println("hi");
 // Method body can use Comparable<T> methods via cast (compiler inserts checkcast)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The `(Runnable & Serializable) () -> ...`
 pattern is used in Apache Spark and other distributed frameworks where
@@ -1425,7 +1431,7 @@ User user = fromJson(json, User.class); // need to pass User.class explicitly
 // These carry generic type info via anonymous subclass + reflection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The erasure decision is often cited as
 Java's biggest design regret (alongside checked exceptions and null). But
@@ -1471,7 +1477,7 @@ Comparisons:
                   no null (Option<T> instead), no inheritance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Java's nullable references are the biggest
 type system gap. Tony Hoare called null his "billion-dollar mistake."

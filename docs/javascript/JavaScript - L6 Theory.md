@@ -167,7 +167,7 @@ REALMS:
     Array.isArray(arr);  // TRUE (works cross-realm)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ECMAScript Specification and TC39 Process example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -269,7 +269,7 @@ const duration = Temporal.Duration.from({ hours: 1, minutes: 30 });
 const endTime = meeting.add(duration);
 ```
 
-> **Code walkthrough:** The `[] == false` trace shows exactly why the
+> **Code walkthrough:** The `[] == false` trace shows exactly why theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ECMAScript spec needs to be read to understand JavaScript's coercion
 > rules. Each step is an abstract operation defined in the spec. Without
 > reading the spec, the behavior appears arbitrary. With it, it's
@@ -353,6 +353,11 @@ compiler. The semantic meaning of the code is preserved.
 
 **Cross-realm instanceof failure in production:**
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // SYMPTOM: validation library throws "invalid array" for valid arrays
 // Only happens in certain contexts (iframe, worker, vm.runInNewContext)
@@ -382,7 +387,7 @@ function validateArray(input) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -402,8 +407,7 @@ function validateArray(input) {
 
 ---
 
-**Q1: What is the difference between ECMAScript and JavaScript?**
-`[MID]` MECHANISM
+**[MID] Q1 - [MECHANISM] What is the difference between ECMAScript and JavaScript?**
 
 > **Answer:**
 >
@@ -446,8 +450,7 @@ function validateArray(input) {
 > and Node.js - understanding this helps predict when a new ECMAScript
 > feature will be available in Node.js based on Chrome's release.
 
-**Q2: Walk me through the TC39 stages with a real example.**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] Walk me through the TC39 stages with a real example.**
 
 > **Answer:**
 >
@@ -494,7 +497,7 @@ function validateArray(input) {
 > changed. The lesson: Stage 2 is "probably" and Stage 3 is "almost
 > certainly."
 
-**Q3: What are Abstract Operations in the ECMAScript spec and why
+**[JUNIOR] Q3 - [MECHANISM] What are Abstract Operations in the ECMAScript spec and why**
 do they matter?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -572,7 +575,7 @@ do they matter?** `[SENIOR]` MECHANISM
 > the Abstract Equality Comparison algorithm covers 90% of JavaScript
 > coercion questions.
 
-**Q4: What is a Realm in ECMAScript and where do you encounter multiple
+**[MID] Q4 - [MECHANISM] What is a Realm in ECMAScript and where do you encounter multiple**
 Realms?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -635,7 +638,7 @@ Realms?** `[STAFF]` MECHANISM
 > module documentation explicitly warns: "vm is not a security mechanism."
 > Proper sandboxing requires `isolated-vm` or subprocess isolation.
 
-**Q5: What major JavaScript features are currently in Stage 3 or
+**[MID] Q5 - [MECHANISM] What major JavaScript features are currently in Stage 3 or**
 recently graduated to Stage 4?** `[SENIOR]` KNOWLEDGE
 
 > **Answer:**
@@ -694,8 +697,7 @@ recently graduated to Stage 4?** `[SENIOR]` KNOWLEDGE
 > When Temporal ships (estimated ES2025), it will replace the need for
 > most date utility libraries.
 
-**Q6: What is the 'Completion Record' in the ECMAScript spec?**
-`[STAFF]` MECHANISM
+**[STAFF] Q6 - [MECHANISM] What is the 'Completion Record' in the ECMAScript spec?**
 
 > **Answer:**
 >
@@ -765,7 +767,7 @@ recently graduated to Stage 4?** `[SENIOR]` KNOWLEDGE
 > swallows both return values AND thrown exceptions). ESLint rule
 > `no-unsafe-finally` catches this pattern.
 
-**Q7: How does the ECMAScript module system differ from CommonJS and
+**[SENIOR] Q7 - [MECHANISM] How does the ECMAScript module system differ from CommonJS and**
 what does the spec say about it?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -830,7 +832,7 @@ what does the spec say about it?** `[SENIOR]` MECHANISM
 > better tree-shaking for consumers, potentially reducing their bundle
 > size by 60%+ for large libraries with many exports.
 
-**Q8: What is the Symbol.iterator protocol and how does it relate
+**[SENIOR] Q8 - [MECHANISM] What is the Symbol.iterator protocol and how does it relate**
 to the spec?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -912,7 +914,7 @@ to the spec?** `[SENIOR]` MECHANISM
 > The spec-level insight: `yield*` in generators delegates to another
 > iterable - this is how you compose generators cleanly.
 
-**Q9: What is the Abstract Equality Comparison algorithm and what
+**[STAFF] Q9 - [MECHANISM] What is the Abstract Equality Comparison algorithm and what**
 are its most surprising results?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -1165,7 +1167,7 @@ SCOPE CHAIN (outer reference chain):
   add5(3);  // 8 (x=5 from outer env, y=3 from add5's env)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Execution Context and Specification Semantics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -1197,6 +1199,11 @@ Node.js processes with many closures over large data.
 ### 💻 Code Example
 
 **Hoisting, closure retention, and this binding context**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // HOISTING DIFFERENCE: var vs let/const
@@ -1268,7 +1275,7 @@ const boundGreet = greetFn.bind({ name: 'Eve' });
 boundGreet();  // 'Hello, Eve'
 ```
 
-> **Code walkthrough:** The `var` in loop closure bug is one of the
+> **Code walkthrough:** The `var` in loop closure bug is one of theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > most famous JavaScript footguns. `var i` creates a SINGLE binding
 > in the outer function's (or global) execution context. All three
 > closures capture this SAME `i` reference. When they execute, `i`
@@ -1393,7 +1400,7 @@ function handleRequest(req, res) {
 // Look for function closures in the retainer chain
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1413,7 +1420,7 @@ function handleRequest(req, res) {
 
 ---
 
-**Q1: Explain exactly how hoisting works for var and function
+**[JUNIOR] Q1 - [MECHANISM] Explain exactly how hoisting works for var and function**
 declarations.** `[MID]` MECHANISM
 
 > **Answer:**
@@ -1475,8 +1482,7 @@ declarations.** `[MID]` MECHANISM
 > returns `undefined`. TDZ catches the class of bugs where you
 > accidentally use a variable before it's initialized.
 
-**Q2: Explain the four rules for determining 'this' in JavaScript.**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] Explain the four rules for determining 'this' in JavaScript.**
 
 > **Answer:**
 >
@@ -1546,7 +1552,7 @@ declarations.** `[MID]` MECHANISM
 > without an object context, losing `this`. Arrow functions solve this
 > by capturing `this` at definition time.
 
-**Q3: What is the Temporal Dead Zone (TDZ) and what problem does it
+**[JUNIOR] Q3 - [MECHANISM] What is the Temporal Dead Zone (TDZ) and what problem does it**
 solve?** `[SENIOR]` MECHANISM
 
 > **Answer:**

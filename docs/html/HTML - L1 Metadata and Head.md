@@ -182,7 +182,7 @@ FAVICON MODERN APPROACH:
 <link rel="manifest" href="/site.webmanifest">
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Head and Metadata example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -300,7 +300,7 @@ how the document is interpreted before rendering; everything in
 </head>
 ```
 
-> **Code walkthrough:** The order matters: charset decodes the rest
+> **Code walkthrough:** The order matters: charset decodes the restice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of the page, so it must be first. Viewport stops the mobile browser
 > double-render. Critical CSS is render-blocking and must be early.
 > Preconnect starts TCP/TLS to font CDN before the browser parses
@@ -379,7 +379,7 @@ Check: Google Search Console → Mobile Usability report
   Will show pages with viewport issues
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -397,8 +397,7 @@ Check: Google Search Console → Mobile Usability report
 
 ---
 
-**Q1: What is the minimum required `<head>` content?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the minimum required `<head>` content?** `[JUNIOR]`**
 
 *Why they ask:* Foundation HTML knowledge.
 
@@ -437,7 +436,7 @@ DEFINITION
 
 ---
 
-**Q2: What is the difference between `preload`, `preconnect`,
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `preload`, `preconnect`,**
 and `prefetch`?** `[SENIOR]` COMPARISON
 
 *Why they ask:* Resource hints affect real performance.
@@ -492,8 +491,7 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q3: What Open Graph tags are essential for social sharing?**
-`[JUNIOR]` SCENARIO
+**[JUNIOR] Q3 - [SCENARIO] What Open Graph tags are essential for social sharing?**
 
 *Why they ask:* Real-world SEO/social knowledge.
 
@@ -541,8 +539,7 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q4: Why is CSS render-blocking and how do you deal with it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] Why is CSS render-blocking and how do you deal with it?**
 
 *Why they ask:* Performance fundamentals.
 
@@ -597,8 +594,7 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q5: How should the `<title>` tag be written for SEO?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q5 - [MECHANISM] How should the `<title>` tag be written for SEO?**
 
 *Why they ask:* SEO + HTML intersection.
 
@@ -649,8 +645,7 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q6: What is a web app manifest and when do you need one?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q6 - [SCENARIO] What is a web app manifest and when do you need one?**
 
 *Why they ask:* PWA knowledge - increasingly common requirement.
 
@@ -710,8 +705,7 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q7: What structured data formats work in the `<head>`?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What structured data formats work in the `<head>`?**
 
 *Why they ask:* SEO + rich results knowledge.
 
@@ -810,21 +804,21 @@ and `prefetch`?** `[SENIOR]` COMPARISON
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # HTML Attributes
@@ -973,7 +967,7 @@ CASE SENSITIVITY:
     class="Active" ≠ class="active" (case-sensitive)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Attributes example demonstrates a key concept ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1019,6 +1013,11 @@ password, checkbox, radio, file) through the `type` attribute.
 
 **Attribute vs property distinction (JavaScript)**
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // HTML: <input type="checkbox" checked id="agree">
 const checkbox = document.getElementById('agree');
@@ -1052,7 +1051,7 @@ input.getAttribute('value');  // "initial" (HTML attribute)
 input.value;                  // "new value" (current property)
 ```
 
-> **Code walkthrough:** Attributes are HTML-source state (what
+> **Code walkthrough:** Attributes are HTML-source state (whatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > you wrote in the HTML). Properties are live DOM state (what
 > the element currently is). For boolean attributes: the attribute
 > controls initial state; the property controls current state.
@@ -1127,30 +1126,29 @@ Same pattern for checkbox:
   const isChecked = input.checked;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Global vs element-specific | 1-2 min | Vocabulary depth |
-| Boolean attribute semantics | 2 min | Presence vs value |
-| Attribute vs property | 3-4 min | Key JavaScript insight |
-| data-* custom attributes | 2 min | dataset API |
-| ARIA attributes purpose | 2-3 min | A11y integration |
-| Case sensitivity | 1-2 min | id vs class behavior |
-| enumerated attributes | 1-2 min | crossorigin, loading |
+| Scenario| Recommended Time| Key Signal|
+|---------------------|---------------------------------|----------------------|
+| Global vs element-specific| 1-2 min| Vocabulary depth|
+| Boolean attribute semantics| 2 min| Presence vs value|
+| Attribute vs property| 3-4 min| Key JavaScript insight|
+| data-* custom attributes| 2 min| dataset API|
+| ARIA attributes purpose| 2-3 min| A11y integration|
+| Case sensitivity| 1-2 min| id vs class behavior|
+| enumerated attributes| 1-2 min| crossorigin, loading|
 
 ---
 
-**Q1: What are the different types of HTML attributes?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What are the different types of HTML attributes?**
 
 *Why they ask:* Vocabulary and categorization test.
 
-*Likely follow-up:* "What is the difference between boolean and enumerated attributes?"
+*Likely follow-up:* "What is the difference between boolean and enumerated attri
 
 > **Answer:**
 >
@@ -1171,8 +1169,8 @@ Same pattern for checkbox:
 > `disabled`, `required`, `checked`, `hidden`, `defer`, `async`.
 >
 > **Enumerated attributes**: accept a limited set of values.
-> `dir="ltr|rtl|auto"`, `crossorigin="anonymous|use-credentials"`,
-> `loading="eager|lazy"`, `decoding="sync|async|auto"`.
+ > `dir="ltr| rtl| auto"`, `crossorigin="anonymous| use-credentials"`,
+ > `loading="eager| lazy"`, `decoding="sync| async| auto"`.
 >
 > **Event handler attributes** (avoid in production):
 > `onclick="..."`, `onload="..."`, `onerror="..."`.
@@ -1189,7 +1187,7 @@ Same pattern for checkbox:
 
 ---
 
-**Q2: What is the difference between `getAttribute` and DOM
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `getAttribute` and DOM**
 properties?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Core JavaScript+HTML interaction question.
@@ -1243,8 +1241,7 @@ properties?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q3: How do ARIA attributes work and when should you use them?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q3 - [MECHANISM] How do ARIA attributes work and when should you use them?**
 
 *Why they ask:* Accessibility depth test.
 
@@ -1300,12 +1297,11 @@ properties?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q4: What is the `crossorigin` attribute and when is it required?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What is the `crossorigin` attribute and when is it required?**
 
 *Why they ask:* CORS awareness in HTML context.
 
-*Likely follow-up:* "What happens if crossorigin is missing on a preloaded font?"
+*Likely follow-up:* "What happens if crossorigin is missing on a preloaded font?
 
 > **Answer:**
 >
@@ -1354,8 +1350,7 @@ properties?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q5: What is the `tabindex` attribute and what are valid values?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q5 - [MECHANISM] What is the `tabindex` attribute and what are valid values?**
 
 *Why they ask:* Keyboard accessibility attributes knowledge.
 
@@ -1410,7 +1405,7 @@ properties?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q6: What is the `contenteditable` attribute and what are its
+**[SENIOR] Q6 - [MECHANISM] What is the `contenteditable` attribute and what are its**
 accessibility implications?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Advanced attribute with subtle issues.
@@ -1463,8 +1458,7 @@ accessibility implications?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q7: How does the `lang` attribute affect the page?** `[JUNIOR]`
-MECHANISM
+**[SENIOR] Q7 - [MECHANISM] How does the `lang` attribute affect the page?** `[JUNIOR]`**
 
 *Why they ask:* Internationalization + accessibility.
 
@@ -1523,14 +1517,61 @@ MECHANISM
 > inaccessible to French-speaking screen reader users even if
 > the text is in English.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Attribute vs property distinction |
-| Hiring Manager | Accessibility attributes |
-| Bar Raiser | ARIA depth + crossorigin |
-| Peer Engineer | data-*, tabindex, contenteditable |
+**[MID] Q8 - [MECHANISM] What is the difference between `id` and `class` attributes and when should each be used?**
+
+*Why they ask:* Tests fundamental attribute semantics.
+
+`id` must be unique within a document - it identifies
+a single element. Use `id` for: fragment navigation
+targets (`<section id="contact">`), JavaScript
+`getElementById` lookups, ARIA `aria-labelledby`
+references, form `<label for="...">` associations.
+`class` can be used on multiple elements and one
+element can have multiple classes. Use `class` for:
+CSS styling, JavaScript `querySelectorAll`, semantic
+grouping. The rule: `id` for unique identity, `class`
+for category membership. A common mistake: using `id`
+for styling (which works but couples HTML structure
+to CSS, making reuse difficult).
+
+*What separates good from great:* ARIA use case -
+`id` is required for `aria-labelledby` and
+`aria-describedby` references which cannot use classes.
+
+---
+
+**[SENIOR] Q9 - [DEBUGGING] A `<label>` click does not focus the associated input. What are the possible causes?**
+
+*Why they ask:* Tests form accessibility debugging.
+
+Three causes: (1) The `for` attribute value does not
+match the input's `id` exactly (case-sensitive, must be
+identical). (2) The input has `display: none` or
+`visibility: hidden` (not focusable). (3) The input is
+disabled. Debug: open DevTools, check the `for` and `id`
+values, check the input's CSS. Fix: ensure `for` matches
+`id` exactly. Alternative: wrap the input inside the
+`<label>` (implicit association, no `for`/`id` needed).
+Common mistake: using `name` instead of `id` in the
+`for` attribute - `name` is for form submission, `id`
+is for label association.
+
+*What separates good from great:* Knowing the implicit
+label pattern (wrapping) as an alternative that avoids
+the ID dependency entirely.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|---------------------------|---------------------------------|
+| Technical Panel| Attribute vs property distinction|
+| Hiring Manager| Accessibility attributes|
+| Bar Raiser| ARIA depth + crossorigin|
+| Peer Engineer| data-*, tabindex, contenteditable|
 
 ---
 
@@ -1565,21 +1606,21 @@ MECHANISM
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # HTML Character Encoding and Internationalization
@@ -1744,7 +1785,7 @@ INTERNATIONALIZATION:
   // → "2 days ago"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Character Encoding and Internationalization exice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1792,6 +1833,12 @@ width (efficient for ASCII-heavy text), and no BOM required
 
 **Encoding declaration and HTML entity usage**
 
+
+```html
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```html
 <!-- CORRECT: UTF-8 declaration first in head -->
 <!DOCTYPE html>
@@ -1831,7 +1878,7 @@ width (efficient for ASCII-heavy text), and no BOM required
 </html>
 ```
 
-> **Code walkthrough:** The charset declaration within the first
+> **Code walkthrough:** The charset declaration within the firstice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > 1024 bytes ensures the browser knows to decode bytes as UTF-8
 > before reading any non-ASCII content. The three required escapes
 > are `&lt;`, `&gt;`, and `&amp;` - these prevent raw characters
@@ -1876,7 +1923,7 @@ width (efficient for ASCII-heavy text), and no BOM required
 </html>
 ```
 
-> **Code walkthrough:** Setting `dir="rtl"` on the `<html>` element
+> **Code walkthrough:** Setting `dir="rtl"` on the `<html>` elementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > flips text alignment, list markers, and scroll position for
 > RTL languages like Arabic and Hebrew. CSS logical properties
 > (`padding-inline-start` instead of `padding-left`) automatically
@@ -1966,7 +2013,7 @@ Fix sequence:
   5. Convert existing data if it was stored in wrong encoding
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1984,8 +2031,7 @@ Fix sequence:
 
 ---
 
-**Q1: Why must `<meta charset>` be within the first 1024 bytes?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] Why must `<meta charset>` be within the first 1024 bytes?**
 
 *Why they ask:* Tests understanding of parser constraints.
 
@@ -2025,8 +2071,7 @@ Fix sequence:
 
 ---
 
-**Q2: What is the difference between UTF-8 and UTF-16?**
-`[SENIOR]` COMPARISON
+**[SENIOR] Q2 - [TRADE-OFF] What is the difference between UTF-8 and UTF-16?**
 
 *Why they ask:* Encoding depth beyond "use UTF-8."
 
@@ -2073,8 +2118,7 @@ Fix sequence:
 
 ---
 
-**Q3: What are HTML character entities and when are they required?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q3 - [MECHANISM] What are HTML character entities and when are they required?**
 
 *Why they ask:* HTML syntax knowledge.
 
@@ -2121,8 +2165,7 @@ Fix sequence:
 
 ---
 
-**Q4: How do you implement RTL language support in HTML?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q4 - [SCENARIO] How do you implement RTL language support in HTML?**
 
 *Why they ask:* i18n awareness for international apps.
 
@@ -2180,8 +2223,7 @@ Fix sequence:
 
 ---
 
-**Q5: What is `hreflang` and how does it work?** `[SENIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] What is `hreflang` and how does it work?** `[SENIOR]`**
 
 *Why they ask:* International SEO - critical for multi-language sites.
 
@@ -2235,8 +2277,7 @@ MECHANISM
 
 ---
 
-**Q6: How does the `Intl` API handle locale-aware formatting?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] How does the `Intl` API handle locale-aware formatting?**
 
 *Why they ask:* JavaScript i18n knowledge.
 
@@ -2308,8 +2349,7 @@ MECHANISM
 
 ---
 
-**Q7: What is mojibake and how do you fix it?** `[JUNIOR]`
-FAILURE
+**[SENIOR] Q7 - [FAILURE] What is mojibake and how do you fix it?** `[JUNIOR]`**
 
 *Why they ask:* Real-world encoding problem everyone has encountered.
 
@@ -2357,6 +2397,54 @@ FAILURE
 > via a form either silently truncates the string at the emoji
 > or throws an error if strict mode is enabled. The fix is
 > `utf8mb4` on the database column and connection.
+
+
+---
+
+**[MID] Q8 - [MECHANISM] What is the difference between `charset="UTF-8"` and `charset="ISO-8859-1"` in practical terms?**
+
+*Why they ask:* Tests character encoding understanding.
+
+UTF-8 encodes all Unicode characters (1.1 million+)
+using 1-4 bytes per character. ISO-8859-1 encodes only
+256 characters (Latin-1 subset). UTF-8 is the universal
+standard for web documents since 2008 (W3C recommendation)
+and is the default for HTML5. The practical difference:
+ISO-8859-1 documents break on emoji, Chinese, Arabic,
+and many European characters (ü, ñ, ø) that fall outside
+the 256-character range. UTF-8 handles all of them.
+Always declare `<meta charset="UTF-8">` as the first
+child of `<head>` (before any content) - the browser
+needs it before encountering any non-ASCII characters.
+Mismatching declared charset and actual file encoding
+causes mojibake (garbled text).
+
+*What separates good from great:* The "first child of
+head" rule - knowing that the charset meta must appear
+before any non-ASCII content including other meta tags.
+
+---
+
+**[SENIOR] Q9 - [DEBUGGING] Text on your page shows garbled characters (ü → Ã¼). How do you diagnose?**
+
+*Why they ask:* Tests encoding mismatch debugging.
+
+This is a UTF-8/Latin-1 mismatch (mojibake). `Ã¼` is
+the Latin-1 representation of the UTF-8 byte sequence
+for `ü`. Diagnosis: (1) Check the HTTP response header:
+`Content-Type: text/html; charset=utf-8`. (2) Check the
+HTML meta: `<meta charset="UTF-8">`. (3) Check the actual
+file encoding in the editor (should be UTF-8 without BOM).
+The BOM (byte-order mark) causes its own issues: Internet
+Explorer renders the BOM as `ï»¿` at the start of the page.
+If all three match UTF-8, the issue is in a data pipeline
+(database, API, template engine) that is re-encoding text.
+Fix at the source of re-encoding.
+
+*What separates good from great:* Knowing that BOM-encoded
+UTF-8 causes visible artifacts in some browsers and in
+HTTP headers that don't expect BOM bytes.
+
 
 ---
 

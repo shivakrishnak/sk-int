@@ -152,7 +152,7 @@ Input -> [Validate Input]
 # Stochastic core, deterministic contract
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stochastic core, deterministic contract example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -173,6 +173,11 @@ needs a deterministic envelope.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: treating LLM output as deterministic
@@ -218,7 +223,7 @@ def extract_sentiment_good(
     return "neutral"  # unreachable but satisfies types
 ```
 
-> **Code walkthrough:** The BAD version assumes the
+> **Code walkthrough:** The BAD version assumes theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > LLM always returns exactly "positive", "negative",
 > or "neutral" - treating it as a deterministic function.
 > In practice, the LLM frequently elaborates ("The
@@ -320,7 +325,7 @@ def parse_llm_json(text: str) -> dict:
     return {}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This return empty dict + log example demonstrates function definition using error handling. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 ---
 
@@ -713,7 +718,7 @@ ANTI-PATTERN MAP:
 - Ops: Not Pinning Model Versions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AI Anti-Patterns in Software Engineering example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -730,6 +735,7 @@ to the AI context.
 
 ### 💻 Code Example
 
+{% raw %}
 ```python
 # Anti-pattern: trusting LLM output without validation
 # (Anti-Pattern #3 from the list)
@@ -757,8 +763,9 @@ def classify_support_ticket_bad(ticket: str) -> dict:
     # wrong key names, or omits a field
     return json.loads(resp.content[0].text)
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This wrong key names, or omits a field example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: validation envelope around LLM output
@@ -826,7 +833,7 @@ def classify_support_ticket_good(
     return DEFAULT
 ```
 
-> **Code walkthrough:** The BAD version calls `json.loads`
+> **Code walkthrough:** The BAD version calls `json.loads`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly on LLM output. This works in development
 > (the LLM usually produces valid JSON in tests) but
 > fails in production: the model sometimes wraps output
@@ -1339,7 +1346,7 @@ $0.03/call, 1M calls/day: $30k/day
 Annual saving: $29.2M
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Context as Architecture Constraint example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1454,7 +1461,7 @@ class ContextManagedChat:
         return assistant_message
 ```
 
-> **Code walkthrough:** The `ContextManagedChat` class
+> **Code walkthrough:** The `ContextManagedChat` classice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > implements explicit context budgeting: it tracks
 > four consumers (system prompt, history, user message,
 > output reserve) and enforces the history budget with
@@ -1672,7 +1679,7 @@ Diagnosis:
 # is hurting quality.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This is hurting quality. example demonstrates context manager using authentication. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 If correlation exists: implement context compression
 at the threshold where quality begins to degrade.
@@ -1804,7 +1811,7 @@ TOKEN_BUDGET = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Buffer to 200k window: 183,500 example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Implementation: when assembling the context, enforce
 each section's budget. For retrieved_docs: keep

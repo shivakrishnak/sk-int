@@ -100,7 +100,7 @@ Common findings and fixes:
   6. @sentry/browser: add Sentry to manual vendor chunk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: npm install --save-dev rollup-plugin-visualizer example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -130,7 +130,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: npm install --save-dev rollup-plugin-visualizer example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```javascript
 // Vite with bundlesize check (via bundlesize2 or similar):
@@ -146,7 +146,7 @@ module.exports = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: npm install --save-dev rollup-plugin-visualizer example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```bash
 # Analyze bundle composition:
@@ -168,7 +168,7 @@ ls -la dist/assets/*.js | sort -k5 -n -r | head -10
 du -sh dist/assets/*.js | sort -rh | head -10
 ```
 
-> **Code walkthrough:** Performance budgets in webpack cause the build
+> **Code walkthrough:** Performance budgets in webpack cause the buildice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to fail when assets exceed limits. This prevents bundle size regressions
 > from slipping through code review unnoticed. The budget should match
 > your mobile performance targets: 200KB initial JS means ~1.5s parse
@@ -176,6 +176,11 @@ du -sh dist/assets/*.js | sort -rh | head -10
 > build time overhead) when investigating specific issues.
 
 **Example 2: Systematic size reduction workflow**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # Step 1: Baseline measurement
@@ -212,7 +217,7 @@ npm run build
 # webpack performance.maxEntrypointSize: 320000
 ```
 
-> **Code walkthrough:** The systematic workflow prevents chasing the
+> **Code walkthrough:** The systematic workflow prevents chasing theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > wrong optimizations. Always measure first (step 1-2), then fix by
 > category (step 3-5), then re-measure to verify impact (step 6). The
 > performance budget (step 7) is the prevention layer - it fails the
@@ -395,6 +400,7 @@ Build time drops from 3 minutes to 15 seconds.
 
 **How it works:**
 
+{% raw %}
 ```
 Three levels of caching:
 
@@ -430,8 +436,9 @@ CI caching (GitHub Actions):
       key: build-cache-${{hashFiles('package-lock.json')}}
       restore-keys: build-cache-
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Caching Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -473,8 +480,9 @@ module.exports = merge(base, {
 // Third build:  Build time: 4.102s,  cache: 844 hits, 3 misses
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Caching Strategies example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
+{% raw %}
 ```yaml
 # GitHub Actions with layered caching
 - name: Cache build artifacts
@@ -491,8 +499,9 @@ module.exports = merge(base, {
 - name: Build
   run: npm run build
 ```
+{% endraw %}
 
-> **Code walkthrough:** The `buildDependencies.config` list is critical:
+> **Code walkthrough:** The `buildDependencies.config` list is critical:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it tells webpack which files could affect build output beyond the
 > source files themselves. Missing the babel config means babel changes
 > don't invalidate the cache - modules get compiled with the old babel
@@ -502,6 +511,7 @@ module.exports = merge(base, {
 
 **Example 2: Vite pre-bundling cache management**
 
+{% raw %}
 ```bash
 # Vite caches pre-bundled dependencies in node_modules/.vite/
 # (configurable via cacheDir in vite.config.ts)
@@ -528,8 +538,9 @@ export default defineConfig({
     path: .vite-cache
     key: vite-${{ hashFiles('**/package-lock.json') }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** Vite's pre-bundling cache (`node_modules/.vite`)
+> **Code walkthrough:** Vite's pre-bundling cache (`node_modules/.vite`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > contains esbuild-compiled versions of all npm packages. This is why
 > Vite dev startup is fast after the first run - packages are already
 > compiled to ESM. Moving the cache to `.vite-cache` (not inside

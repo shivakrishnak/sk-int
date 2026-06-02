@@ -117,7 +117,7 @@ COMMON MISTAKE with NACL:
        Symptom: browser hangs, connection timeout
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Network Security and Zero Trust example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Workload Identity - No Static Credentials:**
 
@@ -141,7 +141,7 @@ CORRECT PATTERN:
   Zero static credentials = zero exfiltration risk of long-lived keys
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Network Security and Zero Trust example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **East-West Zero Trust (Service Mesh):**
 
@@ -165,7 +165,7 @@ WITH mTLS (Service Mesh - Istio/App Mesh):
   Blast radius: contained to service A's authorization scope
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Network Security and Zero Trust example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -299,7 +299,7 @@ resource "aws_iam_role_policy" "app_task" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Specific secret ONLY example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```yaml
 # ISTIO: mTLS authorization policy (Kubernetes/EKS)
@@ -459,7 +459,7 @@ aws ec2 describe-security-groups \
     for sg in json.load(sys.stdin) if sg['Rules']]"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find overly permissive SG rules: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Replace CIDR source with SG reference.
 Enable AWS Config Rule `restricted-ssh` and
@@ -490,7 +490,7 @@ aws ec2 describe-instances \
 # "optional" = vulnerable to SSRF. Must be "required".
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "optional" = vulnerable to SSRF. Must be "required". example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```bash
@@ -503,7 +503,7 @@ aws ec2 modify-instance-metadata-options \
 # Simple GET (SSRF) cannot get the token -> can't get creds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Simple GET (SSRF) cannot get the token -> can't get creds example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -530,7 +530,7 @@ aws ec2 describe-route-tables \
   --query 'RouteTables[].Routes'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if subnets have NAT Gateway route: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Use private subnets with NAT Gateway access.
 Or use VPC endpoints for AWS service calls (no NAT needed).
@@ -644,7 +644,7 @@ flowchart TB
 
 ---
 
-#### CONCEPT 1: What is the difference between Zero Trust and perimeter security, and why does the perimeter model fail in the cloud?
+**[SENIOR] Q1 - [MECHANISM] What is the difference between Zero Trust and perimeter security, and why does the perimeter model fail in the cloud?**
 
 Perimeter security assumes: traffic inside the network is trusted,
 traffic outside is untrusted. Defend the edge (firewall, VPN).
@@ -688,7 +688,7 @@ does not prevent breaches, it contains them.
 
 ---
 
-#### CONCEPT 2: How do Security Groups and NACLs work? When would you use each?
+**[SENIOR] Q2 - [MECHANISM] How do Security Groups and NACLs work? When would you use each?**
 
 **Security Groups:**
 
@@ -750,7 +750,7 @@ stateless gotcha.
 
 ---
 
-#### CONCEPT 3: What is the confused deputy problem in IAM and how do you prevent it?
+**[SENIOR] Q3 - [MECHANISM] What is the confused deputy problem in IAM and how do you prevent it?**
 
 The confused deputy problem occurs when a service (deputy)
 has permissions it should not use on behalf of a caller.
@@ -794,7 +794,7 @@ benefits from Lambda's permissions.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 `aws:SourceAccount` and `aws:SourceArn` constrain the role
 assumption to only your account's Lambda functions.
@@ -813,7 +813,7 @@ condition keys shows practical remediation knowledge.
 
 ---
 
-#### DEBUGGING 1: Users report intermittent connection failures to your application. The ALB health checks pass. ECS tasks are healthy. What Zero Trust / network misconfiguration could cause this?
+**[SENIOR] Q4 - [DEBUGGING] Users report intermittent connection failures to your application. The ALB health checks pass. ECS tasks are healthy. What Zero Trust / network misconfiguration could cause this?**
 
 **Systematic diagnosis:**
 
@@ -832,7 +832,7 @@ aws logs filter-log-events \
 # action = REJECT = Security Group or NACL denied
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This action = REJECT = Security Group or NACL denied example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Common root causes (with Zero Trust context):**
 
@@ -858,7 +858,7 @@ aws ec2 describe-instances \
     ID:InstanceId, SG:SecurityGroups[].GroupId}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This action = REJECT = Security Group or NACL denied example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **ALB idle timeout vs ECS connection pool:**
 ALB closes idle connections after 60 seconds.
@@ -873,7 +873,7 @@ most common real-world cause of this symptom.
 
 ---
 
-#### DEBUGGING 2: Your application is logging AWS API errors: "Access Denied (s3:GetObject). The execution role of the Lambda does not have the permission." But the IAM policy clearly has s3:GetObject. What are the possible causes?
+**[SENIOR] Q1 - [DEBUGGING] Your application is logging AWS API errors: "Access Denied (s3:GetObject). The execution role of the Lambda does not have the permission." But the IAM policy clearly has s3:GetObject. What are the possible causes?**
 
 **Possible causes (systematic):**
 
@@ -894,7 +894,7 @@ aws iam get-role-policy \
 # (bucket-level permission vs object-level permission)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (bucket-level permission vs object-level permission) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **2. S3 Bucket Policy DENY overrides IAM ALLOW:**
 
@@ -908,7 +908,7 @@ aws s3api get-bucket-policy --bucket my-bucket
 # If Lambda is NOT in VPC or uses wrong endpoint: denied
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If Lambda is NOT in VPC or uses wrong endpoint: denied example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **3. KMS key policy if object is encrypted:**
 
@@ -921,7 +921,7 @@ aws kms get-key-policy --key-id <key-id> --policy-name default
 # Check Lambda role ARN is in the key users list
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Lambda role ARN is in the key users list example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **4. SCP (Service Control Policy) denying at org level:**
 
@@ -934,7 +934,7 @@ aws organizations describe-effective-policy \
 # Check for Deny statements on S3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for Deny statements on S3 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The KMS decryption failure
 manifesting as S3 Access Denied is the most-missed cause.
@@ -944,7 +944,7 @@ causes with the diagnostic command for each.
 
 ---
 
-#### TRADE-OFF 1: Service Mesh / mTLS adds complexity. Under what conditions is it worth the operational cost?
+**[SENIOR] Q2 - [TRADE-OFF] Service Mesh / mTLS adds complexity. Under what conditions is it worth the operational cost?**
 
 **The cost of mTLS:**
 
@@ -995,7 +995,7 @@ precondition (platform team), and offer the alternative
 
 ---
 
-#### TRADE-OFF 2: Private subnets + NAT Gateway vs VPC endpoints. How do you decide which AWS services should use VPC endpoints?
+**[SENIOR] Q3 - [TRADE-OFF] Private subnets + NAT Gateway vs VPC endpoints. How do you decide which AWS services should use VPC endpoints?**
 
 **The base cost analysis:**
 
@@ -1049,7 +1049,7 @@ by value, not just by cost.
 
 ---
 
-#### DESIGN 1: Design the security architecture for a multi-account AWS Organization hosting a B2C fintech application. What layers would you implement?
+**[SENIOR] Q4 - [DESIGN] Design the security architecture for a multi-account AWS Organization hosting a B2C fintech application. What layers would you implement?**
 
 **Account structure (account separation is the
 strongest isolation boundary in AWS):**
@@ -1070,7 +1070,7 @@ Staging Account:    Production-like, limited data
 Production Account: Production workloads, most restrictive SCPs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for Deny statements on S3 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SCP guardrails (always-enforced, override IAM):**
 
@@ -1121,7 +1121,7 @@ Account pattern is the canonical enterprise AWS security design.
 
 ---
 
-#### DESIGN 2: Your EKS cluster serves 50 microservices. How do you implement Zero Trust between services?
+**[SENIOR] Q5 - [DESIGN] Your EKS cluster serves 50 microservices. How do you implement Zero Trust between services?**
 
 **Four layers for EKS Zero Trust:**
 
@@ -1140,7 +1140,7 @@ spec:
   # No ingress/egress rules: deny all
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No ingress/egress rules: deny all example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Then add explicit allow policies for each service pair.
 Requires CNI that supports NetworkPolicy (Calico, VPC CNI
@@ -1169,7 +1169,7 @@ eksctl create iamserviceaccount \
 # Only pods with this service account can assume the role
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Only pods with this service account can assume the role example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Layer 4: Secrets (External Secrets Operator + Secrets Manager):**
 
@@ -1194,7 +1194,7 @@ real-world implementation experience beyond the textbook.
 
 ---
 
-#### BEHAVIORAL 1: Describe a time you identified a security misconfiguration in a production cloud environment. What was it, how did you find it, and what did you do?
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a time you identified a security misconfiguration in a production cloud environment. What was it, how did you find it, and what did you do?**
 
 **Structured response (STAR):**
 
@@ -1238,7 +1238,7 @@ preventive control (Config alert) shows systems-thinking.
 
 ---
 
-#### BEHAVIORAL 2: How do you balance security controls with developer velocity? Give a specific example of a trade-off you made.
+**[SENIOR] Q7 - [BEHAVIORAL] How do you balance security controls with developer velocity? Give a specific example of a trade-off you made.**
 
 **Structured response:**
 
@@ -1282,7 +1282,7 @@ mechanism (not just policy) shows operational sophistication.
 
 ---
 
-#### SCENARIO 1: GuardDuty triggers "UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS." An ECS task's temporary credentials were used from an external IP. What do you do?
+**[SENIOR] Q8 - [SCENARIO] GuardDuty triggers "UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS." An ECS task's temporary credentials were used from an external IP. What do you do?**
 
 **Incident Response (step by step):**
 
@@ -1313,7 +1313,7 @@ aws iam put-role-policy \
 # Future tokens still work (for legitimate tasks after relaunch)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Future tokens still work (for legitimate tasks after relaunch) example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Investigation (next 30 minutes):**
 
@@ -1331,7 +1331,7 @@ aws ecs list-tasks --cluster prod-cluster \
   --container-instance <container-instance-id>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find task on that instance: example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Root cause analysis:**
 

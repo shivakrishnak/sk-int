@@ -104,7 +104,7 @@ DYNAMIC DISPATCH (runtime method lookup):
   Animal a = new Dog("Rex");
   a.speak();          // -> Dog.speak() [runtime type = Dog]
   a.describe();       // -> Animal.describe() (final, no dispatch)
-                      // inside describe(): speak() -> Dog.speak() (still dynamic!)
+                      // inside describe(): speak() -> Dog.speak() (still...
   
   // The runtime type is ALWAYS used for virtual method dispatch.
   // Even when called from a superclass method, virtual calls go to
@@ -149,7 +149,7 @@ LSP VIOLATION EXAMPLE:
   // Fix: common interface (Shape) with no setters, or make both immutable value types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 OOP Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -159,6 +159,12 @@ LSP VIOLATION EXAMPLE:
 > done correctly. The base class defines the algorithm structure (invariant), subclasses
 > provide the variable parts (variant). The contract is clear: override only the specified
 > abstract methods; the template method is final.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CORRECT INHERITANCE: Template Method Pattern
@@ -327,7 +333,7 @@ Prevention: NEVER call overridable methods in constructors.
   are a code smell that IDEs and static analysis (SpotBugs, Checkstyle) flag.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -667,7 +673,7 @@ COMBINATION PATTERN (JDK standard):
   // Result: ArrayList is a List, is an AbstractList, is a Collection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using interface. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -678,6 +684,12 @@ COMBINATION PATTERN (JDK standard):
 > by providing default implementations of the non-core methods in terms of the core primitives.
 > This gives concrete classes the choice: extend the abstract class for less work, or implement
 > the interface directly for full control.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // INTERFACE WITH DEFAULT METHODS (backward compatibility):
@@ -833,7 +845,7 @@ Root cause:
   }
   
   But what if D forgets to override?
-    -> COMPILE ERROR: "inherits unrelated defaults" - Java forces explicit resolution
+    -> COMPILE ERROR: "inherits unrelated defaults" - Java forces explicit...
 
 Diagnosis:
   Compile error: "D inherits unrelated defaults for priority() from types B and C"
@@ -847,7 +859,7 @@ Prevention: when designing interfaces with default methods:
   listener/callback interfaces that each add lifecycle default methods.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
@@ -1011,7 +1023,7 @@ interface Identifiable {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 The default `sameAs()` method works correctly for all implementations because it accesses
 state via the `getId()` abstract method (which the implementing class provides). This is the

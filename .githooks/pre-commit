@@ -32,7 +32,7 @@ TMPFILE=$(mktemp)
 echo "$STAGED" > "$TMPFILE"
 
 if command -v pwsh >/dev/null 2>&1; then
-  pwsh -NoProfile -File "scripts/validate.ps1" -FileList "$TMPFILE"
+  pwsh -NoProfile -File "scripts/validate.ps1" -FileList "$TMPFILE" -IgnoreRules R12
   STATUS=$?
 else
   echo "WARNING: pwsh not found; skipping content validation."

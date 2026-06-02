@@ -80,6 +80,13 @@ label."
 ### 📘 Concept Explanation
 
 **Tag semantics, SemVer strategy, registry immutability, digest deployment:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```
 TAG SEMANTICS:
 
@@ -220,16 +227,24 @@ IMAGE RETENTION POLICIES:
     }]
   }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Keep untagged (intermediate) images for only 1 day: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A GitHub Actions workflow using Docker Buildx
+> **Code walkthrough:** A GitHub Actions workflow using Docker Buildxice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > metadata action for proper multi-tier tagging.
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # BAD: only tags with 'latest', loses version traceability:
 - name: Build and push
@@ -275,8 +290,9 @@ jobs:
           cache-from: type=registry,ref=ghcr.io/myorg/myapp:buildcache
           cache-to: type=registry,ref=ghcr.io/myorg/myapp:buildcache,mode=max
 ```
+{% endraw %}
 
-> **Code walkthrough:** `docker/metadata-action` generates tags
+> **Code walkthrough:** `docker/metadata-action` generates tagsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > based on git context. On a push to main: generates `latest` and
 > `sha-a1b2c3d`. On a git tag `v1.2.3`: generates `1.2.3`, `1.2`,
 > and `sha-a1b2c3d`. The `labels` output includes OCI standard labels
@@ -397,7 +413,7 @@ Prevention:
   CI: docker manifest inspect myapp:$TAG 2>/dev/null && exit 1 || true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option 3: rebuild from the git tag "v1.2.2": example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -508,7 +524,49 @@ emergency signal."
 ### 📘 Concept Explanation
 
 **Each anti-pattern with mechanism, symptom, and fix:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 ANTI-PATTERN 1: apt-get update and install in separate RUN:
 
   # BAD:
@@ -641,13 +699,13 @@ ANTI-PATTERN 8: inconsistent package pinning:
   # Every package: exact version + sha256 hash. Verified on install.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Every package: exact version + sha256 hash. Verified on install. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A before-and-after Dockerfile showing 6
+> **Code walkthrough:** A before-and-after Dockerfile showing 6ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > anti-patterns fixed in one rewrite.
 
 ```dockerfile
@@ -694,7 +752,7 @@ EXPOSE 3000
 CMD ["node", "src/server.js"]
 ```
 
-> **Code walkthrough:** Every anti-pattern from the bad version is
+> **Code walkthrough:** Every anti-pattern from the bad version isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > addressed. `node:20-bookworm-slim` is a pinned official image (not
 > `latest`, not `ubuntu`). `COPY package*.json` before `npm ci`:
 > protects the install layer from cache invalidation on source changes.
@@ -782,6 +840,8 @@ Compose) which port to expect. Always include it.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Application in Docker container drops connections during deployment.**
+
+{% raw %}
 ```
 Symptom: During a rolling deployment, active users see connection errors.
   Or: database shows sudden spike in connection errors during deployment.
@@ -831,8 +891,9 @@ Fix:
      # preStop sleep: gives load balancer time to remove pod from endpoints
      # before SIGTERM is sent to the app.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This before SIGTERM is sent to the app. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

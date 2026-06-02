@@ -65,7 +65,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Hardware awareness in Java programming:**
-```
+```plaintext
 CPU CACHE HIERARCHY NUMBERS (approximate, varies by CPU):
 
   L1 data cache:  ~32KB,   4-cycle latency,  per-core
@@ -81,7 +81,7 @@ CPU CACHE HIERARCHY NUMBERS (approximate, varies by CPU):
     int[] arr = new int[1_000_000];
     int sum = 0;
     for (int i = 0; i < arr.length; i++) {
-        sum += arr[i];  // sequential: CPU prefetcher loads next cache lines ahead
+        sum += arr[i];  // sequential: CPU prefetcher loads next cache lines...
     }
     // Effective latency: ~4 cycles per element (L1 hit after prefetch).
     // Total: 4M cycles for 1M elements.
@@ -101,7 +101,7 @@ CPU CACHE HIERARCHY NUMBERS (approximate, varies by CPU):
     
     AoS (typical OOP): objects in array, each object has many fields:
       Object[] orders = { Order(id, status, amount), Order(id, status, amount), ... }
-      Iteration: each object access -> different memory location -> cache miss per object.
+      Iteration: each object access -> different memory location -> cache miss...
     
     SoA (mechanical sympathy): separate arrays per field:
       int[] ids = {1, 2, 3, ...};
@@ -171,7 +171,7 @@ JAVA VECTOR API (JDK 16+, project Panama):
   float dotProductSIMD(float[] a, float[] b) {
       float sum = 0;
       int i = 0;
-      int limit = SPECIES.loopBound(a.length);  // largest multiple of 8 <= length
+      int limit = SPECIES.loopBound(a.length);  // largest multiple of 8 <=...
       
       var vSum = FloatVector.zero(SPECIES);  // accumulator vector
       for (; i < limit; i += SPECIES.length()) {
@@ -210,7 +210,7 @@ MEMORY ORDERING AND HAPPENS-BEFORE:
                       ordering through other means (synchronized, CAS).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -218,6 +218,18 @@ MEMORY ORDERING AND HAPPENS-BEFORE:
 
 > **Code walkthrough:** The SoA example shows the concrete performance impact of data layout.
 > The branchless sort shows how C2 and modern CPUs handle conditional moves.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // STRUCT-OF-ARRAYS vs ARRAY-OF-STRUCTS:
@@ -347,7 +359,7 @@ Fix:
   Expected speedup: 10-20x (same as the ratio of RAM latency to L1 latency).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -437,7 +449,7 @@ tree traversal. The array binary search: elements close in memory. The tree trav
 ### 📘 Concept Explanation
 
 **Amdahl's Law and Little's Law applications:**
-```
+```plaintext
 AMDAHL'S LAW: DERIVATION AND APPLICATION:
 
   Model: a program has two parts.
@@ -540,14 +552,14 @@ QUEUING THEORY BASICS:
     Mean response time: W = 1/(mu - lambda)
     
     At rho = 0.5 (50% utilization): Wq = W * rho = 0.5 * service_time.
-    At rho = 0.8 (80% utilization): Wq = W * 4 (80% utilization -> 4x wait time!).
+    At rho = 0.8 (80% utilization): Wq = W * 4 (80% utilization -> 4x wait...
     At rho = 0.9 (90% utilization): Wq = W * 9 (9x wait time!).
     
     NON-LINEAR LATENCY GROWTH: 80% utilization doesn't mean 1.25x latency.
     It means 5x total response time. This is why "target 60-70% utilization" matters.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -677,7 +689,7 @@ bottleneck resource, not the number of workers waiting for it.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Adding more pods to a service doesn't increase throughput.**
-```
+```plaintext
 Symptom: Current: 3 pods, 3,000 RPS. Added 3 more pods (6 total): still ~3,200 RPS.
   Pod CPU: 30% on all 6 pods. Not CPU-bound.
   No error rates.
@@ -716,7 +728,7 @@ Fix:
     - Linear scaling possible: N shards = N times the write throughput.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

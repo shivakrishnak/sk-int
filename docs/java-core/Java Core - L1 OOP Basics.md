@@ -89,7 +89,7 @@ class Dog extends Animal {    // single inheritance
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 OOP Basics example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 **Polymorphism (virtual dispatch):**
 ```java
@@ -98,7 +98,7 @@ a.speak();             // calls Dog.speak() - NOT Animal.speak()
 // The JVM resolves the call to the actual runtime type (Dog)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 OOP Basics example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Overriding rules:**
 - Same method name, same parameter types, same (or covariant) return type
@@ -116,19 +116,25 @@ class Printer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 OOP Basics example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The animal hierarchy shows runtime polymorphism
+> **Code walkthrough:** The animal hierarchy shows runtime polymorphismice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > via virtual dispatch. `list.get(i).speak()` calls the correct
 > implementation based on the actual object type at runtime, not the
 > declared type. The LSP violation example shows why Square extending
 > Rectangle is incorrect - the Rectangle contract ("setting width
 > doesn't change height") is violated by Square's implementation,
 > breaking code that assumes the Rectangle contract.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Runtime polymorphism - same method, different behaviors:
@@ -170,7 +176,7 @@ class Square {
 }
 ```
 
-> **Code walkthrough:** The LSP violation is subtle: `Square` is a
+> **Code walkthrough:** The LSP violation is subtle: `Square` is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > valid mathematical subtype of rectangle (every square is a rectangle),
 > but it's NOT a valid code subtype because it changes the behavioral
 > contract. The `doubleWidth` method's assertion fails for Square -
@@ -238,7 +244,7 @@ class Child extends Parent {
 }
 new Child(); // value is 0 during init(), not 42
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: avoid calling overridable methods in constructors.
 The object's state is incomplete during construction.
@@ -290,7 +296,7 @@ class LoggingList<T> {
 // inherit it without logging.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The "fragile base class" problem is
 the core reason to prefer composition. If you extend a class and the
@@ -312,7 +318,7 @@ For each class, the JVM creates a vtable: a table of method pointers,
 one per virtual method. Subclasses inherit the parent's vtable and
 override entries for their overridden methods.
 
-```
+```plaintext
 Animal vtable:
   [0] speak -> Animal.speak
   [1] toString -> Object.toString
@@ -329,7 +335,7 @@ Call a.speak() where a is declared Animal:
   3. Call Dog.speak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 JIT optimization: JVM profiles call sites. If a call site always sees
 the same type (monomorphic), JIT inlines the method directly - no vtable
@@ -377,7 +383,7 @@ void addItem(ArrayList<String> list, String item) {
 List<String> readOnly = Collections.unmodifiableList(mutableList);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Java's `Collections.unmodifiableList()`
 technically violates LSP for the same reason (throws on mutation), but
@@ -419,7 +425,7 @@ p.print(5);    // print(int) - compiler sees int literal
 p.print(5.0);  // print(double) - compiler sees double literal
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* A tricky overloading case: varargs
 methods. `print(String... args)` is called when no specific overload
@@ -457,7 +463,7 @@ Dog result = d.getInstance(); // no cast needed (return type is Dog)
 Animal result = d.getInstance(); // had to accept Animal, then cast
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Used extensively in builder patterns and fluent APIs:
 ```java
@@ -470,7 +476,7 @@ class PersonBuilder extends Builder<PersonBuilder> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Covariant return enables cleaner
 API design without casting. The `Comparable<T>` pattern and builder
@@ -523,7 +529,7 @@ class Car extends Vehicle {
 //    - Car.model = "Tesla"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The "call overridable method from
 constructor" anti-pattern: if `Vehicle()` calls `this.validate()` and
@@ -573,7 +579,7 @@ final class Triangle implements Shape { double base, height; }
 // No other class can implement Shape!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition usice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Sealed classes enable exhaustive
 pattern matching. The compiler verifies that a `switch` on a sealed
@@ -663,16 +669,16 @@ complete certain parts yourself."
 
 **When to use each:**
 
-| Feature | Interface | Abstract Class |
-|---|---|---|
-| Multiple inheritance | Yes (multiple implements) | No (single extends) |
-| Instance fields | No | Yes |
-| Constructor | No | Yes |
-| Default implementation | Yes (default methods) | Yes |
-| Static methods | Yes (Java 8+) | Yes |
-| Private methods | Yes (Java 9+) | Yes |
-| Access modifiers | Public/private only | Any |
-| State | No (constants only) | Yes |
+| Feature| Interface| Abstract Class|
+|----------------------|-------------------------|-------------------|
+| Multiple inheritance| Yes (multiple implements)| No (single extends)|
+| Instance fields| No| Yes|
+| Constructor| No| Yes|
+| Default implementation| Yes (default methods)| Yes|
+| Static methods| Yes (Java 8+)| Yes|
+| Private methods| Yes (Java 9+)| Yes|
+| Access modifiers| Public/private only| Any|
+| State| No (constants only)| Yes|
 
 **Functional interfaces:**
 ```java
@@ -693,13 +699,13 @@ interface Transformer<T, R> {
 Transformer<String, Integer> len = s -> s.length();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The Template Method pattern uses an abstract class
+> **Code walkthrough:** The Template Method pattern uses an abstract classice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to define the algorithm skeleton in a final method, with abstract steps
 > that subclasses must implement. The `final` on the template method prevents
 > subclasses from changing the algorithm structure while still allowing
@@ -741,7 +747,7 @@ class Order implements Auditable, Cacheable, Validatable {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -801,7 +807,7 @@ class C implements A, B {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Diagnosis: compiler error will tell you which interfaces conflict.
 Always override when two interfaces provide conflicting defaults.
@@ -857,7 +863,7 @@ abstract class AbstractHttpClient {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The Java SDK itself shows the pattern:
 `AbstractList` (abstract class, shared state + template), `List`
@@ -903,7 +909,7 @@ class D implements X, Y {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Default methods were added for API
 evolution: existing interfaces could add new methods without breaking
@@ -945,7 +951,7 @@ combined.validate("");       // false
 combined.validate("hello");  // true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Standard functional interfaces in `java.util.function`:
 - `Function<T,R>`: T -> R (transform)
@@ -999,7 +1005,7 @@ String name = jdbc.query(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Template Method pattern captures
 the "Hollywood Principle" - don't call us, we'll call you. The framework
@@ -1039,7 +1045,7 @@ class FinanceManager implements Worker, Reviewer, BudgetApprover { ... }
 // Each class implements only what it needs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Java naturally supports ISP: multiple interface implementation means you
 can compose small interfaces without forcing unrelated implementations.
@@ -1092,7 +1098,7 @@ class Circle extends Shape {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Abstract class constructors can
 enforce invariants for ALL subclasses. `Objects.requireNonNull(color)`
@@ -1128,16 +1134,16 @@ if (obj instanceof Cacheable) {
 <T extends Cacheable> void cache(T obj) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition usice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Marker interface vs annotation:**
-| | Marker Interface | Annotation |
-|---|---|---|
-| Type check | `instanceof` | reflection or framework |
-| Generic bound | `<T extends Marker>` | not possible |
-| Applies to | Classes | Classes, methods, fields, etc. |
-| Inherited | Yes | `@Inherited` needed |
-| Retention | Compile + runtime | Configurable |
+  |               | Marker Interface     | Annotation                     |  
+|-------------|--------------------|------------------------------|
+  | Type check    | `instanceof`         | reflection or framework        |  
+  | Generic bound | `<T extends Marker>` | not possible                   |  
+  | Applies to    | Classes              | Classes, methods, fields, etc. |  
+  | Inherited     | Yes                  | `@Inherited` needed            |  
+  | Retention     | Compile + runtime    | Configurable                   |  
 
 Prefer annotations when: marking methods, fields, or constructors;
 specifying metadata (configuration values); the mark is checked by
@@ -1232,7 +1238,7 @@ goes wrong you find out when you check."
 ### 📘 Concept Explanation
 
 **Exception hierarchy:**
-```
+```plaintext
 Throwable
   |-- Error (JVM errors - do not catch)
   |     |-- OutOfMemoryError
@@ -1252,7 +1258,7 @@ Throwable
         |-- ParseException (checked)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Checked vs unchecked:**
 - Checked: compiler verifies caller handles (try-catch) or declares (`throws`)
@@ -1262,12 +1268,22 @@ Throwable
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD pattern catches the broad `Exception`
+> **Code walkthrough:** The BAD pattern catches the broad `Exception`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > class, hiding all exceptions in one catch block and making debugging
 > impossible. The GOOD pattern catches specific exceptions, handles
 > each appropriately, and wraps with context when re-throwing. The
 > try-with-resources pattern ensures the reader is closed in all cases
 > without explicit finally, and handles suppressed exceptions from close().
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: broad catch, exception swallowed:
@@ -1310,7 +1326,7 @@ try (
   // even if an exception occurs
 ```
 
-> **Code walkthrough:** `try-with-resources` calls `close()` in the
+> **Code walkthrough:** `try-with-resources` calls `close()` in theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reverse order of resource declaration: `conn.close()` then `reader.close()`.
 > If both the body AND `close()` throw exceptions, the exception from
 > `close()` is suppressed (attached to the primary exception via
@@ -1363,6 +1379,12 @@ Exception: `System.exit()` terminates JVM before `finally`. Thread kill
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: exception chain broken during re-throw.**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: original cause lost:
 try {
@@ -1380,7 +1402,7 @@ try {
 // In stack trace: Caused by: java.sql.SQLException: ...
 // Without chaining: you see RuntimeException only - no root cause
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 Diagnosis: search codebase for `throw new Exception(message)` without
 passing `cause`. Replace with `throw new Exception(message, cause)`.
@@ -1440,7 +1462,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The lambda incompatibility is the
 strongest argument against checked exceptions for modern code. A
@@ -1466,7 +1488,7 @@ try (Resource1 r1 = ...; Resource2 r2 = ...) {
   // regardless of whether body threw or returned normally
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Suppressed exception scenario:**
 ```java
@@ -1479,7 +1501,7 @@ try (var conn = openConnection()) {
 // BusinessException.getSuppressed() = [ConnectionCloseException]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Examining suppressed:
 ```java
@@ -1493,7 +1515,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Classes implementing `AutoCloseable` (not `Closeable`) can throw any
 exception from `close()`. `Closeable` restricts to `IOException`.
@@ -1554,7 +1576,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Include diagnostic context in custom
 exceptions: not just a message but the IDs, values, and state that
@@ -1593,7 +1615,7 @@ static void logFullException(Logger log, Exception e) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Spring's `DataAccessUtils` and most framework exception translators
 preserve suppressed exceptions in their wrapping.
@@ -1646,7 +1668,7 @@ public UserProfile getProfile(long userId) {
 // Caused by: EmptyResultDataAccessException: ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Exception messages should include
 the DATA that was being processed, not just the operation. "User not
@@ -1687,9 +1709,19 @@ int getValue() {
 // This is a code smell - never return from finally
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Prefer try-with-resources over finally for resources:**
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
+
 ```java
 // BAD: manual finally, verbose, error-prone:
 Connection conn = null;
@@ -1708,7 +1740,7 @@ try (Connection conn = getConnection()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The `return` from `finally` override
 is a famous Java gotcha. If `finally` returns a value, it silently
@@ -1747,7 +1779,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Multi-catch type: the inferred type is the common supertype. If
 `IOException` and `SQLException` both extend `Exception`, `e` is

@@ -183,7 +183,7 @@ NOVALIDATE PATTERN (custom error UI):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML5 Constraint Validation API example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -334,7 +334,7 @@ document.getElementById('signup-form')
 </script>
 ```
 
-> **Code walkthrough:** The `novalidate` attribute disables the
+> **Code walkthrough:** The `novalidate` attribute disables theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > browser's error balloons while keeping all validation state in
 > `input.validity`. On submit, each input is checked via `checkValidity()`
 > - which returns the validation result without showing UI. Error
@@ -417,32 +417,31 @@ Common causes:
    form.checkValidity() manually in the handler.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Core HTML5 validation attributes | 2 min | Attribute knowledge |
-| ValidityState properties | 2-3 min | API depth |
-| novalidate pattern | 3-4 min | Production approach |
-| Client vs server validation | 2 min | Security awareness |
-| ARIA for form errors | 3 min | Accessibility integration |
-| Async validation | 3-4 min | Real-world pattern |
-| setCustomValidity | 2-3 min | Custom error flow |
-| checkValidity vs reportValidity | 2 min | API distinction |
-| Focus management on submit | 2 min | Keyboard + errors |
+| Scenario| Recommended Time| Key Signal|
+|-------------|--------------------------------------|-------------------------|
+| Core HTML5 validation attributes| 2 min| Attribute knowledge|
+| ValidityState properties| 2-3 min| API depth|
+| novalidate pattern| 3-4 min| Production approach|
+| Client vs server validation| 2 min| Security awareness|
+| ARIA for form errors| 3 min| Accessibility integration|
+| Async validation| 3-4 min| Real-world pattern|
+| setCustomValidity| 2-3 min| Custom error flow|
+| checkValidity vs reportValidity| 2 min| API distinction|
+| Focus management on submit| 2 min| Keyboard + errors|
 
 ---
 
-**Q1: What HTML attributes enable native form validation?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What HTML attributes enable native form validation?**
 
 *Why they ask:* Tests knowledge of the built-in validation system.
 
-*Likely follow-up:* "What is the difference between min/max and minlength/maxlength?"
+*Likely follow-up:* "What is the difference between min/max and minlength/maxlen
 
 > **Answer:**
 >
@@ -496,8 +495,7 @@ Common causes:
 
 ---
 
-**Q2: How do you set a custom validation message?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How do you set a custom validation message?** `[JUNIOR]`**
 
 *Why they ask:* Common API that requires specific understanding.
 
@@ -575,8 +573,7 @@ MECHANISM
 
 ---
 
-**Q3: How do you validate forms accessibly?** `[SENIOR]`
-SCENARIO
+**[JUNIOR] Q3 - [SCENARIO] How do you validate forms accessibly?** `[SENIOR]`**
 
 *Why they ask:* Accessibility + forms is a critical real-world requirement.
 
@@ -644,7 +641,7 @@ SCENARIO
 
 ---
 
-**Q4: What is the difference between `checkValidity()` and
+**[MID] Q4 - [TRADE-OFF] What is the difference between `checkValidity()` and**
 `reportValidity()`?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* API distinction commonly confused.
@@ -711,8 +708,7 @@ SCENARIO
 
 ---
 
-**Q5: How do you implement async (server-side) validation in a form?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q5 - [SCENARIO] How do you implement async (server-side) validation in a form?**
 
 *Why they ask:* Real-world pattern requiring API knowledge.
 
@@ -794,8 +790,7 @@ SCENARIO
 
 ---
 
-**Q6: How does the `pattern` attribute work for input validation?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q6 - [MECHANISM] How does the `pattern` attribute work for input validation?**
 
 *Why they ask:* Regex + HTML intersection.
 
@@ -861,12 +856,11 @@ SCENARIO
 
 ---
 
-**Q7: What is the `invalid` event and how do you use it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is the `invalid` event and how do you use it?**
 
 *Why they ask:* Programmatic validation hook.
 
-*Likely follow-up:* "How do you use invalid event to build a custom validation library?"
+*Likely follow-up:* "How do you use invalid event to build a custom validation l
 
 > **Answer:**
 >
@@ -935,8 +929,7 @@ SCENARIO
 
 ---
 
-**Q8: What is the `autocomplete` attribute and why does it matter?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q8 - [MECHANISM] What is the `autocomplete` attribute and why does it matter?**
 
 *Why they ask:* UX and accessibility attribute, often overlooked.
 
@@ -1000,8 +993,7 @@ SCENARIO
 
 ---
 
-**Q9: How do you prevent form resubmission on page refresh?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q9 - [SCENARIO] How do you prevent form resubmission on page refresh?**
 
 *Why they ask:* Real-world POST/Redirect/GET pattern.
 
@@ -1068,23 +1060,23 @@ SCENARIO
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | ValidityState + API depth |
-| Hiring Manager | Accessible form errors |
-| Bar Raiser | Async validation + PRG pattern |
-| Peer Engineer | novalidate pattern + setCustomValidity |
+| Interviewer Type| Emphasis|
+|--------------------------------|--------------------------------------|
+| Technical Panel| ValidityState + API depth|
+| Hiring Manager| Accessible form errors|
+| Bar Raiser| Async validation + PRG pattern|
+| Peer Engineer| novalidate pattern + setCustomValidity|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Validation Approach | Customization | Accessibility | Code Required |
-|---|---|---|---|
-| Native only (no `novalidate`) | None (browser UI) | Browser-handled | Zero |
-| `novalidate` + ValidityState | Full control | Manual ARIA needed | Moderate |
-| `setCustomValidity` | Message only | Partial (native balloon) | Minimal |
-| Third-party library (Zod, RHF) | Full control | Depends on library | High setup |
+| Validation Approach| Customization| Accessibility| Code Required|
+|---|----------------------------------|-------------------------|-------------|
+| Native only (no `novalidate`)| None (browser UI)| Browser-handled| Zero|
+| `novalidate` + ValidityState| Full control| Manual ARIA needed| Moderate|
+| `setCustomValidity`| Message only| Partial (native balloon)| Minimal|
+| Third-party library (Zod, RHF)| Full control| Depends on library| High setup|
 
 ---
 
@@ -1347,7 +1339,7 @@ PASSWORD STRENGTH METER:
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Custom Validity and Form UX Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1529,7 +1521,7 @@ class FormValidator {
 const validator = new FormValidator(document.getElementById('form'));
 ```
 
-> **Code walkthrough:** This FormValidator class implements the
+> **Code walkthrough:** This FormValidator class implements theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > complete production pattern: native error UI suppressed via
 > capture-phase `preventDefault`, validation only after first
 > submit attempt (no premature errors), real-time correction
@@ -1615,7 +1607,7 @@ Diagnosis: Open DevTools console, type valid value:
   // Shows the stuck custom message
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1635,8 +1627,7 @@ Diagnosis: Open DevTools console, type valid value:
 
 ---
 
-**Q1: When should form validation run?** `[JUNIOR]`
-SCENARIO
+**[JUNIOR] Q1 - [SCENARIO] When should form validation run?** `[JUNIOR]`**
 
 *Why they ask:* UX judgment question with research backing.
 
@@ -1696,8 +1687,7 @@ SCENARIO
 
 ---
 
-**Q2: How do you implement password confirmation validation?**
-`[JUNIOR]` SCENARIO
+**[JUNIOR] Q2 - [SCENARIO] How do you implement password confirmation validation?**
 
 *Why they ask:* Classic cross-field validation pattern.
 
@@ -1769,8 +1759,7 @@ SCENARIO
 
 ---
 
-**Q3: How do you show server-side validation errors in a form?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q3 - [SCENARIO] How do you show server-side validation errors in a form?**
 
 *Why they ask:* Real-world AJAX form error handling.
 
@@ -1866,8 +1855,7 @@ SCENARIO
 
 ---
 
-**Q4: What is the PRG pattern and why does it matter?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is the PRG pattern and why does it matter?** `[SENIOR]`**
 
 *Why they ask:* Fundamental web form pattern.
 
@@ -1929,8 +1917,7 @@ MECHANISM
 
 ---
 
-**Q5: How do you build a password strength meter accessibly?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q5 - [SCENARIO] How do you build a password strength meter accessibly?**
 
 *Why they ask:* Common feature combining UX + accessibility.
 
@@ -2026,6 +2013,108 @@ MECHANISM
 > (Use of Color) - color alone cannot convey information.
 > Checkmarks + color satisfies the criterion because the
 > shape (✓/✗) is the primary indicator, color is enhancement.
+
+
+---
+
+**[MID] Q6 - [MECHANISM] How do you implement real-time validation feedback without triggering errors on first keypress?**
+
+*Why they ask:* Tests UX-aware validation implementation.
+
+The pattern: validate on `blur` (when user leaves the
+field), then switch to `input` (on every keypress)
+only after the first validation has occurred. This
+prevents aggressive red borders while typing but
+provides immediate feedback after the first failed
+submission. Implementation: track a `dirty` flag per
+field. On `blur`, set `dirty = true` and validate.
+On `input`, only validate if `dirty`. On `submit`,
+validate all fields regardless of `dirty` state.
+The `setCustomValidity()` API integrates with the
+browser's constraint validation system - setting it
+to an empty string clears the invalid state.
+
+*What separates good from great:* The submit handler
+always re-validates to prevent bypassing validation
+by programmatic form submission.
+
+---
+
+**[SENIOR] Q7 - [TRADE-OFF] When should you use the browser's native validation UI versus a custom validation library?**
+
+*Why they ask:* Tests build-vs-buy decision for form UX.
+
+Native validation advantages: zero JavaScript for
+basic types (email, url, required), works without JS,
+integrates with browser password managers, accessible
+by default. Native disadvantages: no cross-browser
+styling consistency (`:invalid` pseudo-class exists
+but tooltip styling is browser-controlled), no
+async validation (server-side uniqueness checks),
+no field-group validation (password confirmation),
+no centralized error summary. Use native for: simple
+contact forms, single-field lookups. Use library
+(Yup, Zod, Valibot) for: complex multi-step forms,
+async validation, design system requirement for
+custom error UI. Hybrid: use Constraint Validation
+API (`setCustomValidity`) to bridge native mechanism
+with custom UI.
+
+*What separates good from great:* Knowing that native
+tooltip styling cannot be overridden with CSS - the
+only option is `novalidate` on the form and full
+custom UI.
+
+---
+
+**[SENIOR] Q8 - [DEBUGGING] A form input marked `required` submits successfully without a value. How do you investigate?**
+
+*Why they ask:* Tests form validation debugging.
+
+Three causes: (1) The `novalidate` attribute is on the
+`<form>` element - this disables all native browser
+validation. Check with `document.querySelector('form').noValidate`.
+(2) The form is submitted programmatically with
+`form.submit()` instead of a submit button click -
+`form.submit()` bypasses constraint validation.
+(3) The input has `disabled` attribute - disabled
+inputs skip validation and are not submitted.
+Fix: remove `novalidate` if unintentional, use
+`form.requestSubmit()` instead of `form.submit()`
+(it triggers validation), never disable required
+fields without removing the `required` attribute.
+
+*What separates good from great:* `requestSubmit()`
+vs `submit()` - `requestSubmit()` is the spec-correct
+method that triggers validation and submit events;
+`submit()` is a legacy bypass.
+
+---
+
+**[STAFF] Q9 - [DESIGN] Design a form validation architecture for a multi-step form wizard with server-side validation.**
+
+*Why they ask:* Tests full-stack form design.
+
+Architecture: (1) Client-side: per-step validation
+using Constraint Validation API with Zod schema
+mirroring server schema. Steps only advance on
+validation pass. (2) Server-side: re-validate all
+submitted data (client validation is advisory only -
+never trust client). Return structured error response:
+`{field: errorMessage}` map. (3) Error display: map
+server errors to field `setCustomValidity()` calls
+for integration with native form state. Maintain
+error state in component state for controlled inputs.
+(4) Race condition: debounce async validation (email
+uniqueness) with 300ms delay, cancel in-flight
+requests on new keypress. (5) Accessibility: move
+focus to the first invalid field on submit failure,
+add `aria-live` region for dynamic error announcements.
+
+*What separates good from great:* Explaining that
+client validation is a UX feature, not a security
+control - server-side validation is always mandatory.
+
 
 ---
 

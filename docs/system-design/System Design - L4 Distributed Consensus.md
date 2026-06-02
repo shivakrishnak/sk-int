@@ -117,7 +117,7 @@ The two safety properties:
     AP systems: prioritize liveness (may decide different values)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Consensus and Leader Election example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Raft consensus algorithm:**
 
@@ -161,7 +161,7 @@ Safety guarantee:
   -> No data loss on leader election
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Consensus and Leader Election example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Split-brain prevention:**
 
@@ -197,7 +197,7 @@ Fencing with epoch:
            ZooKeeper (epoch per session)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Consensus and Leader Election example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -401,7 +401,7 @@ public class EtcdLeaderElection {
 }
 ```
 
-> **Code walkthrough:** etcd's Election API uses Raft under the hood. The
+> **Code walkthrough:** etcd's Election API uses Raft under the hood. Theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `campaign()` call tries to become leader: it creates an ephemeral key with
 > a lease. If another instance already holds the key: this instance blocks
 > (watches and waits). When the current leader's lease expires (crash) or
@@ -471,9 +471,9 @@ Monitor: session state. On session expiry: immediately stop leader duties.
 
 ---
 
-#### Q1 - Walk me through the Raft leader election process step by step.
+**[JUNIOR] Q1 - [CONCEPTUAL] Walk me through the Raft leader election process step by step.**
 
-```
+```plaintext
 Initial state:
   3-node cluster: [A, B, C], all followers, term 0
 
@@ -518,7 +518,7 @@ Step 7: Client write arrives at A
   B and C: mark entry as committed on next heartbeat
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The election safety property: Raft ensures
 only nodes with the most complete log can win elections. If A crashes after
@@ -531,7 +531,7 @@ the new leader always has all committed entries.
 
 ---
 
-#### Q2 - How does Raft handle log conflicts after a leader crash?
+**[JUNIOR] Q2 - [DEBUGGING] How does Raft handle log conflicts after a leader crash?**
 
 Log inconsistencies can arise when a leader crashes mid-replication:
 
@@ -571,7 +571,7 @@ What about entry 5 (on old L, never replicated)?
                   (in the majority before crash)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The truncation of uncommitted entries is
 the key safety mechanism. Raft's invariant: an entry is committed only when
@@ -585,9 +585,9 @@ use a unique operation ID and let the server deduplicate.
 
 ---
 
-#### Q3 - What is the difference between Paxos and Raft?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between Paxos and Raft?**
 
-```
+```plaintext
 Paxos (Lamport, 1989):
   Original consensus algorithm
   Phases: Prepare -> Promise -> Accept -> Accepted
@@ -634,7 +634,7 @@ When to choose:
   Special constraints (very high throughput): customized Paxos variants
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Raft paper's key contribution wasn't
 correctness (Paxos was already correct) but testability. Raft's design allows
@@ -649,7 +649,7 @@ log term comparison, election timeout tuning).
 
 ---
 
-#### Q4 - How does ZooKeeper use consensus for distributed coordination?
+**[MID] Q4 - [CONCEPTUAL] How does ZooKeeper use consensus for distributed coordination?**
 
 ZooKeeper: distributed coordination service using Zab (Zookeeper Atomic Broadcast).
 
@@ -693,7 +693,7 @@ ZooKeeper guarantees:
   Atomic broadcast: all or none of followers see each update
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The watch-predecessor pattern (each client
 watches only the node immediately before it) is the key optimization in ZooKeeper
@@ -707,11 +707,11 @@ queues (first node in queue = current processor; each client watches predecessor
 
 ---
 
-#### Q5 - How do distributed databases use consensus for write operations?
+**[MID] Q5 - [HANDS-ON] How do distributed databases use consensus for write operations?**
 
 Consensus in distributed databases: correctness for every write.
 
-```
+```plaintext
 CockroachDB (Raft per range):
   Data: sharded into "ranges" (contiguous key ranges)
   Each range: replicated to 3 nodes via Raft
@@ -745,7 +745,7 @@ Cosmos DB (multiple consistency levels):
   Eventual: reads from any replica (Paxos async)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* CockroachDB's per-range Raft groups mean
 that adding nodes increases total write throughput (more ranges can have leaders
@@ -758,7 +758,7 @@ two for most transactions, reducing the latency overhead of multi-Raft coordinat
 
 ---
 
-#### Q6 - What is the quorum size trade-off in distributed systems?
+**[MID] Q6 - [TRADE-OFF] What is the quorum size trade-off in distributed systems?**
 
 Quorum: minimum nodes that must acknowledge for an operation to succeed.
 
@@ -800,7 +800,7 @@ Availability vs consistency:
   Raft: W=majority, R=leader (no explicit quorum for reads)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The quorum selection affects both throughput
 and fault tolerance. N=5, Q=3 (majority): write throughput = limited by 3
@@ -814,11 +814,11 @@ That number + 1 is your quorum; 2 * (failures) + 1 is your cluster size.
 
 ---
 
-#### Q7 - How does etcd ensure strong consistency for Kubernetes?
+**[SENIOR] Q7 - [CONCEPTUAL] How does etcd ensure strong consistency for Kubernetes?**
 
 etcd: distributed key-value store for Kubernetes cluster state.
 
-```
+```plaintext
 Kubernetes uses etcd for:
   All cluster state: pods, services, deployments, config maps
   Desired state: what the user wants
@@ -837,7 +837,7 @@ How Kubernetes uses etcd:
 
 Strong consistency for scheduling:
   Two schedulers: both see unscheduled pod, both try to bind to node
-  etcd: only one write succeeds (optimistic concurrency: check pod.nodeName == "")
+  etcd: only one write succeeds (optimistic concurrency: check pod.nodeName ==...
   Second: write fails (pod already scheduled)
   -> Exactly one scheduler wins
 
@@ -854,7 +854,7 @@ etcd reliability:
   Backup: snapshot + WAL backup for disaster recovery
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* etcd performance under Kubernetes load depends
 on disk I/O. etcd fsync's every Raft log entry before acknowledging. SSD (NVMe)
@@ -868,7 +868,7 @@ P99 > 1000ms = degraded Kubernetes control plane.
 
 ---
 
-#### Q8 - How do you debug a split-brain situation?
+**[SENIOR] Q8 - [DEBUGGING] How do you debug a split-brain situation?**
 
 Diagnosing split-brain: two leaders concurrently.
 
@@ -909,7 +909,7 @@ Diagnosis steps:
   Step 5: restart with correct single leader
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Split-brain post-mortems reveal common root
 causes: (1) ZooKeeper session timeout too short (network blip expires session
@@ -923,11 +923,11 @@ leader operation, not just at startup. Fix (3): use a real consensus system
 
 ---
 
-#### Q9 - How does Kafka use ZooKeeper (and why is it migrating away)?
+**[SENIOR] Q9 - [DEBUGGING] How does Kafka use ZooKeeper (and why is it migrating away)?**
 
 Kafka's ZooKeeper dependency (KIP-500 migration):
 
-```
+```plaintext
 Kafka with ZooKeeper (traditional):
   ZooKeeper stores:
     Broker metadata (which brokers are alive)
@@ -970,7 +970,7 @@ KRaft (Kafka Raft Metadata):
     Timeline: ZooKeeper mode deprecated, removed in future major version
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The KRaft migration demonstrates a real-world
 system replacing its external consensus dependency with a self-hosted implementation.
@@ -985,7 +985,7 @@ Unifying them eliminates the coordination complexity.
 
 ---
 
-#### Q10 - What is the role of timeouts in distributed consensus?
+**[STAFF] Q10 - [CONCEPTUAL] What is the role of timeouts in distributed consensus?**
 
 Timeouts: detection mechanism for leader failure.
 
@@ -1027,7 +1027,7 @@ Effects of timeout misconfiguration:
     Raft heartbeat: application-level -> detects partition correctly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The interaction between JVM GC pauses and Raft
 election timeouts is a real production issue. A Java-based Raft implementation
@@ -1041,11 +1041,11 @@ session timeout to be longer than max JVM GC pause.
 
 ---
 
-#### Q11 - How do you design a distributed lock with fencing tokens?
+**[STAFF] Q11 - [ARCHITECTURE] How do you design a distributed lock with fencing tokens?**
 
 Distributed lock correctness: preventing stale lock holders from causing harm.
 
-```
+```plaintext
 Problem: stale lock holder thinks it still holds the lock
 
 Timeline:
@@ -1086,7 +1086,7 @@ Without fencing tokens:
   Fencing tokens make the critical section safe even with stale holders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The fencing token pattern is described in
 detail in Martin Kleppmann's "Designing Data-Intensive Applications" and his
@@ -1101,7 +1101,7 @@ locks provide a false sense of safety.
 
 ---
 
-#### Q12 - How would you design a distributed election for a payment processing primary?
+**[STAFF] Q12 - [ARCHITECTURE] How would you design a distributed election for a payment processing primary?**
 
 System design: highly available payment processor with leader election.
 
@@ -1157,7 +1157,7 @@ Recovery scenario:
   Total downtime: 13 seconds (within 30s SLO)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The combination of leader election + idempotency +
 fencing tokens provides the "exactly-once" guarantee for payment processing.

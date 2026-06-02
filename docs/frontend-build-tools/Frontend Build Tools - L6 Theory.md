@@ -124,7 +124,7 @@ Phase 5: EMIT
   Write to output file with source map
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bundler Internals (AST, Module Graph, Tree Walking) example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -162,7 +162,7 @@ grep -l 'subtract\|multiply' dist/assets/*.js
 # If grep returns nothing: tree shaking worked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If grep returns nothing: tree shaking worked example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```javascript
 // Why CJS defeats tree shaking:
@@ -183,7 +183,7 @@ const sorted = sortBy(arr, 'name');
 // lodash-es bundle: shows ~3KB "sortBy.js" + small deps
 ```
 
-> **Code walkthrough:** The observable test of tree shaking is a grep
+> **Code walkthrough:** The observable test of tree shaking is a grepice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for the removed function name in the output bundle. If `subtract`
 > and `multiply` appear in dist/, tree shaking failed. Common failure
 > reasons: the module has `sideEffects: true` (or missing) in its
@@ -212,7 +212,7 @@ const sorted = sortBy(arr, 'name');
 // (use hidden-source-map and serve only to Sentry)
 ```
 
-> **Code walkthrough:** VLQ encoding is the compression scheme that
+> **Code walkthrough:** VLQ encoding is the compression scheme thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > makes source map files manageable. Instead of storing absolute line/
 > column pairs, each position is stored as a delta from the previous
 > position - small numbers that VLQ encodes compactly. Generating
@@ -488,7 +488,7 @@ CJS vs ESM key differences:
   Default in Node   Yes              With "type":"module"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ESM Specification and Browser-Native Modules example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -541,7 +541,7 @@ const counter = require('./counter');
 console.log(counter.count); // 2 (the property on the object is live)
 ```
 
-> **Code walkthrough:** Live bindings are one of the most subtle but
+> **Code walkthrough:** Live bindings are one of the most subtle butice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > important differences between ESM and CJS. With ESM, the `count`
 > name in the importing module is a live view into the exporting module's
 > `count` variable - it always reflects the current value. With CJS,
@@ -576,7 +576,7 @@ console.log(counter.count); // 2 (the property on the object is live)
 </html>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ESM Specification and Browser-Native Modules example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // src/main.jsx (served as-is, no bundling)
@@ -607,7 +607,7 @@ createRoot(document.getElementById('root')).render(<App />);
 //   c) htm library (JSX-like tagged template literals)
 ```
 
-> **Code walkthrough:** Import maps are the final piece that makes
+> **Code walkthrough:** Import maps are the final piece that makesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > browser-native ESM practical. Without them, bare specifiers like
 > `import React from 'react'` fail in browsers (browsers don't know
 > how to resolve a name without a path). Import maps map these names

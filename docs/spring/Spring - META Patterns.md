@@ -136,7 +136,7 @@ What breaks the DAG:
   -> This is fine! Just means D is created before B and C.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This IoC Container as Dependency Graph Mental Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why this model matters:**
 
@@ -163,11 +163,17 @@ A: Singleton is a node created ONCE.
         or use ObjectProvider<T>, or @Lookup injection.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This IoC Container as Dependency Graph Mental Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: circular dependency (graph cycle)
@@ -215,13 +221,19 @@ public class InvoiceService {
 // The dependency graph is now a proper DAG
 ```
 
-> **Code walkthrough:** Circular dependency is almost always a domain model
+> **Code walkthrough:** Circular dependency is almost always a domain modelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > problem disguised as a technical error. OrderService needing InvoiceService
 > AND InvoiceService needing OrderService means they are too tightly coupled.
 > The fix: identify what each service ACTUALLY needs from the other.
 > Usually it's just notification ("an order was placed"). An event publisher
 > breaks the cycle: OrderService fires events, InvoiceService listens.
 > Neither depends on the other. The dependency graph becomes a DAG again.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: prototype dependency in singleton (stale reference)
@@ -254,7 +266,7 @@ public class ReportService {
 }
 ```
 
-> **Code walkthrough:** ObjectProvider<T> is Spring's lazy-resolution proxy
+> **Code walkthrough:** ObjectProvider<T> is Spring's lazy-resolution proxyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for dependencies. For prototype beans: getObject() creates a new instance
 > each call. For optional beans: getIfAvailable() returns null instead of
 > throwing NoSuchBeanDefinitionException. ObjectProvider is the type-safe
@@ -317,7 +329,7 @@ Fix: break the cycle by extracting shared logic, using events, or
 
 ---
 
-#### Q1 - Why does Spring fail on circular constructor injection but not setter injection?
+**[JUNIOR] Q1 - [CONCEPTUAL] Why does Spring fail on circular constructor injection but not setter injection?**
 
 Constructor injection: to construct A, you need B. To construct B, you need A.
 Neither can be constructed - deadlock. Spring detects: "I am currently creating
@@ -343,7 +355,7 @@ rather than rely on a framework workaround.
 
 ---
 
-#### Q2 - What is @DependsOn and when should you use it?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is @DependsOn and when should you use it?**
 
 @DependsOn creates an artificial ordering edge in the dependency graph:
 
@@ -366,7 +378,7 @@ public class DatabaseInitializer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use cases:
 - Database initialization before service startup
@@ -387,7 +399,7 @@ artificially ordering bean creation.
 
 ---
 
-#### Q3 - How does Spring resolve multiple beans of the same type?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does Spring resolve multiple beans of the same type?**
 
 ```java
 // Multiple Payment strategies:
@@ -420,7 +432,7 @@ public class CheckoutService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Graph perspective: multiple nodes implement the same interface.
 When an edge points to the interface type, Spring must choose which node.
@@ -436,7 +448,7 @@ included in the map. No factory class, no if-else chain.
 
 ---
 
-#### Q4 - How does the graph model explain @Scope("prototype") behavior?
+**[MID] Q4 - [CONCEPTUAL] How does the graph model explain @Scope("prototype") behavior?**
 
 Prototype beans break the "one node per type" assumption:
 
@@ -462,7 +474,7 @@ Fix: A stores a factory (ObjectProvider<B>), not a B
   This is what "prototype" actually means
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* @Scope("prototype") on a bean used by
 a singleton is a code smell without ObjectProvider. The IDE and compiler don't
@@ -475,7 +487,7 @@ holds report-generation state) where you truly need a fresh instance per operati
 
 ---
 
-#### Q5 - What is the difference between BeanFactory and ApplicationContext in graph terms?
+**[MID] Q5 - [CONCEPTUAL] What is the difference between BeanFactory and ApplicationContext in graph terms?**
 
 BeanFactory: the basic graph. Nodes are beans, edges are dependencies.
 getBean() resolves nodes on demand (lazy).
@@ -506,7 +518,7 @@ at first use (runtime error, harder to diagnose).
 
 ---
 
-#### Q6 - How does Spring's graph model relate to modulith and microservices architecture?
+**[MID] Q6 - [ARCHITECTURE] How does Spring's graph model relate to modulith and microservices architecture?**
 
 The dependency graph idea scales beyond a single application:
 
@@ -534,7 +546,7 @@ The mental model transfers:
                        deployment ordering deadlock
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The DAG constraint is not Spring-specific.
 Every well-designed system at any level of abstraction should be a DAG.
@@ -548,7 +560,7 @@ symptoms (deployment deadlocks, cascading failures).
 
 ---
 
-#### Q7 - How does the dependency graph mental model help during code reviews?
+**[SENIOR] Q7 - [HANDS-ON] How does the dependency graph mental model help during code reviews?**
 
 ```
 Code review checklist using the DAG model:
@@ -578,7 +590,7 @@ Mental model value:
   before running any tests.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The graph mental model makes code review
 faster and more objective. "This creates a circular dependency" is a concrete
@@ -712,7 +724,7 @@ Convention: "@SpringBootApplication scans current package
 Override:   @ComponentScan(basePackages = "com.other")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Convention Over Configuration Transfer example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When CoC breaks down (and how to detect it):**
 
@@ -733,11 +745,17 @@ Override:   @ComponentScan(basePackages = "com.other")
    Fix: add documentation, use @Import explicitly to make it visible
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Convention Over Configuration Transfer example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: fighting conventions with explicit config
@@ -773,7 +791,7 @@ public class App {
 // Only override what needs overriding
 ```
 
-> **Code walkthrough:** The BAD example re-creates what Spring Boot provides
+> **Code walkthrough:** The BAD example re-creates what Spring Boot providesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for free. @SpringBootApplication = @Configuration + @EnableAutoConfiguration
 > + @ComponentScan. The DataSource bean re-implements what HikariDataSourceAutoConfiguration
 > already does. The DispatcherServlet bean recreates what DispatcherServletAutoConfiguration
@@ -781,6 +799,12 @@ public class App {
 > instead of with it. Result: more code, more configuration to maintain,
 > and the auto-configuration report shows your beans displacing the default ones
 > (exactly what @ConditionalOnMissingBean was designed for).
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Applying CoC to your own API design:
@@ -829,7 +853,7 @@ HttpClient slow = HttpClient.builder("http://slow-api")
     .timeout(30_000).build();
 ```
 
-> **Code walkthrough:** The Builder pattern is CoC in API design. The required
+> **Code walkthrough:** The Builder pattern is CoC in API design. The requiredice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > parameter (baseUrl) must be explicit. Optional parameters have sensible defaults
 > and are ONLY specified when the user deviates from convention. This is how
 > Spring Boot's builders work (SpringApplicationBuilder, WebClient.Builder).
@@ -894,7 +918,7 @@ Fix: exclude specific auto-configuration, or provide your own bean to displace i
 
 ---
 
-#### Q1 - How does Spring Boot's auto-configuration report help debug unexpected behavior?
+**[JUNIOR] Q1 - [DEBUGGING] How does Spring Boot's auto-configuration report help debug unexpected behavior?**
 
 ```bash
 # Start with debug flag to see auto-configuration report
@@ -904,7 +928,7 @@ java -jar myapp.jar --debug
 debug=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in application.properties: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Report sections:
 1. POSITIVE MATCHES: auto-configurations that ran and WHY
@@ -913,7 +937,7 @@ Report sections:
      @ConditionalOnClass DataSource (present)
      @ConditionalOnBean DataSource (yes, HikariCP)
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in application.properties: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. NEGATIVE MATCHES: auto-configurations that did NOT run and WHY
    ```
@@ -921,7 +945,7 @@ Report sections:
      @ConditionalOnClass MongoClient
      (MongoClient not on classpath)
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in application.properties: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 3. EXCLUSIONS: auto-configurations explicitly excluded
 4. UNCONDITIONAL: always run
@@ -938,7 +962,7 @@ are active (ensures the right starters are present).
 
 ---
 
-#### Q2 - How does CoC apply to Spring Data repository method naming?
+**[JUNIOR] Q2 - [MECHANISM] How does CoC apply to Spring Data repository method naming?**
 
 Spring Data derives queries from method names:
 
@@ -964,7 +988,7 @@ interface UserRepository extends JpaRepository<User, Long> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in application.properties: example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 The convention: method name vocabulary includes:
 - findBy, countBy, existsBy, deleteBy (operation)
@@ -984,7 +1008,7 @@ for simple lookups. @Query is the right tool for complex queries.
 
 ---
 
-#### Q3 - How does Spring Boot's externalized configuration follow CoC?
+**[MID] Q3 - [MECHANISM] How does Spring Boot's externalized configuration follow CoC?**
 
 Spring Boot defines a property loading order (convention):
 
@@ -1006,7 +1030,7 @@ Convention: profile-specific override (application-prod.yml)
 Deviation: SPRING_CONFIG_NAME=custom-name
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in application.properties: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 CoC in action: the app works correctly in different environments
 (dev/staging/prod) by convention. Dev: application-dev.properties in classpath.
@@ -1024,7 +1048,7 @@ and the same app reads from env vars in production, by convention.
 
 ---
 
-#### Q4 - Where does CoC break down and how do you handle it?
+**[MID] Q4 - [MECHANISM] Where does CoC break down and how do you handle it?**
 
 CoC limitations:
 
@@ -1059,7 +1083,7 @@ without requiring a full rewrite.
 
 ---
 
-#### Q5 - How does the CoC principle apply to Kubernetes resource naming?
+**[SENIOR] Q5 - [MECHANISM] How does the CoC principle apply to Kubernetes resource naming?**
 
 Kubernetes also uses conventions:
 
@@ -1086,7 +1110,7 @@ spring.cloud.kubernetes.config.sources[0].name=\
   my-custom-configmap  # explicit name
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override (deviation from convention): example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Deviation when needed:
 - Shared ConfigMap between services
@@ -1104,7 +1128,7 @@ the deviation, and automate the deviation handling.
 
 ---
 
-#### Q6 - How does CoC interact with security (can it create security gaps)?
+**[SENIOR] Q6 - [MECHANISM] How does CoC interact with security (can it create security gaps)?**
 
 CoC can create security gaps if the convention is "open by default":
 
@@ -1128,7 +1152,7 @@ CoC can create security gaps if the convention is "open by default":
 // (explicit deviation, now intentional)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override (deviation from convention): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Security CoC principles:
 - Default: secure (deny by default)
@@ -1148,7 +1172,7 @@ only prevents access - much safer failure mode.
 
 ---
 
-#### Q7 - What is the transferable insight from CoC to team and process design?
+**[SENIOR] Q7 - [DESIGN] What is the transferable insight from CoC to team and process design?**
 
 CoC as a team process principle:
 
@@ -1176,7 +1200,7 @@ Documentation CoC:
   Deviation: larger docs in /docs folder (README points to it)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Override (deviation from convention): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The principle: define the 80% case as the convention.
 Make deviations visible, intentional, and documented.
@@ -1334,7 +1358,7 @@ Proxy chain (multiple annotations):
     }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Proxy Pattern as Universal Spring Mechanism example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The self-call problem (the most asked interview topic):**
 
@@ -1374,11 +1398,17 @@ Call flow FIXED (separate bean):
     -> OrderSaver.saveOrder()              [real]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Proxy Pattern as Universal Spring Mechanism example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Demonstrating all proxy limitations in one class
@@ -1449,7 +1479,7 @@ public class ReceiptService {
 }
 ```
 
-> **Code walkthrough:** The BAD example has all three proxy anti-patterns:
+> **Code walkthrough:** The BAD example has all three proxy anti-patterns:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > self-call (processPayment calling its own methods), private method with
 > @Transactional (silently ignored), private @Async (also silently ignored).
 > The GOOD example fixes all three by extracting each piece of behavior into
@@ -1489,7 +1519,7 @@ public class DebugService {
 }
 ```
 
-> **Code walkthrough:** This demonstrates the difference between a proxied call
+> **Code walkthrough:** This demonstrates the difference between a proxied callice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (self.checkTransaction() via injected self reference) and a bypassed call
 > (checkTransaction() via this). TransactionSynchronizationManager.isActualTransactionActive()
 > is the diagnostic tool: it returns true only if a Spring-managed transaction
@@ -1559,7 +1589,7 @@ System.out.println("TX: " +
 // If false: no transaction active -> proxy bypassed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: ensure public method, separate bean, runtime exception.
 
@@ -1571,7 +1601,7 @@ Fix: ensure public method, separate bean, runtime exception.
 
 ---
 
-#### Q1 - How does CGLIB create a proxy at runtime?
+**[JUNIOR] Q1 - [HANDS-ON] How does CGLIB create a proxy at runtime?**
 
 CGLIB (Code Generation Library) uses ASM to generate bytecode at runtime:
 
@@ -1597,7 +1627,7 @@ What CGLIB cannot generate:
   - Subclass of final class (forbidden)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 In Spring Boot 3 with Java 17+: CGLIB requires the module (--add-opens
 or explicit module-info) to access private fields if needed for proxying.
@@ -1615,7 +1645,7 @@ Measure first.
 
 ---
 
-#### Q2 - When would you use JDK proxy instead of CGLIB?
+**[JUNIOR] Q2 - [CONCEPTUAL] When would you use JDK proxy instead of CGLIB?**
 
 JDK proxy: implements interfaces, does not subclass:
 
@@ -1635,7 +1665,7 @@ class OrderServiceImpl implements OrderService { ... }
 spring.aop.proxy-target-class=false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 When to use JDK proxy:
 - Code that heavily uses interface types (mocking frameworks)
@@ -1652,7 +1682,7 @@ service.placeOrder(order);
 // Because proxy IS NOT OrderServiceImpl, just implements OrderService
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The move to CGLIB-by-default in Spring Boot 2
 was driven by a common ClassCastException pattern. Teams would inject by
@@ -1665,7 +1695,7 @@ implementation, and you're compatible with both proxy types.
 
 ---
 
-#### Q3 - How does the proxy know which interceptors to chain?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does the proxy know which interceptors to chain?**
 
 Spring uses AdvisedSupport and MethodInterceptor chain:
 
@@ -1689,7 +1719,7 @@ Object proxy = factory.getProxy();
 // <- commit transaction
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Interceptor ordering matters:
 - Transaction should wrap Caching (transaction THEN check cache)
@@ -1707,7 +1737,7 @@ public class SecurityAspect { ... }
 public class TransactionAspect { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The ordering of interceptors matters for
 correctness, not just performance. If caching wraps transaction: the cache
@@ -1721,7 +1751,7 @@ which is correct. Custom aspects need @Order to control their position.
 
 ---
 
-#### Q4 - How does @Async work as a proxy?
+**[MID] Q4 - [CONCEPTUAL] How does @Async work as a proxy?**
 
 @Async creates a proxy that submits the method call to an executor:
 
@@ -1755,7 +1785,7 @@ CompletableFuture<Void> future = emailService.sendEmail(to, body);
 public class App { }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 @Async return types:
 - void: fire and forget (caller can't check completion)
@@ -1776,7 +1806,7 @@ public class AsyncConfig implements AsyncConfigurer {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 With CompletableFuture return: exceptions are available via exceptionally()
 or handle() on the future. For production: always configure an exception handler
@@ -1784,7 +1814,7 @@ for @Async methods to prevent silent failures.
 
 ---
 
-#### Q5 - How does the proxy relate to Spring AOP pointcuts?
+**[MID] Q5 - [CONCEPTUAL] How does the proxy relate to Spring AOP pointcuts?**
 
 A pointcut defines WHICH methods get proxied:
 
@@ -1814,7 +1844,7 @@ public class LoggingAspect {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Proxy creation: Spring scans @Aspect beans, finds pointcuts, and for each
 bean whose methods match a pointcut: creates a proxy wrapping that bean
@@ -1838,7 +1868,7 @@ beans - which creates unexpected behavior and performance degradation.
 
 ---
 
-#### Q6 - How does @Cacheable use the proxy pattern?
+**[MID] Q6 - [ARCHITECTURE] How does @Cacheable use the proxy pattern?**
 
 @Cacheable wraps method calls with cache lookup:
 
@@ -1876,7 +1906,7 @@ public class ProductService {
 //   4. Cache MISS: call real findById(42), store in cache, return
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @Cacheable also has the self-call problem:
 ```java
@@ -1894,7 +1924,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Cache eviction strategy is where most caching
 bugs originate. @CacheEvict removes stale entries but has a race condition:
@@ -1907,7 +1937,7 @@ the developer is responsible for eviction strategy correctness.
 
 ---
 
-#### Q7 - How do you create a custom annotation backed by an AOP proxy?
+**[SENIOR] Q7 - [HANDS-ON] How do you create a custom annotation backed by an AOP proxy?**
 
 ```java
 // 1. Define the annotation
@@ -1959,7 +1989,7 @@ public class SearchController {
 // No other configuration needed (aspect + @EnableAspectJAutoProxy)
 ```
 
-> **Code walkthrough:** @annotation(rateLimit) in the pointcut binds the
+> **Code walkthrough:** @annotation(rateLimit) in the pointcut binds theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > annotation instance to the parameter. This lets the advice read the annotation's
 > values (maxCallsPerSecond). The RateLimiter (from Guava or Resilience4j) is
 > stored per method signature so different methods have independent rate limits.

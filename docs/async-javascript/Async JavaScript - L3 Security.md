@@ -90,6 +90,14 @@ points.
 
 **How it works:**
 
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
 ```javascript
 // TOCTOU: Classic auth race condition
 class OrderService {
@@ -132,7 +140,7 @@ class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Security Risks in Async JavaScript example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // PROTOTYPE POLLUTION via async response processing
@@ -163,7 +171,7 @@ function safeMerge(target, source) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Security Risks in Async JavaScript example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // ASYNC EVENT HANDLER INJECTION
@@ -187,7 +195,7 @@ class EventEmitter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Security Risks in Async JavaScript example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 Every `await` point is a potential security checkpoint. Anything
@@ -231,7 +239,7 @@ async function submitPayment(amount, cardToken) {
 }
 ```
 
-> **Code walkthrough:** `setSubmitting(true)` is set, but between
+> **Code walkthrough:** `setSubmitting(true)` is set, but betweenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the first call's `await fetch` and its response, a second
 > click handler fires. The `submitting` flag may not prevent
 > this if the second handler reads the flag before the first
@@ -277,7 +285,7 @@ class PaymentService {
 // Server returns same response for duplicate keys within 24h
 ```
 
-> **Code walkthrough:** The idempotency key creates a unique
+> **Code walkthrough:** The idempotency key creates a uniqueice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > identifier for each payment intent. The client-side map
 > deduplicates concurrent calls with the same key by returning
 > the same Promise. The server deduplicates across multiple
@@ -342,7 +350,7 @@ internal service URLs).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Timing-based TOCTOU in session expiry**
-```
+```plaintext
 Scenario: User's session expires mid-transaction
 Timeline:
   T=0: check session.isActive => true
@@ -357,7 +365,7 @@ Fix:
   - Client checks session before each privileged action
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Concurrent async updates to shared state**
 ```javascript
@@ -382,7 +390,7 @@ async function debitSafe(amount) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -397,8 +405,7 @@ async function debitSafe(amount) {
 | Design | 2 | Idempotency pattern, auth at action point |
 | Behavioral | 1 | Fixing a security bug in async flow |
 
-**Q1. What is a TOCTOU vulnerability and how does
-async JavaScript enable it?**
+**[JUNIOR] Q1 - [MECHANISM] What is a TOCTOU vulnerability and how does async JavaScript enable it?**
 
 TOCTOU (Time of Check to Time of Use) is a class of race
 condition where the state being checked and the state being
@@ -422,7 +429,7 @@ async function purchaseItem(userId, itemId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 The fix: make the check-and-modify atomic at the data layer
 (database-level atomic operations, compare-and-swap):
@@ -441,7 +448,7 @@ async function purchaseItemSafe(userId, itemId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Moving the critical section
 into a database transaction where atomicity is guaranteed.
@@ -450,12 +457,16 @@ are authoritative.
 
 ---
 
-**Q2. How do you prevent sensitive data from being exposed
-in rejected Promise error messages?**
+**[JUNIOR] Q2 - [MECHANISM] How do you prevent sensitive data from being exposed in rejected Promise error messages?**
 
 The risk: database errors, file system paths, internal service
 URLs, and stack traces in unhandled or poorly-handled rejections
 reaching clients.
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: raw errors propagate to client
@@ -492,7 +503,7 @@ app.post('/api/user', async (req, res) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The `requestId` pattern:
 log internally with full details, return `requestId` to client.
@@ -501,8 +512,7 @@ without exposing implementation details.
 
 ---
 
-**Q3. What is the difference between `Object.assign`
-prototype pollution and spread-based merging?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between `Object.assign` prototype pollution and spread-based merging?**
 
 `Object.assign(target, source)`: copies all enumerable own
 AND prototype-chain properties if accessed via getter. If
@@ -516,7 +526,7 @@ Object.assign(target, source);
 console.log({}.isAdmin); // true - polluted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Object spread (`{ ...source }`): only copies own enumerable
 properties. Does NOT trigger prototype pollution:
@@ -526,7 +536,7 @@ const target = { ...source }; // safe
 console.log({}.isAdmin); // undefined - not polluted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 But spread can still copy `__proto__` as a regular key:
 ```javascript
@@ -537,7 +547,7 @@ const target = { ...source };
 // {isAdmin: true} - it IS copied as a regular property
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Best practice: validate schema before merging (use Zod, Joi):
 ```javascript
@@ -550,7 +560,7 @@ const config = UserConfigSchema.parse(await resp.json());
 Object.assign(userConfig, config); // now safe: validated shape
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* The difference between
 `JSON.parse('{"__proto__":...}')` (creates object with `__proto__`
@@ -559,7 +569,7 @@ prototype). Schema validation is the comprehensive defense.
 
 ---
 
-**Q4. How do timing attacks exploit async JavaScript?**
+**[MID] Q4 - [MECHANISM] How do timing attacks exploit async JavaScript?**
 
 Timing attacks exploit measurable differences in how long
 async operations take to infer information:
@@ -581,7 +591,7 @@ async function login(username, password) {
 // Slow response (~100ms) = user exists, password was checked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Fix: constant-time response:
 ```javascript
@@ -601,7 +611,7 @@ async function loginSafe(username, password) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Always running the expensive
 operation (bcrypt compare) even when the user doesn't exist,
@@ -610,8 +620,7 @@ indistinguishable.
 
 ---
 
-**Q5. How do you safely handle untrusted data from async
-API responses?**
+**[MID] Q5 - [MECHANISM] How do you safely handle untrusted data from async API responses?**
 
 ```typescript
 // Never trust external data shape
@@ -640,7 +649,7 @@ async function fetchUserProfile(userId: string) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Key principles:
 1. Type `response.json()` as `unknown`, not `any`
@@ -655,8 +664,7 @@ a compromised API.
 
 ---
 
-**Q6. What is async event handler injection and how do
-you prevent it?**
+**[SENIOR] Q6 - [MECHANISM] What is async event handler injection and how do you prevent it?**
 
 In async event-driven code, handlers registered during an
 async operation can execute in unintended order or inject
@@ -694,7 +702,7 @@ class SafeEmitter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The snapshot pattern (`[...handlers]`)
 prevents handler injection during processing. The re-entrancy
@@ -703,7 +711,7 @@ for denial-of-service.
 
 ---
 
-**Q7. How do unhandled Promise rejections create security risks?**
+**[SENIOR] Q7 - [SCENARIO] How do unhandled Promise rejections create security risks?**
 
 Node.js: an unhandled rejection does not crash the process
 by default (before Node 15: warning; Node 15+: process exits).
@@ -738,7 +746,7 @@ window.addEventListener('unhandledrejection', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The fail-fast principle for
 unhandled rejections in production: rather than continuing
@@ -991,7 +999,7 @@ async function safeLoadUser(userId: string) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Safe Async Data Handling in TypeScript example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ```typescript
 // SANITIZING FOR DOM INSERTION (prevent XSS from async data)
@@ -1014,7 +1022,7 @@ async function loadAndDisplayContent(articleId: string) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Safe Async Data Handling in TypeScript example demoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The trust boundary is explicit: outside boundary = untrusted,
@@ -1064,7 +1072,7 @@ async function loadDashboard() {
 }
 ```
 
-> **Code walkthrough:** The type assertion `as DashboardConfig`
+> **Code walkthrough:** The type assertion `as DashboardConfig`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is a lie to TypeScript. At runtime, if the API changes the
 > field name from `refreshInterval` to `refresh_interval`,
 > `config.refreshInterval` is `undefined`. Multiplying by 1000
@@ -1133,7 +1141,7 @@ window.addEventListener('message', (event) => {
 });
 ```
 
-> **Code walkthrough:** The schema enforces valid ranges for
+> **Code walkthrough:** The schema enforces valid ranges forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `refreshInterval` (prevents zero or negative values that would
 > cause high-frequency polling). The `unknown` type on `resp.json()`
 > forces explicit validation before use. The URL protocol check
@@ -1215,7 +1223,7 @@ async function fetchWebhookTargetSafe(url: string) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **WHAT BREAKS: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 **Failure 2: Eval in async callback**
 ```javascript
@@ -1235,7 +1243,7 @@ socket.on('message', async (msg) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -1250,8 +1258,7 @@ socket.on('message', async (msg) => {
 | Design | 2 | Safe API wrapper, postMessage security |
 | Behavioral | 1 | Introducing validation to a legacy codebase |
 
-**Q1. Why is `response.json() as SomeType` unsafe and
-what is the correct alternative?**
+**[JUNIOR] Q1 - [MECHANISM] Why is `response.json() as SomeType` unsafe and what is the correct alternative?**
 
 `response.json()` in the Fetch API returns `Promise<any>`
 (TypeScript's Fetch types use `any`). Adding `as SomeType`
@@ -1272,7 +1279,7 @@ const data = UserProfileSchema.parse(raw);
 // Throws ZodError if subscription is missing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 The correct mental model: `as T` is a claim ("I promise this
 is T"). `Schema.parse()` is a check ("let me verify this is T").
@@ -1283,8 +1290,7 @@ only Zod provides runtime safety.
 
 ---
 
-**Q2. How do you handle the performance overhead of
-validating every API response?**
+**[JUNIOR] Q2 - [MECHANISM] How do you handle the performance overhead of validating every API response?**
 
 Zod parsing performance: ~10-50 microseconds for a typical
 response object. For most applications, this is negligible
@@ -1309,7 +1315,7 @@ const MessageEnvelopeSchema = z.object({
 const TradeSchema = z.object({ ... }); // only when type === 'trade'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 *What separates good from great:* Profiling before optimizing.
 The overhead of Zod is almost never the bottleneck. Network
@@ -1318,8 +1324,7 @@ when profiling shows validation in the hot path.
 
 ---
 
-**Q3. How do you validate nested async data structures
-safely?**
+**[JUNIOR] Q3 - [DESIGN] How do you validate nested async data structures safely?**
 
 ```typescript
 // Complex nested schema with Zod
@@ -1349,7 +1354,7 @@ const OrderSchema = z.object({
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 The `.refine()` method adds cross-field business logic
 validation on top of structural validation. This catches
@@ -1362,7 +1367,7 @@ pay less.
 
 ---
 
-**Q4. How do you secure WebSocket message handling?**
+**[MID] Q4 - [MECHANISM] How do you secure WebSocket message handling?**
 
 ```typescript
 class SecureWebSocket {
@@ -1401,7 +1406,7 @@ class SecureWebSocket {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 *What separates good from great:* Using `safeParse` instead of
 `parse` in message handlers - invalid messages should be
@@ -1410,8 +1415,7 @@ ZodError.
 
 ---
 
-**Q5. How do you prevent injection via async URL
-construction?**
+**[MID] Q5 - [MECHANISM] How do you prevent injection via async URL construction?**
 
 ```typescript
 // URL injection surfaces:
@@ -1451,7 +1455,7 @@ function buildUserUrl(userId: string): string {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Using `URLSearchParams` for
 query strings (it handles encoding) and validating path segments
@@ -1460,8 +1464,7 @@ attacks (`%2F` = `/`) are prevented by allowlist validation.
 
 ---
 
-**Q6. How do you safely handle async data from third-party
-scripts or iframes?**
+**[SENIOR] Q6 - [MECHANISM] How do you safely handle async data from third-party scripts or iframes?**
 
 ```typescript
 // postMessage security: always verify origin AND schema
@@ -1506,7 +1509,7 @@ class IframeBridge {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using authentication. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Using Zod `discriminatedUnion`
 for postMessage schemas: TypeScript correctly narrows the type
@@ -1515,8 +1518,7 @@ prevents UI manipulation through iframe resizing.
 
 ---
 
-**Q7. What is the "trust boundary" principle and how does
-it apply to async TypeScript?**
+**[SENIOR] Q7 - [MECHANISM] What is the "trust boundary" principle and how does it apply to async TypeScript?**
 
 The trust boundary is the line between data you control and
 data you do not. All data crossing the boundary from the
@@ -1549,7 +1551,7 @@ async function processApiData(raw: ExternalData): Promise<ProcessedResult> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition.
 
 *What separates good from great:* Making the trust boundary
 explicit in code through types. Using `unknown` for external
@@ -1560,13 +1562,13 @@ enforcement of the boundary through the type system.
 
 ### ⚖️ Comparison Table
 
-| Validation Library | Size | Type Inference | Performance | Best For |
-|---|---|---|---|---|
-| Zod | 14KB | Excellent | Good | General TypeScript |
-| io-ts | 20KB | Excellent (FP style) | Good | FP-style codebases |
-| Yup | 36KB | Good | Slower | Forms (Formik) |
-| TypeBox | 9KB | Excellent (JSON Schema) | Fast | High-performance |
-| ajv | 27KB | Manual | Very fast | High-throughput APIs |
+| Validation Library| Size| Type Inference| Performance| Best For|
+|----------------|----|-----------------------|-----------|--------------------|
+| Zod| 14KB| Excellent| Good| General TypeScript|
+| io-ts| 20KB| Excellent (FP style)| Good| FP-style codebases|
+| Yup| 36KB| Good| Slower| Forms (Formik)|
+| TypeBox| 9KB| Excellent (JSON Schema)| Fast| High-performance|
+| ajv| 27KB| Manual| Very fast| High-throughput APIs|
 
 **The deciding factor:**
 TypeScript-first with DX focus: Zod. JSON Schema integration:

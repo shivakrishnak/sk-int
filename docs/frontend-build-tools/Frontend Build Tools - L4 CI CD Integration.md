@@ -95,7 +95,7 @@ Environment management:
   CI reads secrets from GitHub Actions secrets/OIDC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frontend Build Pipeline in CI/CD example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -111,6 +111,7 @@ build once, deploy the same artifact to staging and production.
 
 **Example 1: Complete GitHub Actions workflow**
 
+{% raw %}
 ```yaml
 # .github/workflows/ci.yml
 name: CI/CD
@@ -273,8 +274,9 @@ jobs:
           curl -f https://myapp.com | grep -q "React App"
           echo "Smoke test passed"
 ```
+{% endraw %}
 
-> **Code walkthrough:** The pipeline design has two key properties:
+> **Code walkthrough:** The pipeline design has two key properties:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > parallel fast checks (typecheck + lint + unit tests) run concurrently
 > with the build, so total CI time is max(slowest parallel job) not
 > sum. E2E tests are sharded across 4 runners to cut a 20-minute suite
@@ -285,6 +287,11 @@ jobs:
 > same binary.
 
 **Example 2: Non-deterministic build diagnosis and fix**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # Symptom: build succeeds on developer machine, fails in CI
@@ -321,7 +328,7 @@ node --version        # local: v18.17.0
 diff <(ls dist/assets/*.js) <(ls dist/assets/*.js) # expect empty
 ```
 
-> **Code walkthrough:** Non-deterministic builds are subtle: the build
+> **Code walkthrough:** Non-deterministic builds are subtle: the buildice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > appears to work but produces different output on repeat. The most
 > common culprit is environment variables. Debug systematically: run
 > the build twice with `--verbose`, compare dist/ checksums, look for
@@ -417,7 +424,7 @@ Cost management:
   - Share CDN distribution (only index.html per preview)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check: build twice, compare dist/ example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -581,7 +588,7 @@ steps:
       role-to-assume: arn:aws:iam::ACCOUNT:role/frontend-deploy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The runner receives a short-lived AWS session token (1 hour default)
 with only the permissions defined in the `frontend-deploy` role (S3

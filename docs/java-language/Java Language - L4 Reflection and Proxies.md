@@ -71,7 +71,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Reflection API core mechanics:**
-```
+```plaintext
 CORE REFLECTION OPERATIONS:
 
   // 1. Obtaining a Class object:
@@ -146,7 +146,7 @@ DYNAMIC PROXY:
                   method.getName(), elapsed / 1_000_000.0);
               return result;
           } catch (InvocationTargetException e) {
-              System.out.println("THROW: " + method.getName() + " -> " + e.getCause());
+              System.out.println("THROW: " + method.getName() + " -> " +...
               throw e.getCause();  // unwrap to original exception
           }
       }
@@ -160,7 +160,7 @@ DYNAMIC PROXY:
       new LoggingHandler(realService)          // the handler
   );
   
-  proxy.process("data");  // -> LoggingHandler.invoke() -> realService.process()
+  proxy.process("data");  // -> LoggingHandler.invoke() -> realService.process(...
   
   // IMPORTANT: proxy implements ALL listed interfaces
   // Proxy class name: "com.sun.proxy.$Proxy0" (runtime-generated)
@@ -186,10 +186,10 @@ CGLIB CLASS PROXY (Spring's mechanism for non-interface classes):
   
   // Requirement: class must NOT be final (cglib subclasses it)
   // Requirement: method must NOT be final (cglib overrides it)
-  // CGLIB limitation: cannot proxy final classes or methods -> AOP simply skips them
+  // CGLIB limitation: cannot proxy final classes or methods -> AOP simply...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Reflection and Proxies example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -200,6 +200,12 @@ CGLIB CLASS PROXY (Spring's mechanism for non-interface classes):
 > + arguments, and only calls the real implementation on a cache miss. The `InvocationTargetException`
 > unwrapping is critical: without it, callers would see `InvocationTargetException` instead of
 > the real exception.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: manual caching in every method
@@ -318,7 +324,7 @@ Java 9+: `setAccessible(true)` works only if the module of the class being acces
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Dynamic proxy causes NullPointerException inside Spring's @Transactional.**
-```
+```plaintext
 Symptom: @Transactional method called from within the same class does NOT start
   a transaction. Database changes not rolled back on exception.
   No NPE actually in the transaction code - the transaction simply isn't active.
@@ -342,9 +348,9 @@ Root cause:
   How Spring @Transactional works:
   - Spring creates a PROXY for OrderService
   - External callers call the PROXY (which starts a transaction)
-  - placeOrder() -> proxy intercepts -> starts transaction -> calls real OrderService.placeOrder()
+  - placeOrder() -> proxy intercepts -> starts transaction -> calls real...
   - Inside OrderService.placeOrder(): 'this' refers to the REAL OrderService, NOT the proxy
-  - this.saveOrder(): bypasses the proxy -> NO transaction started for saveOrder()
+  - this.saveOrder(): bypasses the proxy -> NO transaction started for...
   
   This is the "proxy self-invocation" problem.
 
@@ -380,7 +386,7 @@ Prevention:
   Test: ensure integration tests verify transaction rollback for @Transactional methods.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -439,7 +445,7 @@ try {
     throw new RuntimeException("Undeclared checked exception", cause);
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This is what Spring's `AopUtils` and Mockito do. The naive `throw e.getCause()` doesn't compile (Throwable is checked). The complete logic handles RuntimeExceptions, Errors, and declared checked exceptions correctly.
 
@@ -447,9 +453,9 @@ This is what Spring's `AopUtils` and Mockito do. The naive `throw e.getCause()` 
 
 **Q3 (proxy vs cglib): When does Spring use JDK proxy vs CGLIB?**
 
-A: Spring Boot 2.0+ default: CGLIB for all beans (even those implementing interfaces). Pre-2.0: JDK proxy if the bean implements at least one interface. To force JDK proxy: `@EnableAspectJAutoProxy(proxyTargetClass = false)`. CGLIB requirement: class must not be final, proxied methods must not be final. JDK proxy requirement: target must implement an interface; the injection point must be typed to the interface. If you inject by concrete class type with JDK proxy: `BeanNotOfRequiredTypeException`.
+A: Spring Boot 2.0+ default: CGLIB for all beans (even those implementing interf
 
-*What separates good from great:* The `proxyTargetClass = true` (CGLIB) default in Spring Boot: chosen because it avoids the "inject by concrete type" issue. With JDK proxy: `@Autowired UserServiceImpl userService` fails (the proxy is not a `UserServiceImpl`). With CGLIB: the proxy is a subclass of `UserServiceImpl`, so `@Autowired UserServiceImpl` works. The tradeoff: CGLIB requires a no-arg constructor (Spring uses objenesis to bypass this, but it's still a consideration). Final classes: CGLIB can't proxy them. `@Configuration` classes must be CGLIB-proxied (Spring modifies `@Bean` methods to return singletons). This is why `@Configuration` classes must not be final.
+*What separates good from great:* The `proxyTargetClass = true` (CGLIB) default 
 
 ---
 
@@ -463,27 +469,27 @@ never optimized to direct call speed (blocked by the dynamic dispatch and type c
 `invokedynamic` uses `MethodHandle` internally: lambdas and string concatenation use it.
 
 *What separates good from great:* The JMH benchmark (Java Microbenchmark Harness) numbers:
-direct call = 1x, `MethodHandle.invoke()` = 1.1-1.5x, `Method.invoke()` = 10-100x. The numbers
+direct call = 1x, `MethodHandle.invoke()` = 1.1-1.5x, `Method.invoke()` = 10-100
 depend on whether the `MethodHandle` is stored in a constant (`static final MethodHandle`), whether
 it's used repeatedly (JIT warmup), and whether it's called via `invokeExact` (exact types, no boxing)
 vs `invoke` (type coercion). Production use: frameworks that need reflection at runtime but in hot
 paths (e.g., serialization, ORM field access) use `MethodHandle` instead of `Method.invoke()`.
-The VarHandle API (Java 9+): similar optimization for field access, also supporting atomic
+The VarHandle API (Java 9+): similar optimization for field access, also support
 compare-and-set and fence operations.
 
 ---
 
 **Q5 (module system): How does the Java module system restrict reflection?**
 
-A: Java 9+: packages are encapsulated by modules. `setAccessible(true)` for a class in an
+A: Java 9+: packages are encapsulated by modules. `setAccessible(true)` for a cl
 encapsulated package: `InaccessibleObjectException`. To allow reflective access: the module must
 declare `opens com.example.internal` (open to all) or `opens com.example.internal to other.module`
-(open to specific module). JVM flag workaround: `--add-opens java.base/java.lang=ALL-UNNAMED`.
+(open to specific module). JVM flag workaround: `--add-opens java.base/java.lang
 Many frameworks need this for their own class loading.
 
-*What separates good from great:* The migration pain in Java 9-16: many libraries (Hibernate,
+*What separates good from great:* The migration pain in Java 9-16: many librarie
 Spring, Jackson) used deep reflection (`setAccessible(true)` on private fields). Java 9's strong
-encapsulation broke them. Solutions: (1) libraries updated to use `MethodHandles.privateLookupIn()` (requires `opens` but no `setAccessible`), (2) JVM flags added to build scripts, (3) `--illegal-access=deny` (default in Java 17, made it a hard error). In production: if you see `WARNING: An illegal reflective access operation has occurred` in Java 9-15 or `InaccessibleObjectException` in Java 17+: a library is using deep reflection on a non-opened module. Fix: update the library version (most have been updated) or add `--add-opens` for the specific module/package.
+encapsulation broke them. Solutions: (1) libraries updated to use `MethodHandles
 
 ---
 
@@ -491,38 +497,38 @@ encapsulation broke them. Solutions: (1) libraries updated to use `MethodHandles
 
 A: Steps: (1) Define the interface to proxy. (2) Implement `InvocationHandler`. (3) `handler.invoke`: call `method.invoke(delegate, args)` wrapped in timing/logging, unwrap `InvocationTargetException`. (4) `Proxy.newProxyInstance(interface.classLoader, new Class[]{interface}, handler)`. (5) Cast to interface and use. Key: the `delegate` is the real implementation, passed to the handler and forwarded in invoke.
 
-*What separates good from great:* The tracing proxy is the pedagogical proxy, but production proxies need more: (1) handling of `toString()`, `equals()`, `hashCode()` - by default these go through `invoke()` too. If the delegate's `toString` is correct: forward `toString`. If you're implementing a mock: return fixed values. (2) Handling of methods that return `void`: `method.invoke()` returns null for void methods; the handler must return null (not forward the null to Object methods that don't expect it). (3) Thread safety: if the handler has state (cache, counter): use concurrent collections or synchronize. The production-quality proxy handler handles all edge cases that a naive implementation misses.
+*What separates good from great:* The tracing proxy is the pedagogical proxy, bu
 
 ---
 
 **Q7 (performance): When should you avoid using reflection in production code?**
 
-A: Avoid in: (1) hot code paths (inner loops, per-request processing in high-throughput services),
-(2) security-sensitive code (reflection bypasses access control), (3) when bytecode generation
+A: Avoid in: (1) hot code paths (inner loops, per-request processing in high-thr
+(2) security-sensitive code (reflection bypasses access control), (3) when bytec
 alternatives exist (ByteBuddy, cglib, annotation processing). Use in: (1) framework initialization
 code (runs once at startup), (2) test code (Mockito, test utilities), (3) serialization/deserialization
 libraries (once per class type, cached).
 
 *What separates good from great:* The cache reflection metadata: `Method`, `Field`, `Constructor`
 objects are expensive to look up but cheap to invoke (compared to the lookup). Production pattern:
-at startup (or first access), find the relevant `Method`/`Field` and store in a static or instance cache. Per-request: use the cached `Method` object directly. This amortizes the lookup cost. Jackson's `ObjectMapper`: caches field/method introspection per class. Spring's `BeanWrapper`: caches property descriptors. The reflective invocation itself (10-100x slower than direct call) is usually acceptable for framework initialization but not for per-request hot paths. The tipping point: if a reflective call happens more than ~1,000 times per second in a hot path, measure its contribution to latency.
+at startup (or first access), find the relevant `Method`/`Field` and store in a 
 
 ---
 
 **Q8 (annotations): How do you scan for annotations using reflection and what are the pitfalls?**
 
 A: `method.isAnnotationPresent(MyAnnotation.class)`: checks for annotation directly on the method.
-`method.getAnnotation(MyAnnotation.class)`: get the annotation instance (or null). `class.getDeclaredMethods()` + filter on annotation: standard pattern. Pitfall 1: annotations on overridden methods are NOT inherited in Java unless `@Inherited` meta-annotation is on the annotation TYPE. Pitfall 2: interface method annotations: not visible on the implementing class's method via `getDeclaredMethod().getAnnotation()` (must check the interface method). Spring's `AnnotationUtils.findAnnotation()` handles the full hierarchy.
+`method.getAnnotation(MyAnnotation.class)`: get the annotation instance (or null
 
-*What separates good from great:* The `@Inherited` pitfall: `@Target(ElementType.TYPE) @Inherited @interface Auditable {}` - if a superclass is `@Auditable`, the subclass IS also `@Auditable` (inherited). But method annotations are NEVER inherited (even with `@Inherited` on the annotation type). `@Transactional` is not `@Inherited`. If you put `@Transactional` on an interface method: Spring's `AnnotationUtils.findAnnotation()` finds it (it explicitly checks the interface hierarchy). `method.getAnnotation(Transactional.class)` on the implementation class's method: returns null. This is why Spring uses `AnnotationUtils` not direct reflection for all annotation lookups.
+*What separates good from great:* The `@Inherited` pitfall: `@Target(ElementType
 
 ---
 
 **Q9 (bytebuddy): What is ByteBuddy and when would you use it over dynamic proxies?**
 
-A: ByteBuddy: a library for runtime code generation (creating new classes, modifying existing ones at the bytecode level). Generates subclasses or arbitrary new classes. Use over dynamic proxy: (1) need to proxy a concrete class (not interface-based), (2) need generated code that's as fast as hand-written code (JIT-optimizable), (3) need to add fields or change class structure (proxy can't do this), (4) need to generate code for non-Java JVM languages. Used by: Mockito (since version 2), Spring (optional, for code generation in some scenarios), Hibernate (proxy generation).
+A: ByteBuddy: a library for runtime code generation (creating new classes, modif
 
-*What separates good from great:* The three levels of Java metaprogramming: (1) Reflection: inspect and invoke existing code at runtime (10-100x slower than direct). (2) Dynamic proxy: fabricate new classes at runtime that delegate to handlers (fast for interface-based proxying, CGLIB for class-based). (3) ByteBuddy / annotation processing: generate source or bytecode (compiles to direct-call performance). The choice: reflection for flexibility without performance requirements, dynamic proxy for AOP/decoration at framework/test time, ByteBuddy/APT for production-performance code generation. Lombok uses APT (annotation processing at compile time) - zero runtime overhead. Mapstruct: same. Both generate code that is as fast as hand-written code.
+*What separates good from great:* The three levels of Java metaprogramming: (1) 
 
 ---
 
@@ -530,40 +536,40 @@ A: ByteBuddy: a library for runtime code generation (creating new classes, modif
 
 A: (1) Access control bypass: `setAccessible(true)` can expose private fields/methods. An attacker with code execution can read private keys, credentials stored in final fields. (2) Deserialization attacks: reflection used by Java serialization to call `readObject()` even on classes without public constructors. Many CVEs (gadget chains) exploit this. (3) Dynamic class loading: `Class.forName()` with untrusted input = arbitrary class instantiation. (4) Information disclosure: `getDeclaredFields()` reveals internal structure.
 
-*What separates good from great:* The deserialization vulnerability: Java's native serialization uses reflection to reconstruct objects, bypassing constructors. "Gadget chains" (like in Apache Commons Collections) exploit this: a serialized payload triggers a chain of reflective calls that eventually executes arbitrary code. Mitigation: (1) never deserialize untrusted data with Java native serialization, (2) use `ObjectInputFilter` (Java 9+) to whitelist deserializable classes, (3) prefer JSON/protobuf for cross-service communication. `Class.forName()` with user input: a common vulnerability. In frameworks: if a class name comes from user input (even indirectly through configuration or headers), it must be validated against a whitelist before reflective instantiation.
+*What separates good from great:* The deserialization vulnerability: Java's nati
 
 ---
 
-**Q11 (modules): How do you write reflection code that works in both pre-Java 9 and Java 9+?**
+**Q11 (modules): How do you write reflection code that works in both pre-Java 9 
 
 A: Strategy: (1) try `setAccessible(true)`, catch `InaccessibleObjectException` (Java 9 only),
 fall back to `MethodHandles.privateLookupIn()`. (2) Use `MethodHandles.lookup()` which respects
 module boundaries. (3) Use `@SuppressWarnings("all")` for legacy code that uses `setAccessible`
-with documented JVM args. Multi-release jars (MRJAR): provide different implementations for
+with documented JVM args. Multi-release jars (MRJAR): provide different implemen
 Java 8 and Java 9+.
 
-*What separates good from great:* The `MethodHandles.privateLookupIn(targetClass, lookup)` approach: more compatible with the module system than `setAccessible`. The caller must have `MODULE` and `PRIVATE_LOOKUP` access to the target class's module (requires `opens` in the module declaration). The advantage over `setAccessible`: it's the officially-supported deep reflection API. Libraries migrated to `privateLookupIn` (Hibernate, Jackson after certain versions) use this instead of `setAccessible`. For production framework code: write to `privateLookupIn` + module `opens`, not `setAccessible`. For tests: `--add-opens` in `surefire` or `gradle test` configuration is acceptable.
+*What separates good from great:* The `MethodHandles.privateLookupIn(targetClass
 
 ---
 
 **Q12 (design): When would you design a library feature using dynamic proxies vs annotation processing?**
 
-A: Dynamic proxy: for runtime behavior modification (AOP, lazy loading, caching, transaction management). The target class doesn't change; behavior is added at runtime. The tradeoff: proxy overhead per call, cannot proxy final classes, method references bypass the proxy. Annotation processing (APT): for compile-time code generation (Lombok, Mapstruct, QueryDSL). Generates source code from annotations. The tradeoff: requires a compile step, generated code is visible (debuggable), zero runtime overhead.
+A: Dynamic proxy: for runtime behavior modification (AOP, lazy loading, caching,
 
-*What separates good from great:* The architectural choice: if behavior depends on runtime state (the user's transaction context, security context, cache state) - use proxy (you can't know these at compile time). If behavior is purely structural (map one object to another, generate builder methods) - use APT (no runtime state needed, compile-time generation is safer). The hybrid: Lombok uses APT for `@Data`, `@Builder`. Spring uses proxy for `@Transactional`, `@Cacheable`. MapStruct uses APT for `@Mapper`. The performance-critical case: if the proxy's added behavior (e.g., caching) is on a path called millions of times per second, the proxy overhead (10-30 ns per call) adds up. Benchmark with `jmh` to decide if APT (code generation) is needed.
+*What separates good from great:* The architectural choice: if behavior depends 
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Creates | Requires | Performance | Use Case |
-|-----------|---------|----------|-------------|----------|
-| Reflection invoke | N/A | Access | 10-100x slower | Framework init, serialization |
-| MethodHandle | N/A | Access | ~1x (JIT) | Hot-path reflection |
-| JDK Dynamic Proxy | Interface impl | Interface | 1.5-3x | AOP, decoration (interface) |
-| CGLIB Proxy | Subclass | Non-final class | 1.5-3x | Spring beans, AOP (class) |
-| ByteBuddy | Arbitrary class | None | ~1x | Code generation, Mockito |
-| APT (compile time) | Source code | Annotation | 0x (compile only) | Lombok, Mapstruct, QueryDSL |
+| Mechanism| Creates| Requires| Performance| Use Case|
+|---|----------|---------------|-----------------|-----------------------------|
+| Reflection invoke| N/A| Access| 10-100x slower| Framework init, serialization|
+| MethodHandle| N/A| Access| ~1x (JIT)| Hot-path reflection|
+| JDK Dynamic Proxy| Interface impl| Interface| 1.5-3x| AOP, decoration (interfa
+| CGLIB Proxy| Subclass| Non-final class| 1.5-3x| Spring beans, AOP (class)|
+| ByteBuddy| Arbitrary class| None| ~1x| Code generation, Mockito|
+| APT (compile time)| Source code| Annotation| 0x (compile only)| Lombok, Mapstr
 
 ---
 

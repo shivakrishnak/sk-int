@@ -133,7 +133,7 @@ PERFORMANCE REGRESSION TESTING:
          JMH with perfomance thresholds in CI pipeline.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Measurement example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -248,7 +248,7 @@ least one batch cycle duration.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Performance regression undetected until user complaints.**
-```
+```plaintext
 Symptom: Users report slowness 2 weeks after a major refactor.
   No alerts fired. Dashboard shows "normal."
 
@@ -280,7 +280,7 @@ Prevention:
     Gate: if p99 > baseline * 1.2: review before merging
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -399,7 +399,7 @@ This transforms SLO monitoring from a binary pass/fail to a rate-based early war
 ### 📘 Concept Explanation
 
 **Flame graph anatomy and async-profiler usage:**
-```
+```plaintext
 FLAME GRAPH ANATOMY:
 
   main() ################################################# [100%]
@@ -472,7 +472,7 @@ CPU vs WALL TIME:
     Use when: p99 is high but CPU profile shows no hot code.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Allocation profiling: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -481,6 +481,12 @@ CPU vs WALL TIME:
 > **Code walkthrough:** The profiling workflow shows how to interpret a flame graph output and
 > map it to a code change. The before/after comparison demonstrates how to verify that the
 > optimization actually worked using profiler data, not just latency metrics.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PROFILING WORKFLOW - step by step:
@@ -612,7 +618,7 @@ Fix:
     - Large list copies (new ArrayList<>(existingList))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Allocation profiling: example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -726,7 +732,7 @@ blocked in `Socket.read()` - DB query is slow. Flame graph shows: `OrderReposito
 ### 📘 Concept Explanation
 
 **Memory leak investigation methodology:**
-```
+```plaintext
 MEMORY LEAK INDICATORS:
 
   Symptom 1: Heap used grows over time (even between GC cycles)
@@ -761,7 +767,7 @@ HEAP DUMP ANALYSIS WITH MAT:
     If it's an ArrayList: expand -> see what's in it -> find the GC root
   
   Step 4: Path to GC Root
-    Right-click the large object -> "Path to GC Roots" -> "Exclude weak references"
+    Right-click the large object -> "Path to GC Roots" -> "Exclude weak...
     This shows: WHICH REFERENCE is keeping this object alive
     The reference at the top of the path = the leak source
 
@@ -811,7 +817,7 @@ ALLOCATION PROFILING (reduce allocation rate):
     Or: log.debug("val={}", val);  // lazy, no toString unless DEBUG
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Warning: jmap causes a full GC pause + dump time (seconds to minutes) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -821,6 +827,18 @@ ALLOCATION PROFILING (reduce allocation rate):
 > production Java. Each follows the same structure: a reference keeps the object alive
 > past its useful lifetime. The ThreadLocal example is particularly dangerous because
 > thread pool threads live forever, so an unreleased ThreadLocal never gets collected.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // COMMON MEMORY LEAKS AND FIXES:
@@ -959,7 +977,7 @@ Options:
      8 pods * 4GB each > 1 pod * 32GB (easier to diagnose per pod).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This wait 5 minutes example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

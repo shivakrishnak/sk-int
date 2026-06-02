@@ -82,6 +82,12 @@ adding the next ingredient."
 ### 📘 Concept Explanation
 
 **Build context, registry failures, RUN failures, cache corruption, platform:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 COMMON BUILD FAILURE CATEGORIES:
 
@@ -246,13 +252,13 @@ DEBUGGING TECHNIQUES:
   # If this fixes DNS/connectivity issues: container network config problem.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This If this fixes DNS/connectivity issues: container network config problem. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A systematic debugging session for a failing
+> **Code walkthrough:** A systematic debugging session for a failingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > multi-stage Node.js build demonstrates all six techniques.
 
 ```bash
@@ -296,7 +302,7 @@ systemctl restart docker
 # Now all containers use the correct DNS.
 ```
 
-> **Code walkthrough:** The debugging follows the systematic approach:
+> **Code walkthrough:** The debugging follows the systematic approach:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `--progress=plain` reveals the exact error message (network ENOTFOUND).
 > Testing the base image interactively confirms DNS resolution fails
 > inside Docker's network namespace. `--network=host` bypasses the
@@ -423,7 +429,7 @@ Diagnosis methodology:
   # Remove after diagnosis.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remove after diagnosis. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

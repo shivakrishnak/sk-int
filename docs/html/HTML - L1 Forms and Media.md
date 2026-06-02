@@ -160,7 +160,7 @@ INPUT TYPES (HTML5):
   hidden | submit | reset | button | image | search
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Forms example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -216,7 +216,7 @@ encoding, validation, and submission natively.
 </form>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This HTML Forms example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: proper labels, input types, validation -->
@@ -268,7 +268,7 @@ encoding, validation, and submission natively.
 </form>
 ```
 
-> **Code walkthrough:** The GOOD form has explicit `<label>` elements
+> **Code walkthrough:** The GOOD form has explicit `<label>` elementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > linked by `for`/`id` pairs - clicking the label focuses the input.
 > `aria-describedby` links the hint text to the input, which screen
 > readers announce after the field name. `autocomplete` hints the
@@ -349,7 +349,7 @@ Common causes:
 Fix: verify name attributes first - most common cause
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -367,8 +367,7 @@ Fix: verify name attributes first - most common cause
 
 ---
 
-**Q1: Why is associating labels with form controls important?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] Why is associating labels with form controls important?**
 
 *Why they ask:* Accessibility fundamentals.
 
@@ -413,7 +412,7 @@ Fix: verify name attributes first - most common cause
 
 ---
 
-**Q2: What is the difference between `name` and `id` on a form
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `name` and `id` on a form**
 input?** `[JUNIOR]` DEFINITION
 
 *Why they ask:* Core HTML forms vocabulary.
@@ -458,8 +457,7 @@ input?** `[JUNIOR]` DEFINITION
 
 ---
 
-**Q3: How does HTML5 native form validation work?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does HTML5 native form validation work?** `[SENIOR]`**
 
 *Why they ask:* Front-end validation strategy question.
 
@@ -514,8 +512,7 @@ MECHANISM
 
 ---
 
-**Q4: What is the `autocomplete` attribute and why does it matter?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q4 - [SCENARIO] What is the `autocomplete` attribute and why does it matter?**
 
 *Why they ask:* Production conversion rate impact.
 
@@ -571,8 +568,7 @@ MECHANISM
 
 ---
 
-**Q5: How do you handle file uploads in HTML forms?** `[JUNIOR]`
-SCENARIO
+**[MID] Q5 - [SCENARIO] How do you handle file uploads in HTML forms?** `[JUNIOR]`**
 
 *Why they ask:* Common requirement with specific HTML requirements.
 
@@ -624,8 +620,7 @@ SCENARIO
 
 ---
 
-**Q6: What is the purpose of `<fieldset>` and `<legend>`?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q6 - [MECHANISM] What is the purpose of `<fieldset>` and `<legend>`?**
 
 *Why they ask:* Grouping controls for accessibility.
 
@@ -683,7 +678,7 @@ SCENARIO
 
 ---
 
-**Q7: How does the FormData API work?** `[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] How does the FormData API work?** `[SENIOR]` MECHANISM**
 
 *Why they ask:* JavaScript form handling.
 
@@ -786,21 +781,21 @@ SCENARIO
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # HTML Images and Media
@@ -950,7 +945,7 @@ AUDIO:
 </audio>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Images and Media example demonstrates a key coice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1017,7 +1012,7 @@ that serving 1200px images to 400px screens wasted 9x bandwidth.
 </div>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key conice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```css
 /* CSS width doesn't override the aspect-ratio reservation */
@@ -1029,7 +1024,7 @@ that serving 1200px images to 400px screens wasted 9x bandwidth.
 }
 ```
 
-> **Code walkthrough:** The `width` and `height` attributes in
+> **Code walkthrough:** The `width` and `height` attributes inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > HTML create an intrinsic aspect ratio. Even though CSS sets
 > `width: 100%; height: auto`, the browser reserves the correct
 > proportional space before the image loads. Without these
@@ -1109,7 +1104,7 @@ Measure: DevTools → Performance → scroll → look for layout shift
 Target: CLS < 0.1 (good), 0.1-0.25 (needs improvement), >0.25 (poor)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1127,8 +1122,7 @@ Target: CLS < 0.1 (good), 0.1-0.25 (needs improvement), >0.25 (poor)
 
 ---
 
-**Q1: What is the `alt` attribute and how should you write it?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What is the `alt` attribute and how should you write it?**
 
 *Why they ask:* Accessibility fundamental.
 
@@ -1179,8 +1173,7 @@ Target: CLS < 0.1 (good), 0.1-0.25 (needs improvement), >0.25 (poor)
 
 ---
 
-**Q2: How do `srcset` and `sizes` work together?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How do `srcset` and `sizes` work together?** `[SENIOR]`**
 
 *Why they ask:* Responsive images is a common real-world requirement.
 
@@ -1224,8 +1217,7 @@ MECHANISM
 
 ---
 
-**Q3: When should you use `<picture>` vs `srcset` on `<img>`?**
-`[SENIOR]` COMPARISON
+**[SENIOR] Q3 - [TRADE-OFF] When should you use `<picture>` vs `srcset` on `<img>`?**
 
 *Why they ask:* Common confusion point in responsive images.
 
@@ -1272,7 +1264,7 @@ MECHANISM
 
 ---
 
-**Q4: How do you optimize images for LCP?** `[SENIOR]` SCENARIO
+**[MID] Q4 - [MECHANISM] How do you optimize images for LCP?** `[SENIOR]` SCENARIO**
 
 *Why they ask:* Core Web Vitals is a ranking factor.
 
@@ -1325,8 +1317,7 @@ MECHANISM
 
 ---
 
-**Q5: What attributes are required for background video autoplay?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q5 - [MECHANISM] What attributes are required for background video autoplay?**
 
 *Why they ask:* Common mobile issue with video elements.
 
@@ -1373,8 +1364,7 @@ MECHANISM
 
 ---
 
-**Q6: When should alt be empty (`alt=""`) vs descriptive?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q6 - [MECHANISM] When should alt be empty (`alt=""`) vs descriptive?**
 
 *Why they ask:* Nuanced accessibility question.
 
@@ -1421,8 +1411,7 @@ MECHANISM
 
 ---
 
-**Q7: How does `<figure>` and `<figcaption>` work with images?**
-`[JUNIOR]` SCENARIO
+**[JUNIOR] Q7 - [SCENARIO] How does `<figure>` and `<figcaption>` work with images?**
 
 *Why they ask:* Semantic grouping of images.
 
@@ -1680,7 +1669,7 @@ NAVIGATION PATTERN:
        announce "current page" after link text -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Links and Navigation example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1749,7 +1738,7 @@ element model separates the link (semantic) from the text
 </a>
 ```
 
-> **Code walkthrough:** `target="_blank"` opens the link in a new
+> **Code walkthrough:** `target="_blank"` opens the link in a newice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tab. Without `rel="noopener"`, the new tab has access to the
 > opener's `window.opener` property and can redirect the original
 > tab to a phishing page. This is the "reverse tabnapping" attack.
@@ -1834,7 +1823,7 @@ Quick audit:
 Fix: add rel="noopener noreferrer" to all external _blank links
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1852,8 +1841,7 @@ Fix: add rel="noopener noreferrer" to all external _blank links
 
 ---
 
-**Q1: What is the security risk of `target="_blank"` without `rel="noopener"`?**
-`[SENIOR]` FAILURE
+**[SENIOR] Q1 - [FAILURE] What is the security risk of `target="_blank"` without `rel="noopener"`?**
 
 *Why they ask:* Security awareness - real vulnerability.
 
@@ -1896,8 +1884,7 @@ Fix: add rel="noopener noreferrer" to all external _blank links
 
 ---
 
-**Q2: When should you use `<a>` vs `<button>`?** `[JUNIOR]`
-COMPARISON
+**[JUNIOR] Q2 - [TRADE-OFF] When should you use `<a>` vs `<button>`?** `[JUNIOR]`**
 
 *Why they ask:* Semantic HTML fundamentals.
 
@@ -1950,8 +1937,7 @@ COMPARISON
 
 ---
 
-**Q3: What is `aria-current` and how does it work with navigation?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] What is `aria-current` and how does it work with navigation?**
 
 *Why they ask:* Active state accessibility.
 
@@ -2005,8 +1991,7 @@ COMPARISON
 
 ---
 
-**Q4: What is the `download` attribute on links?** `[JUNIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is the `download` attribute on links?** `[JUNIOR]`**
 
 *Why they ask:* Common requirement, underused attribute.
 
@@ -2060,8 +2045,7 @@ MECHANISM
 
 ---
 
-**Q5: How should navigation menus be structured in HTML?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q5 - [SCENARIO] How should navigation menus be structured in HTML?**
 
 *Why they ask:* Semantic navigation structure question.
 
@@ -2123,7 +2107,7 @@ MECHANISM
 
 ---
 
-**Q6: What are the different `rel` values for links and when
+**[SENIOR] Q6 - [MECHANISM] What are the different `rel` values for links and when**
 do you use them?** `[SENIOR]` DEFINITION
 
 *Why they ask:* SEO + security knowledge via rel attribute.
@@ -2178,8 +2162,7 @@ do you use them?** `[SENIOR]` DEFINITION
 
 ---
 
-**Q7: What is the skip navigation pattern and why is it required?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is the skip navigation pattern and why is it required?**
 
 *Why they ask:* Keyboard accessibility requirement.
 

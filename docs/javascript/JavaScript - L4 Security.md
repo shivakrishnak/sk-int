@@ -87,7 +87,7 @@ impersonate users, and execute unauthorized actions.
 
 **How it works:**
 
-```
+```plaintext
 XSS ATTACK FLOW:
 
   1. Stored XSS:
@@ -173,7 +173,7 @@ DEFENSES:
   - Origin/Referer header validation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Security (XSS, Prototype Pollution, CSRF) example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -203,6 +203,21 @@ for the lifetime of the process. CSRF attacks are automated and scripted.
 ### 💻 Code Example
 
 **Real attack vectors and their mitigations**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // ======================== XSS ========================
@@ -326,7 +341,7 @@ async function transfer(amount, to) {
 }
 ```
 
-> **Code walkthrough:** The XSS example shows the critical distinction
+> **Code walkthrough:** The XSS example shows the critical distinctionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > between `innerHTML` (parses HTML, executes scripts) and `textContent`
 > (treats input as literal text). DOMPurify is the industry-standard
 > sanitizer that allowlists specific HTML tags and removes all event
@@ -435,7 +450,7 @@ LAYERED SECURITY ARCHITECTURE:
   }));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -564,7 +579,7 @@ test('deep merge does not pollute prototype', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using SQL. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -587,7 +602,7 @@ test('deep merge does not pollute prototype', () => {
 
 ---
 
-**Q1: What are the three types of XSS and how do you defend against
+**[JUNIOR] Q1 - [MECHANISM] What are the three types of XSS and how do you defend against**
 each?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -644,8 +659,7 @@ each?** `[SENIOR]` MECHANISM
 > lint error rather than a runtime attack. Google uses Trusted Types
 > across all its web properties.
 
-**Q2: Explain prototype pollution: attack, impact, and all defenses.**
-`[STAFF]` MECHANISM
+**[STAFF] Q2 - [MECHANISM] Explain prototype pollution: attack, impact, and all defenses.**
 
 > **Answer:**
 >
@@ -720,7 +734,7 @@ each?** `[SENIOR]` MECHANISM
 > vulnerability scanning. Prototype pollution in transitive dependencies
 > is as dangerous as in direct dependencies.
 
-**Q3: How does SameSite=Strict prevent CSRF and what are the
+**[MID] Q3 - [MECHANISM] How does SameSite=Strict prevent CSRF and what are the**
 limitations?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -782,8 +796,7 @@ limitations?** `[SENIOR]` MECHANISM
 > is preferred over session cookies for APIs used by SPAs - it removes
 > an entire class of vulnerability by design.
 
-**Q4: What is Content Security Policy and how do nonces work?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What is Content Security Policy and how do nonces work?**
 
 > **Answer:**
 >
@@ -841,7 +854,7 @@ limitations?** `[SENIOR]` MECHANISM
 > with `'unsafe-inline'` disabled and `object-src 'none'` and
 > `base-uri 'none'`, this is the "strict CSP" recommended by Google.
 
-**Q5: How does dangerouslySetInnerHTML work in React and when is it
+**[MID] Q5 - [MECHANISM] How does dangerouslySetInnerHTML work in React and when is it**
 unsafe?** `[MID]` MECHANISM
 
 > **Answer:**
@@ -892,8 +905,7 @@ unsafe?** `[MID]` MECHANISM
 > re-rendering. This is a subtle attack vector in SSR applications
 > where the data source is untrusted.
 
-**Q6: What is clickjacking and how is it prevented?** `[MID]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is clickjacking and how is it prevented?** `[MID]`**
 
 > **Answer:**
 >
@@ -939,7 +951,7 @@ MECHANISM
 > account deletion), always set `frame-ancestors 'none'` to prevent
 > UI redressing attacks regardless of whether the main app uses framing.
 
-**Q7: How do you prevent XSS in a Node.js/Express.js REST API?**
+**[SENIOR] Q7 - [MECHANISM] How do you prevent XSS in a Node.js/Express.js REST API?**
 `[SENIOR]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -996,8 +1008,7 @@ MECHANISM
 > `Content-Type: application/json` on JSON responses, this prevents
 > the entire category of API XSS.
 
-**Q8: What is the Same-Origin Policy and how does CORS relate to it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q8 - [MECHANISM] What is the Same-Origin Policy and how does CORS relate to it?**
 
 > **Answer:**
 >
@@ -1052,7 +1063,7 @@ MECHANISM
 > an explicit allowlist and validate the incoming Origin header against
 > it, never echo it unconditionally.
 
-**Q9: What security risks come from using eval() and how do you
+**[SENIOR] Q9 - [FAILURE] What security risks come from using eval() and how do you**
 avoid them?** `[MID]` MECHANISM
 
 > **Answer:**
@@ -1106,7 +1117,7 @@ avoid them?** `[MID]` MECHANISM
 > untrusted code requires separate processes or WebAssembly. Libraries
 > like `isolated-vm` provide proper V8 isolate-level sandbox.
 
-**Q10: How do you handle security in a third-party JavaScript
+**[SENIOR] Q10 - [MECHANISM] How do you handle security in a third-party JavaScript**
 integration?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -1175,7 +1186,7 @@ integration?** `[STAFF]` SYSTEM-DESIGN
 > in Stripe's origin, not the merchant's, so even if the merchant's
 > app is XSS'd, the card data is inaccessible.
 
-**Q11: What is the ReDoS vulnerability and how do you prevent it?**
+**[STAFF] Q11 - [MECHANISM] What is the ReDoS vulnerability and how do you prevent it?**
 `[SENIOR]` FAILURE-MODE
 
 > **Answer:**
@@ -1252,7 +1263,7 @@ integration?** `[STAFF]` SYSTEM-DESIGN
 > now backtracks catastrophically on edge cases in the new format
 > -> event loop blocked -> cascading timeout.
 
-**Q12: How do you implement a comprehensive security audit for a
+**[STAFF] Q12 - [MECHANISM] How do you implement a comprehensive security audit for a**
 JavaScript/Node.js application?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**

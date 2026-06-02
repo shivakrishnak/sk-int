@@ -132,7 +132,7 @@ Test types by value:
     Best for: utilities, business logic, reducers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frontend Testing Landscape example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Ecosystem tools:**
 
@@ -198,7 +198,7 @@ test('user can complete checkout', async ({ page }) => {
 });
 ```
 
-> **Code walkthrough:** The four test types in the same codebase show
+> **Code walkthrough:** The four test types in the same codebase showice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the spectrum from fast/precise (unit) to slow/realistic (E2E). The
 > unit test verifies pure logic in milliseconds with no DOM. The
 > component test renders a single component in JSDOM and asserts
@@ -310,7 +310,7 @@ Testing Pyramid (classic, Mike Cohn):
 /----------\
 /   Unit     \
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Write many unit tests, fewer integration tests, very few E2E tests.
 Designed for backend systems where unit = a function or class with
@@ -326,7 +326,7 @@ Testing Trophy (Kent C. Dodds, frontend-focused):
 /- Static  -\
 (TypeScript, ESLint)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Integration tests are the largest group. Unit tests are fewer because
 isolating individual components often tests implementation details
@@ -437,7 +437,7 @@ Why Trophy for frontend:
   ESLint catches: common mistakes (free, at write time)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Testing Trophy vs Testing Pyramid example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -484,7 +484,7 @@ interface DateDisplayProps {
 }
 ```
 
-> **Code walkthrough:** The Trophy approach values tests that verify
+> **Code walkthrough:** The Trophy approach values tests that verifyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > what users see over tests that verify implementation details. The
 > `getByText('Jan 15, 2024')` assertion fails only when the visible
 > text changes - which is exactly when a user would notice the
@@ -708,13 +708,18 @@ Challenge 5: Test brittle to implementation
   RTL philosophy: query like a user, not like a developer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why Frontend Testing is Hard example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Async rendering:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: synchronous assertion on async render
@@ -756,7 +761,7 @@ test('shows user name after load', async () => {
 });
 ```
 
-> **Code walkthrough:** The synchronous `getByText` assertion fails
+> **Code walkthrough:** The synchronous `getByText` assertion failsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > intermittently because React's data fetching is async - the component
 > renders a loading state first, then updates when data arrives.
 > `findByText` is an async query that polls the DOM until the element
@@ -850,7 +855,7 @@ await waitFor(() => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 ---
 

@@ -165,7 +165,7 @@ Profile-aware @Bean:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Profiles example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **The key insight:**
 The most important profile is "default" - it is active when NO other profiles
@@ -227,7 +227,7 @@ public class StripePaymentService
 }
 ```
 
-> **Code walkthrough:** Both services implement the same interface. The
+> **Code walkthrough:** Both services implement the same interface. Theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > dependency injection target (PaymentService) is the same in the business code.
 > Spring loads only the bean matching the active profile. In dev, payments are
 > mocked (no real charges, no Stripe dependency). In prod, the real Stripe bean
@@ -341,7 +341,7 @@ level). Check spring.profiles.active setting.
 
 ---
 
-#### Q1 - What is the default profile and when does it activate?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the default profile and when does it activate?**
 
 The "default" profile activates when NO other profiles are active.
 application-default.properties is loaded for this profile.
@@ -362,7 +362,7 @@ falling back to 1 default profile: default", no profiles were set.
 
 ---
 
-#### Q2 - How does @Profile interact with @Conditional?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does @Profile interact with @Conditional?**
 
 @Profile is implemented as @Conditional(ProfileCondition.class). This means:
 - @Profile and @Conditional can be combined
@@ -384,7 +384,7 @@ public @interface Profile { ... }
 public CacheService cacheService() { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-prod.properties (prod overrides) example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 @ConditionalOnProperty is the most commonly combined annotation. This enables
 feature flags that work across environments.
@@ -396,7 +396,7 @@ class is a @Configuration with @Conditional guards.
 
 ---
 
-#### Q3 - How do you activate profiles in different environments?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you activate profiles in different environments?**
 
 Priority order (highest wins, lower is overridden):
 
@@ -420,7 +420,7 @@ env:
     value: prod
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-prod.properties (prod overrides) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Docker Compose:
 ```yaml
@@ -428,7 +428,7 @@ environment:
   - SPRING_PROFILES_ACTIVE=dev
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application-prod.properties (prod overrides) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* SPRING_PROFILES_ACTIVE (env var) is the
 best choice for containers: it works across Docker, Kubernetes, and CI/CD
@@ -437,7 +437,7 @@ Properties file activation is for development defaults only (overridable by env)
 
 ---
 
-#### Q4 - How do profile groups work in Spring Boot 2.4+?
+**[MID] Q4 - [CONCEPTUAL] How do profile groups work in Spring Boot 2.4+?**
 
 Profile groups allow one profile activation to trigger multiple related profiles:
 
@@ -449,7 +449,7 @@ spring.profiles.group.dev=\
   dev-db,dev-mocks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When `SPRING_PROFILES_ACTIVE=prod`:
 - prod profile is active
@@ -467,7 +467,7 @@ Groups are centrally defined in base config and easier to reason about.
 
 ---
 
-#### Q5 - What changed in Spring Boot 2.4 regarding profile loading?
+**[SENIOR] Q5 - [DEBUGGING] What changed in Spring Boot 2.4 regarding profile loading?**
 
 Spring Boot 2.4 introduced significant changes to config file loading:
 
@@ -485,7 +485,7 @@ spring.profiles: prod
 server.port: 80
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 After (Spring Boot 2.4+):
 ```yaml
@@ -495,7 +495,7 @@ spring.config.activate.on-profile: prod
 server.port: 80
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Migration: add spring.config.use-legacy-processing=true to restore old behavior
 during migration.
@@ -508,7 +508,7 @@ experience.
 
 ---
 
-#### Q6 - How do you test with Spring Profiles?
+**[SENIOR] Q6 - [DEBUGGING] How do you test with Spring Profiles?**
 
 @ActiveProfiles in tests activates specific profiles:
 
@@ -528,7 +528,7 @@ spring.jpa.hibernate.ddl-auto=create-drop
 payment.service.mock=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Profile-specific test beans:
 ```java
@@ -544,7 +544,7 @@ public class TestServiceConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* @Primary ensures the mock bean wins over
 any non-mock bean for the same type in tests. Combining @TestConfiguration
@@ -553,7 +553,7 @@ replacing production beans in integration tests without modifying production cod
 
 ---
 
-#### Q7 - Can properties be set in profiles using environment variables?
+**[SENIOR] Q7 - [DEBUGGING] Can properties be set in profiles using environment variables?**
 
 Yes - profile-specific properties can reference environment variables:
 
@@ -569,7 +569,7 @@ spring.datasource.url=\
   jdbc:postgresql://${DB_HOST:localhost}/orders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fallback with default: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Property placeholder resolution: Spring resolves ${VARIABLE_NAME} from:
 1. System properties
@@ -587,7 +587,7 @@ placeholder syntax.
 
 ---
 
-#### Q8 - How do Spring Cloud Config and profiles interact?
+**[STAFF] Q8 - [DEBUGGING] How do Spring Cloud Config and profiles interact?**
 
 Spring Cloud Config Server adds a remote source for profile-specific properties:
 
@@ -611,7 +611,7 @@ spring:
     active: prod
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This bootstrap.yml (loaded before application context) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Spring Cloud Config enables runtime
 configuration refresh: change a property in Git, push, and running applications
@@ -621,7 +621,7 @@ microservice architectures.
 
 ---
 
-#### Q9 - How do you verify which profile is active in a running application?
+**[STAFF] Q9 - [DEBUGGING] How do you verify which profile is active in a running application?**
 
 Multiple ways:
 
@@ -634,7 +634,7 @@ Multiple ways:
    String[] profiles = env.getActiveProfiles();
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This bootstrap.yml (loaded before application context) example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. /actuator/env endpoint:
    Returns all environment properties including
@@ -833,7 +833,7 @@ Auto-configuration registration:
       .AutoConfiguration.imports
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conditional Beans and @ConditionalOnX example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 @ConditionalOnMissingBean is the key to Spring Boot's extensibility. The
@@ -933,7 +933,7 @@ public AuditService productionAuditService() {
 }
 ```
 
-> **Code walkthrough:** Custom Condition implementations enable conditions that
+> **Code walkthrough:** Custom Condition implementations enable conditions thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > don't fit the built-in @ConditionalOnX annotations. ConditionContext provides
 > access to BeanFactory, ClassLoader, ResourceLoader, and Environment. The custom
 > @ConditionalOnProduction meta-annotation wraps the condition for reuse. The
@@ -1022,7 +1022,7 @@ that failed. Check /actuator/env for the actual property value.
 
 ---
 
-#### Q1 - How does Spring Boot auto-configuration use @Conditional internally?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does Spring Boot auto-configuration use @Conditional internally?**
 
 Every Spring Boot auto-configuration class is a @Configuration annotated with
 one or more @Conditional guards:
@@ -1045,7 +1045,7 @@ public class DataSourceAutoConfiguration {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 DataSourceAutoConfiguration only activates if:
 1. DataSource class is on classpath (JPA dependency pulls it in)
@@ -1059,7 +1059,7 @@ DataSourceAutoConfiguration, JacksonAutoConfiguration, or WebMvcAutoConfiguratio
 
 ---
 
-#### Q2 - What is the difference between @ConditionalOnBean and @ConditionalOnMissingBean?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between @ConditionalOnBean and @ConditionalOnMissingBean?**
 
 @ConditionalOnBean - "register me only IF this bean exists":
 - Use case: your bean depends on another (optional) bean being available
@@ -1081,7 +1081,7 @@ may be evaluated before the depended-on bean is registered. Use separate
 
 ---
 
-#### Q3 - How do you create a custom auto-configuration?
+**[JUNIOR] Q3 - [HANDS-ON] How do you create a custom auto-configuration?**
 
 Three files needed:
 
@@ -1103,7 +1103,7 @@ public class MyLibraryAutoConfiguration {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. Properties class:
 ```java
@@ -1115,7 +1115,7 @@ public class MyLibraryProperties {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. Registration file (Spring Boot 3):
 `META-INF/spring/org.springframework.boot
@@ -1124,7 +1124,7 @@ public class MyLibraryProperties {
 com.example.MyLibraryAutoConfiguration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* @AutoConfiguration (Spring Boot 3) adds
 proxyBeanMethods=false by default (avoids CGLIB proxy overhead) and registers
@@ -1134,7 +1134,7 @@ ordering within the same level.
 
 ---
 
-#### Q4 - How do you debug why an auto-configuration did or did not activate?
+**[MID] Q4 - [DEBUGGING] How do you debug why an auto-configuration did or did not activate?**
 
 Three methods:
 
@@ -1158,7 +1158,7 @@ report.getConditionAndOutcomesBySource()
         log.info("{}: {}", src, outcomes));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The conditions report shows not just IF a
 configuration activated, but WHY or WHY NOT. "Did not match: @ConditionalOnMissingBean
@@ -1167,7 +1167,7 @@ you exactly which bean caused the condition to fail and what type it was.
 
 ---
 
-#### Q5 - How does @ConditionalOnProperty work with matchIfMissing?
+**[MID] Q5 - [CONCEPTUAL] How does @ConditionalOnProperty work with matchIfMissing?**
 
 @ConditionalOnProperty with matchIfMissing controls behavior when the property
 is absent:
@@ -1190,7 +1190,7 @@ public class AdvancedFeatureConfig { ... }
 public class DefaultCacheConfig { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 matchIfMissing=true = "opt-out" feature (active unless you turn it off)
 matchIfMissing=false = "opt-in" feature (inactive unless you turn it on)
@@ -1203,7 +1203,7 @@ explicitly). Choosing the right default is a UX decision for library authors.
 
 ---
 
-#### Q6 - What is @ConditionalOnWebApplication and when does it matter?
+**[MID] Q6 - [CONCEPTUAL] What is @ConditionalOnWebApplication and when does it matter?**
 
 @ConditionalOnWebApplication activates only when the application context is
 a web application context:
@@ -1218,7 +1218,7 @@ public class MvcAutoConfiguration { ... }
 public class WebFluxAutoConfiguration { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Types:
 - SERVLET: traditional Spring MVC / Tomcat
@@ -1238,7 +1238,7 @@ web dependencies are on the classpath.
 
 ---
 
-#### Q7 - How do @ConditionalOnX annotations interact when multiple are present?
+**[SENIOR] Q7 - [CONCEPTUAL] How do @ConditionalOnX annotations interact when multiple are present?**
 
 Multiple @ConditionalOnX annotations on a single class/method are AND-combined.
 All conditions must be true for the bean to register:
@@ -1253,7 +1253,7 @@ All conditions must be true for the bean to register:
 public CacheManager redisCacheManager(...) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 All three must be true:
 - RedisCacheManager on classpath
@@ -1268,14 +1268,14 @@ For OR logic, use @ConditionalOnExpression with SpEL:
     + " == 'redis'")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Or implement a custom Condition:
 ```java
 @Conditional(RedisOrHazelcastCondition.class)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* @AnyNestedCondition and @AllNestedConditions
 are meta-conditions that allow composing conditions with OR and AND logic
@@ -1284,7 +1284,7 @@ and testable as plain Java.
 
 ---
 
-#### Q8 - How do you override a Spring Boot auto-configured bean?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you override a Spring Boot auto-configured bean?**
 
 Three patterns:
 
@@ -1301,7 +1301,7 @@ public DataSource dataSource() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Pattern 2 - Exclude auto-configuration explicitly:
 ```java
@@ -1310,7 +1310,7 @@ Pattern 2 - Exclude auto-configuration explicitly:
 })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Pattern 3 - Use application.properties overrides:
 ```properties
@@ -1320,7 +1320,7 @@ spring.datasource.hikari.maximum-pool-size=50
 spring.datasource.hikari.minimum-idle=10
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This customize behavior without full override example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Excluding auto-configuration should be a
 last resort. It breaks the intent of auto-configuration and requires you to
@@ -1332,7 +1332,7 @@ version - auto-configurations evolve with each Spring Boot release.
 
 ---
 
-#### Q9 - How do you write unit tests for @Conditional configurations?
+**[STAFF] Q9 - [MECHANISM] How do you write unit tests for @Conditional configurations?**
 
 Test auto-configuration with ApplicationContextRunner:
 
@@ -1380,7 +1380,7 @@ class MyAutoConfigurationTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This customize behavior without full override example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* ApplicationContextRunner is the correct
 testing tool for auto-configurations. It creates a lightweight application

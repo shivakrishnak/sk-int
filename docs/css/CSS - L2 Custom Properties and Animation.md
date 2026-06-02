@@ -158,7 +158,7 @@ CSS VALUES:
     - NOT property names, selectors, at-rules
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remove: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -212,7 +212,7 @@ a DOM subtree.
 /* Change blue to another color: 50+ replacements */
 ```
 
-> **Code walkthrough:** Magic number repetition makes
+> **Code walkthrough:** Magic number repetition makesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > global changes error-prone. A brand color change requires
 > finding every instance - often missing some. This is
 > especially fragile in large codebases where different
@@ -250,7 +250,7 @@ a DOM subtree.
 }
 ```
 
-> **Code walkthrough:** `--color-primary` is the single
+> **Code walkthrough:** `--color-primary` is the singleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > source of truth. Update it once, all usages update.
 > The dark mode override is trivial: `@media (prefers-
 > color-scheme: dark) { :root { --color-primary: #60a5fa; } }`.
@@ -286,7 +286,7 @@ a DOM subtree.
 }
 ```
 
-> **Code walkthrough:** The card defines its own "API"
+> **Code walkthrough:** The card defines its own "API"ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > via custom properties. Variants don't change the card's
 > structure - they only override the property values.
 > A `.card--dark` class only sets variables; the card's
@@ -363,7 +363,7 @@ elsewhere in the cascade.
 # Click variable name → Styles tab shows where it's set
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Click variable name → Styles tab shows where it's sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -392,7 +392,7 @@ font-size: var(--size); /* direct use */
 font-size: calc(var(--size) * 1px); /* multiply by unit */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Click variable name → Styles tab shows where it's set example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -412,8 +412,7 @@ font-size: calc(var(--size) * 1px); /* multiply by unit */
 
 ---
 
-**Q1: How do CSS custom properties cascade?** `[MID]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] How do CSS custom properties cascade?** `[MID]`**
 
 *Why they ask:* Cascade behavior is what makes custom
 properties different from simple string substitution.
@@ -470,8 +469,7 @@ specificity here?"
 
 ---
 
-**Q2: How do you use custom properties for dark mode?**
-`[MID]` PRODUCTION
+**[MID] Q2 - [DEBUGGING] How do you use custom properties for dark mode?**
 
 *Why they ask:* Dark mode is now expected; proper
 implementation tests understanding of the token model.
@@ -559,7 +557,7 @@ and manual toggle?"
 
 ---
 
-**Q3: How do CSS custom properties interact with
+**[JUNIOR] Q3 - [MECHANISM] How do CSS custom properties interact with**
 JavaScript?** `[MID]` MECHANISM
 
 *Why they ask:* JS-CSS interaction via custom properties
@@ -636,8 +634,7 @@ value?"
 
 ---
 
-**Q4: What is `@property` and why does it matter?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What is `@property` and why does it matter?**
 
 *Why they ask:* `@property` is the Houdini API in production;
 senior candidates should know it.
@@ -714,7 +711,7 @@ animating a custom property?"
 
 ---
 
-**Q5: How do you debug a CSS custom property that isn't
+**[MID] Q5 - [DEBUGGING] How do you debug a CSS custom property that isn't**
 working?** `[MID]` DEBUGGING
 
 *Why they ask:* Custom property debugging requires specific
@@ -769,8 +766,7 @@ show for custom properties?"
 
 ---
 
-**Q6: How do custom properties compare to Sass variables?**
-`[SENIOR]` COMPARISON
+**[SENIOR] Q6 - [TRADE-OFF] How do custom properties compare to Sass variables?**
 
 *Why they ask:* Candidates often use both; understanding
 the distinction shows depth.
@@ -823,7 +819,7 @@ same project?"
 
 ---
 
-**Q7: What is the design token architecture for custom
+**[SENIOR] Q7 - [DESIGN] What is the design token architecture for custom**
 properties?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Senior/Staff candidates are expected to
@@ -895,7 +891,7 @@ know token systems at scale.
 
 ---
 
-**Q8: Implement a user-customizable color theme using
+**[SENIOR] Q8 - [MECHANISM] Implement a user-customizable color theme using**
 custom properties.** `[SENIOR]` HANDS-ON
 
 *Why they ask:* End-to-end design + implementation test.
@@ -959,7 +955,7 @@ custom properties.** `[SENIOR]` HANDS-ON
 
 ---
 
-**Q9: What are the performance implications of custom
+**[SENIOR] Q9 - [MECHANISM] What are the performance implications of custom**
 properties?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Shows understanding of browser rendering
@@ -1245,7 +1241,7 @@ PERFORMANCE TIERS:
     font-size, line-height
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Transitions and Animations example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1306,7 +1302,7 @@ animation even when the main thread is busy.
 /* Causes jank on complex pages */
 ```
 
-> **Code walkthrough:** Animating `width` triggers layout
+> **Code walkthrough:** Animating `width` triggers layoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > recalculation on every frame (60 frames/sec). The browser
 > must recalculate positions of all elements affected by the
 > drawer's changing width. On complex pages this causes
@@ -1328,7 +1324,7 @@ animation even when the main thread is busy.
 /* Zero layout recalculation */
 ```
 
-> **Code walkthrough:** `transform: translateX()` runs
+> **Code walkthrough:** `transform: translateX()` runsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > entirely on the GPU compositor thread. No layout
 > recalculation. The drawer appears to slide but no DOM
 > positions change. `will-change: transform` promotes the
@@ -1362,7 +1358,7 @@ animation even when the main thread is busy.
 }
 ```
 
-> **Code walkthrough:** The spinner uses `transform: rotate`
+> **Code walkthrough:** The spinner uses `transform: rotate`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > via the `to {}` keyframe shorthand (equivalent to `from {
 > transform: rotate(0deg) } to { ... }`). It's GPU-composited,
 > runs independently of main thread. The reduced-motion
@@ -1441,7 +1437,7 @@ after animation ends.
 
 **Symptom: animation is janky (dropping frames)**
 
-```
+```plaintext
 # Chrome DevTools: Performance panel
 # Record while animation plays
 # Look for:
@@ -1452,7 +1448,7 @@ after animation ends.
 # Replace with transform equivalent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Replace with transform equivalent example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1473,7 +1469,7 @@ document.addEventListener('visibilitychange', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Replace with transform equivalent example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1505,8 +1501,7 @@ has lower specificity than explicitly set properties.
 
 ---
 
-**Q1: What CSS properties can be smoothly animated?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What CSS properties can be smoothly animated?**
 
 *Why they ask:* Foundation for animation performance knowledge.
 
@@ -1554,7 +1549,7 @@ has lower specificity than explicitly set properties.
 
 ---
 
-**Q2: What is `animation-fill-mode` and what does
+**[JUNIOR] Q2 - [MECHANISM] What is `animation-fill-mode` and what does**
 `forwards` do?** `[JUNIOR]` MECHANISM
 
 *Why they ask:* `fill-mode` is commonly forgotten but
@@ -1614,7 +1609,7 @@ critical for entrance animations.
 
 ---
 
-**Q3: How do you implement a staggered list entrance
+**[JUNIOR] Q3 - [MECHANISM] How do you implement a staggered list entrance**
 animation?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Staggered animations are common UI patterns;
@@ -1693,7 +1688,7 @@ animations.
 
 ---
 
-**Q4: When do you use CSS animations vs JavaScript
+**[MID] Q4 - [TRADE-OFF] When do you use CSS animations vs JavaScript**
 animation libraries?** `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Shows judgment about tooling choices.
@@ -1747,8 +1742,7 @@ animation libraries?** `[SENIOR]` TRADE-OFF
 
 ---
 
-**Q5: What is `will-change` and when should you use it?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q5 - [DEBUGGING] What is `will-change` and when should you use it?**
 
 *Why they ask:* Overuse/misuse of `will-change` is a
 real production problem.
@@ -1814,7 +1808,7 @@ real production problem.
 
 ---
 
-**Q6: How do you animate an element entering and
+**[SENIOR] Q6 - [MECHANISM] How do you animate an element entering and**
 leaving the DOM?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Enter/leave animations require coordination
@@ -1882,8 +1876,7 @@ between CSS and JavaScript.
 
 ---
 
-**Q7: Debug a CSS animation that isn't playing.**
-`[MID]` DEBUGGING
+**[MID] Q7 - [DEBUGGING] Debug a CSS animation that isn't playing.**
 
 *Why they ask:* Animation debugging is a practical daily
 skill.
@@ -1935,8 +1928,7 @@ paused` do by accident?"
 
 ---
 
-**Q8: What is the View Transitions API?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q8 - [MECHANISM] What is the View Transitions API?** `[SENIOR]`**
 
 *Why they ask:* Modern browser API that changes page
 transition patterns.
@@ -2004,7 +1996,7 @@ transitions?"
 
 ---
 
-**Q9: Implement a progress bar animation for loading.**
+**[SENIOR] Q9 - [MECHANISM] Implement a progress bar animation for loading.**
 `[MID]` HANDS-ON
 
 *Why they ask:* Real component implementation test.

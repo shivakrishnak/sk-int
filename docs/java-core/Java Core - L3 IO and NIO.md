@@ -111,7 +111,7 @@ Character Streams:
     BufferedWriter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 IO and NIO example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decorator pattern in IO:**
 ```java
@@ -130,18 +130,28 @@ out.writeInt(42);    // DataOutputStream: write primitive
 out.writeUTF("hi"); // write String with length prefix
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 IO and NIO example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The file reading example shows three approaches:
+> **Code walkthrough:** The file reading example shows three approaches:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > pre-Java 7 (explicit close in finally), Java 7+ (try-with-resources),
 > and NIO Files API (modern). The encoding pitfall shows why `FileReader`
 > is dangerous and `InputStreamReader` with explicit charset is required.
 > The binary read/write example demonstrates `DataInputStream`/`DataOutputStream`
 > for typed binary protocols.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: pre-try-with-resources (resource leak if exception):
@@ -192,7 +202,7 @@ try (DataInputStream dis = new DataInputStream(
 }
 ```
 
-> **Code walkthrough:** `try-with-resources` with multiple resources
+> **Code walkthrough:** `try-with-resources` with multiple resourcesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > closes them in REVERSE order of declaration (innermost first). This
 > means `BufferedReader` is closed before `InputStreamReader`, which
 > is closed before `FileInputStream`. If `close()` on one resource throws,
@@ -265,7 +275,7 @@ ois.setObjectInputFilter(filter);
 // Better fix: don't use Java serialization for untrusted input.
 // Use JSON (Jackson), Protobuf, or other safe formats.
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Diagnosis: deserialization RCE typically shows up as unexpected process
 spawning or network connections. Tools: ysoserial generates exploit payloads
@@ -320,7 +330,7 @@ try (Reader r = new InputStreamReader(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Rule: use byte streams for binary data. Use character streams (with
 explicit encoding) for text data.
@@ -374,7 +384,7 @@ try (DataOutputStream dos = new DataOutputStream(
 //           -> BufferedOutputStream batches -> FileOutputStream writes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The decorator pattern in IO allows
 arbitrary composition of behaviors without combinatorial explosion of
@@ -425,7 +435,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using error handling. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The suppressed exception mechanism
 (introduced with try-with-resources in Java 7) is a correct solution
@@ -460,7 +470,7 @@ Reader r = Files.newBufferedReader(
     Path.of("config.properties"), StandardCharsets.UTF_8);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Pitfall 2: PrintStream encoding (System.out)**
 ```java
@@ -474,7 +484,7 @@ PrintStream out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 //     or: -Dstdout.encoding=UTF-8 (Java 18+)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Pitfall 3: BOM in UTF-8 files**
 ```java
@@ -488,7 +498,7 @@ if (firstLine.startsWith("\uFEFF")) { // BOM as Unicode
 // Or use Apache Commons IO's BOMInputStream
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The file.encoding system property was
 the conventional way to set default encoding but was "soft" in older Java
@@ -539,7 +549,7 @@ try (InputStream is = new BufferedInputStream(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Buffering is the single most impactful
 IO optimization. The `read()` method on `BufferedInputStream` reads from
@@ -586,7 +596,7 @@ Files.walk(Path.of("src"), 10) // max depth 10
     .forEach(System.out::println);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Files.move()` with `ATOMIC_MOVE` is
 the only reliable way to atomically rename or replace a file on a single
@@ -632,7 +642,7 @@ ObjectInputFilter filter = ObjectInputFilter.Config.createFilter(
 // Avro/Thrift: schema-driven, no arbitrary code execution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Java serialization's fundamental problem:
 `readObject()` is a code execution point, not just data deserialization.
@@ -687,7 +697,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The `try-with-resources` resource variable
 scope is important: only resources declared IN the parentheses are
@@ -706,7 +716,7 @@ try (FileInputStream fis = new FileInputStream("f");
 // Only the outermost is in the resource variable - inner leaks on constructor failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -714,6 +724,12 @@ try (FileInputStream fis = new FileInputStream("f");
 fit in memory?**
 
 A:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // Files.readAllLines() - NOT for large files: loads ALL lines into memory
 List<String> lines = Files.readAllLines(path, UTF_8); // OOM for 10GB file!
@@ -748,7 +764,7 @@ try (FileChannel channel = FileChannel.open(path)) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java Strice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `Files.lines()` is the right tool for
 large text files: it buffers reads but doesn't hold all lines in memory.
@@ -764,14 +780,14 @@ requires reflection or closing the `FileChannel` and waiting for GC).
 
 ### ⚖️ Comparison Table
 
-| Aspect | IO (java.io) | NIO (java.nio) | NIO2 (Files API) |
-|---|---|---|---|
-| Paradigm | Stream (one byte/char at a time) | Channel + Buffer (block-oriented) | Path-based file ops |
-| Blocking | Blocking | Non-blocking available | Blocking (convenience) |
-| Performance | Good with buffering | Best for large files | Good |
-| Ease of use | Moderate | Complex | Simplest |
-| API style | Imperative | Low-level | Modern/functional |
-| Best for | Text processing, protocols | High-throughput binary | File management |
+| Aspect| IO (java.io)| NIO (java.nio)| NIO2 (Files API)|
+|---|-----------------|---------------------------------|----------------------|
+| Paradigm| Stream (one byte/char at a time)| Channel + Buffer (block-oriented)|
+| Blocking| Blocking| Non-blocking available| Blocking (convenience)|
+| Performance| Good with buffering| Best for large files| Good|
+| Ease of use| Moderate| Complex| Simplest|
+| API style| Imperative| Low-level| Modern/functional|
+| Best for| Text processing, protocols| High-throughput binary| File management|
 
 ---
 
@@ -809,9 +825,9 @@ requires reflection or closing the `FileChannel` and waiting for GC).
 > Key improvements over `java.io.File`: (1) Proper exception handling -
 > `File.delete()` returns boolean; `Files.delete()` throws `IOException`
 > with reason. (2) Atomic operations - `Files.move(src, dest, ATOMIC_MOVE)`
-> is atomic on POSIX filesystems. (3) Symbolic links - `Files.readSymbolicLink()`,
-> link following options. (4) Metadata - `Files.readAttributes()`, `BasicFileAttributes`.
-> (5) Directory traversal - `Files.walk()` (depth-first), `Files.walkFileTree()` (visitor).
+> is atomic on POSIX filesystems. (3) Symbolic links - `Files.readSymbolicLink()
+> link following options. (4) Metadata - `Files.readAttributes()`, `BasicFileAtt
+> (5) Directory traversal - `Files.walk()` (depth-first), `Files.walkFileTree()`
 >
 > `WatchService`: registers a path to receive events (`ENTRY_CREATE`,
 > `ENTRY_MODIFY`, `ENTRY_DELETE`). Uses OS-level notifications (inotify
@@ -820,7 +836,7 @@ requires reflection or closing the `FileChannel` and waiting for GC).
 > configuration reload systems.
 >
 > Path operations: `path.resolve()` (append), `path.relativize()` (compute
-> relative path), `path.normalize()` (remove `.`, `..`), `path.toAbsolutePath()`,
+> relative path), `path.normalize()` (remove `.`, `..`), `path.toAbsolutePath()`
 > `path.getParent()`, `path.getFileName()`.
 
 **Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
@@ -872,7 +888,7 @@ File legacy = path.toFile();
 Path modern = legacy.toPath();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Files utility key methods:**
 ```java
@@ -893,13 +909,13 @@ BasicFileAttributes attrs = Files.readAttributes(
     path, BasicFileAttributes.class);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The WatchService example shows event-driven
+> **Code walkthrough:** The WatchService example shows event-drivenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > file monitoring vs polling. The atomic write pattern (write to temp,
 > then move) is the production-safe way to update files: readers never
 > see a partially-written file. The directory walk example demonstrates
@@ -959,7 +975,7 @@ try (Stream<Path> walk = Files.walk(Path.of("src"), Integer.MAX_VALUE)) {
 }
 ```
 
-> **Code walkthrough:** The atomic write pattern is production-critical:
+> **Code walkthrough:** The atomic write pattern is production-critical:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > writing directly to the target file creates a window where the file
 > is partially written and another process reads it (empty or corrupt).
 > Writing to a temp file first, then atomically moving it, eliminates
@@ -1027,7 +1043,7 @@ if (kind == StandardWatchEventKinds.OVERFLOW) {
 // Always handle OVERFLOW: it means "you missed some events"
 // Never ignore it - use OVERFLOW to trigger a full re-scan
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: file changes not being detected; application out-of-sync
 with filesystem. Check if OVERFLOW events are being received and ignored.
@@ -1086,7 +1102,7 @@ try {
 Files.deleteIfExists(path); // throws only on failure (not if missing)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The exception hierarchy under
 `java.nio.file` is much richer than generic `IOException`. `NoSuchFileException`,
@@ -1141,7 +1157,7 @@ public static void atomicWrite(Path target, String content)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `Files.createTempFile(parent, ...)` is
 important: the temp file must be on the same filesystem as the target.
@@ -1187,7 +1203,7 @@ key.cancel();
 ws.close(); // releases inotify file descriptor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The WatchKey lifecycle is critical:
 after `take()`, the key is in "signaled" state and won't receive events.
@@ -1232,7 +1248,7 @@ try (Stream<Path> found = Files.find(dir, 10,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Also:** `Files.list()` (single directory, not recursive) has the same
 requirement: close the returned stream.
@@ -1277,7 +1293,7 @@ Files.copy(source, target,
 // For recursive directory copy: use Files.walk + copy each file
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Files.copy()` does NOT recursively
 copy directories - it only copies a single file or creates an empty
@@ -1336,7 +1352,7 @@ Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
 // SKIP_SIBLINGS (skip other files in same directory), TERMINATE
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `visitFileFailed` in `walkFileTree`
 handles permission-denied errors gracefully. `Files.walk()` by default
@@ -1387,7 +1403,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `deleteOnExit()` is unreliable: only
 called on normal JVM shutdown (not on kill -9, OutOfMemoryError, or
@@ -1439,7 +1455,7 @@ Files.setAttribute(path, "posix:permissions",
 Files.setLastModifiedTime(path, FileTime.fromMillis(System.currentTimeMillis()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `BasicFileAttributes.fileKey()` returns
 the inode number on UNIX filesystems (as `Object` - cast to `Long` after
@@ -1481,7 +1497,7 @@ Files.walk(root); // by default: FileVisitOption.NOFOLLOW_LINKS
 Files.walk(root, FileVisitOption.FOLLOW_LINKS); // follows (may cycle!)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Detecting cycles when following symlinks:
 ```java
@@ -1500,7 +1516,7 @@ Files.walkFileTree(root,
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Files.walk()` does NOT follow symlinks
 by default - a safe default that prevents infinite loops (`a -> b -> a`).

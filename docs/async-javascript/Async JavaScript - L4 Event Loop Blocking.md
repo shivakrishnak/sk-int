@@ -121,7 +121,7 @@ const duration = Number(process.hrtime.bigint() - start) / 1e6;
 console.log(`split() took ${duration.toFixed(1)}ms`);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Loop Blocking and Performance Anti-Patterns example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // MICROTASK STARVATION
@@ -148,7 +148,7 @@ async function yieldingLoop(items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Loop Blocking and Performance Anti-Patterns example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // NODE.JS: Blocking detection with perf_hooks
@@ -183,7 +183,7 @@ const observer = new PerformanceObserver((list) => {
 observer.observe({ entryTypes: ['longtask'] });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Loop Blocking and Performance Anti-Patterns example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **The key insight:**
 `async`/`await` enables non-blocking I/O. It does NOT enable
@@ -240,7 +240,7 @@ app.post('/api/import', async (req, res) => {
 });
 ```
 
-> **Code walkthrough:** The `.map()` call processes 100,000
+> **Code walkthrough:** The `.map()` call processes 100,000 items synchronously, blocking the event loop for the entire duration. **KEY MECHANISM:** JavaScript is single-threaded; any long synchronous loop holds the call stack and prevents the event loop from processing I/O, timers, or UI updates until complete. **WHY IT MATTERS:** a single blocking `.map()` on a large array causes visible UI freezes or missed heartbeat timeouts in Node.js servers. **WHAT BREAKS:** HTTP request timeouts, unresponsive UI, missed health checks under load. **TAKEAWAY:** offload CPU-heavy array operations to worker threads or chunk them with `setImmediate` to yield the event loop periodically.
 > records synchronously. During this 500ms window, Node.js
 > cannot accept new connections, process existing requests,
 > or run timers. All other users experience 500ms added latency.
@@ -308,7 +308,7 @@ app.post('/api/import', async (req, res) => {
 });
 ```
 
-> **Code walkthrough:** Option A (chunked) processes 1000 records
+> **Code walkthrough:** Option A (chunked) processes 1000 records per tick, yielding the event loop between batches. **KEY MECHANISM:** `setImmediate` releases the call stack after each chunk, allowing pending I/O callbacks and timers to run before the next batch. **WHY IT MATTERS:** prevents complete event loop starvation on large dataset processing. **WHAT BREAKS:** chunk size must be tuned - too large still blocks; too small wastes overhead and slows total throughput. **TAKEAWAY:** start with 1000 items per chunk, measure event loop lag with `--inspect`, and adjust until lag stays under 10ms.
 > per synchronous block (~10ms per chunk), then yields with
 > `setImmediate`. `setImmediate` fires after I/O callbacks -
 > better than `setTimeout(0)` for yielding without artificial
@@ -371,7 +371,7 @@ block to complete.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Node.js high p99 latency under load**
-```
+```plaintext
 Symptoms:
   p50: 20ms, p99: 500ms under 100 RPS load
   clinic doctor shows "blocking detected"
@@ -395,10 +395,10 @@ Common causes found:
   - Zod/Joi validation on large arrays
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Browser UI freezes during data processing**
-```
+```plaintext
 Symptoms:
   - UI unresponsive for 2-3 seconds after button click
   - Chrome DevTools Performance: long task (red marker)
@@ -420,7 +420,7 @@ Diagnosis:
   observer.observe({ entryTypes: ['longtask'] });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -435,8 +435,7 @@ Diagnosis:
 | Design | 2 | Worker thread architecture, streaming |
 | Behavioral | 1 | Fixing production blocking issue |
 
-**Q1. Explain the difference between microtasks and macrotasks
-and how they affect event loop blocking.**
+**[JUNIOR] Q1 - [TRADE-OFF] Explain the difference between microtasks and macrotasks and how they affect event loop blocking.**
 
 The event loop processes tasks in this order per iteration:
 1. One macrotask (from the task queue): setTimeout callback,
@@ -470,7 +469,7 @@ console.log('synchronous');
 // macrotask: setTimeout (next macrotask)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The implication for yield
 strategies: `await Promise.resolve()` does not yield to timer
@@ -479,8 +478,7 @@ or `setTimeout(0)`.
 
 ---
 
-**Q2. What is ReDoS and how does it block the Node.js
-event loop?**
+**[JUNIOR] Q2 - [MECHANISM] What is ReDoS and how does it block the Node.js event loop?**
 
 ReDoS (Regular Expression Denial of Service) occurs when a
 regex with exponential backtracking is applied to adversarial
@@ -502,7 +500,7 @@ vulnerable.test('a'.repeat(30) + 'b');
 console.log(Date.now() - start); // 5000ms+ - Node.js blocked!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Detection tools:
 - `safe-regex` npm package: static analysis
@@ -526,7 +524,7 @@ const RE2 = require('re2');
 const re = new RE2(/^(a+)+$/); // RE2 cannot backtrack: O(N) always
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Knowing about the `re2` npm
 package. RE2 guarantees O(N) time complexity by forbidding
@@ -536,8 +534,7 @@ production-safe choice.
 
 ---
 
-**Q3. How does JSON.parse and JSON.stringify block the
-event loop and what are the alternatives?**
+**[JUNIOR] Q3 - [MECHANISM] How does JSON.parse and JSON.stringify block the event loop and what are the alternatives?**
 
 `JSON.parse` and `JSON.stringify` are synchronous and run
 in a tight loop in C++. For large payloads:
@@ -570,7 +567,7 @@ pipeline.on('data', ({ value }) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 2. **Worker Thread** for one-shot large JSON:
 ```javascript
@@ -578,7 +575,7 @@ pipeline.on('data', ({ value }) => {
 const result = await runInWorker(() => JSON.parse(bigString));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 3. **simdjson-node** or **fast-json-stringify**: SIMD-optimized
    C++ bindings, 2-4x faster than native, but still synchronous.
@@ -589,8 +586,7 @@ only solution.
 
 ---
 
-**Q4. How do you diagnose event loop blocking in a
-production Node.js service without stopping it?**
+**[MID] Q4 - [DEBUGGING] How do you diagnose event loop blocking in a production Node.js service without stopping it?**
 
 Production-safe diagnostic tools:
 
@@ -609,7 +605,7 @@ setInterval(() => {
 }, 10_000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 2. **clinic.js in staging** (not production due to overhead):
 ```bash
@@ -617,7 +613,7 @@ clinic doctor -- node app.js
 # Automatically diagnoses: blocking, async, flame chart
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Automatically diagnoses: blocking, async, flame chart example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 3. **V8 CPU profiler via --prof** (short burst sampling):
 ```bash
@@ -628,7 +624,7 @@ node --prof-process isolate-*.log > profile.txt
 grep -A5 'ticks' profile.txt | head -50
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 60 seconds, get isolate-*.log example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 4. **`blocked-at` npm package**: detects blocking and reports
    the call site:
@@ -639,7 +635,7 @@ blockedAt((time, stack) => {
 }, { threshold: 20 }); // alert if blocked > 20ms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 60 seconds, get isolate-*.log example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* `monitorEventLoopDelay`
 with `resolution: 10` (10ms precision) adds near-zero overhead
@@ -648,8 +644,7 @@ production-safe continuous monitoring approach.
 
 ---
 
-**Q5. How does the browser's rendering pipeline interact
-with the event loop, and how can async code affect rendering?**
+**[MID] Q5 - [SCENARIO] How does the browser's rendering pipeline interact with the event loop, and how can async code affect rendering?**
 
 The browser event loop includes rendering as a "task" that
 runs between macrotasks when the browser decides a frame is
@@ -667,7 +662,7 @@ Event Loop iteration:
   4. IdleCallback (if time allows before next frame)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 60 seconds, get isolate-*.log example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If a macrotask takes >16ms: rendering is skipped for that
 frame. User sees a dropped frame.
@@ -694,7 +689,7 @@ button.onclick = async () => {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 60 seconds, get isolate-*.log example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Using `requestAnimationFrame`
 as the yield mechanism for UI-coupled async work. `rAF` yields
@@ -703,8 +698,7 @@ completes within a frame budget.
 
 ---
 
-**Q6. What is the Worker Threads module in Node.js and
-when does it make event loop blocking acceptable?**
+**[SENIOR] Q6 - [MECHANISM] What is the Worker Threads module in Node.js and when does it make event loop blocking acceptable?**
 
 Worker Threads (Node.js 12+) create separate V8 isolates
 with their own event loops. Communication via `MessageChannel`
@@ -776,7 +770,7 @@ app.post('/api/process', async (req, res) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 60 seconds, get isolate-*.log example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* A Worker Thread pool is
 mandatory, not optional, for CPU-bound work in production
@@ -785,8 +779,7 @@ provides full CPU utilization without starving the event loop.
 
 ---
 
-**Q7. How do you detect and fix synchronous blocking in
-a code review?**
+**[SENIOR] Q7 - [SCENARIO] How do you detect and fix synchronous blocking in a code review?**
 
 Code review checklist for blocking patterns:
 
@@ -815,7 +808,7 @@ users.sort((a, b) => compare(a, b)); // O(N log N) synchronous
 /^(a+)+$/.test(userInput); // ReDoS risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 60 seconds, get isolate-*.log example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 Review questions to ask:
 - What is the maximum size of this data?
@@ -830,8 +823,7 @@ moderate, Worker Thread if large.
 
 ---
 
-**Q8. How do you implement a "cooperative scheduler" for
-long-running async operations?**
+**[SENIOR] Q8 - [SCENARIO] How do you implement a "cooperative scheduler" for long-running async operations?**
 
 A cooperative scheduler yields control back to the event loop
 at regular intervals, ensuring other work can proceed:
@@ -875,7 +867,7 @@ const results = await scheduler.processAll(
 // Event loop is free for ~5ms chunks, never blocked for full duration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Using `performance.now()` to
 measure elapsed time rather than counting items. The number
@@ -885,8 +877,7 @@ requires manual tuning per operation type.
 
 ---
 
-**Q9. How does long synchronous blocking affect HTTP keep-alive
-connections and request queuing in Node.js?**
+**[SENIOR] Q9 - [MECHANISM] How does long synchronous blocking affect HTTP keep-alive connections and request queuing in Node.js?**
 
 Node.js HTTP server with keep-alive: a single connection can
 send multiple sequential requests. The event loop processes
@@ -905,7 +896,7 @@ During the 200ms block:
   - Connection may timeout at load balancer (60s default)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Downstream effects:
 - p99 latency = (blocking_time) * (clients_in_queue)
@@ -923,8 +914,7 @@ blocking is catastrophic at 50+ RPS but "fine" at 1 RPS.
 
 ---
 
-**Q10. What metrics should you track for event loop health
-in production?**
+**[SENIOR] Q10 - [MECHANISM] What metrics should you track for event loop health in production?**
 
 Essential metrics (push to Prometheus/DataDog):
 
@@ -959,7 +949,7 @@ setInterval(() => {
 }, 10_000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Alert thresholds:
 - `event_loop.lag_mean_ms` > 10ms: investigate
@@ -974,8 +964,7 @@ closure leaks from object leaks.
 
 ---
 
-**Q11. How do you use `setImmediate` vs `process.nextTick`
-for event loop yielding?**
+**[SENIOR] Q11 - [TRADE-OFF] How do you use `setImmediate` vs `process.nextTick` for event loop yielding?**
 
 Both schedule callbacks, but at different queue positions:
 
@@ -1004,7 +993,7 @@ Promise.resolve().then(() => console.log('Promise'));
 // NEVER use nextTick for large loops: it starves I/O just like microtasks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The critical insight: `process.nextTick`
 does NOT yield to I/O callbacks. Using it for yielding in a
@@ -1013,8 +1002,7 @@ tight loop still starves I/O and incoming requests. Only
 
 ---
 
-**Q12. How do you architect a Node.js service to guarantee
-event loop health under peak load?**
+**[SENIOR] Q12 - [DESIGN] How do you architect a Node.js service to guarantee event loop health under peak load?**
 
 Multi-layer architecture for event loop safety:
 
@@ -1097,7 +1085,7 @@ Metrics:
   request.p99_ms       <- SLO: < 100ms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Design decisions:
 - Main thread: only async I/O, zero CPU

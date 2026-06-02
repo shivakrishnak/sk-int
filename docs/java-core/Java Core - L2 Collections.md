@@ -116,7 +116,7 @@ Map (NOT a Collection)
   |-- ConcurrentHashMap (concurrent, no locks on reads)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Collections example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Time complexity summary:**
 | Operation | ArrayList | LinkedList | HashSet | TreeSet | HashMap | TreeMap |
@@ -132,7 +132,7 @@ Map (NOT a Collection)
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example shows the interface-first declaration
+> **Code walkthrough:** This example shows the interface-first declarationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > principle, immutable factory methods, and the `Collections` utility
 > API. Declaring as `List` not `ArrayList` means you can swap
 > implementations without changing all usages. `List.of()` creates
@@ -140,6 +140,12 @@ Map (NOT a Collection)
 > constants, and test data. `Collections.unmodifiableList()` wraps a
 > mutable list but the wrapped list is still mutable through the original
 > reference.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: interface-first declaration
@@ -178,7 +184,7 @@ int min = Collections.min(nums);    // 1
 Collections.frequency(nums, 1);     // 2 (count of 1s)
 ```
 
-> **Code walkthrough:** The critical distinction: `Collections.unmodifiableList()`
+> **Code walkthrough:** The critical distinction: `Collections.unmodifiableList()`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > wraps the original list but does NOT copy it. Mutations through the
 > original reference are visible through the wrapper. `List.of()` creates
 > a truly immutable copy. For defensive copies in APIs: use
@@ -247,7 +253,7 @@ while (it.hasNext()) {
 // Fix 2: removeIf (Java 8+):
 names.removeIf(name -> name.equals("b"));
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Diagnosis: stack trace points to `checkForComodification()`.
 Root cause: structural modification (add/remove/clear) during iteration.
@@ -318,6 +324,12 @@ A: Declaring the interface type:
 4. **Communication:** the declaration says "I need a list"; not "I need
    an ArrayList"
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: interface type in field, local variable, parameter, return
 List<String> process(List<String> items) {
@@ -334,7 +346,7 @@ ArrayList<String> process(ArrayList<String> items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **WHAT BREAKS: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Exceptions: concrete type is appropriate when:**
 - You specifically need concrete-type methods not in the interface
@@ -382,7 +394,7 @@ unmod.contains(null); // false - null not in list
 immut.contains(null); // NullPointerException - List.of() rejects null
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Practical choice:**
 - `List.of()`: return values, constants, test data - truly immutable
@@ -440,7 +452,7 @@ queue.pollFirst();    // dequeue
 List<String> list = new ArrayList<>();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The performance case against LinkedList
 is compelling. Modern CPUs have 64-byte cache lines. `ArrayList` stores
@@ -488,7 +500,7 @@ for (int i = items.size() - 1; i >= 0; i--) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* CME is a best-effort detection
 mechanism, not a hard guarantee. The Javadoc says: "It is not generally
@@ -538,7 +550,7 @@ List<Person> byAgeDesc = people.stream()
     .toList();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Java's sort algorithm is `TimSort`
 (a hybrid merge sort / insertion sort), O(n log n) worst case with O(n)
@@ -576,7 +588,7 @@ interface SequencedCollection<E> extends Collection<E> {
 // ArrayList, LinkedList, ArrayDeque all implement this now
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Practical use:**
 ```java
@@ -587,7 +599,7 @@ list.reversed();  // reversed view ["c","b","a"]
 list.addFirst("z"); // adds at front: ["z","a","b","c"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `SequencedCollection.reversed()`
 returns a VIEW, not a copy. Mutating the original is reflected in the
@@ -628,7 +640,7 @@ for (Map.Entry<String, Integer> e : map.entrySet()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `CopyOnWriteArrayList` is only
 appropriate when writes are rare and reads are very frequent. Each write
@@ -678,7 +690,7 @@ Collections.copy(dest, nums);        // copy nums into dest
 boolean noCommon = Collections.disjoint(list1, list2);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using coice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `Collections.emptyList()`,
 `Collections.emptySet()`, `Collections.emptyMap()` return singleton
@@ -692,19 +704,19 @@ These are micro-optimizations, but they signal idiomatic Java coding.
 
 ### ⚖️ Comparison Table
 
-| Collection | Order | Duplicates | Null | Thread-Safe | Get O | Add O |
-|---|---|---|---|---|---|---|
-| ArrayList | Insertion | Yes | Yes | No | O(1) | O(1) amort |
-| LinkedList | Insertion | Yes | Yes | No | O(n) | O(1) |
-| ArrayDeque | Insertion | Yes | No | No | O(1) ends | O(1) amort |
-| HashSet | None | No | One null | No | - | O(1) avg |
-| LinkedHashSet | Insertion | No | One null | No | - | O(1) avg |
-| TreeSet | Sorted | No | No | No | - | O(log n) |
-| HashMap | None | Keys no | One null key | No | O(1) avg | O(1) avg |
-| LinkedHashMap | Insert/access | Keys no | One null key | No | O(1) avg | O(1) avg |
-| TreeMap | Key sorted | Keys no | No null key | No | O(log n) | O(log n) |
-| ConcurrentHashMap | None | Keys no | No | Yes | O(1) avg | O(1) avg |
-| CopyOnWriteArrayList | Insertion | Yes | Yes | Yes | O(1) | O(n) |
+| Collection| Order| Duplicates| Null| Thread-Safe| Get O| Add O|
+|-------|-------------|----------|------------|-----------|---------|----------|
+| ArrayList| Insertion| Yes| Yes| No| O(1)| O(1) amort|
+| LinkedList| Insertion| Yes| Yes| No| O(n)| O(1)|
+| ArrayDeque| Insertion| Yes| No| No| O(1) ends| O(1) amort|
+| HashSet| None| No| One null| No| -| O(1) avg|
+| LinkedHashSet| Insertion| No| One null| No| -| O(1) avg|
+| TreeSet| Sorted| No| No| No| -| O(log n)|
+| HashMap| None| Keys no| One null key| No| O(1) avg| O(1) avg|
+| LinkedHashMap| Insert/access| Keys no| One null key| No| O(1) avg| O(1) avg|
+| TreeMap| Key sorted| Keys no| No null key| No| O(log n)| O(log n)|
+| ConcurrentHashMap| None| Keys no| No| Yes| O(1) avg| O(1) avg|
+| CopyOnWriteArrayList| Insertion| Yes| Yes| Yes| O(1)| O(n)|
 
 ---
 
@@ -779,13 +791,13 @@ you find the string."
 ### 📘 Concept Explanation
 
 **ArrayList internal structure:**
-```
+```plaintext
 int[] elementData = [ref0, ref1, ref2, ref3, null, null, null, null]
                      ^^^^^^^^^^^^^^^^^^^^        ^^^^^^^^^^^^^^^
                      size = 4 (used)             capacity = 8 (allocated)
 
 add(): if size < capacity, elementData[size++] = element  -> O(1)
-       if size == capacity, grow: copy to new array of capacity*1.5 -> O(n) once
+       if size == capacity, grow: copy to new array of capacity*1.5 -> O(n)...
        amortized over n appends: O(1) total
 
 get(i): return elementData[i]  -> O(1) - single array access
@@ -794,7 +806,7 @@ add(i, e): System.arraycopy(elementData, i, elementData, i+1, size-i)
            elementData[i] = element  -> O(n) shifts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **LinkedList internal structure:**
 ```
@@ -812,13 +824,13 @@ add(i, e): traverse to node i -> O(n), then insert -> O(1)
            traversal cost (cache misses) usually dominates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The benchmark shows the memory-access pattern
+> **Code walkthrough:** The benchmark shows the memory-access patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > difference. ArrayList iteration accesses a contiguous memory block;
 > LinkedList iteration follows pointers. The `System.arraycopy` for
 > ArrayList mid-insertion is a native bulk memory operation, typically
@@ -860,7 +872,7 @@ for (int i = 0; i < 1000; i++) {
 }
 ```
 
-> **Code walkthrough:** The ListIterator insert scenario is the ONLY
+> **Code walkthrough:** The ListIterator insert scenario is the ONLYice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > realistic case where LinkedList wins. If you have an iterator positioned
 > at the middle of the list and perform 1000 consecutive inserts at that
 > position, LinkedList does 1000 O(1) insertions (total O(n)), while
@@ -916,6 +928,12 @@ not counting the actual objects.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: ArrayList with wrong initial capacity causes GC pressure.**
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: default capacity 10, needs 100,000 elements
 List<String> results = new ArrayList<>();
@@ -926,7 +944,7 @@ for (String item : hugeResultSet) { results.add(item); }
 List<String> results = new ArrayList<>(hugeResultSet.size());
 // or use streams/collect which optimize internally
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Diagnosis: heap profiler shows many ArrayList.grow() calls, or
 `ArrayList$` objects in heap dump.
@@ -991,7 +1009,7 @@ L3 cache: ~8-32MB, ~40 cycles access
 DRAM: unlimited, ~200-300 cycles access
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 A CPU cache line is 64 bytes. When you access an element, the CPU
 loads the surrounding 64 bytes. For `ArrayList` with 8-byte references:
@@ -1010,7 +1028,7 @@ heap address, not adjacent to the previous node).
 // Despite both being O(n)!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Pre-fetching: the hardware prefetcher sees sequential memory addresses
 and proactively loads the next cache lines. `ArrayList` triggers
@@ -1044,7 +1062,7 @@ n=23:  grow to 33, copy 22 elements
 ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Amortized O(1) analysis:**
 For n appends, the total copy work is: 10 + 15 + 22 + 33 + ... < 3n.
@@ -1065,7 +1083,7 @@ List<String> results = new ArrayList<>(expectedSize);
 // capacity = expectedSize, no copies needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The 1.5x growth factor is a balance
 between memory waste (too large a factor wastes memory) and copy
@@ -1083,6 +1101,12 @@ outperform ArrayList?**
 
 A: LinkedList's ONLY practical win: bulk insertions at a maintained
 `ListIterator` position.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Scenario: insert 1000 elements at position 500 of a 1000-element list:
@@ -1102,7 +1126,7 @@ for (String item : newItems) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 This scenario requires: (1) you need to insert at a fixed position in
 the middle, (2) you need to insert many elements, (3) you maintain
@@ -1119,7 +1143,7 @@ combined.addAll(list1.subList(500, list1.size()));
 // Total: O(n+m) instead of O(n*m)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `ListIterator` LinkedList advantage
 is real but rare enough that most production code should still default
@@ -1156,7 +1180,7 @@ class LRUCache<K, V> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 But Java's `LinkedHashMap(capacity, loadFactor, true)` (access-order mode)
 already implements this without exposing `LinkedList`.
@@ -1182,17 +1206,17 @@ LinkedList for 100 objects.**
 A:
 
 **ArrayList (100 String references, capacity 128):**
-```
+```plaintext
 ArrayList object: 16 bytes (header) + 8 (elementData ref) + 4 (size) + 4 (modCount)
 elementData array: 16 (header) + 128 * 8 (refs) = 1040 bytes
 Total ArrayList overhead: ~1060 bytes
 Plus: 100 String objects (actual data)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **LinkedList (100 String references):**
-```
+```plaintext
 LinkedList object: 16 (header) + 4 (size) + 8 (first ref) + 8 (last ref) = 36 bytes
 Per Node: 16 (header) + 8 (item ref) + 8 (prev ref) + 8 (next ref) = 40 bytes
 100 nodes: 4000 bytes
@@ -1200,7 +1224,7 @@ Total LinkedList overhead: ~4036 bytes
 Plus: 100 String objects (actual data)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ArrayList overhead: ~1060 bytes (10.6 bytes/element)
 LinkedList overhead: ~4036 bytes (40.4 bytes/element)
@@ -1241,7 +1265,7 @@ queue.poll();       // removeFirst -> "a"
 // 4. Slightly faster in all microbenchmarks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `ArrayDeque` resizes by doubling (similar to ArrayList). The circular
 array wraps around: head and tail pointers move independently.
@@ -1286,7 +1310,7 @@ A:
 // LinkedList wins only here!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Running your own microbenchmark with
 JMH (Java Microbenchmark Harness) is the correct approach for data-driven
@@ -1329,7 +1353,7 @@ List<String> result = new ArrayList<>(estimatedSize);
 result.trimToSize(); // shrink to fit (rarely needed)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Pre-sizing is most important when:
 (1) the final size is known or estimable, (2) the list is large (>10,000

@@ -159,7 +159,7 @@ spec:
     metrics: true
     tracing: true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This platform abstracts this example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The platform controller reconciles this into the actual Kubernetes
 Deployment, Service, HorizontalPodAutoscaler, ServiceMonitor, and
@@ -273,7 +273,7 @@ spec:
 # No standardization, no security baseline
 ```
 
-> **Code walkthrough:** The manual Kubernetes YAML approach has four
+> **Code walkthrough:** The manual Kubernetes YAML approach has fourice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > critical gaps. No resource limits means a single misbehaving pod
 > can consume all node resources, evicting other pods. No liveness
 > probe means a deadlocked pod stays in the Deployment's "ready"
@@ -336,7 +336,7 @@ spec:
     alertPreset: standard  # Predefined alert rules for HTTP services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Loki log collection, Jaeger tracing example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```go
 // Platform controller (simplified): reconciles MicroService -> Kubernetes objects
@@ -389,7 +389,7 @@ func (r *MicroServiceReconciler) Reconcile(
 }
 ```
 
-> **Code walkthrough:** The MicroService CRD reduces the application
+> **Code walkthrough:** The MicroService CRD reduces the applicationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > team's cognitive load from 200 lines of Kubernetes YAML to 40 lines
 > of business-level configuration. The platform controller handles
 > the translation, and critically, it enforces the security baseline
@@ -781,7 +781,7 @@ spec:
     - component:user-service
     - resource:payment-database
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This catalog-info.yaml in the payment-service repository example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Backstage autodiscovers these files from all repositories and
 builds the catalog automatically. The catalog provides an
@@ -795,6 +795,8 @@ as-code) but is surfaced through a single portal.
 Scaffolder (Templates): the new service wizard. Platform engineers
 define Software Templates that create new repositories from
 cookiecutter-style templates:
+
+{% raw %}
 ```yaml
 # Software Template: creates a new Spring Boot microservice
 apiVersion: scaffolder.backstage.io/v1beta3
@@ -830,8 +832,9 @@ spec:
         resource: PostgreSQLClaim
         name: ${{ parameters.serviceName }}-db
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Software Template: creates a new Spring Boot microservice example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Plugin ecosystem: Backstage's strength is the 200+ community plugins
 for ArgoCD, Kubernetes, Grafana, PagerDuty, Jira, SonarQube, and
@@ -1282,7 +1285,7 @@ spec:
       - service: payment-database
       - external: api.stripe.com:443
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The platform controller creates NetworkPolicy objects based on this
 declaration. Undeclared connections are blocked.

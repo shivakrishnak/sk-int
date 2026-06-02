@@ -83,7 +83,7 @@ OAuth2 Code Flow (third-party):
   6. API validates token with IDP keys
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authentication in REST APIs example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The authentication mechanism should match the client type. Browser-based clients need OAuth2 flows (user interaction required). Server-to-server clients use API keys or client credential OAuth2 (no user interaction). Mobile apps use OAuth2 with PKCE (no client secret, uses code verifier). Choosing the wrong mechanism creates security vulnerabilities: embedding a client secret in a mobile app leaks the secret to any user who decompiles the app.
@@ -104,6 +104,12 @@ Any resource with access restrictions needs a mechanism to verify who is request
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Embedding API key in URL
@@ -224,49 +230,49 @@ Fix: Configure request logging to redact sensitive headers. Spring: configure `C
 | Trade-off | 2 min | 1 |
 | Behavioral | 2 min | 1 |
 
-#### Q1 - "Compare API keys vs JWT tokens for REST API authentication."
+**[JUNIOR] Q1 - [TRADE-OFF] "Compare API keys vs JWT tokens for REST API authentication."**
 > "API keys: fixed secrets assigned to a client. Pros: simple (one header), no expiry complexity, easy to revoke (delete from store), no IDP dependency. Cons: long-lived (if leaked, valid until manually revoked), no built-in user context (requires lookup to associate with a user), no fine-grained permissions in the key itself, key rotation requires client coordination. Use cases: server-to-server integration, developer API keys, internal tool integrations. JWT tokens: short-lived signed tokens with embedded claims. Pros: stateless verification (no DB lookup), carry user context (userId, roles, email), short-lived (15 min typical), standard format (every language has a JWT library). Cons: cannot revoke before expiry without a blacklist, larger payload (500-1500 bytes vs 32-byte key), requires IDP or token issuance infrastructure. Use cases: user-facing APIs, OAuth2 delegated access, microservice authentication. The key difference: API keys are identity for applications. JWTs are identity for users (or services acting on behalf of users). For both: key and token must be stored securely (AWS Secrets Manager, not .env files in repos), transmitted only over HTTPS, and logged with redaction."
 
 *What separates good from great:* "The distinction between API keys as 'application identity' and JWTs as 'user identity' clarifies when to use each. Knowing specific storage mechanisms (AWS Secrets Manager) vs. the vague 'store securely' shows production experience."
 
 ---
 
-#### Q2 - "How does OAuth2 client credentials flow work for service-to-service authentication?"
+**[JUNIOR] Q2 - [CONCEPTUAL] "How does OAuth2 client credentials flow work for service-to-service authentication?"**
 > "Client credentials flow is OAuth2 for machine-to-machine (no user involved). Flow: Service A (client) sends `POST /token` to the IDP with `grant_type=client_credentials`, `client_id=service-a`, `client_secret=secret123`, `scope=service-b:read`. IDP validates the client credentials and returns an access token: `{access_token: 'eyJ...', expires_in: 3600, scope: 'service-b:read'}`. Service A calls Service B's API with `Authorization: Bearer eyJ...`. Service B validates the token's signature (using IDP's public keys from JWKS endpoint) and checks the `scope` claim. Implementation pattern: client caches the access token until it expires (minus 30 seconds buffer for clock drift). When the cached token is expired or near expiry, fetch a new one. This is the token caching responsibility of the client - don't request a new token on every API call (this hits the IDP's rate limits and adds latency). Spring: Spring Security OAuth2 Client handles this automatically. RestTemplate/WebClient with `oauth2Client()` configuration automatically fetches and caches tokens. The security property: each service has its own client_id/secret. If one service is compromised, only its credentials are revoked - other services are unaffected. Better compartmentalization than a shared API key."
 
 *What separates good from great:* "The token caching requirement (don't request a new token per API call) and the Spring Security automatic token management are implementation details that show you've built service-to-service OAuth2 in practice."
 
 ---
 
-#### Q3 - "How do you prevent unauthorized access to other users' data (IDOR vulnerabilities)?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "How do you prevent unauthorized access to other users' data (IDOR vulnerabilities)?"**
 > "IDOR (Insecure Direct Object Reference): authenticated user accesses another user's resource by guessing or modifying the ID. `GET /users/123/orders` - user 456 changes 123 to 456 in the URL and reads user 456's orders. Authentication doesn't prevent this - the request is authenticated. The fix is authorization at the object level. Pattern: always check that the authenticated user has access to the specific object they're requesting. `Long currentUserId = jwtService.extractUserId(token); if (!order.getUserId().equals(currentUserId)) { throw new AccessDeniedException(); }`. In Spring: `@PreAuthorize("authentication.principal.userId == #userId")` at method level. Use Spring Security's `@PostFilter` and `@PostAuthorize` for declarative authorization. The OWASP API Security Top 10 rates Broken Object Level Authorization (BOLA) as the #1 API vulnerability. Most APIs check function access (is this user an admin?) but miss object access (can this admin access this tenant's data?). For multi-tenant systems: always include tenantId in queries: `WHERE tenantId = ? AND orderId = ?`. Never rely on the `orderId` being unguessable - UUIDs are not a security mechanism."
 
 *What separates good from great:* "Using 'BOLA' (OWASP API Security term) and noting that UUIDs are not a security mechanism (they're hard to guess but not a substitute for authorization checks) shows OWASP API Security Top 10 familiarity."
 
 ---
 
-#### Q4 - "You receive a report that your API is being accessed by an unauthorized client. What do you investigate?"
+**[MID] Q4 - [CONCEPTUAL] "You receive a report that your API is being accessed by an unauthorized client. What do you investigate?"**
 > "Investigation steps: (1) Identify the unauthorized access: check access logs for the suspicious client. Filter by IP, User-Agent, API key, or JWT subject. `grep 'X-API-Key: suspicious-key' /var/log/api-access.log`. (2) Determine scope: which endpoints were accessed? Which user data was accessed? When did it start? How much data was accessed? (3) Credential leak path: if an API key was used: where was the key stored? Git history? CI/CD environment variable logs? A compromised team member's machine? `git log --all -- .env` to check if the key was ever committed. Check the CI/CD logs for the key value. (4) Revoke immediately: delete the API key or block the JWT issuer. If JWT: add the compromised token's jti (JWT ID) to a blacklist until expiry. (5) Rotate: issue new credentials. All services using the compromised key must be updated. (6) Determine if data was exfiltrated: check the response sizes for the suspicious requests. Large responses on data listing endpoints indicate exfiltration. Escalation: if PII was accessed, this is a data breach requiring GDPR/CCPA notification. Involve legal and security teams immediately."
 
 *What separates good from great:* "The GDPR/CCPA breach notification requirement shows you know the legal obligations. The git history check for accidentally committed keys is the most common API key leak vector."
 
 ---
 
-#### Q5 - "How do you design authentication for a public API that allows both authenticated and unauthenticated access?"
+**[MID] Q5 - [ARCHITECTURE] "How do you design authentication for a public API that allows both authenticated and unauthenticated access?"**
 > "Tiered authentication: unauthenticated requests get limited access (reduced rate limits, public data only). Authenticated requests get full access (user-specific data, higher rate limits, additional endpoints). Implementation: Spring Security with `requestMatchers`: `/public/**` permitted all (no auth required). `/v1/**` authenticated (auth required). For endpoints that work in both modes: inject an Optional authentication object. `@AuthenticationPrincipal(errorOnInvalidType = false) UserPrincipal user`. If user is null: return public view of the resource. If user is authenticated: return personalized view. Rate limiting by tier: unauthenticated: 10 req/min per IP (fingerprinted). API key authenticated: 100 req/min. OAuth2 bearer: 1000 req/min per user. The public tier is still identified (by IP) for rate limiting and abuse prevention. Completely anonymous APIs without any IP-based rate limiting are vulnerable to DoS and scraping. For the public tier: use Cloudflare's Bot Management or similar to fingerprint and rate limit anonymous traffic without requiring registration."
 
 *What separates good from great:* "The tiered rate limiting (unauthenticated = 10/min per IP, API key = 100/min, OAuth2 = 1000/min) and the mention of Cloudflare Bot Management for anonymous traffic show production API security architecture experience."
 
 ---
 
-#### Q6 - "What is the difference between authentication and authorization in REST APIs?"
+**[MID] Q6 - [CONCEPTUAL] "What is the difference between authentication and authorization in REST APIs?"**
 > "Authentication: who are you? Verifying identity. JWT validation proves the token was issued by a trusted IDP and hasn't expired. The caller is who they claim to be. Authorization: what can you do? Verifying permissions. After authentication establishes identity, authorization checks if this identity is allowed to perform this action on this resource. REST authorization has three layers: function-level (can this user call this endpoint? - role-based: ADMIN role required for DELETE /users), object-level (can this user access this specific record? - ownership: user 123 can only access their own orders), and field-level (can this user see this field? - sensitivity: only FINANCE role can see salary field). A common mistake: only implementing function-level authorization and missing object-level. The API requires authentication + ADMIN role to call GET /users - but doesn't check that Admin A can only see their own tenant's users, not all tenants' users. Spring Security covers function-level well (`@PreAuthorize("hasRole('ADMIN')")`) but object-level requires custom checks in each service method. Spring Security `@PostAuthorize` can do object-level for returns, but the query itself must filter correctly to avoid loading unauthorized data (then failing the PostAuthorize check after the data was fetched)."
 
 *What separates good from great:* "The three-layer authorization model (function + object + field) and the Spring Security gap for object-level authorization (PostAuthorize loads data then discards it vs. correct filtering at query level) shows deep authorization implementation experience."
 
 ---
 
-#### Q7 - "Describe how you'd secure a REST API that handles financial data."
+**[SENIOR] Q7 - [CONCEPTUAL] "Describe how you'd secure a REST API that handles financial data."**
 > "Defense-in-depth for financial APIs: (1) Authentication: OAuth2 with a regulated IDP. Short-lived access tokens (15 min), non-expiring refresh tokens stored server-side (not in cookies or localStorage). mTLS for service-to-service. (2) Authorization: object-level authorization on every endpoint (account owners only). Principle of least privilege: tokens carry minimum scopes. `scope: accounts:read` only for read operations. (3) Input validation: reject any unexpected fields (no mass assignment). Validate all numeric inputs for range (no negative balances). Use `BigDecimal` not `double` for financial amounts. (4) Audit logging: log every request with authenticated user, action, resource accessed, IP, timestamp. Immutable audit log (append-only, write once, read many). Financial regulations require 7 years of audit trail. (5) Encryption: TLS 1.2+ for transport. Database encryption at rest. Sensitive fields (account numbers, SSN) encrypted at column level. (6) Rate limiting: aggressive limits on login attempts (lockout after 5 failures). Rate limiting on read endpoints to prevent scraping. (7) PCI-DSS compliance: if handling card data, PCI-DSS requirements apply. Card numbers must be tokenized (never store full PAN). Use a payment gateway (Stripe, Adyen) that handles PCI scope instead of handling card data yourself."
 
 *What separates good from great:* "BigDecimal vs double for financial amounts (floating point precision errors can cause incorrect balance calculations), column-level encryption for sensitive fields, and PCI-DSS tokenization show financial domain security knowledge."
@@ -366,7 +372,7 @@ Access-Control-Allow-Origin: https://app.mysite.com
 ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CORS and Cross-Origin Requests example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 CORS is a browser security mechanism. Non-browser clients (curl, Postman, server-to-server calls) are not affected by CORS - they don't send OPTIONS preflights and don't check CORS headers. If you can't call an API from a browser but can from curl, CORS is the likely cause. CORS configuration is server-side: the server decides which origins, methods, and headers are allowed.
@@ -387,6 +393,12 @@ Web security is built on the same-origin policy: JavaScript on `evil.com` cannot
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: Allow all origins with credentials
@@ -490,49 +502,49 @@ Fix: Add CORS configuration to the server. Ensure the app.mysite.com origin is i
 | Design | 2 min | 1 |
 | Behavioral | 2 min | 1 |
 
-#### Q1 - "Explain what happens during a CORS preflight request."
+**[JUNIOR] Q1 - [CONCEPTUAL] "Explain what happens during a CORS preflight request."**
 > "A preflight is an automatic OPTIONS request that the browser sends before a 'non-simple' cross-origin request. It asks: 'Is the actual request I want to send allowed from my origin?' Non-simple requests trigger preflights: any method other than GET, HEAD, POST. POST with Content-Type other than application/x-www-form-urlencoded, multipart/form-data, or text/plain. Custom request headers (like Authorization). The preflight: `OPTIONS /api/users` with `Origin: https://app.mysite.com`, `Access-Control-Request-Method: POST`, `Access-Control-Request-Headers: Authorization, Content-Type`. The server must respond with: `Access-Control-Allow-Origin: https://app.mysite.com`, `Access-Control-Allow-Methods: GET, POST, PUT, DELETE`, `Access-Control-Allow-Headers: Authorization, Content-Type`, `Access-Control-Max-Age: 3600`. If the preflight returns anything other than 200 or 204, the browser aborts the actual request. If CORS headers are missing, browser blocks the actual request. MaxAge: the browser caches the preflight result for MaxAge seconds. Default is 5 seconds if not specified. Setting to 3600 (1 hour) reduces OPTIONS request overhead - important for high-traffic APIs where preflights add latency."
 
 *What separates good from great:* "Knowing what makes a request 'non-simple' (the Authorization header or application/json Content-Type trigger preflights) is the detail that explains why API requests always trigger preflights while simple GET requests from forms do not."
 
 ---
 
-#### Q2 - "How do you handle CORS in a microservices environment?"
+**[JUNIOR] Q2 - [CONCEPTUAL] "How do you handle CORS in a microservices environment?"**
 > "In a microservices architecture with an API gateway, CORS should be configured at the gateway, not in each individual service. Reasons: centralized CORS policy (consistent across all services), single place to update when frontend origins change, services don't need CORS knowledge. Configuration: API gateway (Kong, AWS API Gateway, Nginx, Traefik) handles OPTIONS preflights and adds CORS headers before forwarding to services. Services receive and respond to the actual request; CORS headers are added by the gateway on the way back. If services are sometimes called directly (internal dashboards, debugging): they may need CORS too. Use a shared Spring Boot autoconfiguration that all services import. The risk: if services are accessible directly (not only through the gateway), CORS in only the gateway creates a gap. Defense-in-depth: configure CORS at the gateway AND at the service level. The service-level config should be more restrictive (only allow the gateway's internal IP range, or no CORS at all for truly internal services). Gateway handles external CORS. Service-level CORS is a fallback."
 
 *What separates good from great:* "The recommendation to configure CORS at the gateway AND the service level as defense-in-depth (not either/or) and explaining why service-direct access creates a gap shows production microservices architecture experience."
 
 ---
 
-#### Q3 - "What CORS configuration is needed for a JWT-based SPA and API?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "What CORS configuration is needed for a JWT-based SPA and API?"**
 > "SPA on https://app.mysite.com calling API on https://api.mysite.com. The SPA uses JWT in the Authorization header. Configuration: `Access-Control-Allow-Origin: https://app.mysite.com` (exact match, not *). `Access-Control-Allow-Credentials: false` (surprisingly). Note: credentials in CORS context means cookies and HTTP authentication (basic auth). JWT in the Authorization header is NOT a credential in the CORS sense - it's an explicit header that the JavaScript sets. You only need `Allow-Credentials: true` if using cookies for authentication. For JWT-Bearer: set `Allow-Credentials: false`, include `Authorization` in `Allow-Headers`. `Access-Control-Allow-Headers: Authorization, Content-Type, X-Request-Id`. `Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS`. `Access-Control-Max-Age: 3600`. Why specific origin (not *)? The * wildcard has no security value for this case (JWT in header is already per-request authentication), but specific origin shows intentional access policy. For local development: add `http://localhost:3000` to the allowed origins list. Use environment-specific configuration. Never deploy with localhost in the production CORS config."
 
 *What separates good from great:* "The clarification that `Allow-Credentials: false` is correct for JWT-in-header (because CORS credentials = cookies, not JWT) is the nuanced point. Most candidates set `Allow-Credentials: true` unnecessarily for JWT APIs."
 
 ---
 
-#### Q4 - "You're getting CORS errors only in production, not in staging. What do you investigate?"
+**[MID] Q4 - [PRODUCTION] "You're getting CORS errors only in production, not in staging. What do you investigate?"**
 > "Prod-only CORS failures common causes: (1) Different frontend URL: staging frontend is `staging.mysite.com` (allowed). Production frontend is `app.mysite.com` (not in the allowed list). Check the exact origin of the production request vs. the allowed origins list. (2) HTTPS vs HTTP: staging may be HTTP. Production is HTTPS. The origin must include the scheme: `http://staging.mysite.com` != `https://app.mysite.com`. Ensure the production origin includes `https://`. (3) CDN stripping CORS headers: a CDN in front of production is caching the API responses. If the first request was from a same-origin client (no CORS headers needed), that response without CORS headers was cached. Now cross-origin requests receive the cached no-CORS response. Fix: add `Vary: Origin` to API responses so the CDN caches separately per Origin. Or bypass the CDN for API routes. (4) Load balancer handling OPTIONS: a load balancer in production (not in staging) responds to OPTIONS requests with a 200 OK but no CORS headers. The actual application never sees the OPTIONS request. Diagnosis: `curl -X OPTIONS https://api.mysite.com/users -H 'Origin: https://app.mysite.com' -v` - check the response headers. Does it include CORS headers?"
 
 *What separates good from great:* "The CDN caching CORS responses without Vary: Origin is the production-specific failure that staging (without CDN) will never reproduce. This is the answer that shows production CDN experience."
 
 ---
 
-#### Q5 - "How does CORS relate to CSRF attacks?"
+**[MID] Q5 - [CONCEPTUAL] "How does CORS relate to CSRF attacks?"**
 > "CORS and CSRF protection are complementary browser security mechanisms. Same-origin policy: protects against cross-origin response reading (CORS extends this to allow selected origins). CSRF: protects against cross-origin requests being sent in the first place (using the user's credentials). The confusion: CORS allows cross-origin requests. Doesn't this enable CSRF? No, because: CSRF uses credentials that the browser sends automatically (cookies, HTTP auth). CORS with `Allow-Credentials: false` allows cross-origin requests but without cookies. The attacker can make the request but without the victim's cookies, so it's not authenticated. CSRF protection is still needed for cookie-based authentication APIs even with restrictive CORS: a malicious site from an allowed CORS origin (a subdomain XSS) could make credentialed cross-origin requests. The defense: CSRF tokens for state-changing requests when using cookie auth. CORS properly configured is defense-in-depth for CSRF. For JWT Bearer APIs (not using cookies): CSRF is not applicable. The attacker cannot make the browser send the JWT in the Authorization header - JavaScript must explicitly set it. `Access-Control-Allow-Credentials: false` means the browser won't send cookies, so there's no automatic credential to abuse."
 
 *What separates good from great:* "The point that CSRF tokens are not needed for JWT-Bearer APIs (because the browser doesn't automatically send JWTs - they must be explicitly set by JavaScript) clarifies the relationship between CORS, CSRF tokens, and cookie vs. header authentication."
 
 ---
 
-#### Q6 - "What is the security risk of misconfigured CORS?"
+**[MID] Q6 - [CONCEPTUAL] "What is the security risk of misconfigured CORS?"**
 > "The primary CORS misconfiguration risks: (1) Origin reflection without validation: server echoes back any Origin value in `Access-Control-Allow-Origin: {request.origin}` without checking against an allowlist. Any origin can make authenticated requests. Attacker creates evil.com, calls your API, gets the authenticated user's data. (2) Wildcard origin with sensitive data: `Access-Control-Allow-Origin: *` is acceptable for public read-only APIs but dangerous if the API returns per-user data. The attacker's page can read the response and extract user data. `*` should only be used for truly public, non-authenticated APIs. (3) Trusted subdomain too broadly: `allowedOrigins = '*.mysite.com'`. If attacker achieves XSS on any subdomain (old.mysite.com, static.mysite.com), they can make credentialed cross-origin requests from that subdomain. Allowlist specific subdomains. (4) Localhost allowed in production: `http://localhost:3000` in production CORS config means any attacker running a local server can access your production API. This shouldn't need explanation but it happens. Testing: check your API's Access-Control-Allow-Origin response header. If it reflects back arbitrary Origins or accepts localhost, it's misconfigured."
 
 *What separates good from great:* "The origin reflection attack (echo-back without validation) is a specific vulnerability class. Knowing that `*.mysite.com` wildcard subdomain matching is risky due to XSS on any subdomain shows you've thought through the complete attack surface."
 
 ---
 
-#### Q7 - "How do you test CORS configuration in an API?"
+**[SENIOR] Q7 - [CONCEPTUAL] "How do you test CORS configuration in an API?"**
 > "Testing CORS: both automated tests and manual verification. Automated tests with MockMvc (Spring): `mockMvc.perform(options('/api/users').header('Origin', 'https://app.mysite.com').header('Access-Control-Request-Method', 'POST').header('Access-Control-Request-Headers', 'Authorization,Content-Type')).andExpect(status().isOk()).andExpect(header().string('Access-Control-Allow-Origin', 'https://app.mysite.com')).andExpect(header().string('Access-Control-Allow-Methods', containsString('POST')))`. Test negative cases: request from disallowed origin should NOT return CORS headers. Manual testing: browser DevTools Network tab - look for OPTIONS requests and check their response headers. curl: `curl -X OPTIONS https://api.mysite.com/users -H 'Origin: https://evil.com' -v` - should NOT return CORS headers. `curl -X OPTIONS https://api.mysite.com/users -H 'Origin: https://app.mysite.com' -v` - SHOULD return CORS headers. Security testing: try origin reflection (`curl -H 'Origin: https://evil.com'`) - should be rejected. Try `null` origin (some browser iframe scenarios) - should be rejected. Try subdomain variant (`evil.mysite.com`) - should be rejected unless explicitly in the allowlist."
 
 *What separates good from great:* "Testing the negative cases (evil.com, null origin, evil.mysite.com) with specific curl commands shows a security-testing mindset. Most candidates only test the happy path."

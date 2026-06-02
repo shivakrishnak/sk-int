@@ -155,7 +155,7 @@ DEPENDENCY RULE:
   Adapters depend on domain interfaces (ports).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Ports and Adapters example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The dependency inversion principle applied at architecture level.
@@ -217,7 +217,7 @@ public class OrderService {
 // (infrastructure concerns) in the domain model.
 ```
 
-> **Code walkthrough:** The traditional layered approach has the
+> **Code walkthrough:** The traditional layered approach has theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > domain service importing `JpaOrderRepository` - a JPA-specific
 > class with framework annotations. The domain model (`OrderEntity`)
 > is polluted with `@Entity` and `@Column` annotations that are
@@ -321,7 +321,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** The domain layer (`Order`, `OrderRepository`,
+> **Code walkthrough:** The domain layer (`Order`, `OrderRepository`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `OrderNotifier`) has zero infrastructure imports. `Order` is a
 > pure Java class with business behavior. `OrderRepository` is an
 > interface defined by the domain - it says "I need to save orders"
@@ -366,7 +366,7 @@ class OrderApplicationServiceTest {
 // Tests verify domain behavior, not infrastructure wiring.
 ```
 
-> **Code walkthrough:** The test uses an `InMemoryOrderRepository`
+> **Code walkthrough:** The test uses an `InMemoryOrderRepository`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (a simple `HashMap`-backed implementation of the port interface)
 > and a lambda `captureNotifier` that records notified orders. No
 > `@SpringBootTest`, no `@Mock`, no `@Autowired`. The domain behavior
@@ -458,7 +458,7 @@ grep -r "javax.persistence\|org.springframework\|com.fasterxml" \
 # Any hits = domain is leaking infrastructure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any hits = domain is leaking infrastructure example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Separate domain model from JPA entity. The domain `Order`
 class has no annotations. The `OrderJpaEntity` class has `@Entity`
@@ -489,7 +489,7 @@ leaking into port design.
   than domain concepts?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any hits = domain is leaking infrastructure example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Redefine ports from the domain's perspective. The domain
 says `findOrdersReadyForFulfillment()`. The adapter figures out
@@ -518,7 +518,7 @@ the adapter.
 - Do adapters import domain services?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any hits = domain is leaking infrastructure example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Move any business logic found in adapters back to the domain.
 Adapters should contain: mapping, error translation, and
@@ -617,7 +617,7 @@ void placeOrder_creates_pending_order() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any hits = domain is leaking infrastructure example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 No `@SpringBootTest`. No Mockito. No database. Runs in under 10ms.
 The domain behavior is fully tested without infrastructure.
@@ -785,7 +785,7 @@ src/main/java/com/example/
   application/          <- Spring Boot main, config, wiring
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The dependency rule enforced by package structure: `domain/`
 imports from nothing external. `adapter/in/` imports from
@@ -803,7 +803,7 @@ static final ArchRule domainIsolation =
         .resideInAPackage("..adapter..");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Most candidates describe "domain
 package and infrastructure package." Great candidates give a specific
@@ -1033,7 +1033,7 @@ MVC WEB REQUEST FLOW
   Browser/Client
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Model-View-Controller example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Model knows nothing about Views or HTTP. The View knows nothing
@@ -1105,7 +1105,7 @@ public class OrderController {
 // and a database. CSV logic is stuck in the controller.
 ```
 
-> **Code walkthrough:** This fat controller violates MVC by doing
+> **Code walkthrough:** This fat controller violates MVC by doingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > three things: data access (JDBC query), business logic (price
 > calculation with tax), and view selection (CSV format logic).
 > Testing the tax calculation requires standing up the HTTP layer
@@ -1113,6 +1113,12 @@ public class OrderController {
 > the controller. A bug in the tax calculation sits in a controller
 > method, not in a testable service. This is the fat controller
 > antipattern MVC was designed to prevent.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Thin controller, Model with business logic
@@ -1160,7 +1166,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** The controller is now three lines of meaningful
+> **Code walkthrough:** The controller is now three lines of meaningfulice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > code: parse the path variable, call the service, return the DTO.
 > All business logic (tax calculation, order lookup) is in `OrderService`,
 > testable with a mocked repository. The `OrderSummaryDTO` is the
@@ -1252,7 +1258,7 @@ grep -r "if.*status\|calculate\|BigDecimal" \
   src/**/controller/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find business logic in controllers example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Extract all business logic into service classes. The
 controller should be: parse request, call service, return response.
@@ -1282,7 +1288,7 @@ is added in the template.
 <!-- "Active" definition is a business rule in the view -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Find business logic in controllers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 *Fix:* Compute the business state in the Model layer and pass it
 to the view. The view renders `user.isActive()` - a boolean set by
@@ -1718,7 +1724,7 @@ leading to unnecessary redeployments when unrelated features change.
 
 **How it works:**
 
-```
+```plaintext
 THE SIX COMPONENT PRINCIPLES
 
 COHESION PRINCIPLES (what belongs in a component):
@@ -1761,7 +1767,7 @@ COUPLING PRINCIPLES (how components relate):
     SAP + SDP = Dependency Inversion at component level
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Component Design Principles example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 SDP and SAP together implement the Dependency Inversion Principle
@@ -1823,7 +1829,7 @@ public class InventoryService {
 // Can't test orders without inventory.
 ```
 
-> **Code walkthrough:** This circular dependency (orders package
+> **Code walkthrough:** This circular dependency (orders packageice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > imports inventory, inventory package imports orders) violates the
 > Acyclic Dependencies Principle. Neither package can be compiled,
 > tested, or released independently. Adding a feature to orders
@@ -1875,7 +1881,7 @@ public class OrderService {
 // No cycles. Each package releases independently.
 ```
 
-> **Code walkthrough:** The cycle is broken by extracting a shared
+> **Code walkthrough:** The cycle is broken by extracting a sharedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > abstraction (`StockChecker` interface) into a third component that
 > neither orders nor inventory depends on initially. The orders
 > component depends on the interface; the inventory component
@@ -1911,7 +1917,7 @@ public interface Formatter {
 // domain depends on nothing unstable.
 ```
 
-> **Code walkthrough:** The SDP violation shows the stable domain
+> **Code walkthrough:** The SDP violation shows the stable domainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > component importing from an experimental (unstable) utility. Every
 > time the experimental formatter changes, the domain must be
 > recompiled and retested - the domain has taken on the instability
@@ -2006,7 +2012,7 @@ npx depcruise --include-only "^src" \
   --output-type dot src | dot -T svg > deps.svg
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or with dependency-cruiser (Node.js) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Extract the shared abstraction causing the cycle into a new
 component. Use Dependency Inversion (define an interface in the
@@ -2029,7 +2035,7 @@ a logging library upgrades.
 depends on an unstable component (framework utility).
 
 *Diagnostic:*
-```
+```plaintext
 # Compute instability metric for each component:
 # I = Ce / (Ce + Ca)
 # Domain core: should have low I (many depend on it,
@@ -2038,7 +2044,7 @@ depends on an unstable component (framework utility).
 #   too many components
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This too many components example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Define an interface in the domain core for what it needs
 (Stable Abstractions Principle). Move the unstable implementation
@@ -2066,7 +2072,7 @@ technical concern rather than by closure.
   "controller" class? (tight cross-package coupling)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This too many components example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Reorganize to package-by-feature. All classes for "Order
 Management" in `order/` package: `OrderController`, `OrderService`,
@@ -2283,7 +2289,7 @@ static final ArchRule noCycles =
         .matching("com.example.(*)..")
         .should().beFreeOfCycles();
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This runs in the test suite and fails the build if a cycle is
 introduced.
@@ -2299,7 +2305,7 @@ static final ArchRule sdpRule =
         .resideInAPackage("..adapter..");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Component size / CCP fitness function - flag components that are
 growing toward a god component:
@@ -2308,7 +2314,7 @@ growing toward a god component:
 // (signal that CCP may be violated)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Stability metric drift - track average instability of domain
 packages over time. If domain package instability increases

@@ -65,7 +65,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **@Transactional behavior and pitfalls:**
-```
+```plaintext
 SELF-INVOCATION (PROXY BYPASS):
 
   @Service
@@ -163,7 +163,7 @@ READONLY TRANSACTIONS:
      Some JDBC drivers/pools: route to read replica.
      DataSource routing: can route read-only connections to replicas.
   
-  4. DB: some DBs (MySQL): read-only transaction hint -> better optimizer decisions.
+  4. DB: some DBs (MySQL): read-only transaction hint -> better optimizer...
   
   Anti-pattern: @Transactional(readOnly=true) on a method that writes.
     Write inside readOnly transaction: may succeed (readOnly is a hint, not enforced).
@@ -171,7 +171,7 @@ READONLY TRANSACTIONS:
     Result: unpredictable. Don't mix.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Transactions example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -300,7 +300,7 @@ Fix option 3: explicit rollback:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -389,7 +389,7 @@ started for the inner method.
 ### 📘 Concept Explanation
 
 **Entity lifecycle states and transitions:**
-```
+```plaintext
 LIFECYCLE STATE DIAGRAM:
 
   new()           persist()         flush()
@@ -489,7 +489,7 @@ DETACH PATTERN (prevent unintended dirty check):
   // Alternative: use DTO projection (never load the entity at all).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -618,7 +618,7 @@ public Product modify(Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

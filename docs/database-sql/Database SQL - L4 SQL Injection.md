@@ -97,7 +97,7 @@ SQLi types:
        retrieved and used in a query without re-validation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Attack Vectors, Detection, and Prevention example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -120,7 +120,7 @@ public User login(String username, String password) {
 }
 ```
 
-> **Code walkthrough:** The string concatenation inserts the attacker's input
+> **Code walkthrough:** The string concatenation inserts the attacker's inputice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly into the SQL text. The database parser sees the single quote from
 > the input as closing the string literal. Everything after it (up to `--`)
 > is interpreted as SQL syntax. The `--` starts a line comment, making the
@@ -149,7 +149,7 @@ public User login(String username, String password) {
 }
 ```
 
-> **Code walkthrough:** With parameterized queries: the SQL text is sent to
+> **Code walkthrough:** With parameterized queries: the SQL text is sent toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the database as-is (with `?` markers). The database parses and compiles
 > the query structure at prepare time. The parameter values are sent separately.
 > The database engine substitutes the parameters as values, applying proper
@@ -157,6 +157,12 @@ public User login(String username, String password) {
 > the database treats the entire string as a single value to compare against
 > the `username` column. Single quotes, dashes, semicolons: all treated as
 > literal text.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // VULNERABLE: Spring Data JPA with raw string interpolation
@@ -196,7 +202,7 @@ public List<User> searchUsers(String searchTerm) {
 }
 ```
 
-> **Code walkthrough:** ORMs protect against SQLi when using parameterized
+> **Code walkthrough:** ORMs protect against SQLi when using parameterizedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > queries (`:namedParam` or `?` positional). The vulnerability reappears when
 > developers build query strings by concatenation - even in JPQL/HQL (which
 > is then translated to SQL). The LIKE pattern: use `setParameter("pattern", "%" + searchTerm + "%")`.
@@ -239,7 +245,7 @@ public void updateUserEmail(Long userId, String newEmail) {
 }
 ```
 
-> **Code walkthrough:** Second-order injection: the malicious string is correctly
+> **Code walkthrough:** Second-order injection: the malicious string is correctlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > stored in the database. The vulnerability is in a separate code path that reads
 > the value from the database and naively trusts it as safe input for SQL construction.
 > The assumption "data from our database is safe" is wrong: attackers control the data
@@ -278,7 +284,7 @@ GRANT SELECT, INSERT, UPDATE ON orders TO app_writer;
 -- Write operations: use app_writer
 ```
 
-> **Code walkthrough:** Least privilege is defense-in-depth. If parameterized
+> **Code walkthrough:** Least privilege is defense-in-depth. If parameterizedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > queries are used everywhere: SQLi is already impossible. Least privilege limits
 > the blast radius of a mistake (missed parameterization, a vulnerability in
 > a dependency). The attacker who achieves SQLi via a missed parameterization
@@ -380,7 +386,7 @@ Monitoring:
     tables (data exfiltration pattern)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -458,7 +464,7 @@ grep -r "nativeQuery.*+" src/
 # Or use SonarQube with SQL injection rule enabled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or use SonarQube with SQL injection rule enabled example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: convert to named parameters or Criteria API.
 
@@ -491,57 +497,57 @@ String sql = "SELECT ... ORDER BY " + sortBy;
 // Whitelist is the correct approach for dynamic identifiers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or use SonarQube with SQL injection rule enabled example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Explain how SQL injection works at the parser level.**
+**[JUNIOR] Q1 - [MECHANISM] Explain how SQL injection works at the parser level.**
 
 🗣️ "SQL is a text protocol. The database parses the query text into a parse tree. In the vulnerable case: `SELECT * FROM users WHERE username = 'admin'--'`. The parser tokenizes: SELECT, *, FROM, users, WHERE, username, =, 'admin' (string literal), -- (line comment start), which causes the rest of the line to be ignored. The WHERE clause is `username = 'admin'`. Single quote in the input ('admin'--) closes the string literal that the developer opened ('admin'). The injected SQL syntax (--) is interpreted as SQL, not data. With parameterized queries: the SQL text is `SELECT * FROM users WHERE username = $1`. The parser sees: $1 is a parameter reference. The parameter value is transmitted separately as a typed value (`text` type). The parser/executor substitutes the parameter as a value - the value is never re-parsed as SQL. The parameter value can contain any characters (quotes, semicolons, comments) without affecting the SQL structure."
 
-**Q2: What is the difference between SQL injection and command injection?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between SQL injection and command injection?**
 
 🗣️ "SQL injection: the attacker-controlled input is interpreted as SQL syntax, changing the SQL query's structure. The vulnerability is in the database query layer. Command injection: the attacker-controlled input is interpreted as OS shell commands. Example: `Runtime.exec('ls -la ' + userInput)` - if `userInput = '; cat /etc/passwd'`: the shell executes `ls -la; cat /etc/passwd`. Both are injection attacks: the root cause is mixing data (attacker input) with code (SQL or shell commands). The defense is the same: separation of code and data. For SQL: parameterized queries. For shell: use API equivalents instead of shell commands; if shell is unavoidable, validate strictly against a whitelist. SQL injection is more common because database queries are central to most applications. Command injection is more dangerous: it can escalate to full OS compromise."
 
-**Q3: How do you detect SQL injection vulnerabilities in an existing codebase?**
+**[JUNIOR] Q3 - [MECHANISM] How do you detect SQL injection vulnerabilities in an existing codebase?**
 
 🗣️ "Four approaches: (1) Static analysis: SonarQube with the Java SQL injection rule (squid:S2077) catches `createNativeQuery`, JdbcTemplate.execute, Statement.execute with string concatenation. SpotBugs FindBugs has SQL injection detection. Run in CI as a gate. (2) Code review checklist: any use of `+` or string formatting within a SQL/JPQL/HQL string is a red flag. Specifically audit: `createNativeQuery`, `createQuery` with string concat, `JdbcTemplate.execute(sql)` where sql is built by concatenation, stored procedures that use EXECUTE with concatenation. (3) Dynamic testing: SQLMap (`sqlmap -u 'https://app/api?id=1' --dbs`) - automated SQLi scanner. Run against staging environment. (4) Penetration testing: manual fuzzing of all input parameters with SQL metacharacters (`'`, `''`, `'--`, `' OR '1'='1`, `' UNION SELECT ...`). Look for database errors in responses (indicates error-based injection)."
 
-**Q4: Why is input validation not sufficient to prevent SQL injection?**
+**[MID] Q4 - [MECHANISM] Why is input validation not sufficient to prevent SQL injection?**
 
 🗣️ "Input validation (blacklist approach) attempts to reject or escape dangerous characters: single quotes, semicolons, double dashes. Problems: (1) Bypasses: attackers can use encoding to avoid simple filters. URL encoding (%27 = single quote), Unicode variations, multi-byte characters. (2) Context-dependence: a single quote is dangerous in a string context but harmless in a numeric context. A validation rule cannot know the context without parsing the full query - which is essentially reimplementing a SQL parser. (3) Whitelist validation is better but still secondary: if you accept only alphanumeric characters in a username field, injection is unlikely. But not all fields can be strictly whitelisted (free text fields, search terms). (4) Defense-in-depth: input validation is a useful secondary layer but cannot replace parameterized queries as the primary fix. Use both: parameterized queries as the complete fix, validation to reject obviously malformed input early."
 
-**Q5: How do you handle dynamic SQL where table or column names must be user-controlled?**
+**[MID] Q5 - [MECHANISM] How do you handle dynamic SQL where table or column names must be user-controlled?**
 
 🗣️ "Table names and column names cannot be passed as parameters in SQL. Parameterized queries only work for values (WHERE clause values, INSERT/UPDATE values). For dynamic identifiers (ORDER BY column, table sharding by tenant): (1) Whitelist validation: `Set<String> ALLOWED = Set.of('created_at', 'amount', 'status')`. If the input is not in the set: reject with 400. Then safely concatenate: `ORDER BY ' + validatedColumn`. (2) Enum mapping: the API accepts an enum value ('CREATED_AT', 'AMOUNT'). The backend maps the enum to the actual column name internally. No user input ever touches the SQL identifier. (3) Avoid: never use a user-supplied table name or column name directly. If your multi-tenant schema requires dynamic table selection (tenant schema per table): the table name should be derived from an internal session variable (tenant ID), not a user-supplied string. Example: `schemaName = tenantIdToSchema(session.getTenantId())` - derived internally, never directly from user input."
 
-**Q6: What is blind SQL injection and why is it more dangerous to miss?**
+**[SENIOR] Q6 - [MECHANISM] What is blind SQL injection and why is it more dangerous to miss?**
 
 🗣️ "Blind SQL injection: the attacker cannot see query results directly (the application doesn't display database data). Instead: the attacker infers data from application behavior. Boolean-based: `WHERE username = 'admin' AND SUBSTRING(password,1,1)='a'`. If the application behaves differently for true vs false (login successful vs failed): the attacker can extract data one bit at a time. Time-based: `WHERE username = 'admin' AND (SELECT CASE WHEN SUBSTRING(password,1,1)='a' THEN pg_sleep(5) ELSE 0 END) IS NOT NULL`. If the application responds in 5+ seconds: the first character of the password is 'a'. Why more dangerous to miss: error-based SQLi is visible (error messages reveal injection). Blind SQLi is silent - no error messages, no unusual output. Automated scanners often miss it. A WAF blocking error messages does nothing. The attacker needs more time but can still extract all data from the database. Detection: look for unusual patterns in timing (response time correlation with input values). Prevention: parameterized queries prevent both in-band and blind injection."
 
-**Q7: How should SQL injection prevention be enforced at the team level?**
+**[SENIOR] Q7 - [MECHANISM] How should SQL injection prevention be enforced at the team level?**
 
 🗣️ "Enforcement layers: (1) Developer education: SQLi is in OWASP Top 10. All developers must understand why string concatenation is the root cause and why parameterized queries are the fix. (2) Code review: explicit checklist item: 'Does this code use parameterized queries for all SQL?' All PRs with database access reviewed by someone who knows SQLi patterns. (3) Static analysis in CI: SonarQube rule squid:S2077 (SQL injection). Build fails on any detected SQL string concatenation. No exceptions without documented justification. (4) Security scanning in staging: SQLMap automated scan on all API endpoints. Integrated into the QA pipeline. (5) Periodic penetration testing: professional pen testers attempt SQLi on critical endpoints quarterly. (6) Architecture: recommend ORMs for standard CRUD (auto-parameterized). Mandate code review for all native queries. Maintain a list of all places where native queries are used."
 
-**Q8: What additional PostgreSQL-specific protections exist against SQL injection?**
+**[SENIOR] Q8 - [MECHANISM] What additional PostgreSQL-specific protections exist against SQL injection?**
 
 🗣️ "PostgreSQL-specific defenses: (1) `SET search_path = '$user', public`: prevents injection attacks that exploit unqualified table names. If search_path includes attacker-controlled schemas: `SELECT * FROM users` might resolve to an attacker's `users` table (schema injection). (2) `pg_audit` extension: logs all DML on sensitive tables. Post-exploit forensic evidence. Audit log alert: unusual SELECT patterns on `pg_authid` or sensitive tables. (3) Row-level security (RLS): even if SQLi succeeds, the attacker can only see rows they are authorized for. For multi-tenant SaaS: `CREATE POLICY tenant_isolation ON orders USING (tenant_id = current_setting('app.tenant_id')::bigint)`. Bypassing RLS requires superuser: further justification for least-privilege application role. (4) `restrict_nonsuperuser_login` and role attributes: `NOINHERIT`, `NOBYPASSRLS` for application roles. (5) `pg_dump` restriction: application role should not have the privilege to dump the entire database."
 
-**Q9: How do you investigate a suspected SQL injection attack in production?**
+**[SENIOR] Q9 - [DEBUGGING] How do you investigate a suspected SQL injection attack in production?**
 
 🗣️ "Step 1: preserve evidence. Enable `log_min_duration_statement = 0` (log all queries) on a replica if not already running. Don't modify production logs. Step 2: review recent query logs. Look for: UNION SELECT, OR 1=1, double dashes, quoted strings with SQL metacharacters, pg_sleep, information_schema queries. Step 3: check `pg_stat_statements` for unusual query patterns. Has a new normalized query pattern appeared with unusual structure? Step 4: review access logs (HTTP). Look for: unusual parameter values in URLs or POST bodies, repeated variations of the same parameter (enumeration pattern), very long parameter values, response time spikes (time-based blind injection). Step 5: check for data exfiltration. Review `pg_audit` logs for unexpected SELECT on sensitive tables (users, orders, payment info). Check for `COPY TO` commands or `pg_read_file` calls. Step 6: incident response. If confirmed: rotate all database credentials immediately (the credentials may have been extracted). Notify security team. Preserve all logs as evidence."
 
-**Q10: What is the OWASP Top 10 ranking for SQL injection and what does that mean for prioritization?**
+**[SENIOR] Q10 - [MECHANISM] What is the OWASP Top 10 ranking for SQL injection and what does that mean for prioritization?**
 
 🗣️ "SQL injection has historically been #1 in OWASP Top 10 (Injection attacks were #1 for many years). In 2021 it was reclassified into 'Injection' (#3), but SQL injection remains the most prevalent and dangerous injection type. What it means for prioritization: (1) Never ship an application without verifying SQLi protection. It is the most well-known vulnerability class - any successful SQLi in production is an embarrassing failure. (2) It is preventable with certainty using parameterized queries - not a complex mitigation. A 100% fixable vulnerability with no excuses. (3) Bug bounty programs pay high rewards for SQLi: critical severity, often leading to full database compromise. (4) Regulatory impact: SQLi leading to PII exposure triggers GDPR breach notification (72 hours), potential fines (4% of annual revenue). The business impact of a successful SQLi attack is typically the most severe of any vulnerability class."
 
-**Q11: How do you retrofit SQL injection protection into a legacy codebase with hundreds of concatenated queries?**
+**[SENIOR] Q11 - [MECHANISM] How do you retrofit SQL injection protection into a legacy codebase with hundreds of concatenated queries?**
 
 🗣️ "Approach: (1) Risk prioritization: use SAST (SonarQube) to enumerate ALL concatenated queries. Triage by exposure: which queries accept external user input? Which handle authentication? Data access? Prioritize authentication and PII-access queries. (2) Quick wins: queries where the concatenated value is a numeric ID can be fixed by adding input validation (`if (!input.matches('[0-9]+')) throw new ...`) as a temporary measure while the full parameterization is scheduled. Not a permanent fix - schedule the full fix. (3) Systematic refactoring: allocate engineering time per sprint to convert N concatenated queries to parameterized. Track in a security backlog. (4) Wrap with DAL: create a data access layer (DAL) with typed methods. New code MUST use the DAL. Old code is migrated to the DAL incrementally. (5) Regression tests: for each fixed query: add a security test that passes SQLi payloads (`'`, `' OR '1'='1`, UNION SELECT) and asserts the application handles them safely (no unexpected data returned). (6) Timeline: with a team of 5, converting 200 queries takes 3-6 months. Do not skip; it is technical security debt."
 
-**Q12: What is Row Level Security and how does it provide defense-in-depth against SQL injection?**
+**[SENIOR] Q12 - [MECHANISM] What is Row Level Security and how does it provide defense-in-depth against SQL injection?**
 
 🗣️ "Row Level Security (RLS): PostgreSQL feature that adds per-row access control to tables, enforced by the database engine. Even if an application query is: `SELECT * FROM orders` with no WHERE clause - RLS ensures the user only sees rows they are authorized to see. Example for multi-tenant SaaS: `CREATE POLICY tenant_policy ON orders USING (tenant_id = current_setting('app.tenant_id')::bigint)`. The application sets `SET app.tenant_id = 42` at connection time (from the session context). Any query on orders - even a completely injected query - will have `WHERE tenant_id = 42` implicitly added by PostgreSQL. The attacker cannot see other tenants' data. Defense-in-depth against SQLi: if an attacker achieves SQLi and runs `UNION SELECT * FROM orders --`, they only see orders for the current tenant (42). Cross-tenant data exfiltration is prevented at the database level. RLS bypass requires superuser or `BYPASSRLS` privilege - further reason for least-privilege application role with neither. RLS is a powerful additional layer that reduces the blast radius of a successful injection."
 

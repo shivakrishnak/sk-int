@@ -176,7 +176,7 @@ and avoid inconvenient checks.
 // Tests run: whenever a developer remembers
 ```
 
-> **Code walkthrough:** This represents the state before CI - no
+> **Code walkthrough:** This represents the state before CI - noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > automation, relying entirely on developer discipline to run tests.
 > The 2-week branch compounds integration debt daily. Every day of
 > isolation means more divergence, more conflicts, and higher
@@ -184,6 +184,7 @@ and avoid inconvenient checks.
 
 **GOOD: CI pipeline with fast feedback**
 
+{% raw %}
 ```yaml
 # .github/workflows/ci.yml
 name: Continuous Integration
@@ -239,8 +240,9 @@ jobs:
         run: mvn -B package -DskipTests
         # Tests already passed above, skip redundant re-run
 ```
+{% endraw %}
 
-> **Code walkthrough:** This pipeline triggers on every push to main
+> **Code walkthrough:** This pipeline triggers on every push to mainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and develop, and on every PR targeting main. The 15-minute timeout
 > prevents infinite hangs from silently eating CI minutes. Maven
 > dependency caching with the `pom.xml` hash as key gives cache hits
@@ -863,7 +865,7 @@ deploy-production:
 # This is a fundamental CD anti-pattern.
 ```
 
-> **Code walkthrough:** This anti-pattern appears frequently in teams
+> **Code walkthrough:** This anti-pattern appears frequently in teams without automated enforcement of CI gates. **KEY MECHANISM:** without automated pass/fail gates, developers manually skip tests under deadline pressure, creating technical debt that compounds over time. **WHY IT MATTERS:** skipping tests breaks the fast feedback loop CI is designed to provide. **WHAT BREAKS:** bugs reach production; revert pressure increases; confidence in the pipeline degrades. **TAKEAWAY:** enforce test coverage thresholds and lint gates in CI; never allow manual overrides - the pipeline is not optional.
 > migrating from manual deployments. Using Maven profiles per
 > environment means rebuilding the code for each environment. The
 > artifact deployed to production has never been through the test
@@ -872,6 +874,7 @@ deploy-production:
 
 **GOOD: Promote the same immutable artifact through all environments**
 
+{% raw %}
 ```yaml
 # .github/workflows/cd.yml
 # Build once, promote the same artifact through all environments
@@ -932,8 +935,9 @@ jobs:
             --namespace production \
             --set image.tag=${{ needs.build.outputs.image-tag }}
 ```
+{% endraw %}
 
-> **Code walkthrough:** The critical pattern here is that the same
+> **Code walkthrough:** The critical pattern here is that the sameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `image-tag` (a SHA-based immutable identifier) flows through all
 > three jobs. Build once, promote the same artifact. The GitHub
 > `environment: production` combined with protection rules adds the
@@ -1169,7 +1173,7 @@ if (featureFlags.isEnabled("new-checkout-flow", userId)) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The deployment pipeline deploys code with the flag defaulting to
 off. After deployment, the product team activates the flag for 1%
@@ -1608,7 +1612,7 @@ public PaymentResult processPayment(Order order, User user) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This caused entirely by 3-week isolation example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```yaml
 # .github/workflows/ci.yml
@@ -1633,7 +1637,7 @@ jobs:
           FEATURE_FLAGS_NEW_PAYMENT: "enabled"
 ```
 
-> **Code walkthrough:** The feature flag decouples deployment from
+> **Code walkthrough:** The feature flag decouples deployment fromice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > release. The `isEnabled` check wraps the new provider code. Both
 > code paths are tested in CI (the environment variable activates
 > the flag for test runs). Developers merge daily to main because
@@ -1827,7 +1831,7 @@ if (featureFlags.isEnabled("new-search-algorithm", userId)) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CI enables new feature for test coverage example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 With this pattern, I can merge code for a new search algorithm
 to trunk daily even while it is 30% complete. The flag is disabled

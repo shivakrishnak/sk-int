@@ -141,7 +141,7 @@ Example result:
   "xkyzqw" -> byte-level tokens (unseen word)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tokens and Tokenization example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 At inference: text -> tokenizer -> [IDs] -> model
 -> [IDs] -> detokenizer -> text.
@@ -200,7 +200,7 @@ def estimate_tokens(text: str) -> int:
     return len(text.split())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Wrong: ignores language, code, special chars example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: use the tokenizer for the actual model
@@ -235,7 +235,7 @@ def safe_llm_call(
     return resp.content[0].text
 ```
 
-> **Code walkthrough:** The BAD version estimates by word
+> **Code walkthrough:** The BAD version estimates by wordice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > count - wrong by up to 50% for code or non-English text.
 > The GOOD version calls the provider's token-counting
 > endpoint (Anthropic `count_tokens`, OpenAI's `tiktoken`
@@ -906,7 +906,7 @@ Used:              34,596 tokens
 Remaining:         165,404 tokens
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Context Window example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 At the hard limit: API returns a token limit error or
 silently truncates from the beginning.
@@ -974,7 +974,7 @@ def chat(user_msg: str, client) -> str:
     return reply
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This BAD: no context management, grows unbounded example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 import anthropic, os
@@ -1021,7 +1021,7 @@ def chat_managed(
     return reply, history
 ```
 
-> **Code walkthrough:** The BAD version lets the message
+> **Code walkthrough:** The BAD version lets the messageice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > list grow forever - the 51st turn will hit the context
 > limit and either error or silently lose the earliest
 > context. The GOOD version counts tokens before each
@@ -1630,7 +1630,7 @@ After softmax:
   T=2.0: "Paris": 0.65  (flatter)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Temperature and Sampling example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Top-p filtering (applied after temperature scaling):
 Only sample from the tokens whose cumulative probability
@@ -1699,7 +1699,7 @@ def llm_call(prompt: str) -> str:
     ).content[0].text
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This BAD: same temperature for all task types example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: task-appropriate temperature per use case
@@ -1732,7 +1732,7 @@ def generate_ideas(prompt: str) -> str:
     ).content[0].text
 ```
 
-> **Code walkthrough:** The BAD version uses temperature=0.7
+> **Code walkthrough:** The BAD version uses temperature=0.7ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for all tasks - fine for creative writing but problematic
 > for extraction (you want deterministic JSON, not random
 > JSON). The GOOD version uses task-appropriate temperatures:

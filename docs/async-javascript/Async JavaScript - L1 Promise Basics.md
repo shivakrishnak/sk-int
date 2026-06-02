@@ -106,7 +106,7 @@ p.then(value => console.log('Fulfilled:', value))
   .catch(reason => console.log('Rejected:', reason));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Promises Basics example demonstrates Promise chain construction using error handling. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **The key insight:**
 A Promise is a value-over-time abstraction. Once created,
@@ -160,7 +160,7 @@ fetchUser(1,
 );
 ```
 
-> **Code walkthrough:** Error-first callbacks require callers
+> **Code walkthrough:** Error-first callbacks require callersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to know the convention. Each caller must provide both
 > callbacks. There is no standard chaining mechanism.
 > If `processUser` is also async, you get nested callbacks.
@@ -201,7 +201,7 @@ async function handler() {
 }
 ```
 
-> **Code walkthrough:** The Promise-based version returns a
+> **Code walkthrough:** The Promise-based version returns aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > standardized object. Callers chain with `.then()`, which
 > returns a new Promise enabling further chaining. Errors
 > automatically propagate to `.catch()` without manual
@@ -279,7 +279,7 @@ function buggyFetch(url) {
   });
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **WHAT BREAKS: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Diagnosis: identify awaits that never complete; heap profiling
 shows accumulating Promise objects. Fix: always call reject
@@ -297,7 +297,7 @@ doOperation().catch(err => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates arrow function using error handling. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **WHAT BREAKS: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -312,8 +312,7 @@ doOperation().catch(err => {
 | Design | 1 | Promise.resolve for sync values |
 | Trap | 1 | Sync executor, async handler |
 
-**Q1. What are the three states of a Promise and what are
-the valid state transitions?**
+**[JUNIOR] Q1 - [MECHANISM] What are the three states of a Promise and what are the valid state transitions?**
 
 States: pending (initial), fulfilled (resolved with value),
 rejected (resolved with error). Transitions:
@@ -334,8 +333,7 @@ errors in the executor are caught safely.
 
 ---
 
-**Q2. Why are `.then` callbacks always async, even when
-the Promise is already resolved?**
+**[JUNIOR] Q2 - [MECHANISM] Why are `.then` callbacks always async, even when the Promise is already resolved?**
 
 The Promises/A+ specification requires that `.then` callbacks
 are never called synchronously within the current execution
@@ -348,7 +346,7 @@ let called = false;
 Promise.resolve().then(() => { called = true; });
 console.log(called); // would be true if handlers were sync
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 would have unpredictable behavior depending on when the Promise
 resolved. With the guarantee, `called` is always `false` at
@@ -365,8 +363,7 @@ timing-dependent bugs.
 
 ---
 
-**Q3. What happens when you throw inside a Promise executor
-vs inside a `.then` callback?**
+**[JUNIOR] Q3 - [TRADE-OFF] What happens when you throw inside a Promise executor vs inside a `.then` callback?**
 
 Inside executor: the Promise is automatically rejected with
 the thrown error. No `try/catch` required.
@@ -390,7 +387,7 @@ all `.then` steps.
 
 ---
 
-**Q4. What is `Promise.resolve(value)` and when is it useful?**
+**[MID] Q4 - [MECHANISM] What is `Promise.resolve(value)` and when is it useful?**
 
 `Promise.resolve(value)` creates an already-fulfilled Promise
 with the given value. If `value` is already a Promise (or
@@ -405,7 +402,7 @@ Use cases:
    }
    // Callers always get a Promise regardless of cache hit
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using Promise. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 2. Starting a Promise chain: `Promise.resolve().then(step1).then(step2)`
 3. Testing: create immediately-resolved Promises for sync test execution.
@@ -419,8 +416,7 @@ Promise libraries.
 
 ---
 
-**Q5. How do you create a Promise that can be resolved or
-rejected from outside the executor?**
+**[MID] Q5 - [SCENARIO] How do you create a Promise that can be resolved or rejected from outside the executor?**
 
 The "deferred" pattern: expose the `resolve` and `reject`
 functions outside the Promise constructor.
@@ -443,7 +439,7 @@ someEventEmitter.once('done', data => resolve(data));
 const result = await promise; // waits for the event
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 When to use: bridging event-emitter APIs with Promise-based
 code; implementing timeouts that can be cancelled from outside;
@@ -457,8 +453,7 @@ redesigned to return Promises directly.
 
 ---
 
-**Q6. What is the difference between `.then(null, onRejected)`
-and `.catch(onRejected)`?**
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between `.then(null, onRejected)` and `.catch(onRejected)`?**
 
 They are equivalent for simple chains. `.catch(fn)` is
 syntactic sugar for `.then(null, fn)`.
@@ -484,7 +479,7 @@ promise
   .catch(err => handle(err)); // catches riskyTransform errors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using error handling. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Knowing this asymmetry and
 preferring `.catch()` at the end of chains over dual-argument
@@ -493,8 +488,7 @@ errors from all previous steps.
 
 ---
 
-**Q7. How does `Promise.finally` behave differently from
-adding a `.then` after `.catch`?**
+**[SENIOR] Q7 - [MECHANISM] How does `Promise.finally` behave differently from adding a `.then` after `.catch`?**
 
 `.finally(fn)` runs `fn` regardless of fulfillment or rejection,
 and passes through the original value or rejection unchanged.
@@ -521,7 +515,7 @@ db.connect()
   // Wait - conn is not in scope here! Fix: use a variable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using SQL. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* Knowing that `.finally`
 passes through values (unlike `.then(() => someValue)` which
@@ -677,7 +671,7 @@ Promise.resolve('a')         // fulfilled immediately
 // 3. Only then: macrotasks (setTimeout etc)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Promise States and the Microtask Queue example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Promise state is observable but not writable after settlement.
@@ -746,6 +740,14 @@ console.log('4: sync end');
 > running the `.then` callback (5). The ordering (2, 3, 4, 5)
 > not (2, 5, 3, 4) is guaranteed by the spec.
 
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
 ```javascript
 // FAILURE EXAMPLE: Depending on sync-like Promise behavior
 // BAD: assumes Promise.resolve().then runs before next line
@@ -764,7 +766,7 @@ Promise.resolve()
   });
 ```
 
-> **Code walkthrough:** The BAD pattern assumes Promise callbacks
+> **Code walkthrough:** The BAD pattern assumes Promise callbacksice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > run synchronously within the current frame. They do not.
 > `console.log(shared)` runs before the `.then` callback even
 > though `Promise.resolve()` is already fulfilled. The GOOD
@@ -834,7 +836,7 @@ function recursive() {
 }
 recursive(); // Never returns, blocks all tasks
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Diagnosis: setTimeout callbacks stop firing; event emitters
 are silent; CPU at 100%. Fix: add task boundaries (`setImmediate`)
@@ -847,7 +849,7 @@ const { inspect } = require('util');
 const state = inspect(somePromise);
 // Fragile: relies on internal formatting, not spec
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Better approach: use `Promise.race` with a dummy resolved
 Promise to check if a Promise is already settled.
@@ -865,8 +867,7 @@ Promise to check if a Promise is already settled.
 | Design | 1 | nextTick vs microtask |
 | Trap | 1 | Double resolve |
 
-**Q1. Explain the Promise state machine. What transitions
-are valid and which are impossible?**
+**[JUNIOR] Q1 - [MECHANISM] Explain the Promise state machine. What transitions are valid and which are impossible?**
 
 Three states: pending, fulfilled, rejected. Valid transitions:
 - pending -> fulfilled (via `resolve(value)`)
@@ -892,8 +893,7 @@ the same Promise.
 
 ---
 
-**Q2. What is the difference between Promise microtasks and
-macrotasks in terms of event loop execution order?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between Promise microtasks and macrotasks in terms of event loop execution order?**
 
 Microtasks (Promise `.then`, `queueMicrotask`): scheduled
 on the microtask queue. Entire queue is drained before the
@@ -920,7 +920,7 @@ much harder.
 
 ---
 
-**Q3. How does Promise rejection propagation work in a chain?**
+**[JUNIOR] Q3 - [MECHANISM] How does Promise rejection propagation work in a chain?**
 
 When a Promise rejects, the rejection skips all `.then(onFulfilled)`
 handlers in the chain until it finds a `.catch` or a
@@ -938,7 +938,7 @@ Promise.reject(new Error('original'))
   .then(v => console.log(v)); // 'recovered' (fulfilled)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 A `.catch` that returns a value (or returns a fulfilled Promise)
 converts the chain back to fulfilled. If `.catch` throws or
@@ -951,7 +951,7 @@ based on what each handler returns or throws.
 
 ---
 
-**Q4. What is `Promise.resolve` behavior when passed a thenable?**
+**[MID] Q4 - [MECHANISM] What is `Promise.resolve` behavior when passed a thenable?**
 
 `Promise.resolve(value)`: if `value` is a native Promise,
 returns it directly (same object). If `value` is a thenable
@@ -972,7 +972,7 @@ const p = Promise.resolve(fakePromise);
 p.then(v => console.log(v)); // 42
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 This assimilation enables interoperability between Promise
 libraries (bluebird, Q) and native Promises. You can pass
@@ -987,8 +987,7 @@ implementations.
 
 ---
 
-**Q5. What does it mean for a Promise to be "settled" vs
-"resolved"?**
+**[MID] Q5 - [TRADE-OFF] What does it mean for a Promise to be "settled" vs "resolved"?**
 
 "Settled" means the Promise has reached a terminal state:
 either fulfilled or rejected. A settled Promise will never
@@ -1008,7 +1007,7 @@ const outer = new Promise(resolve => {
 // outer is resolved but not yet settled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 In practice: "settled" is the term that matters for most
 use cases. "Resolved" in the sense above is a spec nuance
@@ -1022,8 +1021,7 @@ understood.
 
 ---
 
-**Q6. How do you detect and handle unhandled Promise
-rejections in a production application?**
+**[SENIOR] Q6 - [MECHANISM] How do you detect and handle unhandled Promise rejections in a production application?**
 
 Global handlers:
 
@@ -1040,7 +1038,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Browser:
 ```javascript
@@ -1050,7 +1048,7 @@ window.addEventListener('unhandledrejection', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 Node.js flag: `--unhandled-rejections=throw` crashes on
 unhandled rejections (default behavior in Node.js 15+).
@@ -1068,8 +1066,7 @@ is more visible and recoverable than a silent corruption.
 
 ---
 
-**Q7. What happens to Promise handlers attached after the
-Promise is already settled?**
+**[SENIOR] Q7 - [FAILURE] What happens to Promise handlers attached after the Promise is already settled?**
 
 They run asynchronously (as microtasks) immediately. Attaching
 a handler to an already-settled Promise queues the callback
@@ -1091,7 +1088,7 @@ console.log('after attachment');
 // late handler: 42     (microtask queued and drains)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construcice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Practical use case: caching resolved Promises - if a module
 caches a Promise for a one-time async initialization, any
@@ -1289,7 +1286,7 @@ fetchUser(id)                    // Promise<User>
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Promise Chaining example demonstrates Promise chain construction using error handling. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **The key insight:**
 The `return` in a `.then` callback is critical. Without
@@ -1338,7 +1335,7 @@ function brokenChain(userId) {
 }
 ```
 
-> **Code walkthrough:** Without `return`, `fetchOrders` is
+> **Code walkthrough:** Without `return`, `fetchOrders` isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > called but its Promise is not connected to the chain. The
 > next `.then` receives `undefined` as its value, causing a
 > TypeError when trying to access `.length`. The order fetch
@@ -1383,7 +1380,7 @@ async function fetchUserWithOrdersAsync(userId) {
 }
 ```
 
-> **Code walkthrough:** Every async step returns its Promise,
+> **Code walkthrough:** Every async step returns its Promise,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > threading the chain correctly. Synchronous transforms (the
 > filter and reduce) return plain values, which are automatically
 > wrapped in fulfilled Promises. The `.catch` handles a specific
@@ -1443,7 +1440,7 @@ fetchA()
   .then(([a, b, c]) => combine(a, b, c))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ---
 
@@ -1464,9 +1461,18 @@ fetchUser(id)
   })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **Failure 2: Mixing `.then` and `await` confusingly**
+
+```javascript
+// BAD: not awaiting async operations
+function saveUser(user) {
+    db.save(user); // async call not awaited
+    return { success: true }; // returns before save completes
+}
+```
+
 ```javascript
 // BAD: confusing mix - unclear error handling
 async function mixed(id) {
@@ -1484,7 +1490,7 @@ async function clear(id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -1499,8 +1505,7 @@ async function clear(id) {
 | Design | 1 | Error recovery in chains |
 | Trap | 1 | Nested vs chained |
 
-**Q1. What does `.then()` return and how does it enable
-chaining?**
+**[JUNIOR] Q1 - [MECHANISM] What does `.then()` return and how does it enable chaining?**
 
 `.then(onFulfilled)` returns a new Promise. The value of
 this new Promise is determined by what `onFulfilled` returns:
@@ -1520,7 +1525,7 @@ step by step and predict the exact value at each point.
 
 ---
 
-**Q2. How does error propagation work in a long chain?**
+**[JUNIOR] Q2 - [MECHANISM] How does error propagation work in a long chain?**
 
 When any Promise in a chain rejects, the rejection propagates
 forward through the chain, skipping all `.then(onFulfilled)`
@@ -1540,7 +1545,7 @@ Promise.reject(new Error('step 1 failed'))
   .then(v => console.log('continued:', v)); // 'recovered'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Knowing that the error
 propagation is what makes a single `.catch` at the end of
@@ -1548,8 +1553,7 @@ a chain sufficient for most use cases.
 
 ---
 
-**Q3. What is the difference between `catch(fn)` in the
-middle vs at the end of a chain?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between `catch(fn)` in the middle vs at the end of a chain?**
 
 `.catch(fn)` in the middle acts as error recovery: if `fn`
 returns a value (or fulfilled Promise), the chain continues
@@ -1579,7 +1583,7 @@ startProcess()
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using error handling. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* Understanding that recovery
 via middle `.catch` is a powerful pattern for resilience:
@@ -1588,7 +1592,7 @@ happened.
 
 ---
 
-**Q4. What are the risks of extremely long Promise chains?**
+**[MID] Q4 - [MECHANISM] What are the risks of extremely long Promise chains?**
 
 Performance: each `.then` creates a new Promise object and
 a microtask. For very long chains (100+ steps), the allocation
@@ -1616,8 +1620,7 @@ than just "it's slower."
 
 ---
 
-**Q5. How do you share intermediate values across multiple
-chain steps?**
+**[MID] Q5 - [MECHANISM] How do you share intermediate values across multiple chain steps?**
 
 Problem: step 3 needs the value from step 1, but step 2's
 return value replaces step 1's value in the chain.
@@ -1631,7 +1634,7 @@ fetchUser(id).then(user =>
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 2. `Promise.all` accumulation:
 ```javascript
@@ -1640,7 +1643,7 @@ fetchUser(id)
   .then(([user, orders]) => process(user, orders))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 3. Async/await (best readability):
 ```javascript
@@ -1651,7 +1654,7 @@ async function fn(id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Recognizing this as a
 structural limitation of `.then` chaining and knowing the
@@ -1660,8 +1663,7 @@ intermediate values need to be shared.
 
 ---
 
-**Q6. How does a `.then` handle a synchronous throw vs
-returning a rejected Promise?**
+**[SENIOR] Q6 - [TRADE-OFF] How does a `.then` handle a synchronous throw vs returning a rejected Promise?**
 
 Both result in the `.then`'s returned Promise being rejected:
 - Synchronous throw: caught by the Promise machinery, new
@@ -1683,7 +1685,7 @@ it does not become an uncaught exception.
 
 ---
 
-**Q7. When would you prefer `.then` chaining over async/await?**
+**[SENIOR] Q7 - [TRADE-OFF] When would you prefer `.then` chaining over async/await?**
 
 Prefer `.then` chaining when:
 1. Building a functional pipeline where composability matters:
@@ -1694,7 +1696,7 @@ Prefer `.then` chaining when:
      Promise.resolve(input)
    );
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construcice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. The code is already in a non-async context and you need
    a single short chain (< 3 steps)

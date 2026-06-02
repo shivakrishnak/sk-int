@@ -231,7 +231,7 @@ The platform team builds what every service needs:
       runbook linked, dependency declared
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The leverage of SRE at scale comes from the platform, not from SRE
@@ -258,6 +258,11 @@ to use the platform.
 ### 💻 Code Example
 
 **Example 1: Production readiness review as code gate**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -452,7 +457,7 @@ def prr_gate(
     }
 ```
 
-> **Code walkthrough:** The BAD approach makes PRR a document in a
+> **Code walkthrough:** The BAD approach makes PRR a document in aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > meeting that gets skipped under launch pressure. The GOOD approach
 > encodes PRR as a CI/CD gate: the `prr_gate` function runs automated
 > checks for observability, deployment safety, SLO, and on-call
@@ -1170,7 +1175,7 @@ KEY METRICS AT 3 YEARS
   PRR completion rate: > 95% for all new launches
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

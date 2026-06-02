@@ -72,7 +72,7 @@ Query Parameter:
   GET /users/123?version=2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Versioning Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Versioning at the API level (breaking change = new version) is simpler than versioning at the field level (every field has a version). The contract is the version. Within a version, add new fields freely (additive changes are non-breaking for clients that use Jackson's `@JsonIgnoreProperties(ignoreUnknown = true)`). Between versions, change structure as needed.
@@ -195,49 +195,49 @@ Fix: New request fields should be optional with sensible defaults for at least o
 | Design | 3 min | 1 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - "Compare URI versioning, header versioning, and query parameter versioning."
+**[JUNIOR] Q1 - [TRADE-OFF] "Compare URI versioning, header versioning, and query parameter versioning."**
 > "Three strategies, each with clear trade-offs: URI versioning (/v1/users, /v2/users): visible in every URL, easy to test with browser/curl, cache-friendly (CDN caches by URL, v1 and v2 are separate cache entries), easy to route at proxy level (`if /v2/` -> new backend), client explicitly chooses version on every call. Cost: URL pollution, version visible in every log line. Best for: public APIs with external clients. Header versioning (Accept: application/vnd.myapp.v2+json): clean URLs, version negotiated per response. Same URL serves both v1 and v2. Cost: cannot test with browser without tools, CDN caches by URL only (must add Vary: Accept header), version invisible in URL logs, harder to understand when debugging. Best for: internal APIs where URL cleanliness matters more than observability. Query parameter (/users?version=2): simple, URL-based but version in query string. Cost: leaks version into query parameters (interferes with caching if not handled), easy to omit accidentally. Rarely used in practice. The deciding factor: can all clients be controlled and updated? No -> URI versioning (simple, observable, independent client choice). Yes -> header versioning or contract testing without versioning."
 
 *What separates good from great:* "The CDN caching consideration (URI versioning caches separately per URL, header versioning needs Vary: Accept which reduces cache efficiency) is the production operations insight that candidates who've operated CDN-fronted APIs know."
 
 ---
 
-#### Q2 - "How do you sunset a deprecated API version?"
+**[JUNIOR] Q2 - [CONCEPTUAL] "How do you sunset a deprecated API version?"**
 > "Sunset lifecycle: (1) Announce v2: release v2 while keeping v1 running. Add `Sunset` header (RFC 8594) to all v1 responses: `Sunset: Sat, 01 Jan 2027 00:00:00 GMT`. Add `Deprecation: true` header. Add `Link: </v2/users>; rel=successor-version` pointing to the replacement. (2) Track v1 usage: monitor v1 request volume and the User-Agent / API key making those requests. Contact specific clients that are still heavily using v1. Some won't know about v2 unless you tell them directly. (3) Set a sunset date: 6 months minimum for public APIs, 12+ months for enterprise integrations. Announce via email to registered API key owners, developer portal, changelog. (4) Grace period behavior: in the last month before sunset, increase Sunset header urgency (add warning log entries on the server, consider rate limiting v1 to nudge clients). (5) Sunset day: return 410 Gone from v1 endpoints with a body pointing to v2. Don't return 404 (resource doesn't exist) - return 410 (resource existed, now gone). This tells clients the endpoint was removed intentionally, not a typo. Keep 410 response for 6+ months to help clients who check only occasionally."
 
 *What separates good from great:* "The 410 Gone recommendation (vs 404) on sunset day is the precise HTTP semantics: 410 communicates 'this was here and was intentionally removed.' Clients that check for 404 to detect URL typos won't confuse a 410 with a bug. The tracking v1 usage and proactively contacting heavy users shows operational experience."
 
 ---
 
-#### Q3 - "You're on call and v1 clients are suddenly failing. How do you debug?"
+**[JUNIOR] Q3 - [DEBUGGING] "You're on call and v1 clients are suddenly failing. How do you debug?"**
 > "Triage steps: (1) Check if v2 is also affected. If yes: the issue is shared infrastructure (database, authentication service). Not a versioning issue. (2) Check deployment logs: was anything deployed in the last hour? If v2 was deployed and v1 is in the same codebase: the deployment may have broken v1. (3) Check the v1 error types: 500 vs 400 vs 404. 500: server error, check application logs. 400: schema/validation changed, check if shared request validation logic changed. 404: routing changed, check if /v1/ routes are still configured. (4) If using a shared database schema: check if a database migration altered a column type, added a NOT NULL constraint, or deleted a column that v1 queries use. Database migrations that serve both v1 and v2 must be backward-compatible. (5) Check load balancer routing: v1 requests might be routing to the v2 backend. `curl -v /v1/users -H 'User-Agent: v1test'` and inspect the Server header to see which backend responded. Mitigation: if v2 deployment broke v1: rollback v2 immediately. Root cause: v1 and v2 shared a code path that changed. Fix: version the code path, not just the URL."
 
 *What separates good from great:* "The database migration backward compatibility point is the production edge case. A v2 migration that adds a NOT NULL column with no default breaks v1 code that doesn't set that column. Running both API versions means database migrations must be compatible with all running versions."
 
 ---
 
-#### Q4 - "How do you handle versioning for API clients that hardcoded the wrong version?"
+**[MID] Q4 - [HANDS-ON] "How do you handle versioning for API clients that hardcoded the wrong version?"**
 > "This happens with mobile apps. The scenario: v1 was released. The app hardcoded `/v1/users`. Later, v2 was released. You eventually sunset v1 (return 410). But users haven't updated the app (older iOS/Android version, disabled auto-update, enterprise-managed device). Solution options: (1) Never sunset: accept that v1 lives forever. Practical for small client populations but accumulates technical debt. (2) Redirect: 301 Permanent Redirect from `/v1/users` to `/v2/users`. Works only if v2 is backward compatible enough for v1 clients. v2 must handle missing v1-specific params gracefully. (3) Version adapter: serve v1 responses from the v2 backend using a transformation layer. The v1 endpoint translates v2 internal data to v1 response format. This 'v1 compatibility layer' is a translation adapter, not the original v1 code. Allows v1 URLs to work indefinitely with the current backend. (4) Force upgrade: return `410 Gone` with body `{message: 'Please update your app', updateUrl: '...'}`. Mobile apps must display the update prompt. For regulated industries (banking): often have minimum version policies that force updates. The pragmatic choice: for mobile, the compatibility layer (option 3) is safest. You can update the translation layer incrementally. For partner integrations: negotiate the upgrade timeline directly and commit to a formal sunset date."
 
 *What separates good from great:* "The v1 compatibility layer (translation adapter over v2 backend) is the production solution for long-lived mobile clients. This approach lets you deprecate v1 implementation without removing v1 URL support."
 
 ---
 
-#### Q5 - "What is consumer-driven contract testing and how does it replace API versioning?"
+**[MID] Q5 - [CONCEPTUAL] "What is consumer-driven contract testing and how does it replace API versioning?"**
 > "Consumer-driven contract testing (CDCT) is a testing approach where the API consumer (client) defines the contract it expects from the producer (server). The producer must satisfy all consumer contracts. When the producer wants to change the API: run the CDCT suite. If all consumer contracts still pass: the change is backward compatible, no versioning needed. If a consumer contract breaks: contact that consumer team, update the contract, and only then deploy. Tools: Pact is the industry standard. Consumer team writes a Pact test: 'I expect a GET /users/123 to return {id: 123, name: string, email: string}.' Pact generates a contract file. The provider runs the contract against their API: all contracts must pass before deployment. CDCT enables: confident breaking changes (you know exactly which consumers are affected), independent deployment (consumer and provider can deploy in any order as long as contracts pass), and contract documentation (the Pact files are the living API contract). Why CDCT replaces versioning for internal APIs: versioning is for external clients you can't contact. For internal services, CDCT gives you the same safety (no surprises) without maintaining multiple API versions."
 
 *What separates good from great:* "Knowing Pact by name and how it generates contract files shows practical tooling knowledge. The insight about CDCT replacing versioning for internal services (because you can coordinate with all consumers directly) shows architectural thinking."
 
 ---
 
-#### Q6 - "Tell me about a time you made a breaking API change and how you managed it."
+**[MID] Q6 - [BEHAVIORAL] "Tell me about a time you made a breaking API change and how you managed it."**
 > "Use STAR format. Framework: Situation: a production API served by mobile clients (iOS and Android) with varying update adoption rates. A business requirement changed the order response: the 'price' field needed to become 'subtotal' (price before tax) with a new 'total' field. 'price' was used by mobile clients for displaying checkout. Renaming 'price' to 'subtotal' was a breaking change. Task: make the change without breaking active clients. Action: created v2 endpoint with the correct field names. Added 'subtotal' and 'total' to the v1 response as additive fields (non-breaking) while keeping 'price' as the old field (now a copy of subtotal for backward compat). Added Sunset header to v1 responses with 6-month sunset date. Notified mobile teams. Monitored v1 usage by app version using User-Agent parsing. Result: v2 adoption reached 85% within 3 months. The remaining 15% were on very old app versions (3+ years old). Sunset was extended by 3 months for those users. Total migration: 9 months. No client-visible outages. Lesson: adding fields to v1 while adding the v2 endpoint in parallel is the lowest-risk path. Clients not using v2 don't notice, clients migrating to v2 get the clean design."
 
 *What separates good from great:* "The specific tactic of adding the new fields to v1 additively (while keeping the old field) and launching v2 simultaneously is the non-disruptive migration strategy. Tracking adoption by User-Agent to make the sunset decision data-driven shows production operational discipline."
 
 ---
 
-#### Q7 - "How does API versioning affect your OpenAPI/Swagger documentation?"
+**[SENIOR] Q7 - [CONCEPTUAL] "How does API versioning affect your OpenAPI/Swagger documentation?"**
 > "Each API version should have its own OpenAPI specification. `/v1/openapi.yaml` documents v1. `/v2/openapi.yaml` documents v2. Don't try to document both in one spec - it adds complexity without clarity. Tooling: Swagger UI can be configured to load multiple specs with a version selector dropdown. API portals (Backstage, Stoplight, Kong Developer Portal) support multiple spec versions natively. The documentation strategy mirrors the versioning strategy: (1) Publish v2 spec when v2 launches. (2) Add deprecation note to v1 spec: `deprecated: true` at the API level or on specific operations. (3) When sunset approaches: add sunset date prominently in the v1 spec description and in the Swagger UI. (4) After sunset: remove v1 spec (or redirect to archived version). Automatically generating OpenAPI from code (Springdoc, Springfox): each controller version produces its own spec with `@OpenAPIDefinition` or path prefix filtering. Keep both specs accurate - a stale v1 spec that shows endpoints that no longer exist misleads migrating clients."
 
 *What separates good from great:* "Recommending separate OpenAPI files per version (not one merged spec) and the specific UI tooling (Swagger UI version selector, API portals) shows you've managed multi-version documentation in practice."
@@ -339,7 +339,7 @@ Sorting: GET /users?sort=createdAt,desc
   SELECT * FROM users ORDER BY created_at DESC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pagination, Filtering, and Sorting example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Cursor pagination and offset pagination have different index requirements. Offset pagination with `LIMIT OFFSET` causes a table scan to the offset position - slow for large offsets. `WHERE id > 100 LIMIT 20` uses an index seek - fast regardless of position. For large datasets (millions of rows), cursor pagination is an order of magnitude faster than offset for later pages.
@@ -477,49 +477,49 @@ Fix: Cap page size server-side: `int cappedSize = Math.min(requestedSize, 100)`.
 | Trade-off | 3 min | 1 |
 | Behavioral | 2 min | 1 |
 
-#### Q1 - "What is the difference between cursor and offset pagination? When do you use each?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "What is the difference between cursor and offset pagination? When do you use each?"**
 > "Offset pagination: `LIMIT 20 OFFSET 40` in SQL. Page 3 of size 20 means skip the first 40 records. Simple to implement. Allows random page access (jump to any page). Returns total count. The database problem: OFFSET causes a full index scan to the offset position. Page 1,000 of size 20 means scanning 19,980 rows. O(N) per request for large N. Also unstable: concurrent inserts/deletes shift the window. Cursor pagination: `WHERE id > 100 LIMIT 20`. Anchors on the last-seen record. No count of skipped rows. O(log N) database performance regardless of position. Stable under concurrent writes. The tradeoffs: offset has total count and random access. Cursor doesn't. Cursor is more database-efficient and stable. Use cursor for: infinite scroll, user feeds, export jobs, any scenario with concurrent writes. Use offset for: admin panels with page navigation, reports with 'go to page N', scenarios where the user needs total count to understand their position. My default: cursor for user-facing APIs, offset for internal/admin."
 
 *What separates good from great:* "The O(N) vs O(log N) database complexity analysis is what shows you understand why cursor is more scalable, not just that it's more 'correct.'"
 
 ---
 
-#### Q2 - "How do you design a sort cursor that supports multiple sort fields?"
+**[JUNIOR] Q2 - [ARCHITECTURE] "How do you design a sort cursor that supports multiple sort fields?"**
 > "When clients can sort by any field, the cursor must encode enough information to resume from the exact position regardless of sort order. Problem: sort by createdAt DESC. The cursor encodes the last-seen createdAt value. But if two records have the same createdAt: which one comes first? The sort is ambiguous. The solution: always include the primary key (id) as a tiebreaker in the sort and the cursor. Sort: `createdAt DESC, id ASC`. Cursor: `{createdAt: '2026-01-01T10:00:00Z', id: 100}`. Query: `WHERE createdAt < '2026-01-01T10:00:00Z' OR (createdAt = '2026-01-01T10:00:00Z' AND id > 100) ORDER BY createdAt DESC, id ASC LIMIT 20`. This keyset pagination query handles ties correctly. The SQL is more complex than simple cursor but still uses indexes efficiently. Cursor encoding: serialize to JSON, base64-encode to make opaque. The client receives `eyJjcmVhdGVkQXQiOiIuLi4iLCJpZCI6MTAwfQ==` and sends it back on the next request. The server decodes and uses. Never trust client-constructed cursors - validate and use only server-generated cursor values."
 
 *What separates good from great:* "The keyset pagination SQL (`WHERE createdAt < X OR (createdAt = X AND id > Y)`) and the tiebreaker id requirement are implementation details that candidates who have built cursor pagination in production know. The security note about not trusting client-constructed cursors shows security thinking."
 
 ---
 
-#### Q3 - "A user reports they're missing records in a paginated export. What do you investigate?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "A user reports they're missing records in a paginated export. What do you investigate?"**
 > "Missing records in pagination is usually one of three causes: (1) Offset pagination with concurrent writes: the most common cause. While the client was paginating (page 1, page 2, page 3...), new records were inserted. The inserts shifted the OFFSET window. Records on the boundary between page N and N+1 were either skipped or duplicated. Diagnosis: check if the export was using offset pagination. Check if there was concurrent write activity during the export. Fix: use cursor pagination for exports. (2) Deleted records: records were deleted between page requests. Cursor pagination handles this correctly (the cursor anchors on id, deleted records don't shift the window). Offset pagination may skip records or return duplicates. (3) Sorting instability: sorting by a non-unique field (e.g., updatedAt) with offset pagination. If two records have the same updatedAt, the database may return them in different order on different requests. Diagnosis: check if the sort field has many duplicate values. Fix: add id as tiebreaker to the sort. Always. For the immediate fix: re-run the export with cursor pagination and include a unique sort key. For permanent fix: switch all export endpoints to cursor pagination."
 
 *What separates good from great:* "Identifying three distinct root causes (concurrent inserts, deletes, sort instability) and having a fix for each shows production debugging experience. The sort instability cause (non-unique sort field without tiebreaker) is the subtle one most candidates miss."
 
 ---
 
-#### Q4 - "How do you implement full-text search in a REST API collection endpoint?"
+**[MID] Q4 - [HANDS-ON] "How do you implement full-text search in a REST API collection endpoint?"**
 > "Full-text search via REST collection endpoint: `GET /products?q=blue+leather+shoes`. The q parameter is the search query. Implementation layers: (1) Database full-text search: PostgreSQL tsvector + tsquery. `WHERE to_tsvector('english', name || ' ' || description) @@ plainto_tsquery('english', ?)`. Reasonable for small to medium datasets (< 10M records), no extra infrastructure. (2) Elasticsearch/Opensearch: dedicated search engine. Query DSL sent from the API to Elasticsearch. Better relevance scoring, faceting, autocomplete, synonym support. More infrastructure. (3) Algolia/Typesense: hosted search service. Fast, relevant, zero infrastructure maintenance. Requires data sync. API design: `GET /products?q=shoes&category=footwear&sort=relevance`. `q` is the free-text query. `category` is a filter applied in addition to the full-text search. `sort=relevance` uses the search engine's relevance score. Include `highlight` in the response: `{name: 'Blue <em>Leather</em> <em>Shoes</em>', score: 0.95}`. Don't expose search engine query syntax directly in the URL. If you switch from Elasticsearch to Algolia, the URL should stay the same."
 
 *What separates good from great:* "The abstraction layer recommendation (don't expose search engine query syntax in the URL) is the API design principle that prevents lock-in. Mentioning PostgreSQL tsvector as a viable small-scale option (not just Elasticsearch) shows pragmatism."
 
 ---
 
-#### Q5 - "How does pagination interact with API rate limiting?"
+**[MID] Q5 - [CONCEPTUAL] "How does pagination interact with API rate limiting?"**
 > "Pagination reduces per-request payload size but increases the number of requests needed to fetch all data. A client that needs all 10,000 users makes 500 requests (at size=20). Rate limiting must account for this. The design tension: set rate limit at 100 req/min. The export use case needs 500 requests. The export will hit the rate limit and fail. Solutions: (1) Higher rate limit for authenticated bulk export use case: a specific 'export' API key with a higher rate limit tier. (2) Dedicated export endpoint: `POST /exports/users` creates an async export job. The client polls `GET /exports/{jobId}` for completion. `GET /exports/{jobId}/download` returns the file. Rate limit the export creation (1 per hour), not the download. (3) Streaming response: `GET /users?export=true` streams the entire dataset as newline-delimited JSON or CSV. One request, streaming response. Rate limit: 1 concurrent export per API key. The underlying principle: pagination is not the right tool for bulk data export. It's designed for interactive browsing (user sees 20 users at a time). For bulk data: use async export jobs or streaming. The API should make this explicit with a separate export endpoint."
 
 *What separates good from great:* "The observation that pagination is for interactive browsing, not bulk export, and that a dedicated async export endpoint is the correct solution is the system design insight. Rate limiting for export is a different concern than rate limiting for browsing."
 
 ---
 
-#### Q6 - "How do you handle sparse fieldsets in collection responses?"
+**[MID] Q6 - [CONCEPTUAL] "How do you handle sparse fieldsets in collection responses?"**
 > "Sparse fieldsets: the client requests only specific fields to reduce response size. Useful for mobile clients (bandwidth), list views (only need id + name for a list, not all 50 fields), and clients building aggregations. API design: `GET /users?fields=id,name,email` returns only those fields. Also called 'projections.' Implementation in Spring Data JPA: `@ProjectedPayload` interface or `Projections.fields()` with dynamic projections. The trade-off: sparse fieldsets increase API complexity. The server must dynamically serialize only the requested fields. JSON serialization libraries (Jackson) require dynamic views or custom serializers for this. Performance: reduces response payload (network cost). Potentially reduces database queries if using `SELECT id, name, email FROM users` instead of `SELECT *`. GraphQL is the natural evolution: sparse fieldsets are built into GraphQL's core (clients always specify fields). REST sparse fieldsets are partial adoption of GraphQL's query model. My recommendation: implement sparse fieldsets if you have mobile clients where bandwidth is a documented concern. For server-to-server APIs with reliable connections: the complexity cost exceeds the bandwidth benefit."
 
 *What separates good from great:* "Framing sparse fieldsets as REST's partial adoption of GraphQL's model shows architectural perspective. The pragmatic recommendation (implement for mobile bandwidth concerns, skip for server-to-server) shows judgment."
 
 ---
 
-#### Q7 - "Design the pagination response format for a collection endpoint."
+**[SENIOR] Q7 - [ARCHITECTURE] "Design the pagination response format for a collection endpoint."**
 > "Recommended pagination response envelope: `{data: [...items...], meta: {pagination: {...}}}`. For offset pagination: `{data: [...], meta: {page: 2, size: 20, total: 500, pages: 25, hasNext: true, hasPrev: true}}`. For cursor pagination: `{data: [...], meta: {nextCursor: 'eyJpZCI6MTIwfQ==', prevCursor: 'eyJpZCI6MTAwfQ==', hasNext: true}}`. Also support Link header (RFC 5988) for programmatic navigation: `Link: </users?cursor=abc>; rel='next', </users?cursor=xyz>; rel='prev'`. Link header is what GitHub uses for pagination. The data + meta envelope pattern is widely adopted (JSON:API, GitHub, Stripe). Advantages: consistent structure for all collection endpoints, easy to extend meta without changing data structure, libraries can parse generic pagination from the meta field. Avoid: embedding pagination in the root object alongside data items (collision risk), returning just an array (no pagination metadata), pagination fields named differently per endpoint (page vs offset vs skip vs page_number). Consistency matters: all collection endpoints in the API should use the same pagination envelope."
 
 *What separates good from great:* "Mentioning the RFC 5988 Link header as an alternative (and that GitHub uses it) shows knowledge of the header-based pagination approach. Recommending consistent structure across all collection endpoints shows API design discipline."

@@ -198,7 +198,7 @@ async function staleWhileRevalidate(request) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Workers and Async Fetch Intercepts example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 `event.waitUntil()` is critical in `install` and `activate`
@@ -254,7 +254,7 @@ self.addEventListener('install', event => {
 // 3. No versioning means no way to force refresh
 ```
 
-> **Code walkthrough:** Without a versioned cache name, updating
+> **Code walkthrough:** Without a versioned cache name, updatingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the app does not update the cache. The Service Worker may
 > serve old `bundle.js` indefinitely. Old cache entries from
 > previous versions accumulate, consuming storage. Users see
@@ -313,7 +313,7 @@ self.addEventListener('fetch', event => {
 });
 ```
 
-> **Code walkthrough:** The versioned cache name (`static-v3.2.1`)
+> **Code walkthrough:** The versioned cache name (`static-v3.2.1`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ensures that a new deployment creates a new cache. The
 > `activate` handler finds and deletes all caches not in the
 > current version's list. Avoiding `skipWaiting()` in install
@@ -371,7 +371,7 @@ DOM. They communicate with pages via `postMessage` and the
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Stale content served after deploy**
-```
+```plaintext
 Symptoms: users see old version of app after deploy
 Diagnosis:
   - Check: SW registration shows old APP_VERSION
@@ -382,7 +382,7 @@ Fix:
   - Optionally: call self.skipWaiting() in install for immediate update
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: `event.respondWith` called asynchronously**
 ```javascript
@@ -401,7 +401,7 @@ self.addEventListener('fetch', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -416,7 +416,7 @@ self.addEventListener('fetch', event => {
 | Design | 2 | PWA caching strategy, background sync |
 | Behavioral | 1 | Production Service Worker incident |
 
-**Q1. Describe the Service Worker lifecycle in detail.**
+**[JUNIOR] Q1 - [MECHANISM] Describe the Service Worker lifecycle in detail.**
 
 1. **Registration**: page calls `navigator.serviceWorker.register('/sw.js')`.
    Browser downloads `sw.js` if not already installed.
@@ -445,7 +445,7 @@ Registration -> Download -> Install -> Waiting -> Activate -> Active
                          (discarded)                              (restarts on event)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The detail about Workers
 being terminated when idle - you cannot keep state in module-level
@@ -454,8 +454,7 @@ persistence.
 
 ---
 
-**Q2. What is the Workbox library and why would you use
-it over raw Service Worker code?**
+**[JUNIOR] Q2 - [SCENARIO] What is the Workbox library and why would you use it over raw Service Worker code?**
 
 Workbox (Google) is a set of libraries that provide pre-built
 caching strategies, routing, background sync, and expiration
@@ -490,7 +489,7 @@ registerRoute(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* Knowing Workbox's `ExpirationPlugin`
 automatically handles LRU eviction and age-based expiration -
@@ -499,7 +498,7 @@ unbounded.
 
 ---
 
-**Q3. How does background sync work in Service Workers?**
+**[JUNIOR] Q3 - [MECHANISM] How does background sync work in Service Workers?**
 
 Background Sync allows a Service Worker to defer work until
 the user has connectivity. If the user goes offline after
@@ -543,7 +542,7 @@ async function syncPendingNotes() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Understanding that throwing
 from the sync event handler causes the browser to retry the
@@ -552,8 +551,7 @@ the Worker just needs to signal failure by throwing.
 
 ---
 
-**Q4. How do you handle cache invalidation for API responses
-with different users?**
+**[MID] Q4 - [MECHANISM] How do you handle cache invalidation for API responses with different users?**
 
 Cache keys include the request URL by default. Authentication
 state must be included in the cache key to prevent serving
@@ -586,7 +584,7 @@ self.addEventListener('fetch', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using authentication. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 On logout: explicitly clear the user's cache entries:
 ```javascript
@@ -602,7 +600,7 @@ self.addEventListener('message', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Knowing that failing to
 scope cache by user is a security vulnerability - user A
@@ -611,7 +609,7 @@ in cache keys for user-specific data.
 
 ---
 
-**Q5. What is push notification flow with Service Workers?**
+**[MID] Q5 - [MECHANISM] What is push notification flow with Service Workers?**
 
 1. Page requests notification permission: `Notification.requestPermission()`
 2. Page subscribes to push: `registration.pushManager.subscribe({
@@ -644,7 +642,7 @@ self.addEventListener('notificationclick', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Understanding that push
 messages go through the browser vendor's push infrastructure
@@ -653,7 +651,7 @@ push directly to the device.
 
 ---
 
-**Q6. How do you debug Service Worker issues in production?**
+**[SENIOR] Q6 - [DEBUGGING] How do you debug Service Worker issues in production?**
 
 Browser DevTools:
 - Application -> Service Workers: see registered workers,
@@ -678,7 +676,7 @@ self.addEventListener('fetch', event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Testing offline mode:
 - DevTools -> Network -> Offline checkbox
@@ -694,7 +692,7 @@ wb.addEventListener('waiting', () => {
 wb.register();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using the Workbox Window
 `waiting` event to notify users when an update is available,
@@ -703,8 +701,7 @@ their session.
 
 ---
 
-**Q7. What are the security implications of caching API
-responses in a Service Worker?**
+**[SENIOR] Q7 - [MECHANISM] What are the security implications of caching API responses in a Service Worker?**
 
 Key risks:
 1. **Stale authentication data**: caching user data that
@@ -734,7 +731,7 @@ fetch(request).then(response => {
 // Never cache 206 Partial Content or error responses
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* Knowing that caching error
 responses (500, 404) would cause Service Workers to serve
@@ -989,7 +986,7 @@ while (cursor) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This IndexedDB Async Patterns example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **The key insight:**
 Transaction auto-commit is the most common IndexedDB pitfall.
@@ -1053,7 +1050,7 @@ function saveUser(user) {
 // 25 lines of boilerplate for one put operation
 ```
 
-> **Code walkthrough:** The raw IndexedDB API requires nested
+> **Code walkthrough:** The raw IndexedDB API requires nestedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > callbacks for opening the database, creating the transaction,
 > making the request, and handling success/error at each level.
 > Every operation requires this scaffolding, making the raw API
@@ -1146,7 +1143,7 @@ class UserRepository {
 }
 ```
 
-> **Code walkthrough:** The TypeScript `DBSchema` interface
+> **Code walkthrough:** The TypeScript `DBSchema` interfaceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > provides compile-time type safety for object store names,
 > value types, and index names. `openDB` with a typed schema
 > means `db.get('users', key)` returns `User | undefined` -
@@ -1221,7 +1218,7 @@ await tx2.objectStore('items').put(merged);
 await tx2.done;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: Version mismatch after multiple deploys**
 ```javascript
@@ -1236,7 +1233,7 @@ const db = await openDB('app', 2, {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1251,8 +1248,7 @@ const db = await openDB('app', 2, {
 | Design | 2 | Offline sync queue, schema migration |
 | Behavioral | 1 | Building offline-first feature |
 
-**Q1. How do IndexedDB transactions differ from SQL
-transactions?**
+**[JUNIOR] Q1 - [MECHANISM] How do IndexedDB transactions differ from SQL transactions?**
 
 Similarities: both are ACID; both scope operations to specific
 data; both roll back on error.
@@ -1279,8 +1275,7 @@ by letting the event loop idle between IDB requests.
 
 ---
 
-**Q2. How do you implement schema migrations across IndexedDB
-versions?**
+**[JUNIOR] Q2 - [SCENARIO] How do you implement schema migrations across IndexedDB versions?**
 
 IndexedDB upgrades are incremental. The `upgrade` callback
 receives `oldVersion`. Apply all migrations from `oldVersion`
@@ -1318,7 +1313,7 @@ openDB('app', 4, {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Important: data migrations in `upgrade` cannot use async
 operations - the upgrade transaction is auto-committed. Use
@@ -1331,7 +1326,7 @@ upgrade transaction.
 
 ---
 
-**Q3. How do you query IndexedDB efficiently using indexes?**
+**[JUNIOR] Q3 - [MECHANISM] How do you query IndexedDB efficiently using indexes?**
 
 Without indexes: full scan with a cursor - O(N). For 10,000
 records, this is slow.
@@ -1365,7 +1360,7 @@ while (cursor && count < 10) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using `IDBKeyRange` for
 range queries on indexes. Without this knowledge, developers
@@ -1374,8 +1369,7 @@ defeats the purpose of having an index.
 
 ---
 
-**Q4. How do you handle IndexedDB access from both the
-main thread and a Service Worker?**
+**[MID] Q4 - [MECHANISM] How do you handle IndexedDB access from both the main thread and a Service Worker?**
 
 Both the main thread and Service Worker have access to
 IndexedDB for the same origin. They do not share a database
@@ -1412,7 +1406,7 @@ async function queueOfflineAction(action) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Using IndexedDB as the
 handoff layer between the main thread (writing to the queue)
@@ -1421,8 +1415,7 @@ The queue persists across page loads and Service Worker restarts.
 
 ---
 
-**Q5. What are the storage limits for IndexedDB and how
-do browsers handle quota exceeded?**
+**[MID] Q5 - [MECHANISM] What are the storage limits for IndexedDB and how do browsers handle quota exceeded?**
 
 Storage limits: browser-managed, typically 20-50% of available
 disk space. Chrome uses a "bucket" system with per-origin
@@ -1441,7 +1434,7 @@ const granted = await navigator.storage.persist();
 // Persisted storage: only cleared by user explicit action
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 When quota is exceeded: `DOMException` with name `QuotaExceededError`.
 Handle gracefully:
@@ -1456,7 +1449,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern using async/await. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 *What separates good from great:* Knowing `navigator.storage.persist()`
 requests durable storage that is not evicted under storage
@@ -1465,8 +1458,7 @@ when disk is full.
 
 ---
 
-**Q6. How do you build an offline-first data sync strategy
-using IndexedDB and Service Workers?**
+**[SENIOR] Q6 - [MECHANISM] How do you build an offline-first data sync strategy using IndexedDB and Service Workers?**
 
 Architecture:
 1. All reads: IndexedDB first (fast, offline-capable)
@@ -1510,7 +1502,7 @@ class OfflineFirstStore {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The "optimistic update"
 pattern: write locally and return immediately, sync in
@@ -1519,7 +1511,7 @@ the queue retries on next online event.
 
 ---
 
-**Q7. How do you use IndexedDB for offline-ready forms?**
+**[SENIOR] Q7 - [MECHANISM] How do you use IndexedDB for offline-ready forms?**
 
 ```javascript
 const DRAFTS_STORE = 'form-drafts';
@@ -1565,7 +1557,7 @@ const draft = await manager.getDraft('contact-form');
 if (draft) restoreForm(draft.data);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise reice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The debounced auto-save
 pattern (save every 1s of inactivity, not on every keystroke)
@@ -1577,13 +1569,13 @@ successful submission.
 
 ### ⚖️ Comparison Table
 
-| Storage | Size | Structured | Workers | Transactions | Use Case |
-|---|---|---|---|---|---|
-| localStorage | 5-10MB | No (strings) | No | No | Simple key-value settings |
-| sessionStorage | 5-10MB | No (strings) | No | No | Session state |
-| IndexedDB | GBs | Yes (objects) | Yes | Yes | Offline data, large datasets |
-| Cache API | GBs | HTTP responses | Yes | No | Network response cache |
-| OPFS | GBs | Files (bytes) | Yes | Yes (file locks) | File-based storage |
+| Storage| Size| Structured| Workers| Transactions| Use Case|
+|---|-----|--------------|-------|----------------|----------------------------|
+| localStorage| 5-10MB| No (strings)| No| No| Simple key-value settings|
+| sessionStorage| 5-10MB| No (strings)| No| No| Session state|
+| IndexedDB| GBs| Yes (objects)| Yes| Yes| Offline data, large datasets|
+| Cache API| GBs| HTTP responses| Yes| No| Network response cache|
+| OPFS| GBs| Files (bytes)| Yes| Yes (file locks)| File-based storage|
 
 **The deciding factor:**
 Key-value, string-only, small: localStorage. HTTP request/response:

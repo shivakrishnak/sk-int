@@ -255,7 +255,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** The BAD version records that an error happened
+> **Code walkthrough:** The BAD version records that an error happenedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > but captures no context about which user, product, error class, or
 > duration. During an incident you can confirm the error rate is elevated
 > but cannot narrow the cause without deploying new logging. The GOOD
@@ -313,7 +313,7 @@ public class CacheService {
 }
 ```
 
-> **Code walkthrough:** The BAD version traces every cache lookup
+> **Code walkthrough:** The BAD version traces every cache lookupice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > regardless of outcome, dominating the trace budget at high throughput.
 > The GOOD version applies outcome-based sampling: misses are always
 > recorded (small volume, high diagnostic value); hits are sampled at
@@ -434,7 +434,7 @@ Fix:
   # Query: all log lines for trace_id=X in one command
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query: all log lines for trace_id=X in one command example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Cardinality explosion in metrics storage**
 
@@ -464,7 +464,7 @@ Fix: Remove unbounded-cardinality labels from metrics.
   (latency histograms, error rates, throughput).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or in Prometheus console: example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -812,6 +812,7 @@ value should exist.
     # No runbook. No action required. Pure noise.
 ```
 
+{% raw %}
 ```yaml
 # GOOD: Saturation signal - queue depth growing
 # relative to capacity for a sustained period.
@@ -840,8 +841,9 @@ value should exist.
     # Growing trend (deriv > 0) confirms it is not
     # self-correcting.
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD alert fires on any 30-second CPU
+> **Code walkthrough:** The BAD alert fires on any 30-second CPUice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > elevation, which occurs on every deploy, GC pause, and traffic spike.
 > No runbook exists because no specific action is expected. The GOOD
 > alert uses saturation relative to capacity with a growing trend
@@ -899,7 +901,7 @@ value should exist.
     severity: ticket
 ```
 
-> **Code walkthrough:** SLO burn rate alerts have the highest signal-
+> **Code walkthrough:** SLO burn rate alerts have the highest signal-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to-noise because they are defined in terms of user impact - budget
 > consumption rate. A fast burn alert always means: users are
 > experiencing failures at a rate that will exhaust the monthly budget
@@ -994,7 +996,7 @@ fewer total alerts.
 
 **Failure 1: Alert storm during cascading service failure**
 
-```
+```plaintext
 Symptom: A single service dependency failure generates 200+ alerts
   in 2 minutes. On-call engineer is overwhelmed. Critical alerts
   (user-facing impact) are buried. Resolution time doubles.
@@ -1022,11 +1024,11 @@ Fix: Route all infrastructure alerts to low-urgency channels.
       equal: ['env']
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alertmanager inhibit rule: example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Silent failure - service degraded with no alert firing**
 
-```
+```plaintext
 Symptom: Error rate for 5% of users rises from 0.1% to 8% for
   40 minutes before any alert fires. SLA is violated. No alert
   fired on any threshold.
@@ -1047,7 +1049,7 @@ Fix: Add per-cohort SLOs alongside global SLOs.
   95th-percentile user experience, not just the median.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Global aggregate hid the per-cohort signal example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1358,7 +1360,7 @@ Hypothesis-Driven Debugging Loop:
    Notify stakeholders and close.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging Complex Systems from First Principles example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The most expensive debugging mistake is premature narrowing to a
@@ -1466,7 +1468,7 @@ Incident: Payment p99 latency spiked 200ms to
 // (vs. 30+ with random search)
 ```
 
-> **Code walkthrough:** The BAD approach has two engineers searching
+> **Code walkthrough:** The BAD approach has two engineers searchingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > independently with no shared framework, leading to duplicated effort
 > and red-herring investigation. The GOOD approach starts with precise
 > characterisation (all requests, abrupt start, latency not errors),
@@ -1529,7 +1531,7 @@ DATA CORRECTNESS (wrong results):
   Why: binary split - code or data?
 ```
 
-> **Code walkthrough:** The taxonomy tree shows how failure
+> **Code walkthrough:** The taxonomy tree shows how failureice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > categorisation determines the first observation. For latency failures,
 > the DB slow query log is the highest-discrimination first step -
 > it confirms or denies the most common cause immediately. For error
@@ -1630,7 +1632,7 @@ volume.
 
 **Failure 1: Hypothesis spiral without elimination**
 
-```
+```plaintext
 Symptom: Production incident drags for 4 hours.
   Team generates 12 hypotheses. Each is partially investigated
   but none fully eliminated. Multiple engineers work in parallel
@@ -1656,7 +1658,7 @@ Fix: Appoint an incident commander who maintains a shared
   Parallel exploration only when hypotheses are independent.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This any tool is opened. example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 2: Survivor bias hides root cause behind retry logic**
 
@@ -1688,7 +1690,7 @@ Fix: Instrument retries explicitly. Add metrics for:
   This separates application error rate from user impact rate.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This > 5% retry rate = significant failure hidden by retries example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

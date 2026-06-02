@@ -115,7 +115,7 @@ AUTOBOXING / UNBOXING (Java 5):
   int c = nullable;          // NPE: unboxing null Integer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Core Types example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -124,6 +124,61 @@ AUTOBOXING / UNBOXING (Java 5):
 > **Code walkthrough:** This example shows the most common primitive/wrapper pitfalls:
 > the integer cache comparison trap, unboxing NPE, and performance difference between
 > primitive arrays and boxed collections.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // PRIMITIVE vs WRAPPER PITFALLS
@@ -232,6 +287,18 @@ units, not Unicode code points. `"hello".length()` = 5 (correct). `"😊".length
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Silent data loss from integer overflow in financial calculation.**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 Symptom: Large payment amounts compute incorrectly
   Input:  totalItems=50_000, pricePerItem=100_000 (in cents)
@@ -274,7 +341,7 @@ Prevention: Financial calculations must use long or BigDecimal.
   Code review: flag any int multiplication where the result may exceed 2 billion.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -575,16 +642,34 @@ ITERATION PATTERNS:
       .collect(Collectors.toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The switch evolution example shows why switch expressions
+> **Code walkthrough:** The switch evolution example shows why switch expressionsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are strictly better than switch statements for most use cases: exhaustiveness
 > checking prevents missing cases, no fall-through removes a common bug source,
 > and the value-producing nature reduces boilerplate.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // SWITCH EVOLUTION: from error-prone to robust
@@ -748,7 +833,7 @@ Note: CopyOnWriteArrayList does NOT throw CME during iteration
   Use for: very rare writes, frequent reads, iteration under modification.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -834,7 +919,7 @@ int[] findTarget(int[][] matrix, int target) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The extracted method version: clearer intent, testable, no label syntax. Labeled breaks:
 acceptable in leetcode, discouraged in production.
@@ -861,7 +946,7 @@ int test() {
 // Returns 2, not 1
 // This is NEVER acceptable in production code
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 The finally return overrides any return in try or catch - a confusing behavior that
 suppresses exceptions too (an exception thrown in try is swallowed if finally returns
@@ -1076,15 +1161,21 @@ STRINGBUILDER vs STRING:
       .collect(Collectors.joining(", "));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The string-building performance example demonstrates the
+> **Code walkthrough:** The string-building performance example demonstrates theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fundamental O(n^2) vs O(n) difference. The array sorting and searching examples
 > show the standard `Arrays` utility class patterns used in production.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // STRING BUILDING PERFORMANCE
@@ -1148,7 +1239,7 @@ System.out.println(a.equals(b)); // true (same content)
 // Always use .equals() for String comparison
 ```
 
-> **Code walkthrough:** The StringBuilder pre-sizing with `ensureCapacity()` is a
+> **Code walkthrough:** The StringBuilder pre-sizing with `ensureCapacity()` is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > production optimization: prevents multiple internal array reallocations as the builder
 > grows. The `Arrays.asList()` trap (fixed-size list that throws on structural modification)
 > is a common source of bugs. The string equality `==` trap: always use `.equals()` for
@@ -1238,7 +1329,7 @@ Validation: before/after benchmark with JMH (Java Microbenchmark Harness)
   Expected: 8 seconds -> < 10ms for 10,000 items.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1384,7 +1475,7 @@ String json = """
     }
     """;
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Leading whitespace is stripped based on the column of the closing `"""`. No need for
 `\n`, `\"`. Use cases: SQL queries, JSON, HTML templates, XML in tests. Produces a regular

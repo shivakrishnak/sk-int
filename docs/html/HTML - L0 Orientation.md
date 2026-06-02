@@ -130,7 +130,7 @@ RENDER PIPELINE:
   Render Tree → Layout → Paint → Composite
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Origins and Purpose example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -188,7 +188,7 @@ minimal encoding of this metadata.
 <!-- No heading hierarchy for keyboard nav   -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This HTML Origins and Purpose example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 **GOOD: semantic HTML with clear roles**
 
@@ -215,7 +215,7 @@ minimal encoding of this metadata.
 <!-- Keyboard: jump to headings with H key            -->
 ```
 
-> **Code walkthrough:** Semantic HTML has the same visual output
+> **Code walkthrough:** Semantic HTML has the same visual outputice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as div soup when unstyled, but carries meaning for three audiences:
 > browser rendering optimizations, search engine crawlers that
 > identify content roles for ranking, and assistive technologies
@@ -287,26 +287,25 @@ Fix: make DOM order match reading order; use CSS only for
   visual rearrangement, not logical rearrangement
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| What is HTML? | 1-2 min | Semantic vs structural |
-| Why semantic HTML? | 2-3 min | 3 audiences |
-| HTML vs CSS separation | 2 min | Separation of concerns |
-| HTML5 semantic elements | 2-3 min | article/nav/aside purpose |
-| ARIA on top of HTML | 2-3 min | When HTML is not enough |
-| HTML in rendering path | 3 min | Performance angle |
-| article vs section | 2 min | Self-containedness |
+| Scenario| Recommended Time| Key Signal|
+|----------------|-----------------------------------|-------------------------|
+| What is HTML?| 1-2 min| Semantic vs structural|
+| Why semantic HTML?| 2-3 min| 3 audiences|
+| HTML vs CSS separation| 2 min| Separation of concerns|
+| HTML5 semantic elements| 2-3 min| article/nav/aside purpose|
+| ARIA on top of HTML| 2-3 min| When HTML is not enough|
+| HTML in rendering path| 3 min| Performance angle|
+| article vs section| 2 min| Self-containedness|
 
 ---
 
-**Q1: Why use semantic HTML instead of just divs?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] Why use semantic HTML instead of just divs?** `[JUNIOR]`**
 
 *Why they ask:* Tests whether the candidate understands the purpose
 of HTML elements beyond visual appearance.
@@ -343,7 +342,7 @@ of HTML elements beyond visual appearance.
 
 ---
 
-**Q2: What changed from HTML4 to HTML5?** `[JUNIOR]` DEFINITION
+**[JUNIOR] Q2 - [MECHANISM] What changed from HTML4 to HTML5?** `[JUNIOR]` DEFINITION**
 
 *Why they ask:* Contextual knowledge of HTML evolution.
 
@@ -385,8 +384,7 @@ of HTML elements beyond visual appearance.
 
 ---
 
-**Q3: What is the difference between `<article>` and `<section>`?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between `<article>` and `<section>`?**
 
 *Why they ask:* Most common semantic HTML distinction question.
 
@@ -433,7 +431,7 @@ of HTML elements beyond visual appearance.
 
 ---
 
-**Q4: How does HTML support SEO?** `[JUNIOR]` SCENARIO
+**[MID] Q4 - [MECHANISM] How does HTML support SEO?** `[JUNIOR]` SCENARIO**
 
 *Why they ask:* Cross-domain knowledge: HTML + SEO impact.
 
@@ -472,8 +470,7 @@ of HTML elements beyond visual appearance.
 
 ---
 
-**Q5: When would you use ARIA attributes on HTML?** `[SENIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] When would you use ARIA attributes on HTML?** `[SENIOR]`**
 
 *Why they ask:* Advanced accessibility knowledge.
 
@@ -518,7 +515,7 @@ MECHANISM
 
 ---
 
-**Q6: How does HTML5's error tolerance work?** `[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] How does HTML5's error tolerance work?** `[SENIOR]` MECHANISM**
 
 *Why they ask:* Tests knowledge of the parsing spec.
 
@@ -564,8 +561,7 @@ MECHANISM
 
 ---
 
-**Q7: What HTML elements most affect page load performance?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q7 - [SCENARIO] What HTML elements most affect page load performance?**
 
 *Why they ask:* Performance knowledge crosses HTML, CSS, and JS.
 
@@ -606,14 +602,64 @@ MECHANISM
 > with `rel="preload"`, it's the most effective HTML change for
 > improving LCP scores - often reducing LCP by 200-500ms.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Semantic elements + error tolerance |
-| Hiring Manager | SEO and CWV business impact |
-| Bar Raiser | ARIA depth + first rule |
-| Peer Engineer | Practical element choices |
+**[MID] Q8 - [DEBUGGING] A web page renders differently in Firefox vs Chrome despite identical HTML. What do you investigate?**
+
+*Why they ask:* Tests cross-browser debugging skills.
+
+Start with the browser DevTools rendering panel: check
+computed styles (layout differences are usually CSS, not
+HTML), then inspect the DOM tree to confirm the parser
+produced identical structure in both browsers.
+HTML5 defines error recovery behavior, so both parsers
+should produce the same DOM from valid HTML - if they
+differ, the HTML has a parsing edge case (unclosed tags,
+misplaced elements). Use the W3C Validator to find
+structural errors. If the DOM is identical but rendering
+differs: the issue is CSS rendering (font metrics, box
+model rounding, default stylesheet differences).
+Most browser differences in 2024 are CSS rendering, not
+HTML parsing.
+
+*What separates good from great:* Knowing that HTML5
+standardized error recovery - modern browsers produce
+the same DOM from malformed HTML, making CSS the likely
+culprit for visual differences.
+
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] When would you use a document fragment versus building DOM directly?**
+
+*Why they ask:* Tests knowledge of DOM performance patterns.
+
+`DocumentFragment` is an off-document node that batches
+DOM insertions. When appending 1,000 list items to a live
+`<ul>`, each `appendChild` call triggers a reflow in the
+live document. With a `DocumentFragment`, all 1,000 items
+are added to an off-document tree, then the fragment is
+appended with a single reflow. The trade-off: fragments add
+code complexity for a benefit that only manifests at volume
+(< 100 nodes: negligible difference). Modern alternative:
+`innerHTML` assignment is faster than either for
+server-rendered HTML strings, and `insertAdjacentHTML`
+is fast for smaller insertions. Use fragment only when
+appending 500+ dynamically generated nodes.
+
+*What separates good from great:* Benchmarking the
+threshold - knowing that `innerHTML` wins for most cases
+shows practical production experience over textbook answers.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|-----------------------|-----------------------------------|
+| Technical Panel| Semantic elements + error tolerance|
+| Hiring Manager| SEO and CWV business impact|
+| Bar Raiser| ARIA depth + first rule|
+| Peer Engineer| Practical element choices|
 
 ---
 
@@ -674,21 +720,21 @@ flowchart LR
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # How Browsers Parse HTML
@@ -810,7 +856,7 @@ SPECULATIVE PRELOADER (parallel thread):
   → Images load even while main parser is blocked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This How Browsers Parse HTML example demonstrates a key ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -869,7 +915,7 @@ that any page authors write must render.
 </html>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This How Browsers Parse HTML example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: non-blocking script loading -->
@@ -894,7 +940,7 @@ that any page authors write must render.
 </html>
 ```
 
-> **Code walkthrough:** The BAD example blocks the HTML parser
+> **Code walkthrough:** The BAD example blocks the HTML parserice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > while analytics.js downloads and executes - blank screen during
 > that time. The GOOD example uses `async` for independent scripts
 > (analytics) and `defer` for scripts that need the DOM (app.js).
@@ -974,26 +1020,25 @@ Fix sequence:
   4. Measure LCP in Lighthouse before and after
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| async vs defer | 2-3 min | Order vs execution time |
-| Why scripts block parser | 2 min | document.write rationale |
-| Speculative parsing | 2-3 min | Preloader thread |
-| CSS blocking render (not parse) | 2 min | DOM vs Render Tree |
-| Streaming SSR | 3-4 min | Incremental parsing |
-| render-blocking optimization | 3 min | Critical path |
-| Malformed HTML recovery | 2 min | Spec behavior |
+| Scenario| Recommended Time| Key Signal|
+|------------|----------------------------------------|------------------------|
+| async vs defer| 2-3 min| Order vs execution time|
+| Why scripts block parser| 2 min| document.write rationale|
+| Speculative parsing| 2-3 min| Preloader thread|
+| CSS blocking render (not parse)| 2 min| DOM vs Render Tree|
+| Streaming SSR| 3-4 min| Incremental parsing|
+| render-blocking optimization| 3 min| Critical path|
+| Malformed HTML recovery| 2 min| Spec behavior|
 
 ---
 
-**Q1: What is the difference between `async` and `defer`?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between `async` and `defer`?**
 
 *Why they ask:* Most common HTML performance question.
 
@@ -1029,8 +1074,7 @@ Fix sequence:
 
 ---
 
-**Q2: Why does a `<script>` in `<head>` block page rendering?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] Why does a `<script>` in `<head>` block page rendering?**
 
 *Why they ask:* First principles of render-blocking.
 
@@ -1063,8 +1107,7 @@ Fix sequence:
 
 ---
 
-**Q3: How does streaming HTML improve performance?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does streaming HTML improve performance?** `[SENIOR]`**
 
 *Why they ask:* Connects parsing to modern rendering frameworks.
 
@@ -1104,8 +1147,7 @@ MECHANISM
 
 ---
 
-**Q4: What is foster parenting in HTML parsing?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is foster parenting in HTML parsing?** `[SENIOR]`**
 
 *Why they ask:* Tests deep parsing spec knowledge.
 
@@ -1149,8 +1191,7 @@ MECHANISM
 
 ---
 
-**Q5: What is the speculative parser (preloader)?** `[SENIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] What is the speculative parser (preloader)?** `[SENIOR]`**
 
 *Why they ask:* Advanced parsing optimization knowledge.
 
@@ -1194,7 +1235,7 @@ MECHANISM
 
 ---
 
-**Q6: Why did `document.write()` cause problems with async
+**[SENIOR] Q6 - [MECHANISM] Why did `document.write()` cause problems with async**
 loading?** `[SENIOR]` FAILURE
 
 *Why they ask:* Legacy API that reveals parser knowledge.
@@ -1249,7 +1290,7 @@ loading?** `[SENIOR]` FAILURE
 
 ---
 
-**Q7: What is the difference between DOMContentLoaded and
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between DOMContentLoaded and**
 the load event?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Common JavaScript + HTML interaction question.
@@ -1300,12 +1341,12 @@ the load event?** `[JUNIOR]` COMPARISON
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Parser internals + speculative preloader |
-| Hiring Manager | Performance impact |
-| Bar Raiser | Streaming SSR + document.write() |
-| Peer Engineer | async/defer practical usage |
+| Interviewer Type| Emphasis|
+|-------------------------------|----------------------------------------|
+| Technical Panel| Parser internals + speculative preloader|
+| Hiring Manager| Performance impact|
+| Bar Raiser| Streaming SSR + document.write()|
+| Peer Engineer| async/defer practical usage|
 
 ---
 
@@ -1511,7 +1552,7 @@ MODIFICATION:
   parent.appendChild(child)  → moves into tree
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Document Object Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1553,6 +1594,11 @@ manipulation.
 
 **Layout thrashing: BAD vs GOOD**
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: interleaved reads/writes = layout thrashing
 // Each read forces browser to recalculate layout
@@ -1578,7 +1624,7 @@ items.forEach((item, i) => {
 // 1 layout read, 1 layout write = no thrashing
 ```
 
-> **Code walkthrough:** Layout thrashing occurs when reads of
+> **Code walkthrough:** Layout thrashing occurs when reads ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > layout-dependent properties (`offsetHeight`, `getBoundingClientRect`)
 > are interleaved with writes that invalidate the layout cache.
 > Each read after a write forces synchronous layout recalculation.
@@ -1609,7 +1655,7 @@ el.appendChild(span);
 el.innerHTML = DOMPurify.sanitize(untrustedHTML);
 ```
 
-> **Code walkthrough:** `innerHTML` parses the string as HTML -
+> **Code walkthrough:** `innerHTML` parses the string as HTML -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `<img onerror>`, `<svg onload>`, and event handlers execute.
 > `textContent` sets TEXT only, with no HTML parsing. The attack
 > vector is NOT `<script>` (blocked by browsers for innerHTML)
@@ -1685,26 +1731,25 @@ Fix:
 Before/after: profile with DevTools, compare Layout time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| What is the DOM? | 1-2 min | Live tree vs HTML source |
-| Live vs static collections | 2 min | querySelectorAll vs getElementsBy |
-| Layout thrashing | 3-4 min | Read-write batching |
-| innerHTML XSS | 2 min | Security awareness |
-| Virtual DOM purpose | 3 min | Why frameworks exist |
-| DOM vs CSSOM | 2-3 min | Render tree construction |
-| Shadow DOM | 3 min | Isolation mechanism |
+| Scenario| Recommended Time| Key Signal|
+|--------|-----------------------------------|---------------------------------|
+| What is the DOM?| 1-2 min| Live tree vs HTML source|
+| Live vs static collections| 2 min| querySelectorAll vs getElementsBy|
+| Layout thrashing| 3-4 min| Read-write batching|
+| innerHTML XSS| 2 min| Security awareness|
+| Virtual DOM purpose| 3 min| Why frameworks exist|
+| DOM vs CSSOM| 2-3 min| Render tree construction|
+| Shadow DOM| 3 min| Isolation mechanism|
 
 ---
 
-**Q1: What is the difference between the DOM and HTML?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between the DOM and HTML?**
 
 *Why they ask:* Tests whether candidates understand parsing
 creates a separate object from the source.
@@ -1741,7 +1786,7 @@ creates a separate object from the source.
 
 ---
 
-**Q2: Why is `innerHTML` dangerous?** `[JUNIOR]` FAILURE
+**[JUNIOR] Q2 - [MECHANISM] Why is `innerHTML` dangerous?** `[JUNIOR]` FAILURE**
 
 *Why they ask:* XSS awareness is critical front-end security knowledge.
 
@@ -1776,8 +1821,7 @@ creates a separate object from the source.
 
 ---
 
-**Q3: What is layout thrashing and how do you fix it?**
-`[SENIOR]` FAILURE
+**[SENIOR] Q3 - [FAILURE] What is layout thrashing and how do you fix it?**
 
 *Why they ask:* Real performance problem that shows DOM proficiency.
 
@@ -1817,12 +1861,11 @@ creates a separate object from the source.
 
 ---
 
-**Q4: Why does React use a Virtual DOM?** `[SENIOR]`
-CONCEPTUAL
+**[MID] Q4 - [CONCEPTUAL] Why does React use a Virtual DOM?** `[SENIOR]`**
 
 *Why they ask:* Tests understanding of why React's core design exists.
 
-*Likely follow-up:* "Is the Virtual DOM always faster than direct DOM manipulation?"
+*Likely follow-up:* "Is the Virtual DOM always faster than direct DOM manipulati
 
 > **Answer:**
 >
@@ -1857,8 +1900,7 @@ CONCEPTUAL
 
 ---
 
-**Q5: What is the difference between live and static DOM collections?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q5 - [MECHANISM] What is the difference between live and static DOM collections?**
 
 *Why they ask:* Common gotcha that causes bugs.
 
@@ -1901,8 +1943,7 @@ CONCEPTUAL
 
 ---
 
-**Q6: How does the Shadow DOM differ from the regular DOM?**
-`[SENIOR]` COMPARISON
+**[SENIOR] Q6 - [TRADE-OFF] How does the Shadow DOM differ from the regular DOM?**
 
 *Why they ask:* Advanced DOM feature connecting to Web Components.
 
@@ -1915,12 +1956,12 @@ CONCEPTUAL
 >
 > Key differences:
 >
-> | | Regular DOM | Shadow DOM |
-> |---|---|---|
-> | External CSS | Applies | Does NOT penetrate |
-> | Internal CSS | Leaks out | Does NOT leak out |
-> | querySelector | Finds elements | Cannot penetrate |
-> | Custom properties | Inherited | ALSO inherited (exception) |
+ >|| Regular DOM| Shadow DOM|
+ >| ---| ---| ---|
+ >| External CSS| Applies| Does NOT penetrate|
+ >| Internal CSS| Leaks out| Does NOT leak out|
+ >| querySelector| Finds elements| Cannot penetrate|
+ >| Custom properties| Inherited| ALSO inherited (exception)|
 >
 > ```javascript
 > const shadow = el.attachShadow({ mode: 'open' });
@@ -1949,8 +1990,7 @@ CONCEPTUAL
 
 ---
 
-**Q7: What triggers layout recalculation in the browser?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What triggers layout recalculation in the browser?**
 
 *Why they ask:* Foundation of DOM performance optimization.
 
@@ -1994,12 +2034,12 @@ CONCEPTUAL
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Live vs static + layout thrashing |
-| Hiring Manager | XSS security awareness |
-| Bar Raiser | VDOM rationale + rendering pipeline |
-| Peer Engineer | Practical DOM APIs + debugging |
+| Interviewer Type| Emphasis|
+|--------------------------|-----------------------------------|
+| Technical Panel| Live vs static + layout thrashing|
+| Hiring Manager| XSS security awareness|
+| Bar Raiser| VDOM rationale + rendering pipeline|
+| Peer Engineer| Practical DOM APIs + debugging|
 
 ---
 

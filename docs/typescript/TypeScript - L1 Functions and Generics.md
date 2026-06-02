@@ -166,7 +166,7 @@ CALLBACKS AND HIGHER-ORDER FUNCTIONS:
   // lengths: number[]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Functions and Overloads example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -193,6 +193,11 @@ avoided `as` assertion is one fewer potential runtime type mismatch.
 ### 💻 Code Example
 
 **Practical function typing patterns**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // WRONG: losing type information in overloads
@@ -253,7 +258,7 @@ emitter.on('user:login', ({ userId }) => {
 // emitter.on('unknown', ...) -> Error: not in EventMap
 ```
 
-> **Code walkthrough:** The `format` overload example shows the core
+> **Code walkthrough:** The `format` overload example shows the coreice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > problem: without overloads, returning `string | number` loses the
 > connection between input type and output type. With overloads, when
 > you pass a `string`, TypeScript knows you get a `string` back - no
@@ -345,7 +350,7 @@ function process(input: string | number): string | number {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **WHAT BREAKS: prefer type guards over type assertions for safe narrowing of union types.**
 
 ---
 
@@ -363,7 +368,7 @@ function process(input: string | number): string | number {
 
 ---
 
-**Q1: When should you use overloads vs generics?** `[SENIOR]` DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] When should you use overloads vs generics?** `[SENIOR]` DECISION**
 
 > **Answer:**
 >
@@ -404,8 +409,7 @@ function process(input: string | number): string | number {
 > abstraction. The DOM's `createElement` has ~100 overload signatures;
 > mapped types handle this more maintainably.
 
-**Q2: What is the 'this' parameter in TypeScript functions?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What is the 'this' parameter in TypeScript functions?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -450,7 +454,7 @@ MECHANISM
 > code, TypeScript's `noImplicitThis: true` (part of strict mode)
 > requires explicit `this` types for non-method functions that use `this`.
 
-**Q3: What is a function type expression and how is it different from
+**[JUNIOR] Q3 - [MECHANISM] What is a function type expression and how is it different from**
 a call signature in an interface?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -670,7 +674,7 @@ DEFAULT TYPE PARAMETERS:
   const products: Paginated<Product> = { items: [], total: 0, page: 1 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Generics Basics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -698,6 +702,11 @@ for each entity. One implementation serves all types with full type safety.
 ### 💻 Code Example
 
 **Generics in data fetching and state management**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: non-generic fetch wrapper (loses type information)
@@ -761,7 +770,7 @@ const safeUser = pick(user, ['id', 'name', 'email']);
 // TypeScript error if you try to pick 'nonExistent' key
 ```
 
-> **Code walkthrough:** The generic `fetchData<T>` function is the
+> **Code walkthrough:** The generic `fetchData<T>` function is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > standard pattern for typed HTTP calls. The caller specifies the
 > expected type `<User>`, and the return type `Promise<User>` flows
 > through. The `as Promise<T>` cast is necessary because `response.json()`
@@ -855,7 +864,7 @@ function processEntity<T extends Entity>(entity: T): void {
 // T can be User, Product, Order - any Entity subtype
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **WHAT BREAKS: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 ---
 
@@ -873,8 +882,7 @@ function processEntity<T extends Entity>(entity: T): void {
 
 ---
 
-**Q1: What are generic constraints and why are they needed?** `[MID]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What are generic constraints and why are they needed?** `[MID]`**
 
 > **Answer:**
 >
@@ -915,7 +923,7 @@ MECHANISM
 > work, and how `Record<K, V>` and `Pick<T, K>` utility types are
 > implemented.
 
-**Q2: How do you write a generic React component?** `[MID]`
+**[JUNIOR] Q2 - [MECHANISM] How do you write a generic React component?** `[MID]`**
 SYSTEM-DESIGN
 
 > **Answer:**
@@ -968,7 +976,7 @@ SYSTEM-DESIGN
 > design system components (Table, Select, Autocomplete) where the
 > data shape varies but the rendering logic is the same.
 
-**Q3: What is the difference between <T extends object> and <T extends {}>
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between <T extends object> and <T extends {}>**
 and Record<string, unknown>?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -1198,7 +1206,7 @@ CUSTOM TYPE PREDICATES:
   x.toUpperCase();  // OK: TypeScript narrowed x to string
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Type Narrowing and Type Guards example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -1227,6 +1235,11 @@ algebraic data types in a type-safe way.
 ### 💻 Code Example
 
 **Type narrowing in real-world patterns**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: force-casting without narrowing (unsafe)
@@ -1278,7 +1291,7 @@ function renderUser(state: RequestState<User>) {
 }
 ```
 
-> **Code walkthrough:** The `isUser` type predicate is a runtime guard
+> **Code walkthrough:** The `isUser` type predicate is a runtime guardice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that doubles as a TypeScript narrowing trigger. After `isUser(data)`
 > returns true, TypeScript knows `data` is `User` - the predicate's
 > `data is User` return type informs the type checker. The discriminated
@@ -1369,7 +1382,7 @@ async function processUser(user: User | null) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **WHAT BREAKS: prefer type guards over type assertions for safe narrowing of union types.**
 
 ---
 
@@ -1387,8 +1400,7 @@ async function processUser(user: User | null) {
 
 ---
 
-**Q1: What is a discriminated union and how does TypeScript narrow it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] What is a discriminated union and how does TypeScript narrow it?**
 
 > **Answer:**
 >
@@ -1430,7 +1442,7 @@ async function processUser(user: User | null) {
 > inheritance complexity, and TypeScript's narrowing makes
 > `instanceof` checks unnecessary.
 
-**Q2: What is the difference between a type predicate and an assertion
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between a type predicate and an assertion**
 function?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -1476,8 +1488,7 @@ function?** `[SENIOR]` MECHANISM
 > a type predicate when the "not valid" case is a programming error,
 > not a normal application path.
 
-**Q3: How does TypeScript handle narrowing with the 'in' operator?**
-`[MID]` MECHANISM
+**[MID] Q3 - [MECHANISM] How does TypeScript handle narrowing with the 'in' operator?**
 
 > **Answer:**
 >

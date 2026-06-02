@@ -190,7 +190,7 @@ CONTAINER STYLE QUERIES:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Container Queries and Subgrid example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -265,7 +265,7 @@ grid container.
    The card is broken */
 ```
 
-> **Code walkthrough:** Media queries respond to viewport
+> **Code walkthrough:** Media queries respond to viewportice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > width, not element width. A 600px viewport breakpoint
 > enables the row layout, but at 1200px viewport, the card
 > in a 280px sidebar ALSO gets the row layout because the
@@ -313,7 +313,7 @@ grid container.
 }
 ```
 
-> **Code walkthrough:** The `.card-container` element
+> **Code walkthrough:** The `.card-container` elementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > establishes the containment context. The card inside
 > responds to the container's width. Place this card in
 > a 600px sidebar - it renders column layout. Place it
@@ -370,7 +370,7 @@ grid container.
 }
 ```
 
-> **Code walkthrough:** `grid-row: span 3` tells each card
+> **Code walkthrough:** `grid-row: span 3` tells each cardice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to occupy 3 row tracks in the parent grid. `grid-template-
 > rows: subgrid` means those 3 row tracks are inherited
 > from the parent (not the card's own rows). Cards with
@@ -412,7 +412,7 @@ grid container.
 .widget__footer  { grid-row: 3; padding: 0.5rem 1rem; }
 ```
 
-> **Code walkthrough:** The `.dashboard` container responds
+> **Code walkthrough:** The `.dashboard` container respondsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to its own width (not viewport). When the dashboard is
 > narrow (embedded widget panel), single column. When wide
 > (main content area), 2-column grid with subgrid alignment.
@@ -500,7 +500,7 @@ Debug checklist:
    has no explicit width or flexbox sizing.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -521,7 +521,7 @@ Checklist:
    Mixed span sizes cause alignment gaps
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -544,7 +544,7 @@ Checklist:
 
 ---
 
-**Q1: What problem do Container Queries solve that
+**[JUNIOR] Q1 - [MECHANISM] What problem do Container Queries solve that**
 Media Queries cannot?** `[SENIOR]` CONCEPTUAL
 
 *Why they ask:* Core motivation for container queries.
@@ -602,8 +602,7 @@ Media Queries cannot?** `[SENIOR]` CONCEPTUAL
 
 ---
 
-**Q2: What is container-type and what are its implications?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] What is container-type and what are its implications?**
 
 *Why they ask:* container-type creates CSS containment - a
 side effect with implications.
@@ -665,8 +664,7 @@ inline-size and size?"
 
 ---
 
-**Q3: What are container query units (cqi, cqw, cqh)?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q3 - [MECHANISM] What are container query units (cqi, cqw, cqh)?**
 
 *Why they ask:* CQ units are new relative units that enable
 fluid container-responsive sizing.
@@ -729,8 +727,7 @@ fluid container-responsive sizing.
 
 ---
 
-**Q4: What is the problem that CSS Subgrid solves?**
-`[SENIOR]` CONCEPTUAL
+**[SENIOR] Q4 - [CONCEPTUAL] What is the problem that CSS Subgrid solves?**
 
 *Why they ask:* Subgrid's motivation reveals depth of CSS Grid
 understanding.
@@ -793,7 +790,7 @@ understanding.
 
 ---
 
-**Q5: Explain the CSS required to implement Subgrid
+**[MID] Q5 - [MECHANISM] Explain the CSS required to implement Subgrid**
 for a card grid.** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Tests ability to actually implement subgrid.
@@ -874,7 +871,7 @@ numbers of rows?"
 
 ---
 
-**Q6: What are container style queries and when are they
+**[SENIOR] Q6 - [MECHANISM] What are container style queries and when are they**
 useful?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Style queries are newer and less known but
@@ -949,7 +946,7 @@ theming with CSS custom properties?"
 
 ---
 
-**Q7: How do you handle browser support for container
+**[SENIOR] Q7 - [MECHANISM] How do you handle browser support for container**
 queries and subgrid?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Production CSS requires support strategies.
@@ -1017,7 +1014,7 @@ like for container queries?"
 
 ---
 
-**Q8: How do you use named containers for multi-context
+**[SENIOR] Q8 - [MECHANISM] How do you use named containers for multi-context**
 components?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Named containers are key to controlling
@@ -1091,7 +1088,7 @@ is found?"
 
 ---
 
-**Q9: What layout patterns become possible with Container
+**[SENIOR] Q9 - [MECHANISM] What layout patterns become possible with Container**
 Queries + Subgrid that weren't possible before?**
 `[STAFF]` ARCHITECTURE
 
@@ -1168,7 +1165,7 @@ library design?"
 
 ---
 
-**Q10: What is the `container` shorthand and what are
+**[SENIOR] Q10 - [MECHANISM] What is the `container` shorthand and what are**
 the best practices?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Practical syntax knowledge.
@@ -1237,7 +1234,7 @@ the best practices?** `[SENIOR]` HANDS-ON
 
 ---
 
-**Q11: How do container queries work with React/Vue
+**[STAFF] Q11 - [MECHANISM] How do container queries work with React/Vue**
 components?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Framework integration is a real-world need.
@@ -1331,7 +1328,7 @@ queries in React?"
 
 ---
 
-**Q12: How will `@when` / `@else` affect component
+**[STAFF] Q12 - [MECHANISM] How will `@when` / `@else` affect component**
 queries in the future?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Staff engineers track specification evolution.
@@ -1473,7 +1470,7 @@ Component library convention:
   Card grids always use subgrid.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

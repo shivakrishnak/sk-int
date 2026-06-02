@@ -190,13 +190,18 @@ TYPE CHECKING:
   Object.prototype.toString.call(value) // "[object ...]"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Data Types example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Type checking and reference semantics**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: unreliable type checks
@@ -251,7 +256,7 @@ console.log(Math.abs(0.1 + 0.2 - 0.3) < EPSILON); // true
 // never store $9.99 as a float
 ```
 
-> **Code walkthrough:** The reference semantics bug is one of the
+> **Code walkthrough:** The reference semantics bug is one of theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > most common production issues in JavaScript: a function receives an
 > object, modifies it thinking it's a local copy, and silently corrupts
 > the caller's data. The fix (spread operator `{...config}`) creates
@@ -328,7 +333,7 @@ function deepFreeze(obj) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -346,8 +351,7 @@ function deepFreeze(obj) {
 
 ---
 
-**Q1: What is the difference between undefined and null?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between undefined and null?**
 
 > **Answer:**
 >
@@ -484,7 +488,7 @@ the block. Hoisting makes `var` silently `undefined` before declaration.
 
 **How it works:**
 
-```
+```plaintext
 VAR vs LET vs CONST:
 
   Feature          var         let         const
@@ -574,13 +578,18 @@ CLOSURE AND SCOPE CHAIN:
   // Variable lookup travels UP the chain
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Variables, Scope, and Hoisting example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Classic var scope bug and the fix**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: var in a loop (classic interview trap)
@@ -623,7 +632,7 @@ items[0] = 0;      // OK - mutating elements
 // items = [];     // TypeError - reassigning
 ```
 
-> **Code walkthrough:** The classic `var` loop bug trips up many
+> **Code walkthrough:** The classic `var` loop bug trips up manyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > JavaScript engineers. `var` has function scope, not block scope,
 > so the loop creates ONE `i` variable shared across all iterations
 > and all closures. By the time the setTimeout callbacks fire, the
@@ -698,7 +707,7 @@ let name = 'Alice';
 // In bundlers: may indicate a circular import.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -716,7 +725,7 @@ let name = 'Alice';
 
 ---
 
-**Q1: What is the Temporal Dead Zone?** `[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the Temporal Dead Zone?** `[JUNIOR]` DEFINITION**
 
 > **Answer:**
 >
@@ -941,13 +950,18 @@ TYPEOF + COERCION:
     undefined + 1 // NaN (undefined -> NaN)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Type Coercion and Equality example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Coercion bugs and safe equality patterns**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: loose equality with coercion surprises
@@ -999,7 +1013,7 @@ console.log(JSON.stringify(a) === JSON.stringify(b)); // true
 // For deep equality: use Lodash isEqual, or fast-deep-equal
 ```
 
-> **Code walkthrough:** The `isAdult` bug shows why loose equality
+> **Code walkthrough:** The `isAdult` bug shows why loose equalityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is dangerous: `[18] == '18'` is true because the array is first
 > converted to the string `"18"`, then compared. The id check bug
 > (`id ?`) fails for `0` because 0 is falsy - valid IDs of 0 would
@@ -1070,7 +1084,7 @@ the value, it's about a fixed list of falsy values.
   // ['apple', 'banana', 'Cherry']
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -1088,8 +1102,7 @@ the value, it's about a fixed list of falsy values.
 
 ---
 
-**Q1: Explain the difference between == and === with an example.**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] Explain the difference between == and === with an example.**
 
 > **Answer:**
 >

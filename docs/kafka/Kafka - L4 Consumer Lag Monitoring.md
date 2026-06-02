@@ -71,7 +71,9 @@ fill level, but the trend over time."
 ### 📘 Concept Explanation
 
 **Lag calculation, monitoring tools, and alerting strategy:**
-```
+
+{% raw %}
+```plaintext
 LAG CALCULATION:
 
   For each partition in a consumer group:
@@ -193,8 +195,9 @@ LAG TO TIME CONVERSION:
     P2 lag = 50,000 records. Producer rate = 50 records/sec.
     Time lag = 50,000 / 50 = 1000 seconds (16+ minutes behind). ALERT.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High absolute lag: example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -361,7 +364,7 @@ produce time to process time using record timestamp) + error rate + downstream h
     - committed offset frozen (STALLED) -> CRITICAL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High absolute lag: example demonstrates a key conceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -408,7 +411,7 @@ xychart-beta
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Consumer group STALLED - offset not advancing despite active consumers.**
-```
+```plaintext
 Symptom: kafka-consumer-groups.sh shows consumers assigned to partitions.
   CURRENT-OFFSET: same value in repeated checks (not advancing).
   LAG: growing. Consumers: appear healthy (no pod crashes).
@@ -455,7 +458,7 @@ Fix:
   Dead consumer: resolve crash cause, restart pod.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

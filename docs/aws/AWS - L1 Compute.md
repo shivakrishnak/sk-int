@@ -117,7 +117,7 @@ Graviton (ARM, g-suffix):
   Avoid when: x86-only binaries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This EC2 Instance Types and Lifecycle example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -156,7 +156,7 @@ aws cloudwatch get-metric-statistics \
 # Solution: upgrade to M-series or enable T3 Unlimited
 ```
 
-> **Code walkthrough:** The `describe-instance-types` call
+> **Code walkthrough:** The `describe-instance-types` callice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > shows the memory:vCPU ratio for the m6g family - useful
 > for selecting the right size. The critical distinction
 > between stop and terminate is highlighted: stopping
@@ -268,6 +268,100 @@ sustained high CPU.
 *(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
 
 
+
+---
+
+### 🎯 Interview Deep-Dive
+
+---
+
+**[MID] Q1 - [DEBUGGING] A service using EC2 Instance Types and Lifecycle is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for EC2 Instance Types and Lifecycle beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for EC2 Instance Types and Lifecycle issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For EC2 Instance Types and Lifecycle specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare EC2 Instance Types and Lifecycle to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS EC2 Instance Types and Lifecycle service landscape and can make informed architectural decisions.
+
+EC2 Instance Types and Lifecycle has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives.
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have).
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using EC2 Instance Types and Lifecycle for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to EC2 Instance Types and Lifecycle.
+
+Multi-region architecture for EC2 Instance Types and Lifecycle: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems.
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance).
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What EC2 Instance Types and Lifecycle cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* EC2 Instance Types and Lifecycle cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in EC2 Instance Types and Lifecycle: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs.
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using EC2 Instance Types and Lifecycle in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach EC2 Instance Types and Lifecycle with security as a first-class concern, not an afterthought.
+
+Top security risks for EC2 Instance Types and Lifecycle: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for EC2 Instance Types and Lifecycle resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with EC2 Instance Types and Lifecycle: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for EC2 Instance Types and Lifecycle configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads.
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving EC2 Instance Types and Lifecycle that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world EC2 Instance Types and Lifecycle experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes).
+
+Strong answers include: specific EC2 Instance Types and Lifecycle service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient EC2 Instance Types and Lifecycle architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for EC2 Instance Types and Lifecycle peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency).
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled.
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
 # ECS and Fargate
 
 **Interview Weight:** ★☆☆ - Container orchestration.
@@ -365,7 +459,7 @@ Fargate: AWS manages EC2 invisibly.
   Security groups at task level (not instance level).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ECS and Fargate example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -433,7 +527,7 @@ aws ecs describe-services \
   }'
 ```
 
-> **Code walkthrough:** The Task Definition has two
+> **Code walkthrough:** The Task Definition has twoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > distinct IAM roles: `execution-role` (used by ECS to
 > pull the container image from ECR and write logs to
 > CloudWatch) and `task-role` (used by the application
@@ -509,7 +603,7 @@ aws ecs describe-clusters \
   --include STATISTICS
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For EC2 launch type: check cluster capacity: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix:* Fargate = reduce task size. EC2 = add cluster
 instances or migrate to Fargate for automatic scaling.
@@ -564,6 +658,100 @@ instances or migrate to Fargate for automatic scaling.
 *(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
 
 
+
+---
+
+### 🎯 Interview Deep-Dive
+
+---
+
+**[MID] Q1 - [DEBUGGING] A service using ECS and Fargate is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for ECS and Fargate beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for ECS and Fargate issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For ECS and Fargate specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare ECS and Fargate to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS ECS and Fargate service landscape and can make informed architectural decisions.
+
+ECS and Fargate has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (For EC2 launch type: check clu, Q2)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (For EC2 launch type: check clu, Q2)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using ECS and Fargate for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to ECS and Fargate.
+
+Multi-region architecture for ECS and Fargate: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems. (For EC2 launch type: check clu, Q3)
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance). (For EC2 launch type: check clu, Q3)
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What ECS and Fargate cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* ECS and Fargate cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in ECS and Fargate: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs. (For EC2 launch type: check clu, Q4)
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using ECS and Fargate in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach ECS and Fargate with security as a first-class concern, not an afterthought.
+
+Top security risks for ECS and Fargate: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for ECS and Fargate resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with ECS and Fargate: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for ECS and Fargate configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads. (For EC2 launch type: check clu, Q5)
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving ECS and Fargate that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world ECS and Fargate experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes). (For EC2 launch type: check clu, Q6)
+
+Strong answers include: specific ECS and Fargate service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient ECS and Fargate architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for ECS and Fargate peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency). (For EC2 launch type: check clu, Q7)
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled. (For EC2 launch type: check clu, Q7)
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
 # AWS Lambda Fundamentals
 
 **Interview Weight:** ★☆☆ - Serverless foundation.
@@ -665,7 +853,7 @@ CRITICAL PATTERN:
   not 1 connection per invocation.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AWS Lambda Fundamentals example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -690,7 +878,7 @@ public class Handler
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AWS Lambda Fundamentals example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 ```java
 // GOOD: Connection initialized in static scope
@@ -725,7 +913,7 @@ public class Handler
 }
 ```
 
-> **Code walkthrough:** The BAD pattern creates a new
+> **Code walkthrough:** The BAD pattern creates a newice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > database TCP connection on every Lambda invocation.
 > At 1,000 concurrent Lambda invocations, this opens
 > 1,000 simultaneous connections to RDS, which can
@@ -807,7 +995,7 @@ aws lambda put-function-concurrency \
 # Max 50 concurrent = max 50 connections to RDS
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Max 50 concurrent = max 50 connections to RDS example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 ---
 
@@ -830,6 +1018,96 @@ aws lambda put-function-concurrency \
 ---
 
 ### 🎯 Interview Deep-Dive
+
+---
+
+**[MID] Q1 - [DEBUGGING] A service using AWS Lambda Fundamentals is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for AWS Lambda Fundamentals beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for AWS Lambda Fundamentals issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For AWS Lambda Fundamentals specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare AWS Lambda Fundamentals to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS AWS Lambda Fundamentals service landscape and can make informed architectural decisions.
+
+AWS Lambda Fundamentals has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (Max 50 concurrent = max 50 con, Q2)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (Max 50 concurrent = max 50 con, Q2)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using AWS Lambda Fundamentals for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to AWS Lambda Fundamentals.
+
+Multi-region architecture for AWS Lambda Fundamentals: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems. (Max 50 concurrent = max 50 con, Q3)
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance). (Max 50 concurrent = max 50 con, Q3)
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What AWS Lambda Fundamentals cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* AWS Lambda Fundamentals cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in AWS Lambda Fundamentals: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs. (Max 50 concurrent = max 50 con, Q4)
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using AWS Lambda Fundamentals in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach AWS Lambda Fundamentals with security as a first-class concern, not an afterthought.
+
+Top security risks for AWS Lambda Fundamentals: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for AWS Lambda Fundamentals resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with AWS Lambda Fundamentals: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for AWS Lambda Fundamentals configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads. (Max 50 concurrent = max 50 con, Q5)
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving AWS Lambda Fundamentals that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world AWS Lambda Fundamentals experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes). (Max 50 concurrent = max 50 con, Q6)
+
+Strong answers include: specific AWS Lambda Fundamentals service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient AWS Lambda Fundamentals architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for AWS Lambda Fundamentals peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency). (Max 50 concurrent = max 50 con, Q7)
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled. (Max 50 concurrent = max 50 con, Q7)
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
 
 > **Timing:** 4-5 minutes per question for ★☆☆ keywords.
 
@@ -966,7 +1244,7 @@ aws ecs describe-services \
 # "unable to pull secrets" = Secrets Manager permission
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "unable to pull secrets" = Secrets Manager permission example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 2: Get stopped task exit codes:**
 ```bash
@@ -986,7 +1264,7 @@ aws ecs describe-tasks \
 # ExitCode 0 = clean exit (health check path mismatch)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ExitCode 0 = clean exit (health check path mismatch) example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 3: Check application logs:**
 ```bash
@@ -995,7 +1273,7 @@ aws logs tail /ecs/api-service --follow
 # database connection failures
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This database connection failures example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 4: Check ALB health check config:**
 ```bash
@@ -1010,7 +1288,7 @@ aws elbv2 describe-target-groups \
 # Common: health check on /health but app serves on /api/health
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Common: health check on /health but app serves on /api/health example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* ExitCode 137 = OOM
 is specific knowledge. The health check path mismatch
@@ -1128,7 +1406,7 @@ aws ecs update-service \
   }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Common: health check on /health but app serves on /api/health example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 `minimumHealthyPercent: 100` = ECS will not stop any
 old tasks until new tasks pass health checks and come up.
@@ -1151,7 +1429,7 @@ CodeDeploy:
 Rollback: shift 100% back to Blue in < 30 seconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Common: health check on /health but app serves on /api/health example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 *What separates good from great:* The blue-green with
 canary (10% traffic first) is the production-safe pattern
@@ -1187,7 +1465,7 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check throttles: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Common causes and fixes:**
 
@@ -1204,7 +1482,7 @@ aws cloudwatch get-metric-statistics \
    # 10x throughput at same Lambda concurrency
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check throttles: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 3. Processing duration too long:
    - Check Lambda Duration P99 metric

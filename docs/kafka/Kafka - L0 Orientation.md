@@ -121,7 +121,7 @@ App C ──────────────> [Topic: logs]    ────>
          retained on disk                 tracks offset
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Apache Kafka Overview example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 1. A **producer** sends records to a named **topic**.
 2. Each topic is split into one or more **partitions** - ordered, immutable logs.
@@ -209,7 +209,7 @@ try (KafkaProducer<String, String> producer =
 } // close() flushes outstanding messages - always use try-with-resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Apache Kafka Overview example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *Why this matters:* `send()` is async - the callback is the only place
 you know if delivery succeeded. Ignoring the callback means you lose
@@ -244,7 +244,7 @@ try (KafkaConsumer<String, String> consumer =
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Why this matters:* The poll loop is the fundamental Kafka consumer pattern.
 `group.id` determines which consumer group this instance belongs to -
@@ -291,15 +291,15 @@ governance with a schema registry.
 
 **Misconception 1: Kafka is a message queue like RabbitMQ or SQS.**
 
-Kafka is a distributed commit log, not a queue. Messages are retained on disk for a configurable period (default 7 days) regardless of whether they were consumed. Multiple consumer groups each maintain independent offset cursors and read the full log at their own pace - a new consumer group added 3 days later can replay all retained messages. RabbitMQ and SQS delete messages after delivery; Kafka keeps them, enabling replay, time-travel debugging, and new consumer onboarding at any point in the retention window.
+Kafka is a distributed commit log, not a queue. Messages are retained on disk fo
 
 **Misconception 2: Higher partition count always improves throughput.**
 
-Partitions add parallelism but also overhead. Each partition requires: a file handle pair on each broker that holds it, 50 bytes of metadata on every client, and a separate thread in each consumer group member. Past 1,000-4,000 partitions per broker, leader election time increases, consumer group rebalance latency grows, and end-to-end latency increases measurably. Provision partitions based on target throughput (one partition per ~10 MB/s), not as an optimization afterthought.
+Partitions add parallelism but also overhead. Each partition requires: a file ha
 
 **Misconception 3: Kafka guarantees total message ordering across all partitions.**
 
-Kafka guarantees ordering WITHIN a single partition. Messages with the same key are deterministically routed to the same partition via key hash, ensuring per-key order. Messages with different keys are distributed across partitions with no inter-partition ordering guarantees. If your use case requires strict global ordering across all events, you must use a single partition - eliminating all parallelism and capping throughput at one partition's limit.
+Kafka guarantees ordering WITHIN a single partition. Messages with the same key 
 
 ---
 
@@ -307,15 +307,15 @@ Kafka guarantees ordering WITHIN a single partition. Messages with the same key 
 
 **Failure Mode 1: Consumer group lag grows continuously.**
 
-Symptom: the `consumer_lag` metric per partition shows steady increase; message processing delay accumulates, causing pipeline SLA violations. Diagnosis: `kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group <group-id>` - compare LAG column across partitions to identify which partition(s) are falling behind; check consumer application logs for slow processing or GC pauses. Fix: scale consumer group instances (up to partition count), reduce `max.poll.records` if processing time per batch exceeds `max.poll.interval.ms`, or optimize the consumer's processing critical path.
+Symptom: the `consumer_lag` metric per partition shows steady increase; message 
 
 **Failure Mode 2: Unclean leader election causes silent message loss.**
 
-Symptom: messages that were acknowledged by the producer are missing from consumer reads after a broker failure + leader election. Diagnosis: check broker config `unclean.leader.election.enable` - if `true`, an out-of-sync replica can become leader, losing all messages it had not yet replicated. Check `under_replicated_partitions` metric; messages produced while replicas were lagging may be lost after election. Fix: set `unclean.leader.election.enable=false` and ensure `min.insync.replicas=2` with producer `acks=all` to prefer unavailability over data loss.
+Symptom: messages that were acknowledged by the producer are missing from consum
 
 **Failure Mode 3: Producer `buffer.memory` exhausted under traffic spike.**
 
-Symptom: `TimeoutException: Expiring N record(s) for topic-partition` in producer logs; producer application appears to hang during high-load events. Diagnosis: check `buffer-available-bytes` and `record-queue-time-avg` JMX metrics - if buffer is at zero, all sends are blocked waiting for the broker to accept batches. Fix: tune `buffer.memory` (default 32MB), `linger.ms` (batch accumulation time), and `max.block.ms` (how long send() blocks before throwing); add back-pressure signaling to the upstream producer source.
+Symptom: `TimeoutException: Expiring N record(s) for topic-partition` in produce
 
 ---
 
@@ -363,7 +363,7 @@ RabbitMQ when I need complex routing logic, per-message acknowledgement
 with dead-lettering, or when messages are truly disposable after processing."
 
 #### Scenario
-- "How would you use Kafka to connect a payment service and an analytics service?"
+- "How would you use Kafka to connect a payment service and an analytics service
 - "When would you NOT use Kafka for a system?"
 
 🗣️ "I would put Kafka between the order service and both the payment service
@@ -406,12 +406,12 @@ the right model for most use cases: events related to the same entity
 (same key, same partition) are ordered, and unrelated events do not need
 to be."
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with mechanism - sequential writes, log structure, partitioning |
-| Hiring Manager | Lead with business impact - decoupling, reliability, scale |
-| Bar Raiser | Lead with trade-offs - when NOT to use Kafka, limitations |
-| Peer Engineer | Collaborative - "The thing I keep running into with Kafka is..." |
+| Interviewer Type| Emphasis|
+|---------|--------------------------------------------------------------------|
+| Technical Panel| Lead with mechanism - sequential writes, log structure, parti
+| Hiring Manager| Lead with business impact - decoupling, reliability, scale|
+| Bar Raiser| Lead with trade-offs - when NOT to use Kafka, limitations|
+| Peer Engineer| Collaborative - "The thing I keep running into with Kafka is...
 
 ---
 
@@ -493,21 +493,21 @@ flowchart LR
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Kafka vs Traditional Message Queues
@@ -542,16 +542,16 @@ candidates understand WHY Kafka was invented and when to choose it.
 > routing, per-message ACK, and when you want messages to disappear after use.
 
 **3 minutes (Senior):**
-> The fundamental model difference is push-delete versus pull-retain. Traditional
-> queues push messages to consumers and delete them on acknowledgement - the broker
-> is the arbiter of delivery state. Kafka pulls: consumers poll at their own pace
+> The fundamental model difference is push-delete versus pull-retain. Traditiona
+> queues push messages to consumers and delete them on acknowledgement - the bro
+> is the arbiter of delivery state. Kafka pulls: consumers poll at their own pac
 > and the broker retains all records until the retention deadline, regardless of
-> who has read what. This changes everything about how you design systems. With a
+> who has read what. This changes everything about how you design systems. With 
 > traditional queue, two services cannot independently read the same message -
-> you need two separate queues. With Kafka, both services subscribe with different
+> you need two separate queues. With Kafka, both services subscribe with differe
 > consumer groups and read the same partition data independently. The replay
-> capability is the other major differentiator: Kafka lets you reset a consumer's
-> offset to any past point, which enables backfilling new services with historical
+> capability is the other major differentiator: Kafka lets you reset a consumer'
+> offset to any past point, which enables backfilling new services with historic
 > data, replaying after a bug fix, or auditing what happened. The trade-off is
 > that Kafka is harder to operate - partition counts, consumer group management,
 > and consumer lag monitoring require more infrastructure investment than a
@@ -614,7 +614,7 @@ Producer → Topic/Partition → [offset 0, 1, 2, 3, 4, 5...]
 Same data, independent consumers, retained until expiry.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kafka vs Traditional Message Queues example demonstice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The retention model is the single most important design difference. When
@@ -682,7 +682,7 @@ while (true) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Kafka vs Traditional Message Queues example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Example 2: Right - Kafka for fan-out event streaming (GOOD pattern)**
 
@@ -706,7 +706,7 @@ analyticsProps.put("enable.auto.commit", "false");
 // No message copying required - the log is shared
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Kafka vs Traditional Message Queues example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Why this matters:* Two different `group.id` values mean Kafka maintains
 independent offset state for each group. Both services see every event
@@ -736,7 +736,7 @@ try (KafkaConsumer<String, String> consumer =
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *Why this matters:* `seekToBeginning()` is only possible because Kafka retains
 records. This is the capability that enables backfilling new services, debugging
@@ -1056,7 +1056,7 @@ External Systems        Core Layer         Processing
                     └──────────────┘
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kafka Ecosystem Map example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Component breakdown:**
 
@@ -1157,7 +1157,7 @@ producer.send(new ProducerRecord<>("orders", "order-123", event));
 // violates the registered compatibility mode (BACKWARD by default)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *Why this matters:* Without Schema Registry, a producer can silently change
 the schema and break all consumers. Schema Registry makes incompatible changes
@@ -1187,7 +1187,7 @@ KafkaStreams streams = new KafkaStreams(
 streams.start(); // runs in-process, no external cluster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Kafka messaging. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *Why this matters:* Kafka Streams runs inside your JVM process - no separate
 cluster to deploy. State is stored in RocksDB locally and backed up to a

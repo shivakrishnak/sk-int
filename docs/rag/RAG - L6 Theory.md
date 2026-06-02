@@ -123,7 +123,7 @@ The two encoders are SEPARATE neural networks.
 They do NOT share weights in the original DPR.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dense Passage Retrieval Theory example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Contrastive training loss:**
 
@@ -144,7 +144,7 @@ Goal: maximize probability of scoring the gold
 positive highest among all candidates.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dense Passage Retrieval Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Hard negatives - the key training insight:**
 
@@ -163,7 +163,7 @@ HARD NEGATIVE (useful):
     lexical overlap, different answer.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dense Passage Retrieval Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why DPR beats BM25 for natural language questions:**
 
@@ -185,7 +185,7 @@ Performance (Natural Questions benchmark):
   -> Hybrid consistently beats either alone
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dense Passage Retrieval Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -326,7 +326,7 @@ def generate_explanation_via_llm(query: str) -> str:
     return resp.content[0].text
 ```
 
-> **Code walkthrough:** The core demonstration shows
+> **Code walkthrough:** The core demonstration showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the vocabulary gap problem. BM25 scores passage 1
 > ("Waterloo station in London") highly because it
 > contains the keyword "Waterloo" - even though it's
@@ -656,7 +656,7 @@ COLBERT:
              passage token; scores are summed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why MaxSim works:
 - Standard DPR compresses the passage into one vector,
@@ -1108,7 +1108,7 @@ Intuition:
     TF-IDF: high -> highly discriminative
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Information Retrieval Foundations example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **BM25 formula:**
 
@@ -1135,7 +1135,7 @@ Key improvements over TF-IDF:
      so a long document doesn't just win by volume.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Information Retrieval Foundations example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Inverted index structure:**
 
@@ -1158,7 +1158,7 @@ Query "rate limiting":
   Return: D2 (highest score), D1, D3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Information Retrieval Foundations example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1311,7 +1311,7 @@ for idx, score in results[:3]:
     print(f"BM25: {corpus[idx]['id']} score={score:.3f}")
 ```
 
-> **Code walkthrough:** `SimpleBM25` implements the
+> **Code walkthrough:** `SimpleBM25` implements theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > full BM25 formula. `fit` builds the inverted index:
 > document term frequencies, document lengths, and
 > IDF values. The IDF formula uses the Robertson-Walker
@@ -1502,7 +1502,7 @@ RRF_score(d, query) = sum over retrievers r of:
               (1 = top result, 2 = second, ...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sparse-only retrieval example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why RRF works:
 - No normalization needed: uses ranks (1, 2, 3...)
@@ -1557,7 +1557,7 @@ Query "rate limiting":
   4. Score k documents with BM25: O(k * |query|)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Total: O(k) where k is the number of matching documents,
 not O(N). For rare terms: k is very small. For common
@@ -1661,7 +1661,7 @@ The score saturates: going from TF=10 to TF=100
 adds 0.29, not 9.0. This is much more realistic.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Implication for RAG chunking: BM25 handles repetitive
 documents (FAQs with the same term repeated) better

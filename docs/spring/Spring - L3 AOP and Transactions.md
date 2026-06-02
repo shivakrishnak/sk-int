@@ -165,7 +165,7 @@ Internal call (BROKEN - bypasses proxy):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring AOP and Proxies example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 **The key insight:**
 The Spring context holds the PROXY, not your original object. When beans inject
@@ -224,7 +224,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** batchCreate calls createOrder via `this` - the real
+> **Code walkthrough:** batchCreate calls createOrder via `this` - the realice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > object, not the proxy. The @Transactional annotation on createOrder is
 > completely ignored. Each createOrder call has no transaction - if the 5th
 > call throws a runtime exception, the first 4 orders are committed to the
@@ -276,7 +276,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The clean fix is extracting the transactional method
+> **Code walkthrough:** The clean fix is extracting the transactional methodice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to a separate bean. When OrderService calls creator.create(), the call goes
 > through the proxy of SingleOrderCreator - the @Transactional is correctly
 > applied. The self-injection alternative works but smells: a bean injecting
@@ -335,7 +335,7 @@ public class MonitoredAspect {
 }
 ```
 
-> **Code walkthrough:** @Around advice with ProceedingJoinPoint gives complete
+> **Code walkthrough:** @Around advice with ProceedingJoinPoint gives completeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > control: you call pjp.proceed() to invoke the actual method. The try/finally
 > ensures timing is recorded even on exceptions. The custom @Monitored annotation
 > pattern is how @Transactional, @Cacheable, and @Async are implemented - an
@@ -417,7 +417,7 @@ Fix: Remove final from the class.
 
 ---
 
-#### Q1 - How does Spring AOP work?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does Spring AOP work?**
 
 Spring AOP works by creating proxy objects around managed beans. When a Spring
 bean has methods with AOP-applicable annotations (@Transactional, @Cacheable,
@@ -437,7 +437,7 @@ from @PostConstruct goes to the real object, not the proxy.
 
 ---
 
-#### Q2 - What is the self-invocation problem and how do you fix it?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the self-invocation problem and how do you fix it?**
 
 Self-invocation: calling a proxied method from within the same class via `this`.
 `this` refers to the real object, not the proxy. The proxy never intercepts
@@ -455,7 +455,7 @@ public void outer() {
 public void inner() { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Fixes (best to worst):
 1. Extract inner() to a separate @Service - cleanest design
@@ -470,7 +470,7 @@ structural answer.
 
 ---
 
-#### Q3 - What is the difference between JDK proxy and CGLIB proxy?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between JDK proxy and CGLIB proxy?**
 
 **JDK dynamic proxy:**
 - Requires the target class to implement at least one interface
@@ -497,7 +497,7 @@ at build time by the AOT engine.
 
 ---
 
-#### Q4 - What AOP advice types does Spring support?
+**[MID] Q4 - [CONCEPTUAL] What AOP advice types does Spring support?**
 
 Spring AOP supports five advice types matching the standard AOP vocabulary:
 
@@ -507,7 +507,7 @@ Spring AOP supports five advice types matching the standard AOP vocabulary:
   public void logBefore(JoinPoint jp) { ... }
   ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 - **@After**: runs after the method (always - both success and exception).
   Like a finally block.
@@ -527,7 +527,7 @@ have narrower responsibility.
 
 ---
 
-#### Q5 - How do you write a custom aspect?
+**[MID] Q5 - [HANDS-ON] How do you write a custom aspect?**
 
 ```java
 // 1. Custom annotation as joinpoint marker
@@ -570,7 +570,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The aspect method signature includes the
 AuditLog parameter - Spring binds the annotation instance to it, giving you
@@ -579,7 +579,7 @@ access to annotation attributes. Without this, you'd need pjp.getMethod()
 
 ---
 
-#### Q6 - What is a pointcut expression and how do you write one?
+**[MID] Q6 - [HANDS-ON] What is a pointcut expression and how do you write one?**
 
 A pointcut expression defines which joinpoints (method executions) an advice
 applies to. Common expressions:
@@ -596,7 +596,7 @@ execution(* com.example.service.*.*(..))
 execution(* com.example.OrderService.create*(..))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **@annotation()** - match by annotation:
 ```java
@@ -605,7 +605,7 @@ execution(* com.example.OrderService.create*(..))
     .annotation.Transactional)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 **within()** - match by type:
 ```java
@@ -613,7 +613,7 @@ execution(* com.example.OrderService.create*(..))
 within(com.example.service..*)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Combining with &&, ||, !**:
 ```java
@@ -622,7 +622,7 @@ execution(public * com.example.service..*.*(..)) &&
 @annotation(Transactional)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* Overly broad pointcut expressions (execution(* *(..)))
 have significant performance impact - they intercept every method call.
@@ -631,7 +631,7 @@ have broad pointcuts in high-throughput code.
 
 ---
 
-#### Q7 - How does @Async work with Spring AOP?
+**[SENIOR] Q7 - [CONCEPTUAL] How does @Async work with Spring AOP?**
 
 @Async submits the annotated method's execution to a thread pool instead of
 running it on the calling thread. Spring AOP creates a proxy that:
@@ -653,7 +653,7 @@ public class EmailService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Requirements:
 - @EnableAsync on a @Configuration class
@@ -668,7 +668,7 @@ an AsyncUncaughtExceptionHandler.
 
 ---
 
-#### Q8 - What is the difference between Spring AOP and AspectJ?
+**[SENIOR] Q8 - [CONCEPTUAL] What is the difference between Spring AOP and AspectJ?**
 
 **Spring AOP:**
 - Proxy-based (CGLIB or JDK proxy)
@@ -698,7 +698,7 @@ annotation.
 
 ---
 
-#### Q9 - How do you order multiple aspects on the same method?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you order multiple aspects on the same method?**
 
 When multiple aspects apply to the same method, their order is controlled by:
 
@@ -715,7 +715,7 @@ When multiple aspects apply to the same method, their order is controlled by:
    public class AuditAspect { ... }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **Ordered interface**: implement org.springframework.core.Ordered.
 
@@ -903,7 +903,7 @@ Propagation (nested transactional calls):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional and Transaction Management example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The default rollback rule - RuntimeException triggers rollback, checked
@@ -1016,7 +1016,7 @@ public class ReportService {
 }
 ```
 
-> **Code walkthrough:** rollbackFor = Exception.class ensures both checked and
+> **Code walkthrough:** rollbackFor = Exception.class ensures both checked andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > unchecked exceptions trigger rollback. This is the safe default for any
 > transactional method. The readOnly = true flag tells Hibernate to skip dirty
 > checking (no flush before queries), which improves performance for read-heavy
@@ -1055,7 +1055,7 @@ public class AuditService {
 }
 ```
 
-> **Code walkthrough:** REQUIRES_NEW is essential for audit logging and
+> **Code walkthrough:** REQUIRES_NEW is essential for audit logging andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > notification systems that must persist regardless of the outer transaction's
 > outcome. The audit record must survive even if the order transaction rolls
 > back - you need to know why the order failed. REQUIRES_NEW starts a completely
@@ -1149,7 +1149,7 @@ for high-contention operations.
 
 ---
 
-#### Q1 - What does @Transactional do?
+**[JUNIOR] Q1 - [CONCEPTUAL] What does @Transactional do?**
 
 @Transactional demarcates a transaction boundary. Spring's TransactionInterceptor
 (a BeanPostProcessor-created proxy) wraps the annotated method:
@@ -1172,7 +1172,7 @@ separate transactions.
 
 ---
 
-#### Q2 - What are the transaction propagation modes?
+**[JUNIOR] Q2 - [CONCEPTUAL] What are the transaction propagation modes?**
 
 Key propagation values:
 
@@ -1204,7 +1204,7 @@ which is more efficient but has limited database support.
 
 ---
 
-#### Q3 - What is the default rollback behavior and how do you change it?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the default rollback behavior and how do you change it?**
 
 Default: rollback on RuntimeException (unchecked) and Error.
 Default: NO rollback on checked Exception.
@@ -1222,7 +1222,7 @@ To change:
     noRollbackFor = OptimisticLockingException.class)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Recommendation: always use rollbackFor = Exception.class if your service
 methods throw or propagate checked exceptions.
@@ -1236,7 +1236,7 @@ domain errors requires explicit rollbackFor.
 
 ---
 
-#### Q4 - What is transaction isolation and what are the levels?
+**[MID] Q4 - [CONCEPTUAL] What is transaction isolation and what are the levels?**
 
 Isolation defines what concurrent transactions can see from each other's
 uncommitted work.
@@ -1269,7 +1269,7 @@ almost always appropriate. READ_UNCOMMITTED is rarely useful in production
 
 ---
 
-#### Q5 - How does @Transactional(readOnly = true) affect behavior?
+**[MID] Q5 - [CONCEPTUAL] How does @Transactional(readOnly = true) affect behavior?**
 
 readOnly = true sets a hint on the transaction:
 
@@ -1294,12 +1294,23 @@ DataSource configuration changes.
 
 ---
 
-#### Q6 - What is @TransactionalEventListener?
+**[MID] Q6 - [CONCEPTUAL] What is @TransactionalEventListener?**
 
 @TransactionalEventListener publishes Spring application events AFTER the
 current transaction commits. Contrast with @EventListener which fires immediately.
 
 Use case: send email notification after order creation:
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
+
 ```java
 // BAD: @EventListener fires BEFORE transaction commits
 // Email sent even if order save fails and rolls back
@@ -1317,7 +1328,7 @@ public void onOrderCreated(OrderCreatedEvent event) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **WHAT BREAKS: never self-invoke @Transactional methods; inject the bean instead.**
 
 TransactionPhase options:
 - AFTER_COMMIT (default): fires if transaction committed
@@ -1332,7 +1343,7 @@ listeners to be idempotent and handle failures independently (retry queue).
 
 ---
 
-#### Q7 - How do you handle transactions programmatically?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you handle transactions programmatically?**
 
 TransactionTemplate for programmatic control:
 ```java
@@ -1361,7 +1372,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 When to use programmatic over declarative:
 - Fine-grained control over transaction boundaries within a method
@@ -1375,7 +1386,7 @@ rollback: status.setRollbackOnly() without throwing an exception.
 
 ---
 
-#### Q8 - What is optimistic vs pessimistic locking in JPA?
+**[SENIOR] Q8 - [CONCEPTUAL] What is optimistic vs pessimistic locking in JPA?**
 
 **Optimistic locking** (@Version on entity field):
 - No database lock held
@@ -1394,7 +1405,7 @@ rollback: status.setRollbackOnly() without throwing an exception.
 Optional<Account> findById(Long id);
 ```
 
-> **Code walkthrough:** `@Lock(PESSIMISTIC_WRITE)` annotates a
+> **Code walkthrough:** `@Lock(PESSIMISTIC_WRITE)` annotates aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Spring Data repository method to issue `SELECT ... FOR UPDATE`.
 > The database row lock is held until the transaction commits,
 > blocking concurrent writers entirely. This prevents phantom
@@ -1416,7 +1427,7 @@ adds automatic retry with configurable backoff.
 
 ---
 
-#### Q9 - How does @Transactional interact with Spring Data JPA?
+**[SENIOR] Q9 - [CONCEPTUAL] How does @Transactional interact with Spring Data JPA?**
 
 Spring Data JPA's SimpleJpaRepository:
 - All write methods (save, delete) are @Transactional (read-write)

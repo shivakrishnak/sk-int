@@ -137,7 +137,7 @@ searchInput.addEventListener('input', (e) => {
 // manual loading state, manual race condition guard
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive vs Imperative Frontend Architecture Decision example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ```javascript
 // REACTIVE APPROACH (RxJS):
@@ -168,7 +168,7 @@ search$.pipe(
 // - all declarative
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive vs Imperative Frontend Architecture Decision example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ```typescript
 // SIGNALS APPROACH (Angular 17+):
@@ -198,7 +198,7 @@ class SearchComponent {
 // Signals: 12 lines, simpler than RxJS, handles cancellation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive vs Imperative Frontend Architecture Decision example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 **The key insight:**
 Signals bridge the gap between imperative and reactive. They
@@ -263,7 +263,7 @@ const login$ = fromEvent(form, 'submit').pipe(
 // Same thing in async/await: 10 lines, clearer
 ```
 
-> **Code walkthrough:** The reactive approach to a sequential
+> **Code walkthrough:** The reactive approach to a sequentialice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > login flow is significantly harder to read than async/await.
 > Each step depends on the previous step's result (token ->
 > user -> permissions) - this is a sequential chain, not a
@@ -336,7 +336,7 @@ class UserCard {
 }
 ```
 
-> **Code walkthrough:** The code shows three different patterns
+> **Code walkthrough:** The code shows three different patternsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for three different problem types. Sequential login uses
 > `async/await` - linear, readable, easy to add try/catch.
 > Multi-source live dashboard uses `combineLatest` - declarative
@@ -428,7 +428,7 @@ class UserService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: Mixing models without a seam**
 ```javascript
@@ -452,7 +452,7 @@ service.events$.pipe(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -467,8 +467,7 @@ service.events$.pipe(
 | Design | 2 | Architecture decision process, hybrid model |
 | Behavioral | 1 | Team experience with reactive patterns |
 
-**Q1. How do you decide between async/await and Observables
-for a new feature?**
+**[JUNIOR] Q1 - [MECHANISM] How do you decide between async/await and Observables for a new feature?**
 
 Decision tree:
 
@@ -501,8 +500,7 @@ values over time).
 
 ---
 
-**Q2. What is fine-grained reactivity and how do Angular
-Signals differ from RxJS?**
+**[JUNIOR] Q2 - [MECHANISM] What is fine-grained reactivity and how do Angular Signals differ from RxJS?**
 
 Fine-grained reactivity: only the specific parts of the UI
 that depend on a changed value re-render, rather than the
@@ -542,7 +540,7 @@ const search$ = searchInput$.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Knowing that "fine-grained
 reactivity" (updating only what changed) is the key performance
@@ -551,7 +549,7 @@ advantage of Signals over Angular's previous change detection
 
 ---
 
-**Q3. How do you test reactive async code effectively?**
+**[JUNIOR] Q3 - [SCENARIO] How do you test reactive async code effectively?**
 
 Marble testing with RxJS TestScheduler:
 
@@ -588,7 +586,7 @@ describe('SearchService', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 For async/await tests:
 ```typescript
@@ -606,7 +604,7 @@ test('debounce handler', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Marble testing syntax:
 `'a 100ms b'` reads as "emit 'a', wait 100ms, emit 'b'".
@@ -614,8 +612,7 @@ This makes complex timing scenarios self-documenting in tests.
 
 ---
 
-**Q4. How do you introduce reactive patterns to a team
-that only knows async/await?**
+**[MID] Q4 - [MECHANISM] How do you introduce reactive patterns to a team that only knows async/await?**
 
 Incremental introduction strategy:
 
@@ -648,8 +645,7 @@ semantics. Motivation drives adoption.
 
 ---
 
-**Q5. What is the Signals pattern in Vue 3 and how does it
-compare to Angular Signals?**
+**[MID] Q5 - [MECHANISM] What is the Signals pattern in Vue 3 and how does it compare to Angular Signals?**
 
 Vue 3 reactive system is the original "Signals" model (predating
 the term):
@@ -676,7 +672,7 @@ watchEffect(() => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Angular Signals (Angular 16+):
 ```typescript
@@ -693,7 +689,7 @@ effect(() => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Key differences:
 - Vue uses Proxy (reactive), Angular uses getter functions (signal())
@@ -707,8 +703,7 @@ tracked automatically, computed values update lazily.
 
 ---
 
-**Q6. When would you choose XState (state machines) over
-Observables or Signals for async logic?**
+**[SENIOR] Q6 - [SCENARIO] When would you choose XState (state machines) over Observables or Signals for async logic?**
 
 XState models async workflows as explicit state machines:
 each state is named, each transition is explicit, impossible
@@ -753,7 +748,7 @@ const authMachine = createMachine({
 // Authenticated state cannot receive LOGIN (already auth'd)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using authentication. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 When XState adds complexity:
 - Simple fetch + display: overkill
@@ -768,8 +763,7 @@ be true simultaneously is impossible by construction.
 
 ---
 
-**Q7. How do you benchmark reactive vs imperative code to
-make an evidence-based architecture decision?**
+**[SENIOR] Q7 - [TRADE-OFF] How do you benchmark reactive vs imperative code to make an evidence-based architecture decision?**
 
 The metrics that matter:
 
@@ -804,8 +798,7 @@ if they chose XState and nobody had experience with it.
 
 ---
 
-**Q8. How do Reactive Extensions (RxJS) compare to async
-generators for complex async sequences?**
+**[SENIOR] Q8 - [MECHANISM] How do Reactive Extensions (RxJS) compare to async generators for complex async sequences?**
 
 Both can model async sequences. The key differences:
 
@@ -863,7 +856,7 @@ users$.pipe(
 ).subscribe(console.log);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing that async generators
 are pull-based (consumer controls pace) while Observables are
@@ -873,8 +866,7 @@ implementation (unsubscribe must stop the fetch loop).
 
 ---
 
-**Q9. How do Signals affect the performance model of
-Angular applications vs zone.js change detection?**
+**[SENIOR] Q9 - [TRADE-OFF] How do Signals affect the performance model of Angular applications vs zone.js change detection?**
 
 Zone.js (traditional Angular) change detection:
 - Monkey-patches async APIs: setTimeout, fetch, Promise
@@ -888,6 +880,7 @@ Signals (Angular 16+ with zoneless mode):
 - O(changed signals) per event: independent of tree size
 - 50% performance improvement typical for large apps
 
+{% raw %}
 ```typescript
 // Traditional (zone.js):
 @Component({
@@ -909,8 +902,9 @@ class Counter {
   // Angular knows EXACTLY which templates to update
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* The performance model difference:
 zone.js is O(N) regardless of what changed; Signals are O(changed
@@ -919,8 +913,7 @@ explains why large Angular apps benefit most from Signal migration.
 
 ---
 
-**Q10. How do you handle error state in reactive vs
-imperative architectures?**
+**[SENIOR] Q10 - [TRADE-OFF] How do you handle error state in reactive vs imperative architectures?**
 
 Imperative: try/catch is natural. Error state is in a variable.
 ```javascript
@@ -939,10 +932,15 @@ async function loadUser(id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Reactive: errors terminate the stream. Requires `catchError`
 to prevent stream death:
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: error terminates stream, no more events processed
 const user$ = userId$.pipe(
@@ -965,7 +963,7 @@ const user$ = userId$.pipe(
 // Next userId: fetchUser fires again
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 For Signals + resource():
 ```typescript
@@ -979,7 +977,7 @@ userResource = resource({
 // No try/catch needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* The "error terminates stream"
 behavior is the most common RxJS bug for developers coming from
@@ -988,8 +986,7 @@ building block for error resilience in reactive code.
 
 ---
 
-**Q11. How do you architect a feature that requires both
-imperative and reactive patterns?**
+**[SENIOR] Q11 - [DESIGN] How do you architect a feature that requires both imperative and reactive patterns?**
 
 The seam: use Observables/Signals at the boundary, async/await
 inside operations.
@@ -1037,7 +1034,7 @@ class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* The `from(asyncOperation())` bridge.
 The async function runs imperatively (try/catch, switch, sequential
@@ -1046,8 +1043,7 @@ coordination. The best of both models.
 
 ---
 
-**Q12. How do you evaluate when a reactive codebase has
-become over-engineered?**
+**[SENIOR] Q12 - [SCENARIO] How do you evaluate when a reactive codebase has become over-engineered?**
 
 Signs of reactive over-engineering:
 
@@ -1141,7 +1137,7 @@ Architecture boundary:
   Observable -> Promise: firstValueFrom, lastValueFrom
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Explicit decision mapping.
 Not "use reactive for everything" or "use async/await for

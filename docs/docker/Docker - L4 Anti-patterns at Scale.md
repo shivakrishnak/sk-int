@@ -89,6 +89,54 @@ toward pet."
 ### 📘 Concept Explanation
 
 **The ten anti-patterns, mechanisms, and fixes:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 ANTI-PATTERN CATALOGUE:
 
@@ -283,13 +331,13 @@ ANTI-PATTERN CATALOGUE:
   # Only the ConfigMap and Secret differ.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Only the ConfigMap and Secret differ. example demonstrates a key concept in practice using Promise. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** These are BAD-to-GOOD rewrites of the most
+> **Code walkthrough:** These are BAD-to-GOOD rewrites of the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > consequential anti-patterns - the ones that cause production incidents.
 
 ```yaml
@@ -312,7 +360,7 @@ spec:
           volumeMounts: []             # state in writable layer
 ```
 
-> **Code walkthrough:** This manifest accumulates seven anti-patterns
+> **Code walkthrough:** This manifest accumulates seven anti-patternsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > simultaneously. `latest` tag: different nodes run different code.
 > Shell form command: SIGTERM not forwarded to Java, causing hard kills.
 > Privileged: removes all Linux security mechanisms. No resource limits:
@@ -544,7 +592,7 @@ Remediation:
   kustomize edit set image myapp=myapp:1.2.3-$(git rev-parse --short HEAD)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prevention: enforce in CI with sed or kustomize: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

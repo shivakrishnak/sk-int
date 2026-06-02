@@ -68,7 +68,7 @@ with A-in, B-out. `andThen(Function<B, C>)`: plug two cables together, get A-in,
 ### 📘 Concept Explanation
 
 **Functional interface composition mechanics:**
-```
+```plaintext
 COMPOSITION OPERATORS:
 
   Function<T, R>:
@@ -115,11 +115,11 @@ HIGHER-ORDER FUNCTIONS:
 MEMOIZATION (caching function results):
   static <K, V> Function<K, V> memoize(Function<K, V> fn) {
       Map<K, V> cache = new ConcurrentHashMap<>();
-      return key -> cache.computeIfAbsent(key, fn);  // atomic, one compute per key
+      return key -> cache.computeIfAbsent(key, fn);  // atomic, one compute...
   }
   
   Function<Long, UserProfile> lookupProfile =
-      memoize(userId -> profileService.load(userId));  // DB hit only once per userId
+      memoize(userId -> profileService.load(userId));  // DB hit only once per...
 
 VALIDATION COMBINATOR PATTERN:
   @FunctionalInterface
@@ -136,7 +136,7 @@ VALIDATION COMBINATOR PATTERN:
   
   // Compose validators:
   Validator<String> notEmpty = s ->
-      s == null || s.isEmpty() ? Optional.of("must not be empty") : Optional.empty();
+      s == null || s.isEmpty() ? Optional.of("must not be empty") :...
   Validator<String> maxLength = s ->
       s != null && s.length() > 100 ? Optional.of("too long") : Optional.empty();
   
@@ -145,7 +145,7 @@ VALIDATION COMBINATOR PATTERN:
   nameValidator.validate("");       // Optional.of("must not be empty")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Functional Programming example demonstrates a key concept in practice using Optional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -155,6 +155,12 @@ VALIDATION COMBINATOR PATTERN:
 > steps into a reusable processing pipeline. Each step is independently testable, the pipeline
 > is lazily applied (Function composition creates descriptions, not results), and new steps can
 > be added without modifying existing code.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PIPELINE COMPOSITION:
@@ -304,7 +310,7 @@ Prevention:
     - Non-production / unit test scenarios
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -547,7 +553,7 @@ sorting)."
 ### 📘 Concept Explanation
 
 **Collector contract and built-in collectors:**
-```
+```plaintext
 COLLECTOR INTERFACE:
   
   interface Collector<T, A, R> {
@@ -585,7 +591,7 @@ STANDARD COLLECTORS:
   .collect(groupingBy(classifier, summingInt(fn)))   // Map<K, Integer>
   .collect(groupingBy(classifier, mapping(fn, toList()))) // Map<K, List<R>>
   .collect(groupingBy(classifier, toMap(...)))       // Map<K, Map<...>>
-  .collect(groupingBy(classifier, groupingBy(c2)))   // Map<K, Map<K2, List<T>>>
+  .collect(groupingBy(classifier, groupingBy(c2)))   // Map<K, Map<K2,...
   
   // PARTITION:
   .collect(partitioningBy(predicate))                // Map<Boolean, List<T>>
@@ -625,7 +631,7 @@ REDUCE vs COLLECT:
   // For numeric aggregation: use reduce or specialized IntStream.sum()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -791,7 +797,7 @@ Prevention: ALWAYS use the 3-arg toMap when uniqueness is not 100% guaranteed.
   Default: prefer groupingBy to toMap for grouping scenarios.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -169,7 +169,7 @@ Final response:
   "The current weather in Tokyo is 22°C and sunny."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Function Calling and Tool Use example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -249,7 +249,7 @@ def bad_product_lookup(product_id: str) -> str:
     # Model halluccinates prices and stock levels
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Model halluccinates prices and stock levels example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: tool use for real-time product lookup
@@ -356,7 +356,7 @@ def product_assistant(question: str) -> str:
             })
 ```
 
-> **Code walkthrough:** The BAD version asks the model
+> **Code walkthrough:** The BAD version asks the modelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > about current prices - it will hallucinate confidently.
 > The GOOD version defines a `get_product_info` tool with
 > a clear description including the instruction "Do not
@@ -569,7 +569,7 @@ while True:
     append resp + tool_results to messages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing the exact
 message structure (both the tool_use and tool_result
@@ -673,7 +673,7 @@ async def run_tool_calls(tool_use_blocks):
     return await asyncio.gather(*tasks)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 Latency impact: 3 sequential tool calls at 200ms each
 = 600ms. 3 parallel tool calls = ~200ms. For user-facing
@@ -777,7 +777,7 @@ def get_product(product_id: str) -> dict:
         }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition using error handling. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 The guidance field in error returns: the model reads
 the tool result and uses the guidance to decide the
@@ -834,7 +834,7 @@ Orchestrator system prompt:
   Compose their results into the final deliverable."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Agent-as-tool implementation: each worker agent is
 wrapped in a function that runs the full agent loop
@@ -1139,7 +1139,7 @@ CLIENT:
       update_ui(display_text)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Streaming LLM Responses example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1195,7 +1195,7 @@ def generate_blocking(prompt: str) -> str:
     # User waits 5-15 seconds with no feedback
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This User waits 5-15 seconds with no feedback example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: streaming with proper event handling
@@ -1256,7 +1256,7 @@ async def stream_chat(body: dict):
     )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Send completion event example demonstrates asyncio coroutine definition using Stream. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 ```python
 # STREAMING WITH TOOL USE: accumulate tool calls
@@ -1293,7 +1293,7 @@ def streaming_with_tools(
     return text, tool_calls
 ```
 
-> **Code walkthrough:** The BAD version blocks until
+> **Code walkthrough:** The BAD version blocks untilice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the full response arrives. The GOOD streaming version
 > prints each token immediately using `stream.text_stream`.
 > The FastAPI SSE endpoint wraps the stream in an async
@@ -1480,7 +1480,7 @@ data: {"text": "The"}\n\n
 data: {"text": " weather"}\n\n
 data: {"done": true}\n\n
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Get final message (includes complete tool calls) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The client subscribes to the event stream with the
 browser's EventSource API or a library.
@@ -1618,7 +1618,7 @@ async def stream_with_tools(messages, tools):
                "result": result}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Execute tool calls after stream completes example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 User experience pattern: display a "processing..."
 indicator while the tool call executes. When the
@@ -1781,6 +1781,46 @@ lower TTFT because the prefill computation is cached).
 *What separates good from great:* Explaining why prompt
 length affects TTFT (longer prompt = longer prefill),
 not just listing TTFT as a metric.
+
+---
+
+**[MID] Q7 - [TRADE-OFF] When would you NOT use streaming
+and prefer to wait for the full response?**
+
+Streaming improves perceived latency for interactive
+UIs. However, there are cases where streaming is wrong:
+
+(1) Post-processing required before display: if you
+    must format, validate, or transform the full response
+    before showing it (JSON parsing, content filtering,
+    translation), you need the complete response first.
+    Streaming tokens are not useful until complete.
+
+(2) Downstream API calls: if your app reads the response
+    and makes a follow-up API call based on it, you need
+    the full response before proceeding. Streaming adds
+    no value.
+
+(3) Batch processing and pipelines: no human is watching
+    the screen. Streaming overhead (connection management,
+    SSE parsing) is wasted.
+
+(4) Very short responses: for responses under ~50 tokens,
+    the TTFT difference between streaming and non-streaming
+    is minimal. The complexity of streaming is not justified.
+
+(5) Client can't handle SSE: some HTTP clients, proxies,
+    or mobile environments don't support long-lived
+    connections. Non-streaming is more compatible.
+
+Rule of thumb: stream when a human is waiting and watching.
+Don't stream when a machine is processing.
+
+*What separates good from great:* Candidates who can list
+when NOT to use a pattern demonstrate production experience
+beyond happy-path thinking. The key insight: streaming
+trades complexity for perceived latency. When perceived
+latency is irrelevant (batch, automation), the trade is unfavorable.
 
 ---
 

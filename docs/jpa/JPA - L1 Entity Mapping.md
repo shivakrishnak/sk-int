@@ -66,7 +66,13 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Entity annotation reference:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 MINIMAL ENTITY:
 
   @Entity  // required
@@ -179,7 +185,7 @@ ENUMTYPE.ORDINAL VS ENUMTYPE.STRING:
   // DB value is human-readable.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L1 Entity Mapping example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -302,7 +308,7 @@ Fix:
   Result: 100K inserts in ~5 seconds (60x improvement).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -389,7 +395,19 @@ question the "missing" IDs.
 ### 📘 Concept Explanation
 
 **Relationship mapping patterns:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 BIDIRECTIONAL @OneToMany / @ManyToOne (recommended):
 
   @Entity
@@ -509,7 +527,7 @@ CASCADETYPES REFERENCE:
     Prefer explicit cascade types: {PERSIST, MERGE} for most cases.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -632,7 +650,7 @@ Fix:
     VALUES (NULL, 'Product A', 1, 1)  // NULL confirms missing owning side set
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -718,7 +736,7 @@ with mappedBy for entities you insert frequently.
 ### 📘 Concept Explanation
 
 **Inheritance strategy comparison:**
-```
+```plaintext
 SINGLE_TABLE (default when no strategy specified):
 
   @Entity
@@ -748,7 +766,7 @@ SINGLE_TABLE (default when no strategy specified):
   
   DB table: payments
   | id | amount | payment_type  | card_number | cvv  | account_number | routing_number |
-  |----|--------|---------------|-------------|------|----------------|----------------|
+  |----|--------|---------------|-------------|------|----------------|--------...
   | 1  | 100.00 | CREDIT_CARD   | 4111...     | 123  | NULL           | NULL           |
   | 2  | 50.00  | BANK_TRANSFER | NULL        | NULL | 123456789      | 021000021      |
   
@@ -775,7 +793,7 @@ JOINED STRATEGY:
   DB tables:
     payments: id, amount
     credit_card_payments: id (FK -> payments.id), card_number, cvv
-    bank_transfer_payments: id (FK -> payments.id), account_number, routing_number
+    bank_transfer_payments: id (FK -> payments.id), account_number,...
   
   Query CreditCardPayment by id:
     SELECT p.id, p.amount, c.card_number, c.cvv
@@ -827,7 +845,7 @@ STRATEGY SELECTION:
     - Almost all cases (UNION ALL is slow, ID management complex)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -937,7 +955,7 @@ signal to use JOINED; not normalization purity.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Polymorphic query with JOINED strategy generates N+1 queries.**
-```
+```plaintext
 Symptom: loading 100 Notifications via JOINED strategy:
   SQL log shows 201 queries (1 SELECT + 1 per EmailNotification + 1 per SmsNotification).
 
@@ -958,7 +976,7 @@ Fix option 2: JOINED but with batch loading:
   // Hibernate fetches subtypes in batches of 50 instead of 1-at-a-time.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration using SQL. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 ---
 

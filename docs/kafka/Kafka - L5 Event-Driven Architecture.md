@@ -74,7 +74,7 @@ record: never deleted from the log. Any service that missed the broadcast: can r
 ### 📘 Concept Explanation
 
 **EDA patterns, anti-patterns, and design decisions:**
-```
+```plaintext
 EVENT DESIGN PRINCIPLES:
 
   Principle 1: Events are immutable facts (past tense).
@@ -242,7 +242,7 @@ EDA ANTI-PATTERNS:
     Fix: Avro/Protobuf with Schema Registry. Schema compatibility enforcement at produce time.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -432,7 +432,7 @@ single database transaction boundary or use a distributed transaction protocol (
     InventoryUnavailable -> Payment Service: refund, Order Service: cancel.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -489,7 +489,7 @@ flowchart LR
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: SAGA stuck in intermediate state - compensation did not run.**
-```
+```plaintext
 Symptom: Order 123 in state "Payment Charged" for 24 hours.
   No subsequent events: no InventoryReserved, no ShipmentCreated, no OrderCancelled.
   Customer support: customer charged but no order delivered.
@@ -516,7 +516,7 @@ Diagnosis:
 
 Fix short-term:
   Manually re-trigger the inventory reservation:
-    kafka-console-producer.sh --topic payment-events --property "key.separator=:"
+    kafka-console-producer.sh --topic payment-events --property...
     ord-123:{"type":"PaymentProcessed","orderId":"ord-123",...}
   
   Or: re-seek the inventory consumer group to before the stuck offset:
@@ -532,7 +532,7 @@ Fix long-term:
   4. Use a SAGA orchestrator (Temporal, Axon Server) for explicit state management.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -122,7 +122,7 @@ Flux.defer(() -> fetchUsers())         // lazy source
 // + demand signal flows backward (backpressure)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continuation-Passing Style and Event-Driven Theory example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 **Reactive Streams as principled CPS:**
 
@@ -139,7 +139,7 @@ consumer controls via `request(n)` (pull/push hybrid = backpressure).
 
 **Event-driven systems architecture:**
 
-```
+```plaintext
 Event-driven components:
   Producer (emits events) <-- knows nothing about consumers
   Event Bus / Broker      <-- routes events
@@ -158,7 +158,7 @@ vs. Direct call (RPC):
   - No backpressure: A overwhelms B
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continuation-Passing Style and Event-Driven Theory example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -272,7 +272,7 @@ class PrintSubscriber implements Subscriber<Integer> {
 }
 ```
 
-> **Code walkthrough:** The callback CPS example reveals "callback hell":
+> **Code walkthrough:** The callback CPS example reveals "callback hell":ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > every level needs its own error handling, and the structure mirrors the
 > dependency graph (nested = sequential dependencies). CompletableFuture's
 > `thenCompose` is the monadic bind operation: it flattens a `CF<CF<T>>` to
@@ -362,7 +362,7 @@ void fetchUser(String id,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 CompletableFuture handles this correctly via `completeExceptionally`.
 This is one reason CompletableFuture is safer than raw callbacks.
@@ -375,7 +375,7 @@ This is one reason CompletableFuture is safer than raw callbacks.
 
 ---
 
-#### Q1 - How are CompletableFuture operations related to monad theory?
+**[JUNIOR] Q1 - [CONCEPTUAL] How are CompletableFuture operations related to monad theory?**
 
 A monad is an abstraction for chaining operations that may have effects
 (like async delay, or possible failure). CompletableFuture satisfies
@@ -398,7 +398,7 @@ cf.thenCompose(f).thenCompose(g)
     // == cf.thenCompose(x -> f.apply(x).thenCompose(g))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 The monad operations:
 - `unit` (wrap): `CompletableFuture.completedFuture(value)`
@@ -414,7 +414,7 @@ one function call - valid because map is functorially composable.
 
 ---
 
-#### Q2 - How does the Reactive Streams specification define backpressure?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does the Reactive Streams specification define backpressure?**
 
 The specification (reactive-streams.org) defines the Subscriber-Publisher
 protocol with these rules governing backpressure:
@@ -447,7 +447,7 @@ class ControlledSubscriber<T>
 // sub.request(Long.MAX_VALUE) -> no backpressure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using generic type. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Rule 17 (Publisher): if the publisher cannot produce requested items,
 it must wait. It may not produce items until `request(n)` is called.
@@ -462,7 +462,7 @@ bridges between them using only the RS specification contract.
 
 ---
 
-#### Q3 - How does coroutine theory relate to Java virtual threads?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does coroutine theory relate to Java virtual threads?**
 
 Coroutines are functions that can suspend their execution and resume from
 the suspension point. Virtual threads implement this at the JVM level:
@@ -488,7 +488,7 @@ Kotlin coroutines (suspending functions):
   - Similar to virtual threads but at language level, not JVM level
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The key difference between Kotlin
 coroutines and Java virtual threads is the abstraction level. Kotlin
@@ -501,7 +501,7 @@ enable typed effects (structured concurrency via `CoroutineScope`).
 
 ---
 
-#### Q4 - What is the theoretical basis for operator fusion in reactive pipelines?
+**[MID] Q4 - [CONCEPTUAL] What is the theoretical basis for operator fusion in reactive pipelines?**
 
 Operator fusion is an optimization where adjacent operators in a reactive
 chain are merged into fewer operators (or one). The theoretical basis is
@@ -528,7 +528,7 @@ Flux.range(1, 1000)
 // avoids scheduling overhead for completed publishers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fusion is safe because of the monad functor law:
 `flux.map(f).map(g) == flux.map(f.andThen(g))`
@@ -548,7 +548,7 @@ thread boundary.
 
 ---
 
-#### Q5 - How does the push-pull duality work in reactive streams?
+**[MID] Q5 - [CONCEPTUAL] How does the push-pull duality work in reactive streams?**
 
 Reactive Streams uses a "push-pull" hybrid:
 - Publisher PUSHES items when demanded
@@ -582,7 +582,7 @@ Example:
   Effective throughput: near-continuous; no overflow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The `request(n)` size is a throughput
 tuning parameter. Small n (request(1)) = minimal buffering, maximum latency,
@@ -595,7 +595,7 @@ this for the specific use case (throughput vs memory) is L4-level knowledge.
 
 ---
 
-#### Q6 - How do event-driven and reactive programming relate to the Observer pattern?
+**[MID] Q6 - [ARCHITECTURE] How do event-driven and reactive programming relate to the Observer pattern?**
 
 The Observer pattern (GoF) is the predecessor of reactive programming:
 
@@ -635,7 +635,7 @@ Flux<ButtonEvent> buttonEvents = Flux.create(sink -> {
 // Now composable: filter, map, buffer, error handle
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using SQL. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The missing backpressure in Observer was
 recognized as a fundamental flaw when reactive streaming emerged. Without
@@ -647,7 +647,7 @@ it the rigorous evolution of Observer.
 
 ---
 
-#### Q7 - What are the theoretical guarantees of the Reactive Streams specification?
+**[SENIOR] Q7 - [CONCEPTUAL] What are the theoretical guarantees of the Reactive Streams specification?**
 
 The specification provides four formal guarantees:
 
@@ -694,7 +694,7 @@ class RangePublisherTest
 // Run: 37 spec compliance tests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Rule 2.13 of the specification:
 `Subscriber.onError` must not be called with null. This seems obvious but
@@ -706,7 +706,7 @@ to add context before errors propagate to subscribers.
 
 ---
 
-#### Q8 - How does the concept of hot vs cold publishers map to CPS theory?
+**[SENIOR] Q8 - [CONCEPTUAL] How does the concept of hot vs cold publishers map to CPS theory?**
 
 In CPS theory, a continuation is "cold" if it's defined but not yet invoked.
 It becomes "hot" when invoked (execution begins):
@@ -730,7 +730,7 @@ Hot publisher (CPS equivalent: ongoing execution, subscriber joins mid-stream):
   sink.tryEmitNext(item2);      // both s1 and any future subscribers see this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Practical implications:
 - Cold: each subscribe = independent, isolated execution
@@ -749,7 +749,7 @@ reconnects. For truly hot streams that need replay: use `replay().autoConnect()`
 
 ---
 
-#### Q9 - How does actor model theory compare to reactive programming?
+**[SENIOR] Q9 - [TRADE-OFF] How does actor model theory compare to reactive programming?**
 
 Both actor model and reactive programming address concurrent computation,
 but with different primitives:
@@ -776,7 +776,7 @@ Overlap:
   Full Reactive Streams compliance via Graph DSL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Actor model excels at distributed systems
 (actors across network, supervisor trees, location transparency). Reactive
@@ -979,7 +979,7 @@ properties.
 
 **The four traits:**
 
-```
+```plaintext
 1. RESPONSIVE
    Definition: system responds in timely manner consistently
    Practical: define SLA; detect and handle degradation proactively
@@ -1009,7 +1009,7 @@ properties.
    Key property: backpressure (consumer controls rate)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive Manifesto and Reactive Systems Theory example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why Message-Driven enables the others:**
 
@@ -1030,7 +1030,7 @@ With Message-Driven (async messaging via Kafka):
     Resilience and elasticity emerge from the decoupling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive Manifesto and Reactive Systems Theory example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1114,7 +1114,7 @@ public void handleOrderEvent(OrderEvent event) {
 }
 ```
 
-> **Code walkthrough:** Pattern 1 shows responsiveness: a 500ms timeout
+> **Code walkthrough:** Pattern 1 shows responsiveness: a 500ms timeoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the SLA contract. If `userService` exceeds it, the system falls back
 > to cache rather than blocking the caller indefinitely. Pattern 2 shows
 > resilience: the bulkhead limits how many threads can be tied to a failing
@@ -1206,7 +1206,7 @@ Fix:
   # No cascade (fast failure vs slow degradation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cascade failures often start from a
 single slow downstream service during a maintenance window or traffic spike.
@@ -1223,7 +1223,7 @@ than cascading.
 
 ---
 
-#### Q1 - How do the four Reactive Manifesto traits relate to each other?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do the four Reactive Manifesto traits relate to each other?**
 
 The traits form a dependency graph:
 
@@ -1245,7 +1245,7 @@ With Message-Driven:
   Resilience + Elasticity -> system stays Responsive
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* There's a tension between Responsive
 and Resilient. A maximally resilient system retries failed requests up to
@@ -1259,7 +1259,7 @@ cascade slow-downs.
 
 ---
 
-#### Q2 - How does backpressure fit into the Reactive Manifesto?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does backpressure fit into the Reactive Manifesto?**
 
 Backpressure is mentioned in the Manifesto under Message-Driven:
 "Back-pressure is an important feedback mechanism that allows systems to
@@ -1278,7 +1278,7 @@ With backpressure:
   Result: queue stable; system survives; no collapse
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Backpressure strategies when consumer is too slow:
 1. **Drop** (onBackpressureDrop): lose excess messages (acceptable for sensor data)
@@ -1295,7 +1295,7 @@ reduce producer rate, or shed load gracefully.
 
 ---
 
-#### Q3 - How do you evaluate whether a system satisfies the Resilience trait?
+**[JUNIOR] Q3 - [ARCHITECTURE] How do you evaluate whether a system satisfies the Resilience trait?**
 
 Resilience evaluation framework:
 
@@ -1303,7 +1303,7 @@ Resilience evaluation framework:
 For each critical dependency: what happens to the system when this dependency
 is unavailable?
 
-```
+```plaintext
 Dependency: User Service
 What happens when User Service is down?
   A) System serves cached data and degrades gracefully: RESILIENT
@@ -1311,7 +1311,7 @@ What happens when User Service is down?
   C) System is completely unavailable: NOT RESILIENT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **2. Bulkhead test**
 Can one slow dependency impact other parts of the system?
@@ -1323,7 +1323,7 @@ Test: slow User Service (500ms latency)
   NO: bulkheads in place; services isolated
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **3. Recovery test**
 When a failed dependency recovers, does the system resume normally?
@@ -1336,7 +1336,7 @@ Verify: Circuit breaker transitions OPEN -> HALF-OPEN -> CLOSED
         System resumes normal operation within 2 circuit half-open attempts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "Chaos Engineering" approach formalizes
 resilience verification. Teams define a "steady state" (normal metrics),
@@ -1347,7 +1347,7 @@ without production risk.
 
 ---
 
-#### Q4 - How does elasticity differ from simple auto-scaling?
+**[MID] Q4 - [CONCEPTUAL] How does elasticity differ from simple auto-scaling?**
 
 Elasticity in the Manifesto is more than adding instances. It requires:
 
@@ -1381,7 +1381,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No cascade (fast failure vs slow degradation) example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Kubernetes Horizontal Pod Autoscaler
 default: scale on CPU/memory. For message-driven services: scale on Kafka
@@ -1392,12 +1392,12 @@ a proxy metric like CPU.
 
 ---
 
-#### Q5 - What is the relationship between the Reactive Manifesto and microservices?
+**[MID] Q5 - [CONCEPTUAL] What is the relationship between the Reactive Manifesto and microservices?**
 
 Both address the same fundamental problem: building systems that scale and
 remain available. They're complementary:
 
-```
+```plaintext
 Microservices:
   - Decompose system into independently deployable services
   - Each service: focused responsibility, small team ownership
@@ -1417,7 +1417,7 @@ Combined (Reactive Microservices):
   - SLA per endpoint, alerts on degradation (Responsive)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Without the Manifesto traits, microservices can make things worse:
 more services = more service-to-service calls = more failure points =
@@ -1433,7 +1433,7 @@ most common microservices mistake, and the Manifesto directly addresses it.
 
 ---
 
-#### Q6 - How does the concept of Location Transparency fit into reactive systems?
+**[MID] Q6 - [ARCHITECTURE] How does the concept of Location Transparency fit into reactive systems?**
 
 Location transparency: a consumer doesn't need to know where a producer is
 (local vs remote, which instance, which region). This is enabled by
@@ -1459,7 +1459,7 @@ Reactive Streams (in-process):
   // Location transparent within JVM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Akka's actor model makes location
 transparency explicit: actor references (`ActorRef`) work the same whether
@@ -1472,7 +1472,7 @@ reactive systems.
 
 ---
 
-#### Q7 - What are the limits of the Reactive Manifesto as a design guide?
+**[SENIOR] Q7 - [ARCHITECTURE] What are the limits of the Reactive Manifesto as a design guide?**
 
 The Manifesto is intentionally high-level. It defines WHAT, not HOW.
 Practical limitations:
@@ -1506,12 +1506,12 @@ is a valid choice, as long as the trade-off is conscious and documented.
 
 ---
 
-#### Q8 - How does event sourcing relate to reactive system principles?
+**[SENIOR] Q8 - [ARCHITECTURE] How does event sourcing relate to reactive system principles?**
 
 Event sourcing stores state as an ordered sequence of events. This aligns
 with reactive principles:
 
-```
+```plaintext
 Traditional state storage:
   DB: {orderId: 1, status: "SHIPPED", amount: 100}
   Update: overwrite status to "DELIVERED"
@@ -1529,7 +1529,7 @@ Reactive alignment:
   Responsive: event-driven handlers respond to events (async)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Event-sourced order aggregate:
@@ -1559,7 +1559,7 @@ public class OrderAggregate {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Event sourcing + Kafka is a natural
 reactive system pattern. Events are produced to Kafka (Message-Driven).
@@ -1571,7 +1571,7 @@ minimal coupling.
 
 ---
 
-#### Q9 - How would you explain the Reactive Manifesto to a team unfamiliar with it?
+**[SENIOR] Q9 - [CONCEPTUAL] How would you explain the Reactive Manifesto to a team unfamiliar with it?**
 
 Framing for a Java team:
 

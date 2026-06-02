@@ -135,7 +135,7 @@ Rule 3 - Receive event:
   → Increment VCi[i] (own slot)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Clocks and Causal Consistency example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Comparison algorithm:**
 
@@ -157,7 +157,7 @@ static boolean concurrent(int[] a, int[] b) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Clocks and Causal Consistency example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Four possible relationships between events A and B:**
 
@@ -177,7 +177,7 @@ static boolean concurrent(int[] a, int[] b) {
    A.vc[i] == B.vc[i] for ALL i
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Clocks and Causal Consistency example demonsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Causal consistency (definition):**
 
@@ -202,7 +202,7 @@ Example:
   Y=10 is causally dependent on X=5.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Vector Clocks and Causal Consistency example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Version vectors vs. vector clocks:**
 
@@ -220,7 +220,7 @@ Version vector example (DynamoDB-style):
     (it was not concurrent: vv dominates both previous vvs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Vector clocks are a precise formalization of causality: "who knew
@@ -255,6 +255,12 @@ they are mutually ignorant of each other's events: concurrent."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: using wall-clock time to detect concurrent updates
@@ -377,7 +383,7 @@ public class ReplicatedStore<T> {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern uses wall-clock time
+> **Code walkthrough:** The BAD pattern uses wall-clock timeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (`System.currentTimeMillis()`), which fails when two nodes
 > write at nearly the same time (same or inverted timestamps
 > due to NTP skew). The GOOD `VectorClock` class implements
@@ -455,13 +461,13 @@ with no causal relationship.
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Order type | Captures causality? | Space per event | Conflict detection | Use case |
-|---|---|---|---|---|---|
-| Physical clock | Total (approx) | No | O(1) | No (ties) | Logging, LWW |
-| Lamport timestamp | Total (logical) | Partial (→ implies <, not vice versa) | O(1) | No | Event ordering |
-| Vector clock | Partial | Yes (exact) | O(N) | Yes | Multi-master replication |
-| Hybrid Logical Clock | Total | Partial | O(1) | No | Cross-DC ordering |
-| Dotted Version Vector | Partial | Yes + compacts | O(N) | Yes + tombstone mgmt | Production Riak |
+| Mechanism| Order type| Captures causality?| Space per event| Conflict detectio
+|---|---|--------|---------------|--------------------|------------------------|
+| Physical clock| Total (approx)| No| O(1)| No (ties)| Logging, LWW|
+| Lamport timestamp| Total (logical)| Partial (→ implies <, not vice versa)| O(1
+| Vector clock| Partial| Yes (exact)| O(N)| Yes| Multi-master replication|
+| Hybrid Logical Clock| Total| Partial| O(1)| No| Cross-DC ordering|
+| Dotted Version Vector| Partial| Yes + compacts| O(N)| Yes + tombstone mgmt| Pr
 
 **The deciding factor:** if you need exact concurrent vs. causal
 distinction for conflict resolution: use vector clocks or DVVs.
@@ -528,7 +534,7 @@ Cross-replica sync:
   (Gossip protocol, O(N^2) messages in worst case)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -567,7 +573,7 @@ sequenceDiagram
     P2->>P3: msg (vc=[1,2,0])
     Note over P3: merge([1,2,0],[0,0,0])→[1,2,0]<br/>tick P3 → [1,2,1]
     Note over P1: independent event<br/>tick P1 → [2,0,0]
-    Note over P1,P3: Compare [2,0,0] vs [1,2,1]<br/>P1[0]=2>P3[0]=1 AND P1[1]=0<P3[1]=2<br/>→ CONCURRENT (no causal relation)
+    Note over P1,P3: Compare [2,0,0] vs [1,2,1]<br/>P1[0]=2>P3[0]=1 AND P1[1]=0<
     Note over P2: local event<br/>tick P2 → [1,3,0]
 ```
 
@@ -606,7 +612,7 @@ Measure vector clock sizes in production:
 Average vector size growing? Pruning not working?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: dotted version vectors (Riak). A dotted version vector
 uses a compact representation: instead of one slot per node,
@@ -644,7 +650,7 @@ Diagnosis:
 #   (missing A:1 - cannot serve reply without showing comment)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cannot serve reply without showing comment) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: causal dependency tracking in the read path. Before
 serving value V with VC=[A:1,B:1,C:0]: verify that the
@@ -686,7 +692,7 @@ public int[] receive(int[] incoming) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cannot serve reply without showing comment) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 After the bug: receiving node loses its own causal history
 when processing an incoming message, causing all subsequent
@@ -714,10 +720,9 @@ the merge is not working.
 
 ---
 
-**Q1 (Clarification) - What is the relationship between vector
-clocks and causal consistency?**
+**[JUNIOR] Q1 - [MECHANISM] What is the relationship between vector clocks and causal consistency?**
 
-A: They are related but distinct:
+They are related but distinct:
 
 Vector clocks are a tool (data structure + algorithm) for tracking
 causal dependencies between events in a distributed system. Given
@@ -754,10 +759,9 @@ the full-power tool vs. a bounded approximation.
 
 ---
 
-**Q2 (Mechanism) - How does Riak use vector clocks for conflict
-detection? What is a sibling?**
+**[JUNIOR] Q2 - [MECHANISM] How does Riak use vector clocks for conflict detection? What is a sibling?**
 
-A: Riak is a distributed key-value store that uses vector clocks
+Riak is a distributed key-value store that uses vector clocks
 to detect concurrent writes. When two or more writes to the same
 key have no causal relationship (neither's vector clock dominates
 the other): Riak stores both versions as "siblings" (concurrent
@@ -777,7 +781,7 @@ Riak stores both siblings:
   ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This cannot serve reply without showing comment) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 On the next GET of key=user:42 with multiple siblings: Riak
 returns all siblings. The client (or application) is responsible
@@ -811,10 +815,9 @@ anti-pattern that degrades performance).
 
 ---
 
-**Q3 (Mechanism) - Walk through the vector clock math for three
-processes with message passing. Show concrete vector values.**
+**[JUNIOR] Q3 - [MECHANISM] Walk through the vector clock math for three processes with message passing. Show concrete vector values.**
 
-A: Concrete walkthrough:
+Concrete walkthrough:
 
 Setup: 3 processes P0, P1, P2.
 Initial vectors: all [0,0,0].
@@ -861,7 +864,7 @@ causal relation to P2's history (which includes P0's first
 from P1 or P2 between e1 and e3.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the clear "what this means"
 interpretation. Many engineers can mechanically apply the rules
@@ -874,10 +877,9 @@ views of the world.
 
 ---
 
-**Q4 (Trade-off) - When would you choose last-writer-wins over
-vector clocks? What do you lose?**
+**[MID] Q4 - [TRADE-OFF] When would you choose last-writer-wins over vector clocks? What do you lose?**
 
-A: Last-writer-wins (LWW) uses a timestamp (or sequence number)
+Last-writer-wins (LWW) uses a timestamp (or sequence number)
 to determine which version to keep on conflict: the one with
 the most recent timestamp wins. When to choose LWW:
 
@@ -936,10 +938,9 @@ domain semantics: can silent data loss occur, and is it acceptable?
 
 ---
 
-**Q5 (Failure / Debugging) - Your distributed store shows many
-"conflict" responses post-deployment. How do you debug?**
+**[MID] Q5 - [DEBUGGING] Your distributed store shows many "conflict" responses post-deployment. How do you debug?**
 
-A: Systematic investigation:
+Systematic investigation:
 
 Step 1 - Check if conflicts existed pre-deployment:
 ```bash
@@ -950,7 +951,7 @@ riak-admin bucket-type status default | grep -A2 "siblings"
 # concurrent writes that were previously serialized
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concurrent writes that were previously serialized example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2 - Identify which keys/operations generate conflicts:
 ```bash
@@ -961,9 +962,15 @@ grep "CONFLICT\|siblings\|concurrent_versions" /var/log/app.log \
 # Conflict rate by operation type
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict rate by operation type example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Check the context propagation:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // Most common conflict cause: client not sending context
 // BAD: write without reading first
@@ -978,7 +985,7 @@ client.put("user:42", newValue, ctx);
 // the client read, not a concurrent write
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Conflict rate by operation type example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Step 4 - If conflicts are genuine (two real concurrent writers):
 Check if LWW is acceptable for this key type, or implement
@@ -994,7 +1001,7 @@ public Cart mergeSiblings(List<Cart> siblings) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict rate by operation type example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 5 - If test environment shows no conflicts but production does:
 Check production write patterns. Concurrent writers in production
@@ -1012,10 +1019,9 @@ conflict resolution logic.
 
 ---
 
-**Q6 (Trade-off) - How do Hybrid Logical Clocks (HLC) compare
-to vector clocks? When does Google Spanner use physical clocks?**
+**[SENIOR] Q6 - [TRADE-OFF] How do Hybrid Logical Clocks (HLC) compare to vector clocks? When does Google Spanner use physical clocks?**
 
-A: Three approaches to distributed time:
+Three approaches to distributed time:
 
 **Vector clocks:**
 - Captures: exact causality, identifies concurrent events
@@ -1027,13 +1033,13 @@ A: Three approaches to distributed time:
 - Combines: physical time (NTP) + logical counter
 - Space: O(1) per event (single HLC value, not a vector)
 - Algorithm:
-  ```
+  ```plaintext
   HLC = (physical_time, logical_counter)
   On send: l = max(l, ntp_time); c++; send (l, c)
   On receive(l_m, c_m): l = max(l, l_m, ntp_time);
     c = if l == l_m then max(c, c_m)+1 else 0
   ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict rate by operation type example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Provides: total order (if physical times equal: logical
   counter breaks tie). All events have unique HLC values.
@@ -1071,10 +1077,9 @@ matters: it reduces the commit wait from seconds to milliseconds.
 
 ---
 
-**Q7 (Code) - Implement concurrent-safe read-modify-write using
-vector clocks in a distributed store.**
+**[SENIOR] Q7 - [SCENARIO] Implement concurrent-safe read-modify-write using vector clocks in a distributed store.**
 
-A: The read-modify-write pattern using vector clocks requires
+The read-modify-write pattern using vector clocks requires
 the "context echo" pattern: always include the version context
 from the last read in the next write.
 
@@ -1161,7 +1166,7 @@ class ConflictException extends Exception {
 }
 ```
 
-> **Code walkthrough:** The `CausalStore` implements the core
+> **Code walkthrough:** The `CausalStore` implements the coreice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > vector clock contract: reads return both the value and its
 > version (context). Writes require the client to echo back the
 > context from their last read. If the current store version
@@ -1177,8 +1182,7 @@ class ConflictException extends Exception {
 
 ---
 
-**Q8 (System Design) - Design the replication and conflict
-detection for a distributed shopping cart using vector clocks.**
+**[SENIOR] Q8 - [DESIGN] Design the replication and conflict detection for a distributed shopping cart using vector clocks.**
 
 A:
 ```
@@ -1236,7 +1240,7 @@ Scale:
   This keeps vector size constant as system scales
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the explicit deletion
 tombstone requirement. Without tombstones: if user A removes
@@ -1248,10 +1252,9 @@ same insight underlying CRDT OR-Set design.
 
 ---
 
-**Q9 (Production) - How does Amazon DynamoDB handle concurrent
-writes in practice? What changed between 2007 and today?**
+**[SENIOR] Q9 - [SCENARIO] How does Amazon DynamoDB handle concurrent writes in practice? What changed between 2007 and today?**
 
-A: Amazon's handling of concurrent writes has evolved significantly:
+Amazon's handling of concurrent writes has evolved significantly:
 
 **2007 DynamoDB (Dynamo paper - S3/SimpleDB precursor):**
 - Used vector clocks for multi-version conflict detection
@@ -1277,7 +1280,7 @@ A: Amazon's handling of concurrent writes has evolved significantly:
   // If version changed since read: ConditionCheckFailed
   // Client must retry
   ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Transactions (2018): ACID transactions using OCC
   (optimistic concurrency control) across multiple items
@@ -1309,10 +1312,9 @@ was replaced in practice shows production engineering maturity.
 
 ---
 
-**Q10 (Behavioral) - Describe a time you designed or debugged
-a system with concurrent update problems. How did you resolve it?**
+**[SENIOR] Q10 - [BEHAVIORAL] Describe a time you designed or debugged a system with concurrent update problems. How did you resolve it?**
 
-A: Example answer structure:
+Example answer structure:
 
 "At [company], we had a multi-region user preferences system.
 Users could update preferences from any device: mobile, web,
@@ -1355,10 +1357,9 @@ design sophistication: "it depends on the data model."
 
 ---
 
-**Q11 (Mechanism) - What is a dotted version vector and why
-was it introduced over plain vector clocks?**
+**[SENIOR] Q11 - [MECHANISM] What is a dotted version vector and why was it introduced over plain vector clocks?**
 
-A: A dotted version vector (DVV) is an optimization over version
+A dotted version vector (DVV) is an optimization over version
 vectors that solves two problems in production systems:
 
 **Problem 1: False conflicts from deletes**
@@ -1390,7 +1391,7 @@ DVV issue resolved? The problem is more subtle:
   Known as the "deleted value reappears" bug.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **DVV solution:**
 DVV stores a "dot" - the exact (node, counter) pair of the write
@@ -1415,7 +1416,7 @@ Tombstone:
   This precisely identifies which version to delete.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the "deleted value reappears"
 bug. This is a non-obvious production failure mode that motivated
@@ -1429,9 +1430,7 @@ failure modes, not just theoretical elegance.
 
 ---
 
-**Q12 (Behavioral) - How do you explain vector clocks to a
-non-technical product manager during an incident about
-conflicting cart items?**
+**[SENIOR] Q12 - [BEHAVIORAL] How do you explain vector clocks to a non-technical product manager during an incident about conflicting cart items?**
 
 A:
 "Think of it like Google Docs version history, but for your

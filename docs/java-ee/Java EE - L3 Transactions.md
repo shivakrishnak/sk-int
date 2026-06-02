@@ -132,7 +132,7 @@ TRANSACTION MANAGER:
     -> "JMS, rollback" -> JMS: rolled back
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JTA Distributed Transactions example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **XA DataSource configuration (WildFly):**
 
@@ -158,7 +158,7 @@ TRANSACTION MANAGER:
 </xa-datasource>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JTA Distributed Transactions example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **JTA transaction in EJB:**
 
@@ -183,7 +183,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JTA Distributed Transactions example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -292,7 +292,7 @@ public class OutboxProcessor {
 }
 ```
 
-> **Code walkthrough:** Two approaches to the same
+> **Code walkthrough:** Two approaches to the sameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > problem: atomically save an order and send a
 > notification. The JTA approach with XA requires
 > both the database and JMS broker to support the XA
@@ -382,7 +382,7 @@ SELECT gid, prepared, owner FROM pg_prepared_xacts;
 ls standalone/data/tx-object-store/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Resolution:*
 ```sql
@@ -394,7 +394,7 @@ ROLLBACK PREPARED 'gid-from-above';
 COMMIT PREPARED 'gid-from-above';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ---
 
@@ -677,6 +677,132 @@ Complexity: designing and testing compensating transactions."
 
 ---
 
+**[SENIOR] Q10 - [DEBUGGING] A JTA 2PC transaction is stuck in "prepared" state. How do you recover?**
+
+Symptoms: transaction log shows the transaction in
+PREPARED state; resource (database or JMS) shows
+uncommitted locks; application is blocked.
+
+Root causes:
+1. Coordinator crashed between Prepare and Commit phases
+2. Resource manager unavailable during Commit phase
+3. Network partition during Commit phase
+
+Recovery steps:
+
+WildFly/JBoss (Narayana transaction manager):
+```bash
+# Find stuck transactions
+/subsystem=transactions:read-attribute(name=log-store)
+
+# Recover via JMX or CLI
+/subsystem=transactions/log-store=log-store:recover
+```
+
+> **Code walkthrough:** These WildFly CLI commands read the transaction log store and trigger the recovery scanner. KEY MECHANISM: Narayana (WildFly's transaction manager) persists transaction state to a write-ahead log; the recovery module periodically replays PREPARED transactions against resource managers to complete them. WHY IT MATTERS: without running recovery, stuck XA transactions hold database row locks indefinitely, blocking other operations. WHAT BREAKS: tables with row-level locks appear deadlocked to other transactions. TAKEAWAY: enable automatic recovery scanning (`recovery-listener=true`) in production; manual recovery is the last resort.
+1. Identify the XID (transaction ID) from logs
+2. Connect to each resource manager (DB, JMS)
+3. For database: `SELECT * FROM xa_recovery_view`
+   or equivalent (vendor-specific)
+4. Manually commit or rollback based on business outcome
+5. Update the transaction log to match
+
+Prevention: transaction timeout (prevents indefinite
+locks), idempotent operations (safe to commit or
+rollback twice if transaction log is unclear).
+
+*What separates good from great:* "The recovery
+log is the source of truth. A transaction that is
+in the log in PREPARED state was not committed.
+A transaction that is not in the log was either
+committed or never prepared. Understanding this
+prevents manual recovery mistakes."
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] JTA 2PC adds latency to every transaction. How do you measure and minimize this overhead?**
+
+Measurement:
+1. Add timing to transaction boundaries:
+   `long start = System.nanoTime()` before business
+   logic, log duration at AFTER_COMPLETION observer.
+2. Compare: single-resource transaction (no XA) vs
+   two-resource XA transaction. The XA overhead is
+   the difference.
+3. JVM metrics: `@Counted` transactions/sec,
+   `@Timed` transaction duration histogram.
+
+Typical overhead:
+- Single-resource local transaction: ~1-5ms
+- Two-resource XA transaction: ~10-50ms
+- Three-resource XA transaction: ~30-100ms
+
+Minimization strategies:
+
+(1) Use LRC (Last Resource Commit) optimization.
+    One resource uses non-XA commit as the last step.
+    Reduces prepare round-trips.
+
+(2) Connection pool sizing. Enlisting XA resources
+    requires JDBC connection acquisition before
+    business logic. Pool exhaustion adds queuing time.
+
+(3) Minimize resources per transaction. Separate
+    writes to external systems (email, metrics) from
+    the JTA transaction. Use the Outbox pattern.
+
+(4) Read-only transactions don't need 2PC.
+    `@TransactionAttribute(SUPPORTS)` for read-only
+    EJBs. Saves prepare phase entirely.
+
+*What separates good from great:* "Read-only
+optimization is the easiest win and most commonly
+missed. Every SELECT-only EJB method that uses
+REQUIRED propagation pays for a 2PC it never needs."
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] Describe a production data integrity issue caused by transaction misuse in a Jakarta EE application.**
+
+> Structure: the setup, the failure mode, detection,
+> fix, and prevention.
+
+Example answer:
+"We had an OrderService with @Stateless EJB. The
+placeOrder method: (1) deduct inventory, (2) charge
+payment, (3) send confirmation email via JavaMail.
+
+The bug: JavaMail was enlisted in the JTA transaction.
+If payment succeeded but email delivery failed, the
+transaction rolled back - including the payment charge
+deduction. But the payment processor had already charged
+the customer's card. The rollback reversed our internal
+accounting record but not the real charge.
+
+Detection: customer reported being charged without
+receiving an order confirmation. Correlation of payment
+logs vs. order database revealed mismatched records.
+
+Fix: removed JavaMail from the JTA transaction scope.
+Email sending became a CDI @Observes(during=AFTER_SUCCESS)
+observer. If email fails, the order is still committed.
+Email failures go to a dead letter queue for retry.
+
+Prevention: created a design rule: only database operations
+belong in JTA transactions. External side effects (email,
+REST calls, external APIs) must be decoupled via events
+or the Outbox pattern. Reviewed all @Stateless EJBs for
+external-system calls inside transaction scope."
+
+*What separates good from great:* "The insight is
+that JTA transactions are not a general-purpose
+rollback mechanism for all operations. External systems
+that don't support 2PC cannot be reliably rolled back.
+The correct design separates external side effects from
+transactional boundaries."
+
+---
+
 ---
 
 ---
@@ -792,7 +918,7 @@ SUPPORTS      | No TX (ok)   | Join existing TX
 NOT_SUPPORTED | No TX (ok)   | Suspend, no TX
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Transaction Propagation in EJBs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Call chain propagation:**
 
@@ -811,7 +937,7 @@ RuntimeException in reserve():
   placeOrder() ends -> RollbackException
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Transaction Propagation in EJBs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **@ApplicationException and rollback:**
 
@@ -825,11 +951,17 @@ public class InsufficientStockException extends Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Transaction Propagation in EJBs example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Transaction propagation across EJB services
@@ -956,7 +1088,7 @@ public class GoodService {
 }
 ```
 
-> **Code walkthrough:** The OrderService demonstrates
+> **Code walkthrough:** The OrderService demonstratesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the two most important propagation behaviors. REQUIRED
 > on inventory.reserve() means it joins the caller's
 > transaction - if it fails, the whole order fails.
@@ -1046,7 +1178,7 @@ grep -B50 "RollbackException" standalone/log/server.log \
 # Look for: "setRollbackOnly" entries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: "setRollbackOnly" entries example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```java
@@ -1064,7 +1196,7 @@ public void riskyOperation() {
 public class BusinessException extends Exception { }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: "setRollbackOnly" entries example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1173,7 +1305,7 @@ public class AuditService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: "setRollbackOnly" entries example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Use case: helper methods that MUST participate in
 the caller's transaction. Enforces correct usage
@@ -1209,7 +1341,7 @@ public String readFromLegacy(String path) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: "setRollbackOnly" entries example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "NOT_SUPPORTED is
 the correct pattern for legacy integration points
@@ -1250,7 +1382,7 @@ public class CdiService {
 public void process(Order o) throws BusinessException {}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* "In Jakarta EE 10+,
 CDI @Transactional is preferred. The rollbackOn attribute
@@ -1282,7 +1414,7 @@ grep -B50 "RollbackException" server.log | grep -i exception
 # Grep for "setRollbackOnly"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Grep for "setRollbackOnly" example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: use REQUIRES_NEW to isolate, or accept the rollback
 and let the entire operation fail.
@@ -1346,7 +1478,7 @@ public Future<Void> sendAsync(Long orderId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Grep for "setRollbackOnly" example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: pass data as parameters, not re-read from DB.
 
@@ -1382,7 +1514,7 @@ public OrderResult placeOrder(Order order) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Grep for "setRollbackOnly" example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Check rollback status: `ctx.getRollbackOnly()`.
 
@@ -1422,7 +1554,7 @@ public class BatchService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Grep for "setRollbackOnly" example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "BMT-to-CMT non-propagation
 is non-obvious. If you need the CMT method to participate
@@ -1469,13 +1601,146 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Grep for "setRollbackOnly" example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* "Deadlock retry is
 the most valuable transaction interceptor pattern.
 At 1% deadlock rate with 3 retries, effective deadlock
 rate is 0.01% - often acceptable without application
 logic changes."
+
+---
+
+**[SENIOR] Q10 - [DEBUGGING] setRollbackOnly was called somewhere in the call chain but you can't find where. How do you diagnose?**
+
+Symptoms: transaction commits fail with
+"Transaction is marked for rollback only"; no exception
+thrown in the outer service method.
+
+Diagnosis:
+
+1. Add logging to UserTransaction.getStatus() before
+   each EJB method returns:
+   ```java
+   @Resource UserTransaction ut;
+   // in finally block:
+   log.debug("TX status: {}", ut.getStatus());
+   // Status 4 = STATUS_MARKED_ROLLBACK
+   ```
+
+   > **Code walkthrough:** Logging the UserTransaction status after each EJB method reveals which step marks the transaction for rollback. KEY MECHANISM: `getStatus()` returns an integer constant from `javax.transaction.Status`; status 4 (`STATUS_MARKED_ROLLBACK`) means `setRollbackOnly` was called and the transaction cannot commit. WHY IT MATTERS: once marked rollback-only, all subsequent work in the transaction is futile - the commit will fail. WHAT BREAKS: components that catch exceptions and continue processing after a rollback-only mark waste resources on work that will be discarded. TAKEAWAY: check transaction status at method boundaries; exit early if rollback-only is set.
+   WildFly: `logging.level.org.jboss.tm=TRACE`
+   Shows which component called setRollbackOnly.
+
+3. Use AOP/interceptor to log before and after each
+   `@TransactionAttribute` method - check which
+   method's exit shows status change.
+
+4. Check for swallowed exceptions. A catch block that
+   logs-and-continues after an exception may have
+   triggered setRollbackOnly implicitly (unchecked
+   exceptions in a REQUIRED transaction auto-mark
+   rollback-only).
+
+Root cause: unchecked exception thrown in any method
+participating in the transaction automatically calls
+setRollbackOnly. Even if the exception is caught
+further up the stack, the mark persists.
+
+*What separates good from great:* "The catch-and-continue
+anti-pattern creates ghost rollback marks. An exception
+is caught, the code continues executing, and the caller
+is surprised by a RollbackException at commit. The rule:
+if you catch an exception in a JTA transaction, either
+rethrow or understand that the transaction is now
+doomed."
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] REQUIRES_NEW creates a new transaction but adds latency. When is it worth it?**
+
+REQUIRES_NEW cost:
+- New database connection acquisition
+- Independent 2PC if XA resources involved
+- Adds 5-20ms per call in typical configurations
+
+When it's justified:
+
+(1) Audit logging: audit records must persist even if
+    the outer transaction rolls back. `@Stateless @REQUIRES_NEW`
+    for AuditService. Audit entry committed independently.
+
+(2) Retry-safe operations: if the operation is idempotent
+    and you want to retry within the outer call without
+    rolling back completed work, REQUIRES_NEW provides
+    isolation.
+
+(3) Batch job progress: processing 10,000 records.
+    Commit progress every 100 records. Each batch of 100
+    uses REQUIRES_NEW to commit independently. On failure:
+    restart from the last committed batch.
+
+When it's NOT worth it:
+- When the suspended transaction holds locks that the
+  new transaction needs. Deadlock risk.
+- Simple reads: use SUPPORTS or NOT_SUPPORTED instead.
+  No new transaction needed.
+- When the outer transaction must atomically include
+  this work. Use REQUIRED.
+
+*What separates good from great:* "The audit log pattern
+is the canonical REQUIRES_NEW use case. Everything else
+is usually a design smell that REQUIRES_NEW is papering
+over instead of fixing the transaction structure."
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] Describe a subtle transaction propagation bug you encountered in a Java EE application.**
+
+> Structure: the setup, the bug, why it was hard to find,
+> the fix.
+
+Example answer:
+"We had a ReportService that called AuditService.log()
+inside its REQUIRED transaction. AuditService was
+annotated MANDATORY. The code worked in testing.
+
+In production, the bug: a scheduled batch job (no
+transaction context) called ReportService.generate().
+ReportService started a transaction (REQUIRED).
+Inside the transaction, it called AuditService.log()
+(MANDATORY). This worked correctly.
+
+But a second code path: a monitoring endpoint
+`GET /reports/check` called ReportService without
+an active transaction, but took a read-only shortcut
+that didn't start a REQUIRED transaction. When it
+hit AuditService.log() (MANDATORY), we got
+EJBTransactionRequiredException.
+
+Why it was hard to find: in 95% of calls, ReportService
+was called from other EJBs with an active transaction.
+The monitoring path was called infrequently. The
+exception appeared in monitoring logs, not application
+logs.
+
+Fix: changed AuditService.log() from MANDATORY to
+REQUIRED. MANDATORY is only appropriate when the
+absence of a transaction is always a programming error.
+For a service called from multiple contexts, REQUIRED
+is safer.
+
+Rule extracted: use MANDATORY only when you explicitly
+want a deployment-time check that callers always
+provide a transaction. For general-purpose services,
+use REQUIRED."
+
+*What separates good from great:* "The rule about
+MANDATORY is the transferable insight. MANDATORY is
+a contract enforcement tool, not a transaction
+propagation mode. It's appropriate for services
+that must always run in a caller's transaction and
+where running without one would be a bug."
 
 ---
 

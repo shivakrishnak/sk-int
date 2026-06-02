@@ -101,11 +101,11 @@ FROM (SELECT customer_id, COUNT(*) AS total_orders
 WHERE total_orders > 5;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Subqueries and Correlated Subqueries example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **EXISTS vs IN:**
 
-```
+```plaintext
 EXISTS:
   - Short-circuits on first match
   - Safe with NULLs
@@ -120,7 +120,7 @@ IN:
   - Readable for small value sets
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Subqueries and Correlated Subqueries example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -158,7 +158,7 @@ LEFT JOIN (
 -- O(n log n) total, not O(n * m).
 ```
 
-> **Code walkthrough:** The correlated scalar subquery in SELECT
+> **Code walkthrough:** The correlated scalar subquery in SELECTice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > executes the inner SUM query once per customer row. With 100,000
 > customers this is 100,000 separate aggregation queries. The JOIN
 > version pre-aggregates all customers' order totals in one pass,
@@ -203,7 +203,7 @@ WHERE EXISTS (
 -- No duplicates (vs JOIN which multiplies rows).
 ```
 
-> **Code walkthrough:** The NOT IN danger: `NOT IN (subquery)` is
+> **Code walkthrough:** The NOT IN danger: `NOT IN (subquery)` isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > equivalent to `id != subquery_row1 AND id != subquery_row2 AND ...`.
 > If any subquery row is NULL: the comparison is UNKNOWN, making the
 > entire AND chain UNKNOWN, so WHERE excludes the row. Result: 0 rows.
@@ -301,7 +301,7 @@ WHERE id NOT IN (SELECT fk FROM b WHERE fk IS NOT NULL)
 WHERE NOT EXISTS (SELECT 1 FROM b WHERE b.fk = a.id)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Failure: Correlated subquery causes query to time out**
 
@@ -315,7 +315,7 @@ Fix: rewrite as a JOIN with pre-aggregation or as a window function.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between a correlated and non-correlated subquery?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between a correlated and non-correlated subquery?**
 
 🗣️ "Non-correlated subquery: the inner query has no reference to the outer
 query. It executes once, and the result is reused. Example: `WHERE id IN
@@ -327,7 +327,7 @@ the inner query uses `o.customer_id` from the outer row; it runs once per
 outer row. For 1 million orders: 1 million inner queries. Performance:
 non-correlated is O(1) inner executions; correlated is O(n) inner executions."
 
-**Q2: When would you use a derived table vs. a CTE?**
+**[JUNIOR] Q2 - [SCENARIO] When would you use a derived table vs. a CTE?**
 
 🗣️ "Derived table: subquery in FROM clause. Must be named with an alias.
 Cannot be referenced more than once. CTE (WITH clause): named subquery,
@@ -339,7 +339,7 @@ queries. Performance: in PostgreSQL, CTEs are optimization fences by default
 intermediate results: either works. For multiple references to the same
 intermediate result: CTE is cleaner."
 
-**Q3: How does the database optimize an IN subquery?**
+**[JUNIOR] Q3 - [MECHANISM] How does the database optimize an IN subquery?**
 
 🗣️ "The optimizer rewrites `x IN (SELECT y FROM t WHERE ...)` as a
 semi-join: either a hash semi-join (build a hash set of subquery results,
@@ -351,7 +351,7 @@ but may fall back to row-by-row evaluation. The key: `EXISTS` gives the
 optimizer explicit permission to short-circuit; `IN` requires the optimizer
 to infer this. Both produce the same plan in most cases for simple subqueries."
 
-**Q4: How would you rewrite a correlated subquery as a JOIN?**
+**[MID] Q4 - [MECHANISM] How would you rewrite a correlated subquery as a JOIN?**
 
 🗣️ "Pattern: identify what the correlated subquery is computing per outer row,
 then pre-compute it as a subquery or CTE, and join the result.
@@ -362,7 +362,7 @@ LEFT JOIN (SELECT customer_id, MAX(created_at) AS last_order FROM orders GROUP B
 The subquery runs once (not once per customer). JOIN connects the pre-aggregated
 result. Alternative: window function `MAX(created_at) OVER (PARTITION BY customer_id)` in a CTE."
 
-**Q5: What is a lateral join and how does it relate to correlated subqueries?**
+**[MID] Q5 - [MECHANISM] What is a lateral join and how does it relate to correlated subqueries?**
 
 🗣️ "LATERAL JOIN is an explicit correlated subquery in the FROM clause.
 Without LATERAL: a subquery in FROM cannot reference other FROM tables.
@@ -373,7 +373,7 @@ as a table join. Use when: you need the top-N rows per group (top 3 orders
 per customer). Without LATERAL: you would need a window function and then filter.
 LATERAL is more expressive for per-row computations with LIMIT."
 
-**Q6: How do you detect correlated subquery performance problems in production?**
+**[SENIOR] Q6 - [MECHANISM] How do you detect correlated subquery performance problems in production?**
 
 🗣️ "Three indicators: (1) EXPLAIN ANALYZE: look for 'SubPlan N' nodes with
 loops > 1. If loops = 1,000,000: that subquery executed a million times.
@@ -385,11 +385,11 @@ Remediation: (1) Add an index on the correlated column in the inner table.
 (2) Rewrite as a JOIN with pre-aggregation. (3) Use a window function.
 (4) Use EXISTS instead of correlated scalar subquery for existence checks."
 
-**Q7: What are common use cases where a subquery is the best approach?**
+**[SENIOR] Q7 - [MECHANISM] What are common use cases where a subquery is the best approach?**
 
 🗣️ "Three genuine use cases: (1) Aggregate in WHERE: `WHERE amount > (SELECT AVG(amount) FROM orders)`. You cannot use aggregate functions in WHERE; the subquery pre-computes the aggregate. (2) Anti-join: `WHERE NOT EXISTS (SELECT 1 FROM b WHERE ...)` - finds rows with no match, cleaner than outer join. (3) Row-level comparisons in upsert/update: `UPDATE a SET val = b.val FROM (SELECT id, val FROM b WHERE condition) b WHERE a.id = b.id` - the derived table filters b once before the update. When to use JOIN instead: whenever you need columns from both sides, or the subquery is correlated. Window function instead: when you need per-group aggregates alongside individual rows."
 
-**Q8: How does PostgreSQL's CTE materialization affect performance?**
+**[SENIOR] Q8 - [MECHANISM] How does PostgreSQL's CTE materialization affect performance?**
 
 🗣️ "In PostgreSQL 11 and earlier: CTEs are always materialized. The result
 is computed once and stored. Predicates from outside the CTE are NOT pushed
@@ -402,7 +402,7 @@ Control: `WITH data AS MATERIALIZED (...)` forces materialization;
 if a CTE-using query is slow after upgrading to PG12+, the inlining
 optimization may change the plan. Use EXPLAIN to verify."
 
-**Q9: What is the difference between a semi-join and an anti-join?**
+**[SENIOR] Q9 - [TRADE-OFF] What is the difference between a semi-join and an anti-join?**
 
 🗣️ "Semi-join: return rows from table A where at least one matching row
 exists in table B. Implemented by EXISTS or IN. The row from B is not
@@ -522,7 +522,7 @@ JOIN customers c ON c.id = s.customer_id
 WHERE s.rank <= 10;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CTEs (Common Table Expressions) example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Recursive CTE structure:**
 
@@ -544,7 +544,7 @@ WITH RECURSIVE cte_name AS (
 SELECT * FROM cte_name ORDER BY depth, name;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CTEs (Common Table Expressions) example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -660,7 +660,7 @@ ORDER BY full_path;
 -- id=5, depth=1, full_path='Electronics > Phones'
 ```
 
-> **Code walkthrough:** The anchor member selects root categories
+> **Code walkthrough:** The anchor member selects root categoriesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (`parent_id IS NULL`). The recursive member joins `categories` to the
 > current CTE result (`cp`) to find children. Each iteration adds one
 > level of the hierarchy. `full_path` builds the breadcrumb string by
@@ -763,7 +763,7 @@ WITH RECURSIVE tree AS (
 SELECT * FROM tree;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Failure: CTE is slow after PostgreSQL 11 -> 12 upgrade**
 
@@ -780,7 +780,7 @@ Fix: add `AS MATERIALIZED` to CTEs that should be computed once.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between a CTE and a view?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between a CTE and a view?**
 
 🗣️ "A CTE exists for the duration of one query. A view is a stored query
 accessible from any query. CTE: defined in the WITH clause, referenced
@@ -791,7 +791,7 @@ recursive queries, intermediate named steps. Views are useful for: frequently
 reused query logic, access control (grant access to the view, not the table),
 abstracting complex schema into a simpler interface."
 
-**Q2: When would you use a recursive CTE vs. a closure table?**
+**[JUNIOR] Q2 - [SCENARIO] When would you use a recursive CTE vs. a closure table?**
 
 🗣️ "Recursive CTE: simple to set up, queries traverse the tree at runtime.
 Good for: data with a tree structure that is already in the adjacency list
@@ -803,7 +803,7 @@ Overhead: writes are more complex (insert/update to closure table on
 hierarchy changes). Rule: use recursive CTE for moderate-depth trees (< 100 levels)
 with infrequent traversal. Use closure table for large, frequently-queried hierarchies."
 
-**Q3: How does a recursive CTE work internally?**
+**[JUNIOR] Q3 - [MECHANISM] How does a recursive CTE work internally?**
 
 🗣️ "The database executes a recursive CTE as a loop: (1) Execute the
 anchor member. Load the result into a working table. (2) Execute the
@@ -815,7 +815,7 @@ iteration adds one level of children). Total work: proportional to the
 total number of rows in the result tree. For a tree with 1 million nodes:
 1 million row insertions into the working table, one per node."
 
-**Q4: What is a data-modifying CTE?**
+**[MID] Q4 - [MECHANISM] What is a data-modifying CTE?**
 
 🗣️ "PostgreSQL supports INSERT, UPDATE, and DELETE in CTEs.
 `WITH deleted AS (DELETE FROM sessions WHERE expires_at < now() RETURNING *)
@@ -828,7 +828,7 @@ Data-modifying CTEs execute exactly once, in parallel, within the same
 transaction snapshot. Changes from one CTE are not visible to other CTEs
 in the same statement (they see the pre-modification snapshot)."
 
-**Q5: How do you debug a complex multi-CTE query?**
+**[MID] Q5 - [DEBUGGING] How do you debug a complex multi-CTE query?**
 
 🗣️ "Step-by-step testing: the key advantage of CTEs over nested subqueries.
 (1) Run just the first CTE as a standalone SELECT. Verify its output.
@@ -840,7 +840,7 @@ If a CTE is materialized: its plan shows as a sub-plan. If inlined: the
 optimizer merges it into the main plan. Use `AS MATERIALIZED` to isolate
 a slow CTE and optimize it independently."
 
-**Q6: When should you use a window function inside a CTE?**
+**[SENIOR] Q6 - [SCENARIO] When should you use a window function inside a CTE?**
 
 🗣️ "Window functions must execute after WHERE and GROUP BY. They cannot
 be referenced in WHERE or HAVING of the same query. The pattern: compute
@@ -851,7 +851,7 @@ Without the CTE: `SELECT * FROM (SELECT ..., RANK() OVER (...) AS rn FROM orders
 CTEs make this readable. Window functions in CTEs are common for:
 deduplication (keep first/last), ranking (top N per group), running totals."
 
-**Q7: What are the limitations of recursive CTEs?**
+**[SENIOR] Q7 - [MECHANISM] What are the limitations of recursive CTEs?**
 
 🗣️ "Four key limitations: (1) Recursion depth limit: PostgreSQL default
 1000 iterations. Override with `SET max_recursion_depth = 10000` or `RECURSIVE ... LIMIT`.
@@ -863,7 +863,7 @@ recursive CTEs are always materialized; each level is a separate scan.
 For very deep or wide trees: performance degrades. Alternative: closure
 table (pre-compute ancestry), or application-side graph traversal."
 
-**Q8: How does CTE inlining in PostgreSQL 12+ affect query planning?**
+**[SENIOR] Q8 - [MECHANISM] How does CTE inlining in PostgreSQL 12+ affect query planning?**
 
 🗣️ "Before PG12: CTEs were always materialized (computed once, result stored).
 Any WHERE condition in the outer query was NOT pushed into the CTE.
@@ -875,7 +875,7 @@ When to force materialization: if the CTE is referenced multiple times and
 recomputing it would be expensive. Add `AS MATERIALIZED` to get PG11 behavior.
 When to force inlining: `AS NOT MATERIALIZED` (default in PG12+)."
 
-**Q9: What is the performance difference between a CTE and a temporary table?**
+**[SENIOR] Q9 - [TRADE-OFF] What is the performance difference between a CTE and a temporary table?**
 
 🗣️ "CTE: in-memory, scoped to one query. The result is not stored on disk
 (unless it spills due to large size). No schema, no indexes, no persistence

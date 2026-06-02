@@ -85,6 +85,12 @@ assumptions break.
 
 **How it works:**
 
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 V8 JIT PIPELINE:
 
@@ -169,7 +175,7 @@ OBJECT SHAPE CHANGES:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This V8 JIT Compilation and Optimization example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -206,6 +212,26 @@ optimization. Deoptimizations in hot paths can increase render time
 ### 💻 Code Example
 
 **Hidden classes, inline caches, and deoptimization patterns**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: inconsistent property initialization order
@@ -283,7 +309,7 @@ const intArr = new Int32Array(1000);  // Fixed typed array (fastest)
 const numArr = [1.0, 2.0, 3.0];      // DOUBLE_ELEMENTS (fast)
 ```
 
-> **Code walkthrough:** The `createUser` example shows how V8 hidden
+> **Code walkthrough:** The `createUser` example shows how V8 hiddenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > classes work in practice. The BAD version creates two different hidden
 > classes depending on the `premium` flag - all subsequent property
 > accesses on mixed user objects become polymorphic (slower). The GOOD
@@ -378,7 +404,7 @@ PROFILING WORKFLOW:
   - Deoptimization count: 0 in hot paths
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze .heapprofile in Chrome DevTools example demice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -495,7 +521,7 @@ function processRequest(req) {
 // [40:MarkSweepCompact]: 200ms -> reduce object promotion rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze .heapprofile in Chrome DevTools example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -518,8 +544,7 @@ function processRequest(req) {
 
 ---
 
-**Q1: What are V8 hidden classes and how do they affect performance?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] What are V8 hidden classes and how do they affect performance?**
 
 > **Answer:**
 >
@@ -583,8 +608,7 @@ function processRequest(req) {
 > }
 > ```
 
-**Q2: What triggers deoptimization in TurboFan and how do you avoid it?**
-`[STAFF]` DEBUGGING
+**[STAFF] Q2 - [DEBUGGING] What triggers deoptimization in TurboFan and how do you avoid it?**
 
 > **Answer:**
 >
@@ -645,7 +669,7 @@ function processRequest(req) {
 > validation at data ingestion boundaries, and never mutating object
 > shapes in hot paths.
 
-**Q3: How does V8's garbage collector work and how does it affect
+**[JUNIOR] Q3 - [MECHANISM] How does V8's garbage collector work and how does it affect**
 application performance?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -725,8 +749,7 @@ application performance?** `[SENIOR]` MECHANISM
 > If old gen grows unboundedly: memory leak (object retained by
 > unintentional reference).
 
-**Q4: What are V8 array element kinds and how should you use them?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What are V8 array element kinds and how should you use them?**
 
 > **Answer:**
 >
@@ -791,7 +814,7 @@ application performance?** `[SENIOR]` MECHANISM
 > TensorFlow.js, asm.js, and WebAssembly all use typed arrays as
 > their fundamental data structure for this reason.
 
-**Q5: How would you profile and fix a performance regression caused
+**[MID] Q5 - [DEBUGGING] How would you profile and fix a performance regression caused**
 by V8 deoptimizations?** `[STAFF]` DEBUGGING
 
 > **Answer:**
@@ -876,7 +899,7 @@ by V8 deoptimizations?** `[STAFF]` DEBUGGING
 > code only sees type-stable data, allowing TurboFan to permanently
 > maintain optimizations.
 
-**Q6: What is the role of Sparkplug and Maglev in the V8 pipeline and
+**[SENIOR] Q6 - [MECHANISM] What is the role of Sparkplug and Maglev in the V8 pipeline and**
 why multiple JIT tiers?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -921,7 +944,7 @@ why multiple JIT tiers?** `[STAFF]` MECHANISM
 > frameworks (Next.js) implement explicit warm-up routes that send
 > synthetic requests at startup to pre-warm TurboFan.
 
-**Q7: How does V8 handle memory for closures and what are the
+**[SENIOR] Q7 - [MECHANISM] How does V8 handle memory for closures and what are the**
 performance implications?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -990,7 +1013,7 @@ performance implications?** `[SENIOR]` MECHANISM
 > block-scoped variable, V8 allocates a block context object. In very
 > hot loops, this can be measured with allocation profiling.
 
-**Q8: How would you use knowledge of V8 internals to optimize a
+**[SENIOR] Q8 - [MECHANISM] How would you use knowledge of V8 internals to optimize a**
 React server-side rendering hot path?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**

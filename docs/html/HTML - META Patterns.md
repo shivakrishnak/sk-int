@@ -174,7 +174,7 @@ WHEN PROGRESSIVE ENHANCEMENT IS DIFFICULT:
     The app itself: JavaScript required (document this)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Progressive Enhancement example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -224,7 +224,7 @@ document.getElementById('contact-form').innerHTML = `
 </script>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: progressively enhanced contact form -->
@@ -295,7 +295,7 @@ document.getElementById('contact-form').innerHTML = `
 </script>
 ```
 
-> **Code walkthrough:** The form works at every layer. Without
+> **Code walkthrough:** The form works at every layer. Withoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > JavaScript: the `novalidate` attribute is present (prevents
 > browser validation that might differ from server validation),
 > so the form submits to `/contact` via HTTP POST and the server
@@ -376,26 +376,25 @@ Options:
      </noscript>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Three layers of progressive enhancement | 2-3 min | HTML/CSS/JS layers |
-| PE vs graceful degradation | 2 min | Philosophy difference |
-| When PE is impractical | 2 min | Realistic context |
-| Testing PE (disable JS) | 2 min | Practical skill |
-| PE and SEO connection | 2-3 min | Crawler Wave 1 |
-| PE and accessibility connection | 2 min | Resilience angle |
-| Contact form with PE example | 3-4 min | Concrete implementation |
+| Scenario| Recommended Time| Key Signal|
+|-------------------------------------|----------------|-----------------------|
+| Three layers of progressive enhancement| 2-3 min| HTML/CSS/JS layers|
+| PE vs graceful degradation| 2 min| Philosophy difference|
+| When PE is impractical| 2 min| Realistic context|
+| Testing PE (disable JS)| 2 min| Practical skill|
+| PE and SEO connection| 2-3 min| Crawler Wave 1|
+| PE and accessibility connection| 2 min| Resilience angle|
+| Contact form with PE example| 3-4 min| Concrete implementation|
 
 ---
 
-**Q1: What are the three layers of progressive enhancement?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What are the three layers of progressive enhancement?**
 
 > **Answer:**
 >
@@ -431,6 +430,172 @@ Options:
 > functionality," that feature needs a server-side fallback
 > or a clear explanation that JavaScript is required.
 
+
+---
+
+**[MID] Q2 - [MECHANISM] How do you implement progressive enhancement for a form that requires JavaScript validation?**
+
+*Why they ask:* Tests PE practical application.
+
+Progressive enhancement for forms: (1) Base layer -
+HTML5 constraint validation attributes: `required`,
+`type="email"`, `pattern`, `minlength`. These work
+without JavaScript in all modern browsers. (2) Enhanced
+layer - JavaScript adds real-time feedback, custom
+error messages via `setCustomValidity()`, and async
+server validation. (3) The form must submit and validate
+server-side regardless of whether JavaScript ran.
+Never put required validation only in JavaScript - it
+is trivially bypassed. Implementation: the form's
+`action` attribute points to a server endpoint that
+validates and returns errors. JavaScript intercepts
+submit for enhanced UX (no full page reload) but the
+server endpoint works independently. Test: disable JS
+in DevTools, submit the form - it should still work.
+
+*What separates good from great:* Server-side validation
+as the base layer, not JavaScript - PE means the base
+(server) works alone; JavaScript is enhancement only.
+
+---
+
+**[SENIOR] Q3 - [TRADE-OFF] When is progressive enhancement not worth the investment?**
+
+*Why they ask:* Tests nuanced understanding of PE trade-offs.
+
+PE has real costs: (1) Server-side rendering logic
+must exist alongside client-side enhancement (double
+implementation). (2) Testing requires testing both
+the base and enhanced states. (3) Complex interactions
+(drag-and-drop, rich text editors, 3D canvases) have
+no reasonable base layer - the feature requires
+JavaScript. Cases where PE is not worth it: (1) Internal
+tools with a known user base (always latest Chrome,
+always JS enabled) - PE adds cost for zero benefit.
+(2) Web applications that are fundamentally JavaScript
+(Figma, Google Docs, code editors) - the base layer
+would be a login page that says "enable JavaScript."
+(3) When the JavaScript-enhanced state and the base
+state are so different that two separate codepaths
+must be maintained. PE is most valuable for content-
+heavy sites (e-commerce, news, blogs) with broad
+audiences where network or device failures are common.
+
+*What separates good from great:* Internal tool exclusion -
+knowing when PE is cargo-culted versus when it adds real
+value shows mature judgment rather than dogmatic rule-following.
+
+---
+
+**[SENIOR] Q4 - [DEBUGGING] A feature works with JavaScript but breaks without it. How do you decide whether to fix it or document the requirement?**
+
+*Why they ask:* Tests pragmatic PE decision making.
+
+Decision framework: (1) Who uses this feature? If the
+user base is consumers on varying devices/networks:
+fix it (no-JS is a real scenario - JS fails to load
+due to network, ad blocker, or slow device timeout).
+If the user base is internal engineers on fast corporate
+networks: document the JS requirement. (2) What breaks?
+If the core function breaks (form cannot submit, data
+cannot be read), fix it. If enhanced UX breaks (animation
+does not play, real-time update does not work), document
+it. (3) What is the fix cost? A simple server-side fallback
+endpoint is worth writing. A full parallel implementation
+of a complex client-side app is not.
+Test: try the feature in a browser with JS disabled
+(DevTools Network → Block JavaScript in page settings).
+Classify the broken behavior as "core" or "enhanced."
+
+*What separates good from great:* The ad blocker scenario
+- many ad blockers block third-party scripts, sometimes
+misclassifying first-party bundles. Consumer-facing sites
+regularly see 10-15% JS failure rates from blockers alone.
+
+---
+
+**[MID] Q5 - [MECHANISM] What is graceful degradation and how does it differ from progressive enhancement?**
+
+*Why they ask:* Tests understanding of the two complementary strategies.
+
+Progressive enhancement builds from a minimal, universally
+supported base upward: start with working HTML, add CSS
+for presentation, add JavaScript for enhancement. Each
+layer works independently. Graceful degradation builds
+the full experience first, then adds fallbacks for
+degraded environments: build the full JS app, then
+handle the "what if JS fails" case. Both aim for broad
+compatibility but with opposite starting points.
+In practice: PE produces more robust applications because
+the base layer is designed first and tested independently.
+Graceful degradation often produces tacked-on fallbacks
+that are undertested and brittle. Modern recommendation:
+default to PE for content sites, accept graceful degradation
+for complex applications where a full PE base layer
+is not feasible.
+
+*What separates good from great:* "Both strategies serve
+users" - they are not opposites but rather different
+implementation approaches to the same goal. PE is
+stricter; graceful degradation is more pragmatic for
+complex applications.
+
+---
+
+**[SENIOR] Q6 - [DESIGN] How do you test progressive enhancement in a CI pipeline?**
+
+*Why they ask:* Tests PE automation and validation.
+
+CI testing strategy: (1) Unit tests: run business logic
+tests with a headless HTML parser (no JavaScript) using
+`jsdom` or similar - tests verify that the base HTML
+structure contains all required content. (2) No-JS
+integration tests: Playwright with `javaScriptEnabled: false`
+in the browser context. Test that: forms submit, links
+navigate, content is readable, no console errors.
+(3) Accessibility check: `axe-playwright` on the no-JS
+page - base layer must pass WCAG 2.1 AA. (4) Critical
+path test: identify the top 5 user journeys, test
+all 5 work without JavaScript. (5) Progressive layer
+test: run standard E2E tests with JS enabled to verify
+enhancements work on top of the base layer.
+Report both test suites in CI - failure in either
+blocks the deploy.
+
+*What separates good from great:* `javaScriptEnabled: false`
+in Playwright - this is the exact mechanism to automate
+no-JS testing without manual browser manipulation.
+
+---
+
+**[STAFF] Q7 - [DESIGN] Design the HTML architecture of a product page that works perfectly with and without JavaScript.**
+
+*Why they ask:* Tests full PE architecture design.
+
+Base layer (HTML only): server renders complete product
+data - title, description, price, images as `<img>`,
+add-to-cart as a `<form>` with `<button type="submit">`,
+reviews as a `<section>`. Form `action` posts to
+`/cart/add` endpoint. No JavaScript required to view
+or purchase. Enhanced layer: JavaScript intercepts
+the form `submit` event, sends AJAX to the same endpoint,
+updates the cart counter without page reload.
+Image gallery: base layer shows first image in `<img>`
+with a list of thumbnails as `<a href>` links (clicking
+navigates to a new page showing that image). JavaScript
+replaces this with an in-page gallery component.
+Structured data: JSON-LD for product schema (works
+without JS). Open Graph tags for social sharing (works
+without JS). The test: disable JavaScript - the page
+should be fully functional for a purchase flow.
+
+*What separates good from great:* Form `action` as the
+PE anchor - the server endpoint is the base layer.
+JavaScript is enhancement over this endpoint, not a
+replacement for it. The same `/cart/add` URL handles
+both AJAX and full-page form submissions.
+
+
 ---
 
 ---
@@ -446,21 +611,21 @@ Options:
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Separation of Concerns in Web Documents
@@ -524,7 +689,7 @@ and clearer ownership.
 
 **How it works:**
 
-```
+```plaintext
 SEPARATION OF CONCERNS - THREE CONCERNS:
 
 1. STRUCTURE (HTML):
@@ -621,7 +786,7 @@ MODERN NUANCE - COMPONENT-BASED APPROACHES:
   Both are valid when applied consistently.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Separation of Concerns in Web Documents example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use it:**
 
@@ -652,7 +817,7 @@ owns (its own styles, its own behavior, a fragment of HTML/JSX).
      can't be overridden without !important. -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Separation of Concerns in Web Documents example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: HTML provides structure -->
@@ -670,7 +835,7 @@ owns (its own styles, its own behavior, a fragment of HTML/JSX).
 </div>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```css
 /* CSS provides presentation - separate file */
@@ -690,7 +855,7 @@ owns (its own styles, its own behavior, a fragment of HTML/JSX).
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // JavaScript provides behavior - separate file
@@ -757,7 +922,7 @@ principle (each unit handles its own concern) is preserved.
 
 **Symptom: changing a color requires editing 50 JS files**
 
-```
+```plaintext
 Root cause: CSS embedded in JavaScript (CSS-in-JS without
   proper abstraction, or inline style generation in JS)
 
@@ -785,7 +950,7 @@ Fix:
     // Do: el.classList.add('notification--error')
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -802,8 +967,7 @@ Fix:
 
 ---
 
-**Q1: What are the three concerns in web development and how are they separated?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What are the three concerns in web development and how are they separated?**
 
 > **Answer:**
 >
@@ -839,6 +1003,174 @@ Fix:
 > JavaScript hardcodes a visual decision that belongs in CSS.
 > The rule: JavaScript updates DATA and STATE; CSS translates
 > state to visuals.
+
+
+---
+
+**[MID] Q2 - [MECHANISM] What is the correct separation between HTML, CSS, and JavaScript in modern web development?**
+
+*Why they ask:* Tests separation of concerns understanding.
+
+HTML: structure and semantics - what the content is
+(heading, paragraph, list, form). Must be meaningful
+without CSS or JavaScript. CSS: presentation - how
+the content looks. JavaScript: behavior - how the content
+responds to interaction. Violations: CSS that controls
+semantic meaning (using a `<div class="heading">` instead
+of `<h1>`), HTML that encodes presentation (`<div
+style="color:red">`), JavaScript that builds document
+structure from scratch (rendering full page HTML from JS
+with no server-side markup). The separation is
+architectural, not absolute: `style` attributes are
+sometimes appropriate for dynamic values computed at runtime.
+CSS `::before`/`::after` adds decorative content, not
+semantic content. The test: if a user reads the HTML
+without CSS or JS, is the content structure and meaning clear?
+
+*What separates good from great:* JavaScript-generated
+semantic content as a violation - screen readers and
+search engines that do not run JavaScript miss content
+rendered only in JavaScript, breaking both accessibility
+and SEO.
+
+---
+
+**[SENIOR] Q3 - [TRADE-OFF] When is it acceptable to put presentation attributes in HTML?**
+
+*Why they ask:* Tests pragmatic SoC decision making.
+
+Presentation attributes in HTML are acceptable when:
+(1) The value is dynamic and computed at runtime -
+`style="width: ${percentage}%"` for a progress bar where
+the percentage comes from server or API data. Encoding
+this in CSS would require a CSS variable updated via JS,
+which is equivalent work. (2) Email HTML - email clients
+do not fully support `<style>` blocks; inline styles are
+required for cross-client rendering. (3) Third-party
+embeds and HTML emails where CSS injection is not possible.
+(4) AMP (Accelerated Mobile Pages) requires inline styles
+for performance reasons.
+Not acceptable: using `style` attributes for static
+presentation that belongs in CSS (defeats reusability
+and design token management), using `width`/`height`/
+`bgcolor` HTML attributes on table cells instead of CSS.
+Rule: if the value changes at runtime based on data,
+inline style is reasonable. If it is static design,
+use CSS.
+
+*What separates good from great:* Email HTML exception -
+knowing that email is a separate world with different
+rules shows real-world experience beyond browser development.
+
+---
+
+**[SENIOR] Q4 - [DEBUGGING] A page fails accessibility audit because content is only in CSS (via `content` property). How do you fix it?**
+
+*Why they ask:* Tests CSS content accessibility pitfall.
+
+CSS `::before { content: "Important: " }` is not read
+by all screen readers (behavior varies). Content
+added via CSS `content` property is decorative or
+supplemental in intent - it is not part of the DOM
+and may be ignored by assistive technology. Fix:
+(1) Move the content to HTML if it is semantically
+meaningful. (2) If it must stay in CSS for layout
+reasons, add a visually-hidden HTML element with the
+same content: `<span class="sr-only">Important: </span>`.
+The `.sr-only` pattern: `position: absolute; width: 1px;
+height: 1px; overflow: hidden; clip: rect(0,0,0,0)`.
+This keeps visual rendering in CSS while providing
+accessible content in HTML. Test: run NVDA or VoiceOver
+and listen to the page without looking.
+
+*What separates good from great:* The `.sr-only` pattern
+as the bridge between SoC (design wants CSS content)
+and accessibility (content must be in HTML DOM).
+
+---
+
+**[STAFF] Q5 - [DESIGN] How do you enforce separation of concerns in a large team where developers mix HTML, CSS, and JavaScript concerns?**
+
+*Why they ask:* Tests governance and tooling knowledge.
+
+Enforcement strategy: (1) Linting - `htmlhint` rules
+that flag style attributes (except known exemptions),
+`eslint-plugin-jsx-a11y` for JSX HTML violations,
+CSS Modules or CSS-in-JS (Tailwind utility classes
+excepted) to prevent global style pollution.
+(2) Component API design - design system components
+accept only semantic props, not style props. Instead
+of `<Button color="red">`, use `<Button variant="danger">`.
+The component maps semantics to visual treatment.
+(3) Code review checklist: does any HTML element
+use style attributes without a documented exception?
+Does any CSS rule create semantic meaning (font-weight
+for heading hierarchy instead of H1-H6 elements)?
+(4) Architecture Decision Record (ADR) documenting
+team conventions with rationale - new developers
+understand why, not just what.
+
+*What separates good from great:* Semantic props on
+components - this is the design system enforcement
+of SoC. `variant="danger"` lets the component control
+the visual expression while the consumer expresses
+semantic intent.
+
+---
+
+**[SENIOR] Q6 - [MECHANISM] How does CSS `@layer` affect the separation of concerns model for large stylesheets?**
+
+*Why they ask:* Tests modern CSS architecture knowledge.
+
+CSS `@layer` (2022+) allows declaring explicit cascade
+layers: `@layer base, components, utilities`. Rules
+in a higher-declared layer take precedence regardless
+of specificity. Before `@layer`: specificity wars -
+a component's styles needed higher specificity than
+the base layer, leading to `!important` abuse.
+With `@layer`: base layer styles have low cascade
+priority (any component rule overrides them). Separation
+of concerns benefit: each layer has a clear role -
+`base` for browser defaults reset, `components` for
+component-specific styles, `utilities` for overrides.
+A utility class in the `utilities` layer overrides
+a component class in the `components` layer regardless
+of specificity. This makes the cascade architecture
+explicit rather than emergent from specificity rules.
+
+*What separates good from great:* `@layer` enabling
+low-specificity resets - you can define base styles
+without specificity hacks because the layer position
+guarantees precedence, not selector specificity.
+
+---
+
+**[STAFF] Q7 - [DESIGN] Design the HTML/CSS/JS architecture for a component that must work in a CMS where HTML is author-controlled.**
+
+*Why they ask:* Tests CMS-aware architecture thinking.
+
+CMS content (authored HTML) cannot be controlled for
+structure or classes. Architecture: (1) Container
+component: a custom element (`<styled-content>`) wraps
+the CMS output. The custom element's Shadow DOM isolates
+CMS styles. `::slotted(*)` selectors apply design system
+typography to slotted CMS content without class names.
+(2) Scope-based CSS: `:is(.cms-content) h2` targets
+headings inside the CMS container without requiring
+authors to add classes. (3) CSS resets inside the
+container: scoped reset within `.cms-content` that
+normalizes h1-h6, p, ul, li, a to design system values.
+(4) JavaScript enhancement: a MutationObserver on the
+CMS container detects dynamic content changes and
+re-applies enhancements (syntax highlighting, table
+of contents generation) without requiring
+author cooperation.
+
+*What separates good from great:* Shadow DOM for CMS
+isolation - this prevents CMS inline styles and
+class-less elements from leaking into or being
+polluted by the design system's global CSS.
+
 
 ---
 
@@ -1042,7 +1374,7 @@ PRACTICAL EXERCISE - READING HTML SEMANTICS:
   → the page lacks semantic structure → div-soup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Document Semantics Mental Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1096,7 +1428,7 @@ changed without changing the element.
 <!-- Browser Reader Mode: can't identify article cleanly -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: semantic HTML - meaning encoded in markup -->
@@ -1141,7 +1473,7 @@ changed without changing the element.
 </body>
 ```
 
-> **Code walkthrough:** The semantic version encodes the document
+> **Code walkthrough:** The semantic version encodes the documentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > structure in HTML itself. `<article>` tells Google this is a
 > self-contained publishable piece of content. `<time datetime="2025-01-15">`
 > tells machines the exact publication date in a machine-readable
@@ -1231,7 +1563,7 @@ Heading structure check:
   Fix: replace visual-only bold/large text with appropriate headings
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1250,7 +1582,7 @@ Heading structure check:
 
 ---
 
-**Q1: When do you use `<article>` vs `<section>`?** `[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [TRADE-OFF] When do you use `<article>` vs `<section>`?** `[JUNIOR]` DEFINITION**
 
 > **Answer:**
 >
@@ -1310,7 +1642,7 @@ Heading structure check:
 
 ---
 
-**Q2: What is the difference between `<button>` and `<a>`?
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `<button>` and `<a>`?**
 When do you use each?** `[JUNIOR]` COMPARISON
 
 > **Answer:**
@@ -1374,6 +1706,147 @@ When do you use each?** `[JUNIOR]` COMPARISON
 > is implemented as `<a>`, the browser may try to navigate
 > (or the `href="#"` causes an ugly URL change). Matching the
 > semantic element to the interaction is the correct approach.
+
+
+---
+
+**[MID] Q3 - [MECHANISM] How does the HTML5 document outline algorithm work and why is it important for screen readers?**
+
+*Why they ask:* Tests semantic HTML and accessibility knowledge.
+
+The document outline algorithm infers the heading
+structure from sectioning elements (`<article>`,
+`<section>`, `<aside>`, `<nav>`) and heading levels
+(`<h1>`-`<h6>`). Each sectioning element creates a
+new implicit outline section. Headings reset their
+level within a section - an `<h1>` inside a `<section>`
+creates a sub-section of its parent. Screen readers
+expose this outline via a "Headings" navigation mode
+that allows users to jump between sections by heading
+level. A broken outline (skipped heading levels, multiple
+`<h1>` without sectioning context, decorative text styled
+as headings via CSS rather than `<h#>`) creates navigation
+gaps for screen reader users. Test: use the headings
+list in NVDA or VoiceOver to navigate your page -
+does the outline reflect the page structure?
+
+*What separates good from great:* The practical test
+with a real screen reader - the document outline
+algorithm is defined in the spec but headings list
+navigation is the actual user experience.
+
+---
+
+**[SENIOR] Q4 - [TRADE-OFF] When should you use ARIA roles versus native HTML semantics?**
+
+*Why they ask:* Tests ARIA usage judgment.
+
+Rule: first use semantic HTML. ARIA adds a role and
+properties without changing visual rendering. Native
+HTML elements have built-in accessibility behavior
+that ARIA cannot fully replicate. `<button>` is focusable,
+activatable with Enter/Space, announces "button" to screen
+readers, participates in form context - all automatically.
+`<div role="button">` requires manually adding `tabindex="0"`,
+keyboard event handlers, and visual focus styles. ARIA is
+appropriate when: (1) No native element exists for the
+required role (`role="tabpanel"`, `role="tree"`, custom
+widgets). (2) Semantic meaning needs to be added to
+existing interactive elements that cannot be changed.
+(3) Relationship metadata: `aria-labelledby`,
+`aria-describedby`, `aria-controls`. Never: use ARIA
+to override a native element's role for visual effect
+(`<h2 role="presentation">` makes a heading invisible
+to screen readers).
+
+*What separates good from great:* The first rule of ARIA
+(from the ARIA spec): "No ARIA is better than bad ARIA"
+- incorrectly applied ARIA creates worse accessibility
+than no ARIA.
+
+---
+
+**[SENIOR] Q5 - [DEBUGGING] A screen reader announces element IDs instead of labels for form fields. How do you fix?**
+
+*Why they ask:* Tests form accessibility debugging.
+
+Screen readers announce IDs when: (1) No `<label>`
+is associated with the input via `for`/`id` or wrapping.
+(2) `aria-label` and `aria-labelledby` are absent.
+(3) The input's `id` is the only text the AT can find
+to announce. Fix: add explicit labels using one of:
+(a) `<label for="fieldId">Label Text</label>` - preferred,
+visible label. (b) `<input aria-label="Label Text">` -
+for inputs where a visible label is not appropriate
+(search box with a search icon). (c) `aria-labelledby`
+pointing to an existing element that describes the field.
+Debug: use the Accessibility Tree in Chrome DevTools
+(Elements → Computed Properties → Accessibility) to see
+exactly what label the AT receives for each input.
+The computed accessible name shows the resolved label.
+
+*What separates good from great:* Chrome DevTools
+Accessibility panel showing the computed accessible name
+- this is faster than running a screen reader for
+diagnosis.
+
+---
+
+**[STAFF] Q6 - [DESIGN] Design an accessible navigation component using semantic HTML without JavaScript.**
+
+*Why they ask:* Tests pure HTML accessibility design.
+
+Navigation component: (1) `<nav aria-label="Main navigation">`
+wrapper (landmark, accessible name distinguishes it from
+other nav elements). (2) `<ul>` list of links - screen
+readers announce the count ("list of 5 items"). (3) Current
+page: `<a href="/current" aria-current="page">`. Screen
+readers announce "current page" for this link.
+(4) Sub-menus (no JS): use `<details>`/`<summary>` as
+the disclosure widget - keyboard operable, no JavaScript.
+`<summary>Products</summary><ul>...</ul>` inside `<details>`.
+(5) Skip navigation: `<a href="#main-content" class="skip-link">
+Skip to main content</a>` as the first focusable element.
+Visually hidden until focused. (6) Focus management: ensure
+all links are natively focusable (anchor tags with href).
+No `tabindex` manipulation needed.
+
+*What separates good from great:* `<details>`/`<summary>`
+for JS-free dropdown navigation - this is the semantic
+HTML approach that works without JavaScript while being
+fully accessible. Many candidates reach immediately for
+JavaScript for any interactive pattern.
+
+---
+
+**[SENIOR] Q7 - [MECHANISM] How does the `hidden` attribute differ from `display: none` in terms of accessibility?**
+
+*Why they ask:* Tests CSS vs HTML attribute semantics for AT.
+
+Both `hidden` and `display: none` remove the element
+from the visual rendering and from the accessibility tree.
+Screen readers do not announce hidden elements in either
+case. The semantic difference: `hidden` communicates
+intent - the element is semantically not yet relevant
+(a step in a wizard that has not been reached). CSS
+`display: none` is visual presentation. Practical
+differences: (1) `hidden` can be removed with CSS:
+`[hidden] { display: block; }` overrides the attribute's
+effect - useful for conditional visibility in design
+systems. (2) JavaScript: `element.hidden = true/false`
+is cleaner than toggling a class for visibility.
+(3) HTML validation: `hidden` is a valid HTML attribute
+for conditionally hiding content. The `aria-hidden="true"`
+attribute is different - it hides from AT but not
+from visual rendering.
+
+*What separates good from great:* `aria-hidden` vs
+`hidden` - `aria-hidden="true"` hides from screen readers
+but keeps visible. `hidden` hides from both. Misusing
+`aria-hidden` on visible content (icons inside buttons)
+is a common pattern that must be done carefully to
+preserve the accessible name.
+
 
 ---
 

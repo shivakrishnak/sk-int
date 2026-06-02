@@ -92,7 +92,7 @@ Key commands:
   npm audit fix            # auto-fix vulnerabilities
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This npm Package Management example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -146,7 +146,7 @@ pnpm, bun).
 }
 ```
 
-> **Code walkthrough:** The `scripts` section defines tasks runnable
+> **Code walkthrough:** The `scripts` section defines tasks runnableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with `npm run <name>`. The `ci` script chains other scripts: type
 > check, then lint, then test - all must pass. `devDependencies` lists
 > tools needed only at build/test time; they are not installed in
@@ -155,6 +155,11 @@ pnpm, bun).
 > `18.2.x` and `18.x.x`).
 
 **Example 2: npm vs npm ci**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # Development: install, updating lockfile if needed
@@ -180,7 +185,7 @@ npm ci
 # npm ci       <- identical to every other CI run
 ```
 
-> **Code walkthrough:** The distinction between `npm install` and
+> **Code walkthrough:** The distinction between `npm install` andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `npm ci` is critical in CI/CD. `npm install` can silently install
 > different patch/minor versions if the lockfile is absent or if
 > someone pushed a change to package.json without updating the lockfile.
@@ -386,7 +391,7 @@ Special cases:
   Pre-1.0 packages: minor versions may be breaking
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This package.json and Semantic Versioning example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -418,7 +423,7 @@ your own library, or debugging version conflicts.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This package.json and Semantic Versioning example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```bash
 # What each range resolves to:
@@ -438,7 +443,7 @@ npm list react
 # +-- react@18.3.1
 ```
 
-> **Code walkthrough:** Version ranges determine what npm installs
+> **Code walkthrough:** Version ranges determine what npm installsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > when there is no lockfile (or when using `npm install` with an
 > outdated lockfile). The `^` range is widest - it allows all minor
 > and patch updates within the major version. This is safe when
@@ -465,7 +470,7 @@ npm list react
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This +-- react@18.3.1 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```bash
 # When to bump which version:
@@ -482,7 +487,7 @@ npm list react
 #   Any change that breaks existing consumer code
 ```
 
-> **Code walkthrough:** Library versioning requires discipline: every
+> **Code walkthrough:** Library versioning requires discipline: everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > breaking change to the public API is a major bump. A common mistake
 > is treating minor versions as breaking-change-allowed. This breaks
 > consumers whose lockfile allows `^` ranges. The `peerDependencies`
@@ -700,7 +705,7 @@ Nested (strict) node_modules (pnpm):
   Phantom dependency access is blocked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This node_modules and Dependency Resolution example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -721,6 +726,11 @@ found errors, monorepo configuration, Docker build optimization
 ### 💻 Code Example
 
 **Example 1: Debugging module resolution**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # Find where a package resolves from:
@@ -755,7 +765,7 @@ import { debounce } from 'lodash'; // lodash in node_modules
 import { debounce } from 'lodash';
 ```
 
-> **Code walkthrough:** `npm list react` is the first diagnostic for
+> **Code walkthrough:** `npm list react` is the first diagnostic forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > version conflicts. Multiple React versions in the tree cause hard-to-
 > debug errors (hooks may fail because they're called from a different
 > React instance). `npm dedupe` resolves these when the version ranges
@@ -785,7 +795,7 @@ COPY dist ./dist  # pre-built output (not source)
 CMD ["node", "dist/server.js"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: Install fresh in Docker example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```text
 .dockerignore:

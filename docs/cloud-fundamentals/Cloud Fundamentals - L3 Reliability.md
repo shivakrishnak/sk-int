@@ -101,7 +101,7 @@ LESSON: Series components reduce overall SLA.
   Target each tier for its own 99.99% SLA.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High Availability Design in the Cloud example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **NAT Gateway SPOF Pattern:**
 
@@ -118,7 +118,7 @@ GOOD: One NAT GW per AZ
   Cost: 3 * $32/month = $96/month extra
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High Availability Design in the Cloud example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -199,7 +199,7 @@ resource "aws_lb_target_group" "app" {
 }
 ```
 
-> **Code walkthrough:** The count = 3 pattern creates a NAT
+> **Code walkthrough:** The count = 3 pattern creates a NATice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Gateway in each AZ's public subnet. The private route tables
 > each reference their AZ's NAT Gateway by index. If AZ-a fails,
 > its NAT Gateway goes down but AZ-b and AZ-c route tables
@@ -280,7 +280,7 @@ aws ec2 describe-route-tables \
 # Multiple route tables pointing to same nat-xxx = SPOF
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multiple route tables pointing to same nat-xxx = SPOF example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Create NAT GW in AZ-b, update AZ-b route table.
 
@@ -306,7 +306,7 @@ spring:
       # New connections made to new primary (via RDS endpoint)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This New connections made to new primary (via RDS endpoint) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -320,8 +320,7 @@ spring:
 | Debugging | 1 | Diagnosing 2-minute periodic 5xx |
 | Behavioral | 2 | 3-tier HA design, HA testing strategy |
 
-**Q1. What is the SLA difference between single-AZ and multi-AZ
-deployments and how do you calculate it?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the SLA difference between single-AZ and multi-AZ deployments and how do you calculate it?**
 
 Combined SLA math:
 
@@ -341,7 +340,7 @@ AWS Published SLAs:
 - ALB:            99.99% (always multi-AZ)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This New connections made to new primary (via RDS endpoint) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For services in series (all must be available):
 ```
@@ -354,7 +353,7 @@ EC2 (99.9%) + RDS (99.9%) + ElastiCache (99.9%)
 # Each additional dependency reduces composite SLA
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Each additional dependency reduces composite SLA example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Applying the series SLA formula
 to your actual architecture. Most engineers know multi-AZ is better
@@ -363,8 +362,7 @@ dependencies reduces overall SLA even if each is individually reliable.
 
 ---
 
-**Q2. Why can an entire AWS Availability Zone fail and what does
-a real AZ failure look like?**
+**[JUNIOR] Q2 - [MECHANISM] Why can an entire AWS Availability Zone fail and what does a real AZ failure look like?**
 
 AZs are designed to be isolated fault domains: separate power,
 cooling, and physical facilities within a region. But failures occur:
@@ -397,8 +395,7 @@ with aggressive health check thresholds catches this.
 
 ---
 
-**Q3. How do you implement HA for a stateless application tier
-across multiple AZs?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement HA for a stateless application tier across multiple AZs?**
 
 ```hcl
 # Auto Scaling Group spanning 3 AZs:
@@ -426,7 +423,7 @@ resource "aws_autoscaling_group" "app" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Design for 75% of instances to handle 100% of load example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ALB spanning AZs:
 ```hcl
@@ -443,7 +440,7 @@ resource "aws_lb" "app" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Routes only to healthy targets in each AZ example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Capacity planning for AZ failure.
 Setting `min_size` to handle full load across N-1 AZs. A `min_size=2`
@@ -452,8 +449,7 @@ The system is HA (stays up) but severely degraded.
 
 ---
 
-**Q4. DEBUGGING: Your service shows 5xx errors for ~2 minutes,
-once every 30-60 days with no obvious trigger. How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Your service shows 5xx errors for ~2 minutes, once every 30-60 days with no obvious trigger. How do you diagnose?**
 
 This pattern (periodic 2-minute outage, no pattern) suggests RDS
 Multi-AZ failover.
@@ -480,7 +476,7 @@ aws cloudwatch get-metric-statistics \
 # Check AWS Health dashboard for maintenance windows
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check AWS Health dashboard for maintenance windows example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix (reduce 2 minutes to < 10 seconds for Aurora):
 ```bash
@@ -490,7 +486,7 @@ Fix (reduce 2 minutes to < 10 seconds for Aurora):
 # Application connections do not drop - proxy handles reconnect
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This proxy handles reconnect example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* RDS Proxy as the long-term fix.
 Even with Aurora's faster failover, applications that hold long-lived
@@ -500,8 +496,7 @@ to near-zero.
 
 ---
 
-**Q5. What is the health check grace period on an ASG and what
-happens without it?**
+**[MID] Q5 - [FAILURE] What is the health check grace period on an ASG and what happens without it?**
 
 Health check grace period: the time after an instance launches
 during which ASG ignores health check failures. The instance
@@ -521,7 +516,7 @@ No instances ever become healthy
 Service is down
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This proxy handles reconnect example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With correct grace period:
 ```
@@ -533,7 +528,7 @@ Application responds 200 OK
 Instance marked healthy, receives traffic
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This proxy handles reconnect example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Tuning:
 ```hcl
@@ -544,7 +539,7 @@ health_check_grace_period = 120  # > startup time
 # Too long = broken instance serves traffic during grace period
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Too long = broken instance serves traffic during grace period example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The `startupProbe` in Kubernetes
 is equivalent to the ASG grace period. The same concept applies
@@ -553,8 +548,7 @@ until they have had time to initialize.
 
 ---
 
-**Q6. TRADE-OFF: Multi-AZ vs multi-region. What are the cost
-and complexity differences?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: Multi-AZ vs multi-region. What are the cost and complexity differences?**
 
 | Dimension | Multi-AZ | Multi-Region |
 |---|---|---|
@@ -581,8 +575,7 @@ managed AWS service provides natively at all database types.
 
 ---
 
-**Q7. How do you test HA and failover mechanisms without
-disrupting production?**
+**[SENIOR] Q7 - [MECHANISM] How do you test HA and failover mechanisms without disrupting production?**
 
 Chaos Engineering approach:
 
@@ -616,7 +609,7 @@ aws autoscaling terminate-instance-in-auto-scaling-group \
 aws fis create-experiment-template ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scheduled experiments with automatic rollback example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Running failover tests in
 production during low-traffic windows. Staging failover tests
@@ -626,8 +619,7 @@ real traffic patterns).
 
 ---
 
-**Q8. What is the thundering herd problem during HA failover
-and how do you prevent it?**
+**[SENIOR] Q8 - [MECHANISM] What is the thundering herd problem during HA failover and how do you prevent it?**
 
 Thundering herd: when a primary fails and a standby takes over,
 all connections that were on the primary reconnect simultaneously
@@ -644,7 +636,7 @@ New primary overwhelmed -> performance degraded
 Application sees slow responses even after "successful" failover
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scheduled experiments with automatic rollback example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Prevention:
 ```java
@@ -659,7 +651,7 @@ long backoff = (long)(Math.random() * 5000) + attempt * 1000;
 Thread.sleep(backoff);  // 0-5s + linear backoff
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scheduled experiments with automatic rollback example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 For RDS: use RDS Proxy. It maintains a warm connection pool
 to the primary. On failover, application connections stay open
@@ -674,8 +666,7 @@ that returns to full capacity immediately.
 
 ---
 
-**Q9. BEHAVIORAL: Design a highly available architecture for
-a 3-tier web application on AWS.**
+**[SENIOR] Q9 - [DESIGN] BEHAVIORAL: Design a highly available architecture for a 3-tier web application on AWS.**
 
 Requirements assumed: 99.99% availability, RTO < 5 minutes,
 RPO < 1 minute, supports 10,000 concurrent users.
@@ -715,7 +706,7 @@ Observability:
   - Aurora Performance Insights for query analysis
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scheduled experiments with automatic rollback example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Sizing the ASG for AZ failure.
 "Min 2 tasks/AZ" means on AZ failure we have 4 tasks handling load
@@ -901,7 +892,7 @@ BREAK-EVEN:
   If 1+ outage per month: Active-Active pays for itself
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Disaster Recovery Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Pilot Light vs Warm Standby:**
 
@@ -923,7 +914,7 @@ DIFFERENCE: Warm Standby has running app tier,
   Pilot Light has only data tier running.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Disaster Recovery Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -998,7 +989,7 @@ resource "aws_route53_record" "api_dr" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 3 * 30s = 90 seconds to detect failure example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```bash
 # DR RUNBOOK (executed when primary fails)
@@ -1030,7 +1021,7 @@ dig +short api.example.com
 # Total RTO: ~15-20 minutes
 ```
 
-> **Code walkthrough:** The Warm Standby maintains one running
+> **Code walkthrough:** The Warm Standby maintains one runningice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ECS task in the DR region (not zero, like Pilot Light).
 > The cross-region RDS read replica uses async replication:
 > typical lag is seconds to minutes, giving RPO of seconds.
@@ -1115,7 +1106,7 @@ aws cloudwatch get-metric-statistics \
 # Alert if ReplicaLag > 300 seconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert if ReplicaLag > 300 seconds example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Alert on ReplicaLag. Scale up replica instance type
 if it can't keep up with write load.
@@ -1138,7 +1129,7 @@ spring:
 # to DR region endpoint, redeploy ECS service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This to DR region endpoint, redeploy ECS service example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -1152,8 +1143,7 @@ spring:
 | Debugging | 1 | Diagnosing failed DR execution |
 | Behavioral | 2 | DR design for SLA, chaos experiment |
 
-**Q1. What is the difference between RTO and RPO and how do
-you determine appropriate values?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between RTO and RPO and how do you determine appropriate values?**
 
 RTO (Recovery Time Objective): maximum acceptable time between
 a disaster event and service restoration. How long can the business
@@ -1177,7 +1167,7 @@ RPO=minutes, RTO=minutes -> Warm Standby ($$$)
 RPO=seconds, RTO=seconds -> Active-Active ($$$$)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This to DR region endpoint, redeploy ECS service example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Calibration:
 ```bash
@@ -1194,7 +1184,7 @@ Calibration:
 # RPO = event_time - last_replicated_timestamp
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This last_replicated_timestamp example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Measuring RTO and RPO during
 actual DR tests rather than estimating from architecture diagrams.
@@ -1204,8 +1194,7 @@ to update a config file).
 
 ---
 
-**Q2. What are the four DR strategies and what are the exact
-cost and complexity trade-offs?**
+**[JUNIOR] Q2 - [TRADE-OFF] What are the four DR strategies and what are the exact cost and complexity trade-offs?**
 
 | Strategy | RTO | RPO | Cost vs Prod | Description |
 |---|---|---|---|---|
@@ -1239,8 +1228,7 @@ writes correctly, which can be 6-18 months of work.
 
 ---
 
-**Q3. How does Route 53 health-check-based failover work
-and what are its failure detection limitations?**
+**[JUNIOR] Q3 - [MECHANISM] How does Route 53 health-check-based failover work and what are its failure detection limitations?**
 
 ```hcl
 # Primary record with health check:
@@ -1272,7 +1260,7 @@ resource "aws_route53_record" "secondary" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This no health check: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Failover detection timeline:
 - Failure occurs
@@ -1293,8 +1281,7 @@ endpoint is up but the application cannot reach its database.
 
 ---
 
-**Q4. DEBUGGING: Your DR failover completed but the application
-is serving stale or incorrect data. How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Your DR failover completed but the application is serving stale or incorrect data. How do you diagnose?**
 
 ```bash
 # Step 1: Check replication lag at time of failover:
@@ -1326,7 +1313,7 @@ dig api-db.example.com  # should resolve to DR IP now
 redis-cli -h dr-cache.example.com FLUSHDB  # if cache corruption suspected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Corrupted cached data = incorrect behavior example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The DNS resolution cache check.
 Applications and their database drivers often cache DNS resolutions
@@ -1336,8 +1323,7 @@ cache.ttl=0` setting is needed to prevent this.
 
 ---
 
-**Q5. How do you handle database DR - what is the difference
-between backup-based and replication-based RPO?**
+**[MID] Q5 - [TRADE-OFF] How do you handle database DR - what is the difference between backup-based and replication-based RPO?**
 
 Backup-based RPO:
 - Daily snapshot -> RPO = up to 24 hours of data loss
@@ -1360,7 +1346,7 @@ Trade-off:
 - For high-write applications: prohibitively expensive
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Corrupted cached data = incorrect behavior example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For Aurora Global Database:
 ```bash
@@ -1372,7 +1358,7 @@ aws cloudwatch get-metric-statistics \
 # On failover: up to lag value of data at risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This On failover: up to lag value of data at risk example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Measuring replication lag
 continuously and alerting when it exceeds the RPO target. A lag
@@ -1381,8 +1367,7 @@ waiting to happen during a failover.
 
 ---
 
-**Q6. TRADE-OFF: RPO of zero vs RPO of 5 minutes. What is the
-true cost difference?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: RPO of zero vs RPO of 5 minutes. What is the true cost difference?**
 
 RPO of 5 minutes (Aurora Global Database, async replication):
 - Cost: DR Aurora cluster in secondary region (~50-75% of primary
@@ -1414,8 +1399,7 @@ services). Most RPO=0 requirements are for single-region resilience.
 
 ---
 
-**Q7. What is a chaos experiment in the context of DR validation
-and how do you implement one safely?**
+**[SENIOR] Q7 - [SCENARIO] What is a chaos experiment in the context of DR validation and how do you implement one safely?**
 
 Chaos engineering: deliberately inject failures to measure and
 improve system resilience. For DR: simulate the disaster to validate
@@ -1450,7 +1434,7 @@ aws fis create-experiment-template --cli-input-json '{
 # Built-in safety: experiment cannot make things worse than expected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Built-in safety: experiment cannot make things worse than expected example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Safe chaos principles:
 1. Start with staging; graduate to production at low traffic
@@ -1467,7 +1451,7 @@ a specified CloudWatch alarm fires.
 
 ---
 
-**Q8. How do you test a DR plan without disrupting production?**
+**[SENIOR] Q8 - [MECHANISM] How do you test a DR plan without disrupting production?**
 
 DR test spectrum:
 
@@ -1507,8 +1491,7 @@ an actual disaster, not before.
 
 ---
 
-**Q9. BEHAVIORAL: Your company's RPO is 1 hour, RTO is 4 hours.
-Design a DR solution for a 3-tier app on AWS.**
+**[SENIOR] Q9 - [DESIGN] BEHAVIORAL: Your company's RPO is 1 hour, RTO is 4 hours. Design a DR solution for a 3-tier app on AWS.**
 
 RPO=1 hour, RTO=4 hours maps to **Pilot Light** strategy.
 
@@ -1540,7 +1523,7 @@ DR Activation Runbook (target: 4 hours):
 Cost: ~30% of primary region cost (Aurora replica + ECS at 0)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Built-in safety: experiment cannot make things worse than expected example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Pre-warming Fargate capacity
 in the DR region. Fargate capacity is not always immediately

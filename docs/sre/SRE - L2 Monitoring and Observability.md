@@ -170,7 +170,7 @@ MONITORING MINIMUM
     p50_latency, p999_latency, memory_%, queue_depth
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Latency, Traffic, Errors, Saturation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Saturation is the only leading indicator among the four. Errors
@@ -217,6 +217,12 @@ detecting all user-visible problems.
 
 **Example 1: Four golden signals in Prometheus (wrong vs right)**
 
+
+```promql
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```promql
 # BAD: monitoring infrastructure metrics only
 # - CPU high/low
@@ -251,7 +257,7 @@ sum(rate(http_requests_total[5m]))
 # Complement of idle fraction = utilization
 ```
 
-> **Code walkthrough:** The BAD approach monitors infrastructure
+> **Code walkthrough:** The BAD approach monitors infrastructureice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (CPU seconds, memory bytes) - valid for capacity planning but
 > not for user-experience monitoring. The GOOD approach implements
 > all four golden signals as Prometheus queries. The latency signal
@@ -263,6 +269,12 @@ sum(rate(http_requests_total[5m]))
 > failure modes.
 
 **Example 2: Identifying the constrained resource for saturation**
+
+
+```promql
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```promql
 # BAD: monitoring only CPU for saturation
@@ -289,7 +301,7 @@ kafka_consumer_group_lag_sum{group="my-service"}
 (jvm_memory_used_bytes / jvm_memory_max_bytes)
 ```
 
-> **Code walkthrough:** The BAD approach monitors only CPU, which
+> **Code walkthrough:** The BAD approach monitors only CPU, whichice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is often not the first resource to saturate. A Java service will
 > often exhaust its database connection pool (98% full, causing
 > queue buildup) while CPU is at 60% - the service looks healthy by
@@ -328,7 +340,7 @@ histogram_quantile(0.99,
 # p99 error latency = 5ms (fast failures - useful signal)
 ```
 
-> **Code walkthrough:** The BAD approach measures latency for all
+> **Code walkthrough:** The BAD approach measures latency for allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requests. Fast error responses (a 5ms 500 error is "fast") pull
 > the aggregate p99 down, masking the slow success path. A service
 > with 10% errors at 5ms each and 90% successes at 500ms will show
@@ -421,7 +433,7 @@ histogram_quantile(0.999, # p999
 # p999: 2500ms (PROBLEM - 0.1% of users seeing 2.5s)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 0.1% of users seeing 2.5s) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Add a p999 latency SLI in addition to the p99 threshold SLI.
 The tail latency at p999 is often the canary for broader latency
@@ -454,7 +466,7 @@ probe_success{job="blackbox"}
 # External probe failing = connectivity issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This External probe failing = connectivity issue example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Add a traffic floor alert: if traffic drops below 10% of
 normal baseline, alert even if error rate is 0. Also add synthetic
@@ -489,7 +501,7 @@ hikaricp_connections_acquire_ms{quantile="0.99"}
 # Returns: 28000 (28 second wait for a connection)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Returns: 28000 (28 second wait for a connection) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Increase connection pool size or optimize query patterns
 to reduce connection hold time. Add pool saturation alert at 80%.
@@ -658,7 +670,7 @@ rate(hikaricp_connections_timeout_total[5m])
 # Alert on any non-zero rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert on any non-zero rate example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The pool saturation alert hierarchy: 80% utilization (warning,
 investigate before peak traffic), 95% utilization (critical, scale
@@ -1259,7 +1271,7 @@ ON-CALL REVIEW PROCESS (weekly)
   Each quarter: eliminate 5 alerts from backlog
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert Design and On-Call Hygiene example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Every non-actionable alert has a cost that compounds over time.
@@ -1299,6 +1311,13 @@ they are not met, automation, ticketing, or elimination is better.
 
 **Example 1: Alert definition - wrong vs right**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # BAD: symptom-free infrastructure alert
 # No runbook, no user-impact context, too sensitive
@@ -1342,8 +1361,9 @@ they are not met, automation, ticketing, or elimination is better.
     dashboard_url: >
       https://grafana/d/payment-slo
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD alert fires on infrastructure CPU
+> **Code walkthrough:** The BAD alert fires on infrastructure CPUice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with no user-impact context and no runbook. It will generate false
 > positives (80% CPU is normal during traffic bursts for many services),
 > provides no diagnosis path, and does not indicate whether this
@@ -1356,6 +1376,7 @@ they are not met, automation, ticketing, or elimination is better.
 
 **Example 2: Alert for gradual degradation with burn rate**
 
+{% raw %}
 ```yaml
 # Slow burn alert (catches gradual degradations
 # that threshold alerts miss)
@@ -1392,8 +1413,9 @@ they are not met, automation, ticketing, or elimination is better.
 # Problem: fires on every 1% error rate spike
 # Normal variance triggers this multiple times daily
 ```
+{% endraw %}
 
-> **Code walkthrough:** The slow burn alert detects a sustained 6x
+> **Code walkthrough:** The slow burn alert detects a sustained 6xice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > burn rate - the error budget will be exhausted in 5 days (30/6)
 > if not addressed. Using a 15-minute confirmation window and 6h+1h
 > multi-window confirmation prevents false positives from transient
@@ -1485,7 +1507,7 @@ Retrospective questions:
   Isolate the leading indicator (usually saturation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Normal variance triggers this multiple times daily example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Implement alert grouping (AlertManager groups related
 alerts). Design parent alerts for infrastructure failures that
@@ -1521,7 +1543,7 @@ Track per-alert false positive rate:
   Alerts with > 20% false positive rate: priority fix
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Normal variance triggers this multiple times daily example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Weekly on-call review meeting. For each alert with >20%
 false positive rate: either fix the threshold, add confirmation
@@ -1557,7 +1579,7 @@ while read url; do
 done < runbook_urls.txt
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check each URL for 200 response: example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:* Run runbook link validation in CI/CD. Broken runbook
 URL = alert definition merge blocked. Assign runbook ownership

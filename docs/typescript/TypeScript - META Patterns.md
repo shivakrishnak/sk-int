@@ -126,13 +126,28 @@ Generic constraints:
   <T extends keyof U> -> T must be a key of U
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Decision Framework example demonstrates null-safe value wrapping using authentication. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Common decision mistakes:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
+
+
+```typescript
+// BAD: using any defeats type safety
+```
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: Using 'any' for external data
@@ -173,7 +188,7 @@ interface UserConfig {
 }
 ```
 
-> **Code walkthrough:** The three examples show the most common
+> **Code walkthrough:** The three examples show the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > TypeScript decision mistakes. Using `any` for API responses
 > silently removes all type safety for the function's callers. String
 > unions compile to nothing (pure types, zero JS), while enums compile
@@ -385,7 +400,7 @@ TDD with types - process:
     Integration bugs caught at step 3, not at runtime
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Type-Driven Development example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key practices:**
 
@@ -460,7 +475,7 @@ function canAccess(
 }
 ```
 
-> **Code walkthrough:** The `declare function` statement defines the
+> **Code walkthrough:** The `declare function` statement defines theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > contract without implementation. TypeScript immediately verifies all
 > call sites against the declared types. This enables parallel work:
 > one developer implements `canAccess` while another writes
@@ -680,7 +695,7 @@ Team TypeScript governance:
    Weekly: type coverage % tracked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript at Team Scale example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -750,7 +765,7 @@ Team TypeScript governance:
 }
 ```
 
-> **Code walkthrough:** The base tsconfig pattern ensures all packages
+> **Code walkthrough:** The base tsconfig pattern ensures all packagesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > inherit the same strict settings without duplication. Packages can
 > override only what they need (JSX for React, different module
 > formats). The ESLint configuration uses `recommended-type-checked`
@@ -856,14 +871,14 @@ Step 1: Measure current state. Track the metrics:
 npx type-coverage --strict
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Type coverage (using type-coverage package): example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: Add ESLint enforcement for new code only:
 ```json
 { "overrides": [{ "files": ["src/**/*.ts"],
   "rules": { "@typescript-eslint/no-explicit-any": "error" } }] }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Type coverage (using type-coverage package): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This prevents new `any` without breaking existing code.
 

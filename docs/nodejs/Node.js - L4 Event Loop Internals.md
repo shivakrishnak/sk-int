@@ -152,7 +152,7 @@ Event loop phase details:
     next timers phase.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Loop Phases and libuv Internals example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -223,7 +223,7 @@ for (let i = 0; i < 8; i++) {
 // Shows thread pool batching
 ```
 
-> **Code walkthrough:** The I/O callback ordering demonstrates phase
+> **Code walkthrough:** The I/O callback ordering demonstrates phaseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sequencing precisely. After the poll callback completes, nextTick
 > runs (between-phase), then Promise microtasks, then check phase
 > (setImmediate), then the loop advances to timers phase (setTimeout).
@@ -306,7 +306,7 @@ UV_THREADPOOL_SIZE = 2 * CPU cores
 # Default 4 is almost always too small for production
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Default 4 is almost always too small for production example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Event loop tuning:**
 - Monitor p99 event loop lag (target <10ms)
@@ -330,7 +330,7 @@ if (cluster.isPrimary) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Default 4 is almost always too small for production example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Cluster + worker threads:**
 - Cluster: horizontal scale (one process per core, shared port)
@@ -414,7 +414,7 @@ dns.resolve4('api.external.com', (err, addresses) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Default 4 is almost always too small for production example demonstrates variable declaration using thread pool. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 

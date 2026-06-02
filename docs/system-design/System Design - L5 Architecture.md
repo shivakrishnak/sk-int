@@ -126,11 +126,11 @@ Multi-region data replication:
   Trade-off: AP (eventual consistency for reads) to get active-active
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Region Active-Active Architecture example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Conflict resolution patterns:**
 
-```
+```plaintext
 Last-Write-Wins (LWW):
   Each write: timestamp from local clock
   Conflict: higher timestamp wins
@@ -176,7 +176,7 @@ Global transaction coordinator (for strict consistency):
                (route most operations to local; route consistency-critical to coordinator)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Region Active-Active Architecture example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -249,7 +249,7 @@ public class UserSessionService {
 }
 ```
 
-> **Code walkthrough:** DynamoDB Global Tables handles multi-region replication
+> **Code walkthrough:** DynamoDB Global Tables handles multi-region replicationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > automatically. The application writes to the local region (same AWS_REGION
 > as the pod); DynamoDB asynchronously replicates to all configured regions
 > within 1-2 seconds. Reads from the local region may be slightly stale (up to
@@ -303,7 +303,7 @@ public class PageViewCrdtCounter {
 }
 ```
 
-> **Code walkthrough:** The G-Counter CRDT splits the counter by region. Each
+> **Code walkthrough:** The G-Counter CRDT splits the counter by region. Eachice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > region increments only its own bucket (no concurrent writes to the same key
 > from multiple regions). Async replication copies each region's count to the
 > others. The merge operation is a sum of all region buckets - always correct,
@@ -351,7 +351,7 @@ public class RegionalHealthIndicator
 // Users: DNS TTL expires -> get other region's IP
 ```
 
-> **Code walkthrough:** The health indicator integrates with Route53's health
+> **Code walkthrough:** The health indicator integrates with Route53's healthice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > check system. Route53 polls the `/actuator/health` endpoint every 30 seconds.
 > When the region's DB fails: health returns DOWN. Route53 detects: marks this
 > region's DNS record as unhealthy. On the next DNS query: Route53 returns only
@@ -423,7 +423,7 @@ Connect + internet routing as fallback).
 
 ---
 
-#### Q1 - How does geo-routing work and what are its failure modes?
+**[JUNIOR] Q1 - [PRODUCTION] How does geo-routing work and what are its failure modes?**
 
 DNS-based geo-routing: direct users to the nearest healthy region.
 
@@ -474,7 +474,7 @@ Failure modes:
   Prevention: RPKI (Route Origin Validation) for BGP announcements
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The DNS TTL is a critical tuning knob for
 active-active failover. Too long (300+ seconds): slow failover, users experience
@@ -487,11 +487,11 @@ diminishing returns (DNS resolver behavior unpredictable below 30s TTL).
 
 ---
 
-#### Q2 - How do you handle data consistency with multi-region writes?
+**[JUNIOR] Q2 - [HANDS-ON] How do you handle data consistency with multi-region writes?**
 
 Multi-region write consistency: the central challenge.
 
-```
+```plaintext
 Consistency requirements analysis:
   Classify all data by conflict risk + consequence:
 
@@ -530,7 +530,7 @@ Version vectors (conflict detection):
   Cassandra: LWW (simpler, loses writes on concurrent updates)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The classification exercise (low/medium/high
 risk and consequence) should be done explicitly for every active-active design.
@@ -545,7 +545,7 @@ be caught. The balance can't go negative. This requires the global coordinator
 
 ---
 
-#### Q3 - How do you implement active-active for a database like PostgreSQL?
+**[JUNIOR] Q3 - [HANDS-ON] How do you implement active-active for a database like PostgreSQL?**
 
 PostgreSQL active-active: multi-master replication options.
 
@@ -590,7 +590,7 @@ Options for PostgreSQL-based active-active:
   Not database-level multi-master
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The practical truth about active-active at
 scale: it's mostly application-level partitioning + async replication, not
@@ -605,11 +605,11 @@ latency on every write.
 
 ---
 
-#### Q4 - How do you design for region failover with minimal disruption?
+**[MID] Q4 - [ARCHITECTURE] How do you design for region failover with minimal disruption?**
 
 Region failover design: graceful handling of full region failure.
 
-```
+```plaintext
 Failover triggers:
   Region completely down (all services unavailable)
   Specific service down in one region (partial failure)
@@ -659,7 +659,7 @@ Failover architecture:
     Application retry: faster than DNS failover
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The RPO (Recovery Point Objective) for
 active-active with async replication is determined by the replication lag, not
@@ -673,7 +673,7 @@ tested failover runbooks prevent ad-hoc decisions during incidents.
 
 ---
 
-#### Q5 - How do you handle user authentication in multi-region active-active?
+**[MID] Q5 - [CONCEPTUAL] How do you handle user authentication in multi-region active-active?**
 
 Authentication in multi-region: JWTs vs session state.
 
@@ -713,14 +713,14 @@ JWT-based auth (preferred for multi-region):
 
 Token revocation:
   JWT is valid until expiry (15 min)
-  Revocation: "logout" or "password changed" -> user's JWT still valid for 15 min
+  Revocation: "logout" or "password changed" -> user's JWT still valid for 15...
   Strict revocation: maintain revocation list in global Redis
     All regions: check revocation list on JWT validation
     Cross-region: fast (< 1ms Redis lookup)
   Pragmatic: short JWT TTL (15 min) makes strict revocation unnecessary for most apps
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The JWT refresh token flow is the critical
 design for multi-region auth. The short-lived JWT (15 minutes) is verified
@@ -735,11 +735,11 @@ strict logout semantics vs simplicity.
 
 ---
 
-#### Q6 - How do you handle split-brain in an active-active multi-region setup?
+**[MID] Q6 - [CONCEPTUAL] How do you handle split-brain in an active-active multi-region setup?**
 
 Split-brain in multi-region: what happens when regions can't communicate.
 
-```
+```plaintext
 Scenario: US and EU are both active, inter-region link fails
   US: continues serving US users, writing to US database
   EU: continues serving EU users, writing to EU database
@@ -786,7 +786,7 @@ Implementation:
     - Alert: ops team (manual decision to continue or go read-only)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The split-brain response should be pre-planned
 and tested, not decided during an incident. For each critical data type: document
@@ -800,7 +800,7 @@ documented policy. Fix gaps before production.
 
 ---
 
-#### Q7 - What is the cost model for active-active multi-region?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the cost model for active-active multi-region?**
 
 Active-active cost analysis: quantifying the investment.
 
@@ -852,7 +852,7 @@ When is active-active worth it:
     Data residency: EU data must stay in EU -> multi-region required regardless
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most common miscalculation: treating
 active-active cost as "2x single region." The hidden costs are: data replication
@@ -867,11 +867,11 @@ replicas in each region (reduces read latency without the write complexity).
 
 ---
 
-#### Q8 - How would you test a multi-region active-active system?
+**[SENIOR] Q8 - [ARCHITECTURE] How would you test a multi-region active-active system?**
 
 Testing strategy: verifying correctness and resilience.
 
-```
+```plaintext
 Testing pyramid for multi-region:
 
 1. Unit tests: conflict resolution logic
@@ -882,7 +882,7 @@ Testing pyramid for multi-region:
 2. Integration tests: replication correctness
   Write in US region, verify EU region shows the same data
   Verify replication lag < SLO (e.g., < 2 seconds)
-  Test conflict: concurrent writes to same key -> verify resolution matches policy
+  Test conflict: concurrent writes to same key -> verify resolution matches...
 
 3. Chaos engineering (production-like environment):
   Test 1: Region failover
@@ -917,7 +917,7 @@ Testing pyramid for multi-region:
   Verify: at 2x normal load (simulating failover load): no degradation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The split-brain chaos test is the most
 critical and least commonly run. Teams deploy active-active systems without
@@ -933,7 +933,7 @@ document the runbook, execute, debrief.
 
 ---
 
-#### Q9 - How do you handle compliance and data residency in multi-region?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you handle compliance and data residency in multi-region?**
 
 Data residency: legal requirements on where data is stored and processed.
 
@@ -977,7 +977,7 @@ Architecture for data residency:
   Cross-region access: denied at KMS level (key policy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Data residency compliance is not just a
 storage question; it's a processing question. GDPR covers "processing" of personal
@@ -992,11 +992,11 @@ an engineering decision.
 
 ---
 
-#### Q10 - What are the alternatives to full active-active for global distribution?
+**[STAFF] Q10 - [CONCEPTUAL] What are the alternatives to full active-active for global distribution?**
 
 Alternatives: different trade-offs on the cost/complexity spectrum.
 
-```
+```plaintext
 Full active-active:
   All regions serve reads AND writes
   Highest: complexity, conflict risk, cost
@@ -1039,7 +1039,7 @@ Decision framework:
   Large read-to-write ratio (10:1+): read replicas per region
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Most applications should start with CDN +
 single-region API, not active-active. The business case for active-active
@@ -1052,7 +1052,7 @@ perception threshold for most interactions). Optimize after measuring, not befor
 
 ---
 
-#### Q11 - Design an active-active order processing system for a global e-commerce platform.
+**[STAFF] Q11 - [ARCHITECTURE] Design an active-active order processing system for a global e-commerce platform.**
 
 System design: global e-commerce with active-active for orders.
 
@@ -1115,7 +1115,7 @@ Failover:
   Order reads: still fast (local replicas available)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The hybrid model - active-active for reads
 and eventually-consistent data, global coordinator for inventory - is the
@@ -1130,11 +1130,11 @@ of active-active while maintaining correctness for the operations that need it.
 
 ---
 
-#### Q12 - How do you manage schema migrations in a multi-region active-active database?
+**[STAFF] Q12 - [CONCEPTUAL] How do you manage schema migrations in a multi-region active-active database?**
 
 Schema migrations: safely deploying DB changes across all regions.
 
-```
+```plaintext
 Problem:
   Single-region migration:
     Step 1: stop writes (maintenance window)
@@ -1183,7 +1183,7 @@ Multi-region migration tools:
   Verify: each region at same version before proceeding
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The expand-contract pattern is the only safe
 way to do schema migrations in active-active systems without downtime. It requires

@@ -150,7 +150,7 @@ RESPONSE (host returns):
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MCP Sampling example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -208,6 +208,16 @@ is compromised.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 """MCP Sampling: server-side request and security."""
@@ -289,6 +299,7 @@ async def classify_with_sampling_good(
             "Output only: POSITIVE, NEGATIVE, or NEUTRAL. "
             "Never output anything else."
         ),
+        # BAD: see prior example above (thisServer = minimal context e...)
         # GOOD: thisServer = minimal context exposure
         include_context="thisServer",
         max_tokens=10,  # short output prevents injection
@@ -332,7 +343,7 @@ async def list_tools() -> list[types.Tool]:
     )]
 ```
 
-> **Code walkthrough:** The BAD example uses `include_context="allServers"`,
+> **Code walkthrough:** The BAD example uses `include_context="allServers"`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > exposing the full conversation history (including
 > system prompts) to the sampling request. A malicious
 > actor who can influence the document content could
@@ -436,7 +447,7 @@ capabilities: {
   "sampling": {}   // <-- required for sampling support
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Validate output matches expected values example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If `sampling` is absent: the client doesn't support it.
 
@@ -457,7 +468,7 @@ async def lifespan(server: Server):
         yield {"sampling_available": True}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fall back to deterministic processing example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 *What separates good from great:* "Design servers
 to degrade gracefully when sampling is unavailable."
@@ -577,7 +588,7 @@ without requiring a specific model:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fall back to deterministic processing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 `hints`: a preference list of model names. The host
 tries to match these, in order. If no model matches,
@@ -619,7 +630,7 @@ print(json.dumps({
     "include_context": include_context
 }), file=sys.stderr)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fall back to deterministic processing example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 This shows exactly what the server is sending
 to the host.
@@ -636,7 +647,7 @@ resp = client.messages.create(
 )
 print(resp.content[0].text)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fall back to deterministic processing example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Isolate whether the issue is in the sampling request
 content or in the server's handling of the result.
@@ -763,7 +774,7 @@ if not (client_caps and
     pass
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sampling not supported by this client example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Graceful degradation options:
 
@@ -818,7 +829,7 @@ sampling request:
   "includeContext": "allServers"
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sampling not supported by this client example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The host's LLM, seeing the full conversation context,
 may comply and reveal the system prompt.
@@ -881,7 +892,7 @@ Example (per-server sampling config proposal):
   }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sampling not supported by this client example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Not all clients support per-server sampling controls
 yet - this is an evolving area of the MCP spec.
@@ -1120,7 +1131,7 @@ TOOL INVOCATION FLOW:
   Host continues: messages.create([..., tool_result])
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MCP Host Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1297,7 +1308,7 @@ async def demo():
 asyncio.run(demo())
 ```
 
-> **Code walkthrough:** `MinimalMCPHost` implements
+> **Code walkthrough:** `MinimalMCPHost` implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the three core host responsibilities. The `connect_server()`
 > method establishes a session, discovers tools via
 > `session.list_tools()`, and builds the `tool_to_session`
@@ -1394,7 +1405,7 @@ for tool_name, server_name in host.tool_to_session.items():
 # Look for tools mapped to unexpected servers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for tools mapped to unexpected servers. example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *Fix:* Namespace tools by server name in the aggregated
 view:
@@ -1402,7 +1413,7 @@ view:
 # Instead of: tool.name -> "search"
 # Use: f"{server_name}/{tool.name}" -> "filesystem/search"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use: f"{server_name}/{tool.name}" -> "filesystem/search" example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 The AI sees namespaced names. Tool descriptions
 must also be updated to match.
@@ -1500,7 +1511,7 @@ async def maintain_connection(self, name, params):
             backoff = min(backoff * 2, 60)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 *What separates good from great:* "Remove server tools
 from the aggregated view immediately on disconnect -
@@ -1574,7 +1585,7 @@ async def refresh_capabilities(self, server_name: str):
     self.rebuild_aggregated_view()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 Performance impact: cached aggregation reduces
 per-turn latency from O(N*list_latency) to O(1).
@@ -1603,7 +1614,7 @@ MCP tool schema:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Converted to Anthropic API format:
 ```json
@@ -1614,7 +1625,7 @@ Converted to Anthropic API format:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Note: `inputSchema` (MCP) -> `input_schema` (Anthropic).
 For OpenAI: different conversion. The host handles
@@ -1630,7 +1641,7 @@ After the AI returns a `tool_use` block:
 {"type": "tool_use", "id": "toolu_01", "name": "search_docs", "input": {...}}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The host routes `name: "search_docs"` to the correct
 server, calls it with `input` as arguments, and
@@ -1656,7 +1667,7 @@ Step 1: Log the tool routing map:
 for tool, server in self.tool_to_session.items():
     print(f"{tool} -> {server}")
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Check: is the expected tool in the map? Does it
 point to the expected server?
@@ -1669,7 +1680,7 @@ for block in resp.content:
               f"{self.tool_to_session.get(block.name, 'NOT FOUND')}")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Step 3: Check for name case sensitivity.
 Tool names in MCP are case-sensitive. If the server
@@ -1685,7 +1696,7 @@ Step 5: Test the tool call directly:
 session = self.sessions["expected-server"]
 result = await session.call_tool("search_docs", {"query": "test"})
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset backoff on successful connection example demonstrates Python code pattern using async/await. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 If this works: routing logic is the issue.
 If this fails: server implementation is the issue.
@@ -1774,7 +1785,7 @@ else:
     })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This let the AI decide example demonstrates Python code pattern using async/await. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Why: the AI receives the error message as tool
 output and can reason about it. The AI might retry
@@ -1841,7 +1852,7 @@ if token_count.input_tokens > 180000:
     messages = messages[-10:]  # keep last 10 messages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Truncate conversation history example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "Truncate tool
 results at the host level - the server shouldn't

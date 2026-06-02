@@ -75,7 +75,13 @@ Both needed before putting out the 'Open' sign (routing traffic)."
 ### 📘 Concept Explanation
 
 **Healthcheck configuration, /health endpoint design, Kubernetes comparison:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 HEALTHCHECK IN DOCKERFILE:
 
   # Basic HTTP healthcheck:
@@ -183,7 +189,7 @@ RESTART POLICIES:
   # --restart=always: restart always, including after daemon restart.
   # Use for: production services that must auto-recover.
   
-  # --restart=unless-stopped: like always, but NOT restarted if manually stopped.
+  # --restart=unless-stopped: like always, but NOT restarted if manually...
   # Most practical for production: auto-recovers from crashes, respects manual stops.
   
   # --restart=no (default): no automatic restart.
@@ -196,15 +202,21 @@ RESTART POLICIES:
   # Kubernetes: liveness probe kills and restarts unhealthy pods.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Kubernetes: liveness probe kills and restarts unhealthy pods. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Spring Boot health endpoint with structured
+> **Code walkthrough:** A Spring Boot health endpoint with structuredice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > checks and a Docker Compose healthcheck configuration shows the
 > complete integration.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: shallow health endpoint that gives false confidence:
@@ -253,7 +265,7 @@ class HealthController {
 }
 ```
 
-> **Code walkthrough:** The health endpoint distinguishes between
+> **Code walkthrough:** The health endpoint distinguishes betweenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > critical dependencies (database: failure = 503, container marked
 > unhealthy) and non-critical dependencies (Redis: failure = degraded
 > but 200, container stays healthy). This models the real business
@@ -333,7 +345,9 @@ liveness probe handles this (failure triggers container restart).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Container marked unhealthy immediately on startup.**
-```
+
+{% raw %}
+```plaintext
 Symptom: docker ps shows "(unhealthy)" status.
   Container: running but healthcheck failing.
   Application: may actually be working fine.
@@ -352,7 +366,7 @@ Diagnosis:
   # "Output": "curl: (7) Failed to connect" -> app not yet listening.
   
   # Check the healthcheck exit code:
-  docker inspect mycontainer --format '{{range .State.Health.Log}}{{.ExitCode}} {{.Output}}{{end}}'
+  docker inspect mycontainer --format '{{range .State.Health.Log}}{{.ExitCode}}...
 
 Fix:
   Add start_period to give app time to initialize:
@@ -370,8 +384,9 @@ Fix:
   
   For distroless: build a custom health-check binary.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TCP check: verifies port is listening. No curl needed. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -477,6 +492,13 @@ revocable, centralized)."
 ### 📘 Concept Explanation
 
 **Env vars, secrets, config files, 12-factor app:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```
 ENVIRONMENT VARIABLE METHODS:
 
@@ -596,16 +618,27 @@ EXTERNAL CONFIG STORE PATTERN:
   5. Static config (immutable): baked into image (e.g., application.yaml).
   6. Dynamic config (changes without deploy): external store.
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This (AWS SDK auto-discovers region and credentials from EC2/ECS/EKS role) example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A Spring Boot application reading secrets
+> **Code walkthrough:** A Spring Boot application reading secretsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from `/run/secrets/` files shows the Docker secrets pattern with
 > POJO configuration.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: password as environment variable (visible in docker inspect):
@@ -656,7 +689,7 @@ class SecurityConfig {
 }
 ```
 
-> **Code walkthrough:** The `readSecret()` method first checks
+> **Code walkthrough:** The `readSecret()` method first checksice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `/run/secrets/{name}` (Docker Secrets or Kubernetes Secret volume
 > mount). Falls back to environment variable for local development
 > (where Docker secrets may not be configured). `.strip()` removes
@@ -739,7 +772,7 @@ except during the brief read at startup.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Secret leaked in container logs or image history.**
-```
+```plaintext
 Symptom: Security scanner or SIEM alerts: credentials found in logs.
   Or: developer accidentally views docker history and sees tokens.
   
@@ -777,7 +810,7 @@ Prevention:
   - Application: never log configuration values during startup.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check application logs: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

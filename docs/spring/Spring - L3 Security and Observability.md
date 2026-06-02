@@ -169,7 +169,7 @@ Authorization flow:
     -> @PreAuthorize/@PostAuthorize for method security
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Security Filter Chain example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Spring Security runs BEFORE DispatcherServlet - in the Servlet filter layer.
@@ -310,7 +310,7 @@ public class JwtAuthenticationFilter
 }
 ```
 
-> **Code walkthrough:** OncePerRequestFilter ensures the filter runs exactly
+> **Code walkthrough:** OncePerRequestFilter ensures the filter runs exactlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > once per request. The filter extracts the JWT, validates it, and populates
 > SecurityContext. Critically: the filter does NOT return early on invalid JWT
 > for protected endpoints - it continues to filterChain.doFilter(). The
@@ -395,7 +395,7 @@ SecurityContextHolder to use InheritableThreadLocal mode.
 
 ---
 
-#### Q1 - How does Spring Security integrate with Spring Boot?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does Spring Security integrate with Spring Boot?**
 
 Spring Boot auto-configures Spring Security via SecurityAutoConfiguration.
 When spring-boot-starter-security is on the classpath:
@@ -415,7 +415,7 @@ by defining @Bean SecurityFilterChain(HttpSecurity) methods.
 
 ---
 
-#### Q2 - What is the SecurityContext and how is it stored?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the SecurityContext and how is it stored?**
 
 SecurityContext holds the Authentication for the current request.
 Storage: ThreadLocal (default) via SecurityContextHolder.
@@ -438,7 +438,7 @@ SecurityContextHolder in reactive code - use ReactiveSecurityContextHolder inste
 
 ---
 
-#### Q3 - What is the difference between hasRole() and hasAuthority()?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between hasRole() and hasAuthority()?**
 
 **hasRole("ADMIN")**:
 - Checks for an authority with "ROLE_" prefix: "ROLE_ADMIN"
@@ -462,7 +462,7 @@ JwtAuthenticationConverter to extract claims correctly.
 
 ---
 
-#### Q4 - How does Spring Security handle authentication?
+**[MID] Q4 - [CONCEPTUAL] How does Spring Security handle authentication?**
 
 Authentication flow:
 
@@ -508,7 +508,7 @@ public class ApiKeyAuthProvider
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* AuthenticationProvider.supports() allows
 multiple providers to coexist for different authentication types. ProviderManager
@@ -517,7 +517,7 @@ true. This is how JWT + Basic + API key can all work in the same application.
 
 ---
 
-#### Q5 - What is the difference between authentication and authorization in Spring Security?
+**[MID] Q5 - [CONCEPTUAL] What is the difference between authentication and authorization in Spring Security?**
 
 **Authentication** - WHO are you?
 - Verifies identity
@@ -542,7 +542,7 @@ through the HTTP layer (batch jobs, event listeners).
 
 ---
 
-#### Q6 - How do you configure multiple SecurityFilterChain beans?
+**[MID] Q6 - [CONCEPTUAL] How do you configure multiple SecurityFilterChain beans?**
 
 Multiple SecurityFilterChain beans allow different security configurations
 for different URL patterns:
@@ -576,7 +576,7 @@ public SecurityFilterChain webSecurity(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 FilterChainProxy checks chains in @Order order. First matching chain handles
 the request. API routes use JWT (stateless). Web routes use form login (session).
@@ -589,7 +589,7 @@ bypass via path variation.
 
 ---
 
-#### Q7 - How does CSRF protection work and when should you disable it?
+**[SENIOR] Q7 - [CONCEPTUAL] How does CSRF protection work and when should you disable it?**
 
 CSRF (Cross-Site Request Forgery) attacks trick authenticated browser users into
 making malicious requests using their session cookies.
@@ -619,7 +619,7 @@ When to KEEP CSRF enabled:
     .ignoringRequestMatchers("/api/webhooks/**"))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* SameSite cookie attribute provides additional
 CSRF protection at the browser level. Setting session cookie to SameSite=Strict
@@ -628,7 +628,7 @@ in-depth approach: CSRF tokens + SameSite cookie together.
 
 ---
 
-#### Q8 - How do you implement @PreAuthorize method security?
+**[SENIOR] Q8 - [HANDS-ON] How do you implement @PreAuthorize method security?**
 
 @PreAuthorize checks authorization before the method executes:
 
@@ -661,7 +661,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @PreAuthorize evaluates SpEL: `authentication.name`, `principal.username`,
 `hasRole()`, `hasAuthority()`, method parameters (#paramName).
@@ -673,7 +673,7 @@ authorization, consider a domain-object security framework (ACL module).
 
 ---
 
-#### Q9 - How do you debug Spring Security issues?
+**[SENIOR] Q9 - [DEBUGGING] How do you debug Spring Security issues?**
 
 Enable security debug logging:
 ```properties
@@ -682,7 +682,7 @@ logging.level.org.springframework.security=DEBUG
 logging.level.org.springframework.security.web=DEBUG
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or only filter chain decisions: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This logs:
 - Which SecurityFilterChain matched the request
@@ -694,7 +694,7 @@ Spring Security's built-in debug mode:
 ```java
 @EnableWebSecurity(debug = true)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or only filter chain decisions: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This logs request details and filter invocations at DEBUG level.
 
@@ -711,7 +711,7 @@ Authentication auth = SecurityContextHolder.getContext()
     .getAuthentication();
 log.debug("Authorities: {}", auth.getAuthorities());
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or only filter chain decisions: example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 If the authority list doesn't match your hasRole/hasAuthority checks,
 that's your bug.
@@ -886,7 +886,7 @@ Metrics (Micrometer):
   /actuator/metrics/http.server.requests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Boot Actuator example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Liveness vs Readiness is the critical distinction for Kubernetes. Liveness
@@ -969,7 +969,7 @@ public class PaymentServiceHealthIndicator
 }
 ```
 
-> **Code walkthrough:** Custom HealthIndicator adds the payment service health
+> **Code walkthrough:** Custom HealthIndicator adds the payment service healthice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to the aggregated /actuator/health response. If the payment service is DOWN,
 > the application's overall health becomes DOWN (if it is a readiness indicator)
 > or reports degraded state. The withDetail fields appear in the health response
@@ -1024,7 +1024,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Micrometer metrics are registered in the constructor
+> **Code walkthrough:** Micrometer metrics are registered in the constructorice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and recorded in business methods. Counter tracks events (orders created/failed).
 > DistributionSummary tracks value distribution (order amounts - min, max, mean,
 > percentiles). Timer measures latency. All metrics are automatically exported to
@@ -1112,7 +1112,7 @@ management.endpoints.web.exposure.include=prometheus.
 
 ---
 
-#### Q1 - What is Spring Boot Actuator and why do you use it?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is Spring Boot Actuator and why do you use it?**
 
 Actuator provides production-ready operational endpoints for Spring Boot applications:
 - Health checking (Kubernetes probes, monitoring systems)
@@ -1132,7 +1132,7 @@ can protect them normally.
 
 ---
 
-#### Q2 - What is the difference between liveness and readiness in Kubernetes probes?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between liveness and readiness in Kubernetes probes?**
 
 **Liveness probe** - should the container be restarted?
 - Failing liveness: Kubernetes kills and restarts the container
@@ -1154,7 +1154,7 @@ management.health.livenessstate.enabled=true
 management.health.readinessstate.enabled=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Custom ReadinessHealthIndicators allow
 programmatic readiness control:
@@ -1162,20 +1162,20 @@ programmatic readiness control:
 ApplicationAvailability.setReadinessState(
     ReadinessState.REFUSING_TRAFFIC);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is how graceful shutdown works - the app signals not-ready before
 the server stops accepting connections.
 
 ---
 
-#### Q3 - How do you secure Actuator endpoints?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you secure Actuator endpoints?**
 
 Option 1 - Separate management port (best for production):
 ```properties
 management.server.port=8081  # not exposed externally
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 No authentication needed - the port is only accessible internally.
 
@@ -1195,13 +1195,13 @@ public SecurityFilterChain actuatorSecurity(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 3 - Expose only safe endpoints:
 ```properties
 management.endpoints.web.exposure.include=health,info
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Minimize attack surface by only exposing needed endpoints.
 
@@ -1211,7 +1211,7 @@ even if someone reaches the management port, they need valid credentials.
 
 ---
 
-#### Q4 - How do you create a custom HealthIndicator?
+**[MID] Q4 - [HANDS-ON] How do you create a custom HealthIndicator?**
 
 Implement HealthIndicator and return Health.up() or Health.down() with details:
 
@@ -1242,7 +1242,7 @@ public class ExternalServiceHealthIndicator
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 For Kubernetes readiness (not liveness):
 Implement ReadinessHealthIndicator to contribute only to /health/readiness.
@@ -1255,7 +1255,7 @@ Kubernetes readiness timeout may fire before the check returns.
 
 ---
 
-#### Q5 - What is Micrometer and how does it integrate with Actuator?
+**[MID] Q5 - [CONCEPTUAL] What is Micrometer and how does it integrate with Actuator?**
 
 Micrometer is a metrics facade - a vendor-neutral API for recording metrics
 that delegates to backend-specific implementations.
@@ -1280,7 +1280,7 @@ Gauge.builder("queue.size", queue, Queue::size)
      .register(registry);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Micrometer's global registry
 (Metrics.globalRegistry) allows recording metrics without injecting MeterRegistry.
@@ -1290,7 +1290,7 @@ each call - meter lookup is not free.
 
 ---
 
-#### Q6 - How do you expose custom application info via Actuator?
+**[MID] Q6 - [CONCEPTUAL] How do you expose custom application info via Actuator?**
 
 /actuator/info exposes application information. Contribute via InfoContributor:
 
@@ -1310,7 +1310,7 @@ public class AppInfoContributor
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Or via application.properties:
 ```properties
@@ -1320,7 +1320,7 @@ info.app.version=@project.version@  # Maven placeholder
 info.app.description=Handles order processing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Git info (via spring-boot-maven-plugin):
 ```properties
@@ -1328,7 +1328,7 @@ management.info.git.enabled=true
 management.info.git.mode=full  # includes branch, commit hash
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Including git commit hash in /actuator/info
 is a crucial production practice. When an incident occurs, you immediately know
@@ -1337,7 +1337,7 @@ branch, commit ID, commit time, and dirty flag. Enable it with a few config line
 
 ---
 
-#### Q7 - How do you use /actuator/loggers to change log levels at runtime?
+**[SENIOR] Q7 - [DEBUGGING] How do you use /actuator/loggers to change log levels at runtime?**
 
 /actuator/loggers lists current log levels. POST to change them:
 
@@ -1358,7 +1358,7 @@ POST /actuator/loggers/com.example.orders
 {"configuredLevel": null}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset to default example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This is critical for production debugging: enable DEBUG logging for a specific
 package without restarting the application. After debugging, reset to INFO.
@@ -1370,7 +1370,7 @@ applications via /actuator/refresh (with @RefreshScope on the beans).
 
 ---
 
-#### Q8 - What does /actuator/conditions show?
+**[STAFF] Q8 - [MECHANISM] What does /actuator/conditions show?**
 
 /actuator/conditions shows the Conditions Evaluation Report - exactly what
 /debug output shows at startup, but accessible at runtime.
@@ -1397,7 +1397,7 @@ code to understand why something is or isn't configured, check /actuator/conditi
 
 ---
 
-#### Q9 - How do you add timing metrics to business methods with Micrometer?
+**[STAFF] Q9 - [MECHANISM] How do you add timing metrics to business methods with Micrometer?**
 
 Option 1 - @Timed annotation (requires AspectJ or Micrometer's aspect):
 ```java
@@ -1410,7 +1410,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset to default example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 2 - Manual Timer (more control):
 ```java
@@ -1433,7 +1433,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset to default example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Option 3 - LongTaskTimer for long-running operations:
 ```java
@@ -1445,7 +1445,7 @@ LongTaskTimer batchTimer = LongTaskTimer
 batchTimer.record(() -> runBatch(items));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reset to default example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Percentile metrics (p50, p95, p99) require
 client-side aggregation (publishPercentiles) which uses more memory, or server-

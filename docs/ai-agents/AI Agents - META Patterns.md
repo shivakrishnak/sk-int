@@ -113,7 +113,7 @@ Fast, scalable       Best for production     Slow, safe,
 Risky for prod.      Most common pattern     for new agents
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Human-in-the-Loop Design Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Risk classification:**
 
@@ -135,7 +135,7 @@ HIGH risk (always require approval):
   - Actions affecting multiple users
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Human-in-the-Loop Design Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The approval lifecycle:**
 
@@ -148,11 +148,16 @@ HIGH risk (always require approval):
 6. Log: action, approver, timestamp
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Human-in-the-Loop Design Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic, json, time
@@ -336,7 +341,7 @@ def run_agent_with_hitl(
     return "Task incomplete."
 ```
 
-> **Code walkthrough:** The BAD example calls `send_email`
+> **Code walkthrough:** The BAD example calls `send_email`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly when the agent decides to - zero human
 > oversight for an irreversible action. The GOOD
 > example checks if the tool is in `HIGH_RISK_TOOLS`
@@ -616,7 +621,7 @@ async def resume_from_hitl(
     ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Inject decision and resume example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 *What separates good from great:* State serialization
 as the enabler of async HITL - the checkpoint must
@@ -917,7 +922,7 @@ AUTONOMY INCREASES:   CONTROL DECREASES:
   User experience       Trust from stakeholders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Autonomy vs Control Tradeoff example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Resolution framework:**
 
@@ -933,7 +938,7 @@ FOR EACH ACTION TYPE:
      Regulated action -> control required regardless
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Autonomy vs Control Tradeoff example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1044,7 +1049,7 @@ class DynamicAutonomySystem:
         } for k, v in self._records.items()]
 ```
 
-> **Code walkthrough:** `ActionAutonomyRecord` tracks
+> **Code walkthrough:** `ActionAutonomyRecord` tracksice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the approval/rejection/modification history per
 > action type. `is_high_autonomy()` checks two
 > conditions: enough reviews for statistical validity
@@ -1602,7 +1607,7 @@ Also NOT an agent when:
   - High-volume low-complexity (cost too high)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When NOT to Use Agents example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Common agent overuse patterns:**
 
@@ -1617,11 +1622,16 @@ Structured data extraction   Structured output (no loop)
 Simple lookup + response     LLM with retrieval (no loop)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When NOT to Use Agents example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic, json
@@ -1767,7 +1777,7 @@ def when_agent_is_needed(
     return "handled by agent"
 ```
 
-> **Code walkthrough:** The BAD example wraps a
+> **Code walkthrough:** The BAD example wraps aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > simple lookup + response in a full agent loop.
 > The agent will always: call `get_order` once, then
 > generate a response. This never required a loop -
@@ -1867,7 +1877,7 @@ resp = client.messages.create(
 # Parse resp.content[0].text as JSON
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Parse resp.content[0].text as JSON example demonstrates context manager using authentication. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 Result: 1-2 second response (vs. 10-15). One LLM
 call (vs. 3-5 in agent loop). No tool call formatting
@@ -1986,7 +1996,7 @@ NO -> Candidate for agent
   inputs produce different paths through the task)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Parse resp.content[0].text as JSON example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Examples:
 - "Translate all documents in this folder": scripted
@@ -2022,7 +2032,7 @@ resp = client.messages.create(
 result = json.loads(resp.content[0].text)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Parse resp.content[0].text as JSON example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Use structured output (not agent) when:
 - The extraction schema is known upfront

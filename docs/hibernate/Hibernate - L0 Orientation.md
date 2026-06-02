@@ -178,7 +178,7 @@ if (rs.next()) {
 rs.close(); ps.close(); conn.close(); // forget any = leak
 ```
 
-> **Code walkthrough:** This JDBC pattern repeats for every entity
+> **Code walkthrough:** This JDBC pattern repeats for every entityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > method. Each `rs.getString("column")` call is a typo waiting to
 > happen - the compiler cannot catch a wrong column name. The manual
 > resource close is a memory leak if an exception fires. Multiply
@@ -210,7 +210,7 @@ user.setName("Alice");  // dirty tracking
 // Hibernate generates UPDATE on commit automatically
 ```
 
-> **Code walkthrough:** The `@Entity` annotation tells Hibernate this
+> **Code walkthrough:** The `@Entity` annotation tells Hibernate thisice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > class maps to a table. `@Id` marks the primary key. `@GeneratedValue`
 > tells Hibernate the DB generates the ID. At commit time, Hibernate
 > compares the current state to the snapshot taken at load time
@@ -291,9 +291,15 @@ logging.level.org.hibernate.type.descriptor.sql=TRACE
 spring.jpa.show-sql=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Count queries per request in test example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: LAZY fetch + loop = N+1
 List<Order> orders = orderRepo.findAll();
@@ -305,7 +311,7 @@ orders.forEach(o -> o.getItems().size()); // N selects
 List<Order> findWithItems(@Param("s") String s);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Count queries per request in test example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *Prevention:* Test every repository query with SQL logging enabled.
 
@@ -337,7 +343,7 @@ public UserDTO getUserDTO(Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Count queries per request in test example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **WHAT BREAKS: never self-invoke @Transactional methods; inject the bean instead.**
 
 *Prevention:* Keep transaction boundaries wide enough to cover all
 association access. Use DTOs to decouple from entity lifecycle.
@@ -365,7 +371,7 @@ System.out.println(stats.getFlushCount());
 System.out.println(stats.getEntityUpdateCount());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Count queries per request in test example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Use `session.setReadOnly(entity, true)` for read-only
 operations, or use `@Modifying` JPQL/native queries for bulk updates.
@@ -387,9 +393,7 @@ operations. Use projections (DTOs) or JPQL SELECT new.
 
 ---
 
-**Q1 [JUNIOR] - CONCEPTUAL**
-What is the object-relational impedance mismatch and why does
-it matter?
+**[JUNIOR] Q1 - [MECHANISM] What is the object-relational impedance mismatch and why does it matter?**
 
 *Why they ask:* Tests whether you understand ORM's existence
 at a conceptual level vs just knowing how to annotate entities.
@@ -433,9 +437,7 @@ implements correctly.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-How does Hibernate's dirty checking work? When does it fire and
-what does it compare?
+**[MID] Q2 - [MECHANISM] How does Hibernate's dirty checking work? When does it fire and what does it compare?**
 
 *Why they ask:* Tests whether you understand what Hibernate does
 behind the scenes, which is essential for debugging unexpected
@@ -486,10 +488,7 @@ you have tuned Hibernate performance in real systems.
 
 ---
 
-**Q3 [MID] - DEBUGGING**
-You see hundreds of UPDATE statements in your Hibernate SQL log
-for objects you never explicitly modified. What causes this and
-how do you fix it?
+**[MID] Q3 - [DEBUGGING] You see hundreds of UPDATE statements in your Hibernate SQL log for objects you never explicitly modified. What causes this and how do you fix it?**
 
 *Why they ask:* Tests production debugging skills - this is a
 real failure mode that surprises developers who do not understand
@@ -509,7 +508,7 @@ First, enable full SQL logging with parameters and stack traces:
 logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql=TRACE
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The stack trace on each UPDATE shows exactly which code path
 triggered the flush and which entity was dirty.
@@ -543,8 +542,7 @@ for entities loaded in a read-only session.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-When would you choose raw JDBC or MyBatis over Hibernate?
+**[SENIOR] Q4 - [TRADE-OFF] When would you choose raw JDBC or MyBatis over Hibernate?**
 
 *Why they ask:* Tests trade-off thinking and whether you know
 ORM's limitations.
@@ -596,9 +594,7 @@ and reporting - rather than an either/or choice.
 
 ---
 
-**Q5 [SENIOR] - PRODUCTION**
-What is the identity map in Hibernate and why does it matter
-in production?
+**[SENIOR] Q5 - [MECHANISM] What is the identity map in Hibernate and why does it matter in production?**
 
 *Why they ask:* Tests depth beyond "ORM maps objects to tables" -
 the identity map is a critical correctness and performance
@@ -644,9 +640,7 @@ the identity map is a within-session guarantee only.
 
 ---
 
-**Q6 [STAFF] - ARCHITECTURE**
-How would you decide whether to use Hibernate or a different
-persistence approach for a new microservice?
+**[STAFF] Q6 - [DESIGN] How would you decide whether to use Hibernate or a different persistence approach for a new microservice?**
 
 *Why they ask:* Tests architectural judgment and whether you
 treat persistence as a design decision rather than a default
@@ -695,9 +689,7 @@ mechanisms to combine and for what operations in this service."
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Tell me about a time you diagnosed and fixed a Hibernate
-performance problem in production.
+**[STAFF] Q7 - [BEHAVIORAL] Tell me about a time you diagnosed and fixed a Hibernate performance problem in production.**
 
 *Why they ask:* Tests whether you have real production experience
 with Hibernate failure modes, not just theoretical knowledge.
@@ -738,7 +730,7 @@ JOINs. The JPQL became:
   JOIN FETCH i.product
   WHERE o.status = :s")
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 I added `DISTINCT` to prevent Hibernate from returning duplicate
 Order objects when JOINs produce multiple rows.
@@ -910,7 +902,7 @@ Database driver (PostgreSQL/MySQL/Oracle driver JAR)
 Database
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate vs JDBC vs JPA: The Persistence Stack example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 JPA standardized the 80% common case. Hibernate extensions cover
@@ -974,7 +966,7 @@ public interface UserRepository
 }
 ```
 
-> **Code walkthrough:** `EntityManager` is the JPA standard interface
+> **Code walkthrough:** `EntityManager` is the JPA standard interfaceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > - every JPA provider must implement it. `Session` is Hibernate's own
 > richer interface - accessed via `unwrap()`. `JpaRepository` is
 > Spring Data JPA's abstraction layer that hides even the EntityManager.
@@ -1059,7 +1051,7 @@ public class UserService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* `@PersistenceContext` in Spring beans is correctly scoped
 to a thread-bound proxy. The issue arises only when injecting into
@@ -1117,8 +1109,7 @@ Hibernate dependency explicitly.
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is the difference between JPA and Hibernate?
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between JPA and Hibernate?**
 
 *Why they ask:* Basic knowledge check; many candidates confuse
 these and say "JPA is Hibernate" which signals shallow understanding.
@@ -1157,9 +1148,7 @@ implementation" distinction.
 
 ---
 
-**Q2 [MID] - COMPARISON**
-When would you use the Hibernate Session API directly instead
-of the JPA EntityManager?
+**[MID] Q2 - [TRADE-OFF] When would you use the Hibernate Session API directly instead of the JPA EntityManager?**
 
 *Why they ask:* Tests practical Hibernate knowledge and whether
 you understand the capabilities that exist only in Hibernate's
@@ -1196,7 +1185,7 @@ tx.commit();
 ss.close();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Second: `session.setReadOnly(entity, true)` when I need to
 explicitly mark entities as read-only within a regular session.
@@ -1218,9 +1207,7 @@ that makes Hibernate competitive with JDBC for batch jobs.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-Your team switched from Hibernate to EclipseLink in a
-WebLogic deployment and 20% of queries broke. What went wrong?
+**[SENIOR] Q3 - [DEBUGGING] Your team switched from Hibernate to EclipseLink in a WebLogic deployment and 20% of queries broke. What went wrong?**
 
 *Why they ask:* Tests real-world knowledge of JPA portability
 limits.
@@ -1265,9 +1252,7 @@ listing what broke.
 
 ---
 
-**Q4 [STAFF] - ARCHITECTURE**
-Your enterprise shop mandates JPA portability across all
-microservices. What are the real costs and benefits?
+**[STAFF] Q4 - [DESIGN] Your enterprise shop mandates JPA portability across all microservices. What are the real costs and benefits?**
 
 *Why they ask:* Tests whether you can evaluate technology
 governance policies critically rather than accepting them at
@@ -1315,8 +1300,7 @@ portability or ignoring the policy entirely.
 
 ---
 
-**Q5 [JUNIOR] - MECHANISM**
-What happens at application startup when Hibernate initializes?
+**[JUNIOR] Q5 - [MECHANISM] What happens at application startup when Hibernate initializes?**
 
 *Why they ask:* Tests understanding of the startup lifecycle which
 affects deployment time and startup memory.
@@ -1364,9 +1348,7 @@ Kubernetes pod startup readiness probes.
 
 ---
 
-**Q6 [SENIOR] - TRADE-OFF**
-What are the cases where you would reject using an ORM entirely
-for a new service?
+**[SENIOR] Q6 - [TRADE-OFF] What are the cases where you would reject using an ORM entirely for a new service?**
 
 *Why they ask:* Tests whether you can argue against the default
 choice - an important engineering judgment skill.
@@ -1412,9 +1394,7 @@ need performance."
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Tell me about a time you made a persistence technology decision
-that you later wished you had made differently.
+**[STAFF] Q7 - [BEHAVIORAL] Tell me about a time you made a persistence technology decision that you later wished you had made differently.**
 
 *Why they ask:* Tests intellectual honesty and learning from
 mistakes - a key staff-level signal.
@@ -1664,7 +1644,7 @@ User userAtRev3 = reader.find(
     User.class, userId, revisions.get(2));
 ```
 
-> **Code walkthrough:** Adding `@Audited` to an entity causes
+> **Code walkthrough:** Adding `@Audited` to an entity causesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Hibernate Envers to create a shadow table (`USERS_AUD`) with
 > the same columns plus revision metadata columns (`REV`, `REVTYPE`).
 > Every INSERT/UPDATE/DELETE on User records a row in that table.
@@ -1697,7 +1677,7 @@ public User create(
 }
 ```
 
-> **Code walkthrough:** Bean Validation annotations on the request
+> **Code walkthrough:** Bean Validation annotations on the requestice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > object are processed by Hibernate Validator when Spring evaluates
 > `@Valid`. If any constraint fails, Spring returns a 400 with
 > validation error details before the controller method runs.
@@ -1795,7 +1775,7 @@ Default in some configurations is `none`.
 ```properties
 spring.jpa.properties.javax.persistence.validation.mode=auto
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With `auto`, Hibernate Validator runs before every persist
 and merge operation.
@@ -1821,7 +1801,7 @@ searchSession.massIndexer(Product.class)
     .startAndWait();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1837,9 +1817,7 @@ searchSession.massIndexer(Product.class)
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is Bean Validation and how does Hibernate Validator relate
-to it?
+**[JUNIOR] Q1 - [MECHANISM] What is Bean Validation and how does Hibernate Validator relate to it?**
 
 *Why they ask:* Tests knowledge of the standard vs implementation
 layering - a pattern that repeats throughout Java EE.
@@ -1880,9 +1858,7 @@ just at the REST boundary.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-How does Hibernate Envers track entity changes without
-modifying application code?
+**[MID] Q2 - [MECHANISM] How does Hibernate Envers track entity changes without modifying application code?**
 
 *Why they ask:* Tests understanding of Hibernate's event listener
 mechanism, which is the foundation for many Hibernate extensions.
@@ -1928,9 +1904,7 @@ also adds write latency.
 
 ---
 
-**Q3 [SENIOR] - TRADE-OFF**
-When would you choose Hibernate Search over managing
-Elasticsearch integration yourself?
+**[SENIOR] Q3 - [TRADE-OFF] When would you choose Hibernate Search over managing Elasticsearch integration yourself?**
 
 *Why they ask:* Tests whether you understand when a framework
 integration helps vs when it adds complexity.
@@ -1979,10 +1953,7 @@ outbox pattern as the rigorous solution.
 
 ---
 
-**Q4 [MID] - PRODUCTION**
-You see that your Hibernate Envers audit tables are growing
-unboundedly and the database is running out of space.
-How do you handle this?
+**[MID] Q4 - [MECHANISM] You see that your Hibernate Envers audit tables are growing unboundedly and the database is running out of space. How do you handle this?**
 
 *Why they ask:* Tests production operations thinking - audit
 tables are a common runaway growth problem.
@@ -2022,7 +1993,7 @@ public void purgeOldAuditRecords() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Third, table partitioning. For high-volume audit tables, partition
 by revision timestamp in PostgreSQL. Old partitions can be dropped
@@ -2039,8 +2010,7 @@ audit tables lock tables and cause replication lag.
 
 ---
 
-**Q5 [JUNIOR] - DEFINITION**
-What is Hibernate Validator's relationship to Spring's `@Valid`?
+**[JUNIOR] Q5 - [MECHANISM] What is Hibernate Validator's relationship to Spring's `@Valid`?**
 
 *Why they ask:* Tests practical integration knowledge used daily.
 
@@ -2085,7 +2055,7 @@ public class UserService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing validation groups
 (@Validated) and when they are needed (different constraints
@@ -2093,9 +2063,7 @@ for create vs update operations).
 
 ---
 
-**Q6 [SENIOR] - DEBUGGING**
-Your audit queries on Envers tables are slow. The USERS_AUD
-table has 500 million rows. How do you diagnose and fix this?
+**[SENIOR] Q6 - [DEBUGGING] Your audit queries on Envers tables are slow. The USERS_AUD table has 500 million rows. How do you diagnose and fix this?**
 
 *Why they ask:* Tests performance knowledge of audit table
 queries, which are commonly overlooked in performance planning.
@@ -2132,7 +2100,7 @@ CREATE INDEX idx_users_aud_rev
     ON users_aud(rev);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 For a 500 million row table, also consider: partitioning by
 revision range (PostgreSQL declarative partitioning), and ensuring
@@ -2148,9 +2116,7 @@ the most critical one for the most common query pattern.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Tell me about a time you introduced Hibernate Envers for
-compliance auditing. What challenges did you face?
+**[STAFF] Q7 - [BEHAVIORAL] Tell me about a time you introduced Hibernate Envers for compliance auditing. What challenges did you face?**
 
 *Why they ask:* Tests real-world implementation experience and
 the organizational side of introducing new infrastructure.

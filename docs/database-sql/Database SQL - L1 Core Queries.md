@@ -81,7 +81,7 @@ LIMIT   n
 OFFSET  m;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reading Rows from Tables example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Column expressions in SELECT:**
 
@@ -134,7 +134,7 @@ FROM orders
 WHERE customer_id = :customer_id;
 ```
 
-> **Code walkthrough:** The BAD query fetches `*` - 20 columns including
+> **Code walkthrough:** The BAD query fetches `*` - 20 columns includingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > any large TEXT or BYTEA fields, even though only 4 are needed. The
 > GOOD query names columns explicitly. `total_cents / 100.0` converts
 > integer cents to decimal dollars (divide by an integer would truncate).
@@ -163,7 +163,7 @@ FROM customers;
 -- NULLIF: return null if first = second (useful for 0/null)
 ```
 
-> **Code walkthrough:** `phone = NULL` always evaluates to NULL (unknown),
+> **Code walkthrough:** `phone = NULL` always evaluates to NULL (unknown),ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > not FALSE - SQL three-valued logic: TRUE, FALSE, UNKNOWN. WHERE
 > requires TRUE to include the row; UNKNOWN excludes it. `IS NULL` is
 > the correct predicate. `COALESCE(phone, 'N/A')` returns the phone if
@@ -229,13 +229,13 @@ CREATE INDEX idx_customers_email_lower
 WHERE LOWER(email) = 'user@example.com'  -- uses index
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates index structure using SQL. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Why does SELECT * prevent covering index scans?**
+**[JUNIOR] Q1 - [MECHANISM] Why does SELECT * prevent covering index scans?**
 
 🗣️ "A covering index contains all columns needed to answer a query.
 If `SELECT id, status FROM orders WHERE customer_id = ?` and there's
@@ -246,7 +246,7 @@ The database must also read the heap pages for the remaining 17 columns.
 This doubles (or more) the I/O. For high-frequency queries: designing
 SELECT to match a covering index is a primary performance optimization."
 
-**Q2: What is the three-valued logic in SQL and why does it matter?**
+**[JUNIOR] Q2 - [MECHANISM] What is the three-valued logic in SQL and why does it matter?**
 
 🗣️ "SQL has three truth values: TRUE, FALSE, and UNKNOWN. UNKNOWN occurs
 when NULL is involved in a comparison. `NULL = NULL` is UNKNOWN (not TRUE).
@@ -257,7 +257,7 @@ every row. The correct predicate is `IS NULL`. UNKNOWN also propagates
 through AND/OR, following specific rules (TRUE AND UNKNOWN = UNKNOWN,
 FALSE AND UNKNOWN = FALSE, TRUE OR UNKNOWN = TRUE)."
 
-**Q3: When should you use DISTINCT and what is the performance cost?**
+**[JUNIOR] Q3 - [SCENARIO] When should you use DISTINCT and what is the performance cost?**
 
 🗣️ "DISTINCT eliminates duplicate rows. The database sorts or hashes
 the entire result to find and remove duplicates - O(n log n) or O(n)
@@ -269,7 +269,7 @@ grouping already eliminates duplicates. For existence checks: `EXISTS`
 is faster than `DISTINCT COUNT`. Check DISTINCT in query profiles -
 it is often a performance red flag."
 
-**Q4: What is a derived table and when would you use one?**
+**[MID] Q4 - [SCENARIO] What is a derived table and when would you use one?**
 
 🗣️ "A derived table is a subquery in the FROM clause, used as a table:
 `SELECT * FROM (SELECT id, SUM(amount) FROM orders GROUP BY id) AS t`.
@@ -279,7 +279,7 @@ top 10% of all customers - compute the aggregate first (derived table),
 then join or filter on it. CTEs (`WITH`) are the modern alternative -
 more readable and sometimes the optimizer can refer to them multiple times."
 
-**Q5: How does EXPLAIN help diagnose slow SELECT queries?**
+**[MID] Q5 - [DEBUGGING] How does EXPLAIN help diagnose slow SELECT queries?**
 
 🗣️ "EXPLAIN shows the query execution plan: which tables are accessed,
 which indexes are used, the join order, and estimated row counts.
@@ -291,7 +291,7 @@ Loop - hash joins are efficient for large row counts; nested loop is
 efficient when the inner side is small. The cost= estimate is in arbitrary
 units; compare relative costs between plan nodes."
 
-**Q6: What is predicate pushdown and why does it matter?**
+**[SENIOR] Q6 - [MECHANISM] What is predicate pushdown and why does it matter?**
 
 🗣️ "Predicate pushdown: the optimizer moves WHERE conditions as close
 to the data source as possible. Instead of fetching all rows and then
@@ -303,7 +303,7 @@ far fewer rows are read. If pushdown fails (e.g., the WHERE condition
 references a function that the optimizer cannot simplify): more rows
 are fetched and filtered later in the plan, which is slower."
 
-**Q7: What does LIMIT with OFFSET do and why is it problematic at large offsets?**
+**[SENIOR] Q7 - [MECHANISM] What does LIMIT with OFFSET do and why is it problematic at large offsets?**
 
 🗣️ "LIMIT n OFFSET m tells the database to skip the first m rows and
 return the next n. For page 1 (offset 0): fast. For page 100 with
@@ -422,7 +422,7 @@ NOT SARGABLE (full scan):
   WHERE col IS NULL          -- depends on index type
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Filtering Rows with Conditions example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **AND vs OR performance:**
 
@@ -439,7 +439,7 @@ OR: must satisfy either branch. Optimizer options:
   Often slower than AND predicates.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Filtering Rows with Conditions example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **NULL handling in WHERE:**
 
@@ -458,7 +458,7 @@ WHERE COALESCE(discount_pct, 0) > 10
 -- Better: WHERE discount_pct > 10 OR discount_pct IS NULL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Filtering Rows with Conditions example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ---
 
@@ -487,7 +487,7 @@ WHERE email = LOWER(:input_email)
 -- Then: WHERE LOWER(email) = LOWER(:input)
 ```
 
-> **Code walkthrough:** `YEAR(order_date) = 2024` requires evaluating
+> **Code walkthrough:** `YEAR(order_date) = 2024` requires evaluatingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the YEAR() function on every row - full table scan. The equivalent
 > `order_date >= '2024-01-01' AND order_date < '2025-01-01'` is a range
 > predicate: the B-tree index on `order_date` can seek to the first
@@ -521,7 +521,7 @@ JOIN ids_to_process t ON t.id = o.id;
 -- Index join instead of large IN clause.
 ```
 
-> **Code walkthrough:** `IN ('a', 'b', 'c')` is equivalent to three OR
+> **Code walkthrough:** `IN ('a', 'b', 'c')` is equivalent to three ORice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > conditions. The optimizer recognizes this and uses the index on `status`
 > (if one exists). For very large IN lists (thousands of values):
 > the optimizer may struggle with planning. The temp table join approach
@@ -588,13 +588,13 @@ SELECT * FROM orders WHERE user_id = 123
 -- Each branch uses its own index.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What does sargable mean and why does it matter?**
+**[JUNIOR] Q1 - [MECHANISM] What does sargable mean and why does it matter?**
 
 🗣️ "Sargable: Search ARGument ABLE. A predicate is sargable if the
 database engine can use an index to satisfy it directly, without scanning
@@ -605,7 +605,7 @@ function on column (`YEAR(date) = 2024`), leading wildcard (`LIKE '%suffix'`),
 expression on column (`col * 2 > 100` - rewrite as `col > 50`).
 Non-sargable = full table scan on large tables = slow queries."
 
-**Q2: Why is OR in WHERE slower than AND?**
+**[JUNIOR] Q2 - [MECHANISM] Why is OR in WHERE slower than AND?**
 
 🗣️ "AND: each condition reduces the candidate rows. The optimizer picks
 the most selective predicate and evaluates others as a post-filter.
@@ -618,7 +618,7 @@ efficient as a single index scan. For `WHERE a = 1 OR b = 2`: if both
 only one is indexed: sequential scan. UNION ALL is often the manual
 optimization: two queries each using their own index."
 
-**Q3: How does a composite index affect WHERE clause planning?**
+**[JUNIOR] Q3 - [MECHANISM] How does a composite index affect WHERE clause planning?**
 
 🗣️ "A composite index on (a, b, c) supports queries that filter on: `a`,
 `a AND b`, `a AND b AND c`. It does NOT support queries that filter on
@@ -629,7 +629,7 @@ then filters to `b=2` within that range. For `WHERE a = 1 AND c = 3`:
 the index can be used for `a=1` but `c=3` is a post-filter (the index
 has `b` between `a` and `c`). Column order matters for index effectiveness."
 
-**Q4: What is an index skip scan?**
+**[MID] Q4 - [MECHANISM] What is an index skip scan?**
 
 🗣️ "An index skip scan (Oracle term, also called 'loose index scan'
 in MySQL, 'index skip scan' in Oracle, partially supported in PostgreSQL 14+):
@@ -642,7 +642,7 @@ normally not sargable (leading column not filtered). With skip scan:
 the optimizer tries both 'M+age>30' and 'F+age>30'. Works when the
 number of distinct leading values is very low."
 
-**Q5: How do you handle dynamic WHERE clauses in application code safely?**
+**[MID] Q5 - [MECHANISM] How do you handle dynamic WHERE clauses in application code safely?**
 
 🗣️ "Dynamic WHERE (different filter combinations per request) must always
 use parameterized queries, never string concatenation. In Java/JDBC:
@@ -654,7 +654,7 @@ tags within `<where>` block. Never: `WHERE name = '\" + userInput + \"'`
 (2) allow the database to cache and reuse the execution plan for different
 parameter values (plan cache hit)."
 
-**Q6: What is index selectivity and how does it affect WHERE performance?**
+**[SENIOR] Q6 - [MECHANISM] What is index selectivity and how does it affect WHERE performance?**
 
 🗣️ "Selectivity: the fraction of rows a predicate returns. High selectivity:
 `WHERE id = 12345` returns 1 row / 10M rows = 0.00001%. Low selectivity:
@@ -666,7 +666,7 @@ fetches). Low-selectivity predicates on large tables should either be
 combined with high-selectivity predicates (AND) or redesigned.
 `status = 'ACTIVE'` with no other filter: index may not help."
 
-**Q7: What are parameterized queries and why are they essential?**
+**[SENIOR] Q7 - [MECHANISM] What are parameterized queries and why are they essential?**
 
 🗣️ "Parameterized queries (also called prepared statements) separate
 SQL structure from data values. The SQL template is compiled once; values
@@ -783,7 +783,7 @@ ORDER BY total_cents * -1  -- effectively DESC
 ORDER BY updated_at DESC NULLS LAST
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sorting and Pagination example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 **LIMIT / OFFSET vs keyset pagination:**
 
@@ -802,7 +802,7 @@ Keyset pagination:
           -- always O(log n)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sorting and Pagination example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -846,7 +846,7 @@ LIMIT  20;
 -- No rows wasted scanning and discarding.
 ```
 
-> **Code walkthrough:** The BAD ORDER BY lacks a tiebreaker. For
+> **Code walkthrough:** The BAD ORDER BY lacks a tiebreaker. Forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > multi-page pagination: without a unique tiebreaker, rows with equal
 > `status` values may appear on different pages in different runs
 > (or the same row may appear on two pages). The GOOD query adds `id ASC`
@@ -881,7 +881,7 @@ LIMIT 20;
 -- These are extremely common; index them.
 ```
 
-> **Code walkthrough:** Without an index on `created_at`: the database
+> **Code walkthrough:** Without an index on `created_at`: the databaseice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > does a sequential scan of all 1 million rows, sorts them (in memory
 > or on disk), and returns the top 20. Execution time: hundreds of
 > milliseconds. With a `DESC` index on `created_at`: the index stores
@@ -959,7 +959,7 @@ with a tighter WHERE clause.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Why must ORDER BY include a unique column for stable pagination?**
+**[JUNIOR] Q1 - [MECHANISM] Why must ORDER BY include a unique column for stable pagination?**
 
 🗣️ "SQL rows have no inherent physical order. For a result with ties
 on the ORDER BY columns: the database is free to return tied rows in
@@ -970,7 +970,7 @@ OFFSET 20: if two rows with equal sort values straddle the page boundary,
 they might both appear on page 2 (or neither). Adding a unique tiebreaker
 (typically id) makes the order fully deterministic and the pagination stable."
 
-**Q2: How does the database sort rows that do not fit in memory?**
+**[JUNIOR] Q2 - [MECHANISM] How does the database sort rows that do not fit in memory?**
 
 🗣️ "External sort (external merge sort): (1) Sort phase: divide the input
 into chunks that fit in `work_mem`. Sort each chunk. Write sorted chunks
@@ -981,7 +981,7 @@ than in-memory sort. `EXPLAIN ANALYZE` shows 'Sort Method: external
 merge Disk: 42MB'. Fix: increase `work_mem`, add an index to avoid
 the sort, or reduce the rows with a more selective WHERE."
 
-**Q3: What is the difference between stable and unstable sorts in databases?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between stable and unstable sorts in databases?**
 
 🗣️ "A stable sort preserves the original order of equal elements.
 An unstable sort may reorder elements with equal sort keys.
@@ -992,7 +992,7 @@ The term 'stable' is important when ORDER BY includes expressions or
 derived columns that may produce ties - the application must add a
 unique tiebreaker to get stable results, regardless of the sort algorithm."
 
-**Q4: How does a partial index improve ORDER BY LIMIT queries?**
+**[MID] Q4 - [MECHANISM] How does a partial index improve ORDER BY LIMIT queries?**
 
 🗣️ "A partial index covers only rows matching a WHERE condition.
 Example: `CREATE INDEX idx_orders_pending ON orders(created_at) WHERE status = 'PENDING'`.
@@ -1003,7 +1003,7 @@ Compared to a full index on `(status, created_at)`: the partial index
 is smaller (fewer index pages to read), and reads fewer rows in the scan.
 Useful for frequent queries that filter on a low-cardinality status column."
 
-**Q5: What is a covering index for ORDER BY and how does it work?**
+**[MID] Q5 - [MECHANISM] What is a covering index for ORDER BY and how does it work?**
 
 🗣️ "A covering index includes all columns needed by the query: the WHERE
 columns, the ORDER BY columns, and the SELECT columns. For a query
@@ -1015,7 +1015,7 @@ served by the index order, and LIMIT stops the scan early. This is the
 execution for sorted pagination. Design high-frequency pagination queries
 around covering indexes."
 
-**Q6: When should you avoid LIMIT for correctness reasons?**
+**[SENIOR] Q6 - [SCENARIO] When should you avoid LIMIT for correctness reasons?**
 
 🗣️ "LIMIT without ORDER BY is incorrect for anything requiring
 deterministic results. Additionally: LIMIT with OFFSET for batch
@@ -1027,7 +1027,7 @@ The correct pattern for batch processing: use a cursor or WHERE id > :last
 to advance deterministically. For reporting that requires all rows:
 do not use LIMIT (or use it only for UI pagination, not data processing)."
 
-**Q7: What happens to ORDER BY and LIMIT in parallel query execution?**
+**[SENIOR] Q7 - [FAILURE] What happens to ORDER BY and LIMIT in parallel query execution?**
 
 🗣️ "PostgreSQL parallel query: multiple worker processes each scan a
 partition of the table. Each worker produces a partial sorted result.

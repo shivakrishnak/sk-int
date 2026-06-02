@@ -133,7 +133,7 @@ Node.js:
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Error Handling Strategies example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -174,6 +174,24 @@ reach a catch; every catch should either recover or re-throw with context.
 ### 💻 Code Example
 
 **Example 1: Async error handling patterns**
+
+
+```javascript
+// BAD: not awaiting async operations
+function saveUser(user) {
+    db.save(user); // async call not awaited
+    return { success: true }; // returns before save completes
+}
+```
+
+
+```javascript
+// BAD: not awaiting async operations
+function saveUser(user) {
+    db.save(user); // async call not awaited
+    return { success: true }; // returns before save completes
+}
+```
 
 ```javascript
 // BAD: swallowed rejection
@@ -232,7 +250,7 @@ class DatabaseError extends AppError {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern swallows the error by catching
+> **Code walkthrough:** The BAD pattern swallows the error by catchingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it without re-throwing - the caller receives `undefined` and never
 > knows an error occurred. The GOOD pattern distinguishes error types:
 > known errors (`NotFoundError`) are re-thrown unchanged; unexpected
@@ -289,7 +307,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 ```
 
-> **Code walkthrough:** The Express error middleware is the boundary
+> **Code walkthrough:** The Express error middleware is the boundaryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for all operational errors. It logs with full context, reports to
 > monitoring, and responds with appropriate HTTP status. The distinction
 > between operational errors (known AppError subclasses) and programmer
@@ -299,6 +317,14 @@ process.on('unhandledRejection', (reason, promise) => {
 > allows the response to be sent before exiting.
 
 **Example 3: Error handling in async iteration**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // FAILURE EXAMPLE: parallel requests drop errors
@@ -343,7 +369,7 @@ async function processOrder(orderId) {
 // err.message describes the high-level operation that failed
 ```
 
-> **Code walkthrough:** `Promise.allSettled` is the correct choice
+> **Code walkthrough:** `Promise.allSettled` is the correct choiceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for independent parallel operations where partial success is
 > acceptable. `Promise.all` fails fast on first rejection, aborting
 > all in-flight operations. The error chaining pattern using `cause`
@@ -648,7 +674,7 @@ Category 4: Maintainability
     //   active: false, verified: true })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Anti-patterns example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -688,6 +714,30 @@ developers treat these as synchronous strict operations.
 ### 💻 Code Example
 
 **Example 1: Async anti-patterns**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // ANTI-PATTERN: floating promise (most common production bug)
@@ -738,7 +788,7 @@ async function readFile(path) {
 }
 ```
 
-> **Code walkthrough:** The floating promise anti-pattern is the most
+> **Code walkthrough:** The floating promise anti-pattern is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common production bug in JavaScript - an async function is called
 > without await, and any rejection is silently dropped. The button
 > handler shows success even on save failure. `await` in `.map()`
@@ -796,7 +846,7 @@ function addTimestamp(config) {
 }
 ```
 
-> **Code walkthrough:** The `==` anti-pattern is well-known but the
+> **Code walkthrough:** The `==` anti-pattern is well-known but theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > failure mode is specific: `[] == false` being true is genuinely
 > surprising because both convert through `Number()`. Prototype
 > pollution is a security vulnerability (CVE-level in Node.js apps
@@ -855,7 +905,7 @@ parent.addEventListener('click', e => {
 });
 ```
 
-> **Code walkthrough:** Layout thrashing is one of the top performance
+> **Code walkthrough:** Layout thrashing is one of the top performanceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > anti-patterns in DOM-heavy code. Reading a layout property (`offsetHeight`,
 > `getBoundingClientRect`) after a style write forces the browser to
 > synchronously recalculate layout. Batching reads before writes
@@ -999,7 +1049,7 @@ function merge(a, b) {
 // After: ({}).isAdmin === true for ALL objects
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 This has caused critical CVEs in lodash, jquery, and dozens of
 npm packages. Defenses: (1) sanitize merge keys explicitly -

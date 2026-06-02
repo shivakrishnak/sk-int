@@ -7,6 +7,17 @@ permalink: /platform-engineering/l3-platform-design-decisions/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Build vs Buy Platform Decisions](#build-vs-buy-platform-decisions) | |
+| 2 | [Platform API Design and Contracts](#platform-api-design-and-contracts) | |
+
+---
+
+
 # Build vs Buy Platform Decisions
 
 ---
@@ -173,7 +184,7 @@ Step 5: Build exit criteria
   - What is the maximum investment before you stop and adopt OSS?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build vs Buy Platform Decisions example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Open source is not free - it has integration, maintenance, and upgrade
@@ -257,7 +268,7 @@ spec:
 # health checks, rollback UI, audit trail, multi-cluster.
 ```
 
-> **Code walkthrough:** The BAD pattern builds custom deployment
+> **Code walkthrough:** The BAD pattern builds custom deploymentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > orchestration that reinvents a fraction of ArgoCD's capabilities.
 > The custom code introduces novel bugs, requires platform team
 > expertise for all on-call scenarios, and falls further behind the
@@ -300,7 +311,7 @@ integration cost 3-4 weeks, ongoing maintenance is manageable, and
 the talent pool of Backstage-experienced engineers is growing.
 ```
 
-> **Code walkthrough:** The evaluation template forces explicit
+> **Code walkthrough:** The evaluation template forces explicitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > comparison across integration cost, ongoing maintenance cost, talent
 > availability, and vendor risk for each option. Building a custom
 > portal was rejected not because it is technically infeasible but
@@ -417,7 +428,7 @@ or changes terms.
 
 ---
 
-#### Q1 - How do you evaluate a new platform tool for adoption?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you evaluate a new platform tool for adoption?**
 
 Evaluation framework:
 
@@ -454,7 +465,7 @@ graduated) is a useful health proxy for Kubernetes-adjacent tools.
 
 ---
 
-#### Q2 - How do you handle a platform capability that requires a custom build?
+**[JUNIOR] Q2 - [HANDS-ON] How do you handle a platform capability that requires a custom build?**
 
 When a build decision is justified, the process matters:
 
@@ -489,7 +500,7 @@ migration decision mechanical rather than political.
 
 ---
 
-#### Q3 - What are the CNCF project maturity levels and why do they matter?
+**[JUNIOR] Q3 - [BEHAVIORAL] What are the CNCF project maturity levels and why do they matter?**
 
 CNCF (Cloud Native Computing Foundation) manages a portfolio of open-
 source cloud-native projects and applies a maturity classification:
@@ -528,7 +539,7 @@ good on GitHub."
 
 ---
 
-#### Q4 - How do you handle the "build to understand" use case?
+**[MID] Q4 - [HANDS-ON] How do you handle the "build to understand" use case?**
 
 Sometimes the argument for building is: "we need to understand the problem
 deeply before adopting an OSS solution." This is a legitimate learning
@@ -563,7 +574,7 @@ more long-term suffering than almost any other decision failure.
 
 ---
 
-#### Q5 - How do you evaluate whether to self-host an OSS tool vs. use a managed service?
+**[MID] Q5 - [TRADE-OFF] How do you evaluate whether to self-host an OSS tool vs. use a managed service?**
 
 For most OSS platform tools, the choice is: self-host (run in your own
 Kubernetes cluster) vs. use a managed/SaaS version.
@@ -606,7 +617,7 @@ often win on that math.
 
 ---
 
-#### Q6 - How do you manage the platform tool upgrade lifecycle?
+**[MID] Q6 - [CONCEPTUAL] How do you manage the platform tool upgrade lifecycle?**
 
 Platform tool upgrades are a significant source of platform team toil if
 not managed systematically.
@@ -642,7 +653,7 @@ catching even one breaking change before production.
 
 ---
 
-#### Q7 - How do you handle platform tool deprecation?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you handle platform tool deprecation?**
 
 Platform tool deprecation is the most neglected phase of the platform
 tool lifecycle.
@@ -677,7 +688,7 @@ matters: the extension cost is paid in loss of platform team credibility.
 
 ---
 
-#### Q8 - When should you contribute to an open-source tool vs. forking it?
+**[SENIOR] Q8 - [TRADE-OFF] When should you contribute to an open-source tool vs. forking it?**
 
 Platform teams sometimes discover that an OSS tool almost meets their
 needs but requires changes. The options: contribute upstream, fork, or
@@ -715,7 +726,7 @@ evaluate the "contribute upstream" option in a build vs buy decision.
 
 ---
 
-#### Q9 - Describe a build vs buy decision you made that turned out well or poorly.
+**[SENIOR] Q9 - [HANDS-ON] Describe a build vs buy decision you made that turned out well or poorly.**
 
 *This is an open question probing real-world experience. A strong answer:*
 
@@ -967,7 +978,7 @@ spec:
     # platform sets PodDisruptionBudget based on this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This platform sets PodDisruptionBudget based on this example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Platform API surface area is a liability, not an asset. Every configuration
@@ -1039,7 +1050,7 @@ spec:
     availability: 0.999  # platform sets PDB to allow 1 unavailable
 ```
 
-> **Code walkthrough:** The BAD pattern is a passthrough CRD that
+> **Code walkthrough:** The BAD pattern is a passthrough CRD thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requires product teams to know Kubernetes resource syntax, HPA
 > configuration, and limit ratios. It provides no cognitive load
 > reduction over raw kubectl. The GOOD pattern is opinionated: product
@@ -1082,7 +1093,7 @@ spec:
 #     platform.company.com/migrated-to-v1beta1=true
 ```
 
-> **Code walkthrough:** CRD versioning follows Kubernetes API conventions:
+> **Code walkthrough:** CRD versioning follows Kubernetes API conventions:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > v1alpha1 for experimental (may break), v1beta1 for stable interface
 > with deprecation commitments. The v1beta1 version adds fields and adds
 > validation to an existing field - both are backward compatible changes.
@@ -1206,7 +1217,7 @@ a stable (v1beta1+) CRD version without a new CRD version.
 
 ---
 
-#### Q1 - How do you design a CRD for a platform API?
+**[JUNIOR] Q1 - [ARCHITECTURE] How do you design a CRD for a platform API?**
 
 CRD design process:
 
@@ -1245,7 +1256,7 @@ platform team assumed incorrectly.
 
 ---
 
-#### Q2 - How do you handle backward compatibility for platform APIs?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you handle backward compatibility for platform APIs?**
 
 Backward compatibility rules for platform CRDs (following Kubernetes API
 conventions):
@@ -1281,7 +1292,7 @@ HA requirements as admission webhooks.
 
 ---
 
-#### Q3 - How do you document a platform API?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you document a platform API?**
 
 Platform API documentation must serve two audiences: self-service discovery
 (teams should be able to find and start using the API without talking to
@@ -1318,7 +1329,7 @@ enables self-service incident response.
 
 ---
 
-#### Q4 - How do you measure the quality of a platform API?
+**[MID] Q4 - [CONCEPTUAL] How do you measure the quality of a platform API?**
 
 Platform API quality is measured by consumer behavior, not by the
 platform team's assessment.
@@ -1352,7 +1363,7 @@ thinks the API is well-designed.
 
 ---
 
-#### Q5 - How do you handle platform API migration when consumers break?
+**[MID] Q5 - [CONCEPTUAL] How do you handle platform API migration when consumers break?**
 
 When a platform API breaking change is unavoidable and some consumers
 have not migrated before the deadline:
@@ -1389,7 +1400,7 @@ leadership moment in platform API lifecycle management.
 
 ---
 
-#### Q6 - What is the role of schema validation in platform API design?
+**[MID] Q6 - [ARCHITECTURE] What is the role of schema validation in platform API design?**
 
 Schema validation in Kubernetes CRDs is enforced via OpenAPI v3 schemas
 embedded in the CRD spec. Schema validation serves two purposes:
@@ -1430,7 +1441,7 @@ spec:
     message: "replicas.min must be <= replicas.max"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CRD schema validation example example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 CEL (Common Expression Language) validation (Kubernetes 1.25+):
 Kubernetes now supports CEL expressions for cross-field validation
@@ -1445,7 +1456,7 @@ a good error message that enables self-service correction.
 
 ---
 
-#### Q7 - How do you design platform APIs for multi-cluster environments?
+**[SENIOR] Q7 - [DESIGN] How do you design platform APIs for multi-cluster environments?**
 
 Multi-cluster platforms have an additional API challenge: clusters are
 not identical (different regions, different purposes, different compliance
@@ -1462,7 +1473,7 @@ spec:
       cluster.platform.company.com/tier: production
       cluster.platform.company.com/region: us-east-1
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CRD schema validation example example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Consumers specify what they need (production tier, us-east-1 region);
 the platform finds the matching cluster.
@@ -1472,7 +1483,7 @@ Pattern 2 - Named environments (for simpler use cases):
 spec:
   environment: production  # maps to cluster selection policy
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CRD schema validation example example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The platform maps environment names to cluster selection logic.
 Teams do not know cluster names; they know environments.
@@ -1482,7 +1493,7 @@ Pattern 3 - Explicit cluster (for advanced cases only):
 spec:
   cluster: prod-us-east-1-cluster-03
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CRD schema validation example example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Only for use cases where the specific cluster matters (compliance
 isolation, data residency). Not for general use.
@@ -1500,7 +1511,7 @@ diagnosis are the difference between a 5-minute fix and a support ticket.
 
 ---
 
-#### Q8 - How do you handle API discovery in a large platform?
+**[STAFF] Q8 - [MECHANISM] How do you handle API discovery in a large platform?**
 
 API discovery is the problem of how a product engineer knows what platform
 APIs exist and how to use them.
@@ -1524,7 +1535,7 @@ kubectl get crd -l platform.company.com/managed=true \
 kubectl explain database.spec --recursive
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Describe the API schema example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 CRD-generated documentation: tools like `crd-ref-docs` can generate
 Markdown documentation from CRD OpenAPI schemas. This documentation
@@ -1544,7 +1555,7 @@ discovery into adoption.
 
 ---
 
-#### Q9 - Describe a platform API design decision that taught you something important.
+**[STAFF] Q9 - [DESIGN] Describe a platform API design decision that taught you something important.**
 
 *Open question probing real-world experience. A strong answer:*
 

@@ -171,14 +171,19 @@ WHAT IMMUTABILITY MEANS AT EACH LEVEL:
   # The state: in external systems that survive container restarts.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The state: in external systems that survive container restarts. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Contrasting mutable (drift-prone) vs immutable
+> **Code walkthrough:** Contrasting mutable (drift-prone) vs immutableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > operational patterns for a production incident.
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # SCENARIO: Application has a bug. Config needs updating.
@@ -215,7 +220,7 @@ kubectl patch configmap myapp-config \
 # Every step: auditable in git and Kubernetes history.
 ```
 
-> **Code walkthrough:** The BAD pattern introduces configuration drift:
+> **Code walkthrough:** The BAD pattern introduces configuration drift:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the running container's state diverges from the image definition. The
 > next restart erases the manual change. Multiple replicas have inconsistent
 > config. No audit trail. The GOOD pattern keeps all state in declarative
@@ -269,6 +274,91 @@ still immutable. When the debug session ends: the ephemeral container
 is removed. Production debugging in an immutable system: richer than
 in a mutable system, because the state is predictable (no unknown
 manual modifications).
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Container writeable layer accumulating state**
+
+**Symptom:** Containers that "should be" immutable behave differently
+over time. One pod stores logs in `/tmp` inside the container;
+after running for 3 days, the pod disk usage is 2GB. After restart,
+data is gone and the team is surprised. Or: a container writes
+PID files to a local path; after a crash and restart, the old
+PID file prevents startup.
+
+**Root cause:** The container's writeable layer is not mounted
+from a volume - writes go to the ephemeral container storage.
+On restart, this storage is reset. If the application expected
+the data to persist, it is broken. If the application was
+writing data that should NOT persist, the writeable layer
+accumulation is a resource leak.
+
+**Diagnosis:**
+```bash
+# Check container filesystem usage per pod
+kubectl exec <pod> -- df -h /
+# If the / filesystem shows high usage, the writeable layer is growing
+
+# Check what's taking space
+kubectl exec <pod> -- du -sh /* 2>/dev/null | sort -rh | head -10
+# Identifies directories with accumulated state
+
+# Verify which paths are volumes vs writeable layer
+kubectl get pod <pod> -o jsonpath='{.spec.containers[0].volumeMounts}'
+# Paths NOT in volumeMounts are writeable layer = ephemeral
+```
+
+> **Code walkthrough:** The `df -h /` inside the container shows writeable layer usage. KEY MECHANISM: Docker overlayfs gives every container a thin writeable layer on top of the read-only image layers; any write goes to this layer, and it persists for the container's lifetime. WHY IT MATTERS: a container writing to its local filesystem is not truly stateless - the state just doesn't survive restart, which is often unexpected. WHAT BREAKS: applications relying on local temp files between requests, PID files, or lock files fail silently on restart. TAKEAWAY: mount all paths that need either persistence (databases) or cleanup guarantees (tmp files) as volumes - leave the writeable layer empty.
+
+**Fix:** Mount `/tmp` as an `emptyDir` volume for scratch space;
+use explicit volumes for any persistent data; enable
+`readOnlyRootFilesystem: true` in the security context to
+enforce true immutability.
+
+---
+
+**Failure Mode 2 - Image tag mutation bypassing immutability**
+
+**Symptom:** A production deployment references `myapp:latest`.
+After a CI build, the image referenced by `latest` changes.
+The next pod restart (due to OOM kill, node drain, or HPA
+scale-up) pulls a new, untested image version. The team
+cannot explain why the bug appeared without a deployment.
+
+**Root cause:** Mutable image tags (`latest`, `v1.0.0-SNAPSHOT`,
+`develop`) are not immutable references. Any image push can
+change what the tag points to. Kubernetes defaults to
+`imagePullPolicy: Always` for the `latest` tag - every
+new pod gets whatever image is currently tagged `latest`.
+
+**Diagnosis:**
+```bash
+# Check what imagePullPolicy is set to
+kubectl get deployment <name> -o jsonpath=\
+  '{.spec.template.spec.containers[0].imagePullPolicy}'
+# Always + mutable tag = non-deterministic deployments
+
+# Check if running pods use digest or mutable tag
+kubectl get pod <pod> -o jsonpath=\
+  '{.status.containerStatuses[0].imageID}'
+# Correct: docker-pullable://myapp@sha256:abc123...
+# Problem: docker-pullable://myapp:latest (no digest)
+
+# Check image digest in deployment spec
+kubectl get deployment <name> -o yaml | grep 'image:'
+# Should show: image: myapp@sha256:abc123...
+# Not: image: myapp:latest
+```
+
+> **Code walkthrough:** The `imageID` in pod status always shows the digest of the running image. KEY MECHANISM: a tag is a mutable pointer; a digest (`sha256:...`) is an immutable content address. Deploying by digest guarantees that every pod restart, in every environment, runs exactly the same bytes. WHY IT MATTERS: production incidents have occurred when a hotfix deployment accidentally promoted a partially-tested image to production because it was pushed under the `latest` tag. TAKEAWAY: pin all Kubernetes deployments to image digests in the deployment spec; use mutable tags only as human-readable aliases for documentation.
+
+**Fix:** Update deployment specs to use digest references:
+`image: myapp@sha256:abc...`; enforce via admission webhook
+(OPA Gatekeeper policy: reject mutable tag references).
 
 ---
 
@@ -695,6 +785,12 @@ same product."
 ### 📘 Concept Explanation
 
 **Build-once, promotion pipeline, environment differences:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 BUILD-ONCE PROMOTION PIPELINE:
 
@@ -773,13 +869,13 @@ ENVIRONMENT DIFFERENCES (all injected at runtime, not baked into image):
   # The image reference: identical across environments.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This The image reference: identical across environments. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A GitOps promotion pipeline that moves the same
+> **Code walkthrough:** A GitOps promotion pipeline that moves the sameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > image digest from dev to staging to production.
 
 ```yaml
@@ -844,7 +940,7 @@ images:
     digest: sha256:deadbeef  # SAME digest as dev and staging
 ```
 
-> **Code walkthrough:** The Kustomize overlay pattern implements build-once
+> **Code walkthrough:** The Kustomize overlay pattern implements build-onceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > perfectly. The `base/deployment.yaml` has no image tag. Each environment's
 > `kustomization.yaml` sets the image reference: same `newTag` and same
 > `digest` across all three environments. The `digest` field is the key:
@@ -892,6 +988,84 @@ produces one image, (2) the image's digest is propagated through
 environments, (3) the digest is what is deployed (not a mutable tag).
 The mutable tag can still exist as a human-readable reference. The
 deployment reference: the digest.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Environment-specific build arguments creating divergent images**
+
+**Symptom:** Tests pass in staging but fail in production. Debugging
+reveals the staging image has a different library version than
+production. The images have different `FROM` base image layers
+because they were built on different days, pulling different
+patch releases of the base image.
+
+**Root cause:** The CI pipeline builds a separate image per
+environment. The base image (`FROM openjdk:21-jre-slim`) is
+a mutable tag. Two builds on different days pull different
+patch versions of the base image. The resulting images
+are different bytes with different library versions.
+
+**Diagnosis:**
+```bash
+# Compare image digests between staging and production
+kubectl get pod -n staging <pod> -o jsonpath=\
+  '{.status.containerStatuses[0].imageID}'
+kubectl get pod -n production <pod> -o jsonpath=\
+  '{.status.containerStatuses[0].imageID}'
+# If digests differ: images are not identical
+
+# Inspect base image layers
+docker inspect myapp:staging-v1.2 | \
+  python3 -c "import sys,json; \
+  [print(l) for l in json.load(sys.stdin)[0]['RootFS']['Layers']]"
+# Compare layer hashes to production image
+# Divergent layers = different bytes in image
+```
+
+> **Code walkthrough:** Comparing image digests and layer hashes reveals image divergence between environments. KEY MECHANISM: every `docker pull` for a mutable tag fetches whatever bytes are currently tagged; two builds on different days get different base image bytes even if the Dockerfile is identical. WHY IT MATTERS: the build-once principle is violated when the base image is mutable - you cannot guarantee identical bytes across environments. WHAT BREAKS: a security patch applied to the base image between staging and production builds creates a genuine (desirable) difference, but a bug fix creates a spurious and dangerous difference. TAKEAWAY: pin your base image to a digest in the Dockerfile: `FROM openjdk:21-jre-slim@sha256:abc123`.
+
+**Fix:** Pin `FROM` directives to digests in Dockerfile;
+build one image in CI, promote the same digest through
+all environments; use Dependabot or Renovate to
+automatically update digest pins.
+
+---
+
+**Failure Mode 2 - Configuration baked into image violating build-once**
+
+**Symptom:** The team needs separate images per environment
+because the application.properties is copied into the image
+during build. Changing a config value requires a rebuild.
+Staging and production have different images by design.
+
+**Root cause:** Build-once is being violated by baking
+environment configuration into the image. The correct
+pattern: image contains only code and defaults;
+environment-specific config is injected at runtime
+via environment variables or mounted ConfigMaps/Secrets.
+
+**Diagnosis:**
+```bash
+# Check if config files are in the image
+docker run --rm myapp:v1.2 cat /app/application.properties
+# If output contains production URLs, passwords, or env-specific
+# values: the image has baked-in config - build-once is violated
+
+# Check what environment variables are set at runtime
+kubectl exec <pod> -- env | grep -E 'DB_|API_|SECRET_'
+# These should be the runtime config, not baked in
+```
+
+> **Code walkthrough:** Reading config from inside the running image reveals whether it's baked in. KEY MECHANISM: 12-factor app principles require strict separation of config from code; config is anything that varies between deployments (dev, staging, prod) including database URLs, credentials, and feature flags. WHY IT MATTERS: if config is baked in, you cannot build once - you must rebuild for every environment difference, defeating the entire principle. WHAT BREAKS: security scanning fails because credentials appear in the image layer history. TAKEAWAY: externalize all configuration via environment variables; use ConfigMaps for non-secret config, Secrets for credentials - never `COPY application-prod.properties` in a Dockerfile.
+
+**Fix:** Remove all environment-specific config from Dockerfile;
+use environment variables with sensible defaults in code;
+deploy the same image to all environments with
+different ConfigMaps.
 
 ---
 
@@ -1370,13 +1544,13 @@ CONTAINER BOUNDARY CHECKLIST:
   If < 2 are Yes: the overhead may exceed the benefit.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Decompose the pain points. Don't decompose for decomposition's sake. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Demonstrating the sidecar pattern with a log
+> **Code walkthrough:** Demonstrating the sidecar pattern with a logice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > aggregation container that is separate from but cooperates with the
 > application container.
 
@@ -1394,7 +1568,7 @@ CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
 # Two distinct concerns in one container: anti-pattern.
 ```
 
-> **Code walkthrough:** The BAD pattern couples the application and the
+> **Code walkthrough:** The BAD pattern couples the application and theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > log aggregation concern. The application image now depends on Fluent Bit's
 > version. A Fluent Bit security update requires rebuilding AND retesting
 > the application image. Supervisord as PID 1 complicates signal handling.
@@ -1447,7 +1621,7 @@ spec:
               mountPath: /var/log/app  # app writes logs here
 ```
 
-> **Code walkthrough:** The sidecar pattern cleanly separates the
+> **Code walkthrough:** The sidecar pattern cleanly separates theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > application from the log aggregation concern. The application writes
 > JSON logs to `/var/log/app/app.log`. Fluent Bit reads from the same
 > volume (read-only) and forwards to the centralized log collector.
@@ -1502,15 +1676,94 @@ scaling requirements, and independent deployment value.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Nano-service over-decomposition creating network overhead**
+
+**Symptom:** A feature that previously required 1 database query now
+involves 12 network calls across 6 services. P99 latency increases
+from 50ms to 800ms. Distributed tracing shows a cascade of tiny
+services each adding 50-80ms. Engineers spend more time on
+service-to-service debugging than feature development.
+
+**Root cause:** Services were split at a granularity finer than
+business domain boundaries. Functions that are always called
+together, always deployed together, and never scaled independently
+were extracted into separate services. The microservice split
+added network overhead, serialization cost, distributed tracing
+complexity, and independent deployment ceremony without any
+corresponding benefit.
+
+**Diagnosis:**
+```bash
+# Check call graph for service with high latency
+curl http://jaeger:16686/api/traces?service=<service>&limit=1 \
+  | python3 -c "import sys,json; t=json.load(sys.stdin)['data'][0]; \
+    spans=t['spans']; print(f'{len(spans)} spans in trace')"
+# > 20 spans for a single user action = likely over-decomposed
+
+# Check deployment frequency per service
+git log --since='3 months ago' --oneline --all -- services/ \
+  | awk -F/ '{print $2}' | sort | uniq -c | sort -rn
+# Services deployed < 1/month = possibly should not be independent
+```
+
+> **Code walkthrough:** Span count per user action is the key signal for over-decomposition. KEY MECHANISM: each microservice boundary adds at least one network round trip (serialization + transmission + deserialization) - for LAN calls this is 0.5-2ms, for cross-AZ it is 5-20ms. With 20 hops, baseline latency is 10-400ms before any business logic. WHY IT MATTERS: latency is additive across service calls; a system that was fast as a monolith becomes slow as micro-services if decomposed without regard to call frequency. WHAT BREAKS: any user-facing feature that fans out to many services in the critical path degrades user experience. TAKEAWAY: services that are always called together in the same transaction are good candidates for merger - use the "deployment independence" test: if you cannot deploy service A without deploying service B, they are not truly independent.
+
+**Fix:** Merge nano-services that are always called together;
+use in-process function calls within a bounded context;
+apply the Strangler Fig pattern to gradually re-integrate
+over-split services.
+
+---
+
+**Failure Mode 2 - Shared database preventing true service independence**
+
+**Symptom:** The services are separate containers, but they
+share the same database. A schema migration for Service A
+requires coordinating a deployment window with Service B
+because both use the same `orders` table. Services that
+"should" scale independently cannot because they contend
+on the same database connection pool.
+
+**Root cause:** Microservice decomposition was applied at
+the code level but not the data level. True microservices
+require full data isolation - each service owns its
+data exclusively and exposes it only via its API.
+
+**Diagnosis:**
+```bash
+# Check how many services connect to the same database
+kubectl get pods -A -o yaml \
+  | grep -A5 'DB_HOST' | grep 'value:' | sort | uniq -c
+# Multiple services pointing to same DB_HOST = shared database
+
+# Check for cross-service table access
+grep -r "SELECT.*FROM.*orders" services/payment-service/src/
+# If payment-service queries the orders table directly:
+# it should query the order-service API instead
+```
+
+> **Code walkthrough:** Searching for cross-service table access reveals hidden ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+
+**Fix:** Apply the Database per Service pattern; use
+asynchronous events (Kafka, RabbitMQ) for cross-service
+data sharing; migrate shared tables to the service that
+has primary ownership.
+
+---
+
 ### ⚖️ Comparison Table
 
-| Decomposition Level | Communication | Coupling | When to Use |
-|---|---|---|---|
-| Single container | In-process | Tight | Single concern, single team |
-| Sidecar in pod | Shared volume/localhost | Medium | Cross-cutting concerns |
-| Separate pods, same service | Network call | Loose | Independent scaling |
-| Separate services, namespaces | Network + service mesh | Very loose | Independent teams, data |
-| Over-decomposed (nano-service) | Many network calls | Too loose | Avoid: overhead > benefit |
+| Decomposition Level| Communication| Coupling| When to Use|
+|---------------|-----------------------|----------|---------------------------|
+| Single container| In-process| Tight| Single concern, single team|
+| Sidecar in pod| Shared volume/localhost| Medium| Cross-cutting concerns|
+| Separate pods, same service| Network call| Loose| Independent scaling|
+| Separate services, namespaces| Network + service mesh| Very loose| Independent
+| Over-decomposed (nano-service)| Many network calls| Too loose| Avoid: overhead
 
 ---
 

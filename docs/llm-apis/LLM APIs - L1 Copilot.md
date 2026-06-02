@@ -137,7 +137,7 @@ INTEGRATION POINTS:
    - CI/CD: auto-review, auto-summarize
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitHub Copilot Integration Patterns example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Copilot Extensions architecture:**
 
@@ -162,7 +162,7 @@ Returns SSE stream: Copilot-formatted events
 Copilot chat renders the response
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitHub Copilot Integration Patterns example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -267,7 +267,7 @@ async def call_my_backend(query: str) -> str:
         return resp.json().get("answer", "No result")
 ```
 
-> **Code walkthrough:** A minimal Copilot Extension
+> **Code walkthrough:** A minimal Copilot Extensionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > server. The signature verification using `hmac.compare_digest`
 > is critical - without it, anyone can send requests
 > to your endpoint pretending to be GitHub. The
@@ -345,14 +345,14 @@ curl -X POST https://your-extension.example.com/ \
   -d '{"messages": [{"role": "user", "content": "test"}]}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Final event example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Expected format per event:
 ```
 data: {"choices": [{"delta": {"content": "word "}, "finish_reason": null}]}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Final event example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Final event:
 ```
@@ -361,7 +361,7 @@ data: {"choices": [{"delta": {}, "finish_reason": "stop"}]}
 data: [DONE]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Final event example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Missing `choices` wrapper, wrong field names, or
 missing `[DONE]` event all cause rendering failures.
@@ -563,7 +563,7 @@ your workspace. To improve domain-specific suggestions:
 - hard-coded credentials
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This .github/copilot-instructions.md example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 (4) Copilot workspace index: use `@workspace` in
     chat to query across the full project. The index
@@ -638,7 +638,7 @@ def verify_signature(
     )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This .github/copilot-instructions.md example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 (2) Validate the user token: if you use the GitHub
     user token from the request to call GitHub APIs,
@@ -862,7 +862,7 @@ BEST:
    all edge cases handled)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TODO example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -958,7 +958,7 @@ def get_active_users(
 #  using the updated_at timestamp."
 ```
 
-> **Code walkthrough:** Two implementations of the
+> **Code walkthrough:** Two implementations of theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > same function with different prompt quality. The
 > `get_users()` version gives Copilot nothing: no
 > types, no docstring, no structure. Copilot will
@@ -1050,7 +1050,7 @@ common patterns from training.
    - Logging: structlog (not print, not logging module)
    - Always use async/await for I/O operations
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This using the updated_at timestamp." example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 3. Write a short example at the top of the file
    showing the correct pattern - Copilot follows
@@ -1145,7 +1145,7 @@ Effective contents:
 - Always log with `exc_info=True` before re-raising
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Copilot Instructions example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This is read at the start of agent sessions and
 applied throughout, preventing the pattern mismatches
@@ -1249,7 +1249,7 @@ Three mechanisms for pattern guidance:
     class OrderRepository:
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use repository pattern like user_repo.py example demonstrates class definition. **KEY MECHANISM:** Python builds the class dict at definition time; instances share the class dict via __mro__. **WHY IT MATTERS:** class-level mutable attributes are shared across all instances - mutating one affects all. **TAKEAWAY: declare mutable attributes in __init__, not at class level.**
 
 (3) Partial implementation: write the first method
     of a class following the pattern. Copilot will
@@ -1269,7 +1269,7 @@ Three mechanisms for pattern guidance:
     # Copilot now continues in the same style
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Copilot now continues in the same style example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 (4) `copilot-instructions.md`: the persistent way.
     Once written, all agent tasks follow conventions.
@@ -1532,7 +1532,7 @@ Copilot: "Done. Added cursor-based pagination and
           3 integration tests. All tests pass."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This VS Code Copilot Agent Mode example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Tools available to Copilot Agent:**
 
@@ -1615,7 +1615,7 @@ Why this fails:
   and leave the codebase in a broken state
 ```
 
-> **Code walkthrough:** Agent mode prompts are text
+> **Code walkthrough:** Agent mode prompts are textice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > specifications, not code. The effective patterns
 > share: named files (Copilot doesn't have to search),
 > exact specifications (no interpretation needed),
@@ -1793,7 +1793,7 @@ Success Criteria: how to verify completion?
          the three new error cases"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Template:
 "In [files/scope], implement [what].
@@ -1853,7 +1853,7 @@ Safety practices for agent mode:
 ```bash
 git add -A && git commit -m "checkpoint before agent task"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 If agent makes bad changes, `git checkout .` reverts everything.
 

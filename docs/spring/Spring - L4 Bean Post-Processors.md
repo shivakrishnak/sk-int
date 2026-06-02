@@ -209,7 +209,7 @@ Key architectural constraint:
   by all BeanPostProcessors"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BeanFactoryPostProcessor and BeanPostProcessor example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The separation of BFPP (Phase 5) and BPP (Phase 6 + 11) is intentional and
@@ -297,7 +297,7 @@ public class ServiceRegistrationPostProcessor
 }
 ```
 
-> **Code walkthrough:** This BFPP scans for @RemoteService interfaces and
+> **Code walkthrough:** This BFPP scans for @RemoteService interfaces andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > registers a factory bean for each, creating RPC proxies automatically.
 > This is exactly how Spring Data JPA's MapperScannerConfigurer registers
 > repository proxy beans. PriorityOrdered with HIGHEST_PRECEDENCE ensures
@@ -361,7 +361,7 @@ public class MetricsWrappingPostProcessor
 }
 ```
 
-> **Code walkthrough:** AopUtils.getTargetClass(bean) is critical: by Phase 11
+> **Code walkthrough:** AopUtils.getTargetClass(bean) is critical: by Phase 11ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > when postProcessAfterInitialization runs, the bean may already be wrapped
 > in an AOP proxy by AbstractAutoProxyCreator (for @Transactional etc.).
 > getTargetClass() unwraps proxies to check annotations on the real class.
@@ -466,7 +466,7 @@ and return bean as-is if dependency is unavailable.
 
 ---
 
-#### Q1 - What is the full bean initialization sequence in Phase 11?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the full bean initialization sequence in Phase 11?**
 
 For each singleton BeanDefinition in Phase 11:
 
@@ -512,7 +512,7 @@ For each singleton BeanDefinition in Phase 11:
    Returned object (proxy) replaces bean in context.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Many candidates know steps 4-8 but miss
 steps 1-3. The Aware interface injection in step 3 is interesting: it runs
@@ -524,7 +524,7 @@ events, i18n, resource loading.
 
 ---
 
-#### Q2 - How does AbstractAutoProxyCreator create AOP proxies?
+**[JUNIOR] Q2 - [HANDS-ON] How does AbstractAutoProxyCreator create AOP proxies?**
 
 AbstractAutoProxyCreator is the base class for Spring's AOP proxy-creating
 BPPs (AnnotationAwareAspectJAutoProxyCreator is the concrete class used with
@@ -560,7 +560,7 @@ CGLIB vs JDK proxy:
     - Cannot proxy final classes or final methods
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Spring Boot sets proxyTargetClass=true by default
 (CGLIB for all beans). This avoids the "must implement interface" constraint of
@@ -570,7 +570,7 @@ but modern JVMs JIT-optimize CGLIB dispatch.
 
 ---
 
-#### Q3 - What is InstantiationAwareBeanPostProcessor and when do you use it?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is InstantiationAwareBeanPostProcessor and when do you use it?**
 
 InstantiationAwareBeanPostProcessor (IABPP) extends BeanPostProcessor with
 two additional callbacks:
@@ -593,7 +593,7 @@ postProcessAfterInstantiation(Object bean, String beanName)
   -> Return false to skip property population
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 AutowiredAnnotationBeanPostProcessor implements IABPP:
 - postProcessProperties() handles @Autowired, @Value, @Inject field/method injection
@@ -609,7 +609,7 @@ never created as a singleton - the proxy manages the target lifecycle.
 
 ---
 
-#### Q4 - How do you diagnose the "not eligible for BeanPostProcessors" issue?
+**[MID] Q4 - [DEBUGGING] How do you diagnose the "not eligible for BeanPostProcessors" issue?**
 
 Spring logs this warning when a bean is created before BPPs are registered:
 
@@ -620,7 +620,7 @@ BeanPostProcessors (for example: not eligible
 for auto-proxying).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Diagnosis process:**
 
@@ -636,7 +636,7 @@ Step 3: Enable debug logging:
 logging.level.org.springframework
   .context.support.PostProcessorRegistrationDelegate=DEBUG
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This logs the creation order in detail.
 
@@ -647,6 +647,12 @@ Step 4: Check if myService needs AOP (@Transactional, @Cacheable):
 **Fixes:**
 
 Fix 1: Remove the dependency from BFPP:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: BFPP depends on service bean
 @Component
@@ -662,7 +668,7 @@ class MyBFPP implements BeanFactoryPostProcessor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Fix 2: Make the dependency lazy:
 ```java
@@ -674,7 +680,7 @@ class MyBFPP implements BeanFactoryPostProcessor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The warning is often harmless (bean doesn't
 need AOP), but it points to an architectural issue: a post-processor depending
@@ -685,7 +691,7 @@ instantiated within the post-processor (not a Spring bean).
 
 ---
 
-#### Q5 - How does @Autowired injection work internally via BPP?
+**[MID] Q5 - [CONCEPTUAL] How does @Autowired injection work internally via BPP?**
 
 @Autowired injection is handled by AutowiredAnnotationBeanPostProcessor
 (implements InstantiationAwareBeanPostProcessor):
@@ -709,7 +715,7 @@ Phase 11, per-bean, after instantiation:
        (field.setAccessible(true), field.set(bean, value))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Important: @Autowired field injection uses reflection.setAccessible(true).
 This bypasses Java access modifiers - private @Autowired fields work.
@@ -725,7 +731,7 @@ constructor injection for mandatory dependencies.
 
 ---
 
-#### Q6 - How does Spring handle BPP ordering when two BPPs both want to proxy a bean?
+**[MID] Q6 - [CONCEPTUAL] How does Spring handle BPP ordering when two BPPs both want to proxy a bean?**
 
 Multiple BPPs can each wrap a bean. They run in Ordered sequence and each
 gets the result of the previous BPP:
@@ -749,7 +755,7 @@ Context stores ProxyA2
 Call path: ProxyA2 -> ProxyA2 advice -> ProxyA1 -> ProxyA1 advice -> rawA
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This double-wrapping is usually undesirable. Spring's AOP avoids it
 by using a single AbstractAutoProxyCreator that collects ALL advisors
@@ -765,7 +771,7 @@ Method calls: proxy -> TX advice -> Cache advice
              -> Retry advice -> actual method
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The advice chain order within a single
 proxy is controlled by Ordered on @Aspect classes. Default: higher @Order
@@ -778,7 +784,7 @@ cache is populated within transaction boundary - may cache uncommitted data.
 
 ---
 
-#### Q7 - What is the difference between @PostConstruct and InitializingBean?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the difference between @PostConstruct and InitializingBean?**
 
 Both provide initialization hooks after dependency injection:
 
@@ -814,7 +820,7 @@ proxy wrapper is in place.
 
 ---
 
-#### Q8 - How does BeanDefinition differ from a bean instance?
+**[SENIOR] Q8 - [CONCEPTUAL] How does BeanDefinition differ from a bean instance?**
 
 BeanDefinition is metadata describing how to create a bean:
 
@@ -834,7 +840,7 @@ boolean autowireCandidate // can this be @Autowired?
 String[] dependsOn      // @DependsOn ordering
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Bean instance: the actual Java object created from BeanDefinition.
 
@@ -855,7 +861,7 @@ which is why it can register @Bean-defined beans and @Import-ed configurations.
 
 ---
 
-#### Q9 - How do you implement a custom @Retry annotation using BPP?
+**[SENIOR] Q9 - [HANDS-ON] How do you implement a custom @Retry annotation using BPP?**
 
 ```java
 // 1. Annotation
@@ -931,7 +937,7 @@ public class RetryInterceptor
 }
 ```
 
-> **Code walkthrough:** The BPP checks each bean for @Retry annotations. If found,
+> **Code walkthrough:** The BPP checks each bean for @Retry annotations. If found,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it creates a CGLIB proxy wrapping a RetryInterceptor. proxyTargetClass=true forces
 > CGLIB even if the bean implements interfaces (needed to proxy all methods, not
 > just interface methods). The interceptor checks if the thrown exception matches
@@ -948,7 +954,7 @@ transaction), order the retry interceptor with lower Ordered number (runs first
 
 ---
 
-#### Q10 - What is the difference between @Bean(proxyBeanMethods=false) and @Configuration vs @Component?
+**[STAFF] Q10 - [CONCEPTUAL] What is the difference between @Bean(proxyBeanMethods=false) and @Configuration vs @Component?**
 
 Spring processes @Configuration with CGLIB enhancement when proxyBeanMethods=true:
 
@@ -985,7 +991,7 @@ public class LiteConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Implications:
 - proxyBeanMethods=true: inter-@Bean calls return singleton. CGLIB overhead.
@@ -1005,7 +1011,7 @@ parameters. This forces cleaner design and better performance.
 
 ---
 
-#### Q11 - How does Spring manage BPP lifecycle itself?
+**[STAFF] Q11 - [CONCEPTUAL] How does Spring manage BPP lifecycle itself?**
 
 BPPs are Spring beans but their lifecycle is special:
 
@@ -1023,7 +1029,7 @@ Phase 6 (registerBeanPostProcessors):
    (must remain last BPP)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 BPPs themselves go through:
 - Constructor instantiation
@@ -1047,7 +1053,7 @@ gotcha when writing framework infrastructure code.
 
 ---
 
-#### Q12 - What is the BeanDefinitionRegistryPostProcessor and how does it extend BFPP?
+**[STAFF] Q12 - [CONCEPTUAL] What is the BeanDefinitionRegistryPostProcessor and how does it extend BFPP?**
 
 BeanDefinitionRegistryPostProcessor (BDRPP) extends BeanFactoryPostProcessor
 with an additional callback that runs EVEN EARLIER:
@@ -1064,7 +1070,7 @@ interface BeanDefinitionRegistryPostProcessor
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using interface. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Execution order in Phase 5:
 1. BDRPPs run first:

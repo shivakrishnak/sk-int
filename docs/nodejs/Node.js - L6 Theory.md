@@ -121,13 +121,28 @@ V8 inline caches (ICs):
   Megamorphic (5+ shapes) = slowest (uncached)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This V8 Engine Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Internal Mechanism) - Hidden class optimization:**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: property addition creates new hidden classes:
@@ -177,7 +192,7 @@ const intArr = [1, 2, 3];  // stays FAST_SMI_ELEMENTS
 const strArr = ['a', 'b']; // stays FAST_ELEMENTS (consistent string)
 ```
 
-> **Code walkthrough:** The conditional property example shows a subtle
+> **Code walkthrough:** The conditional property example shows a subtleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > deoptimization. Admin users get `{id, name, role}` (three properties)
 > while regular users get `{id, name}` (two properties). These have
 > different hidden classes. V8 functions that receive both shapes become
@@ -250,7 +265,7 @@ node --trace-deopt server.js 2>&1 | grep "DEOPT"
 # "wrong type" - expected one type, got another
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This expected one type, got another example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -386,13 +401,21 @@ Thread pool mechanics:
     // Under thread pool exhaustion: 100-500ms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This libuv Thread Pool example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Production) - Thread pool tuning and monitoring:**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 import { createServer } from 'net';
@@ -442,7 +465,7 @@ const [addr] = await resolve4('api.github.com');
 // Use clinic.js bubbleprof to visualize async parallelism
 ```
 
-> **Code walkthrough:** The measurement function reveals thread pool
+> **Code walkthrough:** The measurement function reveals thread poolice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > batching: with 4 threads, 20 concurrent `pbkdf2` calls run in batches
 > of 4. Each batch completes in ~250ms (one computation), so 5 batches
 > take ~1250ms total. With `UV_THREADPOOL_SIZE=20`, all 20 run
@@ -523,7 +546,7 @@ if (threadPoolMs > 500) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using thread pool. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Fix:
 ```bash
@@ -533,7 +556,7 @@ const limit = pLimit(4); // respect 4-thread pool
 const hash = await limit(() => bcrypt.hash(pw, 12));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or limit concurrent bcrypt calls: example demonstrates shell script pattern using thread pool. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 

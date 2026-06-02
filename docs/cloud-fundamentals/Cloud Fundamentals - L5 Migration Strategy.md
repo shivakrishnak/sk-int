@@ -133,7 +133,7 @@ Step 4: How much change is justified?
     Use for: legacy apps, migration under time pressure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Migration Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Database Migration Zero-Downtime Pattern:**
 
@@ -172,7 +172,7 @@ Phase 4: VALIDATION
   - Rollback plan: repoint to source if issues (DMS can reverse)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Migration Strategy example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -281,7 +281,7 @@ aws ecs update-service --cluster prod --service app \
 echo "Cutover complete at $(date)"
 ```
 
-> **Code walkthrough:** The DMS migration task uses
+> **Code walkthrough:** The DMS migration task usesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `full-load-and-cdc` mode: it starts with a full copy
 > of all data, then continuously replicates changes.
 > The CDCLatencySource metric measures how far behind
@@ -393,7 +393,7 @@ ss -tnp | awk '{print $5}' | sort -u > actual_connections.txt
 # and after migration to validate no missing connections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This and after migration to validate no missing connections example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -420,7 +420,7 @@ aws dms describe-replication-task-individual-assessments \
   --filters Name=replication-task-arn,Values=<task-arn>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check DMS task logs for errors: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Scale up the replication instance class
 (r5.xlarge -> r5.2xlarge). Or reduce peak write load
@@ -539,7 +539,7 @@ gantt
 
 ---
 
-#### CONCEPT 1: Walk me through the 7Rs migration framework. When do you use each?
+**[SENIOR] Q1 - [MECHANISM] Walk me through the 7Rs migration framework. When do you use each?**
 
 **Retire:** Application is no longer needed. Decommission.
 This is the highest ROI: zero migration cost, zero ongoing
@@ -597,7 +597,7 @@ migrating) shows operational maturity.
 
 ---
 
-#### CONCEPT 2: What are the phases of a typical cloud migration program and what are the most common failure points?
+**[SENIOR] Q2 - [MECHANISM] What are the phases of a typical cloud migration program and what are the most common failure points?**
 
 **Five phases:**
 
@@ -646,7 +646,7 @@ primary reasons real migrations fail.
 
 ---
 
-#### DEBUGGING 1: After migrating an application to AWS, it experiences intermittent connection timeouts to the on-prem database. What do you investigate?
+**[SENIOR] Q3 - [DEBUGGING] After migrating an application to AWS, it experiences intermittent connection timeouts to the on-prem database. What do you investigate?**
 
 **The scenario:** Application migrated to ECS in AWS VPC.
 Database remains on-prem, connected via AWS Direct Connect
@@ -664,7 +664,7 @@ aws directconnect describe-connections
 aws ec2 describe-vpn-connections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if Direct Connect or VPN: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: Network packet loss:**
 ```bash
@@ -674,7 +674,7 @@ mtr --report --tcp --port 5432 <on-prem-db-ip>
 # If loss at Direct Connect endpoint: AWS support
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If loss at Direct Connect endpoint: AWS support example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Connection pool behavior:**
 "Exactly 30s timeout" is a pattern: TCP keepalive or
@@ -703,7 +703,7 @@ spring:
       # net.ipv4.tcp_keepalive_time=10
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This net.ipv4.tcp_keepalive_time=10 example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Firewall idle timeout
 causing "exactly 30s" stale connection failures is the
@@ -713,7 +713,7 @@ is the fix.
 
 ---
 
-#### DEBUGGING 2: DMS task is running but data counts don't match between source and target. How do you diagnose?
+**[SENIOR] Q1 - [DEBUGGING] DMS task is running but data counts don't match between source and target. How do you diagnose?**
 
 **Step 1: Check DMS task status and errors:**
 ```bash
@@ -728,7 +728,7 @@ aws dms describe-replication-tasks \
 # FullLoadRowsInserted < FullLoadRowsTransferred = rows failed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This FullLoadRowsInserted < FullLoadRowsTransferred = rows failed example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: Table-level validation:**
 ```bash
@@ -738,7 +738,7 @@ aws dms describe-table-statistics \
 # Finds tables with mismatched row counts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Finds tables with mismatched row counts example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Check DMS logs:**
 ```bash
@@ -750,7 +750,7 @@ aws logs get-log-events \
   grep -i "error\|warn\|failed"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DMS logs in CloudWatch: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Common causes:**
 
@@ -782,7 +782,7 @@ would know.
 
 ---
 
-#### TRADE-OFF 1: Big Bang migration vs Wave-based migration. What are the trade-offs?
+**[SENIOR] Q2 - [TRADE-OFF] Big Bang migration vs Wave-based migration. What are the trade-offs?**
 
 **Big Bang migration:**
 
@@ -836,7 +836,7 @@ on non-critical ones.
 
 ---
 
-#### TRADE-OFF 2: Rehost first then modernize (two-phase) vs modernize while migrating (combined). Which approach?
+**[SENIOR] Q3 - [TRADE-OFF] Rehost first then modernize (two-phase) vs modernize while migrating (combined). Which approach?**
 
 **Rehost then modernize (two-phase):**
 
@@ -890,7 +890,7 @@ has seen migrations in practice, not just in theory.
 
 ---
 
-#### DESIGN 1: Design a landing zone for a 100-workload cloud migration.
+**[SENIOR] Q4 - [DESIGN] Design a landing zone for a 100-workload cloud migration.**
 
 **Landing Zone definition:** A pre-configured, secure,
 multi-account AWS environment that provides a standardized
@@ -937,7 +937,7 @@ Root:
         (or per application for large apps)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DMS logs in CloudWatch: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Networking:**
 Transit Gateway connects all accounts and on-prem
@@ -966,7 +966,7 @@ is the tamper-evident audit trail requirement.
 
 ---
 
-#### DESIGN 2: A company has a 10TB Oracle database on-prem that must be migrated to AWS Aurora PostgreSQL with < 1 minute downtime. Design the migration.
+**[SENIOR] Q5 - [DESIGN] A company has a 10TB Oracle database on-prem that must be migrated to AWS Aurora PostgreSQL with < 1 minute downtime. Design the migration.**
 
 **This is the hardest migration scenario:**
 Oracle to PostgreSQL = schema conversion, data type mapping,
@@ -984,7 +984,7 @@ oracle-to-postgres conversion assessment:
   Estimated: 8 weeks of developer time for manual conversion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Identify incompatibilities:
 - Oracle sequences -> PostgreSQL SERIAL or UUID
@@ -1011,7 +1011,7 @@ Duration: 10TB full load at ~100GB/hr = 100 hours
 CDC: starts after full load, catches up
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 CDC lag monitoring: wait until consistently < 5 seconds.
 
@@ -1038,7 +1038,7 @@ T+40s: monitor first 100 requests to Aurora
 T+60s: confirm no errors -> cutover complete
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Rollback plan: SSM parameter reverted to Oracle in < 10s
 if errors detected. Oracle is read-only but still running
@@ -1053,7 +1053,7 @@ procedure.
 
 ---
 
-#### BEHAVIORAL 1: Describe the most challenging aspect of a cloud migration you have led or contributed to.
+**[SENIOR] Q6 - [BEHAVIORAL] Describe the most challenging aspect of a cloud migration you have led or contributed to.**
 
 **STAR:**
 
@@ -1104,7 +1104,7 @@ experience.
 
 ---
 
-#### BEHAVIORAL 2: How have you managed the cultural and organizational challenges of a cloud migration?
+**[SENIOR] Q7 - [BEHAVIORAL] How have you managed the cultural and organizational challenges of a cloud migration?**
 
 **The real challenge:** Technical migration is typically
 easier than organizational transformation.
@@ -1157,7 +1157,7 @@ shows people-first leadership thinking.
 
 ---
 
-#### SCENARIO 1: Your migration team discovers that a business-critical application has 40 undocumented integrations with on-prem systems, discovered during the first wave. The scheduled migration date is 3 months away. How do you respond?
+**[SENIOR] Q8 - [SCENARIO] Your migration team discovers that a business-critical application has 40 undocumented integrations with on-prem systems, discovered during the first wave. The scheduled migration date is 3 months away. How do you respond?**
 
 **The discovery:** Application was documented as having
 6 integrations. Network traffic analysis revealed 40.
@@ -1214,7 +1214,7 @@ professional response. Not promising an impossible deadline.
 
 ---
 
-#### SCENARIO 2: Six months into a 2-year migration program, business leadership wants to cut the migration budget by 40%. How do you respond?
+**[SENIOR] Q9 - [SCENARIO] Six months into a 2-year migration program, business leadership wants to cut the migration budget by 40%. How do you respond?**
 
 **The business context:** Cloud migrations are long programs.
 At 6 months, ROI is not yet realized (data center not

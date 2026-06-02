@@ -118,7 +118,7 @@ livenessProbe:
   successThreshold: 1        # (liveness/startup: must be 1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Health Checks: Liveness, Readiness, and Startup Probes example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **The startup probe pattern for slow applications:**
 ```yaml
@@ -136,7 +136,7 @@ livenessProbe:
   failureThreshold: 3      # restarts after 3 * 10s = 30s of failure
   periodSeconds: 10
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Health Checks: Liveness, Readiness, and Startup Probes example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The startup probe gives up to 300 seconds for startup. Once it passes, liveness
 takes over with stricter thresholds. Without startup probe, you'd need
@@ -165,7 +165,7 @@ takes over with stricter thresholds. Without startup probe, you'd need
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Complete probe configuration for a Java microservice with
+> **Code walkthrough:** Complete probe configuration for a Java microservice withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > slow startup, and the dangerous anti-pattern of liveness checking external dependencies.
 
 ```yaml
@@ -450,7 +450,7 @@ containers:
     successThreshold: 1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After startup: remove from traffic if dependencies unavailable example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The `failureThreshold` for startup is the key calculation:
 `max_startup_seconds / periodSeconds = failureThreshold`
@@ -598,7 +598,7 @@ spec:
       maxSurge: 2         # allow 2 extra pods during update
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After startup: remove from traffic if dependencies ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With `maxUnavailable: 0`: Kubernetes will not remove old pods until new pods pass
 readiness. The update proceeds: create 2 new pods (maxSurge), wait for both to be
@@ -607,14 +607,14 @@ Ready, then delete 2 old pods, create 2 more, repeat.
 Readiness probe requirements:
 1. The readiness endpoint must return 200 ONLY when the pod is fully initialized
    and can serve production traffic.
-2. For gradually-warming services (cache prefill, connection pool ready): readiness
+2. For gradually-warming services (cache prefill, connection pool ready): readin
    must remain failing until warmup is complete.
 3. If the new version has a bug that causes readiness to always fail: the rollout
    stalls (old pods remain serving). This is the CORRECT behavior - Kubernetes
    protects production by refusing to remove working pods.
 
 Rollout progress monitoring:
-`kubectl rollout status deployment/<name>` - blocks until rollout completes or fails.
+`kubectl rollout status deployment/<name>` - blocks until rollout completes or f
 `kubectl rollout undo deployment/<name>` - instant rollback to previous version.
 
 Readiness probe timing for zero-downtime:
@@ -665,7 +665,7 @@ Much better than exec-based gRPC health scripts.
 Priority: HTTP > gRPC > TCP > Exec.
 
 *What separates good from great:* The exec probe's per-check process spawn is an
-often-ignored performance cost. If you have 100 pods each with an exec probe running
+often-ignored performance cost. If you have 100 pods each with an exec probe run
 every 5 seconds: 20 process spawns per second per node. For shell scripts this is
 significant. Convert exec probes to HTTP probes where possible by exposing a simple
 health HTTP endpoint.
@@ -677,11 +677,11 @@ health HTTP endpoint.
 A: `failureThreshold` is the number of consecutive failures before taking action.
 The action differs by probe type:
 
-Liveness: `failureThreshold` consecutive failures -> container is killed and restarted.
+Liveness: `failureThreshold` consecutive failures -> container is killed and res
 With `failureThreshold: 3` and `periodSeconds: 10`: container restarts after 30 seconds
 of continuous liveness failure.
 
-Readiness: `failureThreshold` consecutive failures -> pod removed from Service endpoints.
+Readiness: `failureThreshold` consecutive failures -> pod removed from Service e
 With `failureThreshold: 3` and `periodSeconds: 5`: pod removed after 15 seconds.
 Pod is re-added when `successThreshold` consecutive successes occur.
 
@@ -695,7 +695,7 @@ The `successThreshold` is less discussed:
   twice consecutively before being added back to endpoints. Prevents flapping.
 
 Tuning guidance:
-- Too low failureThreshold: false positives, unnecessary restarts/endpoint removal
+- Too low failureThreshold: false positives, unnecessary restarts/endpoint remov
 - Too high failureThreshold: slow detection of genuine failures
 - Default starting point: failureThreshold: 3, periodSeconds: 10 (30s total)
 
@@ -711,12 +711,12 @@ positives (unnecessary restarts) vs detection latency.
 
 A (STAR format):
 
-Situation: during a database maintenance window (planned rolling restart of a 3-node
+Situation: during a database maintenance window (planned rolling restart of a 3-
 PostgreSQL cluster), our API service experienced a complete outage lasting 8 minutes.
 The database was only unavailable for approximately 90 seconds per node, not the
 entire cluster simultaneously.
 
-Task: diagnose why a brief database maintenance caused an 8-minute service outage and
+Task: diagnose why a brief database maintenance caused an 8-minute service outag
 implement a fix.
 
 Action:
@@ -753,21 +753,21 @@ restart IS the fix: deadlock, corrupted state, unrecoverable JVM error.
 
 ### ⚖️ Comparison Table
 
-| | Liveness | Readiness | Startup |
-|---|---|---|---|
-| Failure action | Restart container | Remove from endpoints | Kill container |
-| Container killed | Yes | No | Yes (if exhausted) |
-| Traffic removed | Temporarily (restart) | Yes | N/A (no traffic yet) |
-| Use for | Deadlock/fatal error | Dependency/warmup | Slow startup |
-| External deps? | NEVER | Yes | Same as liveness |
-| Typical failureThreshold | 3 | 3-6 | 15-30 |
-| successThreshold | Must be 1 | Can be > 1 | Must be 1 |
+|| Liveness| Readiness| Startup|
+|-------------|---------------------|---------------------|--------------------|
+| Failure action| Restart container| Remove from endpoints| Kill container|
+| Container killed| Yes| No| Yes (if exhausted)|
+| Traffic removed| Temporarily (restart)| Yes| N/A (no traffic yet)|
+| Use for| Deadlock/fatal error| Dependency/warmup| Slow startup|
+| External deps?| NEVER| Yes| Same as liveness|
+| Typical failureThreshold| 3| 3-6| 15-30|
+| successThreshold| Must be 1| Can be > 1| Must be 1|
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: ★★☆ keyword - health check gateway patterns and service mesh health management covered at L4.)*
+*(Omit: ★★☆ keyword - health check gateway patterns and service mesh health mana
 
 ---
 
@@ -946,7 +946,7 @@ Container -> stdout/stderr
     Query UI (Kibana/Grafana)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes Logging and Monitoring Strategy example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 kubelet performs log rotation: by default 10MB per file, 5 files retained.
 A high-volume container can exhaust this in minutes. Always deploy a log shipper.
@@ -974,7 +974,7 @@ node-exporter (system metrics: CPU, disk, network)
          Grafana (dashboards)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes Logging and Monitoring Strategy example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key metrics to monitor:
 - `container_cpu_usage_seconds_total` - actual CPU usage
@@ -999,7 +999,7 @@ export to Jaeger, Tempo, Zipkin, or commercial APMs.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Fluent Bit DaemonSet for log collection, Prometheus
+> **Code walkthrough:** Fluent Bit DaemonSet for log collection, Prometheusice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > application metric exposition, and OpenTelemetry tracing setup.
 
 ```yaml
@@ -1411,6 +1411,8 @@ A: Alerting requires a layered strategy: infrastructure alerts, workload alerts,
 SLO-based alerts.
 
 Layer 1 - Infrastructure alerts (cluster health):
+
+{% raw %}
 ```yaml
 # Node alerts
 - alert: NodeNotReady
@@ -1424,8 +1426,9 @@ Layer 1 - Infrastructure alerts (cluster health):
                                    status="true"} == 1
   for: 2m
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node alerts example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 2 - Workload alerts (pod health):
 ```yaml
@@ -1444,7 +1447,7 @@ Layer 2 - Workload alerts (pod health):
   for: 1m
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Node alerts example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 3 - SLO alerts (user-facing):
 ```yaml
@@ -1461,7 +1464,7 @@ Layer 3 - SLO alerts (user-facing):
     severity: critical
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error rate SLO: < 1% errors in 1 hour example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Alert routing: critical alerts (PodCrashLooping, NodeNotReady) -> PagerDuty.
 Warning alerts (DeploymentReplicasMismatch) -> Slack. SLO violations -> incident.
@@ -1498,7 +1501,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error rate SLO: < 1% errors in 1 hour example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 In Loki: `{app="order-svc"} | json | traceId="abc123"` finds all logs for this trace.
 In Grafana: from a slow Tempo trace span, click "Logs" to see correlated logs.

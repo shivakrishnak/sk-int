@@ -136,7 +136,7 @@ LAYER 4: Deserialization Filters (JDK 9+)
     Pattern: whitelist application classes, reject everything else (!)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 JVM Security example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -146,6 +146,12 @@ LAYER 4: Deserialization Filters (JDK 9+)
 > hardening for any service that receives serialized data. The BAD pattern accepts
 > any class during deserialization. The GOOD pattern implements a whitelist filter
 > that allows only known-safe application classes.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: no deserialization filter - accepts any class
@@ -273,7 +279,7 @@ verification is a JVM integrity mechanism, not an application security mechanism
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Deserialization attack via exposed Java RMI or custom serialization endpoint.**
-```
+```plaintext
 Symptom: Unexpected process execution, outbound network connections from the JVM,
   or data exfiltration. JVM appears compromised.
 
@@ -301,7 +307,7 @@ Diagnosis:
   
   2. JFR records class loading events:
      If attacker-supplied classes are loaded: JFR ClassLoad events will show them
-     jfr print --events ClassLoad recording.jfr | grep -v "java\|com.google\|com.example"
+     jfr print --events ClassLoad recording.jfr | grep -v "java\|com.google\|co...
   
   3. java.security log (if enabled):
      -Djava.security.debug=all (verbose, for investigation only)
@@ -323,7 +329,7 @@ Prevention (MUST DO for any service deserializing Java):
      Snyk, or GitHub Dependabot for known CVEs in serialization libraries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -635,7 +641,7 @@ trade-off significantly.
 compliance. Threat model: external attackers via HTTP, internal threat from compromised
 developer machines.
 
-```
+```plaintext
 SECURE JVM DEPLOYMENT ARCHITECTURE:
 
   JVM Security Flags:
@@ -687,7 +693,7 @@ SECURE JVM DEPLOYMENT ARCHITECTURE:
     Audit log: all --add-opens flags reviewed quarterly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Memory hardening: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

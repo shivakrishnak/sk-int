@@ -149,7 +149,7 @@ If current error_rate = 0.014 (1.4%):
   burn_rate = 0.014 / 0.001 = 14x -> PAGE
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert Design and Routing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Multi-window alerting (production standard):
 - Fast alert: 14x burn rate over 1 hour (catches fast burns)
@@ -229,7 +229,7 @@ groups:
           severity: critical
 ```
 
-> **Code walkthrough:** The BAD alerts are classic alert anti-
+> **Code walkthrough:** The BAD alerts are classic alert anti-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > patterns. The CPU alert fires for brief spikes that are not
 > user-impacting (most services handle 80% CPU without user
 > visible degradation). The memory alert fires during normal JVM
@@ -240,6 +240,13 @@ groups:
 
 **Example 2: GOOD - SLO burn rate alerts with AlertManager routing**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # GOOD: SLO-based burn rate alerts + AlertManager routing
 # Prometheus alert rules
@@ -325,8 +332,9 @@ inhibit_rules:
       team: checkout
     equal: [environment]
 ```
+{% endraw %}
 
-> **Code walkthrough:** The GOOD alert uses SLO burn rate instead
+> **Code walkthrough:** The GOOD alert uses SLO burn rate insteadice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of raw error rate. The 14x burn rate threshold means the error
 > budget (0.1% errors/30 days) is being consumed fast enough to
 > exhaust in about 2 hours. The `for: 2m` prevents flapping
@@ -425,7 +433,7 @@ curl http://alertmanager:9093/api/v2/alerts | \
 # during a DB outage, inhibition is not configured
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This during a DB outage, inhibition is not configured example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add inhibition rule: when DatabaseDown fires, inhibit
 all alerts with `team != database` and `equal: [environment]`.
@@ -885,6 +893,7 @@ a 30-second regex scan.
 **How it works:**
 LogQL query structure:
 
+{% raw %}
 ```
 {stream selector} | pipeline_stage | pipeline_stage ...
 
@@ -912,8 +921,9 @@ sum by (error_type) (
   | duration_ms > 1000
   | line_format "{{.trace_id}} {{.duration_ms}}ms"
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find slow requests (> 1000ms) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Stream selectors use indexed label values (fast).
 Pipeline stages operate on log line content (sequential).
@@ -982,7 +992,7 @@ filters in decreasing selectivity order (most selective first).
 # Always specify: last 15 minutes is usually sufficient
 ```
 
-> **Code walkthrough:** The first BAD example uses `{env="prod"}`
+> **Code walkthrough:** The first BAD example uses `{env="prod"}`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as the stream selector, which selects ALL services' logs in
 > production. The `app="checkout"` filter is applied as a pipeline
 > stage (sequential scan) instead of being in the selector (indexed).
@@ -994,6 +1004,7 @@ filters in decreasing selectivity order (most selective first).
 
 **Example 2: GOOD - Efficient incident investigation queries**
 
+{% raw %}
 ```logql
 # GOOD: Specific selector + efficient pipeline
 # Query 1: Current error rate (last 15 min)
@@ -1036,8 +1047,9 @@ sum (
 ) by (pod)
 # Per-pod error rate - useful to spot bad pods
 ```
+{% endraw %}
 
-> **Code walkthrough:** Query 1 uses a specific stream selector
+> **Code walkthrough:** Query 1 uses a specific stream selectorice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ({app="checkout", env="prod"}) and filters level="ERROR" before
 > the aggregation. The aggregation by error_type gives a breakdown
 > of which error types are occurring, pointing the investigation
@@ -1136,7 +1148,7 @@ curl -s 'http://loki:3100/loki/api/v1/query_range' \
 # If N > 5, the selector is too broad
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If N > 5, the selector is too broad example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Narrow the stream selector to the specific app and namespace.
 Reduce time range to 15 minutes. Move aggregations to a recording
@@ -1324,7 +1336,7 @@ sum(count_over_time(
 ))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error rate from logs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This divides error events by total checkout events (success +
 failure) to compute the error rate. The difference from metrics-
@@ -1356,7 +1368,7 @@ Step 1: Find the error log for the specific checkout:
 | user_id="u-9182"
 | level="ERROR"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error rate from logs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This returns the error log lines for that user. Step 2: Extract
 the trace_id from the ERROR log line and open it in Jaeger/Tempo
@@ -1372,19 +1384,22 @@ count by (user_id) (
   )
 )
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error rate from logs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If the count shows only user u-9182, it is user-specific (may be
 a data issue with their account). If multiple users appear, it
 is systemic. Step 4: Check the timeline - when did the first error
 for this user occur?
+
+{% raw %}
 ```logql
 {app="checkout", env="prod"}
 | json
 | user_id="u-9182"
 | line_format "{{.timestamp}} {{.event}} {{.level}}"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+{% endraw %}
+> **Code walkthrough:** This Error rate from logs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Sort ascending to see the full sequence of events.
 
@@ -1449,7 +1464,7 @@ groups:
             )
           )
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error rate from logs example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This pre-computes the error count by type every minute and stores
 it as a Prometheus metric `job:checkout_errors:rate5m`. Dashboards

@@ -120,7 +120,7 @@ HIERARCHICAL:
         └── Step 2b
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Task Decomposition example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The explicit planning approach:**
 
@@ -139,7 +139,7 @@ Phase 3 - SYNTHESIZE:
            produce final answer."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Task Decomposition example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -234,7 +234,7 @@ def execute_plan(
     return final.content[0].text
 ```
 
-> **Code walkthrough:** `decompose_task` calls the
+> **Code walkthrough:** `decompose_task` calls theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > LLM with a planning-specific system prompt to produce
 > a JSON array of steps. This separation of planning
 > from execution makes the plan auditable - you can
@@ -669,7 +669,7 @@ without changing application code.
 [TERMINATION]    How to know when the task is done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent System Prompt Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **What belongs in the system prompt vs. user message:**
 
@@ -695,6 +695,11 @@ difficult to debug without this framing.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: minimal, underspecified system prompt
@@ -747,7 +752,7 @@ escalated to a ticket and given the ticket ID.
 """
 ```
 
-> **Code walkthrough:** The BAD system prompt gives
+> **Code walkthrough:** The BAD system prompt givesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the agent no guidance on scope, tools, safety, or
 > format - it will behave inconsistently and may take
 > unintended actions. The GOOD system prompt is
@@ -1201,7 +1206,7 @@ AGENT STATE OBJECT:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent State Management example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **State injection into the agent loop:**
 
@@ -1216,7 +1221,7 @@ System message addendum:
     Steps remaining: update plan, confirm with customer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent State Management example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1320,7 +1325,7 @@ class AgentState:
         self.messages.append(state_msg)
 ```
 
-> **Code walkthrough:** `AgentState` encapsulates all
+> **Code walkthrough:** `AgentState` encapsulates allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > agent execution state as a typed dataclass. `TaskStep`
 > tracks each step with status transitions (pending ->
 > in_progress -> done/failed). `to_context_string`
@@ -1566,7 +1571,7 @@ def load_checkpoint(task_id: str) -> AgentState:
     return AgentState.from_dict(data) if data else None
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 For long-running tasks (hours/days), resumable state
 is not optional - it's a reliability requirement.
@@ -1646,7 +1651,7 @@ VALID_TRANSITIONS = {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Transition only allowed paths: example demonstrates class definition. **KEY MECHANISM:** Python builds the class dict at definition time; instances share the class dict via __mro__. **WHY IT MATTERS:** class-level mutable attributes are shared across all instances - mutating one affects all. **TAKEAWAY: declare mutable attributes in __init__, not at class level.**
 
 *What separates good from great:* The `VALID_TRANSITIONS`
 map that prevents impossible state jumps - turning

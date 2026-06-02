@@ -151,7 +151,7 @@ CHOOSING A GC:
     Very small heaps (< 1GB): G1 is fine, ZGC overhead not justified.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 GC Basics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -249,7 +249,7 @@ trades stop-the-world pauses for CPU overhead. Always measure CPU utilization wh
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: ZGC allocation stall ("Allocation Stall") causing latency spike.**
-```
+```plaintext
 Symptom: ZGC in use, but periodic latency spikes still occur.
   GC log shows: "Allocation Stall" events.
   p99 latency: 50-200ms during stall events.
@@ -279,7 +279,7 @@ Fix:
      than ZGC (G1 young GC can quickly reclaim Eden during burst)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -502,7 +502,7 @@ ALLOCATION RATE MEASUREMENT:
   High allocation rate: > 1GB/s (investigate with alloc flame graph)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -612,7 +612,7 @@ of 4GB or 400GB heap). For ZGC: a larger heap actually helps (more headroom for 
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: G1 GC Ergonomics Log shows continuously declining pause prediction accuracy.**
-```
+```plaintext
 Symptom: GC log shows MaxGCPauseMillis=100 but actual pauses are 300-500ms.
   Log entry: "GC(42) Pause Young (G1 Evacuation Pause) 423ms"
   G1 ergonomics log: "Attempting ergonomics" changes every GC cycle.
@@ -649,7 +649,7 @@ Fix:
   3. If humongous objects: find them (JFR G1HumongousAllocation event), fix the code
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

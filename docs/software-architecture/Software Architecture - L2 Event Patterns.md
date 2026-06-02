@@ -133,7 +133,7 @@ BROKER GUARANTEES (varies by broker):
  - Replay (Kafka: consumers rewind offset)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event-Driven Architecture example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Three event types:**
 
@@ -197,7 +197,7 @@ public class OrderController {
 // this controller.
 ```
 
-> **Code walkthrough:** The synchronous chain couples order placement
+> **Code walkthrough:** The synchronous chain couples order placementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to three downstream services. If `notifService` is down, the entire
 > order fails - the customer cannot place an order because the
 > notification service is unavailable, which is unacceptable.
@@ -262,7 +262,7 @@ public class CustomerNotificationHandler {
 // Zero changes to OrderService or existing handlers.
 ```
 
-> **Code walkthrough:** `OrderService` saves the order and publishes
+> **Code walkthrough:** `OrderService` saves the order and publishesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a single `OrderPlacedEvent`. It returns immediately - the order
 > is placed from the customer's perspective. Downstream services
 > react asynchronously in their own handlers. If `CustomerNotificationHandler`
@@ -301,7 +301,7 @@ public void handleOrderPlaced(OrderPlacedEvent event) {
 // OR: partition by key for ordered processing
 ```
 
-> **Code walkthrough:** The consumer processes 100 events/second
+> **Code walkthrough:** The consumer processes 100 events/secondice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > but the producer generates 1000/second. The lag grows by 900
 > events/second indefinitely. `kafka-consumer-groups.sh` shows the
 > growing lag. Fix: increase `concurrency` to scale consumers (up
@@ -379,7 +379,7 @@ kafka-console-consumer.sh \
 # OrderCancelled is on partition 7 -> ordering violation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OrderCancelled is on partition 7 -> ordering violation example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Use a consistent partition key: `orderId` as the Kafka
 message key. Kafka guarantees ordered delivery within a partition
@@ -406,7 +406,7 @@ kafka-console-consumer.sh \
   --from-beginning
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check dead-letter topic example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Configure error handler with dead-letter queue:
 ```java
@@ -422,7 +422,7 @@ public ConcurrentKafkaListenerContainerFactory factory() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check dead-letter topic example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -552,7 +552,7 @@ public void handleOrderPlaced(OrderPlacedEvent event) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check dead-letter topic example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 The window: idempotency keys must be retained for the expected
 redelivery window (typically 24-72 hours, matching broker retention).
@@ -653,7 +653,7 @@ public DefaultErrorHandler errorHandler(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Most candidates know what a DLQ
 is. Great candidates describe the retry-then-DLQ flow, the distinction
@@ -1022,7 +1022,7 @@ QUERY SIDE (Read)             |
    no domain logic, no joins needed)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Command Query Responsibility Segregation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Read and write models optimize for different things. The write
@@ -1084,7 +1084,7 @@ public interface OrderRepository
 }
 ```
 
-> **Code walkthrough:** The single `Order` entity serves both
+> **Code walkthrough:** The single `Order` entity serves bothice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > writes (domain logic, invariant enforcement) and reads (list pages,
 > detail pages, reports). The list page query joins 5 tables and
 > loads 30 fields when it only needs 5 (id, status, total, date,
@@ -1170,7 +1170,7 @@ public class OrderListQueryHandler {
 }
 ```
 
-> **Code walkthrough:** The command side has a pure domain `Order`
+> **Code walkthrough:** The command side has a pure domain `Order`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > aggregate with no persistence annotations. It raises `OrderPlaced`
 > when placed. The `OrderSummaryProjection` listens to `OrderPlaced`
 > and creates a pre-joined, read-optimized `OrderSummaryView`.
@@ -1244,7 +1244,7 @@ FROM order_summary_views;
 # Compare to last OrderPlaced event time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare to last OrderPlaced event time example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix 1 (client-side):* After command success, temporarily show
 the result from the command response (optimistic UI). Do not wait
@@ -1273,7 +1273,7 @@ ORDER BY event_id;
 -- Look for gaps (missing event IDs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare to last OrderPlaced event time example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Rebuild the projection from scratch by replaying all events
 from the event store. This is the "read model repair" capability -
@@ -1510,7 +1510,7 @@ kafka-consumer-groups.sh \
 # Restart projection service - it rebuilds from scratch
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This it rebuilds from scratch example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Without Event Sourcing: the write store holds current state, not
 event history. Rebuilding from scratch may not be possible unless
@@ -1641,7 +1641,7 @@ void placeOrder_raisesOrderPlacedEvent() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This it rebuilds from scratch example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Projection handler testing: publish an event, verify the read
 model was updated correctly. Use an in-memory or real database
@@ -1658,7 +1658,7 @@ void orderPlacedEvent_updatesOrderSummaryView() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This it rebuilds from scratch example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 End-to-end CQRS test: issue a command, wait for the projection
 to update (poll with timeout), assert on the read model. This

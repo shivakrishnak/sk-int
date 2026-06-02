@@ -150,7 +150,7 @@ and the query pipeline (triggered by user queries).
   Answer + source references
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Pipeline Architecture example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Component responsibilities:**
 
@@ -168,7 +168,7 @@ LLM                    Generation from retrieved context
 Post-Processor         Citations, format, guardrails
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Pipeline Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -295,7 +295,7 @@ if __name__ == "__main__":
     print(json.dumps(result, indent=2))
 ```
 
-> **Code walkthrough:** The pipeline is split cleanly
+> **Code walkthrough:** The pipeline is split cleanlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > into `build_indexing_pipeline` (runs once per
 > document update) and `run_query_pipeline` (runs
 > per request). The indexing pipeline adds documents
@@ -862,7 +862,7 @@ distance                              image patches
 Manhattan      sum(|a-b|)             Sparse, categorical
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Similarity Search and ANN example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ANN vs. exact search:**
 
@@ -881,7 +881,7 @@ ANN SEARCH (HNSW/IVF):
   Cost: may miss up to 5% of truly nearest vectors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Similarity Search and ANN example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Recall vs. speed trade-off:**
 
@@ -897,7 +897,7 @@ ef_search   Recall    Latency
 For RAG: ef_search=50 is typically the sweet spot
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Similarity Search and ANN example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1010,7 +1010,7 @@ def measure_recall(
     return total_recall / len(queries) if queries else 0.0
 ```
 
-> **Code walkthrough:** `exact_similarity_search`
+> **Code walkthrough:** `exact_similarity_search`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > computes cosine similarity against every stored
 > vector - accurate but O(N). Fine for < 10K vectors;
 > prohibitively slow for 1M+. The FAISS index shows
@@ -1573,7 +1573,7 @@ how well the LLM uses the retrieved context.
   {original query}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Context Assembly and Prompt Construction example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The "lost in the middle" effect:**
 
@@ -1588,7 +1588,7 @@ Strategy: put most relevant chunk first or last.
 Put least relevant in the middle.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Context Assembly and Prompt Construction example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Grounding instruction strength levels:**
 
@@ -1606,11 +1606,16 @@ STRONG (recommended):
    'I don't have information on this.'"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Context Assembly and Prompt Construction example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # Context assembly patterns
@@ -1740,7 +1745,7 @@ def adaptive_assemble_prompt(
     return base
 ```
 
-> **Code walkthrough:** The BAD example dumps all
+> **Code walkthrough:** The BAD example dumps allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > chunks into a single string without labels and
 > uses a generic system prompt. The LLM receives
 > no guidance about grounding or citation format.
@@ -1944,7 +1949,7 @@ Practical budget: 2,000-5,000 tokens for retrieved
 context (3-7 chunks × 500-700 tokens/chunk)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Dynamic budget strategy:
 - Simple queries (likely one chunk answers): 1-2

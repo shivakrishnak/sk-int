@@ -66,7 +66,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Full diagnostic stack: logging, statistics, and connection pool:**
-```
+```plaintext
 LOGGING CONFIGURATION BY ENVIRONMENT:
 
   # application-dev.properties:
@@ -173,7 +173,7 @@ POOL SIZE FORMULA (HikariCP recommendation):
   #   Decouples application pool size from DB connection limit.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Decouples application pool size from DB connection limit. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -316,7 +316,7 @@ DATABASE
     └── Reduces DB connection count from N*20 to 100
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Decouples application pool size from DB connection limit. example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -390,7 +390,7 @@ flowchart TD
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: All requests fail with "Unable to acquire JDBC Connection" during peak load.**
-```
+```plaintext
 Symptom: periodic request failures during high traffic (load spikes).
   Error: "Unable to acquire JDBC Connection" after 30s.
   DB: CPU and connections below limit. No DB errors.
@@ -439,7 +439,7 @@ Fix:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

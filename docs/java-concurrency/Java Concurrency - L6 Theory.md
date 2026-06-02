@@ -117,7 +117,7 @@ Java examples:
   Lock-based:  synchronized blocks, ReentrantLock
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **CAS - the atomic primitive:**
 Compare-and-Swap is the hardware instruction (x86: `CMPXCHG`) that
@@ -132,7 +132,7 @@ CAS(memory_location, expected, new_value):
       return FAILURE (current value unchanged)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ABA problem:**
 ```
@@ -148,7 +148,7 @@ Thread 1: resumes, CAS(X, A, newValue) SUCCEEDS!
   was a different A than the current A)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ABA fix - AtomicStampedReference:**
 ```java
@@ -167,13 +167,13 @@ boolean success = head.compareAndSet(
 // A->B->A trick fails: stamp would be 0->1->2, not 0->0->0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example uses synchronized for a counter,
+> **Code walkthrough:** The BAD example uses synchronized for a counter,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > creating contention. The GOOD example uses AtomicInteger CAS loop
 > for a lock-free counter. The production example shows a lock-free
 > Treiber stack (classic lock-free stack using CAS on the head).
@@ -190,7 +190,7 @@ class LockedCounter {
 // All threads compete for lock even when incrementing different "slots"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L6 Theory example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // GOOD: lock-free counter using CAS loop
@@ -216,7 +216,7 @@ class LockFreeCounter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This L6 Theory example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // PRODUCTION: lock-free Treiber stack
@@ -257,7 +257,7 @@ class LockFreeStack<T> {
 // CAS could succeed incorrectly. Fix: AtomicStampedReference<Node<T>>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -334,7 +334,7 @@ Diagnosis: add invariant checks or use AtomicStampedReference.
 AtomicStampedReference<Node> head = new AtomicStampedReference<>(null, 0);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -391,7 +391,7 @@ implications.**
 
 A: CAS (Compare-and-Swap) is an atomic hardware instruction:
 
-```
+```plaintext
 CAS(address, expected, new_value) -> boolean
   atomically:
     if memory[address] == expected:
@@ -401,7 +401,7 @@ CAS(address, expected, new_value) -> boolean
       return false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 On x86: compiled to `LOCK CMPXCHG` instruction.
 On ARM: compiled to `LDAXR` / `STLXR` (load-acquire / store-release).
@@ -421,7 +421,7 @@ do {
 } while (!atom.compareAndSet(current, update)); // CAS (acquire+release)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Performance cost of CAS:
 - Uncontended: ~3-4 nanoseconds (just a locked instruction)
@@ -461,7 +461,7 @@ Thread 1: resumes, CAS(head, A, B) SUCCEEDS
   Stack is now corrupted: head -> B -> (dangling?)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix 1: AtomicStampedReference (version number):
 ```java
@@ -480,7 +480,7 @@ head.compareAndSet(current, newNode, stamp[0], stamp[0] + 1);
 // stamp[0]=0, but actual stamp=2 -> FAIL -> Thread 1 retries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 2: Hazard pointers (not in Java stdlib):
 Mark nodes as "in use" before reading their fields. GC in managed
@@ -544,7 +544,7 @@ same memory location, only one succeeds per round, N-1 retry. In the
 next round, N-1 attempt again, one succeeds, N-2 retry.
 
 Analysis:
-```
+```plaintext
 Round 1: N threads CAS -> 1 succeeds, N-1 retry (O(N) total CAS ops)
 Round 2: N-1 threads CAS -> 1 succeeds, N-2 retry (O(N-1) total CAS ops)
 ...
@@ -552,7 +552,7 @@ Total work to advance by N: O(N^2)
 Throughput: O(1/N) - throughput DECREASES as threads increase
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Mitigation strategies:
 
@@ -564,7 +564,7 @@ adder.increment(); // CAS on one of 16 Cells (hash(threadId) % cells)
 // N threads -> N/16 threads per Cell -> much less contention
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Exponential backoff:**
 ```java
@@ -577,7 +577,7 @@ while (!atom.compareAndSet(expected, update)) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Eliminate the shared state:**
 Use per-thread counters (ThreadLocal) aggregated periodically.
@@ -631,7 +631,7 @@ while (!atom.compareAndSet(expected, update)) {
     update = compute(expected);
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using SQL. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 This is sometimes called "bounded spinning with lock fallback."
 
@@ -663,7 +663,7 @@ class Cell {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 increment() logic:
 1. Hash thread ID to determine target Cell index.
@@ -682,7 +682,7 @@ long sum() {
     return sum;
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Note: sum() is NOT atomic. While iterating cells, other threads
 may be incrementing them. LongAdder.sum() is an estimate. For
@@ -758,7 +758,7 @@ class LockFreeQueue<T> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "consistent read" checks (`t == tail.get()`)
 are necessary because the algorithm uses two CAS operations (one to
@@ -805,15 +805,15 @@ methods expertise to verify correctness.
 
 ### ⚖️ Comparison Table
 
-| Technique | Progress Guarantee | ABA Risk | Throughput (high concention) | Complexity |
-|---|---|---|---|---|
-| Synchronized | Blocking (OS mutex) | None | Low (serialized) | Low |
-| ReentrantLock | Blocking (park/unpark) | None | Low-Medium | Low |
-| AtomicLong CAS loop | Lock-free | Low (GC protects) | Medium (CAS storm) | Medium |
-| AtomicStampedReference | Lock-free | None (version) | Medium | High |
-| LongAdder | Lock-free + striped | None | High (distributes) | Low (API only) |
-| ConcurrentLinkedQueue | Lock-free | None (GC protects) | High | Low (API only) |
-| Wait-free (e.g., AtomicInteger.get) | Wait-free | N/A | Highest | Very High |
+| Technique| Progress Guarantee| ABA Risk| Throughput (high concention)| Complex
+|---|-----------|------------------|----------------------------|--------------|
+| Synchronized| Blocking (OS mutex)| None| Low (serialized)| Low|
+| ReentrantLock| Blocking (park/unpark)| None| Low-Medium| Low|
+| AtomicLong CAS loop| Lock-free| Low (GC protects)| Medium (CAS storm)| Medium|
+| AtomicStampedReference| Lock-free| None (version)| Medium| High|
+| LongAdder| Lock-free + striped| None| High (distributes)| Low (API only)|
+| ConcurrentLinkedQueue| Lock-free| None (GC protects)| High| Low (API only)|
+| Wait-free (e.g., AtomicInteger.get)| Wait-free| N/A| Highest| Very High|
 
 ---
 
@@ -970,11 +970,11 @@ Under linearizability: ILLEGAL
   Contradiction with real-time ordering
 
 Under sequential consistency: LEGAL
-  Reordering allows: Thread A's write(y,1) -> Thread B's reads -> Thread A's write(x,1)
+  Reordering allows: Thread A's write(y,1) -> Thread B's reads -> Thread A's...
   Thread B reads y=1 (correct) and x=0 (Thread A hadn't "committed" x yet in this order)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Java's memory model:**
 Java volatile provides sequential consistency for volatile accesses.
@@ -985,7 +985,7 @@ the critical section.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example shows an operation that is NOT
+> **Code walkthrough:** The BAD example shows an operation that is NOTice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > linearizable - it appears atomic but has a window where internal state
 > is inconsistent. The GOOD example uses a single CAS to make the
 > operation truly linearizable.
@@ -1006,7 +1006,7 @@ class BadPoint {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // GOOD: linearizable point update using AtomicReference
@@ -1026,7 +1026,7 @@ class LinearizablePoint {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1091,7 +1091,7 @@ volatile int x, y;
 // Thread B: if (y == 1) assert x == 1; // FAILS!
 // Thread B may see y=1 but x=0 (store-store reorder on non-x86)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: use AtomicReference<Point> or synchronize the compound operation.
 
@@ -1131,19 +1131,19 @@ Thread A: read counter=5; increment to 6; write counter=6
 Thread B: read counter=5; increment to 6; write counter=6
 Result: counter=6 (should be 7)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This violates linearizability: no sequential order of these operations
 produces counter=6 if the counter started at 5 and both threads
 incremented once.
 
 Linearizable counter (CAS):
-```
+```plaintext
 Thread A: CAS(5, 6) -> SUCCESS; counter=6
 Thread B: CAS(5, 6) -> FAIL; re-read 6; CAS(6, 7) -> SUCCESS; counter=7
 Result: counter=7 (correct)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 CAS makes the increment linearizable: the linearization point is the
 successful CAS.
@@ -1178,18 +1178,18 @@ Under linearizability: ILLEGAL
   B returning 0 violates the real-time constraint.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Sequential consistency:** Total order does NOT need to respect
 real-time for non-overlapping operations.
-```
+```plaintext
 Same timeline under sequential consistency: LEGAL
   The total order could be: [read x -> 0] then [write x=1]
   This is a valid sequential execution (x was 0 before write).
   Sequential consistency allows this reordering.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Practical impact:**
 - Linearizability: safe for any real-time reasoning ("I called the
@@ -1235,7 +1235,7 @@ if (ready) {        // volatile read -> sees data=42
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Linearizability in Java:**
 CAS operations provide linearizability:
@@ -1248,7 +1248,7 @@ counter.incrementAndGet();
 // No thread ever sees counter in an intermediate state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using concurrency primitive. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Double-checked locking requires volatile for linearizability:**
 ```java
@@ -1269,7 +1269,7 @@ Singleton getInstance() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* The JMM's HB relation provides
 the exact minimum guarantees needed for correct concurrent programs.
@@ -1341,7 +1341,7 @@ Processor B: write(y, 1); read(x) -> 0
 Can both processors see the other's initial write as 0?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Under sequential consistency:** YES
 One valid sequential order:
@@ -1470,7 +1470,7 @@ class MyCounterTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `jcstress` is the standard JVM tool
 for stress testing concurrency primitives. It runs tests with many
@@ -1497,7 +1497,7 @@ void setTime(int h, int m) { hour = h; minute = m; }
 // FIX: AtomicReference<LocalTime> for linearizable time update
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Decision 2: Database read-after-write.**
 If your database provides linearizability (strongly consistent reads),
@@ -1547,7 +1547,7 @@ Singleton getInstance() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 The problem: `new Singleton()` is NOT a single atomic operation.
 At the bytecode level:
@@ -1571,7 +1571,7 @@ Fix with volatile:
 private volatile Singleton instance; // volatile ensures publication ordering
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 `volatile` adds a store fence after the write to `instance`, ensuring:
 step 2 (constructor) HB step 3 (volatile write to `instance`) HB
@@ -1592,13 +1592,13 @@ by making DCL with volatile correct.
 
 ### ⚖️ Comparison Table
 
-| Model | Real-time order | Per-thread order | Composable | Used in |
-|---|---|---|---|---|
-| Linearizability | REQUIRED | Yes | Yes | CAS ops, ACID transactions |
-| Sequential consistency | Not required | Yes | No | Java volatile |
-| Causal consistency | Causal only | Yes | Yes | Some NoSQL DBs |
-| Eventual consistency | No | No | No | DynamoDB, Cassandra default |
-| FIFO consistency | No | Per-thread | No | Message queues (within partition) |
+| Model| Real-time order| Per-thread order| Composable| Used in|
+|---|------------|----------------|----------|---------------------------------|
+| Linearizability| REQUIRED| Yes| Yes| CAS ops, ACID transactions|
+| Sequential consistency| Not required| Yes| No| Java volatile|
+| Causal consistency| Causal only| Yes| Yes| Some NoSQL DBs|
+| Eventual consistency| No| No| No| DynamoDB, Cassandra default|
+| FIFO consistency| No| Per-thread| No| Message queues (within partition)|
 
 ---
 
@@ -1610,7 +1610,7 @@ by making DCL with volatile correct.
 
 ### 📊 Diagram
 
-```
+```plaintext
 Consistency Model Hierarchy:
 
 Linearizability (strongest)

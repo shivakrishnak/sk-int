@@ -209,7 +209,7 @@ Kubernetes comparison:
       or let Kubernetes kube-proxy do it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Cloud Config and Service Discovery example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **The key insight:**
 The choice between Eureka/Config Server vs Kubernetes-native is an infrastructure
@@ -275,7 +275,7 @@ spring:
       password: ${CONFIG_SERVER_PASSWORD}
 ```
 
-> **Code walkthrough:** @EnableConfigServer is all that's needed to turn a Spring
+> **Code walkthrough:** @EnableConfigServer is all that's needed to turn a Springice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Boot application into a Config Server. The git.uri points to the config repository.
 > search-paths: '{application}' means Config Server looks in a subfolder named
 > after the application (order-service folder for order-service app).
@@ -429,7 +429,7 @@ handles sustained failures; retry handles transient stale-cache issues.
 
 ---
 
-#### Q1 - How does Spring Cloud Config Server serve properties to clients?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does Spring Cloud Config Server serve properties to clients?**
 
 Config Server exposes a REST API:
 ```
@@ -438,14 +438,14 @@ GET /{application}-{profiles}.yml
 GET /{application}-{profiles}.properties
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secure Config Server access example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For order-service with prod profile on main branch:
 ```
 GET /order-service/prod/main
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secure Config Server access example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Config Server reads (in order, lowest to highest priority):
 1. application.yml (shared, all services)
@@ -468,7 +468,7 @@ Returns merged JSON:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Client merges these (first wins): order-service-prod.yml overrides order-service.yml
 overrides application-prod.yml overrides application.yml.
@@ -482,7 +482,7 @@ Branch-per-environment is simpler to understand but harder to merge.
 
 ---
 
-#### Q2 - How does Eureka's self-preservation mode work?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does Eureka's self-preservation mode work?**
 
 Eureka's self-preservation mode prevents mass evictions during network partitions:
 
@@ -511,7 +511,7 @@ eureka.instance.lease-expiration-duration-in-seconds=30
 eureka.client.registry-fetch-interval-seconds=5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Client (reduce TTL from 90s to 30s): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Self-preservation is a trade-off: it protects
 against mass false evictions during network blips, at the cost of keeping dead
@@ -522,7 +522,7 @@ self-preservation) over protection against false evictions.
 
 ---
 
-#### Q3 - How does Spring Cloud Config handle encryption of sensitive properties?
+**[MID] Q3 - [MECHANISM] How does Spring Cloud Config handle encryption of sensitive properties?**
 
 Config Server supports symmetric and asymmetric encryption:
 
@@ -540,7 +540,7 @@ database.password={cipher}dGhpcyBpcyBlbmNyeXB0ZWQ=...
 # Client sees plain text: mysecretpassword
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Client sees plain text: mysecretpassword example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Asymmetric (RSA key pair):
 ```properties
@@ -551,7 +551,7 @@ encrypt.key-store.password=${KEYSTORE_PASSWORD}
 encrypt.key-store.secret=${KEY_PASSWORD}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Config Server example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Client-side decryption:
 ```properties
@@ -561,7 +561,7 @@ spring.cloud.config.server.encrypt.enabled=false
 encrypt.key=${ENCRYPT_KEY}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Client decrypts with: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Vault integration (better than symmetric):
 ```yaml
@@ -571,7 +571,7 @@ spring.cloud.config.server.vault:
   kvVersion: 2
   backend: secret
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Client decrypts with: example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Config Server reads from Vault. No encryption in Git - secrets never enter
 the config repository at all.
@@ -587,7 +587,7 @@ preferred over {cipher} encryption.
 
 ---
 
-#### Q4 - What is the bootstrap context in Spring Cloud Config clients?
+**[MID] Q4 - [MECHANISM] What is the bootstrap context in Spring Cloud Config clients?**
 
 The bootstrap context loads BEFORE the regular ApplicationContext:
 
@@ -611,7 +611,7 @@ spring.application.name=order-service
 spring.config.import=configserver:http://config-server:8888
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties (no bootstrap needed) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The import is processed during the early config loading phase
 (before ApplicationContext but using application.properties, not bootstrap.yml).
@@ -625,7 +625,7 @@ and it fits into Spring Boot's config loading hierarchy consistently.
 
 ---
 
-#### Q5 - How does Spring Cloud Kubernetes replace Eureka and Config Server?
+**[SENIOR] Q5 - [MECHANISM] How does Spring Cloud Kubernetes replace Eureka and Config Server?**
 
 Spring Cloud Kubernetes provides native Kubernetes integration:
 
@@ -646,7 +646,7 @@ interface InventoryClient {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This application.properties (no bootstrap needed) example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 Behind the scenes: Spring Cloud Kubernetes DiscoveryClient queries the
 Kubernetes API for Service endpoints. Load balancing: client-side (Spring Cloud
@@ -676,7 +676,7 @@ spring:
           - name: order-service-secrets
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Which ConfigMaps to read example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Spring Cloud Kubernetes Config Watcher:
 ```yaml
@@ -686,7 +686,7 @@ spring.cloud.kubernetes.config.reload.enabled=true
 spring.cloud.kubernetes.config.reload.strategy=refresh
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This and calls /actuator/refresh on change example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Spring Cloud Kubernetes needs specific RBAC
 permissions to call the Kubernetes API (list pods, get ConfigMaps). The required
@@ -696,7 +696,7 @@ needed (ConfigMaps, Secrets, Services in the application's namespace).
 
 ---
 
-#### Q6 - How do you achieve high availability for Eureka?
+**[SENIOR] Q6 - [MECHANISM] How do you achieve high availability for Eureka?**
 
 Eureka HA is achieved with a peer-to-peer cluster where each node replicates
 to others:
@@ -719,7 +719,7 @@ eureka:
       defaultZone: http://server1:8761/eureka/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Client configuration (points to both):
 ```properties
@@ -728,7 +728,7 @@ eureka.client.service-url.defaultZone=\
   http://server2:8762/eureka/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Behavior:
 - Each server registers with the others
@@ -749,7 +749,7 @@ Raft consensus is more appropriate than Eureka.
 
 ---
 
-#### Q7 - How does the Config Server handle different environments?
+**[SENIOR] Q7 - [MECHANISM] How does the Config Server handle different environments?**
 
 Two strategies for environment separation:
 
@@ -763,7 +763,7 @@ config-repo/
   order-service-dev.yml         (service, dev)
   order-service-prod.yml        (service, prod)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Client activates profile: spring.profiles.active=prod
 Config Server serves profile-specific files.
@@ -775,7 +775,7 @@ config-repo branches:
   staging -> staging config
   dev -> dev config
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Client specifies label (branch):
 ```properties
@@ -783,7 +783,7 @@ spring.cloud.config.label=main  # prod
 spring.cloud.config.label=dev   # dev
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Trade-offs:
 - Profile-based: simple, all config in one branch, easy to see differences
@@ -800,7 +800,7 @@ never seeing the Vault path.
 
 ---
 
-#### Q8 - How do you implement a Config Server fallback strategy?
+**[STAFF] Q8 - [MECHANISM] How do you implement a Config Server fallback strategy?**
 
 Client fallback when Config Server is unavailable:
 
@@ -808,7 +808,7 @@ Client fallback when Config Server is unavailable:
 ```properties
 spring.cloud.config.fail-fast=false
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Service starts with local application.properties.
 Risk: service uses default config, may connect to wrong environment.
@@ -821,7 +821,7 @@ spring.cloud.config.retry.initial-interval=1000
 spring.cloud.config.retry.max-interval=2000
 spring.cloud.config.retry.multiplier=1.1
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Service retries for ~10 seconds before failing.
 Works with Kubernetes restartPolicy: Always.
@@ -832,7 +832,7 @@ Spring Cloud Config Client can use local filesystem:
 spring.cloud.config.server.native.search-locations=\
   file:///etc/config
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Kubernetes mounts ConfigMap as filesystem at /etc/config.
 Config "Server" is just a Spring Boot app reading files.
@@ -851,7 +851,7 @@ In a K8s deployment: combine ConfigMap (always available, structural config)
 
 ---
 
-#### Q9 - How does service registration work in Eureka?
+**[STAFF] Q9 - [MECHANISM] How does service registration work in Eureka?**
 
 Registration lifecycle:
 
@@ -873,7 +873,7 @@ Body: {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Heartbeat (renew registration):**
 ```
@@ -881,7 +881,7 @@ PUT /eureka/apps/{APP_NAME}/{instanceId}
 Every 30 seconds (eureka.instance.lease-renewal-interval-in-seconds)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Graceful deregistration:**
 ```
@@ -889,13 +889,13 @@ DELETE /eureka/apps/{APP_NAME}/{instanceId}
 On JVM shutdown hook (Spring ApplicationContext.close)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Status change (for graceful degradation):**
 ```
 PUT /eureka/apps/{APP_NAME}/{instanceId}/status?value=OUT_OF_SERVICE
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eureka Server 2 (server2) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Removes from load balancing without deregistering.
 Used in rolling deployments: mark OUT_OF_SERVICE before shutdown.
@@ -911,7 +911,7 @@ ensures no traffic reaches a shutting-down instance.
 
 ---
 
-#### Q10 - How does Spring Cloud Config handle high-volume environments?
+**[STAFF] Q10 - [MECHANISM] How does Spring Cloud Config handle high-volume environments?**
 
 Config Server bottlenecks:
 - Git clone: cloning a large repo is slow
@@ -932,7 +932,7 @@ spring.cloud.config.server.git:
   force-pull: false
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use shallow clone example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **2. Local filesystem backend for Config Server (Kubernetes):**
 ```yaml
@@ -946,7 +946,7 @@ spring:
           search-locations:
             - file:///etc/config/
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use shallow clone example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ConfigMap mounted at /etc/config. No Git IO. Instant config reads.
 
@@ -962,7 +962,7 @@ spring.cloud.config.server.composite:
   - type: vault
     host: vault-server
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use shallow clone example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Git provides structure, Vault provides secrets. Best of both.
 
@@ -977,7 +977,7 @@ runtime refresh.
 
 ---
 
-#### Q11 - How do you test microservices that depend on Config Server?
+**[STAFF] Q11 - [MECHANISM] How do you test microservices that depend on Config Server?**
 
 Testing challenges: Config Server may not be available in test environments.
 
@@ -1004,7 +1004,7 @@ class OrderServiceIntegrationTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use shallow clone example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Option 2: Local config override (simplest):**
 ```properties
@@ -1015,7 +1015,7 @@ feature.enabled=true
 database.url=jdbc:h2:mem:testdb
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Provide test values directly example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Option 3: Native profile Config Server:**
 ```yaml
@@ -1029,7 +1029,7 @@ spring:
         native:
           search-locations: classpath:/test-config/
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Config Server test profile example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Test Config Server reads from test classpath resources.
 Fast, no Git, no network.
@@ -1043,7 +1043,7 @@ unit/integration tests (no external services) vs full-stack tests (everything).
 
 ---
 
-#### Q12 - How do you implement a GitOps workflow with Spring Cloud Config?
+**[STAFF] Q12 - [MECHANISM] How do you implement a GitOps workflow with Spring Cloud Config?**
 
 GitOps: Git is the single source of truth. Infrastructure and config changes
 are made via Git PRs. No direct changes to running systems.
@@ -1064,7 +1064,7 @@ Developer changes order-service-prod.yml
   -> @RefreshScope beans recreated with new config
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Config Server test profile example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Config Server monitor endpoint:
 ```yaml
@@ -1082,7 +1082,7 @@ spring:
     host: rabbitmq-server
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Config Server application.yml example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 GitHub webhook setup:
 - URL: http://config-server:8888/monitor

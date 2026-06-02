@@ -187,7 +187,7 @@ ENFORCEMENT MECHANISM
     include override form link (VP required)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Burn Rate Alerts and SLO Enforcement example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The error budget policy is the organizational change mechanism. Without
@@ -222,6 +222,13 @@ budget is consumed) is sufficient.
 
 **Example 1: Burn rate alert rule in Prometheus**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```yaml
 # BAD: Alert on raw SLO breach
 # Fires only AFTER the SLO window is violated.
@@ -300,8 +307,9 @@ budget is consumed) is sufficient.
       Current error rate: {{ $value | humanizePercentage }}
     runbook_url: https://runbooks/payment-api/high-error-rate
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD alert fires only after the 28-day SLO
+> **Code walkthrough:** The BAD alert fires only after the 28-day SLOice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > window shows a breach - by then, the error budget is consumed. The
 > GOOD approach implements the two-tier burn rate alert from Google SRE
 > best practices. Tier 1 (fast burn): if the 1-hour error rate divided
@@ -313,6 +321,12 @@ budget is consumed) is sufficient.
 
 **Example 2: CI/CD error budget enforcement gate**
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+{% raw %}
 ```python
 #!/usr/bin/env python3
 # BAD: No CI/CD enforcement - error budget policy
@@ -437,8 +451,9 @@ if __name__ == "__main__":
     proceed = enforce_error_budget_gate(service)
     sys.exit(0 if proceed else 1)  # nonzero = pipeline block
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD approach is policy-as-documentation
+> **Code walkthrough:** The BAD approach is policy-as-documentationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that nobody reads during a deployment decision. The GOOD approach
 > implements the error budget policy as a CI/CD gate: the script queries
 > the current 28-day error budget consumption, maps it to the four policy
@@ -449,6 +464,11 @@ if __name__ == "__main__":
 > an enforcement tool rather than a metric.
 
 **Example 3: Error budget burn rate calculation from first principles**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: Compute error rate and compare to SLO directly.
@@ -521,7 +541,7 @@ result = calculate_burn_rate(
 # }
 ```
 
-> **Code walkthrough:** The BAD approach compares error rate to SLO
+> **Code walkthrough:** The BAD approach compares error rate to SLOice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly - this fires only when the SLO is already violated. The GOOD
 > approach calculates the burn rate (14x means consuming budget 14 times
 > faster than sustainable) and hours to exhaustion (48 hours at current
@@ -1142,7 +1162,7 @@ ERROR BUDGET ENFORCEMENT SYSTEM
   Toil correlation: incidents that caused budget consumption
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The key design decisions: the Policy API is a shared service (not duplicated
 in every CI/CD pipeline), uses a 60-second cache to handle high deployment

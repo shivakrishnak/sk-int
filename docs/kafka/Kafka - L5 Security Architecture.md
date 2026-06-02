@@ -76,7 +76,7 @@ controls = the building perimeter (VPC). Encryption at rest = the armored vault 
 ### 📘 Concept Explanation
 
 **TLS, SASL, ACLs, and operational security:**
-```
+```plaintext
 TLS CONFIGURATION:
 
   # Broker server.properties:
@@ -107,7 +107,7 @@ SASL/SCRAM CONFIGURATION:
 
   # Create SCRAM credentials (stored in ZK or KRaft - no restart needed):
   kafka-configs.sh --bootstrap-server broker:9092 --alter \
-    --add-config 'SCRAM-SHA-512=[iterations=8192,password=my-secure-password]' \
+    --add-config 'SCRAM-SHA-512=[iterations=8192,password=my-secure-password]'...
     --entity-type users --entity-name service-account-orders
   
   # Broker server.properties:
@@ -182,7 +182,7 @@ ACL CONFIGURATION:
 PRINCIPAL MAPPING (SASL to ACL PRINCIPAL):
 
   With SASL/SCRAM:
-    Username "service-account-orders" -> Principal "User:service-account-orders"
+    Username "service-account-orders" -> Principal "User:service-account-orders...
   
   With mTLS:
     Client certificate CN="order-service.prod.company.com"
@@ -232,7 +232,7 @@ SECRETS MANAGEMENT:
   # Rotate: update secret, rolling restart brokers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rotate: update secret, rolling restart brokers. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -378,7 +378,7 @@ zero-trust: application-level or field-level encryption is required.
     service-account-monitoring: Describe on *, Describe group *
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rotate: update secret, rolling restart brokers. exaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -507,11 +507,11 @@ Prevention:
     AWS ACM PCA: auto-renew with Lambda.
 
 Post-incident:
-  Reduce certificate lifetime: 1 year -> 90 days. Shorter = more frequent rotation practice.
+  Reduce certificate lifetime: 1 year -> 90 days. Shorter = more frequent...
   After each rotation: automated test. Confirms rotation worked before production.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for "notAfter" date. Compare to today. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

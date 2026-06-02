@@ -77,7 +77,7 @@ The stack = what the pilot was doing. The registers = the flight instruments at 
 ### 📘 Concept Explanation
 
 **hs_err file structure:**
-```
+```plaintext
 hs_err FILE ANATOMY:
 
 SECTION 1: HEADER (first 10 lines - most critical)
@@ -116,7 +116,7 @@ SECTION 4: THREAD STACK
   J [compiled] com.example.DataProcessor.process(...)
   J [compiled] com.example.BatchJob.run(...)
   j  java.lang.Thread.run()  [interpreted]
-  -> reads bottom-up: thread was running BatchJob.run, called DataProcessor.process,
+  -> reads bottom-up: thread was running BatchJob.run, called...
      which called JNI function JNI_ProcessItem, which crashed
 
 SECTION 5: HEAP SUMMARY
@@ -130,16 +130,22 @@ SECTION 6: JVM FLAGS (at bottom)
   Look for: -Xmx, -XX:+UseZGC, -Xss, JNI settings
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This C  [libfoo.so+0x1234abc]  foo_process+0x23 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** JNI bugs are the most common cause of JVM crashes in
+> **Code walkthrough:** JNI bugs are the most common cause of JVM crashes inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > production. The BAD pattern releases a JNI object reference during JNI processing
 > while the JVM still has a pointer to it (use-after-free). The GOOD pattern uses
 > RAII-style cleanup and proper JNI reference management.
+
+
+```c
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```c
 // BAD: JNI code with use-after-free (common cause of SIGSEGV in hs_err)
@@ -230,7 +236,7 @@ JNIEXPORT void JNICALL Java_DataProcessor_process_GOOD
 //   -exec alert_ops.sh {} \;
 ```
 
-> **Code walkthrough:** JNI reference management (GetByteArrayElements /
+> **Code walkthrough:** JNI reference management (GetByteArrayElements /ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ReleaseByteArrayElements) is a critical pattern. The JVM pinning contract:
 > between Get and Release, the JVM may pin the Java byte array in memory (preventing
 > GC from moving it). Failing to Release: memory leak (pinned array never freed).
@@ -283,7 +289,7 @@ indicate bugs in the Java application code itself.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: JVM crashes intermittently with SIGSEGV in a native library.**
-```
+```plaintext
 hs_err snippet:
   # SIGSEGV (0xb) at pc=0x00007f..., pid=42, tid=0x00007f...
   # Problematic frame:
@@ -345,7 +351,7 @@ FIX:
     store_for_later(copy.data());  // safe: not a JVM-managed pointer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This C  [libnative-processor.so+0x2345]  nativeProcess+0x67 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -635,7 +641,7 @@ investigation).
 **Context:** 100 microservices on Kubernetes, each JVM-based. Need: crash detection,
 evidence capture, automated triage, and on-call alerting.
 
-```
+```plaintext
 JVM CRASH MANAGEMENT ARCHITECTURE:
 
   PER SERVICE JVM CONFIG (in Kubernetes pod spec):
@@ -688,7 +694,7 @@ JVM CRASH MANAGEMENT ARCHITECTURE:
     MTTR (mean time to root cause, from detection to fix deployment)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

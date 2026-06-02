@@ -281,15 +281,16 @@ LAYER 5: DRIFT DETECTION
   #   -> High-priority Jira, 72-hour SLA.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> High-priority Jira, 72-hour SLA. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The end-to-end CI/CD pipeline that builds, scans,
+> **Code walkthrough:** The end-to-end CI/CD pipeline that builds, scans,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > signs, and deploys a container image with full supply chain integrity.
 
+{% raw %}
 ```yaml
 # GitHub Actions workflow: complete image pipeline
 
@@ -401,6 +402,7 @@ jobs:
           git push
           # ArgoCD/Flux picks up the change and deploys.
 ```
+{% endraw %}
 
 > **Code walkthrough:** This pipeline implements defense in depth.
 > Build with BuildKit enables secrets mounting (never in layers) and
@@ -484,7 +486,7 @@ a security control.
 
 ### 🏛️ System Design
 
-```
+```plaintext
 CONTAINER PLATFORM ARCHITECTURE (org-scale):
 
   DEVELOPER WORKSTATION          CI/CD PIPELINE
@@ -624,7 +626,7 @@ Remediation:
   # Without SBOM: 72-144 hours.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Without SBOM: 72-144 hours. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

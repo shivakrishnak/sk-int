@@ -101,7 +101,7 @@ MEMORY SOURCE:
 GARBAGE COLLECTION:
   Classes collected when: ClassLoader becomes unreachable AND
   no references to Class objects from that ClassLoader remain
-  GC TRIGGERS: Metaspace full -> trigger Full GC to find unloadable ClassLoaders
+  GC TRIGGERS: Metaspace full -> trigger Full GC to find unloadable...
 
 DYNAMIC CLASS CONSUMERS:
   java.lang.reflect.Proxy: 1 class per unique interface combination
@@ -111,7 +111,7 @@ DYNAMIC CLASS CONSUMERS:
   JVM-based languages: typically more classes per source file
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Metaspace example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -122,6 +122,17 @@ DYNAMIC CLASS CONSUMERS:
 > on every call (each unique interface combo = new class). The GOOD pattern caches
 > the proxy class. The key diagnostic: `jcmd GC.class_histogram | grep -i proxy`
 > should NOT show thousands of entries.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // BAD: creating new Proxy class per call (unique interface combinations)
@@ -176,7 +187,7 @@ ManagementFactory.getMemoryPoolMXBeans().stream()
 // Not usually a problem unless lambda generation is in hot path
 ```
 
-> **Code walkthrough:** Java's `Proxy.newProxyInstance` internally caches the
+> **Code walkthrough:** Java's `Proxy.newProxyInstance` internally caches theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > generated proxy class using a `WeakHashMap` keyed by ClassLoader + interface list.
 > Same ClassLoader + same interfaces = same cached class. This means creating 1M
 > proxy instances of the same interface does NOT create 1M classes - only 1 class
@@ -272,7 +283,7 @@ Fix:
     - Test frameworks: use proper lifecycle management
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -597,17 +608,23 @@ COMMON LEAK SOURCES:
   Shutdown hooks:     Runtime.addShutdownHook with webapp Runnable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** ThreadLocal leak is the most common ClassLoader leak in
+> **Code walkthrough:** ThreadLocal leak is the most common ClassLoader leak inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > servlet containers. The BAD pattern leaves the ThreadLocal value after processing.
 > In a thread pool: the thread keeps running (pool doesn't create new threads),
 > so the ThreadLocal value lives forever, holding the ClassLoader of the class
 > it was initialized from.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: ThreadLocal leak in servlet filter (very common)
@@ -759,7 +776,7 @@ Fix:
   Event listeners: remove all listeners in contextDestroyed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -814,7 +831,7 @@ while (drivers.hasMoreElements()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Modern JDBC 4.0+ uses `ServiceLoader` for driver
 discovery, not static initialization. But: `DriverManager` still registers drivers.
@@ -930,6 +947,12 @@ JVM scope): the MBean object is held by MBeanServer (JVM-lifetime). If the MBean
 is an instance of a webapp class -> webapp ClassLoader pinned. On undeploy: MBean
 still registered -> ClassLoader leak.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: register MBean without unregistering
 @Override
@@ -947,7 +970,7 @@ public void contextDestroyed(ServletContextEvent sce) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Tomcat's JmxRemoteLifecycleListener and most
 modern app servers (WildFly, WebLogic) automatically unregister MBeans when the webapp

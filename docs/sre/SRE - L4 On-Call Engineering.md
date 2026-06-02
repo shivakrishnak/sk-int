@@ -196,7 +196,7 @@ ON-CALL HEALTH METRICS (weekly review)
   Repeat alerts: same alert fired 2+ times this week
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Escalation, Alert Fatigue, Toil Metrics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 On-call health is a lagging indicator of SRE investment. A team that
@@ -230,6 +230,11 @@ to actual critical incidents.
 ### 💻 Code Example
 
 **Example 1: Alert quality metrics dashboard query**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: On-call review relies on engineer recollection:
@@ -355,7 +360,7 @@ def get_oncall_health_metrics(
     }
 ```
 
-> **Code walkthrough:** The BAD approach relies on anecdotal reports
+> **Code walkthrough:** The BAD approach relies on anecdotal reportsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of on-call quality - "it was fine" provides no actionable data. The
 > GOOD approach queries the PagerDuty API for alert metrics over the
 > last 7 days, computing response rate (acknowledged / total), auto-
@@ -367,6 +372,11 @@ def get_oncall_health_metrics(
 > these are the automation candidates."
 
 **Example 2: Escalation policy definition as code**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: Escalation policy documented in a wiki page.
@@ -438,7 +448,7 @@ def create_escalation_policy(
     return resp.json()
 ```
 
-> **Code walkthrough:** The BAD approach stores escalation policy in
+> **Code walkthrough:** The BAD approach stores escalation policy inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > documentation that becomes stale. During a real P1, searching for the
 > escalation path costs minutes that the SLO cannot afford. The GOOD
 > approach defines escalation as code using the PagerDuty API: primary
@@ -534,7 +544,7 @@ def identify_toil_candidates(
     )
 ```
 
-> **Code walkthrough:** This function analyzes incident history to
+> **Code walkthrough:** This function analyzes incident history toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > identify alerts that are toil automation candidates: they fire
 > repeatedly (>= 3 times in the analysis window), take more than
 > 5 minutes to resolve (not trivial), and receive the same manual
@@ -612,7 +622,7 @@ unavailable) seen from 47 different angles.
 # not on each dependent's symptoms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This not on each dependent's symptoms example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Implement alert correlation: when the database health alert
 fires, suppress all downstream service alerts. Alert on the root
@@ -1134,7 +1144,7 @@ ON-CALL MANAGEMENT PLATFORM
   automation removes equivalent volume
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The key architectural decision: alert correlation at the alerting layer
 (before PagerDuty) is the highest-leverage component. Without correlation,

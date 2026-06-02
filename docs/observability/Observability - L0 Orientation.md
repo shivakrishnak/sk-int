@@ -208,7 +208,7 @@ public ResponseEntity<Order> checkout(
 }
 ```
 
-> **Code walkthrough:** This BAD example logs "Order created" with
+> **Code walkthrough:** This BAD example logs "Order created" withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > no user ID, order ID, latency, or trace ID. When checkout fails
 > for a specific user, there is no way to correlate the error with
 > a request. "Error" with no stack trace or context is useless during
@@ -264,7 +264,7 @@ public ResponseEntity<Order> checkout(
 }
 ```
 
-> **Code walkthrough:** The GOOD example emits three RED signals:
+> **Code walkthrough:** The GOOD example emits three RED signals:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a request counter, an error counter, and a duration histogram.
 > Every log line includes the trace ID for correlation with the
 > distributed trace, the user ID for business context, and the
@@ -343,7 +343,7 @@ curl -s 'http://tempo:3200/api/search' \
   jq '.traces[] | select(.rootTraceName == null)'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (spans with no parentSpanId) example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Pass trace context in message headers. Use OpenTelemetry
 messaging instrumentation that does this automatically for common
@@ -373,7 +373,7 @@ curl http://alertmanager:9093/api/v1/alerts | \
   jq 'sort_by(.startsAt) | .[0]'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In Alertmanager: example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add dependency health check metrics. Alert on symptoms
 (user-visible SLO violation) rather than causes (individual
@@ -877,7 +877,7 @@ log.info("request_completed duration_ms={}",
 // over 5 minutes - expensive, slow, misses bursts
 ```
 
-> **Code walkthrough:** Using logs to compute latency percentiles
+> **Code walkthrough:** Using logs to compute latency percentilesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requires scanning and parsing millions of log entries in your
 > log aggregation system. A Prometheus histogram query returns
 > the same result in milliseconds. At 10,000 RPS, you generate
@@ -922,7 +922,7 @@ Span span = tracer
     .startSpan();
 ```
 
-> **Code walkthrough:** This GOOD example uses each signal type for
+> **Code walkthrough:** This GOOD example uses each signal type forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > what it is best at. The histogram metric pre-aggregates latency
 > for fast Prometheus queries and Grafana alerts. The structured
 > log captures per-request context for investigation. The trace
@@ -985,7 +985,7 @@ public Order getOrder(@PathVariable String orderId) {
 }
 ```
 
-> **Code walkthrough:** This production example demonstrates trace-
+> **Code walkthrough:** This production example demonstrates trace-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > metric-log correlation. The trace ID is written into the log line
 > (enabling log-to-trace navigation in Grafana) and into the metric
 > exemplar (enabling metric-to-trace navigation: click a high-latency
@@ -1066,7 +1066,7 @@ curl http://prometheus:9090/api/v1/query \
   --data-urlencode 'query=scrape_samples_scraped{job="checkout"}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare to Prometheus metric scrape size example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Move numeric signal (latency, count, rate) to Prometheus
 metrics. Log only events with context that cannot be pre-aggregated.
@@ -1099,7 +1099,7 @@ kafka-console-consumer.sh \
 # If missing, context propagation is broken
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If missing, context propagation is broken example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add W3C Trace Context headers when publishing. Use
 OTel Kafka instrumentation which does this automatically:
@@ -1130,7 +1130,7 @@ curl -s 'http://prometheus:9090/api/v1/query' \
 # Any metric > 1M time series is a likely OOM culprit
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any metric > 1M time series is a likely OOM culprit example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Remove high-cardinality labels from the metric definition.
 Use trace exemplars to link specific metric data points to
@@ -1606,7 +1606,7 @@ public ResponseEntity<String> health() {
 // These are invisible to the monitoring-only model.
 ```
 
-> **Code walkthrough:** This BAD pattern is a custom health endpoint
+> **Code walkthrough:** This BAD pattern is a custom health endpointice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that checks one anticipated failure mode: connection pool exhaustion.
 > If the database is slow but not exhausted, if there is a memory
 > leak, or if query plans regressed, this endpoint returns "OK" while
@@ -1678,7 +1678,7 @@ public ResponseEntity<Order> checkout(
 }
 ```
 
-> **Code walkthrough:** The GOOD example uses monitoring AND
+> **Code walkthrough:** The GOOD example uses monitoring ANDice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > observability together. The metrics (checkoutDuration histogram,
 > checkoutErrors counter) feed SLO-based alerts that detect known
 > conditions fast. The structured logs with user ID, payment method,
@@ -1754,6 +1754,8 @@ user segment, errors for a specific feature flag variant, or
 degradation at a specific region.
 
 Diagnostic:
+
+{% raw %}
 ```bash
 # Query Loki for error rates by user segment
 # (requires structured logs with segment field)
@@ -1765,8 +1767,9 @@ curl 'http://tempo:3200/api/search' \
   --data-urlencode 'tags=service.region=eu-west' \
   --data-urlencode 'minDuration=2s'
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Query Tempo for traces with high latency by region example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add monitoring for the specific dimension that caused the
 blind spot. For the long term, ensure all user-facing SLOs
@@ -1801,7 +1804,7 @@ curl http://alertmanager:9093/api/v2/alerts | \
 # with no consistent remediation action is probably noise
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This with no consistent remediation action is probably noise example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Migrate to SLO-based alerting. Replace 30 threshold
 alerts with 3-5 SLO burn-rate alerts. Each alert must require

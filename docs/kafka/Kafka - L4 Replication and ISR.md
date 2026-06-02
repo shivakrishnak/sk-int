@@ -72,7 +72,7 @@ If only 1 left (the leader): the performance is cancelled (write fails)."
 ### 📘 Concept Explanation
 
 **Replication mechanics, ISR management, and durability settings:**
-```
+```plaintext
 REPLICATION TOPOLOGY:
 
   Topic "orders", replication.factor=3, partitions=4.
@@ -186,7 +186,7 @@ REPLICA ASSIGNMENT STRATEGY:
   Ensures: no single AZ failure takes down a partition (replicas in all 3 AZs).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Replication and ISR example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -335,7 +335,7 @@ failure without data loss. Not: tolerate 2 simultaneous failures.
     Trade-off: availability vs durability on double failure.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -450,7 +450,7 @@ Fix - emergency (accept data risk):
   NEVER leave min.insync.replicas=1 for financial topics.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

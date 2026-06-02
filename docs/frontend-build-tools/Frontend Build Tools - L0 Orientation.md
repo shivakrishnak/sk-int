@@ -86,7 +86,7 @@ Dev Server:
   Source maps -> error points to source, not bundle
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why Build Tools Exist example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -150,7 +150,7 @@ export const Button: React.FC<ButtonProps> = ({
 // ES module imports resolved and bundled.
 ```
 
-> **Code walkthrough:** The source uses TypeScript interfaces
+> **Code walkthrough:** The source uses TypeScript interfacesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (removed at build time), JSX (compiled to `React.createElement`),
 > CSS Modules (class names hashed for scoping), and ES module imports.
 > None of these work directly in older browsers. The build tool
@@ -191,7 +191,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** Webpack starts at `entry`, follows all imports,
+> **Code walkthrough:** Webpack starts at `entry`, follows all imports,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > applies matching loader rules to each file type, then bundles to
 > `dist/`. The `contenthash` in filenames enables long-lived browser
 > caching - the filename changes only when file content changes.
@@ -391,7 +391,7 @@ Phase 6: Source Maps
   Inline in development builds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build Pipeline Overview example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -461,7 +461,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 // Users who never visit /admin never download admin.js
 ```
 
-> **Code walkthrough:** Dynamic imports create split points. The
+> **Code walkthrough:** Dynamic imports create split points. Theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > bundler outputs each lazy component as a separate chunk. The browser
 > downloads only what it needs for the current page. This is the core
 > performance technique for large SPAs: initial load is minimal; chunks

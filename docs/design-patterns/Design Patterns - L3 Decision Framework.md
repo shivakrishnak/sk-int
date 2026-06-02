@@ -144,7 +144,7 @@ Decision tree for adding a pattern:
    -> Harder (complex factory hierarchy) -> WRONG use
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When to Use Design Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The refactoring trigger (most reliable signal):**
 
@@ -160,7 +160,7 @@ Cross-cutting code in methods | Decorator or Proxy
 Chain of conditionals         | Chain of Responsibility
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When to Use Design Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -194,7 +194,7 @@ public class DefaultUserRepositoryFactory
 // only if you will need a test double.
 ```
 
-> **Code walkthrough:** `UserRepositoryFactory` adds two files and
+> **Code walkthrough:** `UserRepositoryFactory` adds two files andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a layer of indirection for a repository that never varies. The factory
 > creates `JpaUserRepository` and nothing else. If the interface
 > `UserRepository` is kept (it is useful for testing - `@MockBean`
@@ -226,7 +226,7 @@ public class PaymentService {
 }
 ```
 
-> **Code walkthrough:** Each new payment provider requires modifying
+> **Code walkthrough:** Each new payment provider requires modifyingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `PaymentService`. Three providers: the method is 60+ lines.
 > Four providers: 80+ lines. The change pattern: "every new provider
 > adds to the if/else chain." This is the correct trigger for Strategy.
@@ -277,7 +277,7 @@ public class PaymentService {
 // PaymentService not modified.
 ```
 
-> **Code walkthrough:** Strategy applied to real variation. Each
+> **Code walkthrough:** Strategy applied to real variation. Eachice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > provider is a separate class. `PaymentService` is closed for
 > modification (Open/Closed Principle). Adding Braintree: create
 > `BraintreeProvider implements PaymentProvider`, annotate `@Component`,
@@ -590,7 +590,7 @@ Factory fit test:
   If all NO: use new directly.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pattern Selection Framework example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The relationship structure (tertiary axis):**
 
@@ -609,7 +609,7 @@ KNOWS-ABOUT problems -> decouple with mediator/observer
   If A knows B but not reverse: Observer or Callback
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pattern Selection Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -643,7 +643,7 @@ public class ReportGenerator {
 // -> FIT CONFIRMED
 ```
 
-> **Code walkthrough:** The symptom (if/else on type) maps to an OCP
+> **Code walkthrough:** The symptom (if/else on type) maps to an OCPice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > violation. OCP violations with algorithm variation map to Strategy.
 > The structural fit test confirms: 3 algorithms exist, they are
 > interchangeable, a common interface is possible, the choice is
@@ -691,7 +691,7 @@ public class ReportService {
 // ReportService untouched.
 ```
 
-> **Code walkthrough:** Spring's `Map<String, ReportStrategy>` injection
+> **Code walkthrough:** Spring's `Map<String, ReportStrategy>` injectionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > collects all `ReportStrategy` beans keyed by their bean name. `ReportService`
 > never changes for new report types - it dispatches to the strategy by
 > name. Adding a new format: one new class, one `@Component`. This is

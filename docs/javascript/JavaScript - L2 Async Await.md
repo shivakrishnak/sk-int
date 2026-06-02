@@ -147,13 +147,23 @@ TOP-LEVEL AWAIT (ES2022, modules only):
   // Blocks module evaluation until config is loaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async/Await Syntax and Error Handling example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Correct patterns for async/await**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: sequential awaits for independent operations
@@ -229,7 +239,7 @@ async function withRetry(fn, maxRetries = 3) {
 const data = await withRetry(() => fetchFromAPI('/data'));
 ```
 
-> **Code walkthrough:** The sequential vs parallel pattern is the most
+> **Code walkthrough:** The sequential vs parallel pattern is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > important performance optimization in async code. If `fetchUser`,
 > `fetchPosts`, and `fetchFollowers` each take 100ms, sequential takes
 > 300ms while `Promise.all` takes ~100ms (the slowest). The silent
@@ -315,7 +325,7 @@ async function processAll(items) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -333,8 +343,7 @@ async function processAll(items) {
 
 ---
 
-**Q1: Why doesn't `await` work correctly inside `forEach`?**
-`[MID]` DEBUGGING
+**[MID] Q1 - [DEBUGGING] Why doesn't `await` work correctly inside `forEach`?**
 
 > **Answer:**
 >
@@ -564,13 +573,18 @@ CONCURRENCY LIMIT PATTERN:
   // Process in batches of 5: limits concurrent requests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Concurrency Patterns example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Concurrency pattern selection in production**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // SCENARIO: Load a user profile page
@@ -645,7 +659,7 @@ async function processUsers(userIds) {
 }
 ```
 
-> **Code walkthrough:** The tiered approach separates data into required
+> **Code walkthrough:** The tiered approach separates data into requiredice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (use `Promise.all`, fail fast) and optional (use `Promise.allSettled`,
 > graceful degradation). Required data failing means the page cannot
 > render meaningfully, so failing fast is correct. Optional data
@@ -733,7 +747,7 @@ const failures = settled
   .map(r => r.reason);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ---
 
@@ -751,7 +765,7 @@ const failures = settled
 
 ---
 
-**Q1: When would you use Promise.allSettled over Promise.all?**
+**[JUNIOR] Q1 - [SCENARIO] When would you use Promise.allSettled over Promise.all?**
 `[MID]` TRADE-OFF
 
 > **Answer:**

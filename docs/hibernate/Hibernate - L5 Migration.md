@@ -140,7 +140,7 @@ AFTER (Spring Data JPA):
           JPQL / derived query methods
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating from Hibernate to Spring Data JPA example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Entity annotations: unchanged.**
 `@Entity`, `@Table`, `@Column`, `@OneToMany`, `@ManyToOne`, `@Version`,
@@ -199,7 +199,7 @@ public class ProductDaoHibernate {
 // Manual transaction boundary in @Service layer
 ```
 
-> **Code walkthrough:** Native Hibernate DAO: every method explicitly
+> **Code walkthrough:** Native Hibernate DAO: every method explicitlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > accesses the Session. The caller must ensure a transaction is active.
 > Query construction uses HQL strings. Entity lifecycle (`saveOrUpdate`)
 > is managed explicitly. This is 3-5x more code than the Spring Data JPA
@@ -232,7 +232,7 @@ public interface ProductRepository
 // findById(), save(), delete(), findAll() - all inherited from JpaRepository
 ```
 
-> **Code walkthrough:** `JpaRepository<Product, Long>` provides
+> **Code walkthrough:** `JpaRepository<Product, Long>` providesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `findById()`, `save()`, `delete()`, `findAll()`, `existsById()`,
 > `count()` for free. `findByCategory()` is a derived query - Spring
 > Data parses the method name and generates `WHERE category = ?`. The
@@ -313,7 +313,7 @@ spring:
 // where to add @EntityGraph or JOIN FETCH in the service layer.
 ```
 
-> **Code walkthrough:** `open-in-view: false` is the most important
+> **Code walkthrough:** `open-in-view: false` is the most importantice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > migration configuration. The Spring Boot default (`open-in-view: true`)
 > extends the JPA session through the entire HTTP request including the
 > view/controller layer. This allows lazy loading in controllers -
@@ -400,6 +400,17 @@ lost. Entity in database has the pre-save state.
 detached. Modifications to the passed entity after `merge()` are not tracked.
 
 *Fix:*
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
+
 ```java
 // BAD:
 Product product = new Product(id, name);
@@ -418,7 +429,7 @@ public void addDiscount(Long id, int discount) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **WHAT BREAKS: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -439,7 +450,7 @@ spring:
   jpa:
     open-in-view: false  # expose LazyInitializationException immediately
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Then fix each `LazyInitializationException` in the service layer with
 JOIN FETCH or `@EntityGraph`.
@@ -473,7 +484,7 @@ public void transferStock(Long fromId, Long toId, int qty) {
 // Without @Transactional: each findById and save runs in its own TX
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -520,7 +531,7 @@ Phase 2: Migrate per service (one at a time, isolated)
   |
   +-> Add Spring Data JPA dependencies alongside existing
   |
-  +-> Create JpaRepository interfaces for each entity (new file, no deletions yet)
+  +-> Create JpaRepository interfaces for each entity (new file, no deletions...
   |
   +-> Route new code to JpaRepository, old code to existing DAOs
   |
@@ -535,7 +546,7 @@ Phase 3: Behavior alignment (post-migration)
   +-> Add query count assertions to CI for N+1 prevention
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min):
 The highest-risk change is `save()` vs `saveOrUpdate()` semantics.
@@ -545,7 +556,7 @@ pattern is a bug. Add a custom ArchUnit test:
 // ArchUnit rule: detects save() followed by field modification
 // (pattern-based static analysis)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Second highest risk: OSIV behavior. Disabling OSIV reveals all lazy
 loading boundary violations at once. Plan a sprint to fix these before
@@ -665,8 +676,7 @@ flowchart TD
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is the relationship between Hibernate and Spring Data JPA?
+**[JUNIOR] Q1 - [MECHANISM] What is the relationship between Hibernate and Spring Data JPA?**
 
 *Why they ask:* Fundamental architecture question often misunderstood.
 
@@ -692,7 +702,7 @@ JDBC
 Database
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Spring Data JPA depends on JPA, which Hibernate implements. When you use
 Spring Data JPA, you are still using Hibernate underneath - Hibernate is
@@ -716,9 +726,7 @@ present and configurable even when using Spring Data JPA.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What changes and what stays the same when migrating from native
-Hibernate to Spring Data JPA?
+**[MID] Q2 - [MECHANISM] What changes and what stays the same when migrating from native Hibernate to Spring Data JPA?**
 
 *Why they ask:* Tests understanding of migration scope.
 
@@ -754,7 +762,7 @@ Session session = em.unwrap(Session.class);
 // Use Hibernate-specific features when needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Confirming that Hibernate-specific
 annotations remain valid and showing how to access the underlying Hibernate
@@ -762,9 +770,7 @@ session when needed.
 
 ---
 
-**Q3 [SENIOR] - TRADE-OFF**
-What is the `save()` vs `saveOrUpdate()` semantic difference and
-how does it affect migration?
+**[SENIOR] Q3 - [TRADE-OFF] What is the `save()` vs `saveOrUpdate()` semantic difference and how does it affect migration?**
 
 *Why they ask:* This is the most common subtle bug introduced during migration.
 
@@ -799,7 +805,7 @@ p.setDescription("updated"); // p is DETACHED - NOT tracked
 managed.setDescription("updated"); // managed IS tracked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This bug is silent - no exception, just missing data in the database.
 
@@ -817,10 +823,7 @@ is lost.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-After migrating to Spring Data JPA, some complex queries that
-worked as HQL now generate different (suboptimal) SQL or fail.
-How do you diagnose and fix?
+**[SENIOR] Q4 - [DEBUGGING] After migrating to Spring Data JPA, some complex queries that worked as HQL now generate different (suboptimal) SQL or fail. How do you diagnose and fix?**
 
 *Why they ask:* Tests ability to debug query translation issues.
 
@@ -849,7 +852,7 @@ Diagnosis approach:
 logging.level.org.hibernate.SQL: DEBUG
 logging.level.org.hibernate.type: TRACE
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Then compare:
 1. The HQL query in the legacy code
@@ -867,17 +870,14 @@ If the generated SQL differs:
 List<Order> findByJsonbFilter(@Param("filter") String filter);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The nativeQuery fallback and the
 EXPLAIN ANALYZE comparison methodology.
 
 ---
 
-**Q5 [SENIOR] - DEBUGGING**
-After migrating and disabling OSIV, the application throws
-`LazyInitializationException` in multiple controller methods.
-How do you fix this systematically?
+**[SENIOR] Q5 - [DEBUGGING] After migrating and disabling OSIV, the application throws `LazyInitializationException` in multiple controller methods. How do you fix this systematically?**
 
 *Why they ask:* OSIV-related LIE is the most common post-migration issue.
 
@@ -904,7 +904,7 @@ Optional<Order> findById(Long id);
 // Hibernate generates LEFT JOIN FETCH for each path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 For associations needed by multiple queries:
 ```java
@@ -919,7 +919,7 @@ public class Order { ... }
 List<Order> findByStatus(String status);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For complex join paths:
 ```java
@@ -932,7 +932,7 @@ For complex join paths:
 Optional<Order> findDetailById(@Param("id") Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 Step 3: For associations needed in the service layer (not just queries):
 ```java
@@ -945,7 +945,7 @@ public OrderDTO getOrderDetails(Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* The three-tier approach: EntityGraph
 for simple cases, NamedEntityGraph for reusable graphs, explicit JPQL
@@ -953,9 +953,7 @@ JOIN FETCH for complex paths.
 
 ---
 
-**Q6 [MID] - COMPARISON**
-What is the difference between `JpaRepository.findById()` and
-the native Hibernate `session.get()` vs `session.load()`?
+**[MID] Q6 - [TRADE-OFF] What is the difference between `JpaRepository.findById()` and the native Hibernate `session.get()` vs `session.load()`?**
 
 *Why they ask:* Tests understanding of how Spring Data JPA maps to Hibernate primitives.
 
@@ -996,7 +994,7 @@ order.setCustomer(proxy); // no SELECT, just sets FK
 orderRepo.save(order);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 The `getReferenceById()` use case: when you need to set a foreign key
 on a new entity and have the ID but do not need the referenced entity's
@@ -1008,9 +1006,7 @@ for FK reference setting - the direct equivalent of `session.load()`.
 
 ---
 
-**Q7 [STAFF] - ARCHITECTURE**
-How do you handle Spring Data JPA migration for a service that
-uses Hibernate multi-tenancy with a schema-per-tenant approach?
+**[STAFF] Q7 - [DESIGN] How do you handle Spring Data JPA migration for a service that uses Hibernate multi-tenancy with a schema-per-tenant approach?**
 
 *Why they ask:* Multi-tenancy is a Hibernate-specific feature with no
 direct Spring Data JPA equivalent.
@@ -1044,7 +1040,7 @@ public class TenantFilter implements WebMvcConfigurer {
     // (Hibernate interface - still configured even with Spring Data JPA)
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Enable SQL logging: example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 The `CurrentTenantIdentifierResolver` and `MultiTenantConnectionProvider`
 are Hibernate interfaces that Spring Boot supports via
@@ -1059,7 +1055,7 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON orders
     USING (tenant_id = current_setting('app.tenant_id')::int);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Set the RLS parameter per request in the DataSource connection.
 This approach works cleanly with Spring Data JPA and removes the
@@ -1076,9 +1072,7 @@ architectural path rather than just explaining the limitation.
 
 ---
 
-**Q8 [MID] - MECHANISM**
-What is Open Session In View (OSIV) and why should you disable it
-when using Spring Data JPA?
+**[MID] Q8 - [MECHANISM] What is Open Session In View (OSIV) and why should you disable it when using Spring Data JPA?**
 
 *Why they ask:* OSIV is enabled by default and is a significant production risk.
 
@@ -1128,7 +1122,7 @@ public OrderDetailDTO getOrderDetail(Long id) {
 // Controller receives a DTO: no session needed, no lazy loading
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Configuration: `spring.jpa.open-in-view=false`
 
@@ -1137,10 +1131,7 @@ Configuration: `spring.jpa.open-in-view=false`
 
 ---
 
-**Q9 [SENIOR] - DEBUGGING**
-After migrating to Spring Data JPA, `@Modifying @Transactional`
-queries are not reflecting updated data when the same entity is
-loaded again in the same transaction. Why?
+**[SENIOR] Q9 - [DEBUGGING] After migrating to Spring Data JPA, `@Modifying @Transactional` queries are not reflecting updated data when the same entity is loaded again in the same transaction. Why?**
 
 *Why they ask:* Tests knowledge of L1C invalidation with @Modifying queries.
 
@@ -1166,7 +1157,7 @@ int updatePrice(@Param("price") BigDecimal price, @Param("id") Long id);
 // L1C cleared after UPDATE - next findById fires fresh SELECT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 2: add `flushAutomatically = true` to flush pending changes before
 the bulk update (ensures pending dirty writes are committed before the bulk):
@@ -1176,7 +1167,7 @@ the bulk update (ensures pending dirty writes are committed before the bulk):
 int updatePrice(BigDecimal price, Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 3: evict the entity manually:
 ```java
@@ -1186,7 +1177,7 @@ Product updated = productRepo.findById(id).orElseThrow();
 // Now fires fresh SELECT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `clearAutomatically=true` is the standard solution for bulk update
 methods. Include it as a default practice for all `@Modifying` queries.
@@ -1197,10 +1188,7 @@ update executes, preventing the bulk from operating on stale data.
 
 ---
 
-**Q10 [STAFF] - DEBUGGING**
-You migrate a service to Spring Data JPA and notice that insert
-performance degrades significantly for bulk inserts compared to
-the native Hibernate implementation. What are the causes?
+**[STAFF] Q10 - [DEBUGGING] You migrate a service to Spring Data JPA and notice that insert performance degrades significantly for bulk inserts compared to the native Hibernate implementation. What are the causes?**
 
 *Why they ask:* Tests understanding of bulk insert performance in Spring Data JPA.
 
@@ -1236,7 +1224,7 @@ spring:
         order_updates: true       # group updates too
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Fix: switch from IDENTITY to SEQUENCE generator:
 ```java
@@ -1247,7 +1235,7 @@ Fix: switch from IDENTITY to SEQUENCE generator:
 // No round-trip per row - Hibernate uses cached IDs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For true bulk insert performance (1M+ rows): use `StatelessSession`
 or native SQL (`INSERT INTO ... VALUES (...), (...), ...`). Spring Data
@@ -1259,9 +1247,7 @@ SEQUENCE is required for JDBC batching to take effect.
 
 ---
 
-**Q11 [SENIOR] - COMPARISON**
-When would you choose Spring Data JDBC over Spring Data JPA for
-a new service?
+**[SENIOR] Q11 - [TRADE-OFF] When would you choose Spring Data JDBC over Spring Data JPA for a new service?**
 
 *Why they ask:* Tests ability to evaluate alternatives to JPA.
 
@@ -1309,9 +1295,7 @@ requires mutable entities with no-args constructors.
 
 ---
 
-**Q12 [STAFF] - BEHAVIORAL**
-Tell me about a Hibernate-to-Spring Data JPA migration you led
-or participated in. What were the biggest challenges?
+**[STAFF] Q12 - [BEHAVIORAL] Tell me about a Hibernate-to-Spring Data JPA migration you led or participated in. What were the biggest challenges?**
 
 *Why they ask:* Tests leadership and real-world experience with migrations.
 

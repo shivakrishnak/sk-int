@@ -99,7 +99,7 @@ Costs:
                 re-sharding is very painful
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Read Replicas, Sharding, and Partitioning example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -146,7 +146,7 @@ FROM pg_stat_replication;
 -- Alert: lag_bytes > 10MB (or lag_seconds > 5s)
 ```
 
-> **Code walkthrough:** `pg_stat_replication` on the primary shows each connected
+> **Code walkthrough:** `pg_stat_replication` on the primary shows each connectedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > replica's position. `sent_lsn`: the WAL position sent to the replica.
 > `replay_lsn`: the WAL position the replica has replayed (applied).
 > `sent_lsn - replay_lsn` in bytes: how far behind the replica is.
@@ -192,7 +192,7 @@ DROP TABLE orders_2023_01;
 -- O(N), slow, generates huge WAL, bloats table.
 ```
 
-> **Code walkthrough:** Declarative partitioning: the parent table `orders`
+> **Code walkthrough:** Declarative partitioning: the parent table `orders`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the logical table (no actual data storage). Each partition is a physical
 > table with a constraint restricting its key range. PostgreSQL's query planner
 > applies partition pruning: only the partitions that overlap the query's
@@ -250,7 +250,7 @@ public class ShardRouter {
 }
 ```
 
-> **Code walkthrough:** Application-level sharding: the `ShardRouter` contains
+> **Code walkthrough:** Application-level sharding: the `ShardRouter` containsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the routing logic. `customerId % SHARD_COUNT` deterministically maps each customer
 > to a shard (consistent hash). All of customer 42's orders are on shard `42 % 16 = 10`.
 > Single-customer queries: route to one shard, same performance as a non-sharded database.
@@ -360,7 +360,7 @@ Phase 4 (special read models):
   PostgreSQL: source of truth for writes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -448,7 +448,7 @@ FROM pg_stat_replication;
 -- lag_bytes under load: check if > expected threshold.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: (1) For writes that require immediate read consistency: route subsequent reads
 to primary for the same user session for N seconds. (2) Synchronous replication
@@ -474,51 +474,51 @@ availability. Plan the shard key before sharding; it is very hard to change late
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: When do you recommend sharding vs. staying with a single primary and read replicas?**
+**[JUNIOR] Q1 - [MECHANISM] When do you recommend sharding vs. staying with a single primary and read replicas?**
 
 🗣️ "The decision is primarily about write bottlenecks and data volume. Read replicas scale reads horizontally. If the bottleneck is reads: replicas solve it. If the bottleneck is writes: a single primary is the ceiling; sharding is the path to horizontal write scaling. Thresholds for considering sharding: (1) primary CPU consistently > 80% even after query optimization; (2) write throughput approaching the WAL write limit (typically 100-500MB/s WAL for high-end hardware); (3) table sizes > 1TB making VACUUM/index operations slow; (4) clear shard key exists where most queries include it. Before sharding: try application-level caching, write batching, async writes (events), CQRS (separate read and write models), and Postgres with optimized hardware. Sharding adds: no cross-shard ACID, no cross-shard joins, complex re-sharding, operational burden of N databases. Many 'large' applications (100M users) do not need sharding if writes are low-volume (mostly reads with occasional writes)."
 
-**Q2: What are the consistency implications of read replicas?**
+**[JUNIOR] Q2 - [MECHANISM] What are the consistency implications of read replicas?**
 
 🗣️ "Asynchronous replication (default): the primary commits a transaction and acknowledges to the application immediately. The WAL is streamed to replicas asynchronously. The replica replays the WAL with a lag (milliseconds to seconds under normal load; higher under write pressure). Consistency model: eventual consistency for reads from replicas. Violations possible: (1) read-your-own-write inconsistency - write to primary, read immediately from replica (which hasn't caught up) - read your old data. (2) Monotonic read inconsistency - if reads are distributed across replicas with different lag, a user might see 'newer' data on one request and 'older' data on the next. Solutions: (1) sticky sessions - route a user's requests to the same replica for the duration of a session. (2) Read-your-write guarantee - for the current user's session, route reads to the primary for 10 seconds after any write. (3) Synchronous replication - the primary waits for at least one replica to confirm before acknowledging the write. No lag for that replica; write latency increases by network RTT to replica."
 
-**Q3: Describe the operational challenges of managing a sharded PostgreSQL cluster.**
+**[JUNIOR] Q3 - [MECHANISM] Describe the operational challenges of managing a sharded PostgreSQL cluster.**
 
 🗣️ "Seven major operational challenges: (1) Schema migrations: deploying a schema change requires running it on all N shards, ideally in a coordinated way (blue-green deployment per shard, using zero-downtime migration tools). A failed migration on shard 5 means shards 1-4 are on the new schema, 5-16 on the old. Application code must handle both schemas during the migration window. (2) Re-sharding: when the number of shards must increase (data growth), data must be moved from some shards to new shards. During the move: both old and new shard locations must serve traffic. Very complex; typically requires a double-write period followed by cutover. (3) Cross-shard queries: reports or admin queries that need data from all shards require scatter-gather (query all N shards in parallel, aggregate in the application). Slower, more complex, and can cascade load. (4) Distributed transactions: any operation that touches two shards needs 2PC (two-phase commit) or application-level compensating transactions. 2PC is slow and complex; compensating transactions require idempotent operations. (5) Connection scaling: each shard has its own connection pool. N shards * M replicas * connection pool size. Connection counts can become large. (6) Monitoring: N primary metrics + N*replica sets to monitor. PagerDuty rules per shard. (7) Backup/restore: backup of each shard independently. Point-in-time recovery requires coordinating across all shards."
 
-**Q4: How does consistent hashing differ from modulo sharding and why does it matter for re-sharding?**
+**[MID] Q4 - [MECHANISM] How does consistent hashing differ from modulo sharding and why does it matter for re-sharding?**
 
 🗣️ "Modulo sharding: `shard = customerId % N`. Simple, deterministic. Problem at re-sharding: when N changes from 16 to 32, almost every key moves to a different shard (because `x % 32 != x % 16` in general). A re-shard from 16 to 32: ~50% of data moves (massive data migration). Consistent hashing: keys are mapped to a ring [0, 2^32]. Each shard owns a range of the ring. A key maps to the shard whose range contains it. When adding a new shard: only the keys in the new shard's range move (only from adjacent shards). A re-shard from 16 to 32 shards: only 1/32 of the data moves per new shard. Total data moved: ~50% (same as modulo), but distributed across time as shards are added one at a time. More importantly: virtual nodes (vNodes) - each physical shard owns multiple small ranges on the ring. This distributes load more evenly and makes individual shard additions move less data per step. Used by: Amazon DynamoDB, Apache Cassandra, Redis Cluster. For PostgreSQL: consistent hashing must be implemented in the application or a sharding middleware (Citus)."
 
-**Q5: What is Citus and how does it differ from application-level sharding?**
+**[MID] Q5 - [MECHANISM] What is Citus and how does it differ from application-level sharding?**
 
 🗣️ "Citus: a PostgreSQL extension (now merged into core for parallel queries) that adds distributed table management to PostgreSQL. It adds: a coordinator node (standard PostgreSQL that knows the shard map) + N worker nodes (standard PostgreSQL, each holding a subset of shards). SQL queries go to the coordinator; it routes to the correct worker(s). From the application: no sharding logic. The coordinator handles scatter-gather, parallel execution, and result aggregation. Differences from application-level sharding: (1) application remains unaware of sharding (standard SQL to the coordinator). (2) Cross-shard joins are executed at the coordinator level (not in application code). (3) Distributed aggregates (SUM, COUNT) across shards are supported. (4) Schema migrations via the coordinator propagate to all shards. Limitations vs. application sharding: (1) joins across non-co-located tables are expensive (require data movement). (2) Some PostgreSQL features are not supported in distributed mode. (3) The coordinator is a single point of routing (though not a write bottleneck). Best for: analytical workloads (time-series, OLAP on large datasets). For OLTP: CockroachDB or Spanner may be more appropriate."
 
-**Q6: How do you handle cross-shard transactions?**
+**[SENIOR] Q6 - [MECHANISM] How do you handle cross-shard transactions?**
 
 🗣️ "Cross-shard transactions: a transaction that modifies data on two different shards. Neither shard knows about the other. ACID across both shards requires coordination. Options: (1) Avoid cross-shard transactions by design: co-locate related data on the same shard. If `orders` and `order_items` are always accessed together: shard both by `customer_id`. All order + order_items for one customer are on the same shard. Single-shard ACID works. (2) Two-Phase Commit (2PC): the coordinator asks all involved shards to prepare (Phase 1). If all shards confirm: the coordinator commits all (Phase 2). Failure in Phase 2: some shards committed, others did not. Requires recovery protocol. Complex, slow, and fragile. (3) Saga pattern: break the transaction into a sequence of local transactions, each on one shard. Compensating transactions for rollback. Example: debit shard A (local tx 1), credit shard B (local tx 2). If tx 2 fails: run compensation on shard A (reverse debit). Requires idempotent operations and a saga coordinator. (4) Accept eventual consistency: for low-risk data (e.g., analytics counters): use async best-effort updates with reconciliation. The correct approach is (1) first: design the data model to avoid cross-shard transactions. Only use 2PC or sagas when unavoidable."
 
-**Q7: What is CQRS and how does it relate to database scalability?**
+**[SENIOR] Q7 - [MECHANISM] What is CQRS and how does it relate to database scalability?**
 
 🗣️ "CQRS (Command Query Responsibility Segregation): separate the write model (command side) from the read model (query side). Command side: normalized PostgreSQL, optimized for writes, ACID, constraints. Query side: separate denormalized store (PostgreSQL read model, Elasticsearch, Redis, Cassandra) optimized for specific read patterns. The read model is populated by events or change data capture (CDC via Debezium from PostgreSQL WAL). Scalability relationship: (1) The read store can be a different technology optimized for the read pattern: Elasticsearch for full-text, Cassandra for time-series, Redis for low-latency lookups. (2) Each read model scales independently from the write model. (3) Read models can be rebuilt from events at any time (if the event log is retained). Tradeoffs: eventual consistency between write and read models (the read model lags the write by the CDC latency). Increased architectural complexity. More infrastructure to operate. Use when: read queries are complex and diverse (full-text + geospatial + time-series), and the application is already event-driven."
 
-**Q8: How does PostgreSQL table partitioning interact with the query planner?**
+**[SENIOR] Q8 - [MECHANISM] How does PostgreSQL table partitioning interact with the query planner?**
 
 🗣️ "Declarative partitioning creates multiple physical tables (each partition is a real table with a constraint). The query planner knows the partition constraints. Partition pruning: when a query includes a WHERE clause on the partition key, the planner eliminates partitions whose constraint cannot satisfy the WHERE condition. Example: `WHERE created_at BETWEEN '2024-01-01' AND '2024-01-31'`. The planner checks each monthly partition's constraint: only `orders_2024_01` (Jan) has values in this range. All other partitions are pruned. The query only scans `orders_2024_01`. Types of pruning: (1) static pruning at plan time (constant values in WHERE); (2) dynamic pruning at execute time (parameterized queries: the pruning happens when the parameter is bound). `enable_partition_pruning = on` (default). Gotcha: if the WHERE clause uses a function on the partition key (e.g., `DATE(created_at) = '2024-01-15'`): the planner cannot prune (function over the key prevents pruning). Use the key directly: `created_at >= '2024-01-15' AND created_at < '2024-01-16'`."
 
-**Q9: What is connection pooling and why is it critical for scalable database access?**
+**[SENIOR] Q9 - [MECHANISM] What is connection pooling and why is it critical for scalable database access?**
 
 🗣️ "PostgreSQL creates a new OS process per connection (`max_connections`, default 100). Each process uses ~5-10MB of RAM. For an application with 100 threads, each holding a connection: 100 processes, ~1GB RAM just for connections. At 1,000 connections: 10GB RAM, significant context-switch overhead. Connection pooling: a pool of pre-created database connections shared among application threads. Application thread checks out a connection (milliseconds) vs. creates a new one (20-200ms). PgBouncer: dedicated PostgreSQL connection pooler. Three modes: (1) Session mode: one connection per application session (same as no pooling). (2) Transaction mode: connection assigned per transaction (most efficient for short OLTP transactions). (3) Statement mode: connection assigned per statement (breaks multi-statement transactions). Transaction mode: 1,000 application connections can share 20 database connections (if average transaction duration is short). Pool utilization: 1,000 / 50 = 20x connection multiplexing. Caveat: PgBouncer transaction mode disables some PostgreSQL features: prepared statements, advisory locks, session-level settings. Application must be designed for a stateless connection."
 
-**Q10: How do you approach capacity planning for a database before reaching scale limits?**
+**[SENIOR] Q10 - [DESIGN] How do you approach capacity planning for a database before reaching scale limits?**
 
 🗣️ "Five-step capacity planning: (1) Baseline metrics: current query throughput (TPS from pg_stat_statements), read/write ratio, average query latency (p50/p95/p99), CPU/memory/IO utilization on the primary. Establish these numbers now. (2) Growth model: estimate data growth rate (bytes/day) and query volume growth (TPS/year). Plot on a timeline. (3) Limit projection: at the current growth rate, when will: CPU hit 80%? Memory exceed available RAM? Disk fill? Write TPS exceed WAL throughput? (4) Lead time: plan the next scaling tier 3-6 months before the limit is hit (hardware procurement, testing, migration downtime planning). (5) Scaling actions: at 50% CPU: add read replicas (if read-dominated). At 70% storage: implement partitioning with rolling detach of old partitions. At 80% write TPS: evaluate sharding or write-ahead design (batch writes). Track the metrics in a dashboard. Review monthly. Avoid reactive scaling (when already at 95%: too late for a safe migration)."
 
-**Q11: How do read replicas affect the write path in terms of performance?**
+**[SENIOR] Q11 - [MECHANISM] How do read replicas affect the write path in terms of performance?**
 
 🗣️ "Synchronous replication impact: with `synchronous_standby_names` set, the primary waits for at least one synchronous standby to confirm WAL receipt before acknowledging the commit to the application. Write latency increases by the network round-trip time to the replica (typically 1-5ms in the same data center, 50-100ms cross-region). The commit cannot proceed until the standby confirms. This guarantees zero data loss (RPO=0) but costs latency. Asynchronous replication: the primary commits immediately (no wait for replica). Zero write latency impact. Replica may be behind by milliseconds. Data loss possible (RPO > 0) if the primary fails before the replica has replayed recent WAL. Synchronous commit settings: `synchronous_commit = on` (full sync, waits for replica flush + ack). `synchronous_commit = remote_write` (waits for replica to write to OS buffer). `synchronous_commit = remote_apply` (waits for replica to replay = fully applied). `synchronous_commit = local` (commits locally, replica async - reads from replica may lag). Trade-off: durability guarantees vs. write latency vs. risk of data loss."
 
-**Q12: What are the key differences between horizontal and vertical sharding?**
+**[SENIOR] Q12 - [MECHANISM] What are the key differences between horizontal and vertical sharding?**
 
 🗣️ "Horizontal sharding (traditional 'sharding'): splits rows across shards. All columns of a row are on one shard. Shard 1: rows 1-1M, Shard 2: rows 1M-2M. Each shard has the full row. Queries within a shard key are single-shard (fast). Cross-shard queries: scatter-gather. This is what most people mean by 'sharding.' Vertical sharding (vertical partitioning): splits columns across different tables or databases. Example: orders table split into: order_header (id, customer_id, status, created_at) and order_details (order_id, line_items, shipping_address, notes). The two tables are in different databases. Hot data (header: frequently queried) is separated from cold data (details: rarely accessed in full). Benefits: (1) the 'hot' table is smaller (fewer columns, fits in cache better). (2) wide tables can be split so that common queries only access fast columns. In practice: vertical partitioning is done within a single database by table structure design (not truly 'sharding'). The more useful concept in production is column-store databases (Redshift, BigQuery) for OLAP: columnar storage is vertical partitioning taken to its logical extreme, where each column is stored independently (ultra-fast for analytical aggregates on specific columns)."
 

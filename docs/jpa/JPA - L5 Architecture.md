@@ -67,7 +67,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Aggregates, repository pattern, and domain model design:**
-```
+```plaintext
 AGGREGATE DESIGN IN JPA:
 
   // Order aggregate: root + child entities:
@@ -236,7 +236,7 @@ LARGE AGGREGATE DECOMPOSITION:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -244,6 +244,12 @@ LARGE AGGREGATE DECOMPOSITION:
 
 > **Code walkthrough:** The cross-aggregate ID reference pattern eliminates the most common JPA
 > performance problem: accidentally loading a large aggregate graph because of an entity reference.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // WRONG: cross-aggregate @ManyToOne reference:
@@ -382,7 +388,7 @@ CONSISTENCY:
     5. NotificationService: sendConfirmationEmail(customerId)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -466,7 +472,7 @@ graph TD
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Aggregate design fails under concurrent order processing.**
-```
+```plaintext
 Symptom: Order.submit() throws OptimisticLockException under load.
   100 concurrent order submissions fail with version conflicts.
   Root cause analysis: not an optimistic locking bug.
@@ -493,7 +499,7 @@ Lesson: every child entity in an aggregate shares the root's @Version. If a chil
   frequently and independently: extract it to its own aggregate.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

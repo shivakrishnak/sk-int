@@ -140,12 +140,33 @@ Operational failures:
   - Logging full prompts with PII
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AI Feature Development Anti-Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+{% raw %}
 ```python
 """
 AI feature anti-patterns: BAD vs GOOD examples.
@@ -346,8 +367,9 @@ def process_task_good(description: str) -> dict:
         # Graceful degradation
         return {"priority": "med", "category": "general"}
 ```
+{% endraw %}
 
-> **Code walkthrough:** Four BAD-before-GOOD pairs
+> **Code walkthrough:** Four BAD-before-GOOD pairsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > demonstrate the most common anti-patterns. The
 > over-prompting pair shows that SYSTEM_PROMPT_GOOD
 > achieves the same goals in 5 lines vs 500 - the
@@ -470,7 +492,7 @@ if score_after < score_before:
     print("REGRESSION DETECTED - reject change")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run before and after every prompt change: example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 ---
 
@@ -559,7 +581,7 @@ def llm_judge(response: str, expected: str) -> float:
         return 0.5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run before and after every prompt change: example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* "Start with 20 cases and simple assertions. Expand the suite only when you observe a specific quality failure. The suite grows from production observations, not upfront design."
 
@@ -620,7 +642,7 @@ prompts/
     CHANGELOG.md <- what changed and why
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run before and after every prompt change: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Deployment process:
 1. Edit prompt in feature branch
@@ -711,7 +733,7 @@ def estimate_call_cost(
     return cost
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This estimate before production example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Cloud monitoring: set up billing alerts at 50%, 80%, 100% of monthly budget.
 
@@ -965,7 +987,7 @@ LLM TESTING PYRAMID:
 [Unit Tests]             <- mock LLM, test business logic
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM Integration Testing Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The pyramid mirrors traditional testing: many cheap
 unit tests at the base, fewer expensive integration
@@ -1149,7 +1171,7 @@ def llm_judge_quality(
         return 0.5  # fallback if judge returns non-numeric
 ```
 
-> **Code walkthrough:** Four testing layers in one
+> **Code walkthrough:** Four testing layers in oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > file. The unit test layer injects a mock client
 > via dependency injection - `classify_ticket` accepts
 > `llm_client=None`, defaulting to the real client
@@ -1248,7 +1270,7 @@ integration tests. Re-running usually fixes it.
    )
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --- LAYER 4: LLM JUDGE (for subjective quality) --- example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 3. For naturally variable outputs (summaries, generation):
    use the LLM judge test approach - score quality
@@ -1295,7 +1317,7 @@ result = process("urgent issue", client=mock)
 assert result == "high"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test: example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 What to test with unit tests:
 - Input validation logic
@@ -1405,7 +1427,7 @@ async def run_shadow(prompt: str, primary: str):
         pass  # shadow failure never affects users
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shadow: logged only, no user impact example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 What to analyze from shadow logs:
 - Quality: LLM judge scores for primary vs shadow
@@ -1519,7 +1541,7 @@ def test_uses_search_tool_for_product_query():
     assert "red widgets" in result["tool_input"]["query"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify tool was called example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Integration test for tool use:
 - Use a real "test" tool that returns known data
@@ -1738,11 +1760,16 @@ API change        Low         Medium   Version pinning +
                                        integration tests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM Dependency Risk Management example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 """
@@ -1947,7 +1974,7 @@ class BehaviorDriftMonitor:
         return score
 ```
 
-> **Code walkthrough:** Three mitigations for the
+> **Code walkthrough:** Three mitigations for theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > top LLM dependency risks. `MODEL_CONFIG` is the
 > deprecation mitigation: model IDs are configuration
 > (environment variable), not code constants. The
@@ -2069,7 +2096,7 @@ def smoke_test_model(model_id: str) -> bool:
 assert smoke_test_model("claude-3-5-sonnet-20241022")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run before deploying model change: example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *Recovery time objective:* If model IDs are config-driven:
 fix is a config change + deploy. < 30 minutes.

@@ -116,7 +116,7 @@ Application Servers (horizontally scaled)
           +-- Decoupling producers/consumers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What is System Design example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **What an interviewer evaluates:**
 1. Requirements clarification (functional + non-functional)
@@ -185,7 +185,7 @@ an architecture optimized for the wrong problem. First questions:
 
 ---
 
-#### Q1 - What is the first thing you do when given a system design question?
+**[JUNIOR] Q1 - [ARCHITECTURE] What is the first thing you do when given a system design question?**
 
 Clarify requirements before designing anything:
 
@@ -218,7 +218,7 @@ design without requirements is guessing.
 
 ---
 
-#### Q2 - What is the difference between functional and non-functional requirements?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between functional and non-functional requirements?**
 
 **Functional requirements:** What the system does.
 - Users can post tweets (140 chars)
@@ -247,7 +247,7 @@ NFRs drive architecture.
 
 ---
 
-#### Q3 - What are the common system components and when is each used?
+**[JUNIOR] Q3 - [ARCHITECTURE] What are the common system components and when is each used?**
 
 | Component | Purpose | When to add |
 |-----------|---------|------------|
@@ -271,7 +271,7 @@ for 1M QPS).
 
 ---
 
-#### Q4 - How do you estimate capacity in a system design interview?
+**[MID] Q4 - [ARCHITECTURE] How do you estimate capacity in a system design interview?**
 
 Back-of-envelope estimation steps:
 
@@ -295,7 +295,7 @@ Example: Design a URL shortener
    Feasible in Redis cluster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key estimation shortcuts:
 - 1 day = 86,400 sec ≈ 100K sec (easy math: divide by 100K)
@@ -313,7 +313,7 @@ reasonable assumption; state it so the interviewer can correct it.
 
 ---
 
-#### Q5 - What are the most important system design trade-offs to know?
+**[MID] Q5 - [TRADE-OFF] What are the most important system design trade-offs to know?**
 
 **1. Consistency vs Availability (CAP Theorem):**
 Can't have both during network partition. Choose C (banking) or A (social media).
@@ -347,7 +347,7 @@ everything" or "always use SQL" are both wrong.
 
 ---
 
-#### Q6 - What is the difference between latency and throughput?
+**[MID] Q6 - [CONCEPTUAL] What is the difference between latency and throughput?**
 
 **Latency:** Time to complete ONE request (milliseconds).
 - P50 latency: median request time
@@ -374,7 +374,7 @@ High throughput != low latency:
   (processes each item immediately)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Optimizing for the wrong metric is a common
 mistake. Payment processing: optimize latency (user waits for transaction).
@@ -386,7 +386,7 @@ the synchronous (low latency) from asynchronous (high throughput) paths.
 
 ---
 
-#### Q7 - What is availability and how do you calculate it?
+**[SENIOR] Q7 - [CONCEPTUAL] What is availability and how do you calculate it?**
 
 **Availability = Uptime / (Uptime + Downtime)**
 
@@ -410,7 +410,7 @@ If system has 2 servers (parallel, either can serve):
   = 1 - 0.001 * 0.001 = 99.9999%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Achieving high availability:**
 - Redundancy: multiple instances, no SPOF
@@ -562,7 +562,7 @@ TIMING:
   Don't rush step 1 (requirements) even if interviewer pushes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This System Design Interview Framework example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -629,7 +629,7 @@ and identify where we'd hit limits."
 
 ---
 
-#### Q1 - How do you handle an interviewer who keeps adding requirements?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you handle an interviewer who keeps adding requirements?**
 
 This is intentional. Interviewers add requirements to test adaptability:
 
@@ -655,7 +655,7 @@ of the design stays the same" is better than "I'd need to redesign everything."
 
 ---
 
-#### Q2 - How do you decide when to use a message queue?
+**[JUNIOR] Q2 - [TRADE-OFF] How do you decide when to use a message queue?**
 
 Message queues decouple producers from consumers:
 
@@ -689,7 +689,7 @@ the operational overhead.
 
 ---
 
-#### Q3 - How do you handle the database bottleneck in a system design?
+**[JUNIOR] Q3 - [ARCHITECTURE] How do you handle the database bottleneck in a system design?**
 
 Database is the most common bottleneck. Options:
 
@@ -720,7 +720,7 @@ solution in order of ascending complexity.
 
 ---
 
-#### Q4 - When do you use SQL vs NoSQL?
+**[MID] Q4 - [CONCEPTUAL] When do you use SQL vs NoSQL?**
 
 ```
 Choose SQL (Relational) when:
@@ -745,7 +745,7 @@ Hybrid (use both):
   NoSQL: user activity feeds, session storage, leaderboards
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The SQL vs NoSQL decision is not just about
 scale. Eventual consistency of NoSQL is a programming model change: your
@@ -756,7 +756,7 @@ requirements of that specific data - not a global choice for the whole system.
 
 ---
 
-#### Q5 - How do you handle authentication in a system design?
+**[MID] Q5 - [ARCHITECTURE] How do you handle authentication in a system design?**
 
 Authentication flow:
 
@@ -786,7 +786,7 @@ Refresh token pattern:
     Old refresh token invalidated
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The discussion of WHERE to store tokens
 reveals security awareness. httpOnly cookies prevent JavaScript access (XSS
@@ -799,7 +799,7 @@ across services.
 
 ---
 
-#### Q6 - What is the difference between horizontal and vertical scaling?
+**[MID] Q6 - [CONCEPTUAL] What is the difference between horizontal and vertical scaling?**
 
 **Vertical scaling (scale up):** Bigger single machine.
 - More CPU, RAM, faster storage
@@ -827,7 +827,7 @@ Horizontal scaling:
   Database is the last thing to scale horizontally (hardest)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The boundary between vertical and horizontal
 is not binary. Databases are typically scaled vertically first (read replicas
@@ -839,7 +839,7 @@ adds distributed systems complexity - don't introduce it before necessary.
 
 ---
 
-#### Q7 - How do you decide which component to deep dive on?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you decide which component to deep dive on?**
 
 Deep dive selection criteria:
 
@@ -979,7 +979,7 @@ If service calls cross-region -> 150ms added per hop
 Minimize network hops in critical path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scale Mental Models example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Storage size mental models:**
 
@@ -1006,7 +1006,7 @@ Recommendation: store thumbnails, not originals
 -> 1B * 10KB = 10 TB. Much more feasible.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scale Mental Models example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Throughput benchmarks (order of magnitude):**
 
@@ -1029,7 +1029,7 @@ Object storage (S3):
   Add more prefixes (sharding) to scale beyond this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Scale Mental Models example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1087,7 +1087,7 @@ Use Protocol Buffers (10-100x faster than JSON) for high-throughput internal ser
 
 ---
 
-#### Q1 - What is the "thundering herd" problem and how do you prevent it?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the "thundering herd" problem and how do you prevent it?**
 
 Thundering herd: when many clients simultaneously request the same resource
 (usually after a cache miss) and all hit the DB at once:
@@ -1130,7 +1130,7 @@ Prevention strategies:
    User gets fast response (slightly stale)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The best solution depends on data type.
 Static content (product catalog): pre-warming works well. User-specific data
@@ -1142,7 +1142,7 @@ for most non-financial data.
 
 ---
 
-#### Q2 - How does consistent hashing help with distributed caching?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does consistent hashing help with distributed caching?**
 
 Simple modulo hashing problem:
 ```
@@ -1151,7 +1151,7 @@ Add 4th node: node = hash(key) % 4
 ~75% of keys now map to different nodes -> cache miss storm
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Consistent hashing solution:
 ```
@@ -1173,7 +1173,7 @@ Adding Node D at position 150:
   Rest of keys: unchanged
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Virtual nodes (for even distribution):
 ```
@@ -1184,7 +1184,7 @@ Node C: positions 70, 170, 270
 -> Even distribution even with few physical nodes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Consistent hashing is used in Redis Cluster,
 Amazon Dynamo, Apache Cassandra, and Riak. The ring topology also provides
@@ -1195,7 +1195,7 @@ concept that appears in distributed databases, load balancers, and CDNs.
 
 ---
 
-#### Q3 - What is Amdahl's Law and how does it affect scaling?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is Amdahl's Law and how does it affect scaling?**
 
 Amdahl's Law: the maximum speedup from parallelization is limited by the
 serial fraction of work.
@@ -1217,7 +1217,7 @@ If S = 0.25 (25% serial): max speedup = 4x
 If S = 0.5 (50% serial): max speedup = 2x
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 System design implications:
 - Identify serial bottlenecks before horizontal scaling
@@ -1237,7 +1237,7 @@ each partition has one leader. Add partitions to add parallel write capacity.
 
 ---
 
-#### Q4 - How do you estimate QPS from daily active users?
+**[MID] Q4 - [CONCEPTUAL] How do you estimate QPS from daily active users?**
 
 ```
 QPS estimation formula:
@@ -1268,7 +1268,7 @@ Read vs Write ratio: ~1000:1 (read-heavy)
   -> Writes are rarely the bottleneck for Twitter-like systems
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The action distribution matters. Twitter
 is 99%+ read. Instagram is similar. A commenting system is more balanced.
@@ -1279,7 +1279,7 @@ read-heavy or write-heavy?" because it changes the entire design.
 
 ---
 
-#### Q5 - How do you estimate storage requirements?
+**[MID] Q5 - [CONCEPTUAL] How do you estimate storage requirements?**
 
 ```
 Storage estimation:
@@ -1311,7 +1311,7 @@ Example: Design Twitter (5-year storage)
   - Media serving: CDN is mandatory (18 PB can't serve from origin)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Storage estimation reveals which tier is
 needed. Under 10 TB: single server or small cluster. Under 1 PB: commodity
@@ -1322,7 +1322,7 @@ matter more than DB query performance. Always separate estimation by data type
 
 ---
 
-#### Q6 - What is the "back of the envelope" calculation for bandwidth?
+**[MID] Q6 - [CONCEPTUAL] What is the "back of the envelope" calculation for bandwidth?**
 
 ```
 Bandwidth = QPS * average_response_size
@@ -1345,7 +1345,7 @@ Example: Twitter timeline
        Without CDN: 224 Gbps from origin = infeasible.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Bandwidth estimation drives CDN decision.
 At hundreds of Gbps, CDN is mandatory. At tens of Gbps, CDN is strongly
@@ -1357,7 +1357,7 @@ Cost engineering is a real part of system design.
 
 ---
 
-#### Q7 - How do you reason about failure rates at scale?
+**[SENIOR] Q7 - [ARCHITECTURE] How do you reason about failure rates at scale?**
 
 At scale, rare events become frequent:
 
@@ -1388,7 +1388,7 @@ Software bug rate:
   1M QPS * (1 - 0.99999) = 10 errors/sec acceptable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Failure rate reasoning leads to the correct
 architecture conversation. "At our scale, this will fail daily - how do we

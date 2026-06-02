@@ -145,7 +145,7 @@ All four can occur in a single data center.
 Cross-DC connections add more partition probability.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Designing for Network Partition Tolerance example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The PACELC framework (extension of CAP):**
 
@@ -168,7 +168,7 @@ This is often more important than the partition scenario:
 partitions are rare, normal operation is constant.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Designing for Network Partition Tolerance example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Design patterns for partition tolerance:**
 
@@ -192,7 +192,7 @@ partitions are rare, normal operation is constant.
 // Financial: W=3, R=3 (no stale reads, sacrifices availability)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Designing for Network Partition Tolerance example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Pattern 2: Fencing and lease-based coordination**
 
@@ -225,7 +225,7 @@ public class LeaderWithFence {
 // from writing after partition heals.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Pattern 3: Read your writes with session affinity**
 
@@ -267,7 +267,7 @@ public class UserService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Pattern 4: Graceful degradation (serve stale with freshness signal)**
 
@@ -306,7 +306,7 @@ public class ProductService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **The key insight:**
 Partitions are not exceptional events to be "handled" - they
@@ -336,6 +336,12 @@ is a correctly partitioned-tolerant system.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DESIGNING FOR PARTITION TOLERANCE - COMPLETE EXAMPLE
@@ -453,7 +459,7 @@ public class OutboxWorker {
 }
 ```
 
-> **Code walkthrough:** The BAD `CheckoutBad` makes all calls
+> **Code walkthrough:** The BAD `CheckoutBad` makes all callsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > synchronously in one transaction without timeout handling. During
 > a partition: the thread hangs waiting for remote services, the
 > database transaction holds locks, and the user gets a timeout
@@ -635,7 +641,7 @@ even with AP orders because RESERVE step always contacts global
 inventory service before confirming.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -730,7 +736,7 @@ psql -c "SELECT * FROM replication_conflicts
          WHERE created_at > NOW() - INTERVAL '24 hours'"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check replication conflict markers example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 - Strict quorum: majority must be N/2 + 1, never N/2
@@ -765,7 +771,7 @@ grep "outbox processing\|retry scheduled" \
 # Spike in messages per second = retry storm
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spike in messages per second = retry storm example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: rate-limited retry processing:
 ```java
@@ -787,7 +793,7 @@ public class OutboxWorker {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spike in messages per second = retry storm example ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Also: exponential backoff WITH jitter on retries. Jitter
 (random delay) spreads retry load over time even when many
@@ -819,7 +825,7 @@ jstack <pid> | grep "WAITING\|BLOCKED" | wc -l
 # Spike in waiting threads = timeout exhaustion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spike in waiting threads = timeout exhaustion exampice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: timeout budget hierarchy:
 ```java
@@ -838,7 +844,7 @@ stub.callB(request);
 // If 2s already elapsed: C gets at most 4s (not another 4s)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spike in waiting threads = timeout exhaustion example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -857,10 +863,9 @@ stub.callB(request);
 
 ---
 
-**Q1 (Clarification) - What is the difference between a network
-partition and a node failure? Do you handle them differently?**
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between a network partition and a node failure? Do you handle them differently?**
 
-A: Technically distinct but practically similar from one node's
+Technically distinct but practically similar from one node's
 perspective:
 
 **Network partition:** two groups of nodes can still operate
@@ -907,10 +912,9 @@ distinction matters for system design decisions.
 
 ---
 
-**Q2 (Mechanism) - How does fencing prevent split-brain after
-a partition heals?**
+**[JUNIOR] Q2 - [MECHANISM] How does fencing prevent split-brain after a partition heals?**
 
-A: Fencing is a mechanism that prevents an "old" leader (that
+Fencing is a mechanism that prevents an "old" leader (that
 was active during a partition) from writing to shared state
 after the partition heals and a new leader has been elected.
 
@@ -942,7 +946,7 @@ Key: storage must check the fencing token
     Even a buggy old leader cannot write past the fence.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spike in waiting threads = timeout exhaustion example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Implementation in distributed lock:
 ```java
@@ -964,7 +968,7 @@ public class FencedLease {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spike in waiting threads = timeout exhaustion example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Real systems: ZooKeeper ephemeral nodes (session expiry = fencing),
 etcd leases (expired lease = fencing), Google Chubby (locks with
@@ -981,11 +985,9 @@ bypass the fence. The fence must be enforced at the storage level
 
 ---
 
-**Q3 (Mechanism) - How do you implement read-your-writes
-consistency across replicated databases during a partial
-partition?**
+**[JUNIOR] Q3 - [MECHANISM] How do you implement read-your-writes consistency across replicated databases during a partial partition?**
 
-A: Read-your-writes (RYW) consistency guarantees that a client
+Read-your-writes (RYW) consistency guarantees that a client
 always sees its own writes, even when reads land on different
 replicas. During a partial partition: some replicas may not have
 received recent writes.
@@ -1018,7 +1020,7 @@ public class SessionAwareRepository {
 // Under heavy load: primary becomes the bottleneck again.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Write timestamp propagation:**
 ```java
@@ -1043,7 +1045,7 @@ public Order getOrder(String id, long afterTimestamp) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. Causal consistency token (cookie-based):**
 Client stores write timestamps in a session cookie/header.
@@ -1068,8 +1070,7 @@ to primary. The granular control between "never stale" and
 
 ---
 
-**Q4 (Trade-off) - Compare synchronous replication vs. asynchronous
-replication for partition tolerance. When do you choose each?**
+**[MID] Q4 - [TRADE-OFF] Compare synchronous replication vs. asynchronous replication for partition tolerance. When do you choose each?**
 
 A:
 **Synchronous (strong consistency, CP during partition):**
@@ -1088,7 +1089,7 @@ Partition occurs (secondary unreachable):
   Availability: ZERO writes during partition
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to use synchronous:
 - Primary-secondary failover without data loss (RPO=0)
@@ -1100,7 +1101,7 @@ Cost:
 - Any slow secondary = slow primary
 
 **Asynchronous (eventual consistency, AP during partition):**
-```
+```plaintext
 Write flow:
   Primary: write to local storage
   Primary: return success to client (immediately)
@@ -1114,7 +1115,7 @@ Partition occurs (secondary unreachable):
   Availability: FULL writes during partition
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to use asynchronous:
 - High-throughput writes (analytics, logging)
@@ -1137,7 +1138,7 @@ Availability: writes continue if at least 1 secondary is reachable
 Consistency: at most 1 secondary lag behind primary on failover
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* semi-synchronous as the
 practical middle ground. Many candidates know sync vs. async.
@@ -1150,11 +1151,9 @@ not all). Most production database replication uses this pattern.
 
 ---
 
-**Q5 (Failure / Debugging) - A partition caused some orders
-to be processed twice (double charges). How do you diagnose
-and prevent this?**
+**[MID] Q5 - [DEBUGGING] A partition caused some orders to be processed twice (double charges). How do you diagnose and prevent this?**
 
-A: Systematic investigation and prevention:
+Systematic investigation and prevention:
 
 Step 1 - Determine scope:
 ```sql
@@ -1169,7 +1168,7 @@ ORDER BY total_charged DESC;
 -- Affected 43 orders during 14:00-14:35 window
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 2 - Trace the payment flow during the partition:
 ```bash
@@ -1181,7 +1180,7 @@ jaeger-query service=payment-worker \
 # = payment worker submitted payment twice
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Root cause: missing idempotency key:
 ```java
@@ -1200,7 +1199,7 @@ paymentClient.charge(
 // Payment provider: same key = same result (no double charge)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 4 - Secondary cause: outbox worker not deduplicated:
 ```sql
@@ -1220,7 +1219,7 @@ WHERE id = :eventId
 -- If UPDATE affects 0 rows: another worker claimed it → skip
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Step 5 - Verify idempotency key at payment provider level:
 Every payment provider (Stripe, Braintree) accepts an idempotency
@@ -1244,10 +1243,9 @@ standard for payment processing.
 
 ---
 
-**Q6 (Trade-off) - How do you design for partition tolerance
-in a multi-region active-active system?**
+**[SENIOR] Q6 - [TRADE-OFF] How do you design for partition tolerance in a multi-region active-active system?**
 
-A: Multi-region active-active is the most challenging partition
+Multi-region active-active is the most challenging partition
 scenario: both regions accept writes for the same data.
 
 **Design decisions:**
@@ -1266,7 +1264,7 @@ Partition impact: EU ↔ US partition:
     stale during partition (acceptable for analytics)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example deice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. CRDT-based shared state (for genuinely shared data):
 ```
@@ -1277,10 +1275,10 @@ Global user counter, likes, view counts:
   No conflict possible: CRDTs are designed for this
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 3. Conflict resolution for non-CRDT data:
-```
+```plaintext
 If both regions write to the same user's data:
   Option A: Last-writer-wins (timestamp from HLC)
     Risk: 1ms clock difference can lose a write
@@ -1296,7 +1294,7 @@ If both regions write to the same user's data:
     Conflict avoidance (not conflict resolution)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 4. Global sequence number (CP operations only):
 ```
@@ -1308,7 +1306,7 @@ For operations requiring total order across regions:
   This is the correct choice: consistency > availability for money
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = payment worker submitted payment twice example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* data partitioning by geography
 as the first design option. The best way to handle multi-region
@@ -1321,8 +1319,7 @@ geographic data partitioning avoids most conflicts entirely.
 
 ---
 
-**Q7 (Code) - Implement a circuit breaker for partition-tolerant
-service calls in Java.**
+**[SENIOR] Q7 - [SCENARIO] Implement a circuit breaker for partition-tolerant service calls in Java.**
 
 A:
 ```java
@@ -1411,7 +1408,7 @@ public class InventoryService {
 }
 ```
 
-> **Code walkthrough:** The `CircuitBreaker` implements the
+> **Code walkthrough:** The `CircuitBreaker` implements theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > standard three-state machine: CLOSED (normal operation),
 > OPEN (fast-failing), and HALF-OPEN (probing for recovery).
 > During a partition: after 5 consecutive failures, the circuit
@@ -1427,8 +1424,7 @@ public class InventoryService {
 
 ---
 
-**Q8 (System Design) - You are designing a distributed configuration
-service (like Consul or ZooKeeper). How do you handle partitions?**
+**[SENIOR] Q8 - [DESIGN] You are designing a distributed configuration service (like Consul or ZooKeeper). How do you handle partitions?**
 
 A:
 ```
@@ -1491,7 +1487,7 @@ Watch mechanism (active config push):
   On reconnect: gets current config + any missed changes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the startup resilience design.
 Many configuration service designs work well for running services
@@ -1504,10 +1500,9 @@ stale config rather than failing entirely.
 
 ---
 
-**Q9 (Production) - What did you learn from a production partition
-incident? How did you change your design?**
+**[SENIOR] Q9 - [SCENARIO] What did you learn from a production partition incident? How did you change your design?**
 
-A: Example structure:
+Example structure:
 
 "We had a production incident when an AWS security group rule
 change accidentally blocked traffic between our application VPC
@@ -1563,8 +1558,7 @@ that caused the original incident.
 
 ---
 
-**Q10 (Behavioral) - How do you explain the partition tolerance
-trade-off to a non-technical stakeholder?**
+**[SENIOR] Q10 - [BEHAVIORAL] How do you explain the partition tolerance trade-off to a non-technical stakeholder?**
 
 A:
 "Imagine your warehouse management system. We have two warehouses:
@@ -1619,10 +1613,9 @@ either CP or AP.
 
 ---
 
-**Q11 (Mechanism) - Explain how Google Spanner achieves
-external consistency during partitions.**
+**[SENIOR] Q11 - [MECHANISM] Explain how Google Spanner achieves external consistency during partitions.**
 
-A: Google Spanner uses TrueTime + two-phase commit with
+Google Spanner uses TrueTime + two-phase commit with
 deliberate commit-wait to achieve external consistency
 (the strongest consistency guarantee: all operations appear
 as if they occurred at a single point in global time).
@@ -1640,7 +1633,7 @@ TT.before(t): returns true if t is definitely in the future
   (TT.now().latest < t)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **External consistency protocol:**
 ```
@@ -1669,7 +1662,7 @@ Why this works during partitions:
   clock uncertainty, all timestamps are ordered correctly.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The partition behavior:**
 - Spanner is CP: during partition (if majority of Paxos group unreachable):
@@ -1690,8 +1683,7 @@ because this technique was previously considered impractical.
 
 ---
 
-**Q12 (Behavioral) - How do you test partition tolerance in
-production systems? What is your chaos engineering approach?**
+**[SENIOR] Q12 - [BEHAVIORAL] How do you test partition tolerance in production systems? What is your chaos engineering approach?**
 
 A:
 "Chaos engineering for partition tolerance requires simulating
@@ -1721,7 +1713,7 @@ void circuitBreakerOpensOnConnectionTimeout() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Level 2: Integration tests with Toxiproxy (per environment):
 ```bash
@@ -1737,7 +1729,7 @@ toxiproxy-cli toxic add cassandra -t latency \
 toxiproxy-cli toxic delete cassandra
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remove toxic example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Level 3: Canary chaos (weekly in staging):
 ```bash
@@ -1754,7 +1746,7 @@ iptables -A OUTPUT -p tcp \
 iptables -D OUTPUT -p tcp --dport 9042 -j DROP
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Auto-recovery: remove iptables rule, verify circuit closes example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Level 4: Production chaos (monthly, pre-planned):
 - Announced to on-call team

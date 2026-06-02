@@ -67,7 +67,7 @@ size (queue of boxes waiting for the truck)."
 ### 📘 Concept Explanation
 
 **Producer configuration profiles and trade-offs:**
-```
+```plaintext
 THROUGHPUT-OPTIMIZED PRODUCER:
 
   props.put("acks", "1");               // leader ack only (lower latency)
@@ -125,7 +125,7 @@ CONFIGURATION INTERACTION RULES:
 KEY CONFIGURATION REFERENCE:
 
   | Config                          | Default    | Notes                        |
-  |----------------------------------|------------|------------------------------|
+  |----------------------------------|------------|----------------------------...
   | acks                             | all (3.0+) | 0/1/all                      |
   | batch.size                       | 16384      | bytes per partition batch    |
   | linger.ms                        | 0          | wait before send             |
@@ -141,7 +141,7 @@ KEY CONFIGURATION REFERENCE:
   | max.in.flight.requests          | 5          | max unacked batches/broker   |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Producer Configuration example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -187,11 +187,11 @@ props.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, "120000");
 KafkaProducer<String, String> producer = new KafkaProducer<>(props);
 ```
 
-> **Code walkthrough:** Using `ProducerConfig` constants instead of string literals prevents
-> typos (IDE auto-complete and compile-time safety). `enable.idempotence=true` is the single
-> setting that sets all durability-related configs correctly. Explicit `batch.size`, `linger.ms`,
-> and `compression.type` overlay the throughput settings on top of the idempotent base. The
-> `delivery.timeout.ms` caps total retry duration: after 120 seconds of trying, the callback
+> **Code walkthrough:** Using `ProducerConfig` constants instead of string literice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> typos (IDE auto-complete and compile-time safety). `enable.idempotence=true` i
+> setting that sets all durability-related configs correctly. Explicit `batch.si
+> and `compression.type` overlay the throughput settings on top of the idempoten
+> `delivery.timeout.ms` caps total retry duration: after 120 seconds of trying, 
 > receives a `TimeoutException`.
 
 ---
@@ -199,50 +199,50 @@ KafkaProducer<String, String> producer = new KafkaProducer<>(props);
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Three key settings to understand: `acks` (durability: 0=none, 1=leader, all=full), `batch.size`
-> and `linger.ms` (throughput: larger + longer wait = bigger batches = faster), `enable.idempotence`
-> (prevents duplicate sends on retry). For most production use: `acks=all`, `enable.idempotence=true`,
+> Three key settings to understand: `acks` (durability: 0=none, 1=leader, all=fu
+> and `linger.ms` (throughput: larger + longer wait = bigger batches = faster), 
+> (prevents duplicate sends on retry). For most production use: `acks=all`, `ena
 > `compression.type=snappy`, `linger.ms=5`.
 
 ---
 
 **Senior / Staff (5+ years):**
-> `delivery.timeout.ms` vs `request.timeout.ms` vs `retries`: the interaction matters. A send may
-> retry multiple times, each attempt governed by `request.timeout.ms`. The total time budget across
-> all retries: `delivery.timeout.ms`. Setting `retries=MAX_INT` without `delivery.timeout.ms`: the
-> producer retries forever if the broker is down. For real systems: always set `delivery.timeout.ms`
-> to cap the failure window. Application: use the callback's `TimeoutException` to route to a DLQ
-> or trigger an alert. Also: `max.request.size` and `message.max.bytes` (broker setting) must align.
-> A producer configured for 10MB messages against a broker with 1MB max: produces
-> `RecordTooLargeException`. Check: `kafka-configs.sh --describe --broker N` for broker-level limits.
+> `delivery.timeout.ms` vs `request.timeout.ms` vs `retries`: the interaction ma
+> retry multiple times, each attempt governed by `request.timeout.ms`. The total
+> all retries: `delivery.timeout.ms`. Setting `retries=MAX_INT` without `deliver
+> producer retries forever if the broker is down. For real systems: always set `
+> to cap the failure window. Application: use the callback's `TimeoutException` 
+> or trigger an alert. Also: `max.request.size` and `message.max.bytes` (broker 
+> A producer configured for 10MB messages against a broker with 1MB max: produce
+> `RecordTooLargeException`. Check: `kafka-configs.sh --describe --broker N` for
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-**Misconception: "enable.idempotence=true guarantees exactly-once delivery end-to-end."**
-`enable.idempotence=true` provides exactly-once delivery to a single Kafka partition within a
-single producer session. It does NOT provide exactly-once end-to-end. The idempotent producer
-deduplicates retried sends using a producer ID (PID) + sequence number per partition. If the
+**Misconception: "enable.idempotence=true guarantees exactly-once delivery end-t
+`enable.idempotence=true` provides exactly-once delivery to a single Kafka parti
+single producer session. It does NOT provide exactly-once end-to-end. The idempo
+deduplicates retried sends using a producer ID (PID) + sequence number per parti
 producer process restarts: the PID is reset. The broker has no memory of the previous PID. A
-record sent before restart (and potentially committed to Kafka) may be re-sent after restart
-(new PID, different sequence) and appear as a duplicate. For cross-partition or cross-session
-exactly-once: use Kafka Transactions (`transactional.id` + `initTransactions()`, `beginTransaction()`,
-`commitTransaction()`). For end-to-end exactly-once including consumer: use Kafka Streams or
+record sent before restart (and potentially committed to Kafka) may be re-sent a
+(new PID, different sequence) and appear as a duplicate. For cross-partition or 
+exactly-once: use Kafka Transactions (`transactional.id` + `initTransactions()`,
+`commitTransaction()`). For end-to-end exactly-once including consumer: use Kafk
 a transactional consumer+producer pattern with `isolation.level=read_committed`.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Config Dimension | Low Setting | High Setting | Trade-off |
-|---|---|---|---|
-| `acks` | 0 (none) | all (ISR) | Throughput vs durability |
-| `linger.ms` | 0 ms (no wait) | 20 ms | Latency vs batch fill |
-| `batch.size` | 1 KB | 256 KB | Memory vs fewer requests |
-| `compression.type` | none | zstd | CPU vs bandwidth |
-| `retries` | 0 | MAX_INT | Risk of loss vs duplicate risk |
-| `max.in.flight` | 1 (ordered) | 5 (pipelined) | Throughput vs ordering |
+| Config Dimension| Low Setting| High Setting| Trade-off|
+|------------------|--------------|-------------|------------------------------|
+| `acks`| 0 (none)| all (ISR)| Throughput vs durability|
+| `linger.ms`| 0 ms (no wait)| 20 ms| Latency vs batch fill|
+| `batch.size`| 1 KB| 256 KB| Memory vs fewer requests|
+| `compression.type`| none| zstd| CPU vs bandwidth|
+| `retries`| 0| MAX_INT| Risk of loss vs duplicate risk|
+| `max.in.flight`| 1 (ordered)| 5 (pipelined)| Throughput vs ordering|
 
 ---
 
@@ -274,10 +274,10 @@ flowchart TD
     Q --> Dur[Durability-first]
 
     Lat --> L1["batch.size=1\nlinger.ms=0\nacks=1\ncompression=none"]
-    Thr --> T1["batch.size=64KB\nlinger.ms=20ms\nacks=1\ncompression=lz4\nbuffer.memory=64MB"]
-    Dur --> D1["acks=all\nenable.idempotence=true\nmin.insync.replicas=2\ndelivery.timeout.ms=120s"]
+    Thr --> T1["batch.size=64KB\nlinger.ms=20ms\nacks=1\ncompression=lz4\nbuffer
+    Dur --> D1["acks=all\nenable.idempotence=true\nmin.insync.replicas=2\ndelive
 
-    D1 --> D2[Add throughput on top:\nbatch.size=32KB\nlinger.ms=10ms\ncompression=snappy]
+    D1 --> D2[Add throughput on top:\nbatch.size=32KB\nlinger.ms=10ms\ncompressi
 ```
 
 > **Diagram walkthrough:** The three producer profiles map to distinct configuration clusters.
@@ -316,10 +316,10 @@ Fix:
   
   Long-term: use the same key for all events of the same entity:
     new ProducerRecord<>("orders", orderId.toString(), event)
-    All events for orderId=42: same key -> same partition -> ordered within partition.
+    All events for orderId=42: same key -> same partition -> ordered within...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -414,13 +414,13 @@ agreement without breaking existing readers."
 ### 📘 Concept Explanation
 
 **Serialization options and schema evolution:**
-```
+```plaintext
 BUILT-IN SERIALIZERS (kafka-clients library):
 
   StringSerializer / StringDeserializer:
     Converts String to/from bytes (UTF-8).
     Producer: produces JSON strings as the value:
-      new ProducerRecord<>("orders", orderId, objectMapper.writeValueAsString(order))
+      new ProducerRecord<>("orders", orderId, objectMapper.writeValueAsString(o...
     Consumer: parse the JSON string:
       Order order = objectMapper.readValue(record.value(), Order.class)
     Trade-off: no schema enforcement, full field names in every message.
@@ -498,7 +498,7 @@ SCHEMA EVOLUTION (AVRO COMPATIBILITY RULES):
     Safe migration: deploy consumers first, then producers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -552,11 +552,11 @@ public void handleOrder(Order order) {  // Auto-deserialized via KafkaAvroDeseri
 }
 ```
 
-> **Code walkthrough:** The Avro producer serializes the `Order` (Avro-generated Java class) to
-> binary, prepends the 5-byte schema ID header, and sends to Kafka. The Schema Registry checks
-> compatibility on registration - a breaking schema change fails at deploy time, not at runtime.
-> The consumer uses `KafkaAvroDeserializer` which reads the schema ID from the message, fetches
-> the schema from the Registry, and deserializes back to the `Order` class. Schema evolution is
+> **Code walkthrough:** The Avro producer serializes the `Order` (Avro-generatedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> binary, prepends the 5-byte schema ID header, and sends to Kafka. The Schema R
+> compatibility on registration - a breaking schema change fails at deploy time,
+> The consumer uses `KafkaAvroDeserializer` which reads the schema ID from the m
+> the schema from the Registry, and deserializes back to the `Order` class. Sche
 > validated centrally.
 
 ---
@@ -564,21 +564,21 @@ public void handleOrder(Order order) {  // Auto-deserialized via KafkaAvroDeseri
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Kafka stores bytes. You need a serializer (producer) and deserializer (consumer). StringSerializer:
-> for simple text or JSON. Avro + Schema Registry: for typed events in multi-team environments.
-> Schema Registry: stores Avro schemas and validates compatibility. Add fields with defaults: safe.
+> Kafka stores bytes. You need a serializer (producer) and deserializer (consume
+> for simple text or JSON. Avro + Schema Registry: for typed events in multi-tea
+> Schema Registry: stores Avro schemas and validates compatibility. Add fields w
 > Rename fields: breaking change.
 
 ---
 
 **Senior / Staff (5+ years):**
-> Schema Registry compatibility mode: choose `FULL` (backwards + forwards) for inter-team topics
-> where you cannot coordinate producer and consumer deployments simultaneously. FULL: deploy producer
-> or consumer first, in either order. BACKWARD only (default): must deploy consumers first. The
-> schema subject naming: `{topic}-key` and `{topic}-value` (Confluent convention). Custom: use
-> `TopicNameStrategy` vs `RecordNameStrategy` vs `TopicRecordNameStrategy`. For event sourcing:
-> use `RecordNameStrategy` (schema tied to the event type, not the topic) to allow multiple event
-> types on the same topic. For strict typing (one type per topic): `TopicNameStrategy` (default).
+> Schema Registry compatibility mode: choose `FULL` (backwards + forwards) for i
+> where you cannot coordinate producer and consumer deployments simultaneously. 
+> or consumer first, in either order. BACKWARD only (default): must deploy consu
+> schema subject naming: `{topic}-key` and `{topic}-value` (Confluent convention
+> `TopicNameStrategy` vs `RecordNameStrategy` vs `TopicRecordNameStrategy`. For 
+> use `RecordNameStrategy` (schema tied to the event type, not the topic) to all
+> types on the same topic. For strict typing (one type per topic): `TopicNameStr
 
 ---
 
@@ -588,7 +588,7 @@ public void handleOrder(Order order) {  // Auto-deserialized via KafkaAvroDeseri
 Adding a field with a default is backwards compatible: old consumers reading new messages see the
 default. But there is a subtle issue with Avro's union type: `["null", "Type"]`. Adding a union
 field is safe. But REORDERING union members (`["null", "int"]` to `["int", "null"]`) is a breaking
-change - Avro uses the first matching type in the union. Also: renaming a field is breaking unless
+change - Avro uses the first matching type in the union. Also: renaming a field 
 you add an alias (`"aliases": ["oldFieldName"]`). Aliases in Avro: the new schema lists old names
 as aliases, allowing it to read data written with the old field name. Without aliases: renaming
 = breaking change. Schema Registry `FULL` compatibility mode: catches these cases at schema
@@ -599,12 +599,12 @@ registration time and rejects breaking changes. Production rule: always test sch
 
 ### ⚖️ Comparison Table
 
-| Format | Size | Schema | Evolution | Registry Needed | Use Case |
-|---|---|---|---|---|---|
-| String/JSON | Large | None | Flexible, risky | No | Prototyping, low volume |
-| Avro | Small | Strong | Field-level rules | Yes | High-volume, multi-team |
-| Protobuf | Very small | Strong | Field-number rules | Optional | Google ecosystem, gRPC |
-| Byte array | - | None | Manual | No | Raw binary, custom codecs |
+| Format| Size| Schema| Evolution| Registry Needed| Use Case|
+|---|------|------|------------------|---------------|-------------------------|
+| String/JSON| Large| None| Flexible, risky| No| Prototyping, low volume|
+| Avro| Small| Strong| Field-level rules| Yes| High-volume, multi-team|
+| Protobuf| Very small| Strong| Field-number rules| Optional| Google ecosystem, 
+| Byte array| -| None| Manual| No| Raw binary, custom codecs|
 
 ---
 
@@ -669,7 +669,7 @@ sequenceDiagram
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: SerializationException on consumer after schema update.**
-```
+```plaintext
 Symptom: consumer throws:
   "org.apache.kafka.common.errors.SerializationException:
    Error deserializing Avro message for id -1"
@@ -701,7 +701,7 @@ Fix:
   4. Set schema.registry.url to a resilient URL (load-balanced registry cluster).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

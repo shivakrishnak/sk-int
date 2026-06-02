@@ -127,7 +127,7 @@ L3 Construct (pattern-level):
   -> Opinionated: HTTPS redirect, health checks, etc.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CloudFormation and CDK example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -165,7 +165,7 @@ Resources:
   # ... 50+ more lines for API Gateway, DynamoDB, etc.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 80+ lines for a simple Lambda + API Gateway example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 ```typescript
 // GOOD: CDK TypeScript - same infrastructure in ~20 lines
@@ -213,7 +213,7 @@ export class OrderStack extends cdk.Stack {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 80+ lines for a simple Lambda + API Gateway example demonstrates TypeScript type system behavior. **KEY MECHANISM:** TypeScript erases all type information at compile time; only JavaScript runs in production. **WHY IT MATTERS:** type assertions (as T) bypass the type checker - the runtime error still occurs even with no TS error. **TAKEAWAY: use type guards (typeof, instanceof, is) for safe narrowing instead of type assertions.**
 
 ```bash
 # CDK workflow:
@@ -247,7 +247,7 @@ aws cloudformation describe-stack-resource-drifts \
 # Shows: which resources were changed and how
 ```
 
-> **Code walkthrough:** The raw CloudFormation YAML for
+> **Code walkthrough:** The raw CloudFormation YAML forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > even a simple Lambda + API Gateway setup exceeds 80
 > lines with explicit IAM role, trust policies, managed
 > policies, and deployment configuration. The CDK version
@@ -354,7 +354,7 @@ aws cloudformation continue-update-rollback \
 # WARNING: skipped resource state is unknown
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WARNING: skipped resource state is unknown example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix:* Use `continue-update-rollback` with
 `--resources-to-skip` to unstick the stack. Then
@@ -470,6 +470,128 @@ flowchart LR
 *(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
 
 
+
+---
+
+### 🎯 Interview Deep-Dive
+
+---
+
+**[MID] Q1 - [DEBUGGING] A service using CloudFormation and CDK is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for CloudFormation and CDK beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for CloudFormation and CDK issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For CloudFormation and CDK specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare CloudFormation and CDK to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS CloudFormation and CDK service landscape and can make informed architectural decisions.
+
+CloudFormation and CDK has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives.
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have).
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using CloudFormation and CDK for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to CloudFormation and CDK.
+
+Multi-region architecture for CloudFormation and CDK: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems.
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance).
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What CloudFormation and CDK cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* CloudFormation and CDK cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in CloudFormation and CDK: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs.
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using CloudFormation and CDK in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach CloudFormation and CDK with security as a first-class concern, not an afterthought.
+
+Top security risks for CloudFormation and CDK: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for CloudFormation and CDK resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with CloudFormation and CDK: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for CloudFormation and CDK configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads.
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving CloudFormation and CDK that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world CloudFormation and CDK experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes).
+
+Strong answers include: specific CloudFormation and CDK service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient CloudFormation and CDK architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for CloudFormation and CDK peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency).
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled.
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain CloudFormation and CDK to someone who has never used AWS before. What problem does it solve, and when would a startup first need it?**
+
+*Why they ask:* Tests understanding of CloudFormation and CDK core value proposition beyond configuration options.
+
+CloudFormation and CDK exists because building the equivalent infrastructure yourself requires significant engineering time, ongoing maintenance, and operational expertise. AWS manages the undifferentiated heavy lifting so engineering teams can focus on product differentiation.
+
+For a startup: CloudFormation and CDK makes sense when the cost of building or managing the equivalent is higher than the CloudFormation and CDK bill. Early stage: use managed services liberally (S3, RDS, SQS) to move fast. Growth stage: optimize selectively where costs are significant and the team has the expertise to self-manage. Mature stage: strategic decisions about build vs. buy for each component.
+
+The mental model: CloudFormation and CDK is infrastructure you rent rather than infrastructure you build and maintain. Renting is more expensive per unit but cheaper in total when you factor in engineering time.
+
+*What separates good from great:* Understanding both when to use CloudFormation and CDK and when to NOT use it (when it's cheaper or simpler to self-manage).
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] Your organization is considering moving from CloudFormation and CDK to a self-managed equivalent (or vice versa). What is your decision framework and what would trigger the migration?**
+
+*Why they ask:* Tests strategic architectural thinking about CloudFormation and CDK managed vs self-managed trade-offs.
+
+Decision framework: (1) Cost crossover - calculate monthly CloudFormation and CDK bill vs cost of self-managed (engineering FTE + infrastructure + ops tooling). Self-managed typically wins at very high scale. (2) Differentiation - does managing this infrastructure provide competitive advantage? If no, managed service is better. (3) Team expertise - does the team have deep expertise to operate self-managed reliably? Managed services reduce operational risk.
+
+Triggers for migrating away from CloudFormation and CDK: feature limitation blocking a critical requirement, cost exceeding budget with no optimization path, compliance requirement incompatible with managed service model.
+
+Migration risk: any migration of CloudFormation and CDK in production requires a rollback plan, traffic cutover strategy (canary or blue-green), and parallel-run period to validate behavior before full cutover.
+
+*What separates good from great:* Doing the TCO analysis in a spreadsheet before the architecture review, not during it.
 # EKS Kubernetes on AWS
 
 **Interview Weight:** ★★☆ - Container orchestration.
@@ -573,7 +695,7 @@ With IRSA:
   -> Different pods on the same node have different credentials
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This EKS Kubernetes on AWS example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -600,7 +722,7 @@ spec:
         # Relies on EC2 instance profile (node-level)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If public API is compromised: all pod credentials leak example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 ```yaml
 # GOOD: IRSA for per-pod IAM credentials
@@ -627,7 +749,7 @@ metadata:
       arn:aws:iam::123456789012:role/OrderApiRole
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 2: Create Kubernetes ServiceAccount with annotation: example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 ```yaml
 # Step 3: Use ServiceAccount in Deployment:
@@ -657,7 +779,7 @@ spec:
           periodSeconds: 10
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 3: Use ServiceAccount in Deployment: example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 ```bash
 # Create EKS cluster (managed node group):
@@ -700,7 +822,7 @@ aws eks describe-nodegroup \
   --nodegroup-name standard-workers
 ```
 
-> **Code walkthrough:** The BAD Deployment uses no
+> **Code walkthrough:** The BAD Deployment uses noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ServiceAccount, inheriting the EC2 node's instance
 > profile - all pods on that node share credentials.
 > A compromised public API pod could use those credentials
@@ -820,7 +942,7 @@ aws eks describe-nodegroup \
 # If desiredSize = maxSize: at limit, cannot scale up
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If desiredSize = maxSize: at limit, cannot scale up example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix:* Increase node group `maxSize` and let autoscaler
 provision new nodes. Or add more node groups. Or reduce
@@ -920,6 +1042,122 @@ flowchart TB
 
 ### 🎯 Interview Deep-Dive
 
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] A service using EKS Kubernetes on AWS is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for EKS Kubernetes on AWS beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for EKS Kubernetes on AWS issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For EKS Kubernetes on AWS specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] Compare EKS Kubernetes on AWS to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS EKS Kubernetes on AWS service landscape and can make informed architectural decisions.
+
+EKS Kubernetes on AWS has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (If desiredSize = maxSize: at l, Q9)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (If desiredSize = maxSize: at l, Q9)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+**[MID] Q1 - [DEBUGGING] A service using EKS Kubernetes on AWS is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for EKS Kubernetes on AWS beyond 'check CloudWatch logs'. (If desiredSize = maxSize: at l, Q1)
+
+Diagnostic sequence for EKS Kubernetes on AWS issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes. (If desiredSize = maxSize: at l, Q1)
+
+For EKS Kubernetes on AWS specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue. (If desiredSize = maxSize: at l, Q1)
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare EKS Kubernetes on AWS to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS EKS Kubernetes on AWS service landscape and can make informed architectural decisions. (If desiredSize = maxSize: at l, Q2)
+
+EKS Kubernetes on AWS has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads. (If desiredSize = maxSize: at l, Q2)
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (If desiredSize = maxSize: at l, Q2)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (If desiredSize = maxSize: at l, Q2)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using EKS Kubernetes on AWS for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to EKS Kubernetes on AWS.
+
+Multi-region architecture for EKS Kubernetes on AWS: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems. (If desiredSize = maxSize: at l, Q3)
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance). (If desiredSize = maxSize: at l, Q3)
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What EKS Kubernetes on AWS cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* EKS Kubernetes on AWS cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in EKS Kubernetes on AWS: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs. (If desiredSize = maxSize: at l, Q4)
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using EKS Kubernetes on AWS in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach EKS Kubernetes on AWS with security as a first-class concern, not an afterthought.
+
+Top security risks for EKS Kubernetes on AWS: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for EKS Kubernetes on AWS resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with EKS Kubernetes on AWS: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for EKS Kubernetes on AWS configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads. (If desiredSize = maxSize: at l, Q5)
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving EKS Kubernetes on AWS that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world EKS Kubernetes on AWS experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes). (If desiredSize = maxSize: at l, Q6)
+
+Strong answers include: specific EKS Kubernetes on AWS service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient EKS Kubernetes on AWS architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for EKS Kubernetes on AWS peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency). (If desiredSize = maxSize: at l, Q7)
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled. (If desiredSize = maxSize: at l, Q7)
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
 > **Timing:** 5-7 minutes per question for ★★☆ keywords.
 
 | Type | Questions |
@@ -983,7 +1221,7 @@ aws cloudformation describe-change-set \
 aws cloudformation execute-change-set ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Only execute after review: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* Combine change sets
 with stack policies. A stack policy can prevent
@@ -1069,7 +1307,7 @@ kubectl get events \
 # Shows OOMKilling events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows OOMKilling events example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 2: Check memory usage vs limit:**
 ```bash
@@ -1083,7 +1321,7 @@ kubectl get pod <pod-name> -o yaml \
 # If limit: 512Mi and usage is consistently 500Mi+: too tight
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If limit: 512Mi and usage is consistently 500Mi+: too tight example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Step 3: Analyze memory growth:**
 ```bash
@@ -1100,7 +1338,7 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Maximum ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If it stays stable but above limit: limit too low example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Fixes (in order):**
 
@@ -1114,7 +1352,7 @@ aws cloudwatch get-metric-statistics \
        memory: "1Gi"  # Was 512Mi, increase to 1Gi
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If it stays stable but above limit: limit too low example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 2. Memory leak: profile the application.
    For Java: `-XX:+HeapDumpOnOutOfMemoryError`
@@ -1221,7 +1459,7 @@ is "SSH into server, run script." Any change is risky.
    # No recreation - resource is "adopted"
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If it stays stable but above limit: limit too low example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 4. CDK for all new infrastructure. Shared constructs
    library for company standards (logging, encryption,
@@ -1285,7 +1523,7 @@ Rollback:
   -> Previous image version running in < 60s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If it stays stable but above limit: limit too low example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 **Health checks (prevent bad rollouts):**
 
@@ -1302,7 +1540,7 @@ readinessProbe:
 # -> Prevents complete deployment failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Prevents complete deployment failure example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 *What separates good from great:* `maxUnavailable: 0`
 is the zero-downtime configuration. It means:
@@ -1340,7 +1578,7 @@ before new ones are ready, causing brief downtime.
        pods: "50"
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Prevents complete deployment failure example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 2. Network isolation (Network Policies):
    Tenant A pods cannot connect to Tenant B pods.
@@ -1356,7 +1594,7 @@ before new ones are ready, causing brief downtime.
                name: tenant-a  # Only from same namespace
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Prevents complete deployment failure example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 3. IRSA per tenant:
    Each tenant has a separate Service Account -> IAM Role.

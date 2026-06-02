@@ -1,6 +1,6 @@
 ---
 title: "DevOps CI/CD"
-nav_order: 11
+nav_order: 74
 has_children: true
 ---
 

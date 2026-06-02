@@ -123,7 +123,7 @@ componentA.setComponentC(componentC)  // A knows C
 componentB.setComponentA(componentA)  // B knows A (circular!)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Mediator Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Components only know the `Mediator` interface. They never call each other
@@ -220,7 +220,7 @@ public class AnalyticsListener {  // Add without ANY existing changes
 // Adding another listener: add a class. Zero changes to OrderService.
 ```
 
-> **Code walkthrough:** `OrderService` depends only on `ApplicationEventPublisher`
+> **Code walkthrough:** `OrderService` depends only on `ApplicationEventPublisher`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (the Mediator). Each listener depends only on the event type and its
 > own service. No component knows any other component. Adding
 > `FraudDetectionListener`: create the class, annotate with `@Component`
@@ -263,7 +263,7 @@ PlaceOrderResult result = commandBus.dispatch(
 // Caller does not know PlaceOrderCommandHandler exists
 ```
 
-> **Code walkthrough:** The `CommandBus` is the Mediator. Callers
+> **Code walkthrough:** The `CommandBus` is the Mediator. Callersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `dispatch()` a command object without knowing which handler processes it.
 > The mediator routes to the correct handler via the command type map.
 > Adding a new command (`CancelOrderCommand`) means adding a new
@@ -605,7 +605,7 @@ for (Element e : elements) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Visitor Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Double dispatch explained:**
 
@@ -720,7 +720,7 @@ PrintVisitor print = new PrintVisitor();
 System.out.println(expr.accept(print)); // (3.0 + (4.0 + 5.0))
 ```
 
-> **Code walkthrough:** Adding a new operation (`TypeCheckVisitor`,
+> **Code walkthrough:** Adding a new operation (`TypeCheckVisitor`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `OptimizeVisitor`): create one new class implementing `ExpressionVisitor`.
 > Zero changes to `NumberLiteral` or `Addition`. The double dispatch:
 > `expr.accept(eval)` calls `Addition.accept()` (dispatched by element type).
@@ -755,7 +755,7 @@ public static String print(Expression expr) {
 }
 ```
 
-> **Code walkthrough:** Java 21 sealed classes + pattern matching `switch`
+> **Code walkthrough:** Java 21 sealed classes + pattern matching `switch`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > replaces Visitor idiomatically. The `sealed` keyword means the compiler
 > knows all subtypes; the exhaustive `switch` checks that all cases are
 > covered at compile time. Adding a new element type: add a new `permits`

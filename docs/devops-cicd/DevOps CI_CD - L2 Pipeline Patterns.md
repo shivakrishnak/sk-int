@@ -126,7 +126,7 @@ myapp/
   pom.xml
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pipeline as Code example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The CI tool detects changes to the pipeline file or application
 code and executes the pipeline as defined in the file. The file
@@ -149,7 +149,7 @@ standardPipeline {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Pipeline as Code example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The pipeline is part of the software system. It must be versioned,
@@ -204,7 +204,7 @@ the pipeline configuration alongside the code.
 // Invisible to the development team.
 ```
 
-> **Code walkthrough:** The core problem with GUI-configured pipelines
+> **Code walkthrough:** The core problem with GUI-configured pipelines is that configuration is opaque and version control is impossible. **KEY MECHANISM:** GUI state is stored in the CI server database, not source code; it cannot be reviewed, rolled back, or replicated in a new environment. **WHY IT MATTERS:** pipelines become snowflakes - unique, fragile, and impossible to document in code review. **WHAT BREAKS:** new environments cannot reproduce the pipeline; on-call engineers cannot understand pipeline logic from the repository alone. **TAKEAWAY:** all pipeline configuration belongs in the source repository as code - configuration drift is a reliability risk.
 > is invisibility. No developer sees the pipeline configuration change
 > in a pull request. No code review ensures the security scan step
 > was not accidentally removed. No audit log shows who removed the
@@ -338,7 +338,7 @@ pipeline {
 }
 ```
 
-> **Code walkthrough:** This Jenkinsfile represents all CI/CD logic
+> **Code walkthrough:** This Jenkinsfile represents all CI/CD logicice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for the service in one reviewable, versionable file. The Docker
 > agent (`maven:3.9-eclipse-temurin-21`) gives isolated, reproducible
 > build environments without global tool installation. The `parallel`
@@ -574,7 +574,7 @@ company-pipeline-library/
     config-template.yaml          # static resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Each file in `vars/` becomes a callable step:
 ```groovy
@@ -589,7 +589,7 @@ def call(Map config = [:]) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Services import with a version pin:
 ```groovy
@@ -605,7 +605,7 @@ pipeline {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Understanding the governance model.
 The shared library repository should have: the same code review
@@ -694,7 +694,7 @@ def call(String imageName, String imageTag) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2: Update the shared library version (e.g., from v3.1.0 to
 v3.2.0) and add SBOM generation to the standard build template.
@@ -733,7 +733,7 @@ pipeline-as-code formats allow condition-based execution:
 # GitHub Actions: only runs on main
 if: github.ref == 'refs/heads/main'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitHub Actions: only runs on main example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 A step that only runs on main might be a prerequisite for a later
 step that also runs on PRs. If staging deployment creates a test
@@ -892,7 +892,7 @@ For Jenkins shared libraries, the testing approach is more mature:
       }
   }
   ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitHub Actions: only runs on main example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Integration tests: a separate "pipeline test" environment that
   runs test versions of the pipeline against a dummy application.
@@ -926,6 +926,8 @@ path - the sequence of jobs that determines total pipeline time.
 Bottleneck 1: Dependency download (most common). Symptom: the
 first 3-5 minutes of every build are Maven/npm downloading
 dependencies. Fix: add caching.
+
+{% raw %}
 ```yaml
 - uses: actions/cache@v3
   with:
@@ -933,7 +935,8 @@ dependencies. Fix: add caching.
     key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
     restore-keys: ${{ runner.os }}-m2-
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+{% endraw %}
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This alone typically cuts 5-10 minutes from every build.
 
@@ -958,7 +961,7 @@ use BuildKit with GitHub Actions cache:
       type=gha,mode=max
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Target metrics: under 5 minutes for unit test feedback, under
 10 minutes for full CI pipeline. These are achievable for most
@@ -1196,7 +1199,7 @@ class OrderServiceIntegrationTest {
 }
 ```
 
-> **Code walkthrough:** This anti-pattern embeds simple logic tests
+> **Code walkthrough:** This anti-pattern embeds simple logic testsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > inside an integration test harness. Spring Boot context startup
 > takes 15-30 seconds. Multiplied by 200 such tests, this creates
 > a test suite that takes over 100 minutes. The logic being tested
@@ -1279,8 +1282,9 @@ class OrderRepositoryIT {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
+{% raw %}
 ```yaml
 # CI pipeline separates unit tests from integration tests
 jobs:
@@ -1310,8 +1314,9 @@ jobs:
       - run: mvn -B test -Dtest="*IT" -DfailIfNoTests=false
       # Completes in < 10 minutes
 ```
+{% endraw %}
 
-> **Code walkthrough:** The unit test uses no Spring annotations -
+> **Code walkthrough:** The unit test uses no Spring annotations -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it instantiates `OrderService` directly with constructor injection.
 > No context startup overhead. Runs in milliseconds. The integration
 > test uses `@Testcontainers` to spin up a real PostgreSQL container
@@ -1385,6 +1390,44 @@ speed-to-coverage ratio. Use integration tests (Testcontainers) for
 tests that require database or message broker interactions. Use E2E
 tests only for critical user journeys that cannot be validated at
 lower levels.
+
+---
+
+### ⚠️ Common Misconceptions
+
+---
+
+**Misconception 1 - "More tests always means better quality"**
+
+More tests mean more maintenance burden and slower pipelines if the
+tests are at the wrong level. A codebase with 10,000 slow E2E tests
+and 500 unit tests has worse coverage confidence than one with 8,000
+unit tests, 1,500 integration tests, and 200 E2E tests - because the
+10,000 E2E tests are fragile, slow to run, and hard to debug.
+Quality comes from tests at the right level, not test count.
+
+---
+
+**Misconception 2 - "Integration tests catch more real bugs than unit tests"**
+
+Integration tests catch integration bugs (wiring, configuration,
+protocol mismatches). Unit tests catch logic bugs. Both are necessary.
+The misconception is that logic bugs are better caught by integration
+tests - in practice, a logic bug buried inside 5 service calls and 3
+database queries takes 10 minutes to reproduce as an integration test
+and 50 milliseconds to reproduce as a unit test. Isolate logic bugs
+with unit tests; validate assembly with integration tests.
+
+---
+
+**Misconception 3 - "A passing CI pipeline means the code is correct"**
+
+CI validates that tests pass, not that code is correct. Tests only
+cover the scenarios the author imagined. Mutation testing reveals
+that most unit test suites have 30-60% effective coverage (tests
+that actually detect mutations) even when line coverage shows 80%+.
+A CI pipeline passing is a necessary but not sufficient condition
+for correctness.
 
 ---
 
@@ -1553,6 +1596,8 @@ Better: design tests to not require a full context at all.
 
 Step 4: Parallelize across multiple CI runners. GitHub Actions
 matrix strategy can shard the test suite:
+
+{% raw %}
 ```yaml
 strategy:
   matrix:
@@ -1562,7 +1607,8 @@ steps:
       -Dsurefire.useFile=false \
       -Dgroups="shard-${{ matrix.shard }}"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+{% endraw %}
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Four parallel shards of 500 tests: each runs 125 tests, ideally
 cutting the time to under 12 minutes.
@@ -1792,7 +1838,7 @@ void callsTheMethod() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Mutation testing would show 0% kill rate for this test - every
 mutation survives because there are no assertions.

@@ -144,17 +144,23 @@ IMAGE IDENTIFICATION:
   image: myapp@sha256:a1b2c3...  # pinned digest
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In Kubernetes: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD Dockerfile wastes cache on every
+> **Code walkthrough:** The BAD Dockerfile wastes cache on everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > source code change by copying all files before installing
 > dependencies. The GOOD version separates dependency installation
 > from source code copying, so the expensive `npm install` layer is
 > only re-run when `package.json` changes.
+
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```dockerfile
 # BAD: package install re-runs on every code change:
@@ -173,7 +179,7 @@ COPY . .
 CMD ["node", "server.js"]
 ```
 
-> **Code walkthrough:** `COPY package.json package-lock.json ./`
+> **Code walkthrough:** `COPY package.json package-lock.json ./`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > runs first and rarely changes. `RUN npm ci` (faster than
 > `npm install` for CI: uses lock file exactly) is cached until
 > those files change. `COPY . .` copies source code and busts only
@@ -280,7 +286,7 @@ block-beta
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Image is unexpectedly large despite deleting files.**
-```
+```plaintext
 Symptom: docker images shows 2GB image despite cleanup in Dockerfile.
 
 Root cause: file deleted in a separate RUN layer. The deletion adds
@@ -315,7 +321,7 @@ Fix:
   # Final image: only nginx + built files. No node_modules. ~50MB vs ~500MB.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Final image: only nginx + built files. No node_modules. ~50MB vs ~500MB. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -444,7 +450,7 @@ instructions. The result: a sealed, reproducible container."
 ### 📘 Concept Explanation
 
 **Dockerfile instructions, exec vs shell form, signals:**
-```
+```plaintext
 KEY DOCKERFILE INSTRUCTIONS:
 
   FROM node:18-alpine        # Base image. First instruction (usually).
@@ -535,15 +541,21 @@ NON-ROOT USER (SECURITY):
   # With .dockerignore: only source files sent. Faster builds.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This With .dockerignore: only source files sent. Faster builds. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A production-grade Node.js Dockerfile demonstrates
+> **Code walkthrough:** A production-grade Node.js Dockerfile demonstratesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > multi-stage build, non-root user, layer cache optimization, and
 > signal handling.
+
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```dockerfile
 # BAD: runs as root, large image, poor cache:
@@ -579,7 +591,7 @@ EXPOSE 3000
 CMD ["node", "server.js"]
 ```
 
-> **Code walkthrough:** The multi-stage build separates dependency
+> **Code walkthrough:** The multi-stage build separates dependencyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > installation (with build tools available) from the runtime image
 > (minimal, no build tools). The `--chown` flag on `COPY` sets
 > file ownership in one layer instead of a separate `chown` command
@@ -658,7 +670,7 @@ effect on network accessibility. Many engineers waste time debugging
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Container does not shut down gracefully on `docker stop`.**
-```
+```plaintext
 Symptom: docker stop takes 10 seconds (the default timeout), then
   the container is forcibly killed. In-flight requests dropped.
   Database connections not closed cleanly.
@@ -693,7 +705,7 @@ Fix:
   # Or in Kubernetes: terminationGracePeriodSeconds: 30
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in Kubernetes: terminationGracePeriodSeconds: 30 example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -796,7 +808,7 @@ Luggage (volumes): stored separately, survives checkout. Mini-bar
 ### 📘 Concept Explanation
 
 **Container states, resource limits, logging, cleanup:**
-```
+```plaintext
 CONTAINER LIFECYCLE COMMANDS:
 
   # Create and start:
@@ -905,15 +917,20 @@ CLEANUP:
   # Shows: images, containers, volumes, build cache, with reclaimable amounts.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: images, containers, volumes, build cache, with reclaimable amounts. example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Production-grade `docker run` with all
+> **Code walkthrough:** Production-grade `docker run` with allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > recommended flags shows the minimal configuration for a
 > production container launch.
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # BAD: running without any limits or restart policy:
@@ -939,7 +956,7 @@ docker run -d \
   myapp:1.2.3              # pinned version, not :latest
 ```
 
-> **Code walkthrough:** `--memory-swap 512m` (same as `--memory`)
+> **Code walkthrough:** `--memory-swap 512m` (same as `--memory`)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > disables swap entirely, preventing memory pressure from silently
 > overflowing to slow disk swap. `--read-only` makes the container's
 > root filesystem read-only (any write attempt fails). Combined with
@@ -1094,7 +1111,7 @@ Fixes:
   Missing file: ensure volume mounts are correct. Check mount path.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check OOM events: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

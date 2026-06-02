@@ -153,7 +153,7 @@ const IdleLane = 0b10000000;     // Idle work
 // (This enables rendering without partial UI updates)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Fiber Reconciler Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -221,7 +221,7 @@ function Dashboard({ heavyData }) {
 // Flamegraph = one fiber at a time, width = render time
 ```
 
-> **Code walkthrough:** `startTransition` exposes Fiber's lane system
+> **Code walkthrough:** `startTransition` exposes Fiber's lane systemice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly: the wrapped state update receives `TransitionLane` priority.
 > When the user types again (which creates a `SyncLane` update), React
 > pauses the transition work, handles the sync input, then resumes the
@@ -366,7 +366,7 @@ React (UI shell) ←──→ Canvas/WebGL (high-freq data viz)
   state, routing       60fps updates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -413,8 +413,7 @@ Symptom: UI shows inconsistent state across components - different components sh
 
 ---
 
-**Q1: Why can React render a component multiple times without committing?**
-`[STAFF]` INTERNALS
+**[STAFF] Q1 - [MECHANISM] Why can React render a component multiple times without committing?**
 
 > **Answer:**
 >
@@ -448,8 +447,7 @@ Symptom: UI shows inconsistent state across components - different components sh
 
 ---
 
-**Q2: How does React's Suspense mechanism use Fiber internally?**
-`[STAFF]` INTERNALS
+**[STAFF] Q2 - [MECHANISM] How does React's Suspense mechanism use Fiber internally?**
 
 > **Answer:**
 >
@@ -657,7 +655,7 @@ describe('LoginForm', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Testing Library Patterns example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -669,6 +667,12 @@ should survive refactors.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // BAD: testing implementation details
@@ -703,7 +707,7 @@ test('accepts email input', async () => {
 // screen.getByTestId('email-input')               <- last resort
 ```
 
-> **Code walkthrough:** The BAD test uses Enzyme's `shallow` render and
+> **Code walkthrough:** The BAD test uses Enzyme's `shallow` render andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tests internal state. If you refactor `email` state to be part of a
 > `formData` object, the test breaks even though the UI works identically.
 > The GOOD test queries by label text (which also validates that the input
@@ -790,6 +794,7 @@ Manual `act()` wrapping is needed when tests contain async operations
 of act, which means your test is asserting on a component in an
 intermediate (not final) state.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -833,6 +838,7 @@ component conditionally renders the expected element. Diagnosis: add
 Fix: verify the mock returns the expected data format; check that the
 component's loading/error/success state transitions work correctly.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -848,8 +854,7 @@ component's loading/error/success state transitions work correctly.
 
 ---
 
-**Q1: How do you test a component that fetches data on mount?** `[SENIOR]`
-DEBUGGING
+**[JUNIOR] Q1 - [DEBUGGING] How do you test a component that fetches data on mount?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -983,6 +988,7 @@ stem from misunderstanding React's rendering model.
 
 **How it works:**
 
+{% raw %}
 ```jsx
 // ANTI-PATTERN 1: Derived state from props
 function BadUserDisplay({ user }) {
@@ -1075,8 +1081,9 @@ function GoodParent({ items }) {
   return <MemoizedChild config={CONFIG} onAction={handleAction} />;
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This React Anti-patterns example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -1130,7 +1137,7 @@ function GoodFilterableList({ items }) {
 // Bob's key=2 element is unchanged - input stays clean
 ```
 
-> **Code walkthrough:** The index-as-key bug is subtle and hard to
+> **Code walkthrough:** The index-as-key bug is subtle and hard toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reproduce in simple cases (pure display lists where content replaces
 > cleanly). It becomes dangerous with stateful children: inputs, focused
 > elements, CSS transitions, or third-party components that hold internal
@@ -1220,6 +1227,7 @@ The component renders stale data until something else triggers a
 re-render for an unrelated reason. For shared mutable state: use
 React Context, useReducer, or a state management library like Zustand.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1264,6 +1272,7 @@ render. Fix: place `key` on the exact component that should be
 remounted when identity changes, not on wrapper divs; use stable
 IDs not unstable derived values (index, random, date) as keys.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -1279,8 +1288,7 @@ IDs not unstable derived values (index, random, date) as keys.
 
 ---
 
-**Q1: Review this code and identify all React anti-patterns.**
-`[SENIOR]` CODE REVIEW
+**[SENIOR] Q1 - [FAILURE] Review this code and identify all React anti-patterns.**
 
 > **Answer:**
 >
@@ -1538,7 +1546,7 @@ function OptimizedForm() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Controlled vs Uncontrolled Components example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -1550,6 +1558,12 @@ the senior-level insight.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // BAD: mixing controlled and uncontrolled
@@ -1578,7 +1592,7 @@ function FixedForm() {
 // or use `value={name ?? ''}` as a fallback
 ```
 
-> **Code walkthrough:** The `undefined` initial state bug is the most
+> **Code walkthrough:** The `undefined` initial state bug is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common controlled component mistake. When `value={undefined}`, React
 > treats the input as uncontrolled (the DOM owns the value). When state
 > updates to a string, React tries to switch to controlled mode and
@@ -1665,6 +1679,7 @@ defined `value`: initialize state with an empty string (`''`) not
 `undefined` or `null`. This is one of the most common React form
 bugs and causes the "switching controlled/uncontrolled" warning.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -1705,6 +1720,7 @@ removed from the DOM). Diagnosis: add a null check: `if (ref.current)
 { ... }`. Fix: access refs only inside React event handlers,
 `useEffect` callbacks, or after confirming the component is mounted.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -1720,8 +1736,7 @@ removed from the DOM). Diagnosis: add a null check: `if (ref.current)
 
 ---
 
-**Q1: Your large form has typing lag. What's wrong and how do you fix it?**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q1 - [DEBUGGING] Your large form has typing lag. What's wrong and how do you fix it?**
 
 > **Answer:**
 >
@@ -1944,7 +1959,7 @@ function UserList({ page }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Query and Server-State Management example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -1956,6 +1971,12 @@ industry-standard for server-state management.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // BAD: manual fetching with useEffect (common bugs)
@@ -1994,7 +2015,7 @@ function UserProfile({ userId }) {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern has four bugs that React Query
+> **Code walkthrough:** The BAD pattern has four bugs that React Queryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > automatically handles. Race condition: if `userId` changes while the first
 > fetch is in-flight, both responses update state and the older response
 > might "win". React Query cancels the in-flight query when the key changes.
@@ -2080,6 +2101,7 @@ network reconnect). To prevent ALL refetches, you would also need
 `refetchOnMount: false`. Understand each option individually before
 combining them.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -2118,6 +2140,7 @@ exact data being fetched, including all parameters: `['user', userId]`,
 (a module that exports functions returning consistent key arrays) to
 enforce key uniqueness across the codebase.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -2133,8 +2156,7 @@ enforce key uniqueness across the codebase.
 
 ---
 
-**Q1: Explain optimistic updates in React Query and why they matter.**
-`[SENIOR]` DECISION
+**[SENIOR] Q1 - [TRADE-OFF] Explain optimistic updates in React Query and why they matter.**
 
 > **Answer:**
 >
@@ -2267,6 +2289,24 @@ re-renders are bad - only re-renders that are slow or cause visible lag.
 
 **How it works:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```jsx
 // 1. REACT.MEMO: memoize component renders
 const UserCard = React.memo(function UserCard({ user, onSelect }) {
@@ -2337,7 +2377,7 @@ function VirtualList({ items }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This React Performance Optimization Techniques example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -2350,6 +2390,7 @@ is the professional standard.
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // DEBUGGING PERFORMANCE: React DevTools Profiler
 
@@ -2388,8 +2429,9 @@ const ThemeContext = createContext();
 // UserCard only subscribes to UserContext
 // ThemeToggle only subscribes to ThemeContext
 ```
+{% endraw %}
 
-> **Code walkthrough:** The `<Profiler>` component is the programmatic
+> **Code walkthrough:** The `<Profiler>` component is the programmaticice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > way to measure render performance in development - it reports actual
 > duration (time spent rendering) per component. The context split pattern
 > is critical: a single context with multiple values causes ALL consumers
@@ -2477,6 +2519,7 @@ state sometimes belongs higher in the tree. React Context or Zustand
 are the alternatives when co-location creates more problems than
 it solves.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -2519,6 +2562,7 @@ reduced prop drilling) can actually hurt in production due to
 runtime overhead of memoization checks on very cheap renders.
 Measure both environments before and after optimizations.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -2534,8 +2578,7 @@ Measure both environments before and after optimizations.
 
 ---
 
-**Q1: You have a slow React list of 500 items. Walk through your diagnosis.**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q1 - [DEBUGGING] You have a slow React list of 500 items. Walk through your diagnosis.**
 
 > **Answer:**
 >
@@ -2663,6 +2706,19 @@ previous render result is reused.
 
 **How it works:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+{% raw %}
 ```jsx
 // Basic React.memo:
 const ExpensiveCard = React.memo(function ExpensiveCard({ user, onClick }) {
@@ -2723,8 +2779,9 @@ const UserList = React.memo(
   }
 );
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This React.memo and Re-render Prevention example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -2737,6 +2794,7 @@ when combined with stable prop references.
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // DIAGNOSIS: verify memo is working
 // Add a console.log inside the memoized component:
@@ -2771,8 +2829,9 @@ function UserList({ users }) {
 // Memo overhead: comparison cost + memory for cached result
 // Not free - applies wisely, not defensively
 ```
+{% endraw %}
 
-> **Code walkthrough:** The console.log diagnostic is the fastest way to
+> **Code walkthrough:** The console.log diagnostic is the fastest way toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > verify whether `React.memo` is actually preventing re-renders. If the
 > log fires on every parent render, a prop has unstable references. The
 > "move constant objects outside the component" fix is the simplest
@@ -2855,6 +2914,7 @@ cheap individually can create performance problems when thousands
 of instances re-render in a list. Profile first; apply memo where
 the profiler shows unnecessary re-renders with stable inputs.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -2896,6 +2956,7 @@ a selector pattern with `useMemo` to derive only the specific value
 needed; or use a state management library with built-in selector
 support (Zustand, Redux Toolkit with `useSelector`).
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -2911,7 +2972,7 @@ support (Zustand, Redux Toolkit with `useSelector`).
 
 ---
 
-**Q1: A memoized child component still re-renders on every parent render.
+**[JUNIOR] Q1 - [MECHANISM] A memoized child component still re-renders on every parent render.**
 How do you diagnose and fix it?** `[SENIOR]` DEBUGGING
 
 > **Answer:**
@@ -3050,6 +3111,7 @@ components without triggering a full page reload.
 
 **How it works:**
 
+{% raw %}
 ```jsx
 // React Router v6 setup
 import {
@@ -3139,8 +3201,9 @@ function LoginForm() {
   return <form onSubmit={handleSubmit}>...</form>;
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Router and Client-side Routing example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -3152,6 +3215,18 @@ required for implementing layouts efficiently.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // Common v5 vs v6 gotchas:
@@ -3191,7 +3266,7 @@ navigate('/home', { replace: true }); // replace
 navigate(-1);                 // go back
 ```
 
-> **Code walkthrough:** The most common React Router bug after upgrading
+> **Code walkthrough:** The most common React Router bug after upgradingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from v5 to v6 is using old imports. `Switch` is replaced by `Routes`,
 > `component={MyComp}` is replaced by `element={<MyComp />}` (note JSX),
 > and `useHistory()` is replaced by `useNavigate()`. The `exact` prop is
@@ -3274,6 +3349,7 @@ nested routes in v6 use `<Outlet>` in the parent component to render
 child routes - the entire nested routing model changed. Migration from
 v5 to v6 requires systematic updates, not a find-replace.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -3312,6 +3388,7 @@ Fix: serialize critical state to URL params (React Router
 position, use React Router's `ScrollRestoration` component. For form
 drafts, persist to `sessionStorage` with a route-specific key.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -3327,8 +3404,7 @@ drafts, persist to `sessionStorage` with a route-specific key.
 
 ---
 
-**Q1: How do you implement a redirect-after-login flow with React Router?**
-`[SENIOR]` DECISION
+**[SENIOR] Q1 - [TRADE-OFF] How do you implement a redirect-after-login flow with React Router?**
 
 > **Answer:**
 >
@@ -3531,7 +3607,7 @@ function NavBar() {
 // });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dynamic Routing and Code Splitting example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -3542,6 +3618,18 @@ splitting is the highest-ROI performance optimization for SPAs.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // BAD: eager import, entire app in one bundle
@@ -3661,6 +3749,7 @@ deploy). A production lazy-loading implementation always pairs
 `<Suspense fallback={<Spinner />}>` with `<ErrorBoundary>` wrapping
 the lazy component to handle the chunk-load-failure error gracefully.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -3703,6 +3792,7 @@ shared chunk. Use Webpack's `splitChunks.cacheGroups` or Vite's
 `build.rollupOptions.output.manualChunks` to control chunk
 boundaries.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -3718,8 +3808,7 @@ boundaries.
 
 ---
 
-**Q1: How do you investigate and fix bundle size issues in a React app?**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q1 - [DEBUGGING] How do you investigate and fix bundle size issues in a React app?**
 
 > **Answer:**
 >
@@ -3902,7 +3991,7 @@ function PrivateRoute({ children }) {
 // <PrivateRoute><Dashboard /></PrivateRoute>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Higher-Order Components example demonstrates variable declaration using authentication. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -3915,6 +4004,7 @@ the modern hook-based alternatives shows pattern evolution awareness.
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // WRAPPER HELL (classic HOC problem):
 // Applying multiple HOCs creates DevTools nightmare
@@ -3947,8 +4037,9 @@ function MyComponent() {
 // 4. React.memo is technically a HOC:
 const MemoizedList = React.memo(ExpensiveList);
 ```
+{% endraw %}
 
-> **Code walkthrough:** The "wrapper hell" example shows why HOCs fell
+> **Code walkthrough:** The "wrapper hell" example shows why HOCs fellice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > out of favor - 6 levels of nesting in DevTools makes debugging painful.
 > The hook version is completely flat: all behavior is called at the top
 > of one function component. React Router v6 replaced `withRouter` (HOC)
@@ -4033,6 +4124,7 @@ components without touching their source, and (3) error boundaries
 `componentDidCatch`). Knowing when each pattern applies is the signal
 interviewers look for.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -4073,6 +4165,7 @@ or `useEffect(()=>{...},[])` - if it fires on every parent update,
 the HOC is being recreated. Fix: always define HOC-wrapped components
 at module scope, never inside render functions.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -4088,8 +4181,7 @@ at module scope, never inside render functions.
 
 ---
 
-**Q1: How do you migrate a withAuth HOC to the hooks pattern?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] How do you migrate a withAuth HOC to the hooks pattern?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -4226,6 +4318,7 @@ implicitly through React Context, providing a cohesive API.
 
 **How it works:**
 
+{% raw %}
 ```jsx
 // RENDER PROP PATTERN:
 function Toggle({ render }) {
@@ -4310,8 +4403,9 @@ Accordion.Item = AccordionItem;
   </Accordion.Item>
 </Accordion>
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Render Props and Compound Components example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -4384,7 +4478,7 @@ Tabs.Content = TabsContent;
 </Tabs>
 ```
 
-> **Code walkthrough:** The Tabs compound component shares `active` state
+> **Code walkthrough:** The Tabs compound component shares `active` stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and `setActive` via Context. `TabsTrigger` reads `active` (for styling)
 > and calls `setActive` (for navigation). `TabsContent` reads `active` to
 > decide whether to render. No prop drilling: each sub-component accesses
@@ -4466,6 +4560,7 @@ to memoize the render prop using `useCallback` when the child
 implements `React.memo`. This is a subtle issue because the child
 re-renders silently with no error or warning.
 
+---
 
 ### 🚨 Failure Modes and Diagnosis
 
@@ -4505,6 +4600,7 @@ the context value in `useMemo`: `const value = useMemo(() =>
 ({ activeTab, setActiveTab }), [activeTab])`. This prevents
 unnecessary renders of all context consumers.
 
+---
 
 ### 🎯 Interview Deep-Dive
 
@@ -4520,8 +4616,7 @@ unnecessary renders of all context consumers.
 
 ---
 
-**Q1: Design a Dropdown component using compound components pattern.**
-`[SENIOR]` LIVE CODING
+**[SENIOR] Q1 - [SCENARIO] Design a Dropdown component using compound components pattern.**
 
 > **Answer:**
 >

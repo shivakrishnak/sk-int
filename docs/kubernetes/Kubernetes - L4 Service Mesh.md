@@ -125,7 +125,7 @@ spec:
     mode: STRICT  # STRICT: reject non-mTLS; PERMISSIVE: allow both
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Require mTLS for all services in the mesh example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Istio xDS API - control plane to data plane:**
 
@@ -167,7 +167,7 @@ spec:
         weight: 10    # 10% -> v2 canary
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Require mTLS for all services in the mesh example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 DestinationRule - connection policies per subset:
 ```yaml
@@ -191,7 +191,7 @@ spec:
     labels: {version: v2}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Require mTLS for all services in the mesh example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Authorization Policy:**
 
@@ -216,7 +216,7 @@ spec:
         paths: ["/api/v1/inventory/*"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This only payment-service SA can call inventory example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Observability:**
 
@@ -315,6 +315,12 @@ spec:
       interval: 10s
       baseEjectionTime: 30s
       maxEjectionPercent: 50
+```
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
 ```
 
 ```yaml
@@ -476,7 +482,7 @@ istioctl proxy-config cluster <pod>
 kubectl logs <pod> -c istio-proxy | grep -v "200\|304"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Envoy access logs for error codes example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: if mTLS mismatch: add the calling service to the mesh or change PeerAuthentication
 to PERMISSIVE temporarily. If circuit breaker: check destination service health and
@@ -584,7 +590,7 @@ iptables -t nat -A ISTIO_OUTPUT ! -d 127.0.0.1/32 -j ISTIO_REDIRECT
 iptables -t nat -A ISTIO_REDIRECT -p tcp -j REDIRECT --to-port 15001
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This and ALL inbound to port 15006 (Envoy) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 After injection: the application thinks it's sending to `service:8080`. iptables
 redirects to Envoy at port 15001. Envoy handles mTLS, routing, and observability,
@@ -658,7 +664,7 @@ Architecture:
    replicas=5          replicas=1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This and ALL inbound to port 15006 (Envoy) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key insight: replica count doesn't determine traffic percentage. VirtualService weight does.
 You can have 1 v2 pod receiving 10% of traffic, or 5 v2 pods receiving 10%.
@@ -717,7 +723,7 @@ spec:
       baseEjectionTime: 30s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DestinationRule: define subsets + outlier detection example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Progressive rollout automation:
 Start at 1%, check error rate and latency for 15 minutes.
@@ -789,7 +795,7 @@ kubectl logs <source-pod> -c istio-proxy | tail -50
 # `upstream_cx_destroy_remote_with_active_rq`, `circuit_breaker_open`
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This `upstream_cx_destroy_remote_with_active_rq`, `circuit_breaker_open` example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: check Istio proxy status for the source.
 ```bash
@@ -799,7 +805,7 @@ istioctl proxy-config endpoints <source-pod> | grep <destination-service>
 # If OUTLIER CHECK = FAILED: circuit breaker tripped for this endpoint
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If OUTLIER CHECK = FAILED: circuit breaker tripped for this endpoint example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: check mTLS configuration.
 ```bash
@@ -807,7 +813,7 @@ istioctl authn tls-check <source-pod> <destination-service>
 # Output: ok (mTLS), or mismatch (one side strict, other not in mesh)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Output: ok (mTLS), or mismatch (one side strict, other not in mesh) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: check if PeerAuthentication is in STRICT mode but caller is not injected.
 ```bash
@@ -816,7 +822,7 @@ kubectl get peerauthentication -n <destination-namespace>
 # If source has no sidecar: plain HTTP rejected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If source has no sidecar: plain HTTP rejected example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: check destination service pods are healthy.
 ```bash
@@ -826,7 +832,7 @@ kubectl describe pod <destination-pod>
 # Readiness probe failing? Service unavailable?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Readiness probe failing? Service unavailable? example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common root causes:
 - Circuit breaker open: `outlierDetection` triggered due to errors in destination pods
@@ -880,7 +886,7 @@ PeerAuthentication -> LDS -> TLS filter
 AuthorizationPolicy -> LDS -> RBAC filter
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Readiness probe failing? Service unavailable? example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 xDS update mechanism: Envoy establishes a long-lived gRPC stream to istiod. istiod
 pushes config updates when any relevant Kubernetes object changes. Updates are
@@ -911,7 +917,7 @@ Step 2: identify the span with high latency.
   [checkout app: 10ms -> 340ms]
     [db Envoy out: 15ms -> 330ms] -> [db Envoy in: 20ms -> 325ms]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Readiness probe failing? Service unavailable? example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The `checkout app` span is long. The DB call is also long. Is it the application or the DB?
 
@@ -926,7 +932,7 @@ istio_request_duration_milliseconds{
 # P99 latency for this specific service pair
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This P99 latency for this specific service pair example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: check Envoy metrics for connection pool exhaustion.
 ```bash
@@ -936,7 +942,7 @@ kubectl exec <checkout-pod> -c istio-proxy -- \
 # circuit_breakers.*.cx_open = circuit breaker open count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This circuit_breakers.*.cx_open = circuit breaker open count example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: check if it's an mTLS overhead issue.
 For very high-frequency short calls (10ms target, 5ms mTLS overhead = 50% overhead):
@@ -1026,7 +1032,7 @@ pilot_conflict_outbound_listener_tcp_over_current_tcp
 pilot_total_xds_connections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Number of managed Envoy proxies connected example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Alert on: `pilot_xds_push_errors_total > 0` (configuration changes not propagating).
 
@@ -1045,7 +1051,7 @@ histogram_quantile(0.99,
     by (source_app, destination_app, le))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This P99 latency per service pair example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Certificate expiry:
 ```bash
@@ -1055,7 +1061,7 @@ istio_agent_cert_expiry_seconds
 # Alert when < 48 hours remaining
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert when < 48 hours remaining example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Proxy version drift (when upgrading Istio):
 ```bash
@@ -1065,7 +1071,7 @@ istioctl proxy-status
 # SYNCED = proxy is up to date with istiod config
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SYNCED = proxy is up to date with istiod config example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Kiali dashboard: service topology, error rates, and traffic visualization.
 Run Kiali in production for visual debugging: `istioctl dashboard kiali`.
@@ -1159,7 +1165,7 @@ istioctl proxy-status | grep "NOT SYNCED" | awk '{print $1}'
 kubectl rollout restart deployment -n <affected-namespaces>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Force restart to get new Envoy proxy version example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 New proxy version connected to new istiod successfully. xDS connections restored to 450.
 503 errors resolved within 10 minutes of rollout restart.
@@ -1221,7 +1227,7 @@ Topology:
   [Kiali: service topology visualization]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Force restart to get new Envoy proxy version examplice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Security posture:
 - PeerAuthentication: STRICT mode for all namespaces (mTLS enforced)
@@ -1240,17 +1246,17 @@ Observability:
 - Alert: error rate > 1% for any service pair for > 2 minutes
 
 Upgrade strategy:
-- Istio revision-based upgrades (new istiod revision + gradual namespace migration)
+- Istio revision-based upgrades (new istiod revision + gradual namespace migrati
 - Istio pilot canary: test new istiod on `staging` namespace before production
 
-*What separates good from great:* AuthorizationPolicy default-deny is the zero-trust
+*What separates good from great:* AuthorizationPolicy default-deny is the zero-t
 foundation. Add a default-deny policy to every namespace:
 ```yaml
 kind: AuthorizationPolicy
 metadata: {name: default-deny, namespace: payments}
 spec: {}  # empty spec = deny all
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Force restart to get new Envoy proxy version example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Then explicitly allow each needed communication path. This means every inter-service
 communication is documented in code (AuthorizationPolicy), auditable, and enforced.

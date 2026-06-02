@@ -157,7 +157,7 @@ ENFORCED PATTERN:
   → All share one token → change once, update all
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Visual Consistency Mental Model example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -188,7 +188,7 @@ easy to be inconsistent (any value, any time).
    → No one knows */
 ```
 
-> **Code walkthrough:** Without design tokens or a shared
+> **Code walkthrough:** Without design tokens or a sharedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > component, every developer makes independent decisions.
 > Each decision is locally "fine" but globally inconsistent.
 > The product looks like it was made by three different teams
@@ -221,7 +221,7 @@ easy to be inconsistent (any value, any time).
 /* CI fails if developer writes: background: #3b82f6 */
 ```
 
-> **Code walkthrough:** The token + component approach
+> **Code walkthrough:** The token + component approachice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > makes the consistent choice the EASY choice. A developer
 > adding a new CTA writes `<button class="button">` - zero
 > decisions, automatically consistent. The only way to be
@@ -296,7 +296,7 @@ Fix:
   4. The "which blue is right?" question becomes moot
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -314,7 +314,7 @@ Fix:
 
 ---
 
-**Q1: How does CSS architecture enforce visual
+**[JUNIOR] Q1 - [DESIGN] How does CSS architecture enforce visual**
 consistency?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Core architectural thinking for CSS.
@@ -367,7 +367,7 @@ consistency?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q2: What is design debt and how does CSS architecture
+**[JUNIOR] Q2 - [DESIGN] What is design debt and how does CSS architecture**
 prevent it?** `[SENIOR]` CONCEPTUAL
 
 *Why they ask:* Senior engineers articulate the long-term
@@ -425,7 +425,7 @@ high design debt?"
 
 ---
 
-**Q3: How do you balance design consistency with the
+**[JUNIOR] Q3 - [DESIGN] How do you balance design consistency with the**
 need for exceptions?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Real codebases need escape hatches; the
@@ -503,7 +503,7 @@ question is whether exceptions are principled or chaotic.
 
 ---
 
-**Q4: How does visual consistency translate to user
+**[MID] Q4 - [MECHANISM] How does visual consistency translate to user**
 trust?** `[SENIOR]` CONCEPTUAL
 
 *Why they ask:* Business context for CSS architecture work.
@@ -562,7 +562,7 @@ trust?** `[SENIOR]` CONCEPTUAL
 
 ---
 
-**Q5: How do you migrate a legacy codebase to design
+**[MID] Q5 - [DESIGN] How do you migrate a legacy codebase to design**
 tokens incrementally?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Practical migration is a common engineering challenge.
@@ -632,7 +632,7 @@ tokens incrementally?** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q6: What is the CSS architecture principle of "locality
+**[SENIOR] Q6 - [DESIGN] What is the CSS architecture principle of "locality**
 of reasoning"?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Deep CSS architecture thinking.
@@ -699,7 +699,7 @@ of reasoning"?** `[SENIOR]` ARCHITECTURE
 
 ---
 
-**Q7: How does visual consistency at scale relate to
+**[SENIOR] Q7 - [DESIGN] How does visual consistency at scale relate to**
 organizational structure?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Conway's Law applies to CSS architecture.
@@ -998,7 +998,7 @@ COMMON PATTERNS:
   Responsive widget:        container query + flex/grid
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Layout Decision Framework example demonstrates a keice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1039,7 +1039,7 @@ line of items, use Flexbox.
 /* Clearfix required, no gap support, fragile */
 ```
 
-> **Code walkthrough:** Each wrong-tool case creates
+> **Code walkthrough:** Each wrong-tool case createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > brittle CSS: table layout breaks with content changes,
 > absolute positioning requires manual coordinate management,
 > floats require clearfix and don't support `gap`. Modern
@@ -1093,7 +1093,7 @@ line of items, use Flexbox.
 }
 ```
 
-> **Code walkthrough:** Each layout uses the appropriate
+> **Code walkthrough:** Each layout uses the appropriateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tool. Navigation = Flexbox (items in a row). Product grid
 > = Grid (two-dimensional, auto-fill). Page layout = Grid
 > with named areas (named regions are a Grid feature with
@@ -1173,7 +1173,7 @@ Also check: min-width on flex items
   which prevents them from shrinking below content width
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1188,27 +1188,26 @@ Check: align-items on grid container
 Fix: remove explicit align-items or set to stretch
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Flexbox vs Grid decision | 3-4 min | Content vs structure |
-| auto-fill vs auto-fit | 3 min | Track creation semantics |
-| Flexbox main vs cross axis | 3 min | justify vs align |
-| Grid named areas | 3 min | Template pattern |
-| min-width: 0 in Flexbox | 3 min | Overflow debugging |
-| Sticky footer in Flexbox | 3 min | margin-top: auto |
-| Container queries + layout | 3-4 min | Component responsiveness |
-| Multi-column for text | 2-3 min | Reading flow |
+| Scenario| Recommended Time| Key Signal|
+|----------------|------------------------------------|------------------------|
+| Flexbox vs Grid decision| 3-4 min| Content vs structure|
+| auto-fill vs auto-fit| 3 min| Track creation semantics|
+| Flexbox main vs cross axis| 3 min| justify vs align|
+| Grid named areas| 3 min| Template pattern|
+| min-width: 0 in Flexbox| 3 min| Overflow debugging|
+| Sticky footer in Flexbox| 3 min| margin-top: auto|
+| Container queries + layout| 3-4 min| Component responsiveness|
+| Multi-column for text| 2-3 min| Reading flow|
 
 ---
 
-**Q1: When do you choose Flexbox over Grid?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] When do you choose Flexbox over Grid?** `[SENIOR]`**
 
 *Why they ask:* Most common CSS layout question.
 
@@ -1262,7 +1261,7 @@ MECHANISM
 
 ---
 
-**Q2: What is the difference between `auto-fill` and
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `auto-fill` and**
 `auto-fit` in CSS Grid?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Common interview question that reveals
@@ -1323,7 +1322,7 @@ deep Grid understanding.
 
 ---
 
-**Q3: Explain `justify-content` vs `align-items` in
+**[JUNIOR] Q3 - [TRADE-OFF] Explain `justify-content` vs `align-items` in**
 Flexbox.** `[SENIOR]` MECHANISM
 
 *Why they ask:* Most common Flexbox confusion point.
@@ -1385,8 +1384,7 @@ Flexbox.** `[SENIOR]` MECHANISM
 
 ---
 
-**Q4: What is the `min-width: 0` Flexbox fix?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is the `min-width: 0` Flexbox fix?** `[SENIOR]`**
 
 *Why they ask:* Common Flexbox overflow bug that reveals
 spec knowledge.
@@ -1447,7 +1445,7 @@ spec knowledge.
 
 ---
 
-**Q5: How do you implement the "sticky footer" pattern
+**[MID] Q5 - [MECHANISM] How do you implement the "sticky footer" pattern**
 in Flexbox and Grid?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Classic layout challenge tests practical mastery.
@@ -1525,7 +1523,7 @@ in Flexbox and Grid?** `[SENIOR]` HANDS-ON
 
 ---
 
-**Q6: How do you choose between CSS Grid and Flexbox for
+**[SENIOR] Q6 - [SCENARIO] How do you choose between CSS Grid and Flexbox for**
 a card grid with items of variable height?** `[SENIOR]`
 MECHANISM
 
@@ -1604,7 +1602,7 @@ MECHANISM
 
 ---
 
-**Q7: What layout mechanism should you use for a
+**[SENIOR] Q7 - [SCENARIO] What layout mechanism should you use for a**
 dashboard with multiple widget types?** `[SENIOR]`
 ARCHITECTURE
 
@@ -1684,24 +1682,24 @@ widgets?"
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | auto-fill vs auto-fit + min-width: 0 |
-| Hiring Manager | Layout decision explanation |
-| Bar Raiser | Multi-level layout architecture |
-| Peer Engineer | Sticky footer + card grid pattern |
+| Interviewer Type| Emphasis|
+|--------------------------|------------------------------------|
+| Technical Panel| auto-fill vs auto-fit + min-width: 0|
+| Hiring Manager| Layout decision explanation|
+| Bar Raiser| Multi-level layout architecture|
+| Peer Engineer| Sticky footer + card grid pattern|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Layout | Use Case | 1D/2D | Content-driven? | Key Property |
-|---|---|---|---|---|
-| Flexbox | Row/column of items | 1D | Yes | flex, align, justify |
-| CSS Grid | Structured rows+cols | 2D | No (structure first) | grid-template |
-| Position (abs) | Overlay, exact placement | - | No | top/left/right/bottom |
-| Multi-column | Text flow | 1D (vertical) | Yes | columns, column-count |
-| Normal flow | Document text + blocks | 1D (vertical) | Yes | display: block/inline |
+| Layout| Use Case| 1D/2D| Content-driven?| Key Property|
+|---|------|------------------------|--------------------|---------------------|
+| Flexbox| Row/column of items| 1D| Yes| flex, align, justify|
+| CSS Grid| Structured rows+cols| 2D| No (structure first)| grid-template|
+| Position (abs)| Overlay, exact placement| -| No| top/left/right/bottom|
+| Multi-column| Text flow| 1D (vertical)| Yes| columns, column-count|
+| Normal flow| Document text + blocks| 1D (vertical)| Yes| display: block/inline
 
 ---
 
@@ -1955,7 +1953,7 @@ CHOOSING AN ISOLATION APPROACH:
   Modern pure CSS without build → @scope
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Style Isolation Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1992,7 +1990,7 @@ scope; Shadow DOM = private class; `@scope` = lexical scope.
 /* The cascade is out of control */
 ```
 
-> **Code walkthrough:** Without isolation, specificity
+> **Code walkthrough:** Without isolation, specificityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > compounds. `.card .button` overrides `.button`. `.modal
 > .card .button` overrides that. Teams increase specificity
 > to "win" overrides. The CSS becomes unmanageable.
@@ -2019,7 +2017,7 @@ scope; Shadow DOM = private class; `@scope` = lexical scope.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // Button.tsx
@@ -2040,7 +2038,7 @@ export const Card = ({ children, action }) => (
 );
 ```
 
-> **Code walkthrough:** CSS Modules compile `.button`
+> **Code walkthrough:** CSS Modules compile `.button`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in each file to a unique hashed class name. `Button.module.css`'s
 > `.button` and `Card.module.css`'s `.button` become different
 > class names in the output. No selector can match both
@@ -2080,7 +2078,7 @@ export const Card = ({ children, action }) => (
 }
 ```
 
-> **Code walkthrough:** `@scope (.product-card)` creates
+> **Code walkthrough:** `@scope (.product-card)` createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a CSS scope - all selectors inside only match descendants
 > of `.product-card`. The `h2` rule is equivalent to
 > `.product-card h2` but uses proximity-based cascade rather
@@ -2166,27 +2164,26 @@ Fix: ensure all class names use styles.className reference
      not string literals for non-global styles
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| BEM naming motivation | 3 min | Global CSS problem |
-| CSS Modules mechanism | 3-4 min | Build-time scoping |
-| CSS-in-JS trade-offs | 3-4 min | Runtime vs build |
-| Shadow DOM isolation | 3-4 min | Hard browser boundary |
-| @scope proximity cascade | 3 min | New mental model |
-| Custom property inheritance in Shadow DOM | 3 min | Token sharing |
-| Isolation vs performance | 3 min | Trade-offs |
-| Micro-frontend CSS | 3-4 min | Team isolation |
+| Scenario| Recommended Time| Key Signal|
+|--------|-----------------------------------------------|---------------------|
+| BEM naming motivation| 3 min| Global CSS problem|
+| CSS Modules mechanism| 3-4 min| Build-time scoping|
+| CSS-in-JS trade-offs| 3-4 min| Runtime vs build|
+| Shadow DOM isolation| 3-4 min| Hard browser boundary|
+| @scope proximity cascade| 3 min| New mental model|
+| Custom property inheritance in Shadow DOM| 3 min| Token sharing|
+| Isolation vs performance| 3 min| Trade-offs|
+| Micro-frontend CSS| 3-4 min| Team isolation|
 
 ---
 
-**Q1: Why does CSS need isolation mechanisms?** `[SENIOR]`
-CONCEPTUAL
+**[JUNIOR] Q1 - [CONCEPTUAL] Why does CSS need isolation mechanisms?** `[SENIOR]`**
 
 *Why they ask:* Root motivation for BEM, CSS Modules, etc.
 
@@ -2236,8 +2233,7 @@ CONCEPTUAL
 
 ---
 
-**Q2: How do CSS Modules work under the hood?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How do CSS Modules work under the hood?** `[SENIOR]`**
 
 *Why they ask:* Build-time mechanism reveals technical depth.
 
@@ -2303,8 +2299,7 @@ MECHANISM
 
 ---
 
-**Q3: How does Shadow DOM style isolation work?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does Shadow DOM style isolation work?** `[SENIOR]`**
 
 *Why they ask:* Shadow DOM isolation is deeper than CSS Modules.
 
@@ -2381,7 +2376,7 @@ Shadow DOM boundaries?"
 
 ---
 
-**Q4: How does `@scope` change CSS isolation compared
+**[MID] Q4 - [TRADE-OFF] How does `@scope` change CSS isolation compared**
 to previous approaches?** `[SENIOR]` MECHANISM
 
 *Why they ask:* `@scope` is the CSS-native isolation mechanism.
@@ -2424,12 +2419,12 @@ how does it differ from specificity?"
 >
 > How @scope compares:
 >
-> | | Build tool | Runtime | Browser enforcement |
-> |---|---|---|---|
-> | BEM | No | No | No |
-> | CSS Modules | Yes | No | No |
-> | @scope | No | No | Yes (proximity) |
-> | Shadow DOM | No | No | Yes (hard boundary) |
+ >|| Build tool| Runtime| Browser enforcement|
+ >| ---| ---| ---| ---|
+ >| BEM| No| No| No|
+ >| CSS Modules| Yes| No| No|
+ >| @scope| No| No| Yes (proximity)|
+ >| Shadow DOM| No| No| Yes (hard boundary)|
 >
 > `@scope` advantage: zero tooling, zero runtime, works
 > in any CSS environment. The proximity-based cascade is
@@ -2450,7 +2445,7 @@ how does it differ from specificity?"
 
 ---
 
-**Q5: How do you handle CSS isolation in a
+**[MID] Q5 - [MECHANISM] How do you handle CSS isolation in a**
 micro-frontend architecture?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Micro-frontends amplify the CSS isolation problem.
@@ -2527,7 +2522,7 @@ micro-frontends?"
 
 ---
 
-**Q6: What is the performance trade-off of CSS-in-JS
+**[SENIOR] Q6 - [TRADE-OFF] What is the performance trade-off of CSS-in-JS**
 vs CSS Modules?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* CSS-in-JS is the most divisive CSS isolation approach.
@@ -2591,7 +2586,7 @@ over CSS Modules?"
 
 ---
 
-**Q7: How does style isolation relate to the component
+**[SENIOR] Q7 - [MECHANISM] How does style isolation relate to the component**
 architecture decision?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Architectural insight connecting CSS to component design.
@@ -2657,25 +2652,25 @@ component composition?"
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | CSS Modules mechanism + Shadow DOM |
-| Hiring Manager | Micro-frontend CSS risk |
-| Bar Raiser | Isolation → component architecture relationship |
-| Peer Engineer | @scope vs CSS Modules trade-offs |
+| Interviewer Type| Emphasis|
+|------------------------------|-----------------------------------------------|
+| Technical Panel| CSS Modules mechanism + Shadow DOM|
+| Hiring Manager| Micro-frontend CSS risk|
+| Bar Raiser| Isolation → component architecture relationship|
+| Peer Engineer| @scope vs CSS Modules trade-offs|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Build Tool | Runtime Cost | Browser Enforcement | Scope Strength |
-|---|---|---|---|---|
-| BEM naming | Optional | None | None | Convention only |
-| CSS Modules | Yes | None | None (build-time) | Strong |
-| CSS-in-JS (runtime) | Optional | High | None | Strong |
-| CSS-in-JS (build) | Yes | None | None | Strong |
-| @scope | No | None | Proximity cascade | Medium |
-| Shadow DOM | No | Low | Hard boundary | Complete |
+| Mechanism| Build Tool| Runtime Cost| Browser Enforcement| Scope Strength|
+|---|----------------|---------------------|-------------------|---------------|
+| BEM naming| Optional| None| None| Convention only|
+| CSS Modules| Yes| None| None (build-time)| Strong|
+| CSS-in-JS (runtime)| Optional| High| None| Strong|
+| CSS-in-JS (build)| Yes| None| None| Strong|
+| @scope| No| None| Proximity cascade| Medium|
+| Shadow DOM| No| Low| Hard boundary| Complete|
 
 ---
 

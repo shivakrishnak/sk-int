@@ -130,7 +130,7 @@ Business context is added explicitly at call sites.
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structured Logging example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Including the trace ID as a named field (not embedded in the
@@ -245,7 +245,7 @@ public ResponseEntity<Order> checkout(
 //  "payment_method":"credit_card","message":"Checkout completed"}
 ```
 
-> **Code walkthrough:** The GOOD example uses Logback's fluent
+> **Code walkthrough:** The GOOD example uses Logback's fluentice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > API with named key-value pairs. The trace_id and span_id are
 > automatically injected into every log line by the OpenTelemetry
 > Java agent via MDC - no manual extraction needed. Each field
@@ -287,7 +287,7 @@ public ResponseEntity<Order> checkout(
 </appender>
 ```
 
-> **Code walkthrough:** This Logback configuration enables JSON
+> **Code walkthrough:** This Logback configuration enables JSONice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > output for all log events from the service. The LogstashEncoder
 > automatically formats every log event as JSON. MDC key injection
 > pulls trace_id and span_id from the MDC context (which the
@@ -358,6 +358,8 @@ Root cause: Developers logged request or response bodies
 directly, or included PII fields in structured log entries.
 
 Diagnostic:
+
+{% raw %}
 ```bash
 # Scan recent logs for PII patterns
 # Check for email pattern in Loki
@@ -367,8 +369,9 @@ Diagnostic:
   line_format "{{.message}}" |
   regexp "[0-9]{16}"
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for card number pattern (16 digits) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Audit all log call sites. Remove all PII fields. Replace
 with opaque identifiers (user_id, not email). Add PII detection
@@ -400,7 +403,7 @@ curl http://loki:3100/loki/api/v1/query_range \
 # Explosion: > 10,000 lines/sec
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Explosion: > 10,000 lines/sec example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Set log level to INFO or WARN in production. Use dynamic
 log level configuration (Spring Boot Actuator `/loggers` endpoint,
@@ -436,7 +439,7 @@ java -javaagent:/opt/otel/opentelemetry-javaagent.jar \
 # The OTEL agent should inject trace_id into MDC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The OTEL agent should inject trace_id into MDC example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add OpenTelemetry Java agent to service startup command.
 Configure the Logback JSON encoder to include MDC trace_id and
@@ -815,7 +818,7 @@ see ERROR+ for critical failures.
 **How it works:**
 The five standard levels in ascending severity order:
 
-```
+```plaintext
 FATAL (50) - Process cannot continue. Immediate action.
   Example: cannot bind to port 8080, disk full, OOM
 ERROR (40) - Operation failed. Investigation required.
@@ -830,7 +833,7 @@ TRACE (5)  - Extremely verbose. Never in production.
   Example: every byte of a network packet
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log Levels and Severity example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 A logger set to level N emits all log statements at level N
 or above. Setting production to INFO captures INFO, WARN,
@@ -956,7 +959,7 @@ public Order processCheckout(CartRequest req) {
 }
 ```
 
-> **Code walkthrough:** The GOOD example assigns levels by
+> **Code walkthrough:** The GOOD example assigns levels byice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > operational significance. The execution entry point (checkout.start)
 > is DEBUG - useful when debugging locally, silent in production.
 > The successful business outcome (checkout.complete) is INFO -
@@ -1040,7 +1043,7 @@ curl -s http://app:8080/actuator/loggers | \
 # If DEBUG rate > 1000/sec per service, disable immediately
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If DEBUG rate > 1000/sec per service, disable immediately example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Change log level to INFO via Actuator endpoint without
 restart: `curl -X POST http://app:8080/actuator/loggers/ROOT
@@ -1064,6 +1067,8 @@ of `log.error(...)` for exception handling, causing payment
 exceptions to land in the WARN log stream, not the ERROR stream.
 
 Diagnostic:
+
+{% raw %}
 ```bash
 # Search for WARN logs with exception stack traces
 # These should be ERRORs
@@ -1071,8 +1076,9 @@ Diagnostic:
   line_format "{{.stack_trace}}" | regexp "Exception"
 # Any exception stack trace in WARN is probably wrong level
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any exception stack trace in WARN is probably wrong level example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Audit all catch blocks in checkout service. Promote any
 caught exception that represents a business failure from WARN
@@ -1102,7 +1108,7 @@ Diagnostic:
 # The top event type by count is the noise source
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The top event type by count is the noise source example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Change the log level for the high-volume event from INFO
 to DEBUG. If the event is genuinely worth recording at INFO,
@@ -1568,7 +1574,7 @@ latency but fewer, larger writes with better compression.
     # No storage.type filesystem - no persistence
 ```
 
-> **Code walkthrough:** This BAD Fluentbit configuration has no
+> **Code walkthrough:** This BAD Fluentbit configuration has noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > back-pressure protection. When Loki is slow or unavailable,
 > Fluentbit buffers batches in memory without limit. Under sustained
 > load, Fluentbit consumes increasing memory until it is OOM-killed,
@@ -1619,7 +1625,7 @@ latency but fewer, larger writes with better compression.
     storage.type filesystem
 ```
 
-> **Code walkthrough:** The GOOD configuration uses filesystem
+> **Code walkthrough:** The GOOD configuration uses filesystemice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > buffering: if Fluentbit restarts (OOM, node drain), buffered
 > logs are preserved on disk and forwarded after restart.
 > The 50MB in-memory buffer limit prevents unbounded growth.
@@ -1700,7 +1706,7 @@ curl http://loki:3100/metrics | \
   grep distributor_bytes_received_total
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Also check Loki ingest rate vs expected rate example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Scale Loki horizontally if the bottleneck is ingestion
 capacity. Increase Fluentbit's Retry_Limit to 10 to ride out
@@ -1731,7 +1737,7 @@ kubectl exec -n logging fluentbit-xyz -- \
 # shows how far behind the pipeline is
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This shows how far behind the pipeline is example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Reduce the Fluentbit flush interval from 5 seconds to
 2 seconds. Reduce the OTel Collector batch send delay.
@@ -1761,7 +1767,7 @@ kubectl auth can-i get pods \
   --as=system:serviceaccount:logging:fluentbit
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Fluentbit RBAC example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add RBAC ClusterRole and ClusterRoleBinding granting
 Fluentbit read access to pods, namespaces, and nodes.

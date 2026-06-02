@@ -306,7 +306,7 @@ public class DataExporter {
 // DataExporter never modified.
 ```
 
-> **Code walkthrough:** `DataExporter` is closed for modification. New
+> **Code walkthrough:** `DataExporter` is closed for modification. Newice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > formats extend the system by adding a new class. The strategy map is
 > populated by Spring's `List<ExportStrategy>` injection - auto-discovery.
 > YAML export added: create `YamlExportStrategy`, annotate `@Component`,
@@ -348,7 +348,7 @@ static void doubleWidth(Rectangle r) {
 }
 ```
 
-> **Code walkthrough:** `doubleWidth()` operates on a `Rectangle`
+> **Code walkthrough:** `doubleWidth()` operates on a `Rectangle`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reference. It stores the original height and doubles the width.
 > For `Rectangle`: the area doubles. For `Square`: `setWidth` changes
 > both width and height; the stored height is now stale. The assertion
@@ -407,7 +407,7 @@ public class OrderProcessor {
 // Cannot swap to PostgreSQL without changing OrderProcessor
 ```
 
-> **Code walkthrough:** `OrderProcessor` creates `MySqlOrderRepository`
+> **Code walkthrough:** `OrderProcessor` creates `MySqlOrderRepository`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > directly. It depends on a concrete implementation. Tests require MySQL.
 > Swapping databases requires changing `OrderProcessor`. The direction
 > of dependency: `OrderProcessor` -> `MySqlOrderRepository`.
@@ -446,7 +446,7 @@ public class OrderProcessor {
 // in OrderProcessor)
 ```
 
-> **Code walkthrough:** `OrderProcessor` depends on `OrderRepository`
+> **Code walkthrough:** `OrderProcessor` depends on `OrderRepository`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (abstraction). `JpaOrderRepository` implements `OrderRepository`
 > (detail depends on abstraction - the DIP inversion). Spring injects
 > `JpaOrderRepository`. Tests inject `InMemoryOrderRepository`.
@@ -527,7 +527,7 @@ Violation: DIP
      Tests inject MockPaymentProvider.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Result:**
 
@@ -667,7 +667,7 @@ abstract class RepositoryContractTest<R extends Repository> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure 2: OCP violation discovered during sprint**
 
@@ -917,7 +917,7 @@ public class SolidRulesTest {
     // not concrete @Repository implementations
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 (3) SonarQube cognitive complexity metric: high cognitive complexity
 per method correlates with SRP violations. (4) Number of @Autowired
@@ -1060,7 +1060,7 @@ public interface DiscountStrategy {
     int getPriority(); // tie-breaking
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 (2) Extract each case: create one `@Component` class per discount type.
 Each class encapsulates one discount's eligibility check and calculation.

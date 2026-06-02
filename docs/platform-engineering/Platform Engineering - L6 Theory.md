@@ -7,6 +7,17 @@ permalink: /platform-engineering/l6-theory/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Conway's Law and Organizational Architecture Theory](#conways-law-and-organizational-architecture-theory) | |
+| 2 | [Sociotechnical Systems Theory](#sociotechnical-systems-theory) | |
+
+---
+
+
 # Conway's Law and Organizational Architecture Theory
 
 ---
@@ -108,7 +119,7 @@ Platform team structure          Platform design outcome
   -> Product teams self-serve ->   Teams deploy in < 1 hour
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conway's Law and Organizational Architecture Theory example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Inverse Conway Maneuver:**
 
@@ -178,7 +189,7 @@ to support their desired architecture.
 #   by interacting with a single self-service workflow
 ```
 
-> **Code walkthrough:** The contrast illustrates Conway's Law mechanically:
+> **Code walkthrough:** The contrast illustrates Conway's Law mechanically:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > functional silo organization produces disconnected tools (each team
 > builds their silo well but integration is poor). Journey-based
 > organization produces cohesive experiences (each team owns an entire
@@ -312,7 +323,7 @@ fragmenting team ownership of the full developer journey.
 
 ---
 
-#### Q1 - What is Conway's Law and why is it relevant to platform engineering?
+**[JUNIOR] Q1 - [DEBUGGING] What is Conway's Law and why is it relevant to platform engineering?**
 
 Conway's Law (1968): "Organizations which design systems are constrained
 to produce designs which are copies of the communication structures of
@@ -336,7 +347,7 @@ it has been validated against organizational performance outcomes.
 
 ---
 
-#### Q2 - What is the Inverse Conway Maneuver?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the Inverse Conway Maneuver?**
 
 The Inverse Conway Maneuver (Jonny LeRoy, Matt Simons): deliberately
 structure teams to produce the desired architecture, rather than allowing
@@ -364,7 +375,7 @@ worse outcomes than the Inverse Conway Maneuver itself.
 
 ---
 
-#### Q3 - How does Team Topologies extend Conway's Law?
+**[JUNIOR] Q3 - [DEBUGGING] How does Team Topologies extend Conway's Law?**
 
 Team Topologies (Matthew Skelton, Manuel Pais, 2019) operationalizes
 Conway's Law into a set of four team types and three interaction modes.
@@ -413,7 +424,7 @@ of a platform team.
 
 ---
 
-#### Q4 - How do you apply Conway's Law to diagnose platform problems?
+**[MID] Q4 - [DEBUGGING] How do you apply Conway's Law to diagnose platform problems?**
 
 Conway's Law as a diagnostic: if the platform has an integration problem
 (two components work individually but poorly together), look for the
@@ -450,7 +461,7 @@ organizational part means the API will continue to diverge over time.
 
 ---
 
-#### Q5 - What is the evidence base for Conway's Law?
+**[MID] Q5 - [CONCEPTUAL] What is the evidence base for Conway's Law?**
 
 Conway's original paper (1968, "How Do Committees Invent?") was
 theoretical. Subsequent empirical evidence:
@@ -481,7 +492,7 @@ can verify.
 
 ---
 
-#### Q6 - How does Conway's Law affect platform API design?
+**[MID] Q6 - [ARCHITECTURE] How does Conway's Law affect platform API design?**
 
 The platform API design mirrors the platform team structure. Two scenarios:
 
@@ -512,7 +523,7 @@ regress unless the organizational cause is also fixed.
 
 ---
 
-#### Q7 - How do you use the Inverse Conway Maneuver to design a new platform team?
+**[SENIOR] Q7 - [ARCHITECTURE] How do you use the Inverse Conway Maneuver to design a new platform team?**
 
 A new platform team is an opportunity to apply the Inverse Conway
 Maneuver from the start.
@@ -556,7 +567,7 @@ across CI/CD, Kubernetes, and observability within one team.
 
 ---
 
-#### Q8 - What happens to Conway's Law when platform teams grow large?
+**[SENIOR] Q8 - [CONCEPTUAL] What happens to Conway's Law when platform teams grow large?**
 
 As platform teams grow (from 8 to 30+ engineers), Conway's Law creates
 new challenges:
@@ -598,7 +609,7 @@ Conway Maneuver produces architecture fragmentation.
 
 ---
 
-#### Q9 - How does Conway's Law apply to microservices architecture?
+**[SENIOR] Q9 - [ARCHITECTURE] How does Conway's Law apply to microservices architecture?**
 
 Conway's Law predicts microservices from organizational structure:
 organizations with autonomous teams (each team owns a business capability
@@ -899,7 +910,7 @@ print(adoption_program_checklist(ADOPTION_PROGRAM))
 # ['PASS: STS dimensions addressed']
 ```
 
-> **Code walkthrough:** The adoption program checklist encodes STS
+> **Code walkthrough:** The adoption program checklist encodes STSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > theory as an operational checklist: every platform capability rollout
 > must address all four social system dimensions (workflow, incentive,
 > norm, capability). The checklist surfaces the most common failure mode
@@ -1045,7 +1056,7 @@ technical system.
 
 ---
 
-#### Q1 - What is Sociotechnical Systems theory and why does it matter for IDP adoption?
+**[JUNIOR] Q1 - [ARCHITECTURE] What is Sociotechnical Systems theory and why does it matter for IDP adoption?**
 
 STS theory (Trist, 1951): organizations are composed of two
 interdependent subsystems - social (people, teams, culture, workflows)
@@ -1069,7 +1080,7 @@ and apply it in practice.
 
 ---
 
-#### Q2 - What are the four social system dimensions that must change when deploying a new IDP capability?
+**[JUNIOR] Q2 - [ARCHITECTURE] What are the four social system dimensions that must change when deploying a new IDP capability?**
 
 Four dimensions derived from STS theory:
 
@@ -1102,7 +1113,7 @@ diagnoses require different interventions.
 
 ---
 
-#### Q3 - How does STS theory explain why IDP programs often fail despite good technology?
+**[JUNIOR] Q3 - [DEBUGGING] How does STS theory explain why IDP programs often fail despite good technology?**
 
 The STS explanation for IDP program failure:
 
@@ -1142,7 +1153,7 @@ adoption; the incentive system is the blocker" is actionable.
 
 ---
 
-#### Q4 - How do you design the social system around a new IDP capability?
+**[MID] Q4 - [ARCHITECTURE] How do you design the social system around a new IDP capability?**
 
 Social system design process for a new IDP capability:
 
@@ -1179,7 +1190,7 @@ outcomes because the two are interdependent.
 
 ---
 
-#### Q5 - What is the sociotechnical implication of platform team self-service vs. ticket-based model?
+**[MID] Q5 - [TRADE-OFF] What is the sociotechnical implication of platform team self-service vs. ticket-based model?**
 
 STS framing of self-service vs. ticket-based platform:
 
@@ -1215,7 +1226,7 @@ change (trust norms) that the technical capability change cannot force.
 
 ---
 
-#### Q6 - How does STS theory inform the platform team's role in a large organization?
+**[MID] Q6 - [CONCEPTUAL] How does STS theory inform the platform team's role in a large organization?**
 
 STS theory frames the platform team's role as designing and maintaining
 the sociotechnical system (not just the technical system):
@@ -1255,7 +1266,7 @@ social system reach without requiring the platform team to grow.
 
 ---
 
-#### Q7 - How do you apply STS theory to troubleshoot low platform adoption?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you apply STS theory to troubleshoot low platform adoption?**
 
 STS adoption troubleshooting:
 
@@ -1297,7 +1308,7 @@ than survey-based diagnosis for STS adoption problems.
 
 ---
 
-#### Q8 - What is the STS principle of "minimum critical specification" and how does it apply to IDP design?
+**[SENIOR] Q8 - [ARCHITECTURE] What is the STS principle of "minimum critical specification" and how does it apply to IDP design?**
 
 Minimum critical specification (STS principle): specify only what is
 essential; leave people the maximum freedom in HOW they fulfill the
@@ -1345,7 +1356,7 @@ non-negotiable policy; everything else is recommendation.
 
 ---
 
-#### Q9 - How does STS theory explain the relationship between cognitive load and platform adoption?
+**[SENIOR] Q9 - [CONCEPTUAL] How does STS theory explain the relationship between cognitive load and platform adoption?**
 
 STS theory predicts: high cognitive load in the technical system produces
 compensating behaviors in the social system that reduce the apparent

@@ -120,7 +120,7 @@ Browser renders a page:
   6. Composite: layer management (GPU)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why CSS Exists example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The CSSOM maps every DOM node to its computed style. CSS rules
 are matched via selectors, conflicts resolved by the cascade
@@ -179,7 +179,7 @@ minimal solution to these three constraints.
 </table>
 ```
 
-> **Code walkthrough:** This is the pattern CSS was invented to
+> **Code walkthrough:** This is the pattern CSS was invented toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > replace. Every visual change requires touching every HTML file.
 > The `font` tag carries no semantic meaning. Table layouts break
 > screen readers. This approach scales to zero.
@@ -194,7 +194,7 @@ minimal solution to these three constraints.
 </section>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why CSS Exists example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```css
 /* CSS: presentation only */
@@ -210,7 +210,7 @@ minimal solution to these three constraints.
 }
 ```
 
-> **Code walkthrough:** HTML carries semantic meaning (`h1`,
+> **Code walkthrough:** HTML carries semantic meaning (`h1`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `section`, `p`). All visual decisions live in CSS. Changing
 > the entire site's heading color means editing one CSS rule,
 > not every HTML file. Classes decouple the visual identity
@@ -300,14 +300,14 @@ Cause: CSS file not being served, wrong path, or cached old
 version.
 
 Diagnosis:
-```
+```plaintext
 # Check Network tab in DevTools
 # Look for 404 on CSS file
 # Check cache headers with:
 curl -I https://your-site.com/styles.css
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check cache headers with: example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Verify the `<link>` href, add cache-busting content hash
 to filename (Webpack/Vite does this automatically).
@@ -320,14 +320,14 @@ Cause: specificity conflict - a higher-specificity rule
 elsewhere is overriding your rule.
 
 Diagnosis:
-```
+```plaintext
 # In Chrome DevTools:
 # Elements panel > select element > Computed tab
 # Look for strikethrough properties
 # Click the source link to find the winning rule
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Click the source link to find the winning rule example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Increase specificity of your rule by adding a class, or
 reduce specificity of the conflicting rule.
@@ -358,7 +358,7 @@ URL changes when content changes.
 
 ---
 
-**Q1: What is CSS and why does it exist?** `[JUNIOR]` CONCEPTUAL
+**[JUNIOR] Q1 - [MECHANISM] What is CSS and why does it exist?** `[JUNIOR]` CONCEPTUAL**
 
 *Why they ask:* Establishes whether the candidate understands
 separation of concerns or just "knows how to write styles."
@@ -401,8 +401,7 @@ without CSS?"
 
 ---
 
-**Q2: Explain the CSS cascade - what does "cascading" mean?**
-`[MID]` MECHANISM
+**[MID] Q2 - [MECHANISM] Explain the CSS cascade - what does "cascading" mean?**
 
 *Why they ask:* The cascade is the most misunderstood CSS
 feature and the source of most CSS bugs. Understanding it
@@ -445,7 +444,7 @@ and source order?"
 
 ---
 
-**Q3: Why should I avoid inline styles?** `[JUNIOR]`
+**[JUNIOR] Q3 - [MECHANISM] Why should I avoid inline styles?** `[JUNIOR]`**
 TRADE-OFF
 
 *Why they ask:* Tests understanding of specificity and the
@@ -487,8 +486,7 @@ cascade, not just "that's bad practice."
 
 ---
 
-**Q4: Styles I write aren't taking effect. How do you debug?**
-`[MID]` DEBUGGING
+**[MID] Q4 - [DEBUGGING] Styles I write aren't taking effect. How do you debug?**
 
 *Why they ask:* Real-world CSS debugging is a core skill.
 Tests systematic thinking, not guessing.
@@ -535,8 +533,7 @@ strikethrough in DevTools?"
 
 ---
 
-**Q5: What is CSS inheritance and which properties inherit?**
-`[JUNIOR]` CONCEPTUAL
+**[JUNIOR] Q5 - [CONCEPTUAL] What is CSS inheritance and which properties inherit?**
 
 *Why they ask:* Inheritance is often confused with the cascade.
 Understanding the difference shows CSS depth.
@@ -578,7 +575,7 @@ Understanding the difference shows CSS depth.
 
 ---
 
-**Q6: What came before CSS? Why was it better than the
+**[SENIOR] Q6 - [MECHANISM] What came before CSS? Why was it better than the**
 old approach?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Historical context reveals whether the
@@ -620,7 +617,7 @@ better?"
 
 ---
 
-**Q7: When should you use a class vs an ID in CSS?**
+**[SENIOR] Q7 - [TRADE-OFF] When should you use a class vs an ID in CSS?**
 `[MID]` TRADE-OFF
 
 *Why they ask:* Specificity management is foundational CSS
@@ -670,6 +667,84 @@ never use ID selectors?"
 | Hiring Manager | Lead with maintainability and team velocity |
 | Bar Raiser | Discuss CSS-in-JS trade-off vs global cascade |
 | Peer Engineer | Share a real debugging story from the Styles panel |
+
+---
+
+**[MID] Q8 - [MECHANISM] What is the difference between
+`display: none` and `visibility: hidden`?**
+
+*Why they ask:* Common beginner trap. Tests precise mechanism
+knowledge.
+
+> **Answer:**
+>
+> `display: none` removes the element from the layout completely.
+> It takes up no space; surrounding elements reflow as if it
+> doesn't exist. Also removed from accessibility tree (screen
+> readers skip it).
+>
+> `visibility: hidden` makes the element invisible but preserves
+> its space in the layout. Surrounding elements do NOT reflow.
+> The element still occupies its box.
+>
+> A third option: `opacity: 0` makes the element invisible but
+> keeps its space AND keeps it in the accessibility tree and
+> interactable (clicks still register).
+>
+> Production use cases:
+> - `display: none`: hiding navigation menu items, modal dialogs,
+>   conditional form fields.
+> - `visibility: hidden`: skeleton loading (preserve layout
+>   while content loads), preventing layout shift during transitions.
+> - `opacity: 0` + `pointer-events: none`: CSS animations where
+>   you fade in/out while keeping layout stable.
+>
+> *What separates good from great:* Mentioning the accessibility
+> tree difference - `display: none` removes elements from screen
+> reader navigation; `visibility: hidden` does not. This matters
+> for modals and collapsible sections.
+
+---
+
+**[MID] Q9 - [SCENARIO] A designer hands you a Figma file.
+How do you approach translating it to CSS without creating
+a maintenance nightmare?**
+
+*Why they ask:* Tests whether the candidate thinks about
+CSS architecture, not just implementation.
+
+> **Answer:**
+>
+> Before writing a line: extract the design tokens. Colors,
+> font sizes, spacing, border-radius, shadow values. Put them
+> in CSS custom properties (`:root { --color-primary: #...}`).
+> This means every future change to brand colors is a one-line
+> edit.
+>
+> Identify the layout structure: what are the major regions?
+> Header, sidebar, main, footer. These are semantic HTML
+> elements with simple CSS layout rules (Flexbox or Grid).
+> Do not use absolute positioning for flow layouts.
+>
+> Build a component hierarchy: what UI patterns repeat?
+> Button styles, card styles, form field styles. Create
+> classes for each. Name them by role, not visual
+> appearance (`.btn-primary` not `.blue-button`).
+>
+> Order specificity consistently: global resets lowest,
+> layout middle, components highest. Use a methodology
+> like BEM or utility-first (Tailwind) depending on
+> team preference.
+>
+> The nightmare pattern to avoid: pixel-pushing individual
+> elements with unique classes and arbitrary values.
+> Every magic number becomes a maintenance problem when
+> the design changes.
+>
+> *What separates good from great:* Starting with design
+> tokens and a component inventory before writing CSS.
+> Candidates who start by writing CSS for individual
+> elements create specificity debt from line one.
 
 ---
 
@@ -829,7 +904,7 @@ model for all four regions, layout requires workarounds.
 +---------------------------+
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Box Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The `width` and `height` properties target the content area
 by default (`box-sizing: content-box`). With `border-box`,
@@ -891,7 +966,7 @@ complexity without new expressive power.
 }
 ```
 
-> **Code walkthrough:** With default `content-box`, the 300px
+> **Code walkthrough:** With default `content-box`, the 300pxice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `width` is ONLY the content area. Padding (40px total) and
 > border (4px total) are added on top, making the element
 > 344px wide. This is the most common CSS layout bug for new
@@ -914,7 +989,7 @@ complexity without new expressive power.
 }
 ```
 
-> **Code walkthrough:** With `border-box`, `width` sets the
+> **Code walkthrough:** With `border-box`, `width` sets theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > total box size including padding and border. The content area
 > shrinks to accommodate them. A `.card` inside a 300px
 > container will fit exactly. The `*::before` and `*::after`
@@ -943,7 +1018,7 @@ p {
 }
 ```
 
-> **Code walkthrough:** Margin collapsing is intentional CSS
+> **Code walkthrough:** Margin collapsing is intentional CSSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > behavior for text typography. To diagnose: inspect the gap
 > in DevTools - if it's the max of two margins not the sum,
 > you have collapsing. Fix by using a flex or grid container,
@@ -1039,13 +1114,13 @@ Cause: `box-sizing: content-box` with explicit padding or
 border.
 
 Diagnosis:
-```
+```plaintext
 # DevTools Elements panel > select element
 # Layout tab shows box model diagram with exact values
 # Computed width vs set width will differ by padding+border
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Computed width vs set width will differ by padding+border example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add global `box-sizing: border-box` reset or add it
 to the specific component.
@@ -1065,7 +1140,7 @@ Diagnosis:
 # They may be the same margin collapsed together
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This They may be the same margin collapsed together examice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add `padding-top: 1px` or `overflow: hidden` to parent,
 or use `display: flow-root` to establish BFC.
@@ -1086,17 +1161,17 @@ instead of margins. `gap` is more predictable and explicit.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Define box model | 1-2 min | Four layers, box-sizing |
-| Explain box-sizing | 2-3 min | content-box vs border-box |
-| Debug layout overflow | 3-4 min | box-sizing + DevTools |
-| Explain margin collapse | 3-4 min | BFC knowledge |
-| Design system context | 4-5 min | Universal border-box reset |
+| Scenario| Recommended Time| Key Signal|
+|---|-----------------------------------------------|--------------------------|
+| Define box model| 1-2 min| Four layers, box-sizing|
+| Explain box-sizing| 2-3 min| content-box vs border-box|
+| Debug layout overflow| 3-4 min| box-sizing + DevTools|
+| Explain margin collapse| 3-4 min| BFC knowledge|
+| Design system context| 4-5 min| Universal border-box reset|
 
 ---
 
-**Q1: Explain the CSS box model.** `[JUNIOR]` CONCEPTUAL
+**[JUNIOR] Q1 - [MECHANISM] Explain the CSS box model.** `[JUNIOR]` CONCEPTUAL**
 
 *Why they ask:* Direct test of a fundamental concept; reveals
 whether the candidate knows details (box-sizing) or just the
@@ -1142,7 +1217,7 @@ surface.
 
 ---
 
-**Q2: What's the difference between content-box and
+**[JUNIOR] Q2 - [TRADE-OFF] What's the difference between content-box and**
 border-box?** `[MID]` COMPARISON
 
 *Why they ask:* box-sizing is the most impactful CSS
@@ -1184,8 +1259,7 @@ model or just memorized terms.
 
 ---
 
-**Q3: My element is wider than I expected. How do you debug?**
-`[MID]` DEBUGGING
+**[MID] Q3 - [DEBUGGING] My element is wider than I expected. How do you debug?**
 
 *Why they ask:* Box model debugging is a daily CSS skill.
 Tests systematic thinking.
@@ -1229,7 +1303,7 @@ the element panel but overflows anyway?"
 
 ---
 
-**Q4: Explain margin collapsing.** `[SENIOR]` MECHANISM
+**[MID] Q4 - [MECHANISM] Explain margin collapsing.** `[SENIOR]` MECHANISM**
 
 *Why they ask:* Margin collapsing is a frequent source of
 mysterious layout bugs. Tests deep understanding vs surface
@@ -1276,7 +1350,7 @@ knowledge.
 
 ---
 
-**Q5: Why use gap instead of margin in Flexbox/Grid?**
+**[MID] Q5 - [MECHANISM] Why use gap instead of margin in Flexbox/Grid?**
 `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Modern layout knowledge; tests awareness of
@@ -1318,8 +1392,7 @@ better than gap?"
 
 ---
 
-**Q6: How does the box model affect click/hover areas?**
-`[MID]` PRODUCTION
+**[MID] Q6 - [DEBUGGING] How does the box model affect click/hover areas?**
 
 *Why they ask:* Click area confusion is a common production
 bug. Tests whether candidates understand the box model
@@ -1361,7 +1434,7 @@ to click without changing its visual size?"
 
 ---
 
-**Q7: How do you size elements to fit their container
+**[SENIOR] Q7 - [MECHANISM] How do you size elements to fit their container**
 responsively?** `[MID]` HANDS-ON
 
 *Why they ask:* Responsive sizing is a daily CSS task. Tests
@@ -1403,12 +1476,12 @@ and width: 100vw?"
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Show specificity: content-box vs border-box arithmetic |
-| Hiring Manager | Frame as "the #1 source of layout bugs in the codebase" |
-| Bar Raiser | Discuss margin collapse edge cases and BFC creation |
-| Peer Engineer | Share a real "element wider than expected" debugging story |
+| Interviewer Type| Emphasis|
+|-------------------|----------------------------------------------------------|
+| Technical Panel| Show specificity: content-box vs border-box arithmetic|
+| Hiring Manager| Frame as "the #1 source of layout bugs in the codebase"|
+| Bar Raiser| Discuss margin collapse edge cases and BFC creation|
+| Peer Engineer| Share a real "element wider than expected" debugging story|
 
 ---
 
@@ -1624,7 +1697,7 @@ INHERITANCE (separate from cascade):
   to control explicitly.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Cascade and Inheritance example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1684,7 +1757,7 @@ allows override without global coordination.
 }
 ```
 
-> **Code walkthrough:** The first rule uses an ID + multiple
+> **Code walkthrough:** The first rule uses an ID + multipleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > elements, achieving high specificity (1,2,3). The component
 > rule using a single class (0,1,0) can never override it
 > without !important. This is a specificity war - each override
@@ -1712,7 +1785,7 @@ allows override without global coordination.
 /* Order declared = priority order */
 ```
 
-> **Code walkthrough:** CSS cascade layers (`@layer`) provide
+> **Code walkthrough:** CSS cascade layers (`@layer`) provideice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > explicit priority without fighting specificity. A rule in a
 > higher layer wins over a rule in a lower layer REGARDLESS of
 > specificity. This eliminates the need for !important in most
@@ -1743,7 +1816,7 @@ body {
 }
 ```
 
-> **Code walkthrough:** Setting text properties on `body`
+> **Code walkthrough:** Setting text properties on `body`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > uses inheritance as a feature - every text element inherits
 > them without explicit rules. `inherit` is useful for
 > explicit documentation: it says "this is intentionally
@@ -1839,7 +1912,7 @@ inheritance as fallback.
 Cause: a higher-specificity rule elsewhere is overriding it.
 
 Diagnosis:
-```
+```plaintext
 # DevTools Elements > select element > Styles tab
 # Find the property showing strikethrough
 # The rule shown ABOVE it (without strikethrough) is winning
@@ -1847,7 +1920,7 @@ Diagnosis:
 # Compare specificity: winning rule score vs your rule score
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare specificity: winning rule score vs your rule score example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Increase specificity of your rule, or reduce specificity
 of the competing rule. Use @layer if the rules are in
@@ -1868,7 +1941,7 @@ Diagnosis:
 # Check if any ancestor has inline style attribute
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if any ancestor has inline style attribute example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Use `property: unset` or `property: initial` to break
 the cascade at the component level.
@@ -1887,7 +1960,7 @@ Diagnosis:
 # Check if a CSS module or CSS-in-JS class name changed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if a CSS module or CSS-in-JS class name changice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Don't rely on source order for meaningful style
 conflicts. Use specificity differences or @layer to make
@@ -1897,18 +1970,17 @@ the intended override explicit.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| "Explain the cascade" | 2-3 min | Three-stage algorithm |
-| Specificity question | 2-3 min | The three-column scoring |
-| "Why won't my style work?" | 3-4 min | Systematic DevTools |
-| "Avoid !important" | 3-4 min | @layer architecture |
-| Inheritance vs cascade | 3 min | Distinguish the two |
+| Scenario| Recommended Time| Key Signal|
+|---|-------------------------------------------------|------------------------|
+| "Explain the cascade"| 2-3 min| Three-stage algorithm|
+| Specificity question| 2-3 min| The three-column scoring|
+| "Why won't my style work?"| 3-4 min| Systematic DevTools|
+| "Avoid !important"| 3-4 min| @layer architecture|
+| Inheritance vs cascade| 3 min| Distinguish the two|
 
 ---
 
-**Q1: What is CSS specificity and how is it calculated?**
-`[JUNIOR]` CONCEPTUAL
+**[JUNIOR] Q1 - [CONCEPTUAL] What is CSS specificity and how is it calculated?**
 
 *Why they ask:* Most common CSS interview question;
 distinguishes memorization from understanding.
@@ -1950,7 +2022,7 @@ distinguishes memorization from understanding.
 
 ---
 
-**Q2: What's the difference between inheritance and the
+**[JUNIOR] Q2 - [TRADE-OFF] What's the difference between inheritance and the**
 cascade?** `[MID]` COMPARISON
 
 *Why they ask:* These two concepts are frequently confused.
@@ -1997,7 +2069,7 @@ property to inherit?"
 
 ---
 
-**Q3: How do you avoid specificity wars?** `[SENIOR]`
+**[JUNIOR] Q3 - [MECHANISM] How do you avoid specificity wars?** `[SENIOR]`**
 TRADE-OFF
 
 *Why they ask:* Specificity management is a real CSS
@@ -2044,7 +2116,7 @@ CSS cascade layers?"
 
 ---
 
-**Q4: Why does my style break when I move the CSS import
+**[MID] Q4 - [MECHANISM] Why does my style break when I move the CSS import**
 order?** `[SENIOR]` DEBUGGING
 
 *Why they ask:* Source order dependency is a real production
@@ -2093,7 +2165,7 @@ bug pattern, especially with CSS bundlers.
 
 ---
 
-**Q5: What is !important and when should you use it?**
+**[MID] Q5 - [SCENARIO] What is !important and when should you use it?**
 `[MID]` TRADE-OFF
 
 *Why they ask:* !important misuse is the most common CSS
@@ -2138,7 +2210,7 @@ anti-pattern. Tests whether the candidate has mature opinions.
 
 ---
 
-**Q6: A third-party widget has very high specificity styles.
+**[SENIOR] Q6 - [MECHANISM] A third-party widget has very high specificity styles.**
 How do you override without touching their CSS?** `[SENIOR]`
 PRODUCTION
 
@@ -2184,7 +2256,7 @@ practical specificity management skills.
 
 ---
 
-**Q7: What is the difference between initial, inherit,
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between initial, inherit,**
 unset, and revert?** `[SENIOR]` MECHANISM
 
 *Why they ask:* These CSS-wide keywords are frequently misused.
@@ -2233,12 +2305,12 @@ Knowing them reveals deep CSS fluency.
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Walk through the three-stage cascade algorithm |
-| Hiring Manager | Frame as "the root cause of most CSS maintenance debt" |
-| Bar Raiser | Discuss @layer and how it changes CSS architecture |
-| Peer Engineer | Discuss a real specificity war you diagnosed and resolved |
+| Interviewer Type| Emphasis|
+|--------------------|---------------------------------------------------------|
+| Technical Panel| Walk through the three-stage cascade algorithm|
+| Hiring Manager| Frame as "the root cause of most CSS maintenance debt"|
+| Bar Raiser| Discuss @layer and how it changes CSS architecture|
+| Peer Engineer| Discuss a real specificity war you diagnosed and resolved|
 
 ---
 

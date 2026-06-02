@@ -171,7 +171,7 @@ async function* typedPages<T>(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Types for Async Code example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 **The key insight:**
 TypeScript wraps the inferred return type of `async` functions
@@ -227,7 +227,7 @@ getConfig().then(cfg => cfg.nonexistent.deeply.nested);
 // No error at compile time - crashes at runtime
 ```
 
-> **Code walkthrough:** The first BAD pattern shows the most
+> **Code walkthrough:** The first BAD pattern shows the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common async TypeScript mistake: mapping over IDs without
 > `await` or wrapping in `Promise.all`. TypeScript would catch
 > this if the return type is explicitly declared as `Promise<Item[]>`
@@ -293,7 +293,7 @@ const config = await withRetry(() => getConfig());
 // config: Config - not Promise<Config>
 ```
 
-> **Code walkthrough:** Explicit return types (`Promise<Config>`,
+> **Code walkthrough:** Explicit return types (`Promise<Config>`,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Promise<Item[]>`) make the contract self-documenting and
 > enforce correct usage. `Promise.all` correctly collects all
 > fetch Promises and returns `Promise<Item[]>`. The generic
@@ -361,7 +361,7 @@ const data = ConfigSchema.parse(await response.json());
 // data: { apiUrl: string } - validated + typed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 **Failure 2: Type widening from untyped Promise.all**
 ```typescript
@@ -377,7 +377,7 @@ const [user, posts, count] = results;
 // user: User, posts: Post[], count: number - correctly typed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 ---
 
@@ -392,7 +392,7 @@ const [user, posts, count] = results;
 | Design | 2 | Generic retry, typed async generator |
 | Behavioral | 1 | Introducing typed async to a codebase |
 
-**Q1. What is `Awaited<T>` and when do you need it?**
+**[JUNIOR] Q1 - [MECHANISM] What is `Awaited<T>` and when do you need it?**
 
 `Awaited<T>` recursively unwraps Promise types:
 ```typescript
@@ -401,7 +401,7 @@ type B = Awaited<Promise<Promise<string>>>; // string
 type C = Awaited<string>;                   // string (passthrough)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 Use cases:
 1. Extracting the resolved type from a function returning a Promise:
@@ -410,7 +410,7 @@ async function loadData() { return { id: 1, name: 'Alice' }; }
 type Data = Awaited<ReturnType<typeof loadData>>; // { id: number; name: string }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 2. Higher-order async functions where the generic parameter is a Promise:
 ```typescript
@@ -418,7 +418,7 @@ function promisify<T>(cb: (callback: (value: T) => void) => void): Promise<T>;
 type Result = Awaited<ReturnType<typeof promisify<string>>>; // string
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using generic type. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 3. Flattening mapped types over async functions:
 ```typescript
@@ -427,7 +427,7 @@ type Results = { [K in keyof AsyncFns]: Awaited<ReturnType<AsyncFns[K]>> };
 // { a: string; b: number }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 *What separates good from great:* Using `Awaited<ReturnType<typeof fn>>`
 to derive result types from async functions, keeping types
@@ -435,8 +435,7 @@ DRY and synchronized with implementation.
 
 ---
 
-**Q2. How do you type an async function that accepts
-different callback shapes?**
+**[JUNIOR] Q2 - [MECHANISM] How do you type an async function that accepts different callback shapes?**
 
 ```typescript
 // Overloads for sync and async callbacks:
@@ -468,7 +467,7 @@ function processAsync<T, R>(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using Promise. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Knowing that the `R | Promise<R>`
 pattern handles both sync and async callbacks with the same
@@ -477,8 +476,7 @@ accepts `(R | Promise<R>)[]` and unwraps all to `R[]`.
 
 ---
 
-**Q3. What TypeScript configuration and ESLint rules catch
-async mistakes?**
+**[JUNIOR] Q3 - [MECHANISM] What TypeScript configuration and ESLint rules catch async mistakes?**
 
 TypeScript compiler options:
 ```json
@@ -491,7 +489,7 @@ TypeScript compiler options:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ESLint rules (`@typescript-eslint`):
 ```json
@@ -505,7 +503,7 @@ ESLint rules (`@typescript-eslint`):
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - `no-floating-promises`: warns when a Promise expression
   is not awaited or returned
@@ -524,12 +522,11 @@ the React event handler mistake:
 // Fix: wrap with void or use a sync wrapper that calls async
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 ---
 
-**Q4. How do you model error handling with TypeScript
-discriminated unions for async functions?**
+**[MID] Q4 - [MECHANISM] How do you model error handling with TypeScript discriminated unions for async functions?**
 
 ```typescript
 // Result type with discriminated union
@@ -579,7 +576,7 @@ if (result.success) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 *What separates good from great:* The discriminated union
 on error codes enables exhaustive switch statements - TypeScript
@@ -588,7 +585,7 @@ the `HttpError` type.
 
 ---
 
-**Q5. How do you write a typed async middleware pipeline in TypeScript?**
+**[MID] Q5 - [SCENARIO] How do you write a typed async middleware pipeline in TypeScript?**
 
 ```typescript
 type Context = {
@@ -632,7 +629,7 @@ const pipeline = await compose([
 ]);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 *What separates good from great:* The middleware composition
 pattern with TypeScript generics for `Context` enables
@@ -641,8 +638,12 @@ processing) with full type safety.
 
 ---
 
-**Q6. How do you avoid typing `Promise<void>` vs `void`
-incorrectly in callbacks?**
+**[SENIOR] Q6 - [TRADE-OFF] How do you avoid typing `Promise<void>` vs `void` incorrectly in callbacks?**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // Common mistake: async callback in forEach
@@ -682,7 +683,7 @@ strictForEach(arr, async n => { // TS error!
 // (when strictFunctionTypes is enabled)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 *What separates good from great:* Knowing that `void` in TypeScript
 is not quite the same as "returns nothing" - it also accepts
@@ -692,8 +693,7 @@ catch async callbacks in non-async contexts.
 
 ---
 
-**Q7. What is the `using` declaration and `Symbol.asyncDispose`
-for async cleanup in TypeScript?**
+**[SENIOR] Q7 - [MECHANISM] What is the `using` declaration and `Symbol.asyncDispose` for async cleanup in TypeScript?**
 
 The `using` keyword (TC39 Stage 3, TypeScript 5.2) provides
 an RAII-like pattern for automatic resource cleanup:
@@ -720,7 +720,7 @@ async function processData() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This eliminates try/finally blocks for resource cleanup -
 the dispose is guaranteed at block exit, similar to C#'s
@@ -735,12 +735,12 @@ resource management in TypeScript.
 
 ### ⚖️ Comparison Table
 
-| Pattern | Type Safety | Error Model | Complexity | Use Case |
-|---|---|---|---|---|
-| `async` + try/catch | Promise<T> | Exceptions | Low | Standard async code |
-| `Result<T, E>` | Full | Values | Medium | Expected errors |
-| `AsyncGenerator<T>` | Full | Throw in generator | Medium | Lazy async streams |
-| Effect-TS / fp-ts | Maximum | Typed effects | High | FP-heavy codebases |
+| Pattern| Type Safety| Error Model| Complexity| Use Case|
+|----------------|-----------|------------------|----------|-------------------|
+| `async` + try/catch| Promise<T>| Exceptions| Low| Standard async code|
+| `Result<T, E>`| Full| Values| Medium| Expected errors|
+| `AsyncGenerator<T>`| Full| Throw in generator| Medium| Lazy async streams|
+| Effect-TS / fp-ts| Maximum| Typed effects| High| FP-heavy codebases|
 
 **The deciding factor:**
 Standard apps: `async/await` + try/catch + ESLint rules.
@@ -756,7 +756,7 @@ Error-prone APIs: `Result<T, E>`. Large-scale FP: Effect-TS.
 
 ### 📊 Diagram
 
-```
+```plaintext
 PROMISE TYPE FLOW IN TYPESCRIPT
 =================================
 
@@ -1016,7 +1016,7 @@ function SearchComponent() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancellation Patterns in JavaScript example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 `AbortController` works bidirectionally: you can check
@@ -1066,7 +1066,7 @@ class SearchService {
 }
 ```
 
-> **Code walkthrough:** Without cancellation, multiple in-flight
+> **Code walkthrough:** Without cancellation, multiple in-flightice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requests race to update the UI. The slowest response wins,
 > potentially showing results for a superseded query. This is
 > a classic async race condition that manifests as "results
@@ -1117,6 +1117,7 @@ function useSearch(debounceMs = 300) {
   return { results, loading, error, search };
 }
 
+// BAD: see prior example above (AbortSignal.timeout for automa...)
 // GOOD: AbortSignal.timeout for automatic timeout
 async function fetchWithTimeout(url, timeoutMs = 5000) {
   try {
@@ -1133,7 +1134,7 @@ async function fetchWithTimeout(url, timeoutMs = 5000) {
 }
 ```
 
-> **Code walkthrough:** The custom hook returns a `cancel`
+> **Code walkthrough:** The custom hook returns a `cancel`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > function (the AbortController's abort method bound to the
 > current controller). Each call to `search` creates a fresh
 > controller. The cleanup function from `useEffect` calls
@@ -1191,6 +1192,14 @@ to distinguish cancellation from actual errors.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: AbortController in wrong scope**
+
+```javascript
+// BAD: missing dependency array causes infinite re-renders
+useEffect(() => {
+    fetchData(userId).then(setData);
+}); // no dependency array = runs after every render
+```
+
 ```javascript
 // BAD: controller created outside effect - shared across renders
 const controller = new AbortController(); // module scope!
@@ -1213,7 +1222,7 @@ function Component() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: Not propagating signal to nested fetch calls**
 ```javascript
@@ -1233,7 +1242,7 @@ async function loadAll(id, signal) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -1248,7 +1257,7 @@ async function loadAll(id, signal) {
 | Design | 2 | React cancellation pattern, timeout strategy |
 | Behavioral | 1 | Fixing a race condition in production |
 
-**Q1. How does `AbortController` work internally?**
+**[JUNIOR] Q1 - [MECHANISM] How does `AbortController` work internally?**
 
 `AbortController` creates two related objects:
 - The controller: has `abort(reason?)` method
@@ -1278,7 +1287,7 @@ async function longRunning(signal) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 `signal.throwIfAborted()` (ES2022) is the idiomatic way to
 check and throw in custom async loops.
@@ -1289,8 +1298,7 @@ and using it in custom async loops rather than manually checking
 
 ---
 
-**Q2. How do you compose multiple cancellation sources with
-`AbortSignal.any()`?**
+**[JUNIOR] Q2 - [MECHANISM] How do you compose multiple cancellation sources with `AbortSignal.any()`?**
 
 `AbortSignal.any(signals)` (ES2023) returns a signal that
 aborts when ANY of the provided signals abort:
@@ -1313,7 +1321,7 @@ const resp = await fetch('/api/long-operation', {
 cancelButton.onclick = () => userCancel.abort('User cancelled');
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Use cases:
 - User cancellation OR timeout: the most common combination
@@ -1327,8 +1335,7 @@ the need for custom combining logic.
 
 ---
 
-**Q3. How do you implement cancellable recursive async
-operations?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement cancellable recursive async operations?**
 
 ```typescript
 async function processTree(
@@ -1363,7 +1370,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Calling `throwIfAborted()`
 at the start of the recursive function and passing the signal
@@ -1372,8 +1379,7 @@ recursion checks for cancellation.
 
 ---
 
-**Q4. What is the difference between cancelling with
-`AbortController` vs `Promise.race` for timeouts?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between cancelling with `AbortController` vs `Promise.race` for timeouts?**
 
 `Promise.race` with a timeout Promise: stops waiting, but
 the original operation continues running. The fetch is never
@@ -1401,7 +1407,7 @@ async function fetchCancelled(url, ms) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using Promise. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The operational difference:
 `Promise.race` leaves N-1 operations as "ghost requests."
@@ -1410,8 +1416,7 @@ actually terminates the underlying operation.
 
 ---
 
-**Q5. How do you handle AbortError differently from other
-errors in a catch block?**
+**[MID] Q5 - [MECHANISM] How do you handle AbortError differently from other errors in a catch block?**
 
 ```typescript
 async function robustFetch<T>(
@@ -1438,7 +1443,7 @@ async function robustFetch<T>(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 The key distinction: `AbortError` is not a failure - it is
 an intentional cancellation. Logging or alerting on AbortErrors
@@ -1451,8 +1456,7 @@ Production monitoring should never alert on AbortErrors.
 
 ---
 
-**Q6. How do generators enable cancellation of multi-step
-async operations?**
+**[SENIOR] Q6 - [MECHANISM] How do generators enable cancellation of multi-step async operations?**
 
 Generator-based cancellation: each `yield` is a cancellation
 point. A runner function checks cancellation between steps.
@@ -1482,7 +1486,7 @@ async function runCancellable(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Modern alternative: use AbortController + async functions
 with `throwIfAborted()`. Generators are the historical pattern
@@ -1494,8 +1498,7 @@ and recommending `AbortController` for new code.
 
 ---
 
-**Q7. What are the implications of not cancelling fetch
-requests in a long-running application?**
+**[SENIOR] Q7 - [MECHANISM] What are the implications of not cancelling fetch requests in a long-running application?**
 
 Resource accumulation:
 - Open TCP connections: browsers limit connections per hostname
@@ -1525,13 +1528,13 @@ is more convincing than abstract reasoning.
 
 ### ⚖️ Comparison Table
 
-| Pattern | Standard | Works With | Complexity | Best For |
-|---|---|---|---|---|
-| AbortController | Web standard | fetch, Web APIs | Low | HTTP request cancellation |
-| AbortSignal.timeout | Web standard (ES2023) | fetch, Web APIs | Very low | Request timeouts |
-| RxJS unsubscribe | Library | Observables | Medium | Reactive streams |
-| Manual token | Custom | Any async code | Medium | Custom async operations |
-| Generator-based | ES6 | Generator functions | High | Legacy/educational |
+| Pattern| Standard| Works With| Complexity| Best For|
+|---|-----------------|-------------------|----------|-------------------------|
+| AbortController| Web standard| fetch, Web APIs| Low| HTTP request cancellation
+| AbortSignal.timeout| Web standard (ES2023)| fetch, Web APIs| Very low| Request
+| RxJS unsubscribe| Library| Observables| Medium| Reactive streams|
+| Manual token| Custom| Any async code| Medium| Custom async operations|
+| Generator-based| ES6| Generator functions| High| Legacy/educational|
 
 **The deciding factor:**
 For fetch: AbortController. For Observables: unsubscribe (RxJS

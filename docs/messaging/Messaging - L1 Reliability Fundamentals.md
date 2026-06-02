@@ -75,7 +75,7 @@ Producer                      Broker            Consumer
   |                                    | -> Object  |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Serialization and Schema example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Steps:
 1. Producer calls serializer with an object and schema
@@ -214,23 +214,27 @@ Symptom: all producers on schema-registry-dependent topics fail simultaneously; 
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is message serialization and why does it matter in a messaging system?"
-- "What is the difference between a serialization format and a schema registry?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is message serialization and why does it matter in a messaging system?**
+**[JUNIOR] Q2 - [MECHANISM] What is the difference between a serialization format and a schema registry?**
 
 🗣️ "Serialization converts in-memory objects to bytes for transport. It matters because producers and consumers are separate processes - they communicate only through bytes. A serialization format like JSON or Avro defines how the encoding works. A schema registry is a separate service that stores the schema definitions and enforces that changes are compatible - so a producer cannot silently break its consumers."
 
-#### Mechanism
-- "How does Avro schema resolution work between writer and reader schemas?"
-- "Walk me through what happens when a message is consumed with a different schema version than when it was produced."
+
+**[MID] Q3 - [MECHANISM] How does Avro schema resolution work between writer and reader schemas?**
+**[MID] Q4 - [MECHANISM] Walk me through what happens when a message is consumed with a different schema version than when it was produced.**
 
 🗣️ "When a consumer reads an Avro message, it has two schemas: the writer schema, retrieved from the schema registry using the ID embedded in the message, and its own reader schema. Avro's resolution rules compare them field by field. Fields in the writer schema not in the reader schema are ignored. Fields in the reader schema not in the writer schema use the reader's default value. Field types are promoted if compatible - int to long is fine, long to int is not. This is what makes schema evolution safe as long as you define defaults for new fields."
 
-#### Comparison
-- "When would you choose Avro over Protobuf?"
-- "Compare JSON, Avro, and Protobuf for a high-throughput messaging system."
+
+**[SENIOR] Q5 - [TRADE-OFF] When would you choose Avro over Protobuf?**
+**[SENIOR] Q6 - [TRADE-OFF] Compare JSON, Avro, and Protobuf for a high-throughput messaging system.**
 
 🗣️ "JSON is human-readable but 3-5x larger than binary formats and slower to parse. I would use it only for low-volume topics where debuggability matters more than efficiency. Avro is the natural fit with Confluent/Kafka ecosystems - it has built-in schema evolution and the schema registry integration is first-class. Protobuf is better when you need strong typing across multiple languages or when you want field-number-based evolution without a registry dependency. The deciding factor is ecosystem: if you are running Kafka with Confluent, Avro with the schema registry is the standard choice."
+
+**[SENIOR] Q7 - [DEBUGGING] Consumers start throwing deserialization errors after a producer deployment. How do you diagnose?**
+
+🗣️ "First question: did the schema change? Check the schema registry for a new version on the topic's subject. Compare the writer schema version embedded in failing messages versus the consumer's reader schema. If there is a mismatch, check whether the evolution was backward compatible - did the new schema add a field without a default value? A required field without a default breaks backward compatibility. Immediate mitigation: roll back the producer deployment to restore the previous schema version. Fix: add a default value to the new field, register the corrected schema, re-deploy. Prevention: enable schema registry compatibility enforcement (BACKWARD or FULL) before registering new schemas."
 
 | Interviewer Type | Emphasis |
 |---|---|
@@ -319,7 +323,7 @@ Producer -> Broker [Queue: max-length=1000]
     Option C: reject-publish-dlx (send to DLQ)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Queue Depth and Backpressure example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For Kafka (unbounded, retention-based):
 ```
@@ -331,7 +335,7 @@ Consumer reads at its own pace
   or: reduce producer batch size / increase linger.ms
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Queue Depth and Backpressure example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Kafka does not implement backpressure natively - the broker accepts messages up to disk capacity. Consumer lag is the signal, but you must implement the throttling outside the broker. RabbitMQ implements broker-side backpressure via memory and disk alarms that pause producer connections.
@@ -478,21 +482,21 @@ Symptom: RabbitMQ broker process killed by OOM; restart drops all non-durable me
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What does queue depth tell you about a messaging system?"
-- "What is backpressure and why does every message-driven system need it?"
+
+**[JUNIOR] Q1 - [MECHANISM] What does queue depth tell you about a messaging system?**
+**[JUNIOR] Q2 - [MECHANISM] What is backpressure and why does every message-driven system need it?**
 
 🗣️ "Queue depth is the count of messages sitting in a queue waiting to be consumed. It tells you the gap between producer rate and consumer rate - a rising queue depth means consumers are falling behind. Backpressure is the mechanism that prevents that gap from growing without bound. When a consumer signals it is overwhelmed, the system reduces input. Without it, queues grow until memory or disk is exhausted or messages expire."
 
-#### Mechanism
-- "How does Kafka handle backpressure differently from RabbitMQ?"
-- "What happens in RabbitMQ when a queue hits its max-length limit?"
+
+**[MID] Q3 - [MECHANISM] How does Kafka handle backpressure differently from RabbitMQ?**
+**[MID] Q4 - [MECHANISM] What happens in RabbitMQ when a queue hits its max-length limit?**
 
 🗣️ "Kafka has no native backpressure. The broker accepts messages up to its disk limit. Consumer lag is your signal that consumers are behind, but reducing producer rate requires application-level logic - monitoring lag and throttling producers accordingly. RabbitMQ implements broker-side backpressure: when memory exceeds the vm_memory_high_watermark threshold, the broker pauses producer connections using credit-based flow control. For individual queues, you can set x-max-length. When that limit is reached, the overflow policy determines behavior: drop-head removes the oldest message to make room, or reject-publish NACKs the incoming message and returns a signal to the producer."
 
-#### Comparison
-- "When would you choose a bounded queue with reject-publish over an unbounded queue with consumer autoscaling?"
-- "Compare backpressure strategies across Kafka and RabbitMQ."
+
+**[SENIOR] Q5 - [TRADE-OFF] When would you choose a bounded queue with reject-publish over an unbounded queue with consumer autoscaling?**
+**[SENIOR] Q6 - [TRADE-OFF] Compare backpressure strategies across Kafka and RabbitMQ.**
 
 🗣️ "Bounded with reject-publish is the right choice when you need to protect the producer-consumer pipeline from unbounded resource consumption and when it is acceptable for the producer to handle backpressure explicitly - retry, buffer, or shed load. Consumer autoscaling fits when traffic spikes are temporary and the cost of spinning up consumers is acceptable. For Kafka, autoscaling via KEDA on consumer lag is the standard pattern. For RabbitMQ, x-max-length with reject-publish is simpler and does not require external tooling. The deciding factor is: who should absorb the capacity pressure - the broker, the consumer fleet, or the producer?"
 
@@ -502,6 +506,12 @@ Symptom: RabbitMQ broker process killed by OOM; restart drops all non-durable me
 | Hiring Manager | Lead with: unmonitored queue depth causes data loss, not just slowness |
 | Bar Raiser | Lead with: backpressure strategy choice is a system design decision |
 | Peer Engineer | "The thing I keep finding is teams only add lag alerts after the first outage" |
+
+---
+
+**[SENIOR] Q7 - [DEBUGGING] Kafka consumer lag is growing continuously. Walk through your diagnosis.**
+
+🗣️ "Step 1: confirm the lag is growing, not just elevated. Compare current lag to 5 minutes ago using `kafka-consumer-groups.sh --describe`. If growing: the consume rate is below the produce rate. Step 2: check consumer count vs partition count. If consumers < partitions, idle partitions accumulate lag. Add consumers up to partition count. Step 3: check per-partition lag distribution. If one partition has all the lag, that partition is either skewed with more messages or a single consumer processing it is slow. Check the consumer for slow downstream calls, GC pauses, or deadlocks. Step 4: check CPU and network on consumer hosts - saturation limits throughput. Step 5: check if processing logic has a hot path triggered by specific message content causing timeouts."
 
 ---
 
@@ -588,7 +598,7 @@ Broker          Consumer
   | redeliver() -->| (to same or another consumer)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Acknowledgment and At-Least-Once Delivery example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Kafka commit flow:
 ```
@@ -603,7 +613,7 @@ Partition      Consumer          App Logic
   | redeliver 5 ->|  (on restart)    |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Acknowledgment and At-Least-Once Delivery example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The ACK window creates the at-least-once risk. Everything that happens between "message received" and "ACK sent" is vulnerable to duplicate processing. The consumer must complete ALL side effects (database writes, API calls, state changes) before ACKing. If you ACK early to avoid blocking the broker, you convert to at-most-once.
@@ -746,23 +756,27 @@ Symptom: the same messages are delivered repeatedly to multiple consumers simult
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is the difference between at-most-once, at-least-once, and exactly-once delivery?"
-- "What does it mean for a consumer to acknowledge a message?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between at-most-once, at-least-once, and exactly-once delivery?**
+**[JUNIOR] Q2 - [MECHANISM] What does it mean for a consumer to acknowledge a message?**
 
 🗣️ "Delivery semantics describe what happens when failures occur. At-most-once: the broker delivers once and never retries, so messages can be lost but never duplicated. At-least-once: the broker retries unacknowledged messages, so messages may be duplicated but never permanently lost. Exactly-once: every message is processed exactly one time, which requires distributed transaction support and is expensive. An ACK is the consumer's signal to the broker that it has fully processed a message and it is safe to remove it from the queue."
 
-#### Mechanism
-- "Walk me through what happens when a RabbitMQ consumer crashes before ACKing."
-- "How does Kafka's manual commit achieve at-least-once semantics?"
+
+**[MID] Q3 - [MECHANISM] Walk me through what happens when a RabbitMQ consumer crashes before ACKing.**
+**[MID] Q4 - [MECHANISM] How does Kafka's manual commit achieve at-least-once semantics?**
 
 🗣️ "In RabbitMQ with manual ACK, when a consumer crashes, the connection closes. The broker detects the connection drop and transitions all unacknowledged messages from that consumer back to the ready state. They are then redelivered to the next available consumer with the `redelivered` flag set to true. In Kafka, the consumer tracks its position via committed offsets. With manual commit disabled, `auto.commit`, offset advancement only happens when `commitSync()` or `commitAsync()` is called explicitly. If the consumer crashes after processing but before committing, the next consumer instance reads from the last committed offset - which is before the processed messages - and processes them again. That is at-least-once."
 
-#### Comparison
-- "When would you choose at-most-once over at-least-once delivery?"
-- "How is Kafka's manual commit different from RabbitMQ's manual ACK?"
+
+**[SENIOR] Q5 - [TRADE-OFF] When would you choose at-most-once over at-least-once delivery?**
+**[SENIOR] Q6 - [TRADE-OFF] How is Kafka's manual commit different from RabbitMQ's manual ACK?**
 
 🗣️ "At-most-once is appropriate for high-volume, low-value telemetry - metrics, logs, analytics events - where dropping 0.1% of events is acceptable and the throughput gain from skipping ACK overhead matters. Financial transactions, order processing, and state-changing operations need at-least-once with idempotency guards. RabbitMQ's manual ACK is per-message - you ACK each message individually with its delivery tag. Kafka's manual commit is per-partition-offset - you advance a cursor. The key difference is granularity: in Kafka, committing offset N implicitly ACKs all messages before N, so you cannot ACK message 5 and 7 while leaving message 6 unACKed. In RabbitMQ, you can ACK any message independently."
+
+**[SENIOR] Q7 - [DEBUGGING] A RabbitMQ queue has messages stuck in unacknowledged state permanently. How do you diagnose?**
+
+🗣️ "Unacknowledged messages that never return to ready state mean a consumer has them but is not ACKing or NAKing. Check the RabbitMQ Management UI: Consumers tab on the queue shows active consumer connections and their unack counts. If a consumer has a high unack count and is not draining, check: (1) Is the consumer alive? If the connection is open but idle, the consumer may be blocked waiting for a downstream service. (2) Is prefetch count set too high? A prefetch of 1000 allows one consumer to hold 1000 unacked messages while processing slowly - others starve. Set prefetch to 1-10 for even distribution. (3) Is the processing code deadlocked or stuck in a retry loop? Check application logs and thread dumps. Fix: if the consumer is stuck, close the connection - the broker returns all unacked messages to ready state immediately."
 
 | Interviewer Type | Emphasis |
 |---|---|

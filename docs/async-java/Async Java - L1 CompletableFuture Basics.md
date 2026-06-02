@@ -109,7 +109,7 @@ supplyAsync(() -> A)        <- starts async, returns CF<A>
   .thenAccept(c -> use(c))  <- terminal: consumes result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CompletableFuture Basics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Each stage returns a new CompletableFuture. Callbacks execute on the
 thread that completed the previous stage (or a specified executor with
@@ -182,7 +182,7 @@ CompletableFuture<Object> first =
     CompletableFuture.anyOf(primary, fallback);
 ```
 
-> **Code walkthrough:** Example 1 shows the standard chaining pattern:
+> **Code walkthrough:** Example 1 shows the standard chaining pattern:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `supplyAsync` starts computation on an executor thread; each `thenApply`
 > registers a transform that runs when the previous stage completes. No
 > thread is blocked. Example 2 shows the "bridge" pattern for legacy
@@ -248,7 +248,7 @@ ExecutorService ioPool = Executors.newFixedThreadPool(200);
 CompletableFuture.supplyAsync(() -> dbCall(), ioPool);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 ---
 
@@ -276,7 +276,7 @@ cf.whenComplete((result, ex) -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Fix: establish a policy: every CompletableFuture chain must end with
 `whenComplete` or `exceptionally` that logs or re-throws errors. Use
@@ -291,7 +291,7 @@ public static <T> CompletableFuture<T> tracked(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 ---
 
@@ -301,7 +301,7 @@ public static <T> CompletableFuture<T> tracked(
 
 ---
 
-#### Q1 - What is CompletableFuture and how does it differ from Future?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is CompletableFuture and how does it differ from Future?**
 
 `Future<T>` (Java 5): represents a value that will be available in the
 future. To retrieve it, you must call `future.get()` which blocks the
@@ -328,7 +328,7 @@ wrong; it blocks if you call get(). The point is you don't have to.
 
 ---
 
-#### Q2 - What is the difference between thenApply and thenApplyAsync?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the difference between thenApply and thenApplyAsync?**
 
 `thenApply(fn)`: runs fn on the thread that completed the previous
 stage. If the previous stage completed on pool-thread-5, fn runs on
@@ -356,7 +356,7 @@ adding a thread hop but guaranteeing isolation from the completing thread.
 
 ---
 
-#### Q3 - How do you run two CompletableFutures in parallel and combine results?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you run two CompletableFutures in parallel and combine results?**
 
 Two patterns:
 
@@ -370,7 +370,7 @@ CompletableFuture<Response> combined =
 // uf and of run in parallel; combined fires when both done
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 **allOf** - for three or more futures:
 ```java
@@ -385,7 +385,7 @@ CompletableFuture.allOf(f1, f2, f3)
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Key distinction: `thenCombine` gives you typed access to both results
 in the BiFunction. `allOf` returns `CompletableFuture<Void>` - you
@@ -405,11 +405,11 @@ CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
         .map(CompletableFuture::join).toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 ---
 
-#### Q4 - How do you handle errors in a CompletableFuture chain?
+**[MID] Q4 - [CONCEPTUAL] How do you handle errors in a CompletableFuture chain?**
 
 Three error handling methods, each with distinct semantics:
 
@@ -423,7 +423,7 @@ cf.exceptionally(ex -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `handle(BiFunction<T, Throwable, U>)`: called for both success and
 failure. Can inspect both the result and the exception. Can return a
@@ -435,7 +435,7 @@ cf.handle((result, ex) -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `whenComplete(BiConsumer<T, Throwable>)`: side-effect only (logging,
 metrics). Cannot transform the result or recover. The exception (if any)
@@ -447,7 +447,7 @@ cf.whenComplete((result, ex) -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing that `exceptionally` and
 `handle` RECOVER from exceptions (chain continues normally after them).
@@ -457,7 +457,7 @@ as a recovery handler is a common bug.
 
 ---
 
-#### Q5 - What executor should you use with CompletableFuture for I/O tasks?
+**[MID] Q5 - [CONCEPTUAL] What executor should you use with CompletableFuture for I/O tasks?**
 
 Never use the default (ForkJoinPool.commonPool()) for I/O tasks. It is:
 - Shared across the entire JVM (other frameworks use it too)
@@ -479,7 +479,7 @@ private static final ExecutorService IO_POOL =
 CompletableFuture.supplyAsync(() -> jdbc.query(...), IO_POOL);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 For Java 21+, use a virtual thread executor:
 ```java
@@ -488,7 +488,7 @@ ExecutorService vtPool =
 CompletableFuture.supplyAsync(() -> jdbc.query(...), vtPool);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 This creates one virtual thread per task - no pool sizing needed. The
 JDK handles carrier thread multiplexing automatically.
@@ -501,7 +501,7 @@ with actual resource limits.
 
 ---
 
-#### Q6 - What is the difference between complete() and completeAsync()?
+**[MID] Q6 - [CONCEPTUAL] What is the difference between complete() and completeAsync()?**
 
 `complete(T value)`: synchronously completes the future with the given
 value, immediately triggering all registered callbacks on the calling thread
@@ -529,7 +529,7 @@ asyncLibrary.on("error", err -> cf.completeExceptionally(err));
 return cf;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Knowing that calling `complete()` from
 within a callback can trigger synchronous callback chains before complete()
@@ -539,7 +539,7 @@ to an executor avoids this.
 
 ---
 
-#### Q7 - How does CompletableFuture behave when exceptions occur mid-chain?
+**[SENIOR] Q7 - [CONCEPTUAL] How does CompletableFuture behave when exceptions occur mid-chain?**
 
 When any stage in a CompletableFuture chain throws an exception, the
 exception is stored in the resulting CompletableFuture. Downstream stages
@@ -557,7 +557,7 @@ CompletableFuture.supplyAsync(() -> "start")
     .thenAccept(s -> System.out.println(s)); // "recovered: boom"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Key: the exception is wrapped in `CompletionException` when propagating
 through the chain. `exceptionally(fn)` receives the CompletionException.
@@ -724,7 +724,7 @@ thenCombine (CF<U>, BiFunction<T,U,V>):
   Use when: two parallel results needed together.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This thenApply vs thenCompose vs thenCombine example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The difference between `thenApply` and `thenCompose` is identical to
@@ -795,7 +795,7 @@ CompletableFuture<Response> response =
 // uf and pf run simultaneously; response fires when both done
 ```
 
-> **Code walkthrough:** The thenApply example transforms the name
+> **Code walkthrough:** The thenApply example transforms the nameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > synchronously - no new async operation, just a mapping function. The
 > thenCompose example shows the critical pattern: getOrders() is an async
 > operation (returns a result from a service). Using thenApply would wrap
@@ -881,7 +881,7 @@ CompletableFuture<User> flat =
     cf.thenCompose(id -> supplyAsync(() -> getUser(id)));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 The type system helps: if the compiler infers
 `CF<CF<User>>` for a thenApply call, that is always a bug.
@@ -898,7 +898,7 @@ returning) functions.
 
 ---
 
-#### Q1 - What is the difference between thenApply and thenCompose?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between thenApply and thenCompose?**
 
 `thenApply(T -> U)`: takes the result T of the current future and applies
 a synchronous function to produce U. Returns `CompletableFuture<U>`.
@@ -925,7 +925,7 @@ from memory: `cf.thenApply(id -> supplyAsync(() -> getUser(id)))` returns
 
 ---
 
-#### Q2 - When would you use thenCombine vs allOf?
+**[JUNIOR] Q2 - [CONCEPTUAL] When would you use thenCombine vs allOf?**
 
 `thenCombine(CF<U>, BiFunction<T,U,V>)`: combines exactly two futures.
 Type-safe: the BiFunction receives T and U specifically. Returns CF<V>.
@@ -948,7 +948,7 @@ CompletableFuture.allOf(f1, f2, f3)
         .toList());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Knowing that `allOf` with an empty
 array completes immediately - `CompletableFuture.allOf()` is an edge
@@ -956,7 +956,7 @@ case that should be handled to avoid spurious empty results in production.
 
 ---
 
-#### Q3 - What happens if a thenCombine dependency fails?
+**[JUNIOR] Q3 - [CONCEPTUAL] What happens if a thenCombine dependency fails?**
 
 If either of the two futures passed to `thenCombine` completes
 exceptionally, the combined future also completes exceptionally with
@@ -975,7 +975,7 @@ uf.thenCombine(of, (u, o) -> build(u, o))
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 If both fail simultaneously, whichever exception is stored in the
 combined future is implementation-dependent. The first completed-
@@ -989,7 +989,7 @@ solves this: `ShutdownOnFailure` cancels all sibling tasks when one fails.
 
 ---
 
-#### Q4 - How does thenCompose compare to nested supplyAsync calls?
+**[MID] Q4 - [TRADE-OFF] How does thenCompose compare to nested supplyAsync calls?**
 
 Nested `supplyAsync` calls create independent futures that are not
 sequenced. `thenCompose` creates a sequential chain where the second
@@ -1008,7 +1008,7 @@ CompletableFuture<Order> of =
         supplyAsync(() -> getOrder(user.getOrderId())));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Use thenCompose when the second async call DEPENDS on the result of the
 first. Use `thenCombine` or parallel `supplyAsync` when both calls are
@@ -1021,7 +1021,7 @@ gives lower latency because both run simultaneously.
 
 ---
 
-#### Q5 - What is runAfterBoth and when would you use it?
+**[MID] Q5 - [CONCEPTUAL] What is runAfterBoth and when would you use it?**
 
 `runAfterBoth(CF<?>, Runnable)`: fires a Runnable when both the current
 future and the provided future complete, using neither result. Returns
@@ -1037,7 +1037,7 @@ cacheInvalidateFuture
         () -> auditLog.record("cache+db updated"));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Alternatives in the family:
 - `thenAcceptBoth(CF<U>, BiConsumer<T,U>)`: receives both results but
@@ -1055,7 +1055,7 @@ responds first.
 
 ---
 
-#### Q6 - How do you convert a blocking call into a CompletableFuture chain?
+**[MID] Q6 - [CONCEPTUAL] How do you convert a blocking call into a CompletableFuture chain?**
 
 Three approaches, from simplest to most correct:
 
@@ -1066,7 +1066,7 @@ CompletableFuture<User> cf =
         () -> jdbc.findUser(id), ioPool);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 2. Bridge from callback-based API (no thread blocking):
 ```java
@@ -1077,7 +1077,7 @@ asyncHttpClient.execute(request,
 return cf;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 3. Reactive to CompletableFuture (from Project Reactor):
 ```java
@@ -1086,7 +1086,7 @@ CompletableFuture<User> cf =
     reactorMono.toFuture();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 The best approach depends on the underlying API. For JDBC (inherently
 blocking), option 1 is the pragmatic choice with a properly sized pool.
@@ -1101,7 +1101,7 @@ API provides a callback or completion-notification mechanism.
 
 ---
 
-#### Q7 - What is the practical difference in latency between sequential thenCompose and parallel thenCombine?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the practical difference in latency between sequential thenCompose and parallel thenCombine?**
 
 Sequential thenCompose: total latency = latency_A + latency_B.
 The second operation starts only after the first completes.
@@ -1120,7 +1120,7 @@ thenCombine (parallel):
   getPrefs (50ms)/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The latency saving is the latency of the shorter operation.
 
@@ -1265,7 +1265,7 @@ provided a clean typed API for result-bearing async tasks.
 
 **How it works:**
 
-```
+```plaintext
 Callable<T>:
   V call() throws Exception;
   (Returns V; throws checked exceptions)
@@ -1282,7 +1282,7 @@ Future<T>:
   bool isCancelled()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Future and Callable Interface example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Exceptions from Callable.call() are caught by the executor and stored
 in the Future. `future.get()` re-throws them wrapped in
@@ -1363,7 +1363,7 @@ combine(a, b);       // forced sequential blocking
 // CompletableFuture.thenCombine() solves this elegantly
 ```
 
-> **Code walkthrough:** Example 1 shows the basic pattern: Callable is
+> **Code walkthrough:** Example 1 shows the basic pattern: Callable isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a lambda that returns a value (and can throw). `pool.submit(callable)`
 > schedules it and returns a Future immediately. Example 2 shows naive
 > polling - generally avoid this; it wastes CPU time. Example 3 is the
@@ -1458,7 +1458,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Fix: always unwrap ExecutionException with `getCause()` before logging
 or handling. Consider a utility method:
@@ -1477,7 +1477,7 @@ public static <T> T getResult(Future<T> f) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -1487,7 +1487,7 @@ public static <T> T getResult(Future<T> f) {
 
 ---
 
-#### Q1 - What is Callable and how does it differ from Runnable?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is Callable and how does it differ from Runnable?**
 
 `Runnable`: single method `void run()`. Returns nothing. Cannot throw
 checked exceptions. Used for fire-and-forget tasks.
@@ -1504,7 +1504,7 @@ Runnable r = () -> updateCache(key, value); // void
 Callable<User> c = () -> userRepo.findById(id); // returns User
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Functional interface: both are functional interfaces, so lambdas work
 for both. Callable is preferred when the task needs to return a result
@@ -1518,7 +1518,7 @@ completion, not retrieving a result.
 
 ---
 
-#### Q2 - How does ExecutorService.submit() differ from execute()?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does ExecutorService.submit() differ from execute()?**
 
 `execute(Runnable)`: from the Executor interface (parent of
 ExecutorService). Schedules the task for execution, returns void. Any
@@ -1545,7 +1545,7 @@ CompletableFuture without handlers.
 
 ---
 
-#### Q3 - What happens when a Callable throws an exception?
+**[JUNIOR] Q3 - [CONCEPTUAL] What happens when a Callable throws an exception?**
 
 When `Callable.call()` throws an exception (checked or unchecked), the
 executor catches it and stores it in the resulting Future.
@@ -1571,7 +1571,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Special case: `InterruptedException` from `get()` means the waiting
 thread was interrupted, not the task. Always restore the interrupt flag:
@@ -1585,7 +1585,7 @@ only Exception) masks distinct failure modes.
 
 ---
 
-#### Q4 - How do you implement a timeout with Future?
+**[MID] Q4 - [HANDS-ON] How do you implement a timeout with Future?**
 
 `future.get(long timeout, TimeUnit unit)`: waits at most the specified
 duration. If the future does not complete in time, throws `TimeoutException`.
@@ -1609,7 +1609,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Key: `f.cancel(true)` after timeout is best-effort. The pool thread
 running the task only stops if it checks `Thread.interrupted()`. For
@@ -1629,7 +1629,7 @@ long the task's socket waits.
 
 ---
 
-#### Q5 - How do you collect results from multiple parallel Futures?
+**[MID] Q5 - [CONCEPTUAL] How do you collect results from multiple parallel Futures?**
 
 Pattern: submit all tasks, collect futures, then iterate to get results.
 
@@ -1660,7 +1660,7 @@ List<String> results = futures2.stream()
     .toList();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 `invokeAll()`: blocks the calling thread until ALL submitted tasks
 complete (or time out). Convenient but removes the ability to do other
@@ -1680,7 +1680,7 @@ when using timed invokeAll.
 
 ---
 
-#### Q6 - When would you still use Future over CompletableFuture?
+**[MID] Q6 - [CONCEPTUAL] When would you still use Future over CompletableFuture?**
 
 Three scenarios where Future remains relevant:
 
@@ -1708,7 +1708,7 @@ Three scenarios where Future remains relevant:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* The bridge pattern above - knowing
 how to convert a blocking Future to a CompletableFuture without losing
@@ -1717,7 +1717,7 @@ the blocking get() runs on a pool thread, not the calling thread.
 
 ---
 
-#### Q7 - What is the significance of interruption with Future and Callable?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the significance of interruption with Future and Callable?**
 
 Interruption is a cooperative signaling mechanism in Java: one thread
 sets the interrupt flag on another, which is expected to notice and
@@ -1740,7 +1740,7 @@ In the context of Future/Callable:
    };
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. `future.get()` throws `InterruptedException` if the WAITING thread
    (not the task thread) is interrupted. This is often confused with task

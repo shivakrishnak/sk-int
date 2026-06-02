@@ -157,7 +157,7 @@ FINE-TUNING (model weight update)
   Update: requires new training run (hours-days)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fine-Tuning vs RAG vs Prompt Engineering example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -248,7 +248,7 @@ def answer_prompt_only(question: str) -> str:
 # Solution: add RAG.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Solution: add RAG. example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # STAGE 2: Prompt engineering + RAG
@@ -302,7 +302,7 @@ def answer_with_rag(question: str) -> str:
 # Solution: fine-tune for consistent format.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Solution: fine-tune for consistent format. example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # STAGE 3: Fine-tuning evaluation decision
@@ -360,7 +360,7 @@ result = should_fine_tune(
 # -> fine-tune is clearly justified at this scale
 ```
 
-> **Code walkthrough:** Shows the three-stage progression
+> **Code walkthrough:** Shows the three-stage progressionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that should guide every LLM application. Stage 1: pure
 > prompt engineering - zero infrastructure cost, validate
 > the base quality first. Stage 2: add RAG when the model
@@ -1202,7 +1202,7 @@ WITH SCHEMA-CONSTRAINED STRUCTURED OUTPUT:
   Never: wrong types, wrong fields, extra text
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structured Output and JSON Mode example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1280,7 +1280,7 @@ def extract_contact_bad(text: str) -> dict:
     # ParseError: "Here is the extracted JSON: {...}"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This ParseError: "Here is the extracted JSON: {...}" example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 from pydantic import BaseModel, EmailStr
@@ -1343,7 +1343,7 @@ def extract_contact(text: str) -> ContactInfo:
     return ContactInfo(**tool_use.input)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This tool_use block always contains valid schema JSON example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # Using the Instructor library (wraps any API)
@@ -1374,7 +1374,7 @@ def extract_contact_instructor(
 # 4. Async support, streaming, partial parsing
 ```
 
-> **Code walkthrough:** The BAD version uses a text
+> **Code walkthrough:** The BAD version uses a textice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > instruction to request JSON - the model may add
 > prose, wrap in markdown, or produce invalid JSON.
 > The GOOD version uses the `tool_use` API with a
@@ -1859,7 +1859,7 @@ class Contact(BaseModel):
         return v
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Consistency validation: multi-field constraints.
 Start date must precede end date. Total must equal

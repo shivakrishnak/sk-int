@@ -129,7 +129,7 @@ Client:
   invoker.undo()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Command Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Invoker never knows what the command does - it only knows the
@@ -175,7 +175,7 @@ public class TextEditor {
 }
 ```
 
-> **Code walkthrough:** Direct mutation cannot be undone. Every operation
+> **Code walkthrough:** Direct mutation cannot be undone. Every operationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is lost the moment it executes. No history, no rollback. To add undo,
 > you would need to intercept every method and store state - invasive
 > modification of the class.
@@ -241,7 +241,7 @@ editor.undo();
 System.out.println(editor.getText()); // ""
 ```
 
-> **Code walkthrough:** `TypeCommand` stores the text that was typed
+> **Code walkthrough:** `TypeCommand` stores the text that was typedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (so `undo()` knows how many characters to remove). `executeCommand()`
 > pushes each command onto the history stack. `undo()` pops the last
 > command and calls its `undo()` method. Each command is responsible
@@ -289,7 +289,7 @@ jobQueue.enqueue(new RetryableJob(
     () -> paymentService.charge(order), 3));
 ```
 
-> **Code walkthrough:** `Job` is the Command interface. The `JobQueue`
+> **Code walkthrough:** `Job` is the Command interface. The `JobQueue`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (Invoker) holds a blocking queue of Jobs and worker threads that call
 > `execute()` on each. Callers enqueue lambdas (anonymous Commands) for
 > simple jobs, or explicit Command objects (`RetryableJob`) for jobs
@@ -635,7 +635,7 @@ for (String element : collection) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Iterator Pattern example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **External vs Internal Iterator:**
 - **External Iterator** (GoF, Java `Iterator`): client controls the
@@ -726,7 +726,7 @@ for (int value : tree) {  // uses InOrderIterator
 tree.stream().filter(v -> v > 10).forEach(System.out::println);
 ```
 
-> **Code walkthrough:** The tree implements `Iterable`, exposing
+> **Code walkthrough:** The tree implements `Iterable`, exposingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `iterator()` which returns an `InOrderIterator`. The iterator owns
 > the traversal stack - it knows where it is in the tree. Two iterators
 > on the same tree are independent: `Iterator<Integer> iter1 = tree.iterator(); Iterator<Integer> iter2 = tree.iterator()` - each has its own stack.
@@ -768,7 +768,7 @@ List<Order> orders = jdbcTemplate.query(
         .build());
 ```
 
-> **Code walkthrough:** `ResultSet` is an iterator over database rows:
+> **Code walkthrough:** `ResultSet` is an iterator over database rows:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `rs.next()` advances and returns true if there are more rows (like
 > `Iterator.hasNext()` and `Iterator.next()` combined). JdbcTemplate's
 > `query()` is an internal iterator: it drives the traversal and calls

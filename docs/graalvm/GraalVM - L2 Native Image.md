@@ -102,7 +102,48 @@ inclusion. If not linked in, not available at runtime."
 
 ---
 
+
+---
+
+### 📘 Concept Explanation
+
+**First Principles:** Native Image Closed-World Assumption is a capability in the GraalVM ecosystem that solves a specific set of challenges in native compilation, polyglot execution, or JIT optimization. At its core it answers: how do you make the JVM runtime do something that the standard OpenJDK runtime cannot, or cannot do efficiently?
+
+**The Core Idea:** The mechanism works by operating at a lower layer than the standard Java toolchain - either ahead-of-time during the native image build phase, or at runtime through the Truffle language implementation framework. This gives developers capabilities that span from sub-100ms startup to multi-language interoperability within a single process.
+
+**How It Works Under the Hood:** Internally GraalVM uses the Graal compiler (a Java-based JIT compiler) as the foundation. Native Image Closed-World Assumption builds on this foundation by applying closed-world assumptions during analysis or by using interpreter nodes in the Truffle AST. The key invariant: every reachable code path must be known at build time (for native image) or expressed as Truffle nodes (for polyglot).
+
+**The Key Trade-off:** Startup speed and memory footprint improve dramatically (native image: <100ms startup, 50-80% less heap) at the cost of build time (minutes vs seconds) and dynamic class loading restrictions. You give up runtime flexibility to gain deployment efficiency.
+
+**When to Use It:** Cloud-native microservices, serverless functions, CLI tools, and container-based deployments where cold start latency and memory cost matter. Also for polyglot use cases where running JavaScript, Python, or Ruby on the JVM is preferable to a separate runtime process.
+
+**When NOT to Use It:** Long-running JVM applications that rely on dynamic class loading, reflection-heavy frameworks not yet adapted for native image, or teams without the build time budget for native image compilation.
+
+**Mental Model:** Think of GraalVM native image as a compiler that takes a complete Java program and produces a self-contained executable by "freezing" the heap state at build time. It is the difference between a JVM that discovers code at runtime versus a compiler that resolves everything statically.
+
+**Memory Hook:** GraalVM = Graal JIT + Native Image + Polyglot. Native image = AOT + closed-world. Polyglot = Truffle AST nodes. The triad of performance, portability, and polyglotism.
+
+---
+
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // VIOLATION 1: Dynamic class loading
@@ -197,7 +238,7 @@ public class ConfigClient {
 //   com.thirdparty.StatefulClass
 ```
 
-> **Code walkthrough:** The ServiceLoader fix is the
+> **Code walkthrough:** The ServiceLoader fix is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > canonical closed-world-compliant plugin pattern: list
 > implementations in META-INF/services, native-image
 > includes them all. The interface-based proxy fix allows
@@ -258,7 +299,7 @@ public class DriverRegistration { }
 #   "allDeclaredConstructors": true }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "allDeclaredConstructors": true } example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Proxy creation failure:**
 ```bash
@@ -271,7 +312,7 @@ UnsatisfiedLinkError or ClassCastException on proxy
 # Fix: implement interface
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: implement interface example demonstrates shell script pattern using @Transactional. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -300,7 +341,7 @@ The closed-world assumption forces explicit design:
    @RegisterForReflection
    class OrderDto { int id; String status; }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: implement interface example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
    Result: the annotation documents "this is a DTO."
    Code becomes self-documenting.
@@ -312,7 +353,7 @@ The closed-world assumption forces explicit design:
    // Native: compile error equivalent
    // Must use ServiceLoader or explicit types
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: implement interface example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
    Result: all plugin types are listed in META-INF/services.
    Easier to audit what plugins exist.
@@ -325,7 +366,7 @@ The closed-world assumption forces explicit design:
    interface OrderPort { void save(); }
    @Service class OrderService implements OrderPort
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: implement interface example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
    Result: dependency inversion. Better testability.
 
@@ -336,7 +377,7 @@ The closed-world assumption forces explicit design:
    // Native: violates closed-world
    // Must: @ApplicationScoped + @Inject DataSource
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: implement interface example demonstrates Java ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
    Result: lazy initialization, not eager.
 
@@ -348,12 +389,12 @@ more explicit, testable, and analyzable.
 make the code better. I treat closed-world violations
 as design feedback, not just technical problems."
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Violation types, fixes. |
-| Hiring Manager | Native image migration impact. |
-| Bar Raiser | Closed-world as quality constraint, design implications. |
-| Staff | "Closed-world violations are architecture smells. Each one is a question: why is this dynamic? What could be explicit?" |
+| Interviewer Type| Emphasis|
+|---|--------------------------------------------------------------------------|
+| Technical Panel| Violation types, fixes.|
+| Hiring Manager| Native image migration impact.|
+| Bar Raiser| Closed-world as quality constraint, design implications.|
+| Staff| "Closed-world violations are architecture smells. Each one is a questio
 
 ---
 
@@ -370,21 +411,21 @@ as design feedback, not just technical problems."
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Reflection and Serialization Configuration
@@ -457,6 +498,29 @@ native-image exactly which classes need reflective access."
 
 ---
 
+
+---
+
+### 📘 Concept Explanation
+
+**First Principles:** Reflection and Serialization Configuration is a capability in the GraalVM ecosystem that solves a specific set of challenges in native compilation, polyglot execution, or JIT optimization. At its core it answers: how do you make the JVM runtime do something that the standard OpenJDK runtime cannot, or cannot do efficiently?
+
+**The Core Idea:** The mechanism works by operating at a lower layer than the standard Java toolchain - either ahead-of-time during the native image build phase, or at runtime through the Truffle language implementation framework. This gives developers capabilities that span from sub-100ms startup to multi-language interoperability within a single process.
+
+**How It Works Under the Hood:** Internally GraalVM uses the Graal compiler (a Java-based JIT compiler) as the foundation. Reflection and Serialization Configuration builds on this foundation by applying closed-world assumptions during analysis or by using interpreter nodes in the Truffle AST. The key invariant: every reachable code path must be known at build time (for native image) or expressed as Truffle nodes (for polyglot).
+
+**The Key Trade-off:** Startup speed and memory footprint improve dramatically (native image: <100ms startup, 50-80% less heap) at the cost of build time (minutes vs seconds) and dynamic class loading restrictions. You give up runtime flexibility to gain deployment efficiency.
+
+**When to Use It:** Cloud-native microservices, serverless functions, CLI tools, and container-based deployments where cold start latency and memory cost matter. Also for polyglot use cases where running JavaScript, Python, or Ruby on the JVM is preferable to a separate runtime process.
+
+**When NOT to Use It:** Long-running JVM applications that rely on dynamic class loading, reflection-heavy frameworks not yet adapted for native image, or teams without the build time budget for native image compilation.
+
+**Mental Model:** Think of GraalVM native image as a compiler that takes a complete Java program and produces a self-contained executable by "freezing" the heap state at build time. It is the difference between a JVM that discovers code at runtime versus a compiler that resolves everything statically.
+
+**Memory Hook:** GraalVM = Graal JIT + Native Image + Polyglot. Native image = AOT + closed-world. Polyglot = Truffle AST nodes. The triad of performance, portability, and polyglotism.
+
+---
+
 ### 💻 Code Example
 
 ```json
@@ -487,7 +551,7 @@ native-image exactly which classes need reflective access."
 ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reflection and Serialization Configuration example ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```json
 // serialization-config.json
@@ -503,7 +567,7 @@ native-image exactly which classes need reflective access."
 ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reflection and Serialization Configuration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```json
 // proxy-config.json
@@ -518,7 +582,13 @@ native-image exactly which classes need reflective access."
 ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reflection and Serialization Configuration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Quarkus annotation approach (simpler)
@@ -541,7 +611,7 @@ public class NativeImageConfig {
 // Manual override: reflect-config.json still supported
 ```
 
-> **Code walkthrough:** The reflect-config.json format
+> **Code walkthrough:** The reflect-config.json formatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is granular: allDeclaredFields registers all fields,
 > but you can also list specific fields for minimal binary
 > size. The proxy-config.json format specifies the exact
@@ -561,6 +631,70 @@ of this automatically for known libraries."
 for maintainability. Use the tracing agent for third-party
 libraries: run with -agentlib:native-image-agent=config-output-dir=./configs,
 exercise all paths, copy generated files to META-INF."
+
+---
+
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: GraalVM native image is faster at everything.**
+
+Reality: Native image excels at startup time and memory footprint. Throughput (peak performance for long-running workloads) often matches but does not always exceed HotSpot JIT, because HotSpot's JIT has more runtime profiling data. The correct framing: native image optimizes startup and RSS, not necessarily peak throughput.
+
+**Misconception 2: Any Java application compiles to native image without changes.**
+
+Reality: Native image requires a closed-world assumption - all reachable code must be known at build time. Dynamic class loading, reflection without configuration, runtime-generated bytecode, and certain serialization patterns break native image builds. Frameworks must provide native image metadata (Quarkus and Micronaut do; Spring Boot 3.x does with build-time processing).
+
+**Misconception 3: Reflection and Serialization Configuration works identically to its JVM equivalent.**
+
+Reality: Behaviour differences exist in areas involving reflection, dynamic proxies, and resource loading. What works on JVM may silently break on native image if the relevant GraalVM configuration metadata is missing. Always run integration tests on the native binary, not just the JVM build.
+
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: ClassNotFoundException at runtime (native image)**
+
+Symptom: `ClassNotFoundException` or `NoSuchMethodException` when the native binary runs, even though the JVM build works fine.
+
+Root Cause: Reflection used without a corresponding `reflect-config.json` entry. The native image build omitted the class because it was not reachable through static analysis.
+
+Fix:
+```bash
+# Run the tracing agent on the JVM to collect metadata
+java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image \
+  -jar target/app.jar
+# Re-run with native-image build; it picks up the generated configs
+./mvnw package -Pnative
+```
+
+> **Code walkthrough:** The native-image-agent instruments the JVM at runtime, recording every reflection, resource, and proxy call into JSON config files. These config files tell the native image compiler to include those classes and methods in the closed-world analysis. Without this step the compiler has no way to know which dynamically-resolved code paths are reachable.
+
+**Failure Mode 2: Native image build OutOfMemoryError**
+
+Symptom: `java.lang.OutOfMemoryError: Java heap space` during the native image build phase, typically in the analysis or compilation phase.
+
+Root Cause: Native image build is memory-intensive (2-8 GB typical). Default JVM heap settings are insufficient.
+
+Fix: Set `-J-Xmx8g` or use `MAVEN_OPTS=-Xmx8g` before the build, and prefer builds on machines with 16+ GB RAM. In CI/CD, allocate at least 8 GB to the runner.
+
+**Failure Mode 3: Reflection and Serialization Configuration behaves differently in native vs JVM mode**
+
+Symptom: Tests pass on JVM but fail on native binary. The difference appears in initialization order, static field values, or resource loading.
+
+Root Cause: The native image heap is initialized at build time (build-time initialization). Static initializers that depend on runtime state (network, file system, random seeds) must be explicitly deferred to runtime initialization.
+
+Fix:
+```bash
+# Mark packages for runtime initialization
+native-image --initialize-at-run-time=com.example.RuntimeInit \
+  -jar target/app.jar
+```
+
+> **Code walkthrough:** By default native image tries to run static initializers at build time to pre-populate the heap snapshot. Any initializer that touches runtime-only resources (sockets, timestamps, env vars) must be explicitly excluded via `--initialize-at-run-time` to defer execution until binary startup.
 
 ---
 
@@ -616,7 +750,7 @@ curl -X POST http://localhost:8080/orders \
 ./mvnw package -Pnative
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Step 6: Build native image example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Merging multiple runs:
 ```bash
@@ -628,7 +762,7 @@ java -agentlib:native-image-agent=\
 # Run multiple scenarios, merge all results
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run multiple scenarios, merge all results example dice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Limitations:
 - Only records executed paths.
@@ -639,12 +773,11 @@ Limitations:
 point, not a complete solution. Exercise ALL code paths
 including errors and edge cases.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Config file types, format. |
-| Hiring Manager | How to migrate third-party libraries. |
-| Bar Raiser | Tracing agent workflow, merging runs, limitations. |
-| Peer Engineer | "Used agent on Kafka consumer. Generated 450-line reflect-config. Trimmed to 120 lines removing JDK internals. Native build passed first try." |
+| Interviewer Type| Emphasis|
+| Technical Panel| Config file types, format.|
+| Hiring Manager| How to migrate third-party libraries.|
+| Bar Raiser| Tracing agent workflow, merging runs, limitations.|
+| Peer Engineer| "Used agent on Kafka consumer. Generated 450-line reflect-confi
 
 ---
 
@@ -661,21 +794,21 @@ including errors and edge cases.
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Native Image Resources and File Inclusion
@@ -745,6 +878,29 @@ into a ZIP: explicit list of what to include."
 
 ---
 
+
+---
+
+### 📘 Concept Explanation
+
+**First Principles:** Native Image Resources and File Inclusion is a capability in the GraalVM ecosystem that solves a specific set of challenges in native compilation, polyglot execution, or JIT optimization. At its core it answers: how do you make the JVM runtime do something that the standard OpenJDK runtime cannot, or cannot do efficiently?
+
+**The Core Idea:** The mechanism works by operating at a lower layer than the standard Java toolchain - either ahead-of-time during the native image build phase, or at runtime through the Truffle language implementation framework. This gives developers capabilities that span from sub-100ms startup to multi-language interoperability within a single process.
+
+**How It Works Under the Hood:** Internally GraalVM uses the Graal compiler (a Java-based JIT compiler) as the foundation. Native Image Resources and File Inclusion builds on this foundation by applying closed-world assumptions during analysis or by using interpreter nodes in the Truffle AST. The key invariant: every reachable code path must be known at build time (for native image) or expressed as Truffle nodes (for polyglot).
+
+**The Key Trade-off:** Startup speed and memory footprint improve dramatically (native image: <100ms startup, 50-80% less heap) at the cost of build time (minutes vs seconds) and dynamic class loading restrictions. You give up runtime flexibility to gain deployment efficiency.
+
+**When to Use It:** Cloud-native microservices, serverless functions, CLI tools, and container-based deployments where cold start latency and memory cost matter. Also for polyglot use cases where running JavaScript, Python, or Ruby on the JVM is preferable to a separate runtime process.
+
+**When NOT to Use It:** Long-running JVM applications that rely on dynamic class loading, reflection-heavy frameworks not yet adapted for native image, or teams without the build time budget for native image compilation.
+
+**Mental Model:** Think of GraalVM native image as a compiler that takes a complete Java program and produces a self-contained executable by "freezing" the heap state at build time. It is the difference between a JVM that discovers code at runtime versus a compiler that resolves everything statically.
+
+**Memory Hook:** GraalVM = Graal JIT + Native Image + Polyglot. Native image = AOT + closed-world. Polyglot = Truffle AST nodes. The triad of performance, portability, and polyglotism.
+
+---
+
 ### 💻 Code Example
 
 ```properties
@@ -771,7 +927,7 @@ quarkus.native.resources.excludes=\
   **/*-test.*
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exclude pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```json
 // resource-config.json
@@ -798,7 +954,17 @@ quarkus.native.resources.excludes=\
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exclude pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // WRONG: Assume resource auto-included
@@ -823,7 +989,7 @@ public class SqlTemplateLoader {
 // Then the above code works in native
 ```
 
-> **Code walkthrough:** The application.properties pattern
+> **Code walkthrough:** The application.properties patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > uses Java regex not glob: `.*\\.sql` matches any .sql file,
 > not `*.sql` (which is a glob). Comma-separated patterns
 > in a single property cover multiple directories.
@@ -843,6 +1009,70 @@ Java regex patterns."
 at runtime (getResourceAsStream returns null), not build
 failures. Always test: grep for getResourceAsStream in
 code + libraries to find potential missing declarations."
+
+---
+
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: GraalVM native image is faster at everything.**
+
+Reality: Native image excels at startup time and memory footprint. Throughput (peak performance for long-running workloads) often matches but does not always exceed HotSpot JIT, because HotSpot's JIT has more runtime profiling data. The correct framing: native image optimizes startup and RSS, not necessarily peak throughput.
+
+**Misconception 2: Any Java application compiles to native image without changes.**
+
+Reality: Native image requires a closed-world assumption - all reachable code must be known at build time. Dynamic class loading, reflection without configuration, runtime-generated bytecode, and certain serialization patterns break native image builds. Frameworks must provide native image metadata (Quarkus and Micronaut do; Spring Boot 3.x does with build-time processing).
+
+**Misconception 3: Native Image Resources and File Inclusion works identically to its JVM equivalent.**
+
+Reality: Behaviour differences exist in areas involving reflection, dynamic proxies, and resource loading. What works on JVM may silently break on native image if the relevant GraalVM configuration metadata is missing. Always run integration tests on the native binary, not just the JVM build.
+
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: ClassNotFoundException at runtime (native image)**
+
+Symptom: `ClassNotFoundException` or `NoSuchMethodException` when the native binary runs, even though the JVM build works fine.
+
+Root Cause: Reflection used without a corresponding `reflect-config.json` entry. The native image build omitted the class because it was not reachable through static analysis.
+
+Fix:
+```bash
+# Run the tracing agent on the JVM to collect metadata
+java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image \
+  -jar target/app.jar
+# Re-run with native-image build; it picks up the generated configs
+./mvnw package -Pnative
+```
+
+> **Code walkthrough:** The native-image-agent instruments the JVM at runtime, recording every reflection, resource, and proxy call into JSON config files. These config files tell the native image compiler to include those classes and methods in the closed-world analysis. Without this step the compiler has no way to know which dynamically-resolved code paths are reachable.
+
+**Failure Mode 2: Native image build OutOfMemoryError**
+
+Symptom: `java.lang.OutOfMemoryError: Java heap space` during the native image build phase, typically in the analysis or compilation phase.
+
+Root Cause: Native image build is memory-intensive (2-8 GB typical). Default JVM heap settings are insufficient.
+
+Fix: Set `-J-Xmx8g` or use `MAVEN_OPTS=-Xmx8g` before the build, and prefer builds on machines with 16+ GB RAM. In CI/CD, allocate at least 8 GB to the runner.
+
+**Failure Mode 3: Native Image Resources and File Inclusion behaves differently in native vs JVM mode**
+
+Symptom: Tests pass on JVM but fail on native binary. The difference appears in initialization order, static field values, or resource loading.
+
+Root Cause: The native image heap is initialized at build time (build-time initialization). Static initializers that depend on runtime state (network, file system, random seeds) must be explicitly deferred to runtime initialization.
+
+Fix:
+```bash
+# Mark packages for runtime initialization
+native-image --initialize-at-run-time=com.example.RuntimeInit \
+  -jar target/app.jar
+```
+
+> **Code walkthrough:** By default native image tries to run static initializers at build time to pre-populate the heap snapshot. Any initializer that touches runtime-only resources (sockets, timestamps, env vars) must be explicitly excluded via `--initialize-at-run-time` to defer execution until binary startup.
 
 ---
 
@@ -873,7 +1103,7 @@ quarkus.flyway.locations=classpath:db/migration
 # for the standard location
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This for the standard location example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Flyway in Quarkus native:
 - Quarkus Flyway extension registers SQL files automatically.
@@ -892,15 +1122,15 @@ strings target/app-runner | grep "db/migration"
 # Flyway migration runs during test startup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Flyway migration runs during test startup example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 If Flyway migration fails in native:
-```
+```plaintext
 FlywayException: Found non-empty schema "public" without
   schema history table. Use baseline() or set
   baselineOnMigrate to true
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Flyway migration runs during test startup example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This is usually not a resource issue, but a Flyway
 configuration issue. Distinguish: resource missing
@@ -1029,6 +1259,29 @@ speed: mostly I/O bound, not computation."
 
 ---
 
+
+---
+
+### 📘 Concept Explanation
+
+**First Principles:** Native Image Startup and Memory Profile is a capability in the GraalVM ecosystem that solves a specific set of challenges in native compilation, polyglot execution, or JIT optimization. At its core it answers: how do you make the JVM runtime do something that the standard OpenJDK runtime cannot, or cannot do efficiently?
+
+**The Core Idea:** The mechanism works by operating at a lower layer than the standard Java toolchain - either ahead-of-time during the native image build phase, or at runtime through the Truffle language implementation framework. This gives developers capabilities that span from sub-100ms startup to multi-language interoperability within a single process.
+
+**How It Works Under the Hood:** Internally GraalVM uses the Graal compiler (a Java-based JIT compiler) as the foundation. Native Image Startup and Memory Profile builds on this foundation by applying closed-world assumptions during analysis or by using interpreter nodes in the Truffle AST. The key invariant: every reachable code path must be known at build time (for native image) or expressed as Truffle nodes (for polyglot).
+
+**The Key Trade-off:** Startup speed and memory footprint improve dramatically (native image: <100ms startup, 50-80% less heap) at the cost of build time (minutes vs seconds) and dynamic class loading restrictions. You give up runtime flexibility to gain deployment efficiency.
+
+**When to Use It:** Cloud-native microservices, serverless functions, CLI tools, and container-based deployments where cold start latency and memory cost matter. Also for polyglot use cases where running JavaScript, Python, or Ruby on the JVM is preferable to a separate runtime process.
+
+**When NOT to Use It:** Long-running JVM applications that rely on dynamic class loading, reflection-heavy frameworks not yet adapted for native image, or teams without the build time budget for native image compilation.
+
+**Mental Model:** Think of GraalVM native image as a compiler that takes a complete Java program and produces a self-contained executable by "freezing" the heap state at build time. It is the difference between a JVM that discovers code at runtime versus a compiler that resolves everything statically.
+
+**Memory Hook:** GraalVM = Graal JIT + Native Image + Polyglot. Native image = AOT + closed-world. Polyglot = Truffle AST nodes. The triad of performance, portability, and polyglotism.
+
+---
+
 ### 💻 Code Example
 
 ```bash
@@ -1074,7 +1327,7 @@ watch -n5 "cat /proc/$PID/smaps_rollup | grep Rss"
 # If RSS stable: expected steady-state
 ```
 
-> **Code walkthrough:** The /proc/PID/smaps_rollup RSS
+> **Code walkthrough:** The /proc/PID/smaps_rollup RSSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > value is the most accurate native memory measure on
 > Linux: it includes code, heap, and stack. The -Xmx flag
 > works in native image (SubstrateVM honors it). The GC
@@ -1109,6 +1362,70 @@ native. Container with -Xmx128m needs about 150MB limit
 
 ---
 
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: GraalVM native image is faster at everything.**
+
+Reality: Native image excels at startup time and memory footprint. Throughput (peak performance for long-running workloads) often matches but does not always exceed HotSpot JIT, because HotSpot's JIT has more runtime profiling data. The correct framing: native image optimizes startup and RSS, not necessarily peak throughput.
+
+**Misconception 2: Any Java application compiles to native image without changes.**
+
+Reality: Native image requires a closed-world assumption - all reachable code must be known at build time. Dynamic class loading, reflection without configuration, runtime-generated bytecode, and certain serialization patterns break native image builds. Frameworks must provide native image metadata (Quarkus and Micronaut do; Spring Boot 3.x does with build-time processing).
+
+**Misconception 3: Native Image Startup and Memory Profile works identically to its JVM equivalent.**
+
+Reality: Behaviour differences exist in areas involving reflection, dynamic proxies, and resource loading. What works on JVM may silently break on native image if the relevant GraalVM configuration metadata is missing. Always run integration tests on the native binary, not just the JVM build.
+
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: ClassNotFoundException at runtime (native image)**
+
+Symptom: `ClassNotFoundException` or `NoSuchMethodException` when the native binary runs, even though the JVM build works fine.
+
+Root Cause: Reflection used without a corresponding `reflect-config.json` entry. The native image build omitted the class because it was not reachable through static analysis.
+
+Fix:
+```bash
+# Run the tracing agent on the JVM to collect metadata
+java -agentlib:native-image-agent=config-output-dir=src/main/resources/META-INF/native-image \
+  -jar target/app.jar
+# Re-run with native-image build; it picks up the generated configs
+./mvnw package -Pnative
+```
+
+> **Code walkthrough:** The native-image-agent instruments the JVM at runtime, recording every reflection, resource, and proxy call into JSON config files. These config files tell the native image compiler to include those classes and methods in the closed-world analysis. Without this step the compiler has no way to know which dynamically-resolved code paths are reachable.
+
+**Failure Mode 2: Native image build OutOfMemoryError**
+
+Symptom: `java.lang.OutOfMemoryError: Java heap space` during the native image build phase, typically in the analysis or compilation phase.
+
+Root Cause: Native image build is memory-intensive (2-8 GB typical). Default JVM heap settings are insufficient.
+
+Fix: Set `-J-Xmx8g` or use `MAVEN_OPTS=-Xmx8g` before the build, and prefer builds on machines with 16+ GB RAM. In CI/CD, allocate at least 8 GB to the runner.
+
+**Failure Mode 3: Native Image Startup and Memory Profile behaves differently in native vs JVM mode**
+
+Symptom: Tests pass on JVM but fail on native binary. The difference appears in initialization order, static field values, or resource loading.
+
+Root Cause: The native image heap is initialized at build time (build-time initialization). Static initializers that depend on runtime state (network, file system, random seeds) must be explicitly deferred to runtime initialization.
+
+Fix:
+```bash
+# Mark packages for runtime initialization
+native-image --initialize-at-run-time=com.example.RuntimeInit \
+  -jar target/app.jar
+```
+
+> **Code walkthrough:** By default native image tries to run static initializers at build time to pre-populate the heap snapshot. Any initializer that touches runtime-only resources (sockets, timestamps, env vars) must be explicitly excluded via `--initialize-at-run-time` to defer execution until binary startup.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 | Experience | Time | Depth |
@@ -1134,7 +1451,7 @@ resources:
     cpu: "1000m"   # Allow burst for GC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If RSS stable: expected steady-state example demonsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Memory request and limit:
 ```bash
@@ -1149,7 +1466,7 @@ Memory request and limit:
 # = 75MB + 256MB = 331MB → round up to 384Mi
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = 75MB + 256MB = 331MB → round up to 384Mi example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ```yaml
 resources:
@@ -1162,7 +1479,7 @@ env:
     value: "-Xms64m -Xmx128m"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This = 75MB + 256MB = 331MB → round up to 384Mi example ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 OOMKilled diagnosis:
 ```bash
@@ -1175,7 +1492,7 @@ kubectl top pod app-pod --containers
 # Or: reduce -Xmx
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: reduce -Xmx example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Native vs JVM Kubernetes comparison:
 ```
@@ -1195,7 +1512,7 @@ JVM (Spring):
   Cost per 1000 RPS: $0.04/hr
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: reduce -Xmx example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Memory limit is not
 just Xmx: add native code size, heap overhead, thread

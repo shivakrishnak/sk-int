@@ -313,7 +313,7 @@ TECHNICAL SEO HTML PATTERNS:
   <!-- Anchor text tells crawler what the linked page is about -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example in section 'Unknown' demonstrates the concept in a realistic context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics shown - study the structure to understand the execution path. **WHY IT MATTERS:** applying this pattern correctly prevents the most common production failure modes for this concept. **WHAT BREAKS:** misapplying this pattern causes subtle bugs that appear only under concurrent load. **TAKEAWAY:** internalize the execution model before using this in production code.
 
 **The key insight:**
 
@@ -371,7 +371,7 @@ inferring it.
 </head>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: SEO-optimized head -->
@@ -633,38 +633,37 @@ Diagnosis pipeline:
   4. Wait: new structured data takes 1-2 weeks to appear in SERPs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Essential head tags for SEO | 3 min | Title, description, canonical |
-| What is a canonical URL | 2-3 min | Duplicate content |
-| JSON-LD vs Microdata | 2-3 min | Implementation choice |
-| Product schema required fields | 2-3 min | Structured data |
-| Rich Results types | 3 min | FAQ, breadcrumb, product |
-| Open Graph vs Twitter Card | 2 min | Social sharing |
-| Core Web Vitals as SEO signal | 3-4 min | Performance + SEO |
-| hreflang implementation | 3-4 min | International SEO |
-| JavaScript SEO (crawl behavior) | 4-5 min | SPA rendering |
-| robots noindex vs robots.txt | 2-3 min | Crawl control |
-| structured data testing tools | 2 min | Validation |
-| canonical URL edge cases | 3 min | www, https, params |
-| Image SEO (alt text + filename) | 2 min | Visual search |
-| Google Search Console signals | 3-4 min | Monitoring |
-| FAQ schema impact on CTR | 2-3 min | SERP real estate |
-| Meta description CTR strategy | 2-3 min | CTR optimization |
-| Title tag optimization strategy | 3 min | Keyword + brand |
-| Site architecture for SEO | 4-5 min | Internal linking |
-| Schema.org for e-commerce at scale | 4-5 min | Template generation |
+| Scenario| Recommended Time| Key Signal|
+|-------|----------------------------------------|-----------------------------|
+| Essential head tags for SEO| 3 min| Title, description, canonical|
+| What is a canonical URL| 2-3 min| Duplicate content|
+| JSON-LD vs Microdata| 2-3 min| Implementation choice|
+| Product schema required fields| 2-3 min| Structured data|
+| Rich Results types| 3 min| FAQ, breadcrumb, product|
+| Open Graph vs Twitter Card| 2 min| Social sharing|
+| Core Web Vitals as SEO signal| 3-4 min| Performance + SEO|
+| hreflang implementation| 3-4 min| International SEO|
+| JavaScript SEO (crawl behavior)| 4-5 min| SPA rendering|
+| robots noindex vs robots.txt| 2-3 min| Crawl control|
+| structured data testing tools| 2 min| Validation|
+| canonical URL edge cases| 3 min| www, https, params|
+| Image SEO (alt text + filename)| 2 min| Visual search|
+| Google Search Console signals| 3-4 min| Monitoring|
+| FAQ schema impact on CTR| 2-3 min| SERP real estate|
+| Meta description CTR strategy| 2-3 min| CTR optimization|
+| Title tag optimization strategy| 3 min| Keyword + brand|
+| Site architecture for SEO| 4-5 min| Internal linking|
+| Schema.org for e-commerce at scale| 4-5 min| Template generation|
 
 ---
 
-**Q1: What is a canonical URL and when do you need it?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is a canonical URL and when do you need it?** `[JUNIOR]`**
 
 *Why they ask:* Fundamental SEO concept with HTML implementation.
 
@@ -732,8 +731,7 @@ DEFINITION
 
 ---
 
-**Q2: How does JavaScript affect SEO and what is the two-wave crawl?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] How does JavaScript affect SEO and what is the two-wave crawl?**
 
 *Why they ask:* Critical for SPA/React/Vue applications.
 
@@ -813,12 +811,12 @@ DEFINITION
 
 ---
 
-**Q3: What structured data schema type should you use for a product page?
+**[MID] Q3 - [SCENARIO] What structured data schema type should you use for a product page?**
 What fields are required?** `[SENIOR]` SCENARIO
 
 *Why they ask:* Practical implementation knowledge.
 
-*Likely follow-up:* "What is the difference between InStock and LimitedAvailability?"
+*Likely follow-up:* "What is the difference between InStock and LimitedAvailabil
 
 > **Answer:**
 >
@@ -894,12 +892,11 @@ What fields are required?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q4: What is the difference between `noindex` meta tag and `robots.txt`?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q4 - [TRADE-OFF] What is the difference between `noindex` meta tag and `robots.txt`?**
 
 *Why they ask:* Crawl control fundamentals.
 
-*Likely follow-up:* "If you block a page in robots.txt, can it still appear in search results?"
+*Likely follow-up:* "If you block a page in robots.txt, can it still appear in s
 
 > **Answer:**
 >
@@ -977,8 +974,7 @@ What fields are required?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q5: How does `hreflang` work for international SEO?** `[SENIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] How does `hreflang` work for international SEO?** `[SENIOR]`**
 
 *Why they ask:* International sites are common; hreflang is complex.
 
@@ -1057,8 +1053,7 @@ MECHANISM
 
 ---
 
-**Q6: What is the relationship between Core Web Vitals and SEO ranking?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is the relationship between Core Web Vitals and SEO ranking?**
 
 *Why they ask:* Performance as a direct business/SEO KPI.
 
@@ -1072,11 +1067,11 @@ MECHANISM
 >
 > Core Web Vitals metrics and thresholds:
 >
-> | Metric | Good | Needs Improvement | Poor |
-> |---|---|---|---|
-> | LCP (Largest Contentful Paint) | ≤ 2.5s | 2.5s - 4.0s | > 4.0s |
-> | INP (Interaction to Next Paint) | ≤ 200ms | 200ms - 500ms | > 500ms |
-> | CLS (Cumulative Layout Shift) | ≤ 0.1 | 0.1 - 0.25 | > 0.25 |
+ >| Metric| Good| Needs Improvement| Poor|
+ >| ---| ---| ---| ---|
+ >| LCP (Largest Contentful Paint)| ≤ 2.5s| 2.5s - 4.0s| > 4.0s|
+ >| INP (Interaction to Next Paint)| ≤ 200ms| 200ms - 500ms| > 500ms|
+ >| CLS (Cumulative Layout Shift)| ≤ 0.1| 0.1 - 0.25| > 0.25|
 >
 > Note: FID (First Input Delay) was replaced by INP as of March 2024.
 >
@@ -1131,7 +1126,7 @@ MECHANISM
 
 ---
 
-**Q7: How do you generate structured data for thousands of products
+**[SENIOR] Q7 - [MECHANISM] How do you generate structured data for thousands of products**
 in a template-driven system?** `[SENIOR]` SCENARIO
 
 *Why they ask:* Scale thinking and engineering approach.
@@ -1238,7 +1233,7 @@ in a template-driven system?** `[SENIOR]` SCENARIO
 > is null (e.g., from a DB error), generating `"price": null`
 > creates an invalid schema. Pre-validation:
 > ```javascript
-> if (!product.price || product.price <= 0) {
+ > if (!product.price|| product.price <= 0) {
 >   // Log error, skip schema generation:
 >   reportError('Invalid price for structured data', { sku: product.sku });
 >   return null;  // No schema rather than invalid schema
@@ -1250,7 +1245,7 @@ in a template-driven system?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q8: How does Open Graph metadata work and why do you need separate
+**[SENIOR] Q8 - [MECHANISM] How does Open Graph metadata work and why do you need separate**
 tags from the SEO title/description?** `[JUNIOR]` MECHANISM
 
 *Why they ask:* Social sharing is a common implementation need.
@@ -1264,7 +1259,7 @@ tags from the SEO title/description?** `[JUNIOR]` MECHANISM
 > `<meta property="og:...">` tags to generate the link preview.
 >
 > Without OG tags: social platforms use their own algorithms to
-> pick a title (usually `<title>`), description (sometimes `<meta name="description">`),
+> pick a title (usually `<title>`), description (sometimes `<meta name="descript
 > and image (first significant image on the page). Results are often
 > wrong or ugly.
 >
@@ -1307,7 +1302,7 @@ tags from the SEO title/description?** `[JUNIOR]` MECHANISM
 >
 > Why separate from SEO title/description:
 >
-> SEO title: "Trail Runner Pro X3 | Waterproof | BrandName"
+ > SEO title: "Trail Runner Pro X3| Waterproof| BrandName"
 > (Includes brand, informational, keyword-optimized)
 >
 > OG title: "Trail Runner Pro X3 - 50% Off Today Only"
@@ -1316,7 +1311,7 @@ tags from the SEO title/description?** `[JUNIOR]` MECHANISM
 > SEO description: "Buy trail running shoes with Gore-Tex waterproof..."
 > (Informational, keyword-rich)
 >
-> OG description: "Waterproof, 4.7 stars, free 2-day shipping. 50% off ends midnight."
+> OG description: "Waterproof, 4.7 stars, free 2-day shipping. 50% off ends midn
 > (Urgency, social proof, benefit)
 >
 > Testing: `https://developers.facebook.com/tools/debug/`
@@ -1333,8 +1328,7 @@ tags from the SEO title/description?** `[JUNIOR]` MECHANISM
 
 ---
 
-**Q9: How do you implement Article schema for a blog?** `[JUNIOR]`
-SCENARIO
+**[SENIOR] Q9 - [SCENARIO] How do you implement Article schema for a blog?** `[JUNIOR]`**
 
 *Why they ask:* Content site structured data.
 
@@ -1408,14 +1402,93 @@ SCENARIO
 > aspect ratios (3 different ratios helps Google choose the best one
 > for different placements in Discover, image packs, and web results).
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | JSON-LD structure + required fields |
-| Hiring Manager | CTR impact + Rich Results strategy |
-| Bar Raiser | JavaScript SEO + CWV + scale engineering |
-| Peer Engineer | Canonical + hreflang + robots |
+**[STAFF] Q10 - [DESIGN] Design a structured data strategy for an e-commerce site with 100k product pages.**
+
+*Why they ask:* Tests at-scale structured data thinking.
+
+Strategy: (1) Use JSON-LD over Microdata/RDFa - easier
+to inject server-side without modifying template HTML,
+easier to validate, less error-prone. (2) Product schema
+at the product page level: include `name`, `description`,
+`image`, `sku`, `brand`, `offers` (price, availability,
+priceValidUntil). Price and availability must be accurate
+or Google penalizes. (3) BreadcrumbList schema on all
+pages for SERP breadcrumb display. (4) AggregateRating
+from actual review data - fabricated ratings trigger
+Google manual action. (5) Validation pipeline: automated
+`schema.org/validator` check in CI for each template
+change. Monitor Google Search Console Rich Results
+report for errors. (6) At 100k pages: generate JSON-LD
+server-side per-product, do not use client-side rendering
+for structured data (Googlebot renders JS, but with delay).
+
+*What separates good from great:* Price accuracy
+requirement - Google removed rich results from sites
+where structured data price differed from page price
+by > 1%. Automated validation in CI prevents this.
+
+---
+
+**[SENIOR] Q11 - [DEBUGGING] A product page has correct JSON-LD but Google Search Console shows "Price issue detected." How do you diagnose?**
+
+*Why they ask:* Tests structured data debugging.
+
+"Price issue" in GSC means the price in JSON-LD does
+not match the price visible on the page. Causes:
+(1) Client-side price rendering - if the HTML price
+is loaded via JavaScript and the JSON-LD is server-side,
+they may temporarily differ during hydration. Googlebot
+renders JS but may capture the pre-hydration price.
+Fix: server-side render the price in both HTML and
+JSON-LD from the same data source. (2) Currency mismatch
+- JSON-LD uses `priceCurrency: "USD"` but page shows "€".
+(3) JSON-LD not updated on price change - static JSON-LD
+in a template not connected to the live price.
+Fix: generate JSON-LD dynamically at render time from
+the same product data object as the HTML price display.
+
+*What separates good from great:* The hydration timing
+issue - Google's renderer captures the page at a moment
+that may be pre-hydration. Server-side rendering both
+HTML and JSON-LD from the same source is the robust fix.
+
+---
+
+**[SENIOR] Q12 - [TRADE-OFF] When is it better to use Open Graph tags versus structured data for SEO?**
+
+*Why they ask:* Tests understanding of different metadata systems.
+
+Open Graph (og:) and structured data (schema.org) serve
+different consumers. Open Graph: consumed by social
+platforms (Facebook, Twitter, LinkedIn, Slack) for link
+preview cards. Does not affect Google search rankings.
+Required for good social sharing: `og:title`, `og:image`,
+`og:description`, `og:url`. Structured data: consumed by
+search engines for rich results (product cards, recipes,
+FAQs in SERPs). Does not affect social previews.
+Both are needed for different outcomes. Common mistake:
+using only one and expecting the other's benefit.
+Additional consideration: Twitter Cards (twitter:card,
+twitter:image) are Twitter-specific and separate from
+Open Graph even though Twitter falls back to OG tags.
+
+*What separates good from great:* Understanding the
+distinct consumer for each metadata system prevents
+the mistake of using structured data for social sharing
+or Open Graph tags for search rich results.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|----------------------------------|----------------------------------------|
+| Technical Panel| JSON-LD structure + required fields|
+| Hiring Manager| CTR impact + Rich Results strategy|
+| Bar Raiser| JavaScript SEO + CWV + scale engineering|
+| Peer Engineer| Canonical + hreflang + robots|
 
 ---
 
@@ -1495,7 +1568,7 @@ MONITORING:
     - Structured data rendering verification (random sample, weekly)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

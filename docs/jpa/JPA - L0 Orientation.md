@@ -125,7 +125,7 @@ JPA CORE CONCEPTS:
   
   Persistence Context (first-level cache):
     A "unit of work" that tracks all managed entities.
-    Within a transaction: the same entity loaded twice -> same Java instance (no extra SQL).
+    Within a transaction: the same entity loaded twice -> same Java instance...
     entityManager.find(User.class, 1L);  // SQL: SELECT...
     entityManager.find(User.class, 1L);  // No SQL: returns cached instance.
     
@@ -174,7 +174,7 @@ ORM vs JDBC COMPARISON TABLE:
   | Performance tuning | Direct            | Indirect (more hidden)|
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -272,7 +272,7 @@ requires SQL fluency first.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: `LazyInitializationException` in production.**
-```
+```plaintext
 Symptom: org.hibernate.LazyInitializationException: failed to lazily
   initialize a collection of role: com.example.User.orders
 
@@ -293,7 +293,7 @@ Fix option 3: use DTO projection (never load the entity at all):
   List<UserWithOrderCount> findAllWithOrderCount();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -375,7 +375,7 @@ how you design JPA usage: always think "what SQL will this generate?"
 ### 📘 Concept Explanation
 
 **JPA ecosystem layers:**
-```
+```plaintext
 LAYER DIAGRAM:
 
   Your Code
@@ -469,7 +469,7 @@ JPA PORTABILITY:
     Use Hibernate-specific features freely when they solve real problems.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -585,7 +585,7 @@ Fix option 3: use Testcontainers for integration tests (not H2):
   Eliminates dialect differences between test and production.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -672,7 +672,7 @@ issue (wrong data, missing index causing stale cache read). Each layer is testab
 ### 📘 Concept Explanation
 
 **EntityManagerFactory and EntityManager lifecycle:**
-```
+```plaintext
 SPRING BOOT SETUP (application.properties):
 
   spring.datasource.url=jdbc:postgresql://localhost:5432/mydb
@@ -707,7 +707,7 @@ PERSISTENCE CONTEXT LIFECYCLE WITH SPRING:
           em.persist(order);   // entity now managed (tracked)
           // ...
           return order;
-          // @Transactional commit: flush() called -> INSERT SQL executed -> commit
+          // @Transactional commit: flush() called -> INSERT SQL executed ->...
           // EntityManager closed
       }
       
@@ -759,7 +759,7 @@ HIKARICP CONNECTION POOL:
     Too large: DB CPU overhead for unused connections.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This none: do nothing (use Liquibase/Flyway for migrations) example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -890,7 +890,7 @@ Fix:
   Result: startup time drops from 90s to 5s.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If entities are in a different package: @EntityScan is needed. example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 ---
 

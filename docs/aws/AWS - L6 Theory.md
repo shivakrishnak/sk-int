@@ -118,7 +118,7 @@ Quota scope:
   Per resource (S3 bucket policy size: 20KB per bucket)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AWS Service Quotas and Limits Design example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -139,7 +139,7 @@ autoscaling.update_auto_scaling_group(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This No quota check before peak event planning example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 ```python
 # GOOD: Check quota before capacity planning events
@@ -193,7 +193,7 @@ check_quota_headroom(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check EC2 R-family vCPU headroom for 200 instances: example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 ```bash
 # Monitor quota usage with CloudWatch alarms:
@@ -218,7 +218,7 @@ aws service-quotas list-requested-service-quota-changes-by-service \
   --service-code ec2
 ```
 
-> **Code walkthrough:** The BAD pattern silently creates
+> **Code walkthrough:** The BAD pattern silently createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > an Auto Scaling group with `MaxSize=50` for r5.4xlarge
 > instances, which requires 800 vCPU. The default quota
 > is 32 vCPU for R-family instances. On the peak event:
@@ -330,7 +330,7 @@ aws ec2 describe-account-attributes \
   --attribute-names max-instances
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check current vCPU usage: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix (immediate):*
 ```bash
@@ -354,7 +354,7 @@ aws autoscaling update-auto-scaling-group \
 # Spot quota is usually higher and less contested
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spot quota is usually higher and less contested example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 ---
 
@@ -391,6 +391,124 @@ the table above)*
 | SCENARIO | 2 |
 
 ---
+
+---
+
+**[MID] Q1 - [DEBUGGING] A service using AWS Service Quotas and Limits Design is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for AWS Service Quotas and Limits Design beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for AWS Service Quotas and Limits Design issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For AWS Service Quotas and Limits Design specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare AWS Service Quotas and Limits Design to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS AWS Service Quotas and Limits Design service landscape and can make informed architectural decisions.
+
+AWS Service Quotas and Limits Design has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives.
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have).
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using AWS Service Quotas and Limits Design for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to AWS Service Quotas and Limits Design.
+
+Multi-region architecture for AWS Service Quotas and Limits Design: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems.
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance).
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What AWS Service Quotas and Limits Design cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* AWS Service Quotas and Limits Design cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in AWS Service Quotas and Limits Design: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs.
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using AWS Service Quotas and Limits Design in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach AWS Service Quotas and Limits Design with security as a first-class concern, not an afterthought.
+
+Top security risks for AWS Service Quotas and Limits Design: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for AWS Service Quotas and Limits Design resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with AWS Service Quotas and Limits Design: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for AWS Service Quotas and Limits Design configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads.
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving AWS Service Quotas and Limits Design that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world AWS Service Quotas and Limits Design experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes).
+
+Strong answers include: specific AWS Service Quotas and Limits Design service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient AWS Service Quotas and Limits Design architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for AWS Service Quotas and Limits Design peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency).
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled.
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain AWS Service Quotas and Limits Design to someone who has never used AWS before. What problem does it solve, and when would a startup first need it?**
+
+*Why they ask:* Tests understanding of AWS Service Quotas and Limits Design core value proposition beyond configuration options.
+
+AWS Service Quotas and Limits Design exists because building the equivalent infrastructure yourself requires significant engineering time, ongoing maintenance, and operational expertise. AWS manages the undifferentiated heavy lifting so engineering teams can focus on product differentiation.
+
+For a startup: AWS Service Quotas and Limits Design makes sense when the cost of building or managing the equivalent is higher than the AWS Service Quotas and Limits Design bill. Early stage: use managed services liberally (S3, RDS, SQS) to move fast. Growth stage: optimize selectively where costs are significant and the team has the expertise to self-manage. Mature stage: strategic decisions about build vs. buy for each component.
+
+The mental model: AWS Service Quotas and Limits Design is infrastructure you rent rather than infrastructure you build and maintain. Renting is more expensive per unit but cheaper in total when you factor in engineering time.
+
+*What separates good from great:* Understanding both when to use AWS Service Quotas and Limits Design and when to NOT use it (when it's cheaper or simpler to self-manage).
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] Your organization is considering moving from AWS Service Quotas and Limits Design to a self-managed equivalent (or vice versa). What is your decision framework and what would trigger the migration?**
+
+*Why they ask:* Tests strategic architectural thinking about AWS Service Quotas and Limits Design managed vs self-managed trade-offs.
+
+Decision framework: (1) Cost crossover - calculate monthly AWS Service Quotas and Limits Design bill vs cost of self-managed (engineering FTE + infrastructure + ops tooling). Self-managed typically wins at very high scale. (2) Differentiation - does managing this infrastructure provide competitive advantage? If no, managed service is better. (3) Team expertise - does the team have deep expertise to operate self-managed reliably? Managed services reduce operational risk.
+
+Triggers for migrating away from AWS Service Quotas and Limits Design: feature limitation blocking a critical requirement, cost exceeding budget with no optimization path, compliance requirement incompatible with managed service model.
+
+Migration risk: any migration of AWS Service Quotas and Limits Design in production requires a rollback plan, traffic cutover strategy (canary or blue-green), and parallel-run period to validate behavior before full cutover.
+
+*What separates good from great:* Doing the TCO analysis in a spreadsheet before the architecture review, not during it.
 
 #### CONCEPT 1: What are the most important AWS service quotas a production engineer should know?
 
@@ -517,7 +635,7 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check function-level throttles: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Root cause 1: Account concurrent limit reached*
 
@@ -529,7 +647,7 @@ aws service-quotas request-service-quota-increase \
   --desired-value 10000
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check function-level throttles: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Root cause 2: Reserved concurrency too low on function*
 
@@ -540,7 +658,7 @@ aws lambda put-function-concurrency \
   --reserved-concurrent-executions 500
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check function-level throttles: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* Lambda reserved
 concurrency is a double-edged sword. Setting it too
@@ -576,7 +694,7 @@ aws cloudformation list-stacks \
 # Old stacks not updated in 2+ years: candidates for deletion
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Old stacks not updated in 2+ years: candidates for deletion example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix:*
 ```bash
@@ -594,7 +712,7 @@ aws cloudformation delete-stack --stack-name old-stack-name
 # NestedStack in CDK reduces top-level stack count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This NestedStack in CDK reduces top-level stack count example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* CDK generates one
 CloudFormation stack per `Stack` class. Large CDK
@@ -784,7 +902,7 @@ aws service-quotas request-service-quota-increase \
   --desired-value 10
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This VPCs per region: 10 (vs default 5): example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* Include quota requests
 in the Account Factory for Terraform (AFT) customization.
@@ -983,7 +1101,7 @@ When selecting any AWS service:
    Binary/files: S3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AWS Service Selection Frameworks example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 ---
 
@@ -1009,7 +1127,7 @@ response = table.scan(  # Full table scan - NEVER do this for filtering
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This At 100M orders: 100M reads, $50+ per query, minutes to return example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
 ```sql
 -- GOOD: Aurora for ad-hoc relational queries
@@ -1037,7 +1155,7 @@ WHERE c.email LIKE '%@company.com'
 -- Full index usage: status+created_at + customer join
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This At 100M orders: 100M reads, $50+ per query, minutes to return example demonstrates SQL query execution plan. **KEY MECHANISM:** the database planner builds an execution plan from table statistics; sequential scan vs index scan differs by 100x. **WHY IT MATTERS:** SELECT * widens rows increasing I/O; missing WHERE clause on UPDATE/DELETE affects all rows with no undo. **TAKEAWAY: always SELECT only needed columns; use EXPLAIN ANALYZE to verify the execution plan.**
 
 ```python
 # Service selection in code: choosing between
@@ -1084,7 +1202,7 @@ events.put_events(
 # PaymentFailed -> fraud-detection Lambda
 ```
 
-> **Code walkthrough:** The BAD pattern uses DynamoDB
+> **Code walkthrough:** The BAD pattern uses DynamoDBice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for a relational query (multi-column filtering with
 > JOIN-equivalent). DynamoDB's `scan` reads the entire
 > table to apply filters. At 100M orders: 100M reads
@@ -1261,6 +1379,122 @@ represented by the Comparison Tables above)*
 
 ---
 
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] A service using AWS Service Selection Frameworks is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for AWS Service Selection Frameworks beyond 'check CloudWatch logs'.
+
+Diagnostic sequence for AWS Service Selection Frameworks issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes.
+
+For AWS Service Selection Frameworks specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue.
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] Compare AWS Service Selection Frameworks to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS AWS Service Selection Frameworks service landscape and can make informed architectural decisions.
+
+AWS Service Selection Frameworks has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads.
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (PaymentFailed -> fraud-detecti, Q9)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (PaymentFailed -> fraud-detecti, Q9)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+**[MID] Q1 - [DEBUGGING] A service using AWS Service Selection Frameworks is behaving unexpectedly in production with no obvious errors in application logs. What AWS-native diagnostic tools do you use and in what order?**
+
+*Why they ask:* Tests systematic AWS debugging for AWS Service Selection Frameworks beyond 'check CloudWatch logs'. (PaymentFailed -> fraud-detecti, Q1)
+
+Diagnostic sequence for AWS Service Selection Frameworks issues: (1) CloudWatch Metrics - check service-specific metrics (throttling, error counts, latency percentiles). (2) CloudWatch Logs Insights - query for error patterns across the time window of the issue. (3) X-Ray traces - identify which service component has elevated latency or error rate. (4) CloudTrail - verify no unintended API calls or permission changes. (PaymentFailed -> fraud-detecti, Q1)
+
+For AWS Service Selection Frameworks specifically: check the service console for visible warnings (throttling indicators, capacity limits). Enable AWS Config to audit configuration drift. Use CloudWatch Contributor Insights to identify traffic patterns causing the issue. (PaymentFailed -> fraud-detecti, Q1)
+
+*What separates good from great:* Setting up CloudWatch Alarms BEFORE issues occur, so you get notified rather than discovering issues from customer complaints.
+
+---
+
+**[MID] Q2 - [TRADE-OFF] Compare AWS Service Selection Frameworks to its main alternatives in AWS (or outside AWS). When is each the right choice?**
+
+*Why they ask:* Tests whether you understand the AWS AWS Service Selection Frameworks service landscape and can make informed architectural decisions. (PaymentFailed -> fraud-detecti, Q2)
+
+AWS Service Selection Frameworks has specific strengths optimized for certain use cases: managed operational burden (AWS handles patching, scaling, HA), native AWS integration (IAM, VPC, CloudWatch), and pay-per-use cost model for variable workloads. (PaymentFailed -> fraud-detecti, Q2)
+
+Weaknesses vs alternatives: vendor lock-in (migrating away requires significant refactoring), pricing at scale (managed services often cost more than self-managed at high volume), and less configuration flexibility than self-managed alternatives. (PaymentFailed -> fraud-detecti, Q2)
+
+Decision factors: team operational capacity (high ops burden teams benefit more from managed services), workload variability (bursty workloads benefit from pay-per-use), and compliance requirements (some industries require specific certifications that only certain services have). (PaymentFailed -> fraud-detecti, Q2)
+
+*What separates good from great:* Doing the cost math: managed service TCO includes reduced engineering time but higher per-unit cost. Calculate the crossover point.
+
+---
+
+**[SENIOR] Q3 - [ARCHITECTURE] How do you architect a production system using AWS Service Selection Frameworks for high availability across multiple AWS regions? What are the consistency trade-offs?**
+
+*Why they ask:* Tests multi-region architecture knowledge and understanding of CAP theorem applied to AWS Service Selection Frameworks.
+
+Multi-region architecture for AWS Service Selection Frameworks: active-active (both regions serve traffic - requires conflict resolution for write conflicts) vs active-passive (one region serves traffic, the other is warm standby - simpler but higher RTO/RPO). Most services start with active-passive due to lower complexity.
+
+Consistency trade-offs: cross-region replication introduces replication lag (typically 1-5 seconds for most AWS services). During that window, a read from the secondary region may return stale data. This is acceptable for read-heavy workloads but problematic for financial or inventory systems. (PaymentFailed -> fraud-detecti, Q3)
+
+AWS Route 53 for traffic routing: latency-based routing (sends users to closest healthy region), health-check-based failover (automatically redirects if primary region fails), and geolocation routing (data residency compliance). (PaymentFailed -> fraud-detecti, Q3)
+
+*What separates good from great:* Testing the failover scenario with actual traffic before it's needed in production (gameday exercises).
+
+---
+
+**[SENIOR] Q4 - [PRODUCTION] What AWS Service Selection Frameworks cost optimizations should every production deployment implement? What are the common cost waste patterns you've seen?**
+
+*Why they ask:* AWS Service Selection Frameworks cost awareness is a production engineering skill, not just a finance concern.
+
+Common cost waste patterns in AWS Service Selection Frameworks: over-provisioned capacity (right-size based on measured p95 utilization, not peak), unused resources (orphaned volumes, forgotten dev environments, idle NAT gateways at $0.045/hr), and suboptimal pricing model (On-Demand for steady-state workloads that qualify for Reserved Instances or Savings Plans).
+
+Cost optimization checklist: (1) Enable AWS Cost Anomaly Detection to catch unexpected spend. (2) Tag all resources for cost attribution by team and service. (3) Use AWS Compute Optimizer or Trusted Advisor recommendations for right-sizing. (4) Evaluate data transfer costs - moving data between regions or AZs has non-trivial costs. (PaymentFailed -> fraud-detecti, Q4)
+
+*What separates good from great:* Reviewing AWS Cost Explorer weekly as part of the team's operational practice, not quarterly during budget reviews.
+
+---
+
+**[SENIOR] Q5 - [SECURITY] What are the top security risks when using AWS Service Selection Frameworks in production? Which AWS security services mitigate them?**
+
+*Why they ask:* Tests whether you approach AWS Service Selection Frameworks with security as a first-class concern, not an afterthought.
+
+Top security risks for AWS Service Selection Frameworks: overly permissive IAM roles (principle of least privilege violated - use IAM Access Analyzer to detect), unencrypted data at rest or in transit (enable KMS encryption for AWS Service Selection Frameworks resources), and public access misconfiguration (S3 buckets, RDS instances, Elasticsearch clusters accidentally made public).
+
+AWS security services to use with AWS Service Selection Frameworks: GuardDuty (threat detection - unusual API calls, credential compromise), Security Hub (consolidated security findings), Config Rules (automated compliance checks for AWS Service Selection Frameworks configurations), Macie (sensitive data detection in storage).
+
+IAM policy pattern: start with deny-all, add specific allows for what the service needs. Never use AdministratorAccess or wildcard resource ARNs in production service roles. Use IAM Roles for service accounts (IRSA) for Kubernetes workloads. (PaymentFailed -> fraud-detecti, Q5)
+
+*What separates good from great:* Running AWS Security Hub findings review as part of the weekly engineering ritual, not just during audits.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a production incident involving AWS Service Selection Frameworks that you managed or contributed to resolving. What was the root cause, how was it fixed, and what did you change afterward?**
+
+*Why they ask:* Tests real-world AWS Service Selection Frameworks experience and learning mindset under production pressure.
+
+Use the STAR format: Situation (what service, what impact, what time), Task (your role in the incident), Action (specific diagnostic steps and fixes), Result (resolution time, business impact, post-incident changes). (PaymentFailed -> fraud-detecti, Q6)
+
+Strong answers include: specific AWS Service Selection Frameworks service metrics that indicated the problem, which AWS console or CLI commands were used for diagnosis, what the root cause was (not just symptoms), and what monitoring or process change prevented recurrence. Common strong examples: throttling from hitting API limits without exponential backoff, IAM permission boundary blocking a needed action at 2am, or a network ACL change breaking cross-service communication.
+
+*What separates good from great:* Writing a post-incident review (5-whys or fishbone) and sharing it with the team vs. just fixing the symptom and moving on.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a resilient AWS Service Selection Frameworks architecture that handles 10x normal traffic during peak events (Black Friday, product launch). What preparation steps do you take in advance?**
+
+*Why they ask:* Tests load planning and capacity management for AWS Service Selection Frameworks peak events.
+
+Pre-peak preparation: (1) Load test at 2x expected peak (test 20,000 RPS if expecting 10,000 peak) to find bottlenecks before traffic arrives. (2) Pre-warm: AWS ELB, Lambda cold starts, CloudFront edge locations. Request pre-warming from AWS if using services that don't auto-scale instantly. (3) Review Service Quotas and request increases 2-4 weeks in advance (EC2 limits, API Gateway rate limits, Lambda concurrency). (PaymentFailed -> fraud-detecti, Q7)
+
+Architecture for 10x spikes: queuing to absorb bursts (SQS queue + workers decouples request rate from processing rate), aggressive caching at CDN layer (CloudFront with long TTL for static assets, API Gateway caching for stable responses), and autoscaling with predictive scaling enabled. (PaymentFailed -> fraud-detecti, Q7)
+
+*What separates good from great:* Running a gameday exercise (inject synthetic traffic, fail components) 2 weeks before peak events rather than hoping the architecture holds.
+
 #### CONCEPT 1: How do you choose between SQS, SNS, EventBridge, and Kinesis?
 
 Each service solves a different messaging problem:
@@ -1406,7 +1640,7 @@ workloads with no reliability impact.
    -- 95% of queries look like this (key-value):
    SELECT * FROM sessions WHERE session_id = 'abc123';
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates SQL query execution plan. **KEY MECHANISM:** the database planner builds an execution plan from table statistics; sequential scan vs index scan differs by 100x. **WHY IT MATTERS:** SELECT * widens rows increasing I/O; missing WHERE clause on UPDATE/DELETE affects all rows with no undo. **TAKEAWAY: always SELECT only needed columns; use EXPLAIN ANALYZE to verify the execution plan.**
 
    If 95% of queries are primary key lookups with no JOIN:
    DynamoDB would be more cost-efficient.
@@ -1423,7 +1657,7 @@ workloads with no reliability impact.
    orders = db.query("SELECT * FROM orders WHERE region = 'US'")
    # Joining 1M users + 5M orders in application memory
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates Python runtime behavior. **KEY MECHANISM:** the CPython interpreter executes this via reference counting and GIL coordination. **WHY IT MATTERS:** blocking calls inside async contexts starve the event loop and freeze all coroutines. **TAKEAWAY: match synchronous vs asynchronous context to the I/O model of the operation.**
 
    If the data model can be denormalized: DynamoDB single-table
    design handles this in one query.
@@ -1478,7 +1712,7 @@ aws cloudwatch get-metric-statistics \
   --period 60 --statistics Sum ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Lambda throttles: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *Fix: SNS -> SQS -> Lambda pattern (buffered fan-out)*
 
@@ -1500,7 +1734,7 @@ aws lambda create-event-source-mapping \
   --maximum-batching-window-in-seconds 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Create SQS event source mapping to Lambda: example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Now: SNS -> SQS (buffer). Lambda pulls from SQS.
 If Lambda throttles: SQS buffers. No messages dropped.
@@ -1779,7 +2013,7 @@ IaC:
     Type-safe infrastructure, team already knows TypeScript
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Create SQS event source mapping to Lambda: example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 **Year 1 estimated cost:**
 

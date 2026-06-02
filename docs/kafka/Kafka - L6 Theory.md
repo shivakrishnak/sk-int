@@ -89,7 +89,7 @@ PARTITION DIRECTORY STRUCTURE:
     00000000000002097152.timeindex
     leader-epoch-checkpoint       # leader epoch tracking
 
-  Segment file names: the starting offset of that segment (zero-padded to 20 digits).
+  Segment file names: the starting offset of that segment (zero-padded to 20 dig
   Inactive segments: closed, read-only.
   Active segment: the last one. New records appended here.
   
@@ -118,7 +118,7 @@ SEGMENT FILE FORMAT:
     │       key (nullable), value (nullable), headers        │
     └─────────────────────────────────────────────────────────┘
   
-  Batch format: critical for compression efficiency (compress a batch, not per-record).
+  Batch format: critical for compression efficiency (compress a batch, not per-r
   Records within a batch: delta-encoded timestamps and offsets (saves space).
 
 SPARSE INDEX (.index file):
@@ -164,7 +164,7 @@ PAGE CACHE ARCHITECTURE:
   
   Implication: brokers should have enough RAM to hold the "hot" partition data.
   Rule of thumb: provision RAM = max expected consumer lag size per partition * num partitions.
-  For real-time consumers: 30 seconds of data per partition needs to fit in page cache.
+  For real-time consumers: 30 seconds of data per partition needs to fit in page
 
 ZERO-COPY TRANSFER (sendfile):
 
@@ -196,7 +196,7 @@ LOG CLEANUP POLICIES:
   # delete (default for non-compacted topics):
   log.cleanup.policy=delete
   log.retention.ms=604800000        # 7 days
-  log.retention.bytes=107374182400  # 100 GB per partition (or unlimited with -1)
+ log.retention.bytes=107374182400 # 100 GB per partition (or unlimited with -1)
   log.segment.bytes=1073741824      # 1 GB segment size
   # Kafka: deletes segments where all records are older than retention.ms.
   # OR: when total partition log size exceeds retention.bytes.
@@ -218,7 +218,7 @@ LOG CLEANUP POLICIES:
   # After 1 day: key is eligible for deletion (even if no tombstone).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After 1 day: key is eligible for deletion (even if no tombstone). example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -227,6 +227,11 @@ LOG CLEANUP POLICIES:
 > **Code walkthrough:** Inspecting Kafka's internal log structure via the DumpLogSegments tool
 > reveals how records are physically stored, which is essential for debugging corruption or
 > offset anomalies.
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # BAD: trying to understand log storage by reading the raw .log file directly:
@@ -411,7 +416,7 @@ flowchart TB
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Log corruption detected - broker fails to start or replicas out of sync.**
-```
+```plaintext
 Symptom: Broker fails to start with:
   "Caused by: kafka.common.KafkaException: Corrupt log: Found
   record starting at offset X in .log file with invalid CRC"
@@ -460,7 +465,7 @@ Prevention:
   - Regular disk health checks (SMART monitoring).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check OS-level disk health: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -731,7 +736,7 @@ PARTITION TOLERANCE IN PRACTICE:
   #   This is the "sacrifice availability for consistency" trade-off.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This is the "sacrifice availability for consistency" trade-off. example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -784,35 +789,35 @@ producer.send(record, (metadata, exception) -> {
 });
 ```
 
-> **Code walkthrough:** The CP producer uses `acks=all` with `enable.idempotence=true` to ensure
-> both consistency and exactly-once semantics at the producer level. The callback handler
-> explicitly checks for `NotEnoughReplicasException`, which is the CP-mode signal that the
-> system is in an "unavailable" state (ISR too small). The key pattern: do NOT silently fall
-> back to `acks=1` when `NotEnoughReplicasException` occurs. That fallback would turn your CP
-> producer into an AP producer at the worst possible moment (during a failure). Instead: surface
-> the error, trigger monitoring alerts, and let the circuit breaker handle backpressure.
+> **Code walkthrough:** The CP producer uses `acks=all` with `enable.idempotenceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> both consistency and exactly-once semantics at the producer level. The callbac
+> explicitly checks for `NotEnoughReplicasException`, which is the CP-mode signa
+> system is in an "unavailable" state (ISR too small). The key pattern: do NOT s
+> back to `acks=1` when `NotEnoughReplicasException` occurs. That fallback would
+> producer into an AP producer at the worst possible moment (during a failure). 
+> the error, trigger monitoring alerts, and let the circuit breaker handle backp
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> CAP: Consistency (every read sees latest write), Availability (every request gets a response),
-> Partition Tolerance (works despite network failures). Kafka: configurable. `acks=all` + `min.insync.replicas=2`:
-> CP mode (writes fail if not enough replicas, but data is never lost). `acks=1` + `unclean.leader.election=true`:
-> AP mode (writes always succeed, data may be lost if leader fails). Default Kafka: CP.
+> CAP: Consistency (every read sees latest write), Availability (every request g
+> Partition Tolerance (works despite network failures). Kafka: configurable. `ac
+> CP mode (writes fail if not enough replicas, but data is never lost). `acks=1`
+> AP mode (writes always succeed, data may be lost if leader fails). Default Kaf
 
 ---
 
 **Senior / Staff (5+ years):**
-> CAP theorem is a useful model but oversimplifies real Kafka trade-offs. The real spectrum: PACELC.
-> P: partition happens. E: else (no partition). L: latency. C: consistency. PACELC: during partitions
-> choose C or A; else (normal operation) choose lower latency or stronger consistency. Kafka:
-> `acks=all` during normal operation: higher latency (wait for all ISR). `acks=1`: lower latency.
-> The partition scenario AND the normal-operation latency trade-off are both in play every day.
-> Most teams choose `acks=all` for durability-critical topics and `acks=1` for event notification
-> topics where occasional loss is acceptable. Document this per-topic. A producer misconfigured with
-> `acks=1` for a financial event stream: a hidden consistency bug waiting to surface during the
+> CAP theorem is a useful model but oversimplifies real Kafka trade-offs. The re
+> P: partition happens. E: else (no partition). L: latency. C: consistency. PACE
+> choose C or A; else (normal operation) choose lower latency or stronger consis
+> `acks=all` during normal operation: higher latency (wait for all ISR). `acks=1
+> The partition scenario AND the normal-operation latency trade-off are both in 
+> Most teams choose `acks=all` for durability-critical topics and `acks=1` for e
+> topics where occasional loss is acceptable. Document this per-topic. A produce
+> `acks=1` for a financial event stream: a hidden consistency bug waiting to sur
 > first broker failure.
 
 ---
@@ -820,28 +825,28 @@ producer.send(record, (metadata, exception) -> {
 ### ⚠️ Common Misconceptions
 
 **Misconception: "Kafka is always strongly consistent."**
-Kafka provides per-partition ordering consistency and HW-based read consistency. But it does NOT
-provide cross-partition consistency. If a producer writes to Topic A and Topic B in separate
+Kafka provides per-partition ordering consistency and HW-based read consistency.
+provide cross-partition consistency. If a producer writes to Topic A and Topic B
 transactions, a consumer reading Topic A may see the record before a consumer reading Topic B.
-There is no atomic cross-topic read. For cross-partition (or cross-topic) consistency: Kafka
+There is no atomic cross-topic read. For cross-partition (or cross-topic) consis
 Transactions are required (all records in the transaction are committed atomically). Even with
 transactions: consumers must use `isolation.level=read_committed` to see only committed records.
-Without `read_committed`: consumers may read transactionally-produced records that were later
+Without `read_committed`: consumers may read transactionally-produced records th
 aborted. Additionally: Kafka is not linearizable (in the Jepsen sense). The high watermark
 mechanism ensures that consumers don't read uncommitted data, but the HW can temporarily
-diverge across replicas during leader changes. The leader epoch mechanism (Kafka 0.11+) prevents
+diverge across replicas during leader changes. The leader epoch mechanism (Kafka
 consumers from reading records that are later truncated, which is the key safety property.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Configuration | acks | min.insync.replicas | unclean.leader.election | Guarantee | Trade-off |
-|---|---|---|---|---|---|
-| CP strict | all | 2 | false | No data loss | Writes unavailable if ISR < 2 |
-| CP balanced | all | 1 | false | No data loss (single replica risk) | Low availability risk |
-| AP | 1 | 1 | true | Always available | Data loss possible on failure |
-| Fire-and-forget | 0 | any | any | No guarantee | Maximum throughput |
+| Configuration| acks| min.insync.replicas| unclean.leader.election| Guarantee| 
+|---|---|---|---|--------------------------------|-----------------------------|
+| CP strict| all| 2| false| No data loss| Writes unavailable if ISR < 2|
+| CP balanced| all| 1| false| No data loss (single replica risk)| Low availabili
+| AP| 1| 1| true| Always available| Data loss possible on failure|
+| Fire-and-forget| 0| any| any| No guarantee| Maximum throughput|
 
 ---
 
@@ -855,7 +860,7 @@ consumers from reading records that are later truncated, which is the key safety
 
 **High watermark and ISR consistency:**
 
-```
+```plaintext
   Leader: offset 102 (latest write)
   HW:     offset 100 (all ISR have this)
   
@@ -910,7 +915,7 @@ sequenceDiagram
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: "NotEnoughReplicasException" - writes failing in production.**
-```
+```plaintext
 Symptom: Producers receive NotEnoughReplicasException.
   No messages produced. Consumers: still reading (HW-based reads unaffected).
   Specific topic partitions affected: check which partitions have ISR size < min.insync.replicas.
@@ -960,7 +965,7 @@ Fix:
       Revert IMMEDIATELY after ISR recovers.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert on IsrShrinksPerSec > 0 for sustained period (> 30 seconds). example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

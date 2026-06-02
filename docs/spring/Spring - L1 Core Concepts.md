@@ -131,7 +131,7 @@ With DI (loose coupling):
     result: wired, testable object graph
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dependency Injection example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Three injection styles:
 1. **Constructor injection**: dependencies in constructor signature (preferred)
@@ -181,7 +181,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Service locator is the anti-pattern DI replaced. The
+> **Code walkthrough:** Service locator is the anti-pattern DI replaced. Theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > class hides its dependency behind a static lookup, making it impossible to
 > see what OrderService needs just by reading its constructor. Tests must
 > configure the ServiceLocator before running. DI makes dependencies visible
@@ -209,7 +209,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** Constructor injection makes all dependencies explicit
+> **Code walkthrough:** Constructor injection makes all dependencies explicitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and allows them to be final. Any developer reading this class immediately
 > knows it needs a PaymentService and InventoryService. Spring finds beans
 > matching those types and injects them. In tests, `new OrderService(mockPay,
@@ -247,7 +247,7 @@ public class NotificationService {
 }
 ```
 
-> **Code walkthrough:** All three styles in one class. Constructor injection
+> **Code walkthrough:** All three styles in one class. Constructor injectionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > handles the mandatory EmailSender - it is final and always set. Setter
 > injection handles optional SmsSender (required = false). Field injection
 > on auditLogger is shown to illustrate the anti-pattern - it hides the
@@ -341,7 +341,7 @@ Fix: Switch to constructor injection so `new Service(mock)` works in tests.
 
 ---
 
-#### Q1 - What is the difference between DI and IoC?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between DI and IoC?**
 
 IoC (Inversion of Control) is the broad principle: instead of application
 code controlling the creation and lifecycle of its dependencies, control is
@@ -361,7 +361,7 @@ dependencies - the coupling shifts from "new ConcreteType" to "registry.get
 
 ---
 
-#### Q2 - Why is constructor injection preferred over field injection?
+**[JUNIOR] Q2 - [TRADE-OFF] Why is constructor injection preferred over field injection?**
 
 Four concrete reasons:
 1. **Explicit dependencies**: constructor signature shows all required
@@ -382,7 +382,7 @@ while keeping constructor injection semantics.
 
 ---
 
-#### Q3 - What is a circular dependency and how do you fix it?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is a circular dependency and how do you fix it?**
 
 A circular dependency exists when Bean A depends on Bean B and Bean B depends
 on Bean A (directly or transitively). With constructor injection, Spring
@@ -407,7 +407,7 @@ redesign to remove the cycle.
 
 ---
 
-#### Q4 - What is @Qualifier and when do you use it?
+**[MID] Q4 - [CONCEPTUAL] What is @Qualifier and when do you use it?**
 
 @Qualifier disambiguates when Spring finds multiple beans of the same type
 and does not know which to inject. You annotate the injection point with
@@ -419,7 +419,7 @@ and does not know which to inject. You annotate the injection point with
 private PaymentService paymentService;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 @Qualifier can also be used on bean definitions:
 ```java
@@ -428,7 +428,7 @@ private PaymentService paymentService;
 public PaymentService fastPaymentService() { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Alternative to @Qualifier: @Primary marks one bean as the default choice
 without requiring injection-point annotations.
@@ -439,7 +439,7 @@ gives you compile-time safety vs string-based @Qualifier("fastPayment").
 
 ---
 
-#### Q5 - How does Spring resolve which bean to inject when there are multiple candidates?
+**[MID] Q5 - [CONCEPTUAL] How does Spring resolve which bean to inject when there are multiple candidates?**
 
 Spring's resolution algorithm in order:
 1. Type match: find all beans matching the declared type.
@@ -457,7 +457,7 @@ code.
 
 ---
 
-#### Q6 - Can you inject a list of all beans of the same type?
+**[MID] Q6 - [CONCEPTUAL] Can you inject a list of all beans of the same type?**
 
 Yes. Declare `List<SomeInterface>` as the injection point and Spring injects
 all beans implementing that interface.
@@ -478,7 +478,7 @@ public class NotificationDispatcher {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using goroutine. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Spring collects all beans implementing NotificationChannel (EmailChannel,
 SmsChannel, PushChannel, etc.) and injects them as a list. Adding a new
@@ -491,7 +491,7 @@ by name at runtime.
 
 ---
 
-#### Q7 - What is @Autowired(required = false) used for?
+**[SENIOR] Q7 - [CONCEPTUAL] What is @Autowired(required = false) used for?**
 
 @Autowired(required = false) marks an optional dependency. If no matching bean
 exists, Spring leaves the field null rather than throwing
@@ -514,7 +514,7 @@ public void process(Order order) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The modern alternative to @Autowired(required
 = false) is using Optional<T> as the injection type:
@@ -666,7 +666,7 @@ Shutdown:
   2. release resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Spring Bean example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The singleton cache is the core. Spring creates singleton beans once at
@@ -713,7 +713,7 @@ public class AppConfig {
 }
 ```
 
-> **Code walkthrough:** Manual wiring is what Spring replaces. It requires
+> **Code walkthrough:** Manual wiring is what Spring replaces. It requiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > knowing the dependency order (DataSource before Repository before Service),
 > manually passing references, and handling lifecycle (calling close on
 > DataSource on shutdown). For 5 objects this is manageable; for 500 objects
@@ -752,7 +752,7 @@ public class CacheConfig {
 }
 ```
 
-> **Code walkthrough:** Three ways to register beans. @Service is the most
+> **Code walkthrough:** Three ways to register beans. @Service is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common - use it for classes you write. @Bean factory methods are necessary
 > for third-party library classes (like HikariDataSource) that you cannot
 > annotate yourself. The destroyMethod ensures the cache manager is cleanly
@@ -840,7 +840,7 @@ or use @Lookup method injection, or ObjectFactory<MyPrototypeBean>.
 
 ---
 
-#### Q1 - What is a Spring bean?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is a Spring bean?**
 
 A Spring bean is any Java object whose full lifecycle is managed by the Spring
 IoC container. "Managed" means Spring creates it, injects its dependencies,
@@ -858,7 +858,7 @@ of thumb: if Spring should manage the lifecycle, make it a bean.
 
 ---
 
-#### Q2 - What is the default bean scope and why?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is the default bean scope and why?**
 
 The default scope is **singleton**: one instance per Spring ApplicationContext.
 Every request for that bean type returns the same instance.
@@ -878,7 +878,7 @@ of the same type across tests.
 
 ---
 
-#### Q3 - How do you register a bean in Spring?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you register a bean in Spring?**
 
 Three ways, in order of preference:
 
@@ -906,7 +906,7 @@ you from accidentally creating multiple DataSource instances.
 
 ---
 
-#### Q4 - What happens to a bean on application shutdown?
+**[MID] Q4 - [CONCEPTUAL] What happens to a bean on application shutdown?**
 
 On shutdown (when ApplicationContext.close() is called or the JVM receives
 SIGTERM with a registered shutdown hook):
@@ -930,7 +930,7 @@ management.
 
 ---
 
-#### Q5 - What is @PostConstruct and when do you use it?
+**[MID] Q5 - [CONCEPTUAL] What is @PostConstruct and when do you use it?**
 
 @PostConstruct marks a method to be called after dependency injection is
 complete but before the bean is put into service. It runs after all @Autowired
@@ -963,7 +963,7 @@ public class ProductCacheService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* @PostConstruct runs inside the
 singleton creation process, before the bean is exposed to other beans.
@@ -973,7 +973,7 @@ so they run after the context is fully initialized.
 
 ---
 
-#### Q6 - What is the difference between @Bean and @Component?
+**[MID] Q6 - [CONCEPTUAL] What is the difference between @Bean and @Component?**
 
 **@Component** (and @Service, @Repository, @Controller):
 - Applied to the class itself
@@ -998,7 +998,7 @@ through the CGLIB proxy which intercepts it and returns the registered bean.
 
 ---
 
-#### Q7 - What is a BeanDefinition?
+**[SENIOR] Q7 - [CONCEPTUAL] What is a BeanDefinition?**
 
 A BeanDefinition is the metadata object that describes how to create a bean -
 before any instance is actually created. It contains: the bean class name, scope,
@@ -1172,7 +1172,7 @@ ApplicationContext lifecycle:
      -> publishes ContextClosedEvent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ApplicationContext example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The ApplicationContext refresh is the critical startup phase. Every non-lazy
@@ -1224,7 +1224,7 @@ public class Application {
 }
 ```
 
-> **Code walkthrough:** SpringApplication.run() creates the right
+> **Code walkthrough:** SpringApplication.run() creates the rightice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ApplicationContext subclass (web vs non-web), populates it from all
 > @Configuration classes and @Component-scanned classes, refreshes it
 > (which creates all singleton beans), then returns the live context.
@@ -1262,7 +1262,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** ApplicationContextAware is an interface for
+> **Code walkthrough:** ApplicationContextAware is an interface forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > infrastructure code that needs dynamic runtime bean lookup. For business
 > code, always use constructor injection - injecting the context itself is
 > the service locator anti-pattern. The comparison shows the correct and
@@ -1356,7 +1356,7 @@ for recreation after the test), or design beans to be stateless.
 
 ---
 
-#### Q1 - What is the ApplicationContext and how does it differ from BeanFactory?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the ApplicationContext and how does it differ from BeanFactory?**
 
 ApplicationContext extends BeanFactory. BeanFactory provides the minimal
 container: lazy bean creation and basic DI. ApplicationContext adds:
@@ -1377,7 +1377,7 @@ server as part of the onRefresh() step during refresh. This is why
 
 ---
 
-#### Q2 - What happens during the ApplicationContext refresh?
+**[JUNIOR] Q2 - [CONCEPTUAL] What happens during the ApplicationContext refresh?**
 
 The refresh is the most important phase of Spring startup. Key steps:
 
@@ -1399,7 +1399,7 @@ from this order.
 
 ---
 
-#### Q3 - What is the ContextRefreshedEvent and when is it fired?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the ContextRefreshedEvent and when is it fired?**
 
 ContextRefreshedEvent is published when the ApplicationContext refresh
 is complete - all singletons are created, wired, and initialized, and the
@@ -1427,7 +1427,7 @@ public class StartupValidator {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* In web applications, ContextRefreshedEvent
 fires when the parent context refreshes AND again when the web (child) context
@@ -1437,7 +1437,7 @@ is ready including all lifecycle beans.
 
 ---
 
-#### Q4 - What are the main ApplicationContext implementations?
+**[MID] Q4 - [HANDS-ON] What are the main ApplicationContext implementations?**
 
 Key implementations in order of use frequency:
 
@@ -1466,7 +1466,7 @@ works demonstrates understanding of the framework's internals vs just using
 
 ---
 
-#### Q5 - How can you interact with the ApplicationContext programmatically?
+**[MID] Q5 - [CONCEPTUAL] How can you interact with the ApplicationContext programmatically?**
 
 Three legitimate use cases for programmatic context access:
 
@@ -1494,7 +1494,7 @@ registered implementations.
 
 ---
 
-#### Q6 - How does Spring Boot's SpringApplication.run() work?
+**[MID] Q6 - [CONCEPTUAL] How does Spring Boot's SpringApplication.run() work?**
 
 SpringApplication.run() is a factory that:
 1. Deduces the ApplicationContext type from the classpath (web vs non-web).
@@ -1516,7 +1516,7 @@ for its @Conditional conditions - only matching ones create beans.
 
 ---
 
-#### Q7 - What is context hierarchy and how is it used in Spring MVC?
+**[SENIOR] Q7 - [CONCEPTUAL] What is context hierarchy and how is it used in Spring MVC?**
 
 A parent-child context hierarchy is two ApplicationContexts where the child
 inherits beans from the parent but the parent cannot see the child's beans.

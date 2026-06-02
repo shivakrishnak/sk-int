@@ -86,6 +86,7 @@ failures while maintaining full coverage for release.
 
 **How it works:**
 
+{% raw %}
 ```
 Frontend CI pipeline architecture:
 
@@ -136,8 +137,9 @@ Playwright sharding (GitHub Actions):
   4 parallel jobs: 60 E2E tests -> ~15 tests each
   Wall clock: 20 min -> ~5 min
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Frontend Testing Strategy in CI/CD example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -145,6 +147,7 @@ Playwright sharding (GitHub Actions):
 
 **Example (Production) - GitHub Actions frontend CI:**
 
+{% raw %}
 ```yaml
 # .github/workflows/ci.yml
 name: Frontend CI
@@ -241,8 +244,9 @@ jobs:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           exitZeroOnChanges: true  # non-blocking: review required
 ```
+{% endraw %}
 
-> **Code walkthrough:** The pipeline uses four key patterns. First,
+> **Code walkthrough:** The pipeline uses four key patterns. First,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `needs:` creates a dependency graph: E2E doesn't start until unit
 > tests pass (fail-fast). Second, `if: github.base_ref == 'main'`
 > gates expensive E2E tests to PRs targeting the main branch only -
@@ -447,7 +451,7 @@ PR created:
   → Does not block unit test feedback
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Required optimizations for <3 min unit tests:
 1. `npm ci` with cache (saves 2-4 min on cold install)
@@ -460,6 +464,8 @@ For very large projects (10,000+ tests):
 - Or split by test type: unit job + integration job (parallel)
 
 Cache strategy:
+
+{% raw %}
 ```yaml
 - uses: actions/cache@v4
   with:
@@ -471,8 +477,9 @@ Cache strategy:
     restore-keys: |
       deps-${{ hashFiles('package-lock.json') }}-
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Using Vitest with HMR in development
 (sub-second re-runs on watch) while the CI pipeline uses the parallel

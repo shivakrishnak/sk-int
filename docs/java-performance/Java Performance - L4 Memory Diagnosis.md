@@ -67,7 +67,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Memory leak root causes and diagnosis tooling:**
-```
+```plaintext
 COMMON MEMORY LEAK PATTERNS:
 
   1. STATIC COLLECTION WITHOUT EVICTION:
@@ -163,10 +163,10 @@ HEAP DUMP ANALYSIS WITH ECLIPSE MAT:
     Sort by "Retained Heap": top entry = the biggest leak.
     
   Step 5: Path to GC Roots:
-    Right-click the suspected object -> Path to GC Roots -> exclude weak/soft references.
+    Right-click the suspected object -> Path to GC Roots -> exclude weak/soft...
     MAT: shows the shortest reference chain from a GC root to this object.
     Example:
-    org.example.AppContext$1$staticCache <- AppContext.cache <- AppContext (static field)
+    org.example.AppContext$1$staticCache <- AppContext.cache <- AppContext...
     Translation: AppContext has a static field "cache" of type AppContext.
                  The AppContext.cache HashMap contains the 4.5GB of data.
     Root cause: AppContext.cache is a static field (GC root) with no eviction.
@@ -183,7 +183,7 @@ GC ANTI-PATTERNS:
     }
     
     Problem: objects with finalizers must be processed by the Finalizer thread.
-    Object lifecycle: allocated -> GC discovers unreachable -> placed in finalizer queue
+    Object lifecycle: allocated -> GC discovers unreachable -> placed in...
     -> Finalizer thread calls finalize() -> GC collects on NEXT cycle.
     At high allocation rates: finalizer queue grows. Objects live 2+ extra GC cycles.
     Peak: finalizer queue holds thousands of objects, Finalizer thread falls behind.
@@ -246,7 +246,7 @@ MEMORY GROWTH MONITORING:
     Tools: JVM heap snapshot API or JFR ObjectAllocationInNewTLAB events.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -255,6 +255,12 @@ MEMORY GROWTH MONITORING:
 > **Code walkthrough:** The ThreadLocal cleanup pattern and the bounded cache pattern show the
 > two most common production memory leak fixes. The heap dump capture and verification script
 > shows the operational workflow.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // THREADLOCAL LIFECYCLE MANAGEMENT (critical for thread pools):
@@ -448,7 +454,7 @@ Diagnosis workflow:
      Keywords: RecentRequestCache, static"
     
     Path to GC Root:
-    LinkedHashMap <- RecentRequestCache.requestHistory <- RecentRequestCache (static)
+    LinkedHashMap <- RecentRequestCache.requestHistory <- RecentRequestCache...
     
   Step 3: Look at what's in the LinkedHashMap:
     OQL query in MAT:
@@ -458,7 +464,7 @@ Diagnosis workflow:
     
   Step 4: Examine the code:
     class RecentRequestCache {
-        static LinkedHashMap<String, byte[]> requestHistory = new LinkedHashMap<>();
+        static LinkedHashMap<String, byte[]> requestHistory = new...
         
         static void record(String requestId, byte[] body) {
             requestHistory.put(requestId, body);
@@ -473,7 +479,7 @@ Diagnosis workflow:
     static LinkedHashMap<String, byte[]> requestHistory = 
         new LinkedHashMap<String, byte[]>(1000, 0.75f, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
+  protected boolean removeEldestEntry(Map.Entry<String, byte[]> eldest) {
                 return size() > 1000;  // keep last 1000 entries max
             }
         };
@@ -486,7 +492,7 @@ Diagnosis workflow:
         .build();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

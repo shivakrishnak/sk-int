@@ -131,7 +131,7 @@ Consistent hashing:
   Use: cache rings (Redis Cluster), distributed KV stores
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database Sharding and Partitioning example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Cross-shard queries:**
 
@@ -161,11 +161,17 @@ Secondary index approaches:
     Cost: 2x storage, 2x write complexity
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database Sharding and Partitioning example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: no shard key consideration (all-to-one)
@@ -232,7 +238,7 @@ public class ShardedUserEventRepository {
 }
 ```
 
-> **Code walkthrough:** The BAD example uses auto-increment IDs as the primary
+> **Code walkthrough:** The BAD example uses auto-increment IDs as the primaryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > key for a range-sharded table. All new records go to the last shard (highest ID).
 > This creates a permanent write hot spot. The GOOD example shards by userId:
 > all events for a user are on the same shard (single-shard user queries),
@@ -296,7 +302,7 @@ Fix: re-shard with better key, add virtual nodes (consistent hashing),
 
 ---
 
-#### Q1 - How do you shard a users table at Twitter scale?
+**[JUNIOR] Q1 - [ARCHITECTURE] How do you shard a users table at Twitter scale?**
 
 Twitter scale context: 400M users, 500M tweets/day, 6000 reads/sec peak.
 
@@ -330,7 +336,7 @@ Users table sharding:
     Twitter uses fanout for normal users (<1M followers)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Twitter's actual architecture evolved from
 MySQL + scatter-gather to fanout-on-write to hybrid (celebrities skip fanout,
@@ -344,7 +350,7 @@ trade-off: 1000 followers = 1000 writes on tweet creation.
 
 ---
 
-#### Q2 - How does database resharding work and why is it hard?
+**[JUNIOR] Q2 - [DEBUGGING] How does database resharding work and why is it hard?**
 
 Resharding: changing shard count (adding shards to reduce load per shard).
 
@@ -378,7 +384,7 @@ Risk: bugs in migration logic cause data loss or duplication
 Testing: run migration in staging first, verify checksums
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Online resharding is complex enough that most
 teams use a shard proxy (Vitess, PlanetScale) that handles it transparently.
@@ -392,7 +398,7 @@ shard count grows. This is how Google's Spanner and many large systems work.
 
 ---
 
-#### Q3 - What is the difference between vertical and horizontal partitioning?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between vertical and horizontal partitioning?**
 
 ```
 Vertical Partitioning (column splitting):
@@ -440,7 +446,7 @@ Horizontal Partitioning (row splitting):
       FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Postgres native partitioning (PARTITION BY RANGE)
 is transparent to the application - queries to `orders` automatically route to
@@ -453,7 +459,7 @@ partitioning is insufficient.
 
 ---
 
-#### Q4 - How do you handle cross-shard transactions?
+**[MID] Q4 - [CONCEPTUAL] How do you handle cross-shard transactions?**
 
 Distributed transactions across shards: hard to do correctly.
 
@@ -502,7 +508,7 @@ Avoid cross-shard transactions (design):
   This is the preferred solution
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Saga pattern is the production answer to
 distributed transactions, not 2PC. 2PC is blocking (locks held across network)
@@ -516,7 +522,7 @@ constantly doing cross-shard queries: reconsider the shard key.
 
 ---
 
-#### Q5 - How does Vitess enable transparent MySQL sharding?
+**[MID] Q5 - [CONCEPTUAL] How does Vitess enable transparent MySQL sharding?**
 
 Vitess (used by YouTube, GitHub, Slack): MySQL sharding layer.
 
@@ -563,7 +569,7 @@ Resharding with Vitess:
   Online resharding: zero downtime, tested in production
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Vitess abstracts the sharding complexity that
 would otherwise require significant custom application code. The application
@@ -576,7 +582,7 @@ cross-shard query patterns before adopting Vitess.
 
 ---
 
-#### Q6 - How do you shard a global social graph (like LinkedIn connections)?
+**[MID] Q6 - [CONCEPTUAL] How do you shard a global social graph (like LinkedIn connections)?**
 
 Social graph: users as nodes, connections as edges.
 
@@ -614,7 +620,7 @@ Friend-of-friend queries (2 hops):
     -> Very expensive for users with 1000+ connections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Social graph traversal is a fundamentally
 cross-shard problem. No sharding strategy eliminates it. Facebook's TAO system
@@ -627,7 +633,7 @@ of deep graph traversals at scale is infeasible; pre-computation + cache is stan
 
 ---
 
-#### Q7 - What is tenant-based sharding in multi-tenant SaaS systems?
+**[SENIOR] Q7 - [ARCHITECTURE] What is tenant-based sharding in multi-tenant SaaS systems?**
 
 Multi-tenant SaaS: one system, many customers (tenants), data isolation.
 
@@ -665,7 +671,7 @@ Hybrid (pool + silo for large tenants):
   Used by: Salesforce, Slack, Shopify
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "noisy neighbor" problem in pool sharding
 is the most common production complaint. One large tenant runs expensive queries
@@ -678,7 +684,7 @@ time; RLS policy enforces WHERE tenant_id = current_setting('app.current_tenant'
 
 ---
 
-#### Q8 - How do you ensure data consistency across shards?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you ensure data consistency across shards?**
 
 Data consistency challenges with sharding:
 
@@ -720,7 +726,7 @@ Option 4: Design avoidance
     Ledger entries are immutable (no update conflicts)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The ledger pattern (append-only credit/debit
 entries) avoids cross-shard UPDATE conflicts entirely. Instead of "UPDATE balance
@@ -733,7 +739,7 @@ and auditable.
 
 ---
 
-#### Q9 - How do you monitor a sharded database system?
+**[SENIOR] Q9 - [ARCHITECTURE] How do you monitor a sharded database system?**
 
 Monitoring key metrics per shard:
 
@@ -765,7 +771,7 @@ Vitess: built-in monitoring dashboard
   Replication lag per tablet
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The heat map visualization is the key
 diagnostic tool for sharding. A QPS heat map shows which shards are hot
@@ -901,7 +907,7 @@ Quorum Replication:
   Cassandra, DynamoDB use quorum
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Replication Strategies example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Replication modes:**
 
@@ -931,11 +937,17 @@ Quorum writes:
              W=1 (one replica) = low latency, risk of data loss
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Replication Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: read from primary for all queries (no read scaling)
@@ -1012,7 +1024,7 @@ public class ProductService {
 }
 ```
 
-> **Code walkthrough:** The RoutingDataSource uses Spring's transaction context
+> **Code walkthrough:** The RoutingDataSource uses Spring's transaction contextice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to determine which DataSource to use. @Transactional(readOnly=true) sets a
 > flag in TransactionSynchronizationManager. The routing data source reads this
 > flag and routes to the replica. Regular @Transactional routes to the primary.
@@ -1059,7 +1071,7 @@ public class ReplicationContext {
 }
 ```
 
-> **Code walkthrough:** The "read your own writes" problem: user creates an order
+> **Code walkthrough:** The "read your own writes" problem: user creates an orderice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and immediately views it. If the GET request hits a replica with replication lag,
 > the order isn't visible yet. The solution: after a write, set a thread-local flag
 > that forces reads to the primary for the duration of the request. The routing
@@ -1127,11 +1139,11 @@ or accept data loss and correct manually.
 
 ---
 
-#### Q1 - How does Postgres streaming replication work?
+**[JUNIOR] Q1 - [CONCEPTUAL] How does Postgres streaming replication work?**
 
 Postgres streaming replication: binary WAL log shipped to standbys.
 
-```
+```plaintext
 WAL (Write-Ahead Log):
   Every change in Postgres written to WAL first
   WAL is binary log of all page-level changes
@@ -1169,7 +1181,7 @@ Failover:
   Tools: Patroni, repmgr (automate failover)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Patroni is the industry standard for Postgres
 HA. It uses a distributed consensus system (etcd, ZooKeeper, or Consul) to
@@ -1183,7 +1195,7 @@ is the fencing mechanism that prevents two primaries simultaneously.
 
 ---
 
-#### Q2 - What is the difference between synchronous and asynchronous replication trade-offs?
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between synchronous and asynchronous replication trade-offs?**
 
 ```
 Async replication:
@@ -1224,7 +1236,7 @@ Multi-AZ trade-off:
     Lower latency writes, but stale reads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The failover time matters as much as data
 loss. Synchronous replication gives zero data loss but only matters if failover
@@ -1238,11 +1250,11 @@ Choose based on which failure mode is more acceptable for the business.
 
 ---
 
-#### Q3 - How do you implement multi-region replication for global users?
+**[JUNIOR] Q3 - [HANDS-ON] How do you implement multi-region replication for global users?**
 
 Multi-region replication: data available near users in every continent.
 
-```
+```plaintext
 Architecture:
   US-East: primary (all writes)
   EU-West: async replica (reads for EU users)
@@ -1282,7 +1294,7 @@ Practical pattern (Slack):
   Enterprise workspaces: all data in enterprise's contracted region
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Multi-region active-active is complex to
 implement correctly. Most companies don't need it until they have a global
@@ -1295,7 +1307,7 @@ active-active only when write latency is a demonstrated user-facing problem.
 
 ---
 
-#### Q4 - How do read replicas handle the "read after write" consistency problem?
+**[MID] Q4 - [HANDS-ON] How do read replicas handle the "read after write" consistency problem?**
 
 Read after write: user writes data, immediately reads it, gets stale result.
 
@@ -1338,7 +1350,7 @@ Amazon Aurora:
   Transparent to application: Aurora handles routing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Most production systems handle this with a
 combination of (1) short default TTL for cached user data and (2) route post-write
@@ -1351,11 +1363,11 @@ and implement a solution proportional to the actual frequency of the issue.
 
 ---
 
-#### Q5 - How does Cassandra handle replication differently from relational databases?
+**[MID] Q5 - [CONCEPTUAL] How does Cassandra handle replication differently from relational databases?**
 
 Cassandra uses peer-to-peer replication (no single primary):
 
-```
+```plaintext
 Cassandra replication:
   Data: distributed across all nodes (consistent hashing ring)
   Replication factor (RF): how many copies of each data item
@@ -1390,7 +1402,7 @@ Multi-datacenter:
   Write propagates to both DCs eventually
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cassandra's replication model is fundamentally
 different from primary-replica. There is no primary; any node can handle writes
@@ -1405,7 +1417,7 @@ prevents data loss without requiring synchronous writes.
 
 ---
 
-#### Q6 - How do you monitor and alert on replication health?
+**[MID] Q6 - [PRODUCTION] How do you monitor and alert on replication health?**
 
 Replication health monitoring:
 
@@ -1444,7 +1456,7 @@ Synthetic monitoring:
   = Real replication lag measurement (not just WAL bytes)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The synthetic monitoring approach gives the
 true end-to-end replication lag as experienced by the application, not just
@@ -1458,11 +1470,11 @@ is high after a deployment, roll back.
 
 ---
 
-#### Q7 - What is logical replication and when do you use it over physical replication?
+**[SENIOR] Q7 - [DEBUGGING] What is logical replication and when do you use it over physical replication?**
 
 Two replication modes in Postgres:
 
-```
+```plaintext
 Physical Replication (streaming):
   Replicates WAL (raw page changes)
   Exact byte-for-byte copy of primary
@@ -1506,7 +1518,7 @@ Use cases for logical replication:
     Analytics DB: additional columns, different schema
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Logical replication enables zero-downtime
 major version upgrades - the most important operational use case. Before logical
@@ -1520,7 +1532,7 @@ expand-contract pattern: add columns on both before deploying code that uses the
 
 ---
 
-#### Q8 - How does database failover work and what are the risks?
+**[SENIOR] Q8 - [CONCEPTUAL] How does database failover work and what are the risks?**
 
 Failover: promoting a replica to primary after primary failure.
 
@@ -1566,7 +1578,7 @@ Application reconnection:
     -> Retry on connection failure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The split-brain prevention is the most
 critical correctness concern in automated failover. If the old primary recovers
@@ -1581,7 +1593,7 @@ primary can re-join as standby.
 
 ---
 
-#### Q9 - How do you handle schema migrations with replication?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you handle schema migrations with replication?**
 
 Schema migrations on replicated databases require careful sequencing.
 
@@ -1623,7 +1635,7 @@ Zero-downtime (expand-contract):
   6. Later: clean up if needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Flyway / Liquibase migration timing is
 the critical operationally. Many teams run migrations as part of the application

@@ -139,7 +139,7 @@ DDD TACTICAL PATTERNS - RELATIONSHIPS
   (OrderPlaced, OrderCancelled)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Domain-Driven Design Tactical Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Aggregate is the most important tactical pattern. It is the
@@ -198,7 +198,7 @@ public class OrderService {
 // Business rules duplicated across multiple services.
 ```
 
-> **Code walkthrough:** The anemic model treats `Order` as a data
+> **Code walkthrough:** The anemic model treats `Order` as a dataice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > holder with public setters. `order.setStatus("INVALID_STATE")`
 > compiles without restriction - the domain has no self-protection.
 > The "only DRAFT orders can be placed" rule lives in `OrderService`
@@ -311,7 +311,7 @@ public record OrderPlaced(
 ) implements DomainEvent {}
 ```
 
-> **Code walkthrough:** The rich domain model enforces all business
+> **Code walkthrough:** The rich domain model enforces all businessice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > rules in the domain objects. `Money` is immutable: `add()` returns
 > a new instance. `Order.place()` validates its own preconditions
 > and raises a domain event internally. No external code can bypass
@@ -344,7 +344,7 @@ public class PriceDiscountService {
 }
 ```
 
-> **Code walkthrough:** `PriceDiscountService` is a Domain Service
+> **Code walkthrough:** `PriceDiscountService` is a Domain Serviceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > because discount calculation requires both an `Order` and a
 > `Customer` - it cannot naturally belong to either aggregate.
 > The service is infrastructure-free (no repositories, no database
@@ -413,7 +413,7 @@ any invariant.
 // If no - extract it to its own Aggregate or entity.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Extract non-invariant data to separate Aggregates.
 `Order` contains only objects participating in its invariants.
@@ -437,7 +437,7 @@ public void placeOrder(PlaceOrderCommand cmd) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *Fix:* Use Domain Events. `Order.place()` raises `OrderPlaced`.
 A handler processes `OrderPlaced` and updates `Inventory` in a
@@ -854,7 +854,7 @@ SOA ARCHITECTURE
 (SOAP/WSDL)  (SOAP/WSDL)  (SOAP/WSDL)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service-Oriented Architecture example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight (and failure):**
 The ESB concentrated complexity. What started as routing became
@@ -894,7 +894,7 @@ from("direct:placeOrder")
 // Services are "dumb functions" with no autonomy.
 ```
 
-> **Code walkthrough:** The ESB orchestration contains the "place
+> **Code walkthrough:** The ESB orchestration contains the "placeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > order" business workflow. Every business change (adding a fraud
 > check, reordering steps) requires the ESB team to change and
 > deploy the ESB configuration. The ESB becomes the organization's
@@ -931,7 +931,7 @@ public class OrderWorkflowService {
 // No central bus. No central bottleneck.
 ```
 
-> **Code walkthrough:** `OrderService` decides what to call
+> **Code walkthrough:** `OrderService` decides what to callice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > synchronously (pricing - needed before saving) and what to handle
 > asynchronously (inventory reservation via `OrderPlaced` event).
 > `InventoryService` reacts to the event independently without being
@@ -1001,7 +1001,7 @@ to modify their business workflows.
   with business rules?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Move business logic back to services. The Gateway is a
 dumb pipe for cross-cutting concerns only.
@@ -1019,7 +1019,7 @@ WHERE datname = 'shared_services_db';
 -- Multiple service users = shared DB anti-pattern
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Each service owns its schema. Inter-service data access
 via APIs or events, not direct database access.

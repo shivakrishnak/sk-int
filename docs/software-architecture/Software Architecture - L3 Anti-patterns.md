@@ -130,7 +130,7 @@ DISTRIBUTED MONOLITH SYMPTOMS
   A single request spans: A -> B -> C -> D -> A
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architecture Anti-patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **2. Big Ball of Mud**
 No enforced module boundaries. All code can call all code.
@@ -174,7 +174,7 @@ A God Service: high Ca, low Ce (everything depends on it)
 A Distributed Monolith: all services have high Ce and Ca
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architecture Anti-patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -204,7 +204,7 @@ public class Order {  // In the shared library
 // = not microservices - Distributed Monolith
 ```
 
-> **Code walkthrough:** The shared `Order` domain class in a common
+> **Code walkthrough:** The shared `Order` domain class in a commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > library creates a transitive coupling between all five services.
 > Any change to `Order` propagates to all consumers. This is the
 > Distributed Monolith: the deployment coordination matrix is 5x5.
@@ -239,7 +239,7 @@ public class PaymentRecord {
 // PaymentService. Each service deployed independently.
 ```
 
-> **Code walkthrough:** Each service owns its domain model. `OrderService`
+> **Code walkthrough:** Each service owns its domain model. `OrderService`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > holds `OrderId`, `CustomerId` (reference, not the Customer object),
 > and `OrderLine`. `PaymentService` holds `PaymentRecord` with only
 > the fields it needs. Services reference each other by ID, not
@@ -306,7 +306,7 @@ kubectl get configmap -o yaml | grep DB_URL
 # "Who do you need to notify before deploying?"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "Who do you need to notify before deploying?" example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Start with data ownership. Identify which service should
 own each database. Build read models for services that need
@@ -331,7 +331,7 @@ grep -c "@Service\|@Component" CoreBusinessService.java
 # More than 1 = likely a God Service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This More than 1 = likely a God Service example demonstrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Extract bounded contexts. Identify distinct business
 capabilities. Create separate services (or at minimum packages
@@ -342,13 +342,13 @@ incrementally.
 
 ### 🎯 Interview Deep-Dive
 
-| Preparation | Target |
-|---|---|
-| Time to prep | 20 minutes |
-| Core themes | Distributed Monolith, coupling metrics, identification toolkit |
-| Seniority signal | Junior: definition; Senior: identification; Staff: migration strategy |
-| Common trap | Claiming microservices always avoid Distributed Monolith |
-| Staff differentiator | Deployment coordination matrix, data ownership fix |
+| Preparation| Target|
+|--------|---------------------------------------------------------------------|
+| Time to prep| 20 minutes|
+| Core themes| Distributed Monolith, coupling metrics, identification toolkit|
+| Seniority signal| Junior: definition; Senior: identification; Staff: migration
+| Common trap| Claiming microservices always avoid Distributed Monolith|
+| Staff differentiator| Deployment coordination matrix, data ownership fix|
 
 ---
 
@@ -695,24 +695,23 @@ Law in isolation. Great candidates describe the causal mechanism
 specific anti-pattern examples, and describe the Inverse Conway
 Maneuver as the remedy.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Coupling metrics, identification toolkit |
-| Hiring Manager | Business case for fixing anti-patterns |
-| Bar Raiser | Conway's Law relationship, RDD prevention |
-| Peer Engineer | Concrete examples: Distributed Monolith, God Service |
+| Interviewer Type| Emphasis|
+| Technical Panel| Coupling metrics, identification toolkit|
+| Hiring Manager| Business case for fixing anti-patterns|
+| Bar Raiser| Conway's Law relationship, RDD prevention|
+| Peer Engineer| Concrete examples: Distributed Monolith, God Service|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Anti-pattern | Symptom | Root Cause | Fix |
-|---|---|---|---|
-| Distributed Monolith | Cannot deploy services independently | Shared databases, sync chains, shared domain models | Data ownership, async communication, Anti-Corruption Layer |
-| Big Ball of Mud | Change in module A breaks module B | No enforced module boundaries | Package-level visibility, ArchUnit tests, layer enforcement |
-| God Service | All features require changing one service | No separation of concerns, feature gravity | Extract bounded contexts, domain decomposition |
-| Accidental Complexity | Architecture complexity exceeds problem complexity | Resume-Driven Development, premature optimization | Match architecture to current needs, evolve when forced |
-| Resume-Driven Development | Technology chosen without justifiable forces | Career incentives override technical fit | ADRs with explicit force fields, staged scaling principle |
+| Anti-pattern| Symptom| Root Cause| Fix|
+|---|---|----------|-----------------------------------------------------------|
+| Distributed Monolith| Cannot deploy services independently| Shared databases, 
+| Big Ball of Mud| Change in module A breaks module B| No enforced module bounda
+| God Service| All features require changing one service| No separation of conce
+| Accidental Complexity| Architecture complexity exceeds problem complexity| Res
+| Resume-Driven Development| Technology chosen without justifiable forces| Caree
 
 ---
 
@@ -725,7 +724,7 @@ system design reviews and architecture assessments.)*
 
 ### 📊 Diagram
 
-```
+```plaintext
 ANTI-PATTERN IDENTIFICATION FRAMEWORK
 
 COUPLING SIGNAL:
@@ -933,16 +932,16 @@ Risks accepted: PostgreSQL operational complexity vs managed
 RDS offloads management at the cost of vendor lock-in.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architecture Decision Records example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ADR lifecycle:**
 
-```
+```plaintext
 proposed --> accepted --> deprecated
                     \--> superseded by ADR-XXX
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architecture Decision Records example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to write an ADR:**
 
@@ -967,7 +966,7 @@ Consequences:
 - Fast and scalable.
 ```
 
-> **Code walkthrough:** This ADR is nearly useless. It records
+> **Code walkthrough:** This ADR is nearly useless because it records the decision without the reasoning, alternatives considered, or consequences. **KEY MECHANISM:** decisions without documented reasoning become unmaintainable; future engineers cannot evaluate whether the constraint still applies or has been superseded. **WHY IT MATTERS:** teams that inherit undocumented decisions either blindly follow stale constraints or recklessly abandon them without understanding the tradeoffs. **WHAT BREAKS:** architectural drift, repeated debates about already-settled decisions, and inability to onboard new engineers effectively. **TAKEAWAY:** the value of an ADR is in the alternatives-considered and consequences sections - the decision itself is the least important part.
 > the decision (Kafka) but not the forces that led to it (what
 > alternatives were considered and why rejected?), not the actual
 > consequences (what specifically becomes easier/harder?), and
@@ -1047,7 +1046,7 @@ compatibility layer; migration to self-hosted Kafka is possible
 if Confluent pricing becomes prohibitive.
 ```
 
-> **Code walkthrough:** The good ADR records the specific problem
+> **Code walkthrough:** The good ADR records the specific problemice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (tight coupling, no replay), the concrete evaluation of four
 > alternatives with specific rejection reasons (not vague preferences),
 > and the consequences split into positive (with specifics) and
@@ -1127,7 +1126,7 @@ git log --oneline docs/adr/ | tail -20
 # All entries old = ADRs not being read or updated
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This All entries old = ADRs not being read or updated example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Link ADRs from README.md and relevant source code comments.
 Add an onboarding step: "Read ADR-001 through ADR-010 before
@@ -1324,7 +1323,7 @@ RFC (proposal + discussion period)
             -> Code implemented
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When RFC vs ADR alone: significant decisions that affect multiple
 teams or have irreversible consequences should go through RFC

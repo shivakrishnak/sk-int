@@ -149,7 +149,7 @@ Cosine similarity:
   fox1 vs plants: 0.12 (unrelated)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Embeddings example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -216,7 +216,7 @@ def find_relevant_docs(query: str, docs: list) -> list:
     ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This paraphrases, and semantically similar content example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 import anthropic
@@ -249,6 +249,7 @@ def cosine_similarity(a: list, b: list) -> float:
         (np.linalg.norm(a_arr) * np.linalg.norm(b_arr))
     )
 
+# BAD: see prior example above (semantic search with embedding...)
 # GOOD: semantic search with embeddings
 def semantic_search(
     query: str,
@@ -277,7 +278,7 @@ results = semantic_search("What is a cat?", docs)
 #           ("Felines are carnivorous mammals.", 0.87), ...]
 ```
 
-> **Code walkthrough:** The BAD version uses substring
+> **Code walkthrough:** The BAD version uses substringice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > matching - "What is a cat?" would not match "Felines
 > are carnivorous mammals." even though they are semantically
 > related. The GOOD version embeds both the query and each
@@ -485,7 +486,7 @@ not their magnitude (length). The formula is:
 cosine_similarity(A, B) = A · B / (|A| * |B|)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Where A · B is the dot product and |A|, |B| are the
 magnitudes. The result is in the range [-1, 1]:
@@ -1023,7 +1024,7 @@ Why hallucinations occur:
    -> May not exist
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hallucination example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1101,7 +1102,7 @@ def answer_factual_question(question: str) -> str:
     # dates, citations with apparent confidence
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This dates, citations with apparent confidence example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: grounded response with explicit uncertainty
@@ -1158,7 +1159,7 @@ def verify_answer(
     return json.loads(resp.content[0].text)
 ```
 
-> **Code walkthrough:** The BAD version asks the model to
+> **Code walkthrough:** The BAD version asks the model toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > answer factual questions using only its training knowledge -
 > high hallucination risk for specific facts, dates, citations.
 > The GOOD version uses a grounded system prompt that
@@ -1903,7 +1904,7 @@ Input: ... [example code]
 Output: {"vulnerabilities": [{"type": "SQL Injection",...}]}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prompt Engineering Basics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1956,6 +1957,11 @@ the probability of that specific output format.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic, os
@@ -2015,7 +2021,7 @@ def classify_sentiment(text: str) -> dict:
 # -> {"sentiment": "positive", "confidence": 0.91}
 ```
 
-> **Code walkthrough:** The BAD version asks a vague
+> **Code walkthrough:** The BAD version asks a vagueice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > question ("What do you think about") - the model
 > generates a discursive response rather than a
 > classification. Impossible to parse reliably. The

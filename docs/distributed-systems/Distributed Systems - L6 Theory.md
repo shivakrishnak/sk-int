@@ -138,7 +138,7 @@ Definitions:
     inputs (no randomness, no external entropy source).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This FLP Impossibility Theorem example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters for distributed systems design:**
 
@@ -155,7 +155,7 @@ CAP relates:
   is impossible in pure asynchrony.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This FLP Impossibility Theorem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The bivalency proof (simplified):**
 
@@ -186,7 +186,7 @@ The adversary's power in pure asynchrony:
   This is sufficient to keep the system from deciding.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This FLP Impossibility Theorem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Partial synchrony: the practical escape hatch:**
 
@@ -214,7 +214,7 @@ Randomization escape:
   Terminates probabilistically with high probability.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This FLP Impossibility Theorem example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Interview relevance:**
 FLP is the theoretical foundation for understanding why:
@@ -229,6 +229,12 @@ it: FLP applies and consensus does not terminate.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // FLP IMPOSSIBILITY - PRACTICAL IMPLICATIONS IN CODE
@@ -297,7 +303,7 @@ public class DistributedLockGood {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern acquires a lock with no
+> **Code walkthrough:** The BAD pattern acquires a lock with noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > TTL. Per FLP: if the holder crashes, the system cannot distinguish
 > "slow" from "crashed" in pure asynchrony, so the lock is held
 > forever. In practice: the resource is permanently unavailable.
@@ -386,7 +392,7 @@ etcdctl endpoint status --cluster  # rapid leader changes
 zookeeper.log: looking for election storms
 jstack <pid>: GC pause duration > election_timeout
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: increase election timeout to > max observed GC pause.
 Or: tune GC to reduce stop-the-world pauses (G1GC, ZGC).
@@ -449,13 +455,11 @@ is where all real consensus algorithms operate.
 
 *(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
 
-
 ---
 
 ### ⚖️ Comparison Table
 
 *(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
-
 
 ---
 
@@ -463,8 +467,235 @@ is where all real consensus algorithms operate.
 
 *(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
 
+---
 
-# Byzantine Fault Tolerance
+### 🎯 Interview Deep-Dive
+
+| Question | Type | Level | Time |
+|---|---|---|---|
+| What does FLP impossibility prove and what does it NOT prove? | Definition | All | 2 min |
+| How does Raft achieve consensus if FLP says it's impossible? | Mechanism | Mid | 3 min |
+| What is the practical engineering implication of FLP? | Trade-off | Senior | 2 min |
+| How does ZooKeeper's leader election work around FLP? | Mechanism | Senior | 3 min |
+| What is the difference between crash-stop and crash-recovery models? | Definition | Mid | 2 min |
+| How does Paxos handle the impossibility constraint? | Mechanism | Staff | 4 min |
+| Design a distributed lock that acknowledges FLP constraints | Scenario | Staff | 5 min |
+| What assumptions allow real systems to be live despite FLP? | Theory | Staff | 3 min |
+| When would you cite FLP in a system design interview? | Behavioral | Senior | 2 min |
+
+---
+
+**[JUNIOR] Q1 - [MECHANISM] What does FLP impossibility prove and what does it NOT prove?**
+
+*Why they ask:* Tests theoretical foundations vs practical understanding.
+
+*Likely follow-up:* So does that mean ZooKeeper is impossible?
+
+FLP (Fischer, Lynch, Paterson 1985) proves that in an **asynchronous**
+distributed system where even **one** node may crash (crash-stop
+failure model), no deterministic algorithm can guarantee both
+**safety** (agreement) and **liveness** (termination). It proves
+impossibility only under the specific combination of: (1) fully
+asynchronous message delivery - no bounds on message delay, and
+(2) crash-stop failures - a crashed node sends no more messages.
+
+What FLP does NOT prove: it does not say consensus is impossible in
+practice. Real systems use **partial synchrony** (GST - Global
+Stabilization Time): message delays are unbounded during bad
+periods but bounded during good periods. Raft, ZooKeeper, and Paxos
+all assume partial synchrony. They trade liveness during bad network
+periods for safety always. FLP also does not apply to randomized
+algorithms - randomization can achieve consensus with probability 1.
+
+*What separates good from great:* Great candidates distinguish the
+theoretical impossibility result from the practical engineering
+response - real systems use timeouts and partial synchrony
+assumptions, accepting that liveness is never guaranteed but
+safety is never violated.
+
+---
+
+**[JUNIOR] Q2 - [MECHANISM] How does Raft achieve consensus if FLP says it's impossible?**
+
+*Why they ask:* Tests ability to connect theory to practice.
+
+Raft operates under partial synchrony, not the fully asynchronous
+model FLP analyzes. Raft's leader election has a randomized
+election timeout (150-300ms random). During a stable network
+(GST period), Raft guarantees both safety and liveness. During
+network instability, Raft guarantees safety (committed entries
+are never lost) but not liveness (leader elections may not
+complete, writes block). This is acceptable: a system that
+blocks during network partition is correct; one that commits
+conflicting values during partition is catastrophic.
+
+The randomized election timeout is the practical escape from
+FLP - it is not a deterministic algorithm, so the impossibility
+proof does not apply. With high probability, exactly one node
+times out first in each election term.
+
+*What separates good from great:* Great candidates mention
+that Raft's safety property is absolute - committed entries
+are guaranteed to appear in all future leaders' logs. Liveness
+is probabilistic - a network that keeps all leaders at equal
+timeout has no progress guarantee, but this is vanishingly
+unlikely with randomization.
+
+---
+
+**[JUNIOR] Q3 - [MECHANISM] What is the practical engineering implication of FLP?**
+
+*Why they ask:* Tests ability to reason about distributed systems.
+
+FLP's engineering implication: **you cannot build a perfectly
+reliable distributed consensus system using only deterministic
+algorithms and asynchronous communication**. This means:
+
+1. Every consensus-based system (ZooKeeper, etcd, Kafka's
+   KRaft, Spanner's Paxos) has an availability-safety trade-off.
+2. When you see a system pause during a leader election, it
+   is correctly choosing safety over liveness (CP in CAP terms).
+3. If a vendor claims their distributed database has both
+   100% availability and strong consistency - that is wrong.
+   Either they are relying on partial synchrony assumptions
+   or they are sacrificing safety under failure.
+4. Operational implication: tune timeouts based on your
+   network's GST characteristics. In a LAN, 150ms timeouts
+   are appropriate. In a WAN, 3-5s timeouts may be needed.
+
+*What separates good from great:* Great candidates relate FLP
+to real operational decisions: why ZooKeeper has session
+timeouts, why etcd has heartbeat intervals, why Kafka replication
+acks = all matters - these are all engineering responses to
+the impossibility constraint.
+
+---
+
+**[MID] Q4 - [DESIGN] Design a distributed lock that acknowledges FLP constraints**
+
+*Why they ask:* Tests ability to design with theoretical grounding.
+
+A production-grade distributed lock must explicitly acknowledge
+the FLP constraints:
+
+1. **Safety first:** Never grant two clients the same lock
+   simultaneously. Use fencing tokens (monotonically increasing
+   integers) issued by the lock service. Storage backends
+   reject writes with stale tokens.
+
+2. **Liveness with caveat:** The lock service (etcd, ZooKeeper)
+   may be temporarily unavailable during leader election. Clients
+   must be prepared for the lock acquisition to block (not return
+   failure) during this window.
+
+3. **Lease-based expiry:** Locks must expire automatically to
+   handle the case where the lock holder crashes. Lease duration
+   must be tuned: too short = spurious expiry under GC pause;
+   too long = long recovery after crash. Typical: 15-30s.
+
+4. **Crash recovery safety:** Use fencing tokens to protect
+   against the scenario where: client A holds lock, pauses
+   for 30s (GC, debug), lock expires, client B acquires lock,
+   client A resumes and writes. The storage layer must reject
+   client A's write (stale token) even though client A never
+   received an explicit expiry notification.
+
+*What separates good from great:* Great candidates describe
+that the fencing token approach transforms the distributed
+lock from a coordination problem (hard) to a storage
+validation problem (easy). The lock service just needs to
+issue increasing tokens; the storage layer does the safety enforcement.
+
+---
+
+**[MID] Q5 - [DESIGN] When would you cite FLP in a system design interview?**
+
+*Why they ask:* Tests meta-reasoning about distributed systems design.
+
+Cite FLP when: (1) a design requires both perfect availability
+and strong consistency - use FLP to explain why this is
+theoretically impossible; (2) evaluating a consensus component
+- use FLP to set correct expectations about availability during
+network partitions; (3) explaining why a distributed system
+pauses during leader election - it is the correct behavior,
+not a bug; (4) designing a system that currently uses ZooKeeper
+or etcd - the availability SLA of the consensus service bounds
+the availability of anything that depends on it.
+
+Do NOT cite FLP to dismiss practical concerns. "FLP says it's
+impossible" is not an acceptable answer to "why does our
+database sometimes reject writes?" - FLP explains the theoretical
+bound but practical debugging requires operational analysis.
+
+*What separates good from great:* Great candidates use FLP
+as a design vocabulary tool, not a theoretical dodge. They
+say "this design would require violating FLP under partition,
+so we need to choose either blocking during partition (CP) or
+allowing divergence (AP)" - then they make a concrete recommendation.
+
+---
+
+**[SENIOR] Q6 - [MECHANISM] What is the difference between crash-stop and crash-recovery failure models, and how does this affect FLP?**
+
+In the crash-stop model (used by FLP): a node that crashes stops
+permanently, never sends another message. In the crash-recovery
+model: a node may crash and later restart, with some state
+persisted to durable storage.
+
+FLP proves impossibility under crash-stop in an asynchronous
+system. The crash-recovery model actually makes the problem
+harder in some ways: a recovered node may have stale state
+and re-execute requests it already processed. Practical systems
+address this through: (1) stable storage - nodes persist
+their accept/commit decisions before responding, so after
+recovery they can resume correctly; (2) log-based recovery -
+every state change is written to a durable log before the
+state is updated.
+
+Raft uses stable storage: before responding to a vote request
+or AppendEntries, the node writes to disk. If the node crashes
+mid-write, it recovers to a consistent state using the log.
+This is why Raft and Paxos can operate correctly under
+crash-recovery, not just crash-stop.
+
+*What separates good from great:* understanding that stable
+storage is what allows practical consensus algorithms to work
+under crash-recovery. Without stable storage, a crash-recovery
+node cannot safely participate in consensus.
+
+---
+
+**[SENIOR] Q7 - [TRADE-OFF] How does ZooKeeper's leader election work and what FLP assumptions does it rely on?**
+
+ZooKeeper uses ZAB (ZooKeeper Atomic Broadcast), a variant of
+Paxos adapted for the crash-recovery model. Leader election:
+(1) all servers start in LOOKING state; (2) each server votes
+for itself initially; (3) servers exchange votes, updating to
+vote for the server with the most up-to-date transaction log
+(highest zxid); (4) once a quorum agrees on a leader, the
+leader enters LEADING state and followers enter FOLLOWING state.
+
+FLP assumptions ZooKeeper relies on: partial synchrony.
+ZooKeeper sets a heartbeat timeout (tickTime, default 2 seconds).
+If the leader does not send a heartbeat within the timeout,
+followers initiate a new election. The assumption is that the
+network is eventually synchronous - during good periods
+(GST), heartbeats are delivered within the timeout. During
+bad periods (partition), ZooKeeper blocks, trading liveness
+for safety.
+
+Practical trade-off: `tickTime=2000ms` (2s). Session timeout
+is typically 2 * tickTime = 4s minimum. A GC pause exceeding
+4s causes a client to lose its session. In JVM-based services,
+tune `tickTime` based on your GC pause profile.
+
+*What separates good from great:* connecting the tickTime
+configuration to FLP and partial synchrony. The tickTime is
+not arbitrary - it is the system's bet on what the GST period
+looks like in the deployment network. Tuning it is directly
+tied to your failure-detection latency SLO.
+
+---
 
 **TL;DR:** Byzantine Fault Tolerance (BFT) handles the worst-case
 failure model: nodes that fail by sending arbitrary, incorrect,
@@ -591,7 +822,7 @@ Proof for 3 generals, 1 traitor (f=1):
   2 "attack" vs 1 "retreat" → B decides "attack" (correct)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Byzantine Fault Tolerance example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **PBFT (Practical Byzantine Fault Tolerance):**
 
@@ -619,7 +850,7 @@ Guarantees:
   Tolerates: f < n/3 Byzantine faults (requires n ≥ 3f+1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Byzantine Fault Tolerance example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Modern BFT protocols:**
 
@@ -648,7 +879,7 @@ Nakamoto Consensus (Bitcoin):
     - Tendermint: instant finality (2 rounds)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Byzantine Fault Tolerance example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Crash fault vs. Byzantine fault comparison:**
 
@@ -672,7 +903,7 @@ Byzantine fault (BFT):
   Use case: blockchain, multi-org, adversarial
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The signed messages shortcut:**
 
@@ -696,7 +927,7 @@ Key insight: with cryptographic signatures (digital signatures):
   Eliminates O(n^2) by making signature aggregation O(n).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 BFT is only needed when the Byzantine threat model applies.
@@ -711,6 +942,12 @@ and CFT is insufficient.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BYZANTINE FAULT TOLERANCE - QUORUM VALIDATION PATTERN
@@ -809,7 +1046,7 @@ public class EquivocationDetector {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern trusts a single replica
+> **Code walkthrough:** The BAD pattern trusts a single replicaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > read. A Byzantine node returns wrong data and the caller has
 > no way to detect this. The GOOD `ByzantineTolerantReadService`
 > queries all replicas concurrently, validates cryptographic
@@ -958,10 +1195,9 @@ or where nodes can be compromised for economic gain: BFT.
 
 ---
 
-**Q1 (Clarification) - How do FLP Impossibility and CAP Theorem
-relate? Are they the same result?**
+**[JUNIOR] Q1 - [MECHANISM] How do FLP Impossibility and CAP Theorem relate? Are they the same result?**
 
-A: No, they are different results addressing different problems:
+No, they are different results addressing different problems:
 
 **CAP Theorem (Brewer 2000, Gilbert and Lynch 2002):**
 - About distributed data stores
@@ -1013,10 +1249,9 @@ node without time assumptions.
 
 ---
 
-**Q2 (Mechanism) - How does PBFT handle a Byzantine primary
-(leader)?**
+**[JUNIOR] Q2 - [MECHANISM] How does PBFT handle a Byzantine primary (leader)?**
 
-A: In PBFT, the primary (leader) coordinates consensus. A
+In PBFT, the primary (leader) coordinates consensus. A
 Byzantine primary can try to:
 1. Send different pre-prepare messages to different nodes
    (equivocation)
@@ -1061,7 +1296,7 @@ View change protocol:
      - Accept only if valid
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why Byzantine primary cannot prevent view change:**
 To prevent 2f+1 VIEW-CHANGE messages: Byzantine nodes would need
@@ -1080,11 +1315,9 @@ require more than f Byzantine nodes to be in both).
 
 ---
 
-**Q3 (Mechanism) - Why does Nakamoto consensus (Bitcoin's
-proof-of-work) tolerate Byzantine faults without the 3f+1
-requirement?**
+**[JUNIOR] Q3 - [MECHANISM] Why does Nakamoto consensus (Bitcoin's proof-of-work) tolerate Byzantine faults without the 3f+1 requirement?**
 
-A: Nakamoto consensus violates several assumptions of classic
+Nakamoto consensus violates several assumptions of classic
 BFT:
 
 **Classic BFT assumptions violated by Nakamoto:**
@@ -1141,8 +1374,7 @@ both models - and why one uses math and the other uses economics
 
 ---
 
-**Q4 (Trade-off) - When would you choose PBFT over Tendermint
-for a blockchain application?**
+**[MID] Q4 - [TRADE-OFF] When would you choose PBFT over Tendermint for a blockchain application?**
 
 A:
 
@@ -1190,8 +1422,7 @@ limit and what HotStuff enables above Tendermint's ceiling.
 
 ---
 
-**Q5 (Failure / Debugging) - How do you detect and handle
-a Byzantine validator in a Tendermint-based blockchain?**
+**[MID] Q5 - [DEBUGGING] How do you detect and handle a Byzantine validator in a Tendermint-based blockchain?**
 
 A:
 
@@ -1216,7 +1447,7 @@ DuplicateVoteEvidence {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Evidence is included in the next block and handled by the
 application layer via the ABCI `BeginBlock` call.
@@ -1245,7 +1476,7 @@ def begin_block(self, request):
             f"slash={slash_amount}")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tombstone: never allow this validator back example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 **Why economic slashing works:**
 Without slashing: a validator with nothing at stake can equivocate
@@ -1267,8 +1498,7 @@ but aligned incentives.
 
 ---
 
-**Q6 (Trade-off) - Compare deterministic BFT finality vs.
-probabilistic Nakamoto finality for financial applications.**
+**[SENIOR] Q6 - [TRADE-OFF] Compare deterministic BFT finality vs. probabilistic Nakamoto finality for financial applications.**
 
 A:
 
@@ -1325,10 +1555,9 @@ validator model.
 
 ---
 
-**Q7 (Behavioral) - How would you explain Byzantine Fault
-Tolerance to a product manager or business stakeholder?**
+**[SENIOR] Q7 - [BEHAVIORAL] How would you explain Byzantine Fault Tolerance to a product manager or business stakeholder?**
 
-A: Framing for a non-technical audience:
+Framing for a non-technical audience:
 
 "In most of our systems, when a server fails, it simply
 stops responding. Our other servers notice it is not responding

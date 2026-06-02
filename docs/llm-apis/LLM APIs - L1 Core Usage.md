@@ -144,7 +144,7 @@ RESPONSE ANATOMY:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Claude Messages API example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Messages rules:**
 
@@ -285,7 +285,7 @@ def extract_entities(text: str) -> dict:
         return {"people": [], "places": [], "dates": []}
 ```
 
-> **Code walkthrough:** Three patterns cover the
+> **Code walkthrough:** Three patterns cover theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common Messages API use cases. Pattern 1 (single-turn)
 > uses `temperature=0.0` and `max_tokens=16` for
 > a classification task where the answer is one word -
@@ -379,7 +379,7 @@ def trim_history(
     return history[-(max_turns * 2):]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fallback: return empty structure example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 For applications where long-term memory matters,
 use summarization: every 20 turns, ask Claude to
@@ -463,7 +463,7 @@ def chat(user_msg: str) -> str:
     return reply
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fallback: return empty structure example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Pattern 2 - Sliding window (long conversations):
 
@@ -489,7 +489,7 @@ def chat_windowed(
     return reply, history
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Pattern 3 - Persistent storage (multi-session):
 Store history in a database keyed by session_id.
@@ -546,7 +546,7 @@ if msg.stop_reason == "tool_use":
     # Continue: call messages.create again
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continue: call messages.create again example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "tool_use stop_reason
 starts an async loop - the conversation continues
@@ -574,7 +574,7 @@ if raw.startswith("```"):
 result = json.loads(raw)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Parse with fallback example demonstrates context manager. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 Approach 2 - Assistant turn prefill:
 Add a partial assistant message to force JSON start:
@@ -586,7 +586,7 @@ messages=[
 ]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Parse with fallback example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Then prepend `{` to the response before parsing.
 Very reliable: Claude continues from where you left off.
@@ -629,6 +629,11 @@ Common mistake: using the default temperature (1.0)
 for classification or data extraction. This introduces
 randomness into tasks that need consistency.
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # BAD: random classification
 msg = client.messages.create(
@@ -649,7 +654,7 @@ msg = client.messages.create(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: deterministic classification example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "Temperature=0
 doesn't guarantee identical output across all model
@@ -700,7 +705,7 @@ def create_with_retry(
     raise last_err
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: deterministic classification example demonstrates function definition using error handling. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 For production: use the Anthropic SDK's built-in
 retry with `max_retries=3` in the client constructor.
@@ -723,7 +728,7 @@ cost = (input_tokens * input_price)
      + (output_tokens * output_price)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: deterministic classification example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Mid-2025 pricing (approximate):
 - claude-3-5-sonnet: $3/MTok in, $15/MTok out
@@ -744,7 +749,7 @@ cost_usd = (
 print(f"Cost: ${cost_usd:.6f}")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This claude-3-5-sonnet pricing example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Monthly estimation: if avg request = 500 in + 200 out
 at 10,000 requests/day:
@@ -907,7 +912,7 @@ These are bearer tokens: possession = access.
 No expiry. No refresh flow.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM API Authentication and Key Management example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key storage by environment:**
 
@@ -934,7 +939,7 @@ CI/CD:
   Never in pipeline scripts or artifacts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This LLM API Authentication and Key Management example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Defense layers:**
 
@@ -946,6 +951,21 @@ CI/CD:
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 """
@@ -1018,6 +1038,7 @@ def get_client_from_aws() -> anthropic.Anthropic:
     )
 
 
+# BAD: see prior example above (3: .env file with python-doten...)
 # GOOD 3: .env file with python-dotenv (dev only)
 # requirements: python-dotenv in dev dependencies
 def load_env_for_development():
@@ -1028,7 +1049,7 @@ def load_env_for_development():
         pass  # dotenv not installed in production
 ```
 
-> **Code walkthrough:** Four bad patterns show the
+> **Code walkthrough:** Four bad patterns show theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > most common mistakes. Hardcoding is the most dangerous:
 > git history is permanent - even if the line is
 > deleted, the key exists in every previous commit.
@@ -1126,7 +1147,7 @@ are world-readable for public repositories.
 # Add linting rule: no print(os.environ["...KEY..."])
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add linting rule: no print(os.environ["...KEY..."]) example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -1314,7 +1335,7 @@ import os
 print(f"Starting with key: {os.environ['ANTHROPIC_API_KEY']}")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add linting rule: no print(os.environ["...KEY..."]) example demonstrates context manager. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 This key is now in:
 - Application stdout logs
@@ -1343,7 +1364,7 @@ print(
 # Never: print(f"Key: {key}")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Never: print(f"Key: {key}") example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "Log boolean presence
 or first 8 chars for format verification - never
@@ -1394,7 +1415,7 @@ result = json.loads(response["body"].read())
 print(result["content"][0]["text"])
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This uses IAM role automatically example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Security benefits: no credential in code, no rotation
 required (IAM credentials auto-rotate), audit trail
@@ -1454,7 +1475,7 @@ def tracked_call(client, **kwargs):
     return msg
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Emit metrics example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* "Per-call metrics
 emitted to a TSDB give you minute-level visibility
@@ -1621,7 +1642,7 @@ Total wait: 15s (same)
 Time to first content: 0.2s (75x faster perception)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Streaming API Responses example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SSE event types in Anthropic streaming:**
 
@@ -1634,7 +1655,7 @@ message_delta         - stop_reason, usage updates
 message_stop          - stream complete
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Streaming API Responses example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For text generation: you only need `content_block_delta`
 events where `delta.type == "text_delta"`. The
@@ -1740,7 +1761,7 @@ async def chat_stream(body: dict):
 # };
 ```
 
-> **Code walkthrough:** Three streaming patterns cover
+> **Code walkthrough:** Three streaming patterns coverice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the main use cases. Pattern 1 (console) uses the
 > SDK's `text_stream` iterator which handles event
 > parsing internally - each iteration yields a string
@@ -1836,7 +1857,7 @@ return StreamingResponse(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This }; example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Option 2 - nginx config:
 ```nginx
@@ -1848,7 +1869,7 @@ location /api/chat {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This }; example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Always test streaming behind the full proxy stack,
 not just the app server. nginx buffering is invisible
@@ -1902,7 +1923,7 @@ Streaming for the same 500-token response:
   T+10s:  500 tokens. Generation complete
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This }; example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For user-facing chat: streaming is always preferred.
 For batch processing, background jobs, or when the
@@ -1959,7 +1980,7 @@ async def stream_async():
 asyncio.run(stream_async())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async streaming (for FastAPI / async apps) example demonstrates asyncio coroutine definition using Stream. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 `flush=True` on print is essential: without it
 Python's stdout buffering accumulates chunks until
@@ -2015,7 +2036,7 @@ async def stream_chat(body: dict):
     )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async streaming (for FastAPI / async apps) example demonstrates asyncio coroutine definition using Stream. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 Browser JavaScript:
 ```javascript
@@ -2043,7 +2064,7 @@ while (true) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async streaming (for FastAPI / async apps) example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* "Include error
 events in the SSE stream - the browser must handle
@@ -2134,7 +2155,7 @@ except anthropic.APIStatusError as e:
     yield "[ERROR: response incomplete]"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Signal error to caller example demonstrates context manager using Stream. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 For web applications: send an error SSE event so
 the browser knows the stream ended abnormally and

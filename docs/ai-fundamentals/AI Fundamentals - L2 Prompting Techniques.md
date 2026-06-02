@@ -175,7 +175,7 @@ Now solve:
   Reasoning:
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Few-Shot and Chain-of-Thought Prompting example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -264,7 +264,7 @@ def classify_bad(text: str) -> str:
     # "I would say this is positive.", etc.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This "I would say this is positive.", etc. example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 import json
@@ -314,7 +314,7 @@ def classify_with_few_shot(text: str) -> dict:
     return json.loads(resp.content[0].text)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This GOOD: few-shot classification example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # CHAIN-OF-THOUGHT: multi-step reasoning
@@ -380,7 +380,7 @@ def solve_with_few_shot_cot(problem: str) -> str:
     return resp.content[0].text
 ```
 
-> **Code walkthrough:** The BAD version asks a yes/no
+> **Code walkthrough:** The BAD version asks a yes/noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > question and gets inconsistent, unparseable formats.
 > The few-shot GOOD version provides three labeled
 > examples in the exact output format required - the model
@@ -569,7 +569,7 @@ Review: "Total waste of money." -> Label: negative
 Review: "Package arrived Tuesday." -> Label: neutral
 Classify: Review: "Great product!"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The model follows the demonstrated pattern exactly.
 
@@ -615,7 +615,7 @@ Therefore: [answer]
 Problem: [new problem]
 Let's think step by step:
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 More reliable than zero-shot CoT for complex tasks
 because the model sees the reasoning structure to follow.
@@ -1283,7 +1283,7 @@ System prompt anatomy (RTIECS framework):
   Prompt injection resistance.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This System Prompt Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1353,7 +1353,7 @@ def analyze_code_bad(code: str) -> str:
     # may suggest style changes instead of security
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This may suggest style changes instead of security example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # GOOD: RTIECS-structured system prompt
@@ -1426,7 +1426,7 @@ def secure_code_review(user_input: str) -> dict:
     return result
 ```
 
-> **Code walkthrough:** The BAD version sends code with
+> **Code walkthrough:** The BAD version sends code withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a vague instruction - gets inconsistent prose responses
 > that can't be reliably parsed or compared. The GOOD
 > version uses the RTIECS structure: Role (senior security
@@ -2001,7 +2001,7 @@ Output: {"vulnerabilities": [{"type": "SQLi",...}]}
 </examples>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why it helps for Claude specifically: Anthropic's models
 are trained with XML tags as a structure marker. The

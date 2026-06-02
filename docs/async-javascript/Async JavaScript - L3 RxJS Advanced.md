@@ -143,7 +143,7 @@ sharedData$.subscribe(b => console.log('B:', b));
 // ONE request, both receive the result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RxJS Subjects and Multicasting example demonstrates async/await Promise resolution using HTTP client. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 `BehaviorSubject` requires an initial value. If "no value
@@ -199,7 +199,7 @@ class CartService {
 }
 ```
 
-> **Code walkthrough:** The first BAD pattern exposes the
+> **Code walkthrough:** The first BAD pattern exposes theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Subject publicly, allowing any code to push values into
 > the stream. This breaks the single-source-of-truth invariant.
 > The second BAD pattern uses an empty array as the initial
@@ -233,6 +233,7 @@ class CartService {
   }
 }
 
+// BAD: see prior example above (shareReplay for shared HTTP da...)
 // GOOD: shareReplay for shared HTTP data
 @Injectable({ providedIn: 'root' })
 class ConfigService {
@@ -245,7 +246,7 @@ class ConfigService {
 }
 ```
 
-> **Code walkthrough:** `asObservable()` creates a wrapper
+> **Code walkthrough:** `asObservable()` creates a wrapperice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Observable that forwards emissions but does not expose `next()`,
 > enforcing the single-writer invariant. `ReplaySubject(1)` solves
 > the "flash of empty" problem: there is no initial value, so
@@ -317,7 +318,7 @@ user$.pipe(
 // Or: use ReplaySubject(1) to avoid initial value entirely
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using SQL. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 **Failure 2: shareReplay memory leak with refCount: false**
 ```javascript
@@ -330,7 +331,7 @@ const data$ = source$.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using Kafka messaging. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -345,8 +346,7 @@ const data$ = source$.pipe(
 | Design | 2 | State service, event bus |
 | Behavioral | 1 | When to use Subjects vs state library |
 
-**Q1. What is the difference between `share()` and
-`shareReplay(1)`?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between `share()` and `shareReplay(1)`?**
 
 `share()` is `pipe(multicast(() => new Subject()), refCount())`.
 It multicasts but does not replay. If all subscribers unsubscribe
@@ -371,7 +371,7 @@ when it is desirable vs when it causes leaks.
 
 ---
 
-**Q2. How do you implement a simple event bus with Subject?**
+**[JUNIOR] Q2 - [SCENARIO] How do you implement a simple event bus with Subject?**
 
 ```javascript
 type EventMap = {
@@ -408,7 +408,7 @@ bus.on('user:login').subscribe(e => loadUserProfile(e.userId));
 bus.emit('user:login', { userId: '123' });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* The TypeScript generic event
 map providing compile-time type safety for event names and
@@ -417,8 +417,7 @@ prone to typos and type mismatches.
 
 ---
 
-**Q3. Why is `BehaviorSubject.getValue()` considered
-an anti-pattern?**
+**[JUNIOR] Q3 - [FAILURE] Why is `BehaviorSubject.getValue()` considered an anti-pattern?**
 
 `getValue()` provides a synchronous snapshot of the current
 value outside the reactive stream. This breaks the reactive
@@ -430,6 +429,11 @@ Problems:
 - Encourages mixing reactive and imperative code
 
 Preferred alternative: subscribe or use `withLatestFrom`:
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: synchronous snapshot
 const user = userService.getCurrentUser(); // getValue()
@@ -443,7 +447,7 @@ action$.pipe(
 ).subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Knowing that `getValue()` is
 sometimes pragmatically necessary (e.g., in non-reactive code
@@ -452,13 +456,13 @@ rather than the default pattern.
 
 ---
 
-**Q4. How does Angular's `AsyncPipe` interact with Subjects
-and BehaviorSubjects?**
+**[MID] Q4 - [MECHANISM] How does Angular's `AsyncPipe` interact with Subjects and BehaviorSubjects?**
 
 `AsyncPipe` subscribes to an Observable in a template and
 automatically unsubscribes when the component is destroyed.
 With `BehaviorSubject`:
 
+{% raw %}
 ```typescript
 // Service
 @Injectable({ providedIn: 'root' })
@@ -473,8 +477,9 @@ class UserService {
 //   {{ user.name }}
 // </div>
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 The `async` pipe handles: subscription on init, unsubscription
 on destroy, change detection on emission, and null/undefined
@@ -488,8 +493,7 @@ require explicit `markForCheck()` calls to update the view.
 
 ---
 
-**Q5. When should you use Subjects vs a dedicated state
-management library (NgRx, Zustand, Redux)?**
+**[MID] Q5 - [TRADE-OFF] When should you use Subjects vs a dedicated state management library (NgRx, Zustand, Redux)?**
 
 Use Subjects/BehaviorSubjects when:
 - State is local to a feature or module
@@ -516,8 +520,7 @@ scoped state.
 
 ---
 
-**Q6. How do you prevent a Subject from completing and
-breaking subscribers?**
+**[SENIOR] Q6 - [MECHANISM] How do you prevent a Subject from completing and breaking subscribers?**
 
 A Subject that calls `complete()` will end all subscriptions.
 Future `next()` calls after `complete()` are ignored.
@@ -540,7 +543,7 @@ class SafeSubject<T> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates ES6 class syntax using generic type. **KEY MECHANISM:** class syntax is syntactic sugar over prototype chains; methods go on Class.prototype. **WHY IT MATTERS:** instanceof fails across different window/realm boundaries in browser environments. **TAKEAWAY: classes are prototype-based; for plain data objects, use factory functions.**
 
 For event buses and services that should never complete,
 never call `complete()` or `error()` unless the service
@@ -549,6 +552,11 @@ itself is being destroyed.
 If a Subject may receive errors from external sources,
 wrap the error-prone operation rather than forwarding errors
 to the Subject:
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: error from inner ops completes the Subject
@@ -559,7 +567,7 @@ subject.next({ type: 'error', data: err }); // data approach
 // Or use catchError before the subject
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **WHAT BREAKS: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 *What separates good from great:* Knowing that `subject.error(err)`
 terminates the Subject permanently - future subscribers get
@@ -567,8 +575,7 @@ the error immediately. This is rarely desired in service patterns.
 
 ---
 
-**Q7. What is the difference between `publish()` and
-`shareReplay()` in multicasting?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between `publish()` and `shareReplay()` in multicasting?**
 
 `publish()`: converts to ConnectableObservable - does not
 start executing until `connect()` is called explicitly.
@@ -593,7 +600,7 @@ cached$.subscribe(A); // triggers fetch
 cached$.subscribe(B); // gets cached result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 `publish()` is the correct choice when you need to guarantee
 all subscribers are attached before the source starts emitting.
@@ -606,13 +613,13 @@ consumers must be ready before the first value is emitted.
 
 ### ⚖️ Comparison Table
 
-| Subject Type | Initial Value | Late Subscriber Gets | Use Case |
-|---|---|---|---|
-| Subject | None | Nothing (misses past) | Event bus, triggers |
-| BehaviorSubject | Required | Current value | Current state |
-| ReplaySubject(N) | None | Last N values | Event history |
-| AsyncSubject | None | Last value on complete | Promise-like |
-| shareReplay(1) | None | Last value | Shared HTTP/computed |
+| Subject Type| Initial Value| Late Subscriber Gets| Use Case|
+|----------------|-------------|----------------------|--------------------|
+| Subject| None| Nothing (misses past)| Event bus, triggers|
+| BehaviorSubject| Required| Current value| Current state|
+| ReplaySubject(N)| None| Last N values| Event history|
+| AsyncSubject| None| Last value on complete| Promise-like|
+| shareReplay(1)| None| Last value| Shared HTTP/computed|
 
 **The deciding factor:**
 Does the late subscriber need a value immediately? Yes -> BehaviorSubject
@@ -833,7 +840,7 @@ const ws$ = webSocketSubject.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error Handling in RxJS Pipelines example demonstrates variable declaration using HTTP client. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **The key insight:**
 The position of `catchError` in the pipeline determines
@@ -885,7 +892,7 @@ const search$ = searchInput$.pipe(
 // User types more: nothing happens
 ```
 
-> **Code walkthrough:** The `catchError` is on the outer pipe,
+> **Code walkthrough:** The `catchError` is on the outer pipe,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > after `switchMap`. When any HTTP request fails, the error
 > propagates through `switchMap` to the outer Observable.
 > `catchError` catches it and returns `EMPTY`, which completes
@@ -932,7 +939,7 @@ function createResilientWebSocket(url) {
 }
 ```
 
-> **Code walkthrough:** Moving `catchError` inside the `switchMap`
+> **Code walkthrough:** Moving `catchError` inside the `switchMap`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > callback isolates each HTTP request's error handling.  When
 > a search fails, `EMPTY` is returned for that specific request,
 > completing only the inner Observable. The outer `switchMap`
@@ -1008,9 +1015,14 @@ outer$.pipe(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 **Failure 2: retry with infinite loop on permanent error**
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: 401 retried forever - auth will never recover
 api$.pipe(retry()) // no limit!
@@ -1028,7 +1040,7 @@ api$.pipe(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates arrow function using authentication. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **WHAT BREAKS: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -1043,8 +1055,7 @@ api$.pipe(
 | Design | 2 | Resilient WebSocket, form validation |
 | Behavioral | 1 | Production stream failure investigation |
 
-**Q1. What does an Observable error do to the stream and
-all its subscribers?**
+**[JUNIOR] Q1 - [MECHANISM] What does an Observable error do to the stream and all its subscribers?**
 
 When an Observable errors:
 1. The error is passed to all current subscribers' `error` handler
@@ -1072,7 +1083,7 @@ subject.error(new Error('oops')); // error: oops
 subject.next(2);        // ignored - closed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Understanding the implications:
 a BehaviorSubject that receives `error()` is permanently broken
@@ -1081,8 +1092,7 @@ must not propagate errors into shared Subjects.
 
 ---
 
-**Q2. How do `catchError` and `throwError` work together
-for error escalation?**
+**[JUNIOR] Q2 - [MECHANISM] How do `catchError` and `throwError` work together for error escalation?**
 
 `catchError` intercepts errors. `throwError(() => err)` creates
 an Observable that immediately errors. Combined, they enable
@@ -1110,7 +1120,7 @@ function handleError(err: HttpErrorResponse) {
 api$.pipe(catchError(handleError)).subscribe(...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* The pattern of using a
 dedicated error handler function that is reusable across
@@ -1119,8 +1129,7 @@ pipeline is a maintenance burden.
 
 ---
 
-**Q3. How do you implement a "dead letter queue" pattern
-for failed Observable emissions?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement a "dead letter queue" pattern for failed Observable emissions?**
 
 A dead letter queue captures failed processing attempts for
 later analysis or reprocessing:
@@ -1162,7 +1171,7 @@ deadLetter$.pipe(
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using generic type. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* The DLQ as a Subject with
 structured error data (item + error + timestamp). This enables
@@ -1171,8 +1180,7 @@ the original data.
 
 ---
 
-**Q4. What is the `finalize` operator and how does it differ
-from `tap`'s complete callback?**
+**[MID] Q4 - [MECHANISM] What is the `finalize` operator and how does it differ from `tap`'s complete callback?**
 
 `finalize(fn)` executes `fn` when the Observable terminates
 for ANY reason: error, complete, or unsubscribe.
@@ -1198,7 +1206,7 @@ const request2$ = http.get('/api').pipe(
 // If request errors: loading spinner never clears
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using HTTP client. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* `finalize` is the correct
 operator for cleanup (hiding spinners, releasing resources,
@@ -1206,7 +1214,7 @@ cleanup calls) because it covers all three termination reasons.
 
 ---
 
-**Q5. How do you test Observable error handling?**
+**[MID] Q5 - [MECHANISM] How do you test Observable error handling?**
 
 Using marble testing with error marbles:
 
@@ -1231,7 +1239,7 @@ it('retries 3 times then returns fallback', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 For testing with actual timers (debounce, retry delay), use
 `TestScheduler.run()` with virtual time:
@@ -1249,7 +1257,7 @@ it('retries with delay', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using marble testing for
 error scenarios, including retry timing. Without virtual time,
@@ -1258,8 +1266,7 @@ non-deterministic.
 
 ---
 
-**Q6. How do you build a resilient polling mechanism with
-error recovery?**
+**[SENIOR] Q6 - [MECHANISM] How do you build a resilient polling mechanism with error recovery?**
 
 ```javascript
 function createPolling<T>(
@@ -1290,7 +1297,7 @@ const status$ = createPolling(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using HTTP client. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using `exhaustMap` instead
 of `switchMap` for polling: if the request takes longer than
@@ -1300,8 +1307,7 @@ in-flight requests, potentially causing incomplete state updates.
 
 ---
 
-**Q7. Describe a production incident where RxJS error
-handling was incorrect. How did you diagnose and fix it?**
+**[SENIOR] Q7 - [DEBUGGING] Describe a production incident where RxJS error handling was incorrect. How did you diagnose and fix it?**
 
 Pattern: search stream dies silently after a 500 error.
 
@@ -1339,7 +1345,7 @@ pipe(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using HTTP client. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* The `tap({ error })` debugging
 technique for pinpointing where errors surface in a pipeline,

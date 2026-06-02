@@ -132,7 +132,7 @@ Behavioral (11):
   Strategy, Template Method, Visitor
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GoF Pattern Origins and Theory example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Christopher Alexander's influence:**
 
@@ -202,7 +202,7 @@ public abstract class Subject {
 // - Memory leaks (Observer not detached = Subject holds reference)
 ```
 
-> **Code walkthrough:** The GoF Observer template. The consequences
+> **Code walkthrough:** The GoF Observer template. The consequencesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > section is what separates pattern documentation from simple class
 > diagrams. "Unexpected updates" is the Observer Avalanche (DP-023).
 > "Memory leaks from non-detached observers" is a common production bug.
@@ -237,7 +237,7 @@ products.sort(
               .thenComparing(Product::getName));
 ```
 
-> **Code walkthrough:** In Java 8+, many Strategy use cases are replaced
+> **Code walkthrough:** In Java 8+, many Strategy use cases are replacedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > by `Comparator`, `Predicate`, `Function`, and `BiFunction` functional
 > interfaces. The Strategy pattern is still relevant when the algorithm
 > has state (a `DiscountStrategy` that needs access to a `UserRepository`
@@ -502,6 +502,12 @@ the aggregate knowing who those consumers are.
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // VALUE OBJECT: Money
 // BAD: primitive obsession
@@ -564,7 +570,7 @@ public final class Money {
 }
 ```
 
-> **Code walkthrough:** `Money` enforces three invariants at construction:
+> **Code walkthrough:** `Money` enforces three invariants at construction:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > non-null, non-negative, and correct scale for the currency. After
 > construction, an invalid `Money` cannot exist. `add()` prevents
 > cross-currency addition (a common primitive obsession bug: adding USD
@@ -630,7 +636,7 @@ public class Order {  // Aggregate Root (Entity)
 }
 ```
 
-> **Code walkthrough:** The `Order` aggregate root enforces all business
+> **Code walkthrough:** The `Order` aggregate root enforces all businessice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > rules. Adding items: must be in DRAFT status, validated by `addItem`.
 > Placing: must have items, must be in DRAFT status. `place()` raises
 > a `DomainEvent` instead of calling services - the event is collected

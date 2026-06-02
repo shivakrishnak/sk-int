@@ -1689,6 +1689,12 @@ requirements of the IDP.
 
 **Example 1: catalog-info.yaml (Backstage catalog)**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```yaml
 # BAD: service without catalog registration
 # No visibility, no ownership, no documentation link
@@ -1723,7 +1729,7 @@ spec:
     - payments-api-v2
 ```
 
-> **Code walkthrough:** The `catalog-info.yaml` is the
+> **Code walkthrough:** The `catalog-info.yaml` is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > registry entry that makes a service visible in Backstage.
 > The `annotations` block is where ecosystem integrations
 > live: the GitHub slug links CI/CD status, the Grafana
@@ -1735,6 +1741,12 @@ spec:
 > this file, the service is invisible to the IDP.
 
 **Example 2: Crossplane CompositeResourceClaim**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # BAD: developer files a ticket for a database
@@ -1765,7 +1777,7 @@ spec:
     namespace: payments-team
 ```
 
-> **Code walkthrough:** The Crossplane claim is how
+> **Code walkthrough:** The Crossplane claim is howice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > self-service infrastructure provisioning works in
 > practice. The developer specifies what they need
 > (20GB PostgreSQL 14 in dev) in a YAML that reads

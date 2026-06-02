@@ -133,7 +133,7 @@ Coordinator sends ABORT to all participants.
 All participants roll back their prepared writes.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Transactions and Two-Phase Commit example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The blocking problem:**
 
@@ -157,7 +157,7 @@ If coordinator takes 2 hours to recover:
   - All queries on those rows are blocked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Transactions and Two-Phase Commit example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **XA Transactions (Java EE / JTA):**
 
@@ -175,7 +175,7 @@ jmsSession.send(...);       // enlists in XA
 tx.commit(); // 2PC across all three resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Transactions and Two-Phase Commit example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **The key insight:**
 2PC trades availability for consistency: participants must wait
@@ -268,7 +268,7 @@ public void transferMoney(TransferRequest req) {
 // marks the event as PROCESSED.
 ```
 
-> **Code walkthrough:** The BAD pattern shows the partial failure
+> **Code walkthrough:** The BAD pattern shows the partial failureice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > problem directly - money debited but not credited. The ACCEPTABLE
 > pattern works only if both accounts are in the same database.
 > The MODERN pattern uses the Outbox pattern: both the account
@@ -353,14 +353,99 @@ the domain boundaries.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Coordinator crash leaves participants in in-doubt state**
+
+**Symptom:** Database tables show rows locked indefinitely.
+`SHOW PROCESSLIST` has queries waiting on lock for hours.
+The XA coordinator service is down or was restarted.
+XA participants show `XA RECOVER` returning transactions in
+PREPARED state.
+
+**Root cause:** In 2PC, once a participant votes PREPARE (Phase 1
+complete), it holds its locks until it receives COMMIT or ABORT
+from the coordinator. If the coordinator crashes after collecting
+PREPARE votes but before sending COMMIT, participants are stuck
+in in-doubt state - they cannot unilaterally abort (that would
+violate atomicity) so they hold locks indefinitely.
+
+**Diagnosis:**
+```sql
+-- Check for in-doubt XA transactions (MySQL)
+XA RECOVER;
+-- Output: list of prepared transactions waiting for coordinator
+-- Any rows here = in-doubt state = blocking locks
+
+-- Find what's being blocked
+SELECT r.trx_id waiting_trx_id, r.trx_mysql_thread_id waiting_thread,
+       r.trx_query waiting_query, b.trx_id blocking_trx_id
+FROM information_schema.innodb_lock_waits w
+JOIN information_schema.innodb_trx b ON b.trx_id = w.blocking_trx_id
+JOIN information_schema.innodb_trx r ON r.trx_id = w.requesting_trx_id;
+
+-- Coordinator logs for last known state
+grep 'XA COMMIT\|XA ABORT\|XA ROLLBACK' coordinator.log | tail -20
+```
+
+> **Code walkthrough:** `XA RECOVER` is the definitive diagnostic for in-doubt XA transactions. KEY MECHANISM: XA participants lock rows at PREPARE time and cannot release until they receive the coordinator's decision; if the coordinator never sends the decision, the participant holds locks forever. WHY IT MATTERS: a single coordinator crash with 10 in-flight transactions can lock critical tables for hours, causing cascading failures across the database. WHAT BREAKS: all operations touching the locked rows block; depending on isolation level, reads may also block. TAKEAWAY: always implement coordinator recovery - write the PREPARE decision to durable storage before asking participants to PREPARE, so recovery can always determine the correct outcome.
+
+**Fix:** (1) Restart coordinator - it reads its WAL and resolves
+in-doubt transactions. (2) If coordinator is unrecoverable: check
+the last logged decision for each XA transaction; manually execute
+`XA COMMIT xid` or `XA ROLLBACK xid` on each participant based
+on the coordinator's last logged intent.
+
+---
+
+**Failure Mode 2 - 2PC availability collapse under partial failure**
+
+**Symptom:** A single database node failure causes all writes to
+stall system-wide. Services that were not using the failed database
+also stop processing. Alert storm across unrelated services.
+
+**Root cause:** 2PC blocks if any participant is unavailable.
+Because 2PC is blocking, any service participating in a
+distributed transaction with the failed node blocks its thread
+until the transaction times out. Thread pool exhaustion cascades
+to services not even using the failed database.
+
+**Diagnosis:**
+```bash
+# Check thread pool saturation
+curl http://service:8080/actuator/metrics/executor.pool.size
+curl http://service:8080/actuator/metrics/executor.queued.tasks
+# If queued tasks >> 0 and growing = thread exhaustion
+
+# Find blocked transactions
+curl http://service:8080/actuator/httptrace | python3 -c "
+import sys,json; traces=json.load(sys.stdin)['traces']
+long=[t for t in traces if t.get('timeTaken',0) > 5000]
+print(f'{len(long)} requests blocked > 5s')
+"
+
+# Database connection pool exhaustion
+curl http://service:8080/actuator/metrics/hikaricp.connections.active
+# If active = max = all connections in blocked 2PC transactions
+```
+
+> **Code walkthrough:** The HikariCP active connections metric reveals connection pool exhaustion from blocked 2PC transactions. KEY MECHANISM: each blocked 2PC transaction holds a database connection until timeout; with default timeout of 30s and connection pool of 20, a single participant failure blocks all 20 connections within seconds and all new requests queue. WHY IT MATTERS: 2PC's blocking nature means a single database failure causes total availability loss for all services participating in distributed transactions with that database, even if their own logic is unrelated. WHAT BREAKS: the entire application stops processing; not just the failed database's operations. TAKEAWAY: 2PC has O(participants) blast radius for availability - this is why distributed systems architects prefer Saga or Outbox patterns.
+
+**Fix:** Set aggressive 2PC timeout (2-5s); implement circuit
+breakers around XA participants; migrate to Saga or Outbox
+pattern for new microservice architectures.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: An XA transaction is blocking database reads on critical
-tables. The coordinator service is down. How do you recover?
+**[JUNIOR] Q1 - [MECHANISM] An XA transaction is blocking database reads on critical tables. The coordinator service is down. How do you recover?**
 
-A: Participants are in "in-doubt" state holding locks. Recovery
+Participants are in "in-doubt" state holding locks. Recovery
 steps: (1) Restart the coordinator service. It reads its
 transaction log and resolves in-doubt transactions by either
 committing or aborting based on logged decisions. (2) If the
@@ -374,8 +459,7 @@ migrate to Saga pattern to eliminate XA dependency.
 
 #### Candidate Mistakes
 
-Q: When would you use a distributed transaction in a
-microservices architecture?
+**[JUNIOR] Q2 - [DESIGN] When would you use a distributed transaction in a microservices architecture?**
 
 **What NOT to say:** "Whenever I need ACID across multiple services."
 
@@ -523,7 +607,7 @@ OrderService             PaymentService         InventoryService
     |  cancel order            |                       |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Saga Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Orchestration-based Saga:**
 ```
@@ -540,7 +624,7 @@ SagaOrchestrator
     |<-- OrderCancelled --------|
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Saga Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Compensating transactions:**
 ```
@@ -554,7 +638,7 @@ Send email              -->  Send cancellation email
                                is sent instead)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Saga Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Isolation (the critical gap vs. 2PC):**
 ```
@@ -576,7 +660,7 @@ Mitigations:
   partial state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Saga Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Sagas provide *atomicity* (eventually, all steps complete OR
@@ -613,6 +697,12 @@ global agreement."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // SAGA ORCHESTRATION WITH SPRING STATE MACHINE
@@ -691,7 +781,7 @@ public class OrderSagaOrchestrator {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern calls services sequentially
+> **Code walkthrough:** The BAD pattern calls services sequentiallyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with no compensation - an exception between the payment charge
 > and the order save leaves the customer charged for an order that
 > was never created. The GOOD pattern implements an orchestrated
@@ -773,10 +863,9 @@ orchestration for complex, changing workflows.
 
 #### Production Failures
 
-Q: An order saga got stuck in PAYMENT_REFUNDING state for 48 hours.
-No compensation has completed. What do you investigate?
+**[JUNIOR] Q1 - [DEBUGGING] An order saga got stuck in PAYMENT_REFUNDING state for 48 hours. No compensation has completed. What do you investigate?**
 
-A: The payment refund compensation is failing and retries are
+The payment refund compensation is failing and retries are
 exhausted or not configured. Investigation: (1) Check the saga
 state table for the specific saga ID - what step is failing,
 and what is the last error recorded? (2) Check the payment service
@@ -794,8 +883,7 @@ hour, alert on-call.
 
 #### Candidate Mistakes
 
-Q: How do you handle a scenario where a Saga step calls an
-external payment API that cannot be idempotent?
+**[JUNIOR] Q2 - [MECHANISM] How do you handle a scenario where a Saga step calls an external payment API that cannot be idempotent?**
 
 **What NOT to say:** "Make the call and hope it does not fail twice."
 
@@ -884,8 +972,7 @@ value over the textual representation.)*
 
 ---
 
-**Q1 (Conceptual): Explain why 2PC is called a "blocking"
-protocol and what specific failure scenario causes blocking.**
+**[JUNIOR] Q1 - [MECHANISM] Explain why 2PC is called a "blocking" protocol and what specific failure scenario causes blocking.**
 
 2PC is blocking because participants cannot make progress
 (commit or abort) independently if the coordinator fails at
@@ -922,8 +1009,7 @@ coordinator's decision.
 
 ---
 
-**Q2 (Conceptual): What is the XA specification and how does
-Java implement it with JTA?**
+**[JUNIOR] Q2 - [MECHANISM] What is the XA specification and how does Java implement it with JTA?**
 
 XA is a specification from The Open Group that defines an
 interface between a transaction manager and resource managers
@@ -957,8 +1043,7 @@ transaction - the non-XA resource does not participate in the
 
 ---
 
-**Q3 (Conceptual): Why is 3PC not widely used despite being
-designed to fix 2PC's blocking problem?**
+**[JUNIOR] Q3 - [MECHANISM] Why is 3PC not widely used despite being designed to fix 2PC's blocking problem?**
 
 3PC adds a "pre-commit" phase between prepare and commit:
 1. Prepare: ask participants if they can commit
@@ -990,8 +1075,7 @@ systems failure modes.
 
 ---
 
-**Q4 (Trade-off): When should you use the Outbox pattern vs.
-the Saga pattern for cross-service data consistency?**
+**[MID] Q4 - [TRADE-OFF] When should you use the Outbox pattern vs. the Saga pattern for cross-service data consistency?**
 
 Outbox pattern: best for publishing domain events reliably as a
 side effect of a local business operation. Example: when an order
@@ -1025,8 +1109,7 @@ Kafka" problem, not the "multi-step distributed transaction" problem.
 
 ---
 
-**Q5 (Trade-off): Describe the consistency guarantees of a Saga
-vs. a 2PC transaction. What does a Saga NOT guarantee?**
+**[MID] Q5 - [TRADE-OFF] Describe the consistency guarantees of a Saga vs. a 2PC transaction. What does a Saga NOT guarantee?**
 
 A 2PC transaction provides ACID:
 - Atomicity: all-or-nothing (within the 2PC window)
@@ -1063,8 +1146,7 @@ proceeding)."
 
 ---
 
-**Q6 (Debugging): A saga has been executing for 2 hours and is
-stuck in INVENTORY_RESERVING state. How do you debug it?**
+**[SENIOR] Q6 - [DEBUGGING] A saga has been executing for 2 hours and is stuck in INVENTORY_RESERVING state. How do you debug it?**
 
 Step 1: check the saga state table for the specific saga ID.
 What step is it on? What is the last event recorded? When was
@@ -1104,9 +1186,7 @@ after a consumer exception.
 
 ---
 
-**Q7 (Debugging): You are seeing duplicate orders created in your
-system. Investigation shows the OrderService saga handler is
-processing the same `OrderCreated` event twice. How do you fix this?**
+**[SENIOR] Q7 - [DEBUGGING] You are seeing duplicate orders created in your system. Investigation shows the OrderService saga handler is processing the same `OrderCreated` event twice. How do you fix this?**
 
 This is a lack of idempotency in the saga step. The event was
 delivered twice (at-least-once delivery is the norm for Kafka,
@@ -1137,8 +1217,7 @@ The unique constraint is atomic.
 
 ---
 
-**Q8 (Behavioral): Tell me about a time you had to design or
-debug a distributed transaction in a microservices architecture.**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a time you had to design or debug a distributed transaction in a microservices architecture.**
 
 *(Personalize from experience.)*
 
@@ -1161,8 +1240,7 @@ production experience.
 
 ---
 
-**Q9 (Scale): How does Saga performance compare to 2PC at
-high transaction volumes?**
+**[SENIOR] Q9 - [TRADE-OFF] How does Saga performance compare to 2PC at high transaction volumes?**
 
 At low volume (100 transactions/second):
 - 2PC: acceptable latency for same-datacenter resources
@@ -1268,9 +1346,7 @@ file which includes service mesh diagrams.)*
 
 ---
 
-**Q1 (Conceptual): Explain the difference between a compensating
-transaction and a rollback. When can a compensation fail where
-a rollback cannot?**
+**[JUNIOR] Q1 - [MECHANISM] Explain the difference between a compensating transaction and a rollback. When can a compensation fail where a rollback cannot?**
 
 A database rollback reverts changes that are still in a pending
 (uncommitted) transaction. The rollback is a database-internal
@@ -1306,8 +1382,7 @@ succeed."
 
 ---
 
-**Q2 (Conceptual): What is semantic locking and why does a Saga
-need it?**
+**[JUNIOR] Q2 - [MECHANISM] What is semantic locking and why does a Saga need it?**
 
 Semantic locking is an application-level mechanism to prevent
 other saga instances from accessing a resource that is currently
@@ -1338,8 +1413,7 @@ domains. The credit limit example is the canonical illustration.
 
 ---
 
-**Q3 (Conceptual): How does the Outbox pattern integrate with
-a Saga to ensure reliable message delivery?**
+**[JUNIOR] Q3 - [MECHANISM] How does the Outbox pattern integrate with a Saga to ensure reliable message delivery?**
 
 The Outbox pattern ensures that every state change in the saga
 orchestrator is reliably reflected as a published event/command
@@ -1373,8 +1447,7 @@ that the command is durably queued for delivery.
 
 ---
 
-**Q4 (Trade-off): Compare choreography vs. orchestration for
-a Saga with 8 steps and multiple failure paths. Which is better?**
+**[MID] Q4 - [TRADE-OFF] Compare choreography vs. orchestration for a Saga with 8 steps and multiple failure paths. Which is better?**
 
 For an 8-step saga with multiple failure paths, orchestration
 is significantly better. Reasons:
@@ -1410,8 +1483,7 @@ including compensation paths."
 
 ---
 
-**Q5 (Trade-off): When is a Saga not the right solution, and
-what should be used instead?**
+**[MID] Q5 - [TRADE-OFF] When is a Saga not the right solution, and what should be used instead?**
 
 Sagas are not the right solution when:
 
@@ -1449,9 +1521,7 @@ the Saga is unnecessary."
 
 ---
 
-**Q6 (Debugging): Your Saga orchestrator is reprocessing
-already-completed sagas after a restart, causing duplicate
-compensations. What is the root cause?**
+**[SENIOR] Q6 - [DEBUGGING] Your Saga orchestrator is reprocessing already-completed sagas after a restart, causing duplicate compensations. What is the root cause?**
 
 The orchestrator is not correctly persisting saga completion
 state, or it is not reading completion state on startup.
@@ -1482,8 +1552,7 @@ state in memory is not production-ready. State must survive restarts."
 
 ---
 
-**Q7 (Debugging): How would you add observability to a Saga
-to enable production debugging?**
+**[SENIOR] Q7 - [DEBUGGING] How would you add observability to a Saga to enable production debugging?**
 
 Key observability additions:
 
@@ -1519,8 +1588,7 @@ provider issues, etc."
 
 ---
 
-**Q8 (Behavioral): How have you handled the need for exactly-once
-processing in an event-driven or Saga-based system?**
+**[SENIOR] Q8 - [BEHAVIORAL] How have you handled the need for exactly-once processing in an event-driven or Saga-based system?**
 
 *(Personalize from experience.)*
 
@@ -1541,9 +1609,7 @@ effectively-exactly-once processing."
 
 ---
 
-**Q9 (Scale): How do you scale a Saga orchestrator to handle
-high transaction volume without the orchestrator becoming a
-bottleneck?**
+**[SENIOR] Q9 - [TRADE-OFF] How do you scale a Saga orchestrator to handle high transaction volume without the orchestrator becoming a bottleneck?**
 
 The saga orchestrator can become a bottleneck if it is a single
 instance with a sequential processing loop.

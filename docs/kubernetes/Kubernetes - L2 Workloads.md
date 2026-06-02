@@ -111,7 +111,7 @@ PVC data-kafka-1 reattaches to the new pod -> data preserved
 DNS name unchanged -> other brokers reconnect to kafka-1 at same address
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This StatefulSet vs Deployment example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Ordered operations:
 - Scale up: 0 -> 1 -> 2 (each waits for previous to be Running+Ready)
@@ -152,7 +152,7 @@ kafka-2.kafka-headless." StatefulSet provides exactly these three guarantees.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A StatefulSet for Kafka showing the headless service
+> **Code walkthrough:** A StatefulSet for Kafka showing the headless serviceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > requirement, VolumeClaimTemplate (per-pod PVC creation), and ordered pod naming.
 > The Deployment comparison shows why Deployment fails for stateful clusters.
 
@@ -238,7 +238,7 @@ spec:
           storage: 100Gi
 ```
 
-> **Code walkthrough:** The headless service is mandatory - it provides the DNS
+> **Code walkthrough:** The headless service is mandatory - it provides the DNSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > infrastructure for per-pod addressing. `serviceName: kafka-headless` in the
 > StatefulSet spec links the two. `volumeClaimTemplates` is the key StatefulSet
 > feature - Kubernetes automatically creates one PVC per pod (data-kafka-0,
@@ -437,7 +437,7 @@ kind: StatefulSet
 # postgres-2: streams from postgres-0.postgres-headless...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This postgres-2: streams from postgres-0.postgres-headless... example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 My recommendation: use the Crunchy Data PGO or Zalando PostgreSQL Operator.
 These operators wrap StatefulSet + orchestrate:
@@ -718,7 +718,7 @@ Does the app form a cluster where members identify each other?
            NO  -> Deployment
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -895,11 +895,11 @@ Job: data-migration (completions:1, parallelism:1)
   Pod fails -> backoffLimit retry -> (retry 1, retry 2, retry 3) -> Job: Failed
 
 CronJob: nightly-report (schedule: "0 2 * * *")
-  02:00 -> creates Job -> Job creates Pod -> Pod runs report -> exits 0 -> Job: Complete
+  02:00 -> creates Job -> Job creates Pod -> Pod runs report -> exits 0 ->...
   (Job auto-deleted after TTL)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DaemonSet and Job example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 DaemonSet bypasses the scheduler for node assignment - it places pods directly on
@@ -1278,7 +1278,7 @@ spec:
   parallelism: 20         # 20 pods at a time
   completionMode: Indexed # each pod gets JOB_COMPLETION_INDEX 0-99
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Each pod processes records [index * 100000 : (index+1) * 100000].
 No queue needed. Deterministic partitioning. Re-run failed pod for its index.
@@ -1372,7 +1372,7 @@ spec:
           privileged: true    # required for eBPF kernel probes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Security implications of privileged: a privileged container has full host access.
 Compromise of a Falco DaemonSet pod = full node compromise. Mitigate by:
@@ -1533,7 +1533,7 @@ Is the work node-level infrastructure?
                     NO  -> Deployment
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

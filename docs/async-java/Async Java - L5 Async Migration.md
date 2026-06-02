@@ -108,7 +108,7 @@ Migration Target C: Selective Async (CompletableFuture for hot paths)
   Benefit: targeted improvement without full migration
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating Blocking Java to Async and Reactive example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Strangler Fig pattern:**
 
@@ -138,7 +138,7 @@ Phase 4: Complete, decommission legacy
   Legacy MVC completely removed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating Blocking Java to Async and Reactive example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Layer migration order and complexity:**
 
@@ -164,13 +164,31 @@ Layer 4 (critical): Security Context
   Risk: HIGH (security bugs if wrong)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migrating Blocking Java to Async and Reactive example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Migration progression patterns:**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PHASE 1: Wrap blocking service in reactive (Strangler Fig)
@@ -263,7 +281,7 @@ public Mono<Order> createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** Phase 1 shows the Strangler Fig's first move: wrap
+> **Code walkthrough:** Phase 1 shows the Strangler Fig's first move: wrapice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the existing blocking service in `Mono.fromCallable(...).subscribeOn(boundedElastic)`.
 > This unblocks the event-loop thread (WebFlux can accept new requests) while
 > the pool thread handles the blocking call. It's not the final state but enables
@@ -360,7 +378,7 @@ Mono.fromCallable(() -> service.blockingMethod())
     .subscribeOn(Schedulers.boundedElastic())
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This becomes: example demonstrates shell script pattern using Stream. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Permanent fix: complete the R2DBC/WebClient migration for the affected layer.
 Remove the `subscribeOn` wrapper once the underlying call is non-blocking.
@@ -373,14 +391,14 @@ Remove the `subscribeOn` wrapper once the underlying call is non-blocking.
 
 ---
 
-#### Q1 - What is the Strangler Fig pattern and how does it apply to async migration?
+**[JUNIOR] Q1 - [ARCHITECTURE] What is the Strangler Fig pattern and how does it apply to async migration?**
 
 The Strangler Fig pattern (Martin Fowler) migrates a system incrementally
 by building new functionality alongside old code, then gradually replacing
 old code. Named for the strangler fig tree that grows around an existing
 tree, eventually replacing it.
 
-```
+```plaintext
 Applied to async migration:
   Step 1: Build reactive/async facade around existing system
   Step 2: Route NEW requests to the facade
@@ -398,7 +416,7 @@ Concrete example:
         Spring MVC removed entirely
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This becomes: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Benefits of Strangler Fig over "big bang" migration:
 - System remains operational throughout migration
@@ -415,7 +433,7 @@ the migration specifically.
 
 ---
 
-#### Q2 - How do you migrate @Transactional semantics from JDBC to R2DBC?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you migrate @Transactional semantics from JDBC to R2DBC?**
 
 `@Transactional` with Spring Data JPA uses `JpaTransactionManager` which
 stores connection in ThreadLocal. R2DBC uses `R2dbcTransactionManager`
@@ -451,7 +469,7 @@ public Mono<Order> createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This becomes: example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 R2DBC transaction limitations vs JPA:
 1. No `@Transactional(propagation = REQUIRES_NEW)` nested transactions
@@ -467,7 +485,7 @@ a saga pattern with compensation, not a shared transaction.
 
 ---
 
-#### Q3 - How do you migrate RestTemplate to WebClient?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you migrate RestTemplate to WebClient?**
 
 RestTemplate is synchronous and blocking. WebClient is non-blocking.
 
@@ -534,7 +552,7 @@ Mono.zip(
     tuple.getT1(), tuple.getT2()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This becomes: example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* WebClient configuration for production:
 connection pooling (Netty uses connection pools by default),
@@ -558,11 +576,11 @@ WebClient externalServiceClient(WebClient.Builder builder) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using goroutine. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q4 - What are the risks of migrating JPA to R2DBC?
+**[MID] Q4 - [CONCEPTUAL] What are the risks of migrating JPA to R2DBC?**
 
 R2DBC is a first-class non-blocking JDBC alternative, but lacks several
 JPA features:
@@ -588,7 +606,7 @@ NOT available in R2DBC:
   Stored procedure support (limited)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Risk assessment:**
 
@@ -622,7 +640,7 @@ Mono<OrderWithDetails> findOrderWithDetails(Long orderId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* For services with complex object graphs,
 the JPA -> R2DBC migration may require redesigning the domain model. If the
@@ -633,7 +651,7 @@ significant behavioral change that requires testing every query.
 
 ---
 
-#### Q5 - How do you approach a virtual-thread migration instead of reactive migration?
+**[MID] Q5 - [CONCEPTUAL] How do you approach a virtual-thread migration instead of reactive migration?**
 
 Virtual thread migration is significantly simpler than reactive migration:
 
@@ -650,7 +668,7 @@ spring:
 # - No code changes required
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - No code changes required example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```java
 // BEFORE (blocking, Spring MVC):
@@ -679,7 +697,7 @@ public UserProfile getProfile(@PathVariable String id)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - No code changes required example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 **Virtual thread migration checklist:**
 1. Upgrade to Java 21 (compile and runtime)
@@ -698,7 +716,7 @@ thread safe. Run with `jdk.tracePinnedThreads` under load to verify.
 
 ---
 
-#### Q6 - How do you handle the parallel operation migration from sync to async?
+**[SENIOR] Q6 - [MECHANISM] How do you handle the parallel operation migration from sync to async?**
 
 Blocking sequential code often benefits most from parallelism in migration:
 
@@ -747,7 +765,7 @@ public Dashboard getDashboard(String userId) throws Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - No code changes required example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Performance comparison for this pattern:
 - Blocking sequential: 300ms
@@ -763,7 +781,7 @@ DB lookup: use `ShutdownOnSuccess` (whichever returns first wins).
 
 ---
 
-#### Q7 - How do you migrate Spring Security configuration from MVC to WebFlux?
+**[SENIOR] Q7 - [MECHANISM] How do you migrate Spring Security configuration from MVC to WebFlux?**
 
 Spring Security has different APIs for MVC and WebFlux:
 
@@ -818,7 +836,7 @@ public class SecurityConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - No code changes required example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Key differences:
 - `WebSecurityConfigurerAdapter` -> `SecurityWebFilterChain` bean
@@ -847,11 +865,11 @@ public class JwtAuthFilter implements WebFilter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q8 - How do you ensure data consistency during the migration period?
+**[STAFF] Q8 - [MECHANISM] How do you ensure data consistency during the migration period?**
 
 During migration, some code is reactive (new) and some is blocking (legacy).
 Consistency risks:
@@ -890,7 +908,7 @@ compensationLog.record(
     Instant.now());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Feature flags for gradual rollout of
 migrated code paths:
@@ -903,14 +921,14 @@ if (featureFlags.isEnabled("use-r2dbc-orders")) {
         .subscribeOn(Schedulers.boundedElastic());
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Feature flags allow 1%, 10%, 100% rollout of migrated paths. Any consistency
 issue: toggle off the feature flag, revert to old path, investigate.
 
 ---
 
-#### Q9 - How do you measure the success of an async migration?
+**[STAFF] Q9 - [MECHANISM] How do you measure the success of an async migration?**
 
 Key metrics to compare before/after migration:
 
@@ -945,7 +963,7 @@ meter_registry.counter("errors",
 # After: P99 = 120ms (no queuing; non-blocking)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After: P99 = 120ms (no queuing; non-blocking) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Success criteria checklist:
 - Throughput equal or higher under same concurrency
@@ -963,7 +981,7 @@ async call patterns; (3) actual error rates on production data.
 
 ---
 
-#### Q10 - How do you handle test migration from MVC to WebFlux?
+**[STAFF] Q10 - [MECHANISM] How do you handle test migration from MVC to WebFlux?**
 
 Test migration is often underestimated:
 
@@ -1009,7 +1027,7 @@ class UserControllerTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This After: P99 = 120ms (no queuing; non-blocking) example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Additional test migration:
 - Service layer: `assertEquals(result, expected)` -> `StepVerifier`
@@ -1026,7 +1044,7 @@ timing) benefit most from reactive migration (virtual time makes them fast).
 
 ---
 
-#### Q11 - How do you handle connection pool migration from blocking to reactive?
+**[STAFF] Q11 - [MECHANISM] How do you handle connection pool migration from blocking to reactive?**
 
 Blocking JDBC uses HikariCP (thread-per-connection model).
 Reactive R2DBC uses r2dbc-pool (connection pool, not thread pool).
@@ -1050,7 +1068,7 @@ spring:
       acquire-retry: 3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This R2DBC Pool config (reactive): example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Why R2DBC pool is smaller: with blocking JDBC, one thread holds one
 connection for the duration of the query. With R2DBC, a connection is
@@ -1072,7 +1090,7 @@ int pending = metrics.pendingAcquireSize();
 // If pendingAcquireSize > 0 consistently: pool too small
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This R2DBC Pool config (reactive): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Mixed migration: for services using both
 JPA (for complex queries) and R2DBC (for hot paths), maintain BOTH connection
@@ -1082,7 +1100,7 @@ increases temporarily during migration but allows safe incremental validation.
 
 ---
 
-#### Q12 - What is your recommended migration strategy for a production Java service?
+**[STAFF] Q12 - [MECHANISM] What is your recommended migration strategy for a production Java service?**
 
 Recommended migration plan:
 
@@ -1095,7 +1113,7 @@ Java 21 available?
   No + > 5k concurrency + streaming -> Reactive migration (3-6 months)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This R2DBC Pool config (reactive): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Virtual thread migration (if Java 21):**
 ```
@@ -1109,7 +1127,7 @@ Week 1:
   6. Deploy to production (gradual rollout: 10%, 50%, 100%)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This R2DBC Pool config (reactive): example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Full reactive migration (if required):**
 ```
@@ -1136,7 +1154,7 @@ Month 4: Cleanup
   - Incident review: document any migration-related incidents
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This R2DBC Pool config (reactive): example demonstrates ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most common migration failure mode:
 skipping the "validate correctness" step in month 2. R2DBC query behavior
@@ -1151,16 +1169,16 @@ response comparison of old vs new code on production traffic is invaluable.
 
 **Migration approach comparison:**
 
-| Factor | Virtual Threads | Full Reactive Migration |
-|---|---|---|
-| Java version required | Java 21+ | Java 8+ |
-| Code changes | Minimal (config) | Major (all layers) |
-| JPA/Hibernate | Unchanged | Replace with R2DBC |
-| Duration | 1-2 weeks | 2-6 months |
-| Risk level | Low | High |
-| Performance gain | High (matches reactive) | Highest (streaming capable) |
-| Streaming support | No (no backpressure) | Yes (first-class) |
-| Team upskilling | Minimal | Significant |
+| Factor| Virtual Threads| Full Reactive Migration|
+|---------------------|-----------------------|---------------------------|
+| Java version required| Java 21+| Java 8+|
+| Code changes| Minimal (config)| Major (all layers)|
+| JPA/Hibernate| Unchanged| Replace with R2DBC|
+| Duration| 1-2 weeks| 2-6 months|
+| Risk level| Low| High|
+| Performance gain| High (matches reactive)| Highest (streaming capable)|
+| Streaming support| No (no backpressure)| Yes (first-class)|
+| Team upskilling| Minimal| Significant|
 
 ---
 
@@ -1206,7 +1224,7 @@ Architecture after migration:
               -> Database (R2DBC for write-heavy analytics)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This R2DBC Pool config (reactive): example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Migration plan:
 - Week 1-2: Java 21 upgrade + VThread config + load test
@@ -1242,7 +1260,7 @@ gantt
 
 **Migration layers and dependency order:**
 
-```
+```plaintext
 Layer 4: HTTP server
   Spring MVC controller
       |

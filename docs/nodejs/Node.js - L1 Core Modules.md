@@ -139,7 +139,7 @@ function safePath(baseDir, userInput) {
 }
 ```
 
-> **Code walkthrough:** The API spectrum: `readFileSync` blocks the event
+> **Code walkthrough:** The API spectrum: `readFileSync` blocks the eventice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > loop (CPU stuck on I/O for every request). `fsp.readFile` yields during
 > I/O. `createReadStream` yields AND uses constant memory. The `safePath`
 > function shows the correct security pattern: `path.join` alone does NOT
@@ -186,6 +186,16 @@ difference is O(fileSize) vs O(64KB).
 
 ### 💻 Code Example
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: sync fs in a request handler (blocks all requests)
 app.get('/config', (req, res) => {
@@ -226,7 +236,7 @@ app.get('/download/:file', (req, res) => {
 });
 ```
 
-> **Code walkthrough:** `readFileSync` in a request handler is the most
+> **Code walkthrough:** `readFileSync` in a request handler is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common Node.js performance mistake. While the file reads (even 1-10ms
 > on fast SSDs), the event loop is blocked and no other request is
 > processed. The async version yields during I/O. The streaming download
@@ -292,7 +302,7 @@ lsof -p $(pgrep node) | wc -l
 ulimit -n 65536
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Default limit: 1024. Fix: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Symptom: Path traversal allowing reads outside upload dir**
 
@@ -305,7 +315,7 @@ fsp.readFile = async (p, ...args) => {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Default limit: 1024. Fix: example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Symptom: High memory on download endpoint**
 
@@ -328,8 +338,7 @@ The endpoint uses `readFile` instead of streaming. Switch to
 
 ---
 
-**Q1: How do you serve user-uploaded files safely in Node.js?**
-`[SENIOR]` SYSTEM DESIGN
+**[SENIOR] Q1 - [DESIGN] How do you serve user-uploaded files safely in Node.js?**
 
 > **Answer:**
 >
@@ -383,7 +392,7 @@ The endpoint uses `readFile` instead of streaming. Switch to
 
 ---
 
-**Q2: A file download endpoint is causing OOM errors under load.
+**[JUNIOR] Q2 - [MECHANISM] A file download endpoint is causing OOM errors under load.**
 Diagnose and fix it.** `[MID]` DEBUGGING
 
 > **Answer:**
@@ -422,7 +431,163 @@ Diagnose and fix it.** `[MID]` DEBUGGING
 
 ---
 
+**[JUNIOR] Q3 - [MECHANISM] When should you use synchronous fs methods vs async methods?**
+
+> **Answer:**
+>
+> Use synchronous methods (`readFileSync`, `writeFileSync`) only in two contexts: (1) application startup code that runs before the server begins accepting requests, and (2) CLI tools where blocking is acceptable.
+>
+> Never use synchronous fs methods in HTTP request handlers or inside any live event handler. Node.js is single-threaded - a `readFileSync` blocks the entire event loop. For a 10ms file read with 100 concurrent requests, you can add up to 1 second of latency to every pending request.
+>
+> ```javascript
+> // WRONG: blocks all other requests while reading
+> app.get('/config', (req, res) => {
+>   const data = fs.readFileSync('./config.json', 'utf8');
+>   res.json(JSON.parse(data));
+> });
+>
+> // CORRECT: non-blocking
+> app.get('/config', async (req, res) => {
+>   const data = await fs.promises.readFile('./config.json', 'utf8');
+>   res.json(JSON.parse(data));
+> });
+>
+> // ACCEPTABLE: at startup, before server.listen
+> const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+> const server = http.createServer(app);
+> server.listen(3000);
+> ```
+>
+> *What separates good from great:* Even `fs.promises.readFile` loads the entire file into memory. For large files, use `createReadStream` regardless of sync/async. Blocking vs non-blocking and buffering vs streaming are two separate decisions.
+
 ---
+
+**[JUNIOR] Q4 - [DEBUGGING] How do you handle specific fs error codes: ENOENT, EACCES, and EMFILE?**
+
+> **Answer:**
+>
+> Node.js fs errors carry a `.code` property mapping to OS error codes. Handle them separately - they require different responses:
+>
+> - `ENOENT` - file does not exist; usually expected, return null or a default
+> - `EACCES` - permission denied; this is a deployment misconfiguration, not user error
+> - `EMFILE` - too many open file descriptors; this is a resource leak bug in your code
+>
+> ```javascript
+> async function safeRead(filePath) {
+>   try {
+>     return await fs.promises.readFile(filePath, 'utf8');
+>   } catch (err) {
+>     switch (err.code) {
+>       case 'ENOENT': return null;
+>       case 'EACCES':
+>         throw new Error(
+>           `Permission denied: ${filePath}. ` +
+>           'Check process user has read access.'
+>         );
+>       case 'EMFILE':
+>         throw new Error(
+>           'File descriptor limit reached. ' +
+>           'Run: ulimit -n 65536'
+>         );
+>       default: throw err;
+>     }
+>   }
+> }
+> ```
+>
+> `EMFILE` silently accumulates - the most common cause is `createReadStream` streams that are opened but never closed when an error path exits early.
+>
+> *What separates good from great:* Never use a generic `catch (err)` for fs errors. `ENOENT` is normal flow. `EMFILE` means you have a leak bug that needs a code fix, not a retry.
+
+---
+
+**[SENIOR] Q5 - [MECHANISM] When should you use `stream.pipeline` over `stream.pipe`?**
+
+> **Answer:**
+>
+> Always prefer `pipeline` in production. `pipe` has a critical flaw: if the destination stream errors or closes early, the source stream is NOT automatically destroyed - causing file descriptor leaks.
+>
+> ```javascript
+> import { createReadStream, createWriteStream } from 'fs';
+> import { pipeline } from 'stream/promises';
+> import { createGzip } from 'zlib';
+>
+> // WRONG: source stream leaks if writeStream errors
+> readStream.pipe(gzip).pipe(writeStream);
+>
+> // CORRECT: all streams destroyed on error
+> await pipeline(
+>   createReadStream('input.log'),
+>   createGzip(),
+>   createWriteStream('output.log.gz')
+> );
+> ```
+>
+> `pipeline` from `stream/promises` (Node 15+) propagates errors through the chain, calls `destroy()` on all streams on failure, and returns a Promise that rejects on error.
+>
+> *What separates good from great:* `EMFILE: too many open files` after days of uptime is almost always `pipe` without error cleanup. Every production stream chain should use `pipeline`.
+
+---
+
+**[JUNIOR] Q6 - [DEBUGGING] How do file descriptor leaks happen and how do you detect them?**
+
+> **Answer:**
+>
+> A file descriptor leak occurs when a stream is opened but never closed. Every open fd consumes an OS resource - default limit is 1024 on Linux.
+>
+> Common causes: (1) `createReadStream` opened but never consumed or closed, (2) `pipe` chain where source stream is not destroyed on destination error, (3) early return from a function after opening a stream but before closing it.
+>
+> ```javascript
+> // LEAK: stream never closed when format check fails
+> app.get('/preview', (req, res) => {
+>   const stream = createReadStream(filePath); // fd opens here
+>   if (req.query.format !== 'text') {
+>     res.json({ error: 'unsupported' }); // returns, stream abandoned
+>     return;
+>   }
+>   stream.pipe(res);
+> });
+>
+> // FIXED: open stream only when needed
+> app.get('/preview', (req, res) => {
+>   if (req.query.format !== 'text') {
+>     res.json({ error: 'unsupported' });
+>     return;
+>   }
+>   createReadStream(filePath).pipe(res);
+> });
+>
+> // DIAGNOSE: count open fds - should be stable
+> // lsof -p $(pgrep node) | wc -l
+> ```
+>
+> *What separates good from great:* Always open streams as late as possible - in the branch that actually needs them. A steady increase in fd count over time (check with `lsof`) is the diagnostic signal.
+
+---
+
+**[JUNIOR] Q7 - [DESIGN] How do you cache a config file so it is only read once at startup?**
+
+> **Answer:**
+>
+> Read the file synchronously at module initialization and export the parsed result. Node.js module caching ensures this code runs once per process lifetime.
+>
+> ```javascript
+> // config.js
+> import { readFileSync } from 'fs';
+> import path from 'path';
+> import { fileURLToPath } from 'url';
+>
+> const __dirname = path.dirname(fileURLToPath(import.meta.url));
+>
+> // Intentionally sync: runs once at startup before server.listen
+> const raw = readFileSync(path.join(__dirname, 'config.json'), 'utf8');
+> export const config = Object.freeze(JSON.parse(raw));
+> // All imports get the same frozen object - no re-reads
+> ```
+>
+> `Object.freeze` prevents consumers from accidentally mutating the shared config object. Any mutation attempt throws `TypeError` in strict mode.
+>
+> *What separates good from great:* Beginner mistake is reading config inside each request handler. The symptom in dev: config hot-reloads work, giving a false impression that production also picks up config changes live. It does not.
 
 ---
 
@@ -567,7 +732,7 @@ const agent = new http.Agent({
 });
 ```
 
-> **Code walkthrough:** The body reading pattern shows exactly what
+> **Code walkthrough:** The body reading pattern shows exactly whatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `express.json()` does internally: listen to `data` events, concatenate
 > chunks, then `JSON.parse`. The 1MB body limit is critical security -
 > without it an attacker can POST gigabytes until the server OOMs. The
@@ -673,7 +838,7 @@ function jsonBodyParser(req, res, next) {
 }
 ```
 
-> **Code walkthrough:** The mini-Express shows that middleware is just a
+> **Code walkthrough:** The mini-Express shows that middleware is just aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > queue of `(req, res, next)` functions invoked in order. Each calls `next()`
 > to continue the chain. `jsonBodyParser` reveals exactly what `express.json()`
 > does: reads the stream body, enforces size limit, parses JSON, attaches
@@ -745,7 +910,7 @@ app.get('/users', async (req, res) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Symptom: Memory grows on POST-heavy endpoints**
 
@@ -773,8 +938,7 @@ the load balancer's timeout. AWS ALB default: 60s. Set Node.js server to 65s.
 
 ---
 
-**Q1: Why does `req.body` appear as `undefined` in Express route handlers?**
-`[JUNIOR]` DEBUGGING
+**[JUNIOR] Q1 - [DEBUGGING] Why does `req.body` appear as `undefined` in Express route handlers?**
 
 > **Answer:**
 >
@@ -817,7 +981,222 @@ the load balancer's timeout. AWS ALB default: 60s. Set Node.js server to 65s.
 
 ---
 
+**[JUNIOR] Q2 - [MECHANISM] Explain how Express wraps the Node.js `http` module.**
+
+> **Answer:**
+>
+> Express's `app` object is a function with the signature `(req, res, next)`. When you call `app.listen(3000)`, Express calls `http.createServer(app)` internally - the Express app itself IS the request handler passed to `createServer`.
+>
+> The `req` and `res` objects Express provides are the same `IncomingMessage` and `ServerResponse` objects from Node's `http` module, extended with convenience methods (`req.params`, `res.json()`, `res.status()`). No magic - just property augmentation.
+>
+> The middleware queue is the core innovation: when a request arrives, Express calls `next()` to pass control down a chain of functions. `app.use`, `app.get`, `app.post` all register functions into this chain. The chain short-circuits when a function sends a response without calling `next()`.
+>
+> ```javascript
+> // What Express does internally:
+> const http = require('http');
+> const server = http.createServer((req, res) => {
+>   app(req, res); // app is the middleware chain runner
+> });
+> server.listen(3000);
+> ```
+>
+> *What separates good from great:* Understanding that `req` is a Readable stream and `res` is a Writable stream. Express does NOT buffer request bodies - you need body-parser middleware for that. Raw `http` gives you the stream; middleware converts it to a usable object.
+
 ---
+
+**[JUNIOR] Q3 - [MECHANISM] How do you read a raw HTTP request body without Express body-parser?**
+
+> **Answer:**
+>
+> ```javascript
+> const http = require('http');
+>
+> http.createServer((req, res) => {
+>   if (req.method !== 'POST') {
+>     res.writeHead(405).end();
+>     return;
+>   }
+>
+>   const chunks = [];
+>   let totalSize = 0;
+>   const MAX_SIZE = 1 * 1024 * 1024; // 1MB limit
+>
+>   req.on('data', (chunk) => {
+>     totalSize += chunk.length;
+>     if (totalSize > MAX_SIZE) {
+>       res.writeHead(413).end('Payload Too Large');
+>       req.destroy(); // stop receiving data
+>       return;
+>     }
+>     chunks.push(chunk);
+>   });
+>
+>   req.on('end', () => {
+>     const body = Buffer.concat(chunks).toString('utf8');
+>     try {
+>       const data = JSON.parse(body);
+>       res.writeHead(200, { 'Content-Type': 'application/json' });
+>       res.end(JSON.stringify({ received: data }));
+>     } catch {
+>       res.writeHead(400).end('Invalid JSON');
+>     }
+>   });
+>
+>   req.on('error', (err) => {
+>     console.error('Request error:', err);
+>     res.writeHead(500).end();
+>   });
+> }).listen(3000);
+> ```
+>
+> Always implement a size limit. Without it, a client can send an arbitrarily large body and exhaust server memory.
+>
+> *What separates good from great:* The size check must be inside the `data` event, not in `end`. Checking in `end` means you have already buffered the full oversized payload. `req.destroy()` stops Node from reading more data from the socket.
+
+---
+
+**[SENIOR] Q4 - [DESIGN] Where should TLS termination happen in a Node.js deployment?**
+
+> **Answer:**
+>
+> TLS should be terminated at the load balancer or reverse proxy (NGINX, AWS ALB, Cloudflare), not in the Node.js process. Node.js applications run plain HTTP internally.
+>
+> Why:
+> - TLS handshakes are CPU-intensive. Dedicated hardware (ALB) or optimized proxy (NGINX) handles this more efficiently than Node.js
+> - Certificate management (renewal, rotation) is centralized at the infrastructure layer, not spread across all application instances
+> - Internal service-to-service traffic can use plain HTTP within a private network (VPC), reducing CPU overhead
+>
+> For mutual TLS (mTLS) between microservices, use a service mesh (Envoy/Istio) rather than Node.js `https` module in every service.
+>
+> When to terminate TLS in Node.js: single-process dev/test environments, cases where end-to-end encryption is required and you cannot use a service mesh.
+>
+> ```javascript
+> // In production: app serves plain HTTP, TLS at ALB
+> const http = require('http');
+> http.createServer(app).listen(3000);
+>
+> // Trust X-Forwarded-Proto from ALB
+> app.set('trust proxy', true);
+> app.use((req, res, next) => {
+>   if (req.protocol !== 'https') {
+>     return res.redirect(`https://${req.hostname}${req.url}`);
+>   }
+>   next();
+> });
+> ```
+>
+> *What separates good from great:* Setting `trust proxy` is mandatory when ALB terminates TLS - otherwise Express sees all requests as HTTP even when the original client used HTTPS, breaking HTTPS redirects and secure cookie flags.
+
+---
+
+**[JUNIOR] Q5 - [MECHANISM] When should you use `fetch` vs `http.request` in Node.js?**
+
+> **Answer:**
+>
+> In Node.js 18+, use the built-in `fetch` for all new HTTP client code. It is the same API as browser `fetch`, reducing cognitive overhead for full-stack developers.
+>
+> Use `http.request` (or the `https` module) when:
+> - You need streaming control (pipe response directly to a file stream without buffering)
+> - You need per-request socket configuration (custom timeout, agent, keep-alive settings)
+> - You are supporting Node.js < 18 without a polyfill
+>
+> ```javascript
+> // MODERN: use fetch (Node.js 18+)
+> const response = await fetch('https://api.example.com/data');
+> if (!response.ok) throw new Error(`HTTP ${response.status}`);
+> const data = await response.json();
+>
+> // STREAMING with http.request (when fetch is insufficient):
+> const https = require('https');
+> https.get('https://example.com/large-file', (res) => {
+>   res.pipe(fs.createWriteStream('./output'));
+> });
+>
+> // Note: fetch can also stream via response.body (ReadableStream)
+> const { body } = await fetch('https://example.com/large-file');
+> await pipeline(body, fs.createWriteStream('./output'));
+> ```
+>
+> *What separates good from great:* `fetch` does not handle HTTP errors the same way as `axios` - a 404 or 500 response does NOT throw; you must check `response.ok`. This is a common production bug when migrating from `axios` to `fetch`.
+
+---
+
+**[SENIOR] Q6 - [DESIGN] How do you configure HTTP keep-alive connection pooling in Node.js?**
+
+> **Answer:**
+>
+> By default, Node.js `http.request` does not reuse connections. Each request opens a new TCP connection. For services making high-volume outbound HTTP requests, this causes significant latency and port exhaustion.
+>
+> ```javascript
+> const http = require('http');
+>
+> // Configure an Agent with connection reuse
+> const agent = new http.Agent({
+>   keepAlive: true,
+>   maxSockets: 50,      // max concurrent connections per host
+>   maxFreeSockets: 10,  // idle connections to keep open
+>   timeout: 30000,      // idle socket timeout
+> });
+>
+> // Pass agent to all requests to this host
+> http.request({
+>   hostname: 'internal-service',
+>   port: 3001,
+>   path: '/api/data',
+>   agent,
+> });
+>
+> // With fetch (Node.js 18+): use undici Agent
+> const { fetch, Agent } = require('undici');
+> const myAgent = new Agent({ connections: 50 });
+> fetch('http://internal-service/api', { dispatcher: myAgent });
+> ```
+>
+> For server-side `keepAliveTimeout`: this must exceed the load balancer's idle timeout. AWS ALB default is 60s; set `server.keepAliveTimeout = 65000` to prevent the ALB from sending a request on a connection Node is about to close (502 errors).
+>
+> *What separates good from great:* Knowing that high `maxSockets` can exhaust the upstream service's connection pool. The right value is `upstream_max_connections / number_of_node_instances`, not "as high as possible."
+
+---
+
+**[JUNIOR] Q7 - [DESIGN] How do you prevent a body-size attack on an HTTP server?**
+
+> **Answer:**
+>
+> Without a body size limit, a client can send a multi-gigabyte POST body, causing out-of-memory errors. Two layers of defense:
+>
+> 1. **At the framework/middleware level** - limits buffered body size
+> 2. **At the connection level** - limits total data per request
+>
+> ```javascript
+> // Layer 1: Express body-parser limit (default: 100kb)
+> app.use(express.json({ limit: '1mb' }));
+> app.use(express.urlencoded({ limit: '1mb', extended: true }));
+>
+> // Layer 2: Raw http request limit
+> const server = http.createServer(app);
+> server.maxHeadersCount = 100;  // header count limit
+>
+> // For file uploads: use multer with limits
+> const upload = multer({
+>   limits: {
+>     fileSize: 10 * 1024 * 1024, // 10MB per file
+>     files: 5,                    // max 5 files
+>   },
+> });
+>
+> // For raw http: enforce in data event
+> req.on('data', (chunk) => {
+>   total += chunk.length;
+>   if (total > MAX_BYTES) {
+>     res.writeHead(413).end();
+>     req.destroy();
+>   }
+> });
+> ```
+>
+> Setting a limit in Express body-parser does NOT help if you have custom raw http handling - the limit is per-middleware, not per-connection.
+>
+> *What separates good from great:* The `413 Payload Too Large` status code must be sent AND `req.destroy()` called. Sending the response without destroying the request stream means Node continues reading the body anyway, consuming memory and CPU.
 
 ---
 
@@ -957,7 +1336,7 @@ types.isDate(new Date());           // true
 types.isMap(new Map());             // true
 ```
 
-> **Code walkthrough:** The `fileURLToPath` + `path.dirname` pattern is
+> **Code walkthrough:** The `fileURLToPath` + `path.dirname` pattern isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a common interview question - ESM doesn't provide `__dirname` globally.
 > `promisify` converts any callback-based API following the error-first
 > convention `(err, result)` to a Promise. The worker count heuristic
@@ -1004,6 +1383,11 @@ module caches static system info; `freemem()` calls the OS each time.
 
 ### 💻 Code Example
 
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: hardcoded separator + string concatenation
 const imgPath = __dirname + '/public/images/' + filename;
@@ -1037,7 +1421,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dir = path.join(__dirname, 'public');
 ```
 
-> **Code walkthrough:** The progression: string concat (breaks cross-platform)
+> **Code walkthrough:** The progression: string concat (breaks cross-platform)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > -> `path.join` (solves separators, not security) -> `path.resolve` +
 > `startsWith` (solves both). The `path.sep` suffix on the base prevents
 > partial matches: `/uploads-private` starting with `/uploads` would
@@ -1101,7 +1485,7 @@ import path from 'path';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Symptom: Files not found on Windows (works on macOS)**
 
@@ -1112,7 +1496,7 @@ console.log('path:', filePath); // Look for mixed separators / and \
 // FIX: Replace all hardcoded '/' with path.join/path.resolve
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 **Symptom: Worker threads underperforming in containers**
 
@@ -1136,7 +1520,7 @@ function getContainerCPUs() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using container. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1154,7 +1538,7 @@ function getContainerCPUs() {
 
 ---
 
-**Q1: You see `ReferenceError: __dirname is not defined`. Fix it and
+**[JUNIOR] Q1 - [MECHANISM] You see `ReferenceError: __dirname is not defined`. Fix it and**
 explain why it happens.** `[JUNIOR]` DEBUGGING
 
 > **Answer:**
@@ -1187,6 +1571,213 @@ explain why it happens.** `[JUNIOR]` DEBUGGING
 > CJS-style pattern from a tutorial. Also knowing that creating the
 > `__dirname` shim at the module level once (not inside functions) is
 > the correct pattern.
+
+---
+
+**[SENIOR] Q2 - [DEBUGGING] What is the security risk with path concatenation, and how do you prevent path traversal?**
+
+> **Answer:**
+>
+> Path traversal attacks use `../` sequences in user-supplied filenames to escape the intended directory and read arbitrary files from the server.
+>
+> ```javascript
+> // VULNERABLE: direct use of user input in path
+> app.get('/files/:name', (req, res) => {
+>   const filePath = './uploads/' + req.params.name;
+>   // If name = '../../etc/passwd', reads /etc/passwd
+>   res.sendFile(filePath);
+> });
+>
+> // FIXED: resolve and verify containment
+> import path from 'path';
+> const UPLOAD_DIR = path.resolve('./uploads');
+>
+> app.get('/files/:name', (req, res) => {
+>   const resolved = path.resolve(UPLOAD_DIR, req.params.name);
+>   if (!resolved.startsWith(UPLOAD_DIR + path.sep)) {
+>     return res.status(403).end();
+>   }
+>   res.sendFile(resolved);
+> });
+> ```
+>
+> `path.resolve` handles `../` sequences, URL-encoded traversal (`%2F`), and Unicode lookalikes. The `startsWith(UPLOAD_DIR + path.sep)` check prevents the edge case where the filename matches the directory prefix exactly.
+>
+> *What separates good from great:* Regex validation alone (e.g., `/^[\w-]+\.\w+$/`) is insufficient for path security. URL-encoded sequences bypass regex but are resolved by `path.resolve`. Always use containment check as the authoritative gate.
+
+---
+
+**[JUNIOR] Q3 - [MECHANISM] Why does `os.cpus().length` sometimes return the wrong value in containers?**
+
+> **Answer:**
+>
+> `os.cpus()` reads from the OS interface, which in a container reports the HOST machine's CPU count, not the container's CPU limit. A container configured with 0.5 CPU shares on a 32-core host reports `os.cpus().length = 32`.
+>
+> This affects worker thread pool sizing - a Node.js app that creates `os.cpus().length` workers will spawn 32 threads when it has only 0.5 CPU available, causing extreme thread contention.
+>
+> ```javascript
+> // Safer: use cgroup-aware CPU detection
+> function getContainerCPUCount() {
+>   try {
+>     // Read cgroup v2 CPU limit
+>     const quota = fs.readFileSync(
+>       '/sys/fs/cgroup/cpu.max', 'utf8'
+>     ).trim().split(' ');
+>     if (quota[0] === 'max') return os.cpus().length;
+>     return Math.ceil(parseInt(quota[0]) / parseInt(quota[1]));
+>   } catch {
+>     return os.cpus().length; // fallback for non-container
+>   }
+> }
+>
+> const WORKERS = Math.max(1, getContainerCPUCount());
+> ```
+>
+> *What separates good from great:* This is a production issue at scale. Apps running in Kubernetes with resource limits but no cgroup-aware CPU detection silently over-thread, causing p99 latency spikes under load.
+
+---
+
+**[JUNIOR] Q4 - [MECHANISM] What are the requirements for using `util.promisify`?**
+
+> **Answer:**
+>
+> `util.promisify` wraps a function that follows Node.js error-first callback convention (`(err, result) => void`) and returns a Promise-returning version.
+>
+> Requirements: (1) the function's last argument must be a callback, (2) the callback's first argument must be the error (`null` on success), (3) the callback's second argument is the success value.
+>
+> ```javascript
+> const { promisify } = require('util');
+> const fs = require('fs');
+>
+> // Works: fs.readFile follows error-first callback convention
+> const readFileAsync = promisify(fs.readFile);
+> const data = await readFileAsync('./file.txt', 'utf8');
+>
+> // Works: custom error-first callback function
+> function loadUser(id, callback) {
+>   db.query('SELECT * FROM users WHERE id = ?', [id], callback);
+> }
+> const loadUserAsync = promisify(loadUser);
+>
+> // Does NOT work: callback not error-first
+> function badCallback(result, err) { } // wrong order
+> // promisify(badCallback) - will never properly detect errors
+>
+> // Custom Promise return: use util.promisify.custom symbol
+> readFileAsync[util.promisify.custom] = (path, options) => {
+>   return new Promise((resolve, reject) => {
+>     // custom implementation
+>   });
+> };
+> ```
+>
+> *What separates good from great:* Many Node.js built-in functions already have Promise versions in `fs.promises`, `dns.promises`, etc. Use those instead of promisifying manually - they are more performant and correctly typed.
+
+---
+
+**[JUNIOR] Q5 - [DEBUGGING] Why does `path.sep` matter in regex patterns, and how do you use it correctly?**
+
+> **Answer:**
+>
+> `path.sep` is `/` on Unix/macOS and `\\` on Windows. Hardcoding `/` in path-related regex breaks on Windows deployments.
+>
+> ```javascript
+> import path from 'path';
+>
+> // WRONG on Windows (hardcoded Unix separator)
+> function getRelative(base, full) {
+>   return full.replace(base + '/', '');
+> }
+>
+> // WRONG: escaping issue - backslash in regex needs double escape
+> const sep = path.sep; // '\' on Windows
+> const regex = new RegExp(sep); // ERROR or wrong match
+>
+> // CORRECT: escape the separator for use in RegExp
+> const escapedSep = path.sep.replace(/\\/g, '\\\\');
+> const pathSepRegex = new RegExp(escapedSep, 'g');
+>
+> // BETTER: use path.relative instead of regex manipulation
+> const relative = path.relative(baseDir, fullPath);
+> ```
+>
+> In most cases, prefer `path.relative`, `path.join`, and `path.resolve` over manual string manipulation or regex. They handle separators correctly for the current OS.
+>
+> *What separates good from great:* Node.js path utilities normalize separators. `path.join('a', 'b')` always produces the correct result for the current OS. Only resort to regex when you have no alternative, and always use `path.sep` as the separator source.
+
+---
+
+**[JUNIOR] Q6 - [MECHANISM] What is `os.tmpdir()` and when should you use it?**
+
+> **Answer:**
+>
+> `os.tmpdir()` returns the OS-designated temporary directory (`/tmp` on Linux/macOS, `%TEMP%` on Windows). Use it when you need to write temporary files that should not persist beyond the current operation.
+>
+> ```javascript
+> import os from 'os';
+> import path from 'path';
+> import fs from 'fs/promises';
+> import crypto from 'crypto';
+>
+> async function processUpload(fileBuffer) {
+>   // Create a unique temp file path
+>   const tmpPath = path.join(
+>     os.tmpdir(),
+>     `upload-${crypto.randomUUID()}.tmp`
+>   );
+>
+>   try {
+>     await fs.writeFile(tmpPath, fileBuffer);
+>     // Process the file...
+>     const result = await processFile(tmpPath);
+>     return result;
+>   } finally {
+>     // Always clean up temp files
+>     await fs.unlink(tmpPath).catch(() => {}); // ignore if already deleted
+>   }
+> }
+> ```
+>
+> Important: in containers, `/tmp` may be memory-mapped (tmpfs). Writing large files to `/tmp` consumes container memory. For large temporary files, use a mounted volume instead.
+>
+> *What separates good from great:* Always clean up temp files in a `finally` block. Temp files in `/tmp` are not automatically cleaned during process lifetime - only on OS reboot or by explicit cleanup cron jobs.
+
+---
+
+**[JUNIOR] Q7 - [MECHANISM] What is the difference between `util.inspect` and `JSON.stringify` for debugging?**
+
+> **Answer:**
+>
+> `JSON.stringify` only handles JSON-serializable values. It silently drops functions, `undefined`, `Symbol`, and produces `[object Object]` for circular references (actually throws with a circular reference error).
+>
+> `util.inspect` is designed for debugging - it handles circular references, functions, class instances, Symbols, and produces human-readable output.
+>
+> ```javascript
+> import util from 'util';
+>
+> const obj = {
+>   fn: () => 'hello',         // JSON.stringify drops this
+>   undef: undefined,          // JSON.stringify drops this
+>   sym: Symbol('id'),         // JSON.stringify drops this
+>   date: new Date(),          // JSON.stringify converts to string
+>   nested: { deep: { data: 1 } },
+> };
+>
+> // JSON.stringify: { "date": "2024-01-01T..." }
+> // (fn, undef, sym all silently dropped)
+>
+> // util.inspect: shows everything
+> console.log(util.inspect(obj, { depth: Infinity, colors: true }));
+> // { fn: [Function: fn], undef: undefined, sym: Symbol(id), ... }
+>
+> // Circular reference handling:
+> const circ = {};
+> circ.self = circ;
+> JSON.stringify(circ);        // TypeError: circular structure
+> util.inspect(circ);          // { self: [Circular *1] }
+> ```
+>
+> *What separates good from great:* `util.inspect` accepts depth and colors options. Set `depth: Infinity` for fully-expanded objects. In production logging, use `JSON.stringify` with a replacer function to strip non-serializable values rather than using `inspect` (which produces non-parseable output).
 
 ---
 

@@ -98,7 +98,7 @@ PATTERN 3: Active-Active Multi-Master
   Use for: globally distributed IoT, gaming events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Region and Global Patterns example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Event ordering in global systems:
 ```
@@ -120,7 +120,7 @@ Solution options:
    provide causally consistent ordering
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Region and Global Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Global messaging is a set of trade-offs, not a single solution. The trade-offs are per-event-type: decide for each event class whether availability or consistency is the priority, and apply the matching pattern. Do not use the same global topology for all events.
@@ -351,7 +351,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 | Scale | 3 min | 1-2 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - Definition
+**[JUNIOR] Q1 - [CONCEPTUAL] Definition**
 **"What are the main patterns for global Kafka deployment and what trade-offs does each involve?"**
 
 *What to say:*
@@ -361,7 +361,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q2 - Mechanism
+**[JUNIOR] Q2 - [CONCEPTUAL] Mechanism**
 **"How does MirrorMaker 2 replicate consumer group offsets across clusters, and why does this matter for DR failover?"**
 
 *What to say:*
@@ -371,7 +371,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q3 - Comparison
+**[JUNIOR] Q3 - [CONCEPTUAL] Comparison**
 **"Compare Kafka MirrorMaker 2, Confluent Cluster Linking, and Apache Pulsar geo-replication for global messaging."**
 
 *What to say:*
@@ -381,7 +381,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q4 - Scenario
+**[MID] Q4 - [CONCEPTUAL] Scenario**
 **"Design a global order processing system serving US, EU, and APAC users with sub-100ms write latency and EU GDPR compliance."**
 
 *What to say:*
@@ -391,7 +391,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q5 - Debugging
+**[MID] Q5 - [DEBUGGING] Debugging**
 **"EU consumers are 5 minutes behind US producers on a globally replicated topic. It was under 30 seconds before a new data center was added. What changed?"**
 
 *What to say:*
@@ -401,7 +401,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q6 - Deep Dive
+**[MID] Q6 - [CONCEPTUAL] Deep Dive**
 **"Explain hybrid logical clocks (HLC) and how they enable causally consistent event ordering in global Kafka systems."**
 
 *What to say:*
@@ -411,7 +411,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q7 - Scenario
+**[SENIOR] Q7 - [CONCEPTUAL] Scenario**
 **"Your globally replicated system has an EU consumer that must never see a US-produced order before the corresponding EU inventory update. How do you guarantee this?"**
 
 *What to say:*
@@ -421,7 +421,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q8 - Behavioral
+**[SENIOR] Q8 - [CONCEPTUAL] Behavioral**
 **"Tell me about a time you had to make a trade-off decision in global messaging architecture."**
 
 *What to say (structure):*
@@ -431,7 +431,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q9 - Scale
+**[SENIOR] Q9 - [ARCHITECTURE] Scale**
 **"How does global event throughput change when you scale from 1 million to 1 billion events per day per region?"**
 
 *What to say:*
@@ -441,7 +441,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q10 - Misconception
+**[STAFF] Q10 - [CONCEPTUAL] Misconception**
 **"Global Kafka means one topic that all producers and consumers worldwide use."**
 
 *What to say:*
@@ -451,7 +451,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q11 - Deep Dive
+**[STAFF] Q11 - [CONCEPTUAL] Deep Dive**
 **"How do you handle the global event ordering problem for events that cross domain boundaries?"**
 
 *What to say:*
@@ -461,7 +461,7 @@ Fix: Implement schema registry federation. All schema changes must replicate to 
 
 ---
 
-#### Q12 - Edge Case
+**[STAFF] Q12 - [CONCEPTUAL] Edge Case**
 **"What happens to global event processing during a planned cross-region Kafka upgrade?"**
 
 *What to say:*
@@ -533,7 +533,7 @@ TOPOLOGY:
                          +-> Tokenize -> Global Fraud Cluster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

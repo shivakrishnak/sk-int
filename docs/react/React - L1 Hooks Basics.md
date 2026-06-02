@@ -130,7 +130,7 @@ function UserProfile({ userId }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This useEffect and Side Effect Management example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Why it matters:**
 
@@ -143,6 +143,18 @@ function UserProfile({ userId }) {
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // STALE DEPENDENCY BUG:
@@ -186,7 +198,7 @@ function UserData({ userId }) {
 }
 ```
 
-> **Code walkthrough:** The infinite loop from object-as-dependency is one
+> **Code walkthrough:** The infinite loop from object-as-dependency is oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of the trickiest useEffect bugs. On every render, `options` is a new
 > object reference (even if the values are identical). React compares
 > deps with `Object.is` - new reference = changed dependency = effect runs
@@ -226,42 +238,41 @@ function UserData({ userId }) {
 
 **Misconception 1: useEffect runs after every render by default and that's fine for performance.**
 
-Running useEffect without dependencies means it runs after every single render - including re-renders from parent state changes. For API calls, this creates a request waterfall: render → request → re-render → request → infinite loop if the response updates state. Every useEffect must have a dependency array that accurately reflects the values it uses. An empty `[]` means run once on mount; `[dependency]` means run when dependency changes.
+Running useEffect without dependencies means it runs after every single render -
 
 **Misconception 2: You should always use useEffect for data fetching.**
 
-React's own documentation now recommends against using useEffect for data fetching in new code. The reasons: no request deduplication, no caching, no automatic refetch on focus, and the potential for race conditions with stale responses. Use React Query, SWR, or RTK Query for data fetching. In Next.js, use server components or `getServerSideProps`. useEffect is appropriate for DOM side effects, subscriptions, and integrating with third-party libraries.
+React's own documentation now recommends against using useEffect for data fetchi
 
 ---
 
 ### 🚨 Failure Modes and Diagnosis
 
-**Failure Mode 1: Race condition in useEffect causes stale state from an out-of-order response.**
+**Failure Mode 1: Race condition in useEffect causes stale state from an out-of-
 
-Symptom: switching between tabs quickly shows data from a previous tab; search results show results for a different query than what's in the input. Root cause: two effects are in-flight; the earlier one resolves AFTER the later one and overwrites the correct state. Diagnosis: add request ID logging; observe order of API responses vs component state. Fix: use an effect cleanup function with an `isCancelled` flag: `let cancelled = false; fetch(url).then(d => !cancelled && setData(d)); return () => { cancelled = true; }`.
+Symptom: switching between tabs quickly shows data from a previous tab; search r
 
-**Failure Mode 2: Missing cleanup causes memory leaks and update-on-unmounted-component errors.**
+**Failure Mode 2: Missing cleanup causes memory leaks and update-on-unmounted-co
 
-Symptom: "Can't perform a React state update on an unmounted component" warning; event listeners or subscriptions still active after component unmounts. Root cause: useEffect subscribes to events or starts async operations without returning a cleanup function. Fix: always return a cleanup function for subscriptions: `useEffect(() => { const sub = subscribe(); return () => sub.unsubscribe(); }, [])`.
+Symptom: "Can't perform a React state update on an unmounted component" warning;
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Time | Key Signal |
-|---|---------|-----------|
-| useEffect lifecycle | 3-4 min | After paint |
-| Dependency array rules | 3-4 min | Exhaustive deps |
-| Cleanup function | 3-4 min | Memory leak prevention |
-| Race condition fix | 4-5 min | Cancellation pattern |
-| Infinite loop causes | 3-4 min | Object reference |
-| useEffect vs useLayoutEffect | 2-3 min | Before vs after paint |
-| When NOT to use useEffect | 3-4 min | Over-use pattern |
+  | Scenario                     | Time    | Key Signal             |  
+|----------------------------|-------|----------------------|
+  | useEffect lifecycle          | 3-4 min | After paint            |  
+  | Dependency array rules       | 3-4 min | Exhaustive deps        |  
+  | Cleanup function             | 3-4 min | Memory leak prevention |  
+  | Race condition fix           | 4-5 min | Cancellation pattern   |  
+  | Infinite loop causes         | 3-4 min | Object reference       |  
+  | useEffect vs useLayoutEffect | 2-3 min | Before vs after paint  |  
+  | When NOT to use useEffect    | 3-4 min | Over-use pattern       |  
 
 ---
 
-**Q1: How do you prevent race conditions in useEffect data fetching?**
-`[SENIOR]` DEBUGGING
+**[SENIOR] Q1 - [DEBUGGING] How do you prevent race conditions in useEffect data fetching?**
 
 > **Answer:**
 >
@@ -328,21 +339,21 @@ Symptom: "Can't perform a React state update on an unmounted component" warning;
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # useRef and DOM Access
@@ -365,7 +376,7 @@ access, mutable values without re-render, and forwarding refs to children
 
 **3 minutes:**
 
-> DOM access: use `useRef` to call imperative DOM APIs: focus(), scrollIntoView(),
+> DOM access: use `useRef` to call imperative DOM APIs: focus(), scrollIntoView(
 > getBoundingClientRect(). Never store refs in state (causes re-renders);
 > useRef is specifically for "not trigger re-render" mutations.
 >
@@ -476,7 +487,7 @@ function Form() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This useRef and DOM Access example demonstrates variableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -519,7 +530,7 @@ function MyComponent(props) {
 // Critical for debugging unnecessary re-renders
 ```
 
-> **Code walkthrough:** The `useWhyDidYouUpdate` hook illustrates both
+> **Code walkthrough:** The `useWhyDidYouUpdate` hook illustrates bothice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `useRef` patterns simultaneously: (1) persisting a value across renders
 > (`prevProps.current` stores the previous render's props), and (2) no
 > re-render triggered when `prevProps.current` is mutated (we don't want
@@ -593,8 +604,7 @@ Symptom: interval timer fires cause unnecessary re-renders updating the UI; logg
 
 ---
 
-**Q1: When should you use useRef instead of useState?** `[SENIOR]`
-DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] When should you use useRef instead of useState?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -793,7 +803,7 @@ function SearchInput({ onSearch }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Handling in React example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -805,6 +815,12 @@ this changes how `stopPropagation()` interacts with handlers outside React.
 ---
 
 ### 💻 Code Example
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```jsx
 // COMMON MISTAKE: event handler with async and stale event
@@ -837,7 +853,7 @@ function handleChange(e) {
 }
 ```
 
-> **Code walkthrough:** In React 16, SyntheticEvent objects were reused
+> **Code walkthrough:** In React 16, SyntheticEvent objects were reusedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (pooled) for performance. After an event handler returned, the event
 > was "nullified" (all properties set to null). Accessing event properties
 > in async callbacks caused "null" errors. `e.persist()` opted out of
@@ -912,8 +928,7 @@ Symptom: event handler reads an outdated value that was current when the compone
 
 ---
 
-**Q1: How does React's event system differ from native DOM events?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q1 - [MECHANISM] How does React's event system differ from native DOM events?**
 
 > **Answer:**
 >

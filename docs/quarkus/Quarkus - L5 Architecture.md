@@ -196,7 +196,7 @@ spec:
             periodSeconds: 5
 ```
 
-> **Code walkthrough:** @Liveness and @Readiness annotate
+> **Code walkthrough:** @Liveness and @Readiness annotateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > HealthCheck implementations. Quarkus registers them
 > at /q/health/live and /q/health/ready. The liveness
 > probe checks if the DB connection is valid (1-second
@@ -218,6 +218,89 @@ Dev Services for local development."
 **Staff:** "Quarkus startup speed is the architectural
 advantage. HPA scale-up adds capacity in <5 seconds
 for Quarkus vs 30+ seconds for Spring. This allows
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Running Quarkus in Kubernetes microservices means designing
+services that leverage Quarkus's build-time augmentation for Kubernetes-native
+deployment characteristics: auto-generated Kubernetes manifests (`quarkus-kubernetes`
+extension), Knative integration, operator-friendly health checks, and container
+resource right-sizing.
+
+**Mechanism:** The `quarkus-kubernetes` extension generates Kubernetes Deployment,
+Service, ConfigMap, and Ingress manifests at build time from `application.properties`
+config. Health check probes are auto-configured from MicroProfile Health endpoints.
+Container resource requests/limits are set via `quarkus.kubernetes.resources.*`.
+The extension supports generating manifests for vanilla Kubernetes, OpenShift,
+Knative, and Docker Compose from the same build.
+
+**Trade-off:**
+
+**Positive:** Manifest generation from application config reduces configuration
+drift between code and deployment. Small container images (native: ~50MB vs
+JVM: 200-300MB) reduce K8s image pull time and improve pod scheduling density.
+
+**Negative:** Generated manifests may not cover all organizational Kubernetes
+requirements (network policies, pod security policies). Additional manifests
+(Ingress, NetworkPolicy) must be maintained separately.
+
+**Production Reality:** Quarkus's memory efficiency enables tighter Kubernetes
+resource requests (100Mi vs 512Mi for Spring Boot). Tighter requests allow more
+pods per node, lower cluster costs, and more aggressive HPA autoscaling triggers.
+
+**Decision:** Use `quarkus-kubernetes` for manifest generation in new projects.
+Pair with `quarkus-container-image-jib` for native-optimized container images.
+Set resource requests to measured P95 usage, not conservative estimates.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Quarkus always requires native image for Kubernetes benefits**
+**Reality:** Quarkus JVM mode provides significant Kubernetes improvements over
+Spring Boot without native image. JVM Quarkus: 200MB vs Spring Boot 400MB,
+5s vs 20s startup. For most Kubernetes workloads, JVM mode achieves a 2-3x pod
+density improvement with zero native image build complexity.
+
+**Misconception 2: quarkus-kubernetes generates production-ready manifests**
+**Reality:** Generated manifests provide a solid foundation but lack
+organization-specific requirements: PodDisruptionBudgets, NetworkPolicies,
+ServiceAccounts with RBAC, PodSecurityContext, and topology spread constraints.
+Use generated manifests as a starting point and extend with Kustomize overlays.
+
+**Misconception 3: Small container images always deploy faster**
+**Reality:** Container image size affects initial pull time (less to download)
+but not subsequent startup time (image is cached). The startup speed benefit
+comes from Quarkus's fast initialization, not the image size. Image size matters
+most for: cold node provisioning, ECR/GCR pull costs at high image churn.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Pod killed during startup before readiness check passes**
+**Symptom:** Pod oscillates between `Running` and `Terminating`. Logs show
+application starting successfully but pod is killed. Events show
+`Liveness probe failed`.
+**Diagnosis:** Kubernetes liveness probe starts before the application is ready.
+Default `initialDelaySeconds=5` is too short for services with data loading.
+**Fix:** Set `quarkus.kubernetes.liveness-probe.initial-delay=30` (or appropriate
+value for your startup time). Or use `startupProbe` with higher failure threshold:
+`quarkus.kubernetes.startup-probe.failure-threshold=15`.
+
+**Failure 2: OOMKilled under normal load with conservative memory limits**
+**Symptom:** Pod crashes with OOMKilled at normal load levels. Memory limit
+set at twice the startup RSS but insufficient at load.
+**Diagnosis:** Memory limit set based on startup RSS measurement, not peak load
+RSS. Under load, GC pause, Metaspace growth, or off-heap buffers push usage
+above the limit.
+**Fix:** Run a load test and measure peak RSS at P99 load. Set limit to
+`peak_rss * 1.25`. Include both heap (`-Xmx`) and off-heap (metaspace,
+direct buffers, native) in the calculation.
+
 tighter autoscaling triggers: scale at 70% CPU instead
 of 50%, reducing base cost."
 
@@ -231,6 +314,160 @@ of 50%, reducing base cost."
 | Staff | 12 min | Autoscaling trade-offs, density, cost optimization |
 
 ---
+
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] Production service using Quarkus in Kubernetes Microservices starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus in Kubernetes Microservices-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last.
+
+For Quarkus in Kubernetes Microservices specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation.
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] What are the key trade-offs of Quarkus in Kubernetes Microservices? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus in Kubernetes Microservices, not just the benefits.
+
+Quarkus in Kubernetes Microservices is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance.
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity.
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q10 - [ARCHITECTURE] How does Quarkus in Kubernetes Microservices fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus in Kubernetes Microservices in a real production system, not just in isolation.
+
+Quarkus in Kubernetes Microservices in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus in Kubernetes Microservices typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion).
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus in Kubernetes Microservices affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q11 - [PRODUCTION] What Quarkus in Kubernetes Microservices configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus in Kubernetes Microservices.
+
+Critical pre-production checklist for Quarkus in Kubernetes Microservices: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents.
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured.
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q12 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus in Kubernetes Microservices resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus in Kubernetes Microservices knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome).
+
+Strong answers for Quarkus in Kubernetes Microservices include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus in Kubernetes Microservices actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus in Kubernetes Microservices in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus in Kubernetes Microservices starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus in Kubernetes Microservices-related issues. (Generated output: target/kuber, Q2)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Generated output: target/kuber, Q2)
+
+For Quarkus in Kubernetes Microservices specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Generated output: target/kuber, Q2)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Generated output: target/kuber, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus in Kubernetes Microservices? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus in Kubernetes Microservices, not just the benefits. (Generated output: target/kuber, Q3)
+
+Quarkus in Kubernetes Microservices is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Generated output: target/kuber, Q3)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Generated output: target/kuber, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Generated output: target/kuber, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus in Kubernetes Microservices fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus in Kubernetes Microservices in a real production system, not just in isolation. (Generated output: target/kuber, Q4)
+
+Quarkus in Kubernetes Microservices in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability). (Generated output: target/kuber, Q4)
+
+Architectural enablements: Quarkus in Kubernetes Microservices typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden. (Generated output: target/kuber, Q4)
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Generated output: target/kuber, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus in Kubernetes Microservices affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus in Kubernetes Microservices configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus in Kubernetes Microservices. (Generated output: target/kuber, Q5)
+
+Critical pre-production checklist for Quarkus in Kubernetes Microservices: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs). (Generated output: target/kuber, Q5)
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Generated output: target/kuber, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Generated output: target/kuber, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus in Kubernetes Microservices resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus in Kubernetes Microservices knowledge under pressure, and whether you learn from production experience. (Generated output: target/kuber, Q6)
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Generated output: target/kuber, Q6)
+
+Strong answers for Quarkus in Kubernetes Microservices include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus in Kubernetes Microservices actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence. (Generated output: target/kuber, Q6)
+
+If you have not used Quarkus in Kubernetes Microservices in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts. (Generated output: target/kuber, Q6)
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus in Kubernetes Microservices handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus in Kubernetes Microservices at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus in Kubernetes Microservices is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes.
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern).
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
 
 **[STAFF] Q1 - How does Quarkus startup speed
 change Kubernetes autoscaling strategy?**
@@ -266,7 +503,7 @@ spec:
     stabilizationWindowSeconds: 60   # Scale in faster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Quarkus: aggressive triggers example demonstrates YAML configuration structure. **KEY MECHANISM:** the YAML parser builds a document tree from indentation and special characters. **WHY IT MATTERS:** unquoted colon-space sequences and special characters cause silent parse errors in production. **TAKEAWAY: quote all string values containing YAML special characters.**
 
 Native image adds the serverless benefit: FaaS cold start
 is <100ms. Spring cold start in Lambda is 10-30 seconds
@@ -464,7 +701,7 @@ time aws lambda invoke \
 # Duration: 80ms (native) vs 10s (JVM, first invoke)
 ```
 
-> **Code walkthrough:** OrderLambdaHandler extends RequestHandler
+> **Code walkthrough:** OrderLambdaHandler extends RequestHandlerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and uses @Inject for CDI beans - Quarkus CDI context
 > is active per invocation. The HTTP handler (QuarkusRequestHandler)
 > maps API Gateway events to JAX-RS requests - existing
@@ -486,6 +723,94 @@ work). Native build: container-build for Linux binary."
 Knative vs always-on. Lambda: spiky traffic (10x scale
 in seconds). Knative: scale-to-zero for dev/test environments,
 batch endpoints. Always-on: steady high traffic (cost-effective
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus serverless architecture covers running Quarkus
+applications on AWS Lambda, Azure Functions, Google Cloud Run, and Knative
+with native image for cold-start optimization. The `quarkus-funqy` and
+`quarkus-amazon-lambda` extensions provide serverless function adapters that
+map HTTP, SQS, S3, and DynamoDB events to Quarkus handler methods.
+
+**Mechanism:** For AWS Lambda with native image:
+1. Quarkus builds a GraalVM native binary compiled for Linux x86_64 (via
+   container build: `quarkus.native.container-build=true`).
+2. A `bootstrap` shell script wraps the binary as the Lambda function handler.
+3. Lambda invokes `bootstrap` which starts the Quarkus native binary in
+   <100ms (cold start), processes the event, and returns the response.
+4. Subsequent invocations reuse the warm Lambda container - startup only
+   occurs on cold starts (new container allocation).
+
+**Trade-off:**
+
+**Positive:** Native image cold starts <200ms vs JVM cold starts 5-20s.
+Pay-per-invocation billing model - zero cost during zero traffic.
+
+**Negative:** 5-20 minute native build time per deployment. Per-invocation
+billing is expensive for high-traffic services (>1M/month). Lambda concurrency
+limits require architecture-level design.
+
+**Production Reality:** Quarkus serverless is economically justified for:
+event-driven handlers (S3 triggers, SQS consumers), API endpoints with highly
+variable traffic (peaks followed by silence), scheduled jobs. Avoid for
+services with consistent high traffic where always-on ECS/EKS is cheaper.
+
+**Decision:** Use Lambda/serverless when: traffic is sporadic, cold start SLA
+is acceptable (or native image eliminates the concern), and event-driven
+integration with AWS services is needed. Use Kubernetes for: consistent
+traffic, complex stateful services, multi-cloud requirements.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Quarkus Lambda requires native image**
+**Reality:** Quarkus on Lambda works in both JVM mode and native mode. JVM mode
+uses a custom Lambda runtime (`quarkus-amazon-lambda` provides a SnapStart-
+compatible JVM runtime). AWS Lambda SnapStart caches the JVM-initialized state,
+reducing JVM cold starts to <1s for compatible functions. Native is not required
+if SnapStart is available.
+
+**Misconception 2: Serverless always costs less than container services**
+**Reality:** Lambda pay-per-invocation pricing is cheaper than always-on ECS
+ONLY when average invocations/month are below a crossover point. For a service
+with >1M invocations/month at >100ms duration, always-on ECS Fargate is
+typically cheaper. Calculate before choosing.
+
+**Misconception 3: Quarkus Funqy is required for Lambda functions**
+**Reality:** Funqy is an optional portable function API that works across Lambda,
+Azure Functions, Knative, and Google Cloud Run. Standard AWS Lambda
+`RequestHandler<I, O>` interfaces work with Quarkus Lambda directly. Use Funqy
+for portability; use raw Lambda interfaces for AWS-specific features.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Cold start exceeds 10s SLA in Lambda**
+**Symptom:** Lambda p99 cold start duration > 10 seconds. Users experience
+request timeouts on first invocation. CloudWatch shows cold starts at
+container recycling intervals.
+**Diagnosis:** Running JVM mode without SnapStart. Check Lambda function
+configuration for runtime type and SnapStart status.
+**Fix:** Either: enable GraalVM native image build (`./mvnw package -Pnative
+-Dquarkus.native.container-build=true`) for <200ms cold starts, or enable
+AWS Lambda SnapStart for Java 21 runtime.
+
+**Failure 2: Lambda function times out on first request after native build**
+**Symptom:** Lambda executes successfully but times out (max 15 minutes for
+Lambda). Works in JVM mode.
+**Diagnosis:** Native build includes classes that require heavy initialization
+at first invocation (database connection pool, HTTP client connection). These
+are fine at Kubernetes startup (long-lived) but exceed Lambda timeout on cold
+start.
+**Fix:** Configure connection pool minimum size to 0 and maximum to 1 for
+Lambda functions. Use `quarkus.datasource.jdbc.min-size=0` for datasource.
+Use `@Startup` bean for pre-warming critical connections on cold start.
+
 at scale). Native image enables all three patterns with
 acceptable cold start."
 
@@ -499,6 +824,160 @@ acceptable cold start."
 | Staff | 10 min | Serverless trade-offs, cost modeling |
 
 ---
+
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] Production service using Quarkus Serverless Architecture starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Serverless Architecture-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Duration: 80ms (native) vs 10s, Q8)
+
+For Quarkus Serverless Architecture specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Duration: 80ms (native) vs 10s, Q8)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] What are the key trade-offs of Quarkus Serverless Architecture? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Serverless Architecture, not just the benefits.
+
+Quarkus Serverless Architecture is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Duration: 80ms (native) vs 10s, Q9)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Duration: 80ms (native) vs 10s, Q9)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q10 - [ARCHITECTURE] How does Quarkus Serverless Architecture fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Serverless Architecture in a real production system, not just in isolation.
+
+Quarkus Serverless Architecture in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Serverless Architecture typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Duration: 80ms (native) vs 10s, Q10)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Serverless Architecture affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q11 - [PRODUCTION] What Quarkus Serverless Architecture configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Serverless Architecture.
+
+Critical pre-production checklist for Quarkus Serverless Architecture: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Duration: 80ms (native) vs 10s, Q11)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Duration: 80ms (native) vs 10s, Q11)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q12 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Serverless Architecture resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Serverless Architecture knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Duration: 80ms (native) vs 10s, Q12)
+
+Strong answers for Quarkus Serverless Architecture include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Serverless Architecture actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Serverless Architecture in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Serverless Architecture starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Serverless Architecture-related issues. (Duration: 80ms (native) vs 10s, Q2)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Duration: 80ms (native) vs 10s, Q2)
+
+For Quarkus Serverless Architecture specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Duration: 80ms (native) vs 10s, Q2)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Duration: 80ms (native) vs 10s, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Serverless Architecture? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Serverless Architecture, not just the benefits. (Duration: 80ms (native) vs 10s, Q3)
+
+Quarkus Serverless Architecture is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Duration: 80ms (native) vs 10s, Q3)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Duration: 80ms (native) vs 10s, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Duration: 80ms (native) vs 10s, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Serverless Architecture fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Serverless Architecture in a real production system, not just in isolation. (Duration: 80ms (native) vs 10s, Q4)
+
+Quarkus Serverless Architecture in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability). (Duration: 80ms (native) vs 10s, Q4)
+
+Architectural enablements: Quarkus Serverless Architecture typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden. (Duration: 80ms (native) vs 10s, Q4)
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Duration: 80ms (native) vs 10s, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Serverless Architecture affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Serverless Architecture configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Serverless Architecture. (Duration: 80ms (native) vs 10s, Q5)
+
+Critical pre-production checklist for Quarkus Serverless Architecture: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs). (Duration: 80ms (native) vs 10s, Q5)
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Duration: 80ms (native) vs 10s, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Duration: 80ms (native) vs 10s, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Serverless Architecture resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Serverless Architecture knowledge under pressure, and whether you learn from production experience. (Duration: 80ms (native) vs 10s, Q6)
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Duration: 80ms (native) vs 10s, Q6)
+
+Strong answers for Quarkus Serverless Architecture include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Serverless Architecture actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence. (Duration: 80ms (native) vs 10s, Q6)
+
+If you have not used Quarkus Serverless Architecture in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts. (Duration: 80ms (native) vs 10s, Q6)
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Serverless Architecture handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Serverless Architecture at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Serverless Architecture is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Duration: 80ms (native) vs 10s, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Duration: 80ms (native) vs 10s, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
 
 **[STAFF] Q1 - When should you NOT use serverless
 for a Quarkus service?**
@@ -763,7 +1242,7 @@ public class OrderResource {
 }
 ```
 
-> **Code walkthrough:** The annotation mapping is nearly
+> **Code walkthrough:** The annotation mapping is nearlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > 1:1 for service classes. The key differences: @Value
 > becomes @ConfigProperty, @EventListener becomes @Observes,
 > ResponseEntity becomes Response (or Uni<Response> for
@@ -783,6 +1262,93 @@ replace Spring events."
 **Staff:** "Migration decision criteria: startup time
 matters (Kubernetes, Lambda)? Migrate. Memory density
 matters (high pod count)? Migrate. Stable Spring monolith
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Migrating from Spring Boot to Quarkus is a deliberate
+refactoring project that rewrites the web layer (Spring MVC -> JAX-RS/RESTEasy),
+dependency injection (Spring DI -> CDI), data access (Spring Data JPA -> Panache),
+and security (Spring Security -> SmallRye JWT/OIDC). The migration is NOT
+automated and requires deep understanding of both frameworks.
+
+**Mechanism:** Migration phases:
+1. **Assessment:** Map Spring beans/controllers/repositories to CDI/JAX-RS
+   equivalents. Identify incompatible libraries (Spring Cloud, Spring Security).
+2. **Scaffold:** Create Quarkus project with equivalent extensions.
+3. **Layer-by-layer migration:** Start with domain model (entities/Panache),
+   then service layer (CDI beans), then REST layer (JAX-RS), then security.
+4. **Test parity:** Ensure `@QuarkusTest` coverage matches existing Spring tests.
+5. **Performance validation:** Measure startup/memory improvement vs baseline.
+
+**Trade-off:**
+
+**Positive:** Post-migration: 3-5x faster startup, 2-4x lower memory, modern
+CDI-based programming model, native image option.
+
+**Negative:** Full rewrite risk. Migration timeline: 2-8 weeks per service
+depending on complexity. Spring ecosystem features without Quarkus equivalents
+require workarounds.
+
+**Production Reality:** Successful migrations use the strangler-fig pattern:
+keep the Spring service running, migrate endpoint by endpoint behind a gateway,
+validate each migrated endpoint in production before removing the Spring version.
+
+**Decision:** Migrate when: Kubernetes cost reduction is the primary driver,
+team has time and expertise for refactoring, the service is small-to-medium.
+Do not migrate when: service uses deep Spring Cloud features (Circuit Breaker,
+Config Server), service is stable and meeting SLAs with acceptable costs.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Spring compatibility extensions make migration transparent**
+**Reality:** `quarkus-spring-web`, `quarkus-spring-di`, and `quarkus-spring-data-jpa`
+provide BASIC compatibility for common Spring annotations. They do NOT support:
+Spring AOP, Spring Events, Spring Batch, Spring Cloud, Spring Security, or
+advanced Spring Data features. These extensions reduce migration effort for
+simple services but are insufficient for complex Spring applications.
+
+**Misconception 2: Spring Data JPA and Quarkus Panache are equivalent**
+**Reality:** Spring Data JPA uses interface-based repository with method name
+parsing (`findByEmailAndStatus()`). Panache uses either Active Record
+(`User.find("email = ?1", email)`) or explicit JPQL. Method name convention
+is replaced by explicit JPQL or Panache's shorthand query API. Existing Spring
+Data query methods must be rewritten.
+
+**Misconception 3: Migration should happen all at once**
+**Reality:** Big-bang rewrites have the highest risk. The safest migration
+strategy is incremental: add Quarkus service alongside Spring service, migrate
+one endpoint at a time, route traffic via an API gateway, and only decommission
+the Spring service after all endpoints are validated in production.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Spring Security migration stalls the project**
+**Symptom:** Migration blocked for weeks because Spring Security's `SecurityConfig`
+class has no direct CDI equivalent. Team cannot find a clean migration path.
+**Diagnosis:** Spring Security uses a filter chain and WebSecurityConfigurerAdapter
+pattern - fundamentally different from Quarkus OIDC/JWT. There is no 1:1
+mapping.
+**Fix:** Treat security as a complete rewrite: identify the security requirements
+(authentication method, authorization rules), implement them with Quarkus OIDC
+and `@RolesAllowed`, and do not attempt to port Spring Security configuration
+directly.
+
+**Failure 2: CDI bean lookup fails for dynamically-typed beans**
+**Symptom:** `Instance<T>.select(type)` does not find beans that Spring's
+`ApplicationContext.getBean(type)` found easily.
+**Diagnosis:** Spring's application context indexes all classes at runtime.
+CDI requires beans to be discovered at build time. Dynamically-loaded bean
+types or beans from external JARs without CDI annotations are not discoverable.
+**Fix:** Register synthetic beans via `SyntheticBeanBuildItem` in a Quarkus
+extension. Or use `@RegisterForReflection` and `CDI.current().select(type)`.
+
 with no cloud-native needs? Don't migrate. The migration
 cost must be justified by measurable benefits."
 
@@ -796,6 +1362,160 @@ cost must be justified by measurable benefits."
 | Staff | 12 min | Migration strategy selection, risk assessment |
 
 ---
+
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] Production service using Quarkus Migration Strategy from Spring starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Migration Strategy from Spring-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Migration Strategy fro, Q8)
+
+For Quarkus Migration Strategy from Spring specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Migration Strategy fro, Q8)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] What are the key trade-offs of Quarkus Migration Strategy from Spring? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Migration Strategy from Spring, not just the benefits.
+
+Quarkus Migration Strategy from Spring is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Migration Strategy fro, Q9)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Migration Strategy fro, Q9)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q10 - [ARCHITECTURE] How does Quarkus Migration Strategy from Spring fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Migration Strategy from Spring in a real production system, not just in isolation.
+
+Quarkus Migration Strategy from Spring in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Migration Strategy from Spring typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Quarkus Migration Strategy fro, Q10)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Migration Strategy from Spring affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q11 - [PRODUCTION] What Quarkus Migration Strategy from Spring configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Migration Strategy from Spring.
+
+Critical pre-production checklist for Quarkus Migration Strategy from Spring: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Quarkus Migration Strategy fro, Q11)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Quarkus Migration Strategy fro, Q11)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q12 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Migration Strategy from Spring resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Migration Strategy from Spring knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Quarkus Migration Strategy fro, Q12)
+
+Strong answers for Quarkus Migration Strategy from Spring include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Migration Strategy from Spring actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Migration Strategy from Spring in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Migration Strategy from Spring starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Migration Strategy from Spring-related issues. (Quarkus Migration Strategy fro, Q2)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Migration Strategy fro, Q2)
+
+For Quarkus Migration Strategy from Spring specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Quarkus Migration Strategy fro, Q2)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Migration Strategy fro, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Migration Strategy from Spring? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Migration Strategy from Spring, not just the benefits. (Quarkus Migration Strategy fro, Q3)
+
+Quarkus Migration Strategy from Spring is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Quarkus Migration Strategy fro, Q3)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Migration Strategy fro, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Migration Strategy fro, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Migration Strategy from Spring fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Migration Strategy from Spring in a real production system, not just in isolation. (Quarkus Migration Strategy fro, Q4)
+
+Quarkus Migration Strategy from Spring in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability). (Quarkus Migration Strategy fro, Q4)
+
+Architectural enablements: Quarkus Migration Strategy from Spring typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden. (Quarkus Migration Strategy fro, Q4)
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Quarkus Migration Strategy fro, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Migration Strategy from Spring affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Migration Strategy from Spring configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Migration Strategy from Spring. (Quarkus Migration Strategy fro, Q5)
+
+Critical pre-production checklist for Quarkus Migration Strategy from Spring: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs). (Quarkus Migration Strategy fro, Q5)
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Quarkus Migration Strategy fro, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Quarkus Migration Strategy fro, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Migration Strategy from Spring resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Migration Strategy from Spring knowledge under pressure, and whether you learn from production experience. (Quarkus Migration Strategy fro, Q6)
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Quarkus Migration Strategy fro, Q6)
+
+Strong answers for Quarkus Migration Strategy from Spring include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Migration Strategy from Spring actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence. (Quarkus Migration Strategy fro, Q6)
+
+If you have not used Quarkus Migration Strategy from Spring in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts. (Quarkus Migration Strategy fro, Q6)
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Migration Strategy from Spring handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Migration Strategy from Spring at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Migration Strategy from Spring is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Quarkus Migration Strategy fro, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Quarkus Migration Strategy fro, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
 
 **[STAFF] Q1 - How do you de-risk a Spring to
 Quarkus migration for a critical service?**
@@ -1100,7 +1820,7 @@ public class ConfirmOrderUseCase {
 }
 ```
 
-> **Code walkthrough:** The domain module (order-domain)
+> **Code walkthrough:** The domain module (order-domain)ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > has no Quarkus dependencies - pure Java with domain
 > logic and port interfaces. order-persistence implements
 > the OrderRepository port using Panache - the persistence
@@ -1122,6 +1842,89 @@ with no framework deps for clean architecture."
 teams: domain team writes order-domain with no Quarkus
 knowledge, persistence team implements adapters, HTTP
 team implements controllers. The assembler (order-app)
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus multi-module projects organize a complex application
+into Maven/Gradle modules: domain modules (no Quarkus dependency), infrastructure
+modules (Panache entities, repositories), application modules (REST layer), and
+the assembler module (just `quarkus-bom` + dependencies, no code). This structure
+enables independent compilation, reuse, and testing.
+
+**Mechanism:** Quarkus CDI scan crosses module boundaries via Jandex:
+1. Each module that contains CDI beans must have a Jandex index (`jandex.idx`)
+   in its JAR for Quarkus to discover its beans at build time.
+2. Add `jandex-maven-plugin` to each module OR add
+   `quarkus.index-dependency.<module>=<groupId>:<artifactId>` to the assembler.
+3. The assembler module contains only the main class and `pom.xml` with all
+   module dependencies - it performs the augmentation that wires all modules.
+4. Entity classes in domain modules need Hibernate enhancer and must be on
+   the Jandex index for JPA to discover them.
+
+**Trade-off:**
+
+**Positive:** Domain modules have no Quarkus coupling - testable with plain JUnit.
+Infrastructure modules testable with lightweight Quarkus test slices.
+
+**Negative:** Jandex index configuration across modules is error-prone.
+Missing index causes beans or entities from a module to be silently undiscovered.
+
+**Production Reality:** The #1 multi-module Quarkus issue is missing Jandex
+index in a module. The symptom is `UnsatisfiedDependencyException` for a bean
+that clearly exists - because CDI cannot see it without the index.
+
+**Decision:** Structure Quarkus multi-module projects with a dedicated assembler
+module. Add `jandex-maven-plugin` to every module with CDI beans or JPA entities.
+Verify Jandex in CI: `jar tf <module>.jar | grep jandex.idx`.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: All modules in a multi-module project are scanned automatically**
+**Reality:** Quarkus CDI scan operates on the classpath, but ONLY classes in
+a Jandex index are processed for bean discovery and JPA entity enhancement.
+Modules without Jandex indexes are invisible to CDI and JPA. This is NOT
+automatic - each module requires explicit Jandex generation.
+
+**Misconception 2: The assembler module must contain all application code**
+**Reality:** The assembler module should contain ZERO application code - only
+the `pom.xml` with all module dependencies and Quarkus BOM. The assembler's
+purpose is augmentation orchestration, not code. Code belongs in domain,
+infrastructure, or application modules.
+
+**Misconception 3: Multi-module structure always improves build speed**
+**Reality:** Maven multi-module parallelism (`-T 4`) can speed builds, but
+the Quarkus augmentation phase (in the assembler) is always sequential and
+cannot be parallelized. Build speed improvement comes from parallel compilation
+of independent modules, not augmentation.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: CDI bean from external module not discovered**
+**Symptom:** `UnsatisfiedResolutionException` for a bean class that exists in
+a dependency module. Works when moved to the assembler module.
+**Diagnosis:** The dependency module's JAR does not contain `META-INF/jandex.idx`.
+Verify: `jar tf <module>.jar | grep jandex.idx`. No output = missing index.
+**Fix:** Add to the missing module's pom.xml:
+`<plugin><groupId>io.smallrye</groupId><artifactId>jandex-maven-plugin</artifactId>`
+Or in assembler: `quarkus.index-dependency.module=<groupId>:<artifactId>`.
+
+**Failure 2: Hibernate entities from domain module not enhanced**
+**Symptom:** `LazyInitializationException` on eager fields or dirty checking not
+working for entities in a domain module. Works for entities in the assembler.
+**Diagnosis:** Hibernate entity enhancement requires Jandex index to discover
+entities and the Quarkus Hibernate extension bytecode enhancer. Missing index
+means enhancement is skipped silently.
+**Fix:** Add Jandex to the domain module. Verify with
+`quarkus.hibernate-orm.log.queries-slower-than-ms=0` to confirm entities are
+properly enhanced (enhanced entities show better SQL efficiency).
+
 just wires them. Tests per module: unit tests per module,
 integration tests in order-app."
 
@@ -1135,6 +1938,160 @@ integration tests in order-app."
 | Staff | 10 min | Clean architecture, Jandex index, team structure |
 
 ---
+
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] Production service using Quarkus Multi-Module Projects at Scale starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Multi-Module Projects at Scale-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Multi-Module Projects , Q8)
+
+For Quarkus Multi-Module Projects at Scale specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Multi-Module Projects , Q8)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] What are the key trade-offs of Quarkus Multi-Module Projects at Scale? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Multi-Module Projects at Scale, not just the benefits.
+
+Quarkus Multi-Module Projects at Scale is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Multi-Module Projects , Q9)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Multi-Module Projects , Q9)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q10 - [ARCHITECTURE] How does Quarkus Multi-Module Projects at Scale fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Multi-Module Projects at Scale in a real production system, not just in isolation.
+
+Quarkus Multi-Module Projects at Scale in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Multi-Module Projects at Scale typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Quarkus Multi-Module Projects , Q10)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Multi-Module Projects at Scale affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q11 - [PRODUCTION] What Quarkus Multi-Module Projects at Scale configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Multi-Module Projects at Scale.
+
+Critical pre-production checklist for Quarkus Multi-Module Projects at Scale: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Quarkus Multi-Module Projects , Q11)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Quarkus Multi-Module Projects , Q11)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q12 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Multi-Module Projects at Scale resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Multi-Module Projects at Scale knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Quarkus Multi-Module Projects , Q12)
+
+Strong answers for Quarkus Multi-Module Projects at Scale include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Multi-Module Projects at Scale actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Multi-Module Projects at Scale in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Multi-Module Projects at Scale starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Multi-Module Projects at Scale-related issues. (Quarkus Multi-Module Projects , Q2)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Multi-Module Projects , Q2)
+
+For Quarkus Multi-Module Projects at Scale specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Quarkus Multi-Module Projects , Q2)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Multi-Module Projects , Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Multi-Module Projects at Scale? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Multi-Module Projects at Scale, not just the benefits. (Quarkus Multi-Module Projects , Q3)
+
+Quarkus Multi-Module Projects at Scale is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Quarkus Multi-Module Projects , Q3)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Multi-Module Projects , Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Multi-Module Projects , Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Multi-Module Projects at Scale fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Multi-Module Projects at Scale in a real production system, not just in isolation. (Quarkus Multi-Module Projects , Q4)
+
+Quarkus Multi-Module Projects at Scale in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability). (Quarkus Multi-Module Projects , Q4)
+
+Architectural enablements: Quarkus Multi-Module Projects at Scale typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden. (Quarkus Multi-Module Projects , Q4)
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Quarkus Multi-Module Projects , Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Multi-Module Projects at Scale affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Multi-Module Projects at Scale configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Multi-Module Projects at Scale. (Quarkus Multi-Module Projects , Q5)
+
+Critical pre-production checklist for Quarkus Multi-Module Projects at Scale: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs). (Quarkus Multi-Module Projects , Q5)
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Quarkus Multi-Module Projects , Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Quarkus Multi-Module Projects , Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Multi-Module Projects at Scale resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Multi-Module Projects at Scale knowledge under pressure, and whether you learn from production experience. (Quarkus Multi-Module Projects , Q6)
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Quarkus Multi-Module Projects , Q6)
+
+Strong answers for Quarkus Multi-Module Projects at Scale include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Multi-Module Projects at Scale actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence. (Quarkus Multi-Module Projects , Q6)
+
+If you have not used Quarkus Multi-Module Projects at Scale in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts. (Quarkus Multi-Module Projects , Q6)
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Multi-Module Projects at Scale handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Multi-Module Projects at Scale at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Multi-Module Projects at Scale is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Quarkus Multi-Module Projects , Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Quarkus Multi-Module Projects , Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
 
 **[STAFF] Q1 - Why does ArC miss beans in
 sub-modules without the Jandex plugin?**
@@ -1169,7 +2126,7 @@ Alternative: add quarkus-jandex to each module:
 </dependency>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 This is simpler than adding the Maven plugin manually.
 
@@ -1181,7 +2138,7 @@ jar tf order-persistence-1.0.jar | grep jandex
 # If missing: add jandex to the module
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If missing: add jandex to the module example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 *What separates good from great:* The jar command
 to verify the Jandex index is present.

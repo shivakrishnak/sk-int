@@ -140,7 +140,7 @@ kubectl rollout undo deployment/myapp --to-revision=14 -n production
 # Check rollback status
 kubectl rollout status deployment/myapp -n production
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check rollback status example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Duration: 30-120 seconds (depends on pod startup time).
 Limitation: only works if the previous image is still in the registry.
@@ -157,7 +157,7 @@ kubectl set image deployment/myapp \
   myapp=ghcr.io/myorg/myapp:${STABLE_SHA} -n production
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Deploy specific artifact example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Mechanism 3: Feature flag rollback.
 For deployments using feature flags, the "rollback" is turning off
@@ -167,7 +167,7 @@ the flag rather than reverting the code.
 curl -X PATCH https://launchdarkly.com/api/flags/feature-x \
   -d '{"on": false}'
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kill switch: disable the feature flag for all users example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Duration: seconds to minutes (depends on flag evaluation cache TTL).
 Advantage: no deployment required. The code stays deployed; the
@@ -183,7 +183,7 @@ kubectl argo rollouts abort myapp -n production
 # This sets canary weight to 0 and stable to 100%
 # No pod restart required - routing change only
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This routing change only example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Duration: seconds (routing table change in the service mesh).
 Most powerful: rollback can happen while the new version is still
@@ -261,6 +261,7 @@ settled.
 
 **BAD: Deployment tightly coupled to database migration**
 
+{% raw %}
 ```yaml
 # ANTI-PATTERN: Single deployment step does code + migration together
 # Rolling back is dangerous
@@ -296,8 +297,9 @@ jobs:
           # Result: every database query for user email throws an error
           # Rollback made things WORSE
 ```
+{% endraw %}
 
-> **Code walkthrough:** The destructive migration (column rename) and
+> **Code walkthrough:** The destructive migration (column rename) andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the application deployment are bundled in a single step. If the
 > application deployment fails after the migration succeeds, rolling
 > back the application code creates a broken state: old code expecting
@@ -321,7 +323,7 @@ UPDATE users SET email_address = email WHERE email IS NOT NULL;
 -- New code writes to both columns (backward compatible)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rollback made things WORSE example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ```java
 // Phase 1 application code: writes to BOTH columns
@@ -348,7 +350,7 @@ public class User {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rollback made things WORSE example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```sql
 -- PHASE 3 MIGRATION: V44__read_from_email_address.sql
@@ -360,7 +362,7 @@ ALTER TABLE users
 -- Still not dropping old column - backward compatible
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rollback made things WORSE example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ```java
 // Phase 3 application code: reads from NEW column only
@@ -382,7 +384,7 @@ public class User {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rollback made things WORSE example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```sql
 -- PHASE 4 MIGRATION: V46__drop_old_email_column.sql
@@ -393,8 +395,9 @@ ALTER TABLE users DROP COLUMN email;
 -- After this: the column is gone. No rollback to pre-Phase-1 app possible.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rollback made things WORSE example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
+{% raw %}
 ```yaml
 # Deployment pipeline with expand-contract phases
 
@@ -422,8 +425,9 @@ jobs:
           echo "Phase 1 deployed. Monitor for 24h before Phase 3."
           echo "Phase 3 can be triggered manually after validation."
 ```
+{% endraw %}
 
-> **Code walkthrough:** The expand-contract pattern creates a safe
+> **Code walkthrough:** The expand-contract pattern creates a safeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > multi-phase migration. Phase 1 adds the new column and deploys code
 > that writes to both columns - safe to roll back at any point in
 > this phase. Phase 3 deploys code that reads from the new column
@@ -671,7 +675,7 @@ kubectl exec -n production deploy/myapp -- \
 psql -h db.internal -U app -d production -c \
   "SELECT version, description FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 5;"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Get current database migration version example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: if the migration was additive (add column), the old code typically
 fails on null values if it does not handle the new nullable column.
@@ -696,7 +700,7 @@ kubectl describe configmap myapp-config -n production
 # Compare against git history: what was in this ConfigMap 1 version ago?
 git show HEAD~1:k8s/configmap.yaml
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare against git history: what was in this ConfigMap 1 version ago? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: revert the ConfigMap to the previous version. Or add the old
 config key back. The root cause is config schema was changed without
@@ -797,7 +801,7 @@ kubectl rollout undo deployment/myapp --to-revision=14 -n production
 # spec.revisionHistoryLimit: 20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spec.revisionHistoryLimit: 20 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Limitations of `kubectl rollout undo`:
 
@@ -851,7 +855,7 @@ CREATE INDEX CONCURRENTLY idx_users_tier ON users(tier);
 -- Safe for high-traffic tables
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spec.revisionHistoryLimit: 20 example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 Deploy Phase 1 application:
 ```java
@@ -868,7 +872,7 @@ user.setTier(tier.name());
 userRepository.save(user);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spec.revisionHistoryLimit: 20 example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Phase 2: Backfill existing rows (data migration - separate from code deploy)**
 ```sql
@@ -894,7 +898,7 @@ BEGIN
 END $$;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spec.revisionHistoryLimit: 20 example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Phase 3: Add NOT NULL constraint (after all rows populated)**
 ```sql
@@ -919,7 +923,7 @@ ALTER TABLE users
 ALTER TABLE users VALIDATE CONSTRAINT users_tier_not_null;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spec.revisionHistoryLimit: 20 example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Total phases: 3 separate deployments, each deployable and rollback-
 safe independently. Phase 1 alone: 10 minutes. Backfill: background
@@ -970,7 +974,7 @@ public ResponseEntity<UserProfile> getProfileV1(@PathVariable Long id) {
     return getProfileV2(id);
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This spec.revisionHistoryLimit: 20 example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Deploy the forward-fix (5 minutes with fast CI). Downstream
 services recover.
@@ -1067,7 +1071,7 @@ kubectl logs -n production deployment/myapp --since=10m | \
   grep -E "ERROR|EXCEPTION|FATAL" | sort | uniq -c | sort -rn | head -20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Get error details from production logs example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Compare production environment to test environment.
 The failure passed tests, which means the test environment does
@@ -1086,7 +1090,7 @@ psql -h prod-db -c "
   ORDER BY mean_exec_time DESC LIMIT 10;"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find slow queries in production example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Configuration differences: production uses different JVM flags,
 connection pool sizes, or feature flags than the test environment.
@@ -1097,7 +1101,7 @@ kubectl exec -n staging deploy/myapp -- env | sort > /tmp/staging.env
 diff /tmp/prod.env /tmp/staging.env
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare env vars: production vs. staging example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Scale differences: production has 50 concurrent users; test has 10.
 A race condition that occurs at high concurrency passes tests with
@@ -1161,7 +1165,7 @@ ALTER TABLE users DROP COLUMN tier;
 -- old rows never had tier data). CONCURRENTLY avoids locks.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare env vars: production vs. staging example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 Policy 3: Destructive operations have no undo.
 Migrations that drop columns or tables with data cannot be undone
@@ -1196,7 +1200,7 @@ def check_migration_safety(sql: str) -> list[str]:
     return issues
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Migration linter (runs in CI, checks each migration) example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* The migration linter transforms
 migration safety from a policy document into automated enforcement.
@@ -1355,7 +1359,7 @@ spec:
       count: 10
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analysis Template: latency example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Automatic rollback behavior:
 When `failureCondition` is met on any metric, Argo Rollouts:
@@ -1457,7 +1461,7 @@ After forward-fix of B to handle both schemas:
   Result: works → SAFE
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analysis Template: latency example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The safe paths: either roll back both services simultaneously,
 or forward-fix the consumer to handle both schemas.

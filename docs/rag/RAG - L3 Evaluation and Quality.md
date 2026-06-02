@@ -111,7 +111,7 @@ Answer Relevance    Answer addresses question  Generation
 Correctness         Answer is factually right  End-to-end
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Evaluation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The diagnostic matrix:**
 
@@ -129,7 +129,7 @@ High recall + low faithfulness = grounding problem
   (right docs retrieved, LLM ignores them)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Evaluation example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **RAGAS metrics (automated with LLM judge):**
 
@@ -145,7 +145,7 @@ Answer Relevance:
   3. Score = cosine_similarity(gen_q, original_q)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Evaluation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -291,7 +291,7 @@ def evaluate_pipeline(
     }
 ```
 
-> **Code walkthrough:** Three evaluation functions
+> **Code walkthrough:** Three evaluation functionsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cover the core RAG metrics. `compute_faithfulness`
 > uses Claude Haiku as a judge: it extracts factual
 > claims from the answer and checks each against
@@ -545,6 +545,8 @@ CI integration for RAG:
     Changes to the test set are reviewed in PR.
 
 (2) Automated evaluation on PR:
+
+{% raw %}
     ```yaml
     # .github/workflows/rag-eval.yml
     on: [pull_request]
@@ -555,8 +557,9 @@ CI integration for RAG:
             env:
               ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This .github/workflows/rag-eval.yml example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 (3) Quality gates: fail the PR if:
     - recall@5 drops by > 3%
@@ -619,7 +622,7 @@ Warning: faithfulness < 0.85 (investigate within 24h)
 Info: "I don't know" rate > 15% (review knowledge gaps)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This .github/workflows/rag-eval.yml example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* "I don't know rate
 > 15% signals knowledge gaps" as the specific
@@ -701,7 +704,7 @@ End-to-end quality is poor
                           - Knowledge base gaps?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This .github/workflows/rag-eval.yml example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Rule: never tune the generation step if recall is
 low. The retrieval problem will mask any generation
@@ -1030,7 +1033,7 @@ score threshold            (irrelevant chunks    score < 0.6
                            in context)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RAG Anti-Patterns example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1155,7 +1158,7 @@ def fix_adaptive_k(
     return vector_store.search(query, top_k=k)
 ```
 
-> **Code walkthrough:** Four anti-patterns with
+> **Code walkthrough:** Four anti-patterns withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > their fixes. Anti-pattern 1: "help answer" system
 > prompt allows the LLM to supplement from training.
 > Fix: explicit "ONLY from the documents" + "say
@@ -1426,7 +1429,7 @@ Prevention strategy:
                                     -> index new chunks
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 (2) Periodic sync: for systems without events,
     run a nightly comparison:

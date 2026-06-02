@@ -121,7 +121,7 @@ Client:
   // Guaranteed: A and B are from the same family
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Abstract Factory Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The abstract factory interface is the contract for a family. By injecting
@@ -172,7 +172,7 @@ if (theme.equals("dark")) {
 }
 ```
 
-> **Code walkthrough:** Direct instantiation gives no compile-time or
+> **Code walkthrough:** Direct instantiation gives no compile-time orice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > runtime guarantee that the products are from the same family. A
 > developer creating `DarkButton` can accidentally use `LightCheckbox` -
 > the compiler does not prevent it. This is the core problem Abstract
@@ -242,7 +242,7 @@ public class ThemeConfig {
 }
 ```
 
-> **Code walkthrough:** `Application` depends only on `UIFactory` -
+> **Code walkthrough:** `Application` depends only on `UIFactory` -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > it never knows whether it is creating dark or light components.
 > Changing `app.theme=dark` in configuration swaps the entire UI family.
 > Adding a `HighContrastThemeFactory` does not require changing
@@ -279,7 +279,7 @@ public class DataSourceConfig {
 }
 ```
 
-> **Code walkthrough:** `DataSource` is an Abstract Factory: it creates
+> **Code walkthrough:** `DataSource` is an Abstract Factory: it createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Connection` objects (which in turn create `Statement` and `ResultSet`).
 > Swapping the `DataSource` bean (H2 in test, MySQL in production) swaps
 > the entire JDBC family. Application code that uses `jdbcTemplate.query()`
@@ -622,7 +622,7 @@ Config cfg = (Config) registry.create("fullConfig");
 cfg.customize(userSettings);  // mutate the clone, not original
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prototype Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The prototype registry separates "knowing which kind to create"
@@ -678,7 +678,7 @@ clone.getInventory().add("Sword"); // Also adds to original!
 // Bug: original.getInventory() now contains "Sword"
 ```
 
-> **Code walkthrough:** `super.clone()` copies the object but not
+> **Code walkthrough:** `super.clone()` copies the object but notice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the objects its fields reference. `inventory` in `original` and
 > `clone` point to the same `List` object. Any mutation of the clone's
 > inventory mutates the original. This is the canonical Prototype bug.
@@ -716,7 +716,7 @@ player1.getInventory().add("Sword");
 // player2.getInventory() is independent - still empty
 ```
 
-> **Code walkthrough:** Copy constructor makes the deep copy explicit
+> **Code walkthrough:** Copy constructor makes the deep copy explicitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and readable. Every mutable field is explicitly copied. Immutable
 > fields (`String`, primitives) can be shared safely. The `Stats` deep
 > copy uses its own copy constructor. No magic `super.clone()` with
@@ -763,7 +763,7 @@ public class EmailService {
 }
 ```
 
-> **Code walkthrough:** Templates are loaded once at startup (expensive:
+> **Code walkthrough:** Templates are loaded once at startup (expensive:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > DB queries). Each request calls `get()` which returns a deep copy
 > (cheap: in-memory copy). The copy is then customized with the specific
 > user's data and sent. The prototype in the registry is never mutated.

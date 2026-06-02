@@ -130,7 +130,7 @@ Playwright architecture:
     );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Playwright Fundamentals example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -211,7 +211,7 @@ test('shows loading state while API responds', async ({ page }) => {
 });
 ```
 
-> **Code walkthrough:** `playwright.config.ts` configures `webServer`
+> **Code walkthrough:** `playwright.config.ts` configures `webServer`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to auto-start the dev server before tests and reuse it locally
 > (not on CI, where it's always fresh). The `webServer.url` field
 > makes Playwright wait until the server is ready before running tests.
@@ -334,7 +334,7 @@ test('login', async ({ page }) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Benefits: If the login form HTML changes (label text, button text),
 only `LoginPage.ts` needs to update - not every test that logs in.
@@ -453,7 +453,7 @@ When to choose Cypress:
   - Limited to Chromium/Firefox acceptable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cypress vs Playwright Decision example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -501,7 +501,7 @@ await page.route('/api/cart', route =>
 cy.intercept('/api/cart', { body: { count: 5 } });
 ```
 
-> **Code walkthrough:** Both frameworks use accessibility-first queries
+> **Code walkthrough:** Both frameworks use accessibility-first queriesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (Playwright's `getByRole`, Cypress's `findByRole` via
 > `@testing-library/cypress`). The syntax diverges: Playwright uses
 > native async/await, reflecting its Node.js-first architecture.
@@ -578,7 +578,7 @@ npx playwright show-trace trace.zip
 # View trace recording for failed test
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This View trace recording for failed test example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common WebKit issues: CSS grid, certain input types, service workers,
 specific keyboard events differ from Chrome behavior.
@@ -622,7 +622,7 @@ async function globalSetup() {
 // Each test starts with saved auth state (no login needed)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This View trace recording for failed test example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 **Cypress approach** - cy.session():
 ```typescript
@@ -638,7 +638,7 @@ Cypress.Commands.add('login', () => {
 // In tests: cy.login() - restores cached session on second run
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This View trace recording for failed test example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Using Playwright's `storageState`
 with multiple user roles (admin.json, editor.json, viewer.json) so

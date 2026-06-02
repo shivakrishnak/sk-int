@@ -143,7 +143,7 @@ Architecture DECISIONS = explicit answers to these four.
 Architecture DOCUMENT = record of decisions AND their rationale.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What Is Software Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Architecture is not the code - it is the decisions that constrain
@@ -261,7 +261,7 @@ a shared framework. Each team optimizes locally.
 - Can a new engineer understand the system from documentation?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Retrospective architecture review. Document the as-is
 state. Identify which decisions created the most pain. Write ADRs.
@@ -290,7 +290,7 @@ are not yet known.
   implementation begins?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Shift to just-in-time architecture. Make the minimum
 decisions needed to start. Defer decisions that can be deferred.
@@ -319,7 +319,7 @@ grep -r "import.*presentation" src/data/
 grep -r "import.*controller" src/repository/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This import from the presentation layer? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Architecture fitness functions. Automated tests that verify
 architectural constraints: ArchUnit for Java, dependency-cruiser
@@ -745,7 +745,7 @@ failure modes in one word.
 
 **How it works:**
 
-```
+```plaintext
 LAYERED (N-TIER)
   Presentation -> Business Logic -> Data Access
   Coupling: each layer calls only the layer below
@@ -783,7 +783,7 @@ MODULAR MONOLITH
   Trade-off: scales as a unit when scaling is needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architecture Styles Landscape example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 No architecture style is universally correct. Each is a set of
@@ -908,7 +908,7 @@ have synchronous call chains (tight operational coupling).
   for a single user request?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Address the coupling, not just the deployment topology.
 Each service needs its own database. Long synchronous chains must
@@ -929,14 +929,14 @@ service mesh, distributed tracing) rather than on product features.
 complexity justified it. Complexity imported without the benefits.
 
 *Diagnostic:*
-```
+```plaintext
 - Ratio of infrastructure code/config to business logic
 - Time spent per sprint on deployment/infrastructure vs features
 - How many of the services could reasonably be merged?
   (> 30% = probably too granular)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Consolidate services aggressively. The rule: one team should
 own 3-5 services maximum. If a team owns 10 services, most should
@@ -963,7 +963,7 @@ Answers indicating a problem:
 - "Because our previous company used it"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Run Architecture Trade-Off Analysis. Identify top 3 quality
 attributes the system must prioritize. Select the style that best
@@ -1377,7 +1377,7 @@ enables the right decisions to be made at the right scope.
 
 **How it works:**
 
-```
+```plaintext
 LEVELS OF ABSTRACTION
 
 SYSTEM LEVEL (Architecture):
@@ -1405,7 +1405,7 @@ CLASS LEVEL (Low-Level Design / Code Design):
   COST TO CHANGE: low (IDE refactoring)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Levels of Abstraction example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Architecture and design exist on a continuum, not in separate boxes.
@@ -1522,7 +1522,7 @@ All decisions treated as architectural regardless of scope.
 - How long does a "simple" change take from idea to production?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Define explicit boundaries: "Architecture review is required
 for decisions affecting component interfaces, data models shared
@@ -1542,7 +1542,7 @@ the same cross-cutting concern, incompatible interfaces.
 multiple teams. Design autonomy extended to system-level concerns.
 
 *Diagnostic:*
-```
+```plaintext
 - How many different messaging libraries are in use?
   (> 2 = likely under-governance)
 - How many different API authentication mechanisms?
@@ -1550,7 +1550,7 @@ multiple teams. Design autonomy extended to system-level concerns.
   (> 3 = lacking architecture standards)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Architecture Decision Records for cross-team standards.
 Establish guardrails: "all inter-service communication must use the
@@ -1579,7 +1579,7 @@ High-count, high-cost = architectural decisions made
 without architectural rigor.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* ADR retrospective. For each pain-point: write an ADR
 documenting the original decision, why it was made, and the current

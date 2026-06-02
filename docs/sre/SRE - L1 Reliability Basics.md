@@ -158,7 +158,7 @@ BUDGET RESET OPTIONS
     Benefit: consistent incentives, no reset race
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error Budget example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The error budget is not a technical tool - it is an organizational
@@ -200,6 +200,12 @@ activity that would deplete it further.
 
 **Example 1: Error budget remaining - Prometheus recording rule**
 
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```yaml
 # BAD: no recording rules - recomputing 28-day
 # queries in every dashboard causes timeout
@@ -235,7 +241,7 @@ groups:
           )
 ```
 
-> **Code walkthrough:** The BAD approach recomputes 28-day range
+> **Code walkthrough:** The BAD approach recomputes 28-day rangeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > queries on every dashboard load, which is expensive and slow.
 > The GOOD approach uses recording rules that Prometheus pre-computes
 > every minute. `sli:availability:28d` stores the rolling SLI.
@@ -247,6 +253,7 @@ groups:
 
 **Example 2: Error budget burn rate alert**
 
+{% raw %}
 ```yaml
 # Burn rate alerting for error budget
 # Critical: budget exhausted in ~2 days (page urgently)
@@ -284,8 +291,9 @@ groups:
         labels:
           severity: warning
 ```
+{% endraw %}
 
-> **Code walkthrough:** Burn rate alerting detects how fast the
+> **Code walkthrough:** Burn rate alerting detects how fast theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > error budget is being consumed relative to the allowed rate.
 > 14.4x burn rate means the budget would be exhausted in 2 days
 > (30 days / 14.4 = 2.08 days). The dual-window check (1h AND 5m
@@ -375,7 +383,7 @@ avg_over_time(
 # Compare: target vs. rolling average
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare: target vs. rolling average example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Reset SLO to be slightly better than the 90-day historical
 average. Establish the baseline. Create a roadmap to tighten the
@@ -406,7 +414,7 @@ any automated deployment gate integration?
 If no: budget is advisory, not operational.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare: target vs. rolling average example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Implement automated deployment gates that check error
 budget remaining before allowing production deployments. Require
@@ -438,7 +446,7 @@ constrained by a single historical event, not
 current system state.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare: target vs. rolling average example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* The error budget policy should distinguish catastrophic
 incidents (single events consuming >50% of budget) from chronic
@@ -925,7 +933,7 @@ TOIL MEASUREMENT
     3. Hire additional SREs (last resort)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Definition, Measurement, and Reduction example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The 50% toil cap forces an organizational conversation that would
@@ -965,6 +973,11 @@ SRE title."
 
 **Example 1: Toil automation - certificate rotation**
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # BAD: manual certificate rotation procedure
 # (classic toil - repetitive, manual, automatable)
@@ -997,7 +1010,7 @@ spec:
     - api.example.com
 ```
 
-> **Code walkthrough:** The BAD approach is classic toil - a 9-hour
+> **Code walkthrough:** The BAD approach is classic toil - a 9-hourice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > monthly manual process across 12 services. The GOOD approach
 > eliminates the toil entirely using cert-manager: the Kubernetes
 > operator automatically detects certificates within 30 days of
@@ -1007,6 +1020,11 @@ spec:
 > configuration investment.
 
 **Example 2: Toil measurement script**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -1053,7 +1071,7 @@ print(f"Toil alerts: {toil}/{total} = {ratio:.1%}")
 print(f"Status: {'ABOVE CAP' if ratio > 0.5 else 'OK'}")
 ```
 
-> **Code walkthrough:** This script categorizes PagerDuty alerts
+> **Code walkthrough:** This script categorizes PagerDuty alertsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as toil or engineering based on known patterns. The BAD state
 > is having no measurement at all, which makes the 50% cap
 > unenforced by default. The GOOD approach runs monthly and
@@ -1148,7 +1166,7 @@ If answer "I don't know": toil is not measured
   and the problem is invisible.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: automated toil tagging from alert history example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Implement toil tracking immediately. Identify the three
 highest-toil sources. Build automation for the top source within
@@ -1182,7 +1200,7 @@ sum by (alertname) (
 # Top 5 recurring = top toil candidates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Top 5 recurring = top toil candidates example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* For each recurring alert, ask: (a) does it require human
 action? If no: suppress or auto-resolve. (b) Does it always require
@@ -1679,7 +1697,7 @@ MTTR AND AVAILABILITY
     preventing all failures.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Availability and Reliability Fundamentals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The nines math reveals that each additional nine is exponentially
@@ -1722,6 +1740,11 @@ diagnosis, automated remediation).
 
 **Example 1: Composite availability calculation**
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # Availability calculator for microservices
 # BAD: assuming service availability equals component max
@@ -1758,7 +1781,7 @@ print(f"Required per component: {required_per_component:.5%}")
 # Required per component: 99.96668%
 ```
 
-> **Code walkthrough:** The BAD approach uses `min()` which takes
+> **Code walkthrough:** The BAD approach uses `min()` which takesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the weakest component's availability as the composite - this
 > overestimates composite availability. The GOOD approach multiplies
 > component availabilities: three 99.9% components produce 99.7%
@@ -1804,7 +1827,7 @@ print(f"Option B2 (0.25h MTTR): {option_b2:.4%}")
 # Better MTTR gives more availability than better MTTF
 ```
 
-> **Code walkthrough:** This model reveals a critical SRE insight:
+> **Code walkthrough:** This model reveals a critical SRE insight:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > at high availability levels, reducing MTTR (faster recovery) is
 > more effective than increasing MTTF (preventing failures). Options A
 > and B produce identical availability improvement, but further MTTR
@@ -1900,7 +1923,7 @@ Ask the business stakeholder:
   Five nines requires: never down for > 5 min/year.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Better MTTR gives more availability than better MTTF example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Re-baseline the SLO against actual business requirements.
 Present the nines table with downtime equivalents to stakeholders.
@@ -1933,7 +1956,7 @@ sum(rate(http_requests_total{status=~"2.."}[5m]))
 # Returns: 0.70 (70% availability - critically degraded)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This critically degraded) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Replace time-based monitoring with request-based SLI
 monitoring. The service is "available" only when the SLI is above
@@ -1963,7 +1986,7 @@ print(f"{composite:.3%}")
 # SLO was 99.9% but users see 99.4%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SLO was 99.9% but users see 99.4% example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *Fix:* Map the full dependency graph for the SLO measurement.
 Either measure the composite (user-visible) availability as the

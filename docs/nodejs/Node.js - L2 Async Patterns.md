@@ -134,13 +134,45 @@ Promise states and transitions:
     }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Promises and async/await in Node.js example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Common async mistakes:**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // BAD: sequential await in loop (each waits for previous):
@@ -196,7 +228,7 @@ app.get('/user/:id', asyncRoute(async (req, res) => {
 }));
 ```
 
-> **Code walkthrough:** The sequential vs parallel loop pattern is one
+> **Code walkthrough:** The sequential vs parallel loop pattern is oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of the most common Node.js performance bugs. `await` inside a `for...of`
 > loop makes each request wait for the previous to complete. `Promise.all`
 > launches all requests concurrently and waits for all to settle. For
@@ -272,7 +304,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Better: fix the root cause by adding .catch() or try/catch
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using error handling. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ---
 
@@ -306,7 +338,7 @@ const results = await Promise.all(
 // When one completes, the next queued item starts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Understanding that `pLimit` uses
 a queue internally. When a slot frees up, the next queued function
@@ -439,13 +471,18 @@ EventEmitter mechanics:
     // Or globally: EventEmitter.defaultMaxListeners = 20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event Emitter Pattern example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Production) - Request tracking with EventEmitter:**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 import { EventEmitter } from 'events';
@@ -502,7 +539,7 @@ http.createServer((req, res) => {
 });
 ```
 
-> **Code walkthrough:** `RequestTracker` extends `EventEmitter` and
+> **Code walkthrough:** `RequestTracker` extends `EventEmitter` andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > uses private class fields (`#activeRequests`) to track state. Events
 > decouple the tracking logic from the response logic - the HTTP layer
 > doesn't know about logging or analytics. The memory leak example shows
@@ -578,7 +615,7 @@ emitter.eventNames().forEach(event => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Fix: Use `once()` for one-time handlers. Use `off()` in cleanup.
 Move persistent listeners outside the hot path.
@@ -623,7 +660,7 @@ class OrderService
   extends TypedEmitter<OrderEvents> { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 *What separates good from great:* TypeScript inference on event
 names and payloads catches typos and mismatched handler signatures

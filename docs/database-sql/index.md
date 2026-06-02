@@ -1,6 +1,6 @@
 ---
 title: "Database SQL"
-nav_order: 1
+nav_order: 30
 has_children: true
 ---
 

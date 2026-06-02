@@ -131,7 +131,7 @@ INHERITANCE
   Architecture scale: PREFER COMPOSITION for flexibility
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Object-Oriented Foundations for Architecture example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **The key insight:**
 OOP principles scale from class to module to service to system.
@@ -192,7 +192,7 @@ public class OrderRepository {
 // OrderRepository breaks silently in the next deployment.
 ```
 
-> **Code walkthrough:** OrderRepository reaches into a schema it
+> **Code walkthrough:** OrderRepository reaches into a schema itice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > does not own. This is accessing a private field at service scale.
 > When Customer team changes their schema (their right as owner),
 > Order service breaks. This is the most common microservices
@@ -223,13 +223,19 @@ public record CustomerDto(
 ) {}
 ```
 
-> **Code walkthrough:** CustomerServiceClient depends on
+> **Code walkthrough:** CustomerServiceClient depends onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > CustomerDto (the contract), not the database schema. Customer
 > team can migrate `email` to `contact_email` internally - callers
 > only see the change when CustomerDto is updated deliberately
 > with versioning. Encapsulation at service level.
 
 **BAD vs GOOD - polymorphism for testability:**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: concrete dependency, cannot swap in tests
@@ -261,7 +267,7 @@ public class PaymentProcessor {
 }
 ```
 
-> **Code walkthrough:** The BAD version embeds StripeClient as a
+> **Code walkthrough:** The BAD version embeds StripeClient as aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > concrete type. Switching providers means changing PaymentProcessor.
 > Tests require live Stripe credentials. The GOOD version depends
 > on PaymentGateway interface - inject StripeGateway in prod,
@@ -361,7 +367,7 @@ grep -r "extends" src/ | wc -l
 # Use IDE class hierarchy view to find depth > 3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use IDE class hierarchy view to find depth > 3 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Flatten to composition. Extract shared behavior to
 collaborator objects injected via constructor.
@@ -785,7 +791,7 @@ failure modes.
 
 **How it works:**
 
-```
+```plaintext
 S - Single Responsibility Principle (SRP)
   One reason to change.
   WRONG: UserService handles auth + profile + notifications
@@ -818,7 +824,7 @@ D - Dependency Inversion Principle (DIP)
   BENEFIT: Swap Stripe for PayPal, inject Mock in tests.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SOLID and Beyond example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 SOLID principles trade complexity for flexibility. Perfect SOLID
@@ -878,7 +884,7 @@ public class UserRegistrationService {
 }
 ```
 
-> **Code walkthrough:** A validation rule change, schema migration,
+> **Code walkthrough:** A validation rule change, schema migration,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > email template change, and log format change all require modifying
 > this class. Changes for any one reason risk breaking the other
 > three. This is the SRP violation - four reasons to change.
@@ -922,6 +928,16 @@ public class UserRegistrationService {
 
 **BAD vs GOOD - Open/Closed Principle:**
 
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
+
 ```java
 // BAD: every new payment type modifies this method
 public class PaymentProcessor {
@@ -954,7 +970,7 @@ public class PaymentProcessor {
 // PaymentProcessor unchanged. OCP achieved.
 ```
 
-> **Code walkthrough:** The BAD version grows an if/else chain
+> **Code walkthrough:** The BAD version grows an if/else chainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > every time a new payment type is added - modifying existing code
 > and risking regression. The GOOD version uses a registry: new
 > gateways self-register, PaymentProcessor never changes. This is
@@ -1035,7 +1051,7 @@ find src/ -name "*Service.java" \
 # Flag any over 500 lines for SRP review
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Flag any over 500 lines for SRP review example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Identify the class's "reasons to change" - each one becomes
 its own service. Extract incrementally: new code calls the new
@@ -1060,7 +1076,7 @@ grep -r "new.*Client\|new.*Repository\|new.*Gateway" src/ \
   --include="*.java" | grep -v "test"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find direct instantiation of external dependencies example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Extract an interface for each external dependency. Move
 instantiation to DI configuration. Inject mocks in tests.
@@ -1308,7 +1324,7 @@ double tax =
 double tax = order.getTaxRate();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The coupling problem: the violating code depends on Order,
 Customer, Address, and State structures. When Customer refactored
@@ -1519,7 +1535,7 @@ FAILURE CASCADES
   Prevention: circuit breakers, bulkheads, timeouts, backpressure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Systems Thinking Foundations example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The system has properties not in any component. You cannot predict
@@ -1704,7 +1720,7 @@ redis-cli info stats | grep keyspace_hits
 grep "Connection is not available" app.log | tail -50
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Connection pool exhaustion in HikariCP logs: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* (1) Jitter retry intervals. (2) Stagger TTL with small
 random offset to prevent simultaneous expiry. (3) Pre-warm caches
@@ -1733,7 +1749,7 @@ kill -3 <pid>    # trigger thread dump on JVM
 # java.net.SocketTimeoutException absent = no timeout set
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This java.net.SocketTimeoutException absent = no timeout set example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* (1) Set timeouts on ALL upstream calls. (2) Bulkheads -
 separate thread pools per upstream. (3) Circuit breaker to stop
@@ -1763,7 +1779,7 @@ can handle.
 # component in the call chain, not just the target
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This component in the call chain, not just the target example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Apply Theory of Constraints. Identify the constraint first.
 Optimize the constraint. Find the new constraint. Repeat.

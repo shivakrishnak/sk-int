@@ -236,7 +236,7 @@ Signal 4: PROFILES
   -> Profiles need aggressive downsampling for long retention
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The cost of not having observability data during an incident
@@ -338,7 +338,7 @@ otel:
     # This will bankrupt the observability budget
 ```
 
-> **Code walkthrough:** Three unsustainable patterns: DEBUG-level
+> **Code walkthrough:** Three unsustainable patterns: DEBUG-levelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Spring Boot logging generates 50-200 log lines per request that
 > no one reads but everyone pays to store. The user_id Prometheus
 > label creates one time series per user (1M+ series = OOM for
@@ -372,6 +372,24 @@ logging.pattern.console=%d{ISO8601} %level %X{traceId} \
 # -> traceId links log to the trace in Tempo
 # -> no request/response body logged
 # -> consistent structure enables Loki LogQL queries
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
 ```
 
 ```java
@@ -410,6 +428,12 @@ Span.current().setAttribute(
     user.getInternalId()  // goes to Tempo/ClickHouse trace
     // NOT in Prometheus. Correct placement.
 );
+```
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
 ```
 
 ```yaml
@@ -458,7 +482,7 @@ processors:
 #   At $0.023/GB: ~$22/month (vs $1,495/month at 100%)
 ```
 
-> **Code walkthrough:** Three GOOD patterns: WARN-level production
+> **Code walkthrough:** Three GOOD patterns: WARN-level productionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > logging cuts 90%+ of log volume while preserving all incident-
 > relevant signals (errors are always logged; INFO for application
 > code provides request flow context). The bounded-cardinality
@@ -472,6 +496,12 @@ processors:
 > with no meaningful loss in debugging capability.
 
 **Example 3: GOOD - Retention tier configuration and cost model**
+
+
+```yaml
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```yaml
 # GOOD: Tiered retention policy for Loki
@@ -583,7 +613,7 @@ def calculate_monthly_cost(
     return results
 ```
 
-> **Code walkthrough:** The retention tier configuration moves
+> **Code walkthrough:** The retention tier configuration movesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Loki data to S3 after 30 days (the hot tier) and configures
 > a 7-day Tempo retention (covering 95%+ of incident investigations).
 > The cost model script enables cost attribution: given metric
@@ -796,7 +826,7 @@ kubectl get events -n production \
   | tail -20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check recent deploys for the culprit service example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix immediate: delete the high-cardinality metric series from
 Prometheus TSDB:
@@ -806,7 +836,7 @@ delete_series?match[]=YOUR_METRIC"
 curl -X POST "http://prometheus:9090/api/v1/admin/tsdb/\
 clean_tombstones"
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check recent deploys for the culprit service example demonstrates HTTP request from shell using SQL. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Root cause fix: remove the high-cardinality label from the metric
 instrumentation. Move the high-cardinality attribute to span
@@ -848,7 +878,7 @@ kubectl rollout history \
 # Output: 18:30 deploy confirms the timing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Output: 18:30 deploy confirms the timing example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix immediate: rollback the checkout-service deploy or change
 the log level via environment variable:
@@ -861,9 +891,11 @@ kubectl set env deployment/checkout-service \
 # -> accept the cost for this cycle, prevent recurrence
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> accept the cost for this cycle, prevent recurrence example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Prevention: add a Prometheus alert rule:
+
+{% raw %}
 ```yaml
 - alert: ServiceLogVolumeSpike
   expr: |
@@ -876,8 +908,9 @@ Prevention: add a Prometheus alert rule:
     description: "{{ $labels.service }} log volume is
       3x baseline - check log level configuration"
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> accept the cost for this cycle, prevent recurrence example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Failure 3: Observability cost grows 40% monthly with no
 identified cause**
@@ -933,7 +966,7 @@ LIMIT 20" \
 # -> likely running 100% sampling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> likely running 100% sampling example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: the four-part remediation: (1) reduce the new service's
 trace sampling to 1% tail sampling; (2) fix the high-cardinality
@@ -1666,7 +1699,7 @@ is cheaper when accounting for the engineering time cost.
 
 **LLD sketch:**
 
-```
+```plaintext
 Cost Optimization Architecture
 =================================
 Before:
@@ -1687,7 +1720,7 @@ After Phase 2 (platform migration, -$70K/month):
   (includes platform team allocation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Staff angle:**
 The cost optimization conversation with leadership is most

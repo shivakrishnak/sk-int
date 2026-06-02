@@ -181,7 +181,7 @@ Pillar 4: FAST RECOVERY (low MTTR)
     - Chaos engineering: verify recovery is fast BEFORE production incident
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Resilience Mental Model example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The resilience cost model:**
 
@@ -215,7 +215,7 @@ Bulkhead:
   Justified: dependencies with different failure modes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Resilience Mental Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Resilience investment should be proportional to failure impact.
@@ -229,6 +229,12 @@ Not everything needs to be equally resilient.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // RESILIENCE PATTERNS - PRACTICAL IMPLEMENTATION
@@ -323,7 +329,7 @@ public class OrderServiceGood {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern chains all dependencies
+> **Code walkthrough:** The BAD pattern chains all dependenciesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > synchronously with no resilience: a single email service failure
 > causes a 500 error even though the order was placed. The GOOD
 > pattern explicitly classifies dependencies by criticality: payment
@@ -402,7 +408,7 @@ resilience4j.circuitbreaker.slowCallDurationThreshold: 2s
 # GC pause was 400ms: below threshold?
 # Or: recordExceptions includes TimeoutException from own GC?
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: recordExceptions includes TimeoutException from own GC? example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: tune `slowCallDurationThreshold` to be greater than max
 observed GC pause. Log circuit breaker transitions with reason.
@@ -457,10 +463,9 @@ from the main pool.
 
 ---
 
-**Q1 (Mechanism) - How does a circuit breaker work and what
-are the state transitions?**
+**[JUNIOR] Q1 - [MECHANISM] How does a circuit breaker work and what are the state transitions?**
 
-A: A circuit breaker is a proxy around a remote call that
+A circuit breaker is a proxy around a remote call that
 tracks failure rate and trips (opens) when failures exceed
 a threshold, preventing further calls to a failing service.
 
@@ -489,7 +494,7 @@ Example configuration (Resilience4j):
   Permitted calls in HALF-OPEN: 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or: recordExceptions includes TimeoutException from own GC? example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the "minimum calls before
 opening" threshold. Without a minimum: a circuit with 1 call
@@ -501,9 +506,9 @@ circuit breakers.
 
 ---
 
-**Q2 (Trade-off) - When should you NOT retry?**
+**[JUNIOR] Q2 - [TRADE-OFF] When should you NOT retry?**
 
-A: Retries are appropriate only for idempotent, transient failures.
+Retries are appropriate only for idempotent, transient failures.
 Do not retry:
 
 1. Non-idempotent operations that succeeded (unknown outcome):
@@ -534,10 +539,9 @@ circuit break, and back off exponentially with jitter.
 
 ---
 
-**Q3 (Failure / Debugging) - A cascading failure is spreading
-through your microservices. What do you do?**
+**[JUNIOR] Q3 - [DEBUGGING] A cascading failure is spreading through your microservices. What do you do?**
 
-A: Structured response:
+Structured response:
 
 Immediate (first 5 minutes):
 1. Open circuit breakers manually if not tripping automatically.
@@ -548,7 +552,7 @@ Immediate (first 5 minutes):
      -d '{"state":"FORCED_OPEN"}'
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Resilience4j actuator endpoint example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 2. Identify the origin service:
    ```bash
@@ -559,7 +563,7 @@ Immediate (first 5 minutes):
    # First service with errors = cascade origin
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This First service with errors = cascade origin example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 3. Shed load if origin service is overloaded:
    Enable load shedding / rate limiting at the API gateway.
@@ -569,7 +573,7 @@ Immediate (first 5 minutes):
    kubectl rollout restart deployment/inventory-service
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This First service with errors = cascade origin example ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 5. Monitor: watch error rate per service drop as circuit
    breakers open and load is shed.
@@ -589,9 +593,9 @@ during the restart, giving the service time to stabilize.
 
 ---
 
-**Q4 (Trade-off) - Chaos engineering: when is it worth the risk?**
+**[MID] Q4 - [TRADE-OFF] Chaos engineering: when is it worth the risk?**
 
-A: Chaos engineering (deliberately injecting failures into
+Chaos engineering (deliberately injecting failures into
 production) is justified when:
 
 The cost of a real failure (unplanned) > cost of a controlled
@@ -626,10 +630,9 @@ not chaos engineering - it is just creating incidents.
 
 ---
 
-**Q5 (Behavioral) - Describe a time you improved resilience
-after an incident.**
+**[MID] Q5 - [BEHAVIORAL] Describe a time you improved resilience after an incident.**
 
-A: Example structure:
+Example structure:
 
 "An incident at [company]: our checkout flow had a synchronous
 call to a third-party fraud detection service. During a Black
@@ -691,21 +694,21 @@ technically but in terms of business impact.
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Two Generals as Coordination Model
@@ -829,7 +832,7 @@ The problem:
   protocol is always unacknowledged by the other party.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Two Generals as Coordination Model example demonstrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The formal impossibility proof:**
 
@@ -849,11 +852,11 @@ Proof by contradiction:
   → Contradiction.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Two Generals as Coordination Model example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Practical implications:**
 
-```
+```plaintext
 1. TCP and the Two Generals
    TCP provides reliable, ordered delivery within a connection.
    But TCP does not solve Two Generals:
@@ -901,7 +904,7 @@ Proof by contradiction:
    via idempotency (not by solving the protocol).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Two Generals as Coordination Model example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The connection to distributed systems patterns:**
 
@@ -918,11 +921,17 @@ Dead letter queue    Messages that cannot be processed: don't lose them,
                      observe and replay
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using goroutine. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // TWO GENERALS IN PRACTICE: IDEMPOTENCY PATTERN
@@ -994,7 +1003,7 @@ public class IdempotencyStore {
 }
 ```
 
-> **Code walkthrough:** The BAD payment controller processes every
+> **Code walkthrough:** The BAD payment controller processes everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > request as a new charge. A client that times out and retries
 > causes a double charge - the classic Two Generals outcome: the
 > server knows the first charge succeeded, the client does not.
@@ -1102,32 +1111,31 @@ operations: 24-72 hours is standard.
 
 ### ⚖️ Comparison Table
 
-| Protocol | Solves Two Generals? | Trade-off | Use case |
-|---|---|---|---|
-| Plain TCP | No | Reliable delivery, not committed action | All network communication |
-| 2PC | Partially | Blocks when coordinator fails | Trusted distributed transactions |
-| Saga | No (accepts it) | Compensation instead of rollback | Microservices distributed workflows |
-| Idempotency keys | Workaround | Requires idempotent operations | All external API calls |
-| Event sourcing + outbox | Workaround | Eventually consistent | Event-driven architecture |
+| Protocol| Solves Two Generals?| Trade-off| Use case|
+|---|---|----------------------------------|-----------------------------------|
+| Plain TCP| No| Reliable delivery, not committed action| All network communicat
+| 2PC| Partially| Blocks when coordinator fails| Trusted distributed transaction
+| Saga| No (accepts it)| Compensation instead of rollback| Microservices distrib
+| Idempotency keys| Workaround| Requires idempotent operations| All external API
+| Event sourcing + outbox| Workaround| Eventually consistent| Event-driven archi
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Category | Count |
-|---|---|
-| Mechanism | 2 |
-| Failure / Debugging | 1 |
-| Trade-off | 2 |
-| Behavioral | 1 |
-| Production | 1 |
+| Category| Count|
+|-----------------------|--------------------|
+| Mechanism| 2|
+| Failure / Debugging| 1|
+| Trade-off| 2|
+| Behavioral| 1|
+| Production| 1|
 
 ---
 
-**Q1 (Mechanism) - How does the outbox pattern work and how
-does it relate to Two Generals?**
+**[JUNIOR] Q1 - [MECHANISM] How does the outbox pattern work and how does it relate to Two Generals?**
 
-A: The outbox pattern solves the "write to DB and send message
+The outbox pattern solves the "write to DB and send message
 atomically" problem - a Two Generals scenario:
 
 ```
@@ -1164,7 +1172,7 @@ Outbox pattern solution:
   Kafka consumers: idempotent (handle duplicate events).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The Two Generals connection: the outbox pattern accepts that
 the message will eventually be delivered (at-least-once) but
@@ -1184,10 +1192,9 @@ applications of this meta-pattern.
 
 ---
 
-**Q2 (Trade-off) - How do you decide between at-least-once
-and at-most-once delivery semantics?**
+**[JUNIOR] Q2 - [TRADE-OFF] How do you decide between at-least-once and at-most-once delivery semantics?**
 
-A: The Two Generals insight: guaranteed exactly-once delivery
+The Two Generals insight: guaranteed exactly-once delivery
 is impossible over an unreliable channel. Choose:
 
 **At-most-once delivery:**
@@ -1240,8 +1247,7 @@ Only within a single atomic transaction (single system).
 
 ---
 
-**Q3 (Failure / Debugging) - A downstream service reports
-receiving duplicate events from your service. How do you investigate?**
+**[JUNIOR] Q3 - [DEBUGGING] A downstream service reports receiving duplicate events from your service. How do you investigate?**
 
 A:
 Step 1 - Quantify the duplicates:
@@ -1256,7 +1262,7 @@ ORDER BY duplicates DESC;
 -- Pattern: all duplicates in same time window?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Step 2 - Correlate with outage/restart events:
 ```bash
@@ -1267,7 +1273,7 @@ kubectl get events --namespace=prod \
 # Restart at 14:03:22? Duplicates at 14:03-14:05?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Restart at 14:03:22? Duplicates at 14:03-14:05? example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Trace the message flow:
 ```bash
@@ -1279,7 +1285,7 @@ kafka-consumer-groups.sh \
 # Restarted consumers re-read from last committed offset
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Restarted consumers re-read from last committed offset example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Root cause: consumer crashed after processing but before
 committing offset. On restart: re-reads and reprocesses
@@ -1300,7 +1306,7 @@ public void processOrder(OrderEvent event) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Restarted consumers re-read from last committed office. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the "consumer crashed after
 processing, before committing offset" root cause. This is the
@@ -1312,10 +1318,9 @@ Idempotency is the only safe mitigation.
 
 ---
 
-**Q4 (Trade-off) - Why can't you have exactly-once delivery
-in a distributed system?**
+**[MID] Q4 - [TRADE-OFF] Why can't you have exactly-once delivery in a distributed system?**
 
-A: Exactly-once delivery requires that a message is processed
+Exactly-once delivery requires that a message is processed
 exactly once across all system boundaries. This is the Two
 Generals problem:
 
@@ -1357,10 +1362,9 @@ that writes to an external system MUST be idempotent.
 
 ---
 
-**Q5 (Behavioral) - How did your understanding of Two Generals
-change how you designed a distributed feature?**
+**[MID] Q5 - [BEHAVIORAL] How did your understanding of Two Generals change how you designed a distributed feature?**
 
-A: Example answer:
+Example answer:
 
 "Building a payment-to-fulfillment workflow. Initial design:
   1. Payment Service charges customer → returns success
@@ -1425,21 +1429,21 @@ atomicity requirement entirely - the core insight.
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # DS Design Heuristics
@@ -1658,11 +1662,11 @@ H12: NEVER TRUST A DISTRIBUTED SYSTEM PERFORMANCE ESTIMATE
   Trust measured data, not estimates.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The meta-heuristic:**
 
-```
+```plaintext
 When in doubt: choose the simpler option.
 A simple system that meets 80% of requirements and fails
 gracefully is better than a complex system that meets 100%
@@ -1678,11 +1682,23 @@ All four are violations of "choose the simpler option"
 applied too early in the system's life.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DISTRIBUTED SYSTEMS HEURISTICS - APPLIED IN CODE
@@ -1793,7 +1809,7 @@ public class OrderServiceObservable {
 }
 ```
 
-> **Code walkthrough:** The `ProductService` demonstrates H2
+> **Code walkthrough:** The `ProductService` demonstrates H2ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (network calls need caching) and H3 (always timeout): the
 > `getStock` method wraps the inventory call with a 500ms timeout
 > and caches the result. On timeout: it degrades to `unknown`
@@ -1930,10 +1946,9 @@ Fix: SLO on business outcomes, not just infrastructure metrics.
 
 ---
 
-**Q1 (Mechanism) - How do you identify the correct service
-boundaries when designing a new system?**
+**[JUNIOR] Q1 - [MECHANISM] How do you identify the correct service boundaries when designing a new system?**
 
-A: Use Domain-Driven Design (DDD) bounded contexts as the primary
+Use Domain-Driven Design (DDD) bounded contexts as the primary
 heuristic:
 
 **Step 1: Event storming**
@@ -1980,8 +1995,7 @@ from the start: one team → one service → clear ownership.
 
 ---
 
-**Q2 (Trade-off) - When is synchronous vs. asynchronous
-communication the right choice between services?**
+**[JUNIOR] Q2 - [TRADE-OFF] When is synchronous vs. asynchronous communication the right choice between services?**
 
 A:
 
@@ -2032,10 +2046,9 @@ largest practical benefit.
 
 ---
 
-**Q3 (Failure / Debugging) - How do you approach a "mystery"
-production slowdown that started this morning?**
+**[JUNIOR] Q3 - [DEBUGGING] How do you approach a "mystery" production slowdown that started this morning?**
 
-A: Structured investigation using heuristics:
+Structured investigation using heuristics:
 
 Step 1 - Characterize (not diagnose):
 ```bash
@@ -2053,7 +2066,7 @@ git log --since="24 hours ago" --oneline
 # Gradual = growing data volume, memory leak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Gradual = growing data volume, memory leak example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2 - Identify the bottleneck:
 ```bash
@@ -2071,7 +2084,7 @@ ORDER BY total_time DESC;
 # Missing index? Table scan? N+1?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Missing index? Table scan? N+1? example demonstrateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3 - Check resource saturation:
 ```bash
@@ -2090,7 +2103,7 @@ kubectl exec order-service -- \
 # Heap utilization > 85% = GC pressure → P99 spikes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Heap utilization > 85% = GC pressure → P99 spikes eice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 - Cross-reference with deployments:
 ```bash
@@ -2100,7 +2113,7 @@ kubectl rollout undo deployment/order-service
 # Rollback and observe: incident resolves? = deploy was the cause
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rollback and observe: incident resolves? = deploy was the cause example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* "gradual vs. sudden increase"
 as the diagnostic triage. Sudden increase = external change
@@ -2113,10 +2126,9 @@ that eliminates half the search space in the first 30 seconds.
 
 ---
 
-**Q4 (Behavioral) - What is the best distributed systems design
-decision you have made, and what made it good?**
+**[MID] Q4 - [BEHAVIORAL] What is the best distributed systems design decision you have made, and what made it good?**
 
-A: Example structure:
+Example structure:
 
 "The best decision: choosing a monolith for a platform we were
 asked to build as microservices from day one.

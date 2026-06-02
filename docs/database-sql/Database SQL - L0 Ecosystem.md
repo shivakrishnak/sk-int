@@ -148,7 +148,7 @@ CREATE TABLE orders (
 );
 ```
 
-> **Code walkthrough:** The auto-increment syntax is one of the most
+> **Code walkthrough:** The auto-increment syntax is one of the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common portability issues. PostgreSQL's `GENERATED ALWAYS AS IDENTITY`
 > (SQL standard, PostgreSQL 10+) is preferred over the legacy `SERIAL`.
 > MySQL uses `AUTO_INCREMENT`. Oracle adopted `IDENTITY` in 12c.
@@ -183,7 +183,7 @@ ORDER BY id
 FETCH NEXT 20 ROWS ONLY;
 ```
 
-> **Code walkthrough:** The BAD pattern (OFFSET) is supported in all
+> **Code walkthrough:** The BAD pattern (OFFSET) is supported in allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > four databases but degrades at large page numbers - page 100 of 20 rows
 > requires fetching and discarding 2,000 rows. The GOOD pattern (keyset
 > pagination) uses a WHERE clause on the last-seen ID, which hits the
@@ -259,7 +259,7 @@ Test against all target databases in CI.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: When would you choose PostgreSQL over MySQL?**
+**[JUNIOR] Q1 - [SCENARIO] When would you choose PostgreSQL over MySQL?**
 
 🗣️ "PostgreSQL when: (1) complex analytical queries using window functions,
 recursive CTEs, or advanced aggregations; (2) need for specialized index
@@ -271,7 +271,7 @@ compatible fork with significantly better performance); (3) the workload
 is simple OLTP with standard queries and maximum simplicity of operation
 is a priority."
 
-**Q2: What is the CAP theorem and how does it apply to RDBMS?**
+**[JUNIOR] Q2 - [MECHANISM] What is the CAP theorem and how does it apply to RDBMS?**
 
 🗣️ "CAP: a distributed system cannot simultaneously guarantee Consistency,
 Availability, and Partition tolerance. Traditional single-node RDBMS:
@@ -284,7 +284,7 @@ RAC: tight coupling, strong consistency, high availability, but expensive.
 PostgreSQL streaming replication: asynchronous by default (CA: favors
 availability). `synchronous_standby_names` adds synchronous confirmation."
 
-**Q3: Why might you use multiple database systems in one application?**
+**[JUNIOR] Q3 - [MECHANISM] Why might you use multiple database systems in one application?**
 
 🗣️ "Polyglot persistence: use each database for what it does best.
 PostgreSQL for transactional data (orders, users) needing ACID. Redis
@@ -296,7 +296,7 @@ databases are hard (no ACID across systems). Compensating transactions
 or eventual consistency needed. Operational complexity: each database
 needs its own monitoring, backup, and expertise."
 
-**Q4: How does database replication work at a high level?**
+**[MID] Q4 - [MECHANISM] How does database replication work at a high level?**
 
 🗣️ "Replication: changes on the primary are propagated to one or more
 replicas. Methods: (1) Statement-based: SQL statements are replicated.
@@ -309,7 +309,7 @@ scaling (route SELECT to replicas), failover (promote replica on
 primary failure), reporting (analytics queries on replica, not
 primary)."
 
-**Q5: What is the difference between InnoDB and MyISAM?**
+**[MID] Q5 - [TRADE-OFF] What is the difference between InnoDB and MyISAM?**
 
 🗣️ "MyISAM is MySQL's legacy storage engine (pre-InnoDB default).
 MyISAM: table-level locking (one writer at a time per table), no
@@ -320,7 +320,7 @@ InnoDB has been the default since MySQL 5.5 (2010). MyISAM should not
 be used for any new workload. The only remaining use case: full-text
 search in very old MySQL versions (InnoDB has full-text indexes in 5.6+)."
 
-**Q6: How do you evaluate if a database can handle your scale requirements?**
+**[SENIOR] Q6 - [DESIGN] How do you evaluate if a database can handle your scale requirements?**
 
 🗣️ "Four dimensions: (1) Write throughput: transactions per second.
 Single-node PostgreSQL: 10,000-50,000 TPS on NVMe SSD with connection
@@ -332,7 +332,7 @@ query, or an OLAP system. Benchmark with realistic data volumes and
 query distributions before choosing. pgbench (PostgreSQL), sysbench (MySQL)
 for standard OLTP benchmarks."
 
-**Q7: What should you consider when migrating from one RDBMS to another?**
+**[SENIOR] Q7 - [MECHANISM] What should you consider when migrating from one RDBMS to another?**
 
 🗣️ "Seven considerations: (1) SQL dialect differences (LIMIT vs FETCH NEXT,
 date functions, string functions); (2) data type mapping (Oracle NUMBER
@@ -471,7 +471,7 @@ Time-Series (InfluxDB, TimescaleDB, Prometheus):
   - Limitation: limited non-time-series query capability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When to Choose Each example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decision framework:**
 
@@ -515,12 +515,17 @@ GROUP BY c.email
 ORDER BY revenue DESC;
 ```
 
-> **Code walkthrough:** This query was not written at the time the schema
+> **Code walkthrough:** This query was not written at the time the schemaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > was designed. Relational databases allow ad-hoc questions: join any
 > tables, filter by any column, aggregate any way. The optimizer uses
 > indexes on `orders.customer_id` and `orders.created_at` to make this
 > fast. A document database cannot answer this query without fetching
 > all documents and joining in application code.
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # NoSQL: Redis for session management (key-value)
@@ -633,7 +638,7 @@ and do not need ACID.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the CAP theorem's practical implication for choosing a database?**
+**[JUNIOR] Q1 - [MECHANISM] What is the CAP theorem's practical implication for choosing a database?**
 
 🗣️ "CAP: a distributed system can guarantee at most two of Consistency,
 Availability, and Partition tolerance. In practice, network partitions happen,
@@ -644,7 +649,7 @@ with synchronous replication: CP. Cassandra with eventual consistency: AP.
 For financial transactions: CP is mandatory. For a social media feed:
 AP is acceptable (seeing a slightly stale like count is fine)."
 
-**Q2: When is MongoDB a better choice than PostgreSQL?**
+**[JUNIOR] Q2 - [MECHANISM] When is MongoDB a better choice than PostgreSQL?**
 
 🗣️ "MongoDB fits better when: (1) the document structure varies significantly
 per entity (different fields per user profile type); (2) the primary access
@@ -655,7 +660,7 @@ nested address objects). PostgreSQL's JSONB covers many of these cases
 with the added benefit of SQL queries. MongoDB fits when the document model
 is deeply nested and the access pattern is single-document retrieval."
 
-**Q3: Why do document databases struggle with relational queries?**
+**[JUNIOR] Q3 - [MECHANISM] Why do document databases struggle with relational queries?**
 
 🗣️ "Document databases lack JOIN at the storage level. To find all users
 who have placed an order this month: (1) fetch all orders from the orders
@@ -666,7 +671,7 @@ application-side join is slow and expensive. MongoDB's `$lookup` stage
 performs a join in the aggregation pipeline, but it is a nested loop join -
 O(n*m) without indexes, much slower than a hash join in PostgreSQL."
 
-**Q4: What is eventual consistency and when is it acceptable?**
+**[MID] Q4 - [MECHANISM] What is eventual consistency and when is it acceptable?**
 
 🗣️ "Eventual consistency: after a write, replicas will converge to the
 same state eventually (usually within milliseconds to seconds). In the
@@ -680,7 +685,7 @@ balances (reading stale balance and debiting = overdraft); (2) inventory
 (reading stale count and selling = oversell); (3) security (reading stale
 permissions and granting access = security hole)."
 
-**Q5: How does DynamoDB's partition key design affect performance?**
+**[MID] Q5 - [DESIGN] How does DynamoDB's partition key design affect performance?**
 
 🗣️ "DynamoDB partitions data by the partition key. All writes and reads
 for the same partition key go to the same shard. Hot partition problem:
@@ -693,7 +698,7 @@ shards cold. Fix: shard ID prefix + timestamp as the partition key to
 distribute writes. DynamoDB capacity is provisioned per shard - uneven
 distribution wastes capacity."
 
-**Q6: When would you use a graph database over a relational database?**
+**[SENIOR] Q6 - [SCENARIO] When would you use a graph database over a relational database?**
 
 🗣️ "Graph databases (Neo4j, Neptune) excel when the query requires
 traversing relationships of unknown depth. Examples: (1) 'find all friends
@@ -705,7 +710,7 @@ X through any chain of relationships.' SQL recursive CTEs handle graph
 queries for small depths. Graph databases are optimized for deep traversals
 on graphs with millions of edges."
 
-**Q7: Why is Redis called a data structure server, not just a cache?**
+**[SENIOR] Q7 - [MECHANISM] Why is Redis called a data structure server, not just a cache?**
 
 🗣️ "Redis supports multiple data structures, each with specific operations:
 Strings (GET/SET, INCR for counters), Lists (LPUSH/RPOP for queues,
@@ -813,7 +818,7 @@ simultaneously or when you need to find all Q3 expenses."
 
 **Pre-database data problems:**
 
-```
+```plaintext
 1. Data Redundancy
    Employee record in 5 separate department files.
    Update address: must update 5 files.
@@ -846,7 +851,7 @@ simultaneously or when you need to find all Q3 expenses."
    Database solution: GRANT/REVOKE per table/column.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Before Databases example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Historical evolution:**
 
@@ -864,6 +869,17 @@ simultaneously or when you need to find all Q3 expenses."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // THE FILE-BASED DATA PROBLEM in Java
@@ -925,7 +941,7 @@ public class EmployeeRepository {
 }
 ```
 
-> **Code walkthrough:** `FileBasedEmployeeStore.updateSalary` has three
+> **Code walkthrough:** `FileBasedEmployeeStore.updateSalary` has threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > critical flaws: (1) reads all lines into memory (O(n) even for single
 > record update); (2) rewrites the entire file (any crash between
 > `readAllLines` and `Files.write` corrupts the file or loses the update);
@@ -1007,7 +1023,7 @@ then rename - rename is atomic on POSIX filesystems).
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What was Codd's key insight in the 1970 relational model paper?**
+**[JUNIOR] Q1 - [MECHANISM] What was Codd's key insight in the 1970 relational model paper?**
 
 🗣️ "Two insights: (1) data independence - the physical storage layout
 should not constrain the query. In hierarchical databases, you navigate
@@ -1019,7 +1035,7 @@ This solved the data consistency problem: update a customer's address
 in one place, and all related orders see the new address. The practical
 impact: query flexibility and data integrity by design."
 
-**Q2: Why did hierarchical and network databases fail in enterprise?**
+**[JUNIOR] Q2 - [MECHANISM] Why did hierarchical and network databases fail in enterprise?**
 
 🗣️ "Hierarchical databases (IMS) modeled data as trees: parent-child
 relationships were physical. To add a new relationship (a product to a
@@ -1031,7 +1047,7 @@ Codd's breakthrough: queries should be logical (describe the result),
 not physical (navigate the structure). SQL is the declarative interface
 that achieved this separation."
 
-**Q3: How did the shift to SSDs change database design?**
+**[JUNIOR] Q3 - [DESIGN] How did the shift to SSDs change database design?**
 
 🗣️ "HDDs: sequential access is much faster than random access (10ms seek
 time for random vs. near-zero for sequential). Database design favored
@@ -1045,7 +1061,7 @@ differently for SSD. Modern NVMe SSDs have further changed the equation:
 databases like RocksDB and newer PostgreSQL versions exploit NVMe's
 parallelism."
 
-**Q4: What is data independence and why does it matter?**
+**[MID] Q4 - [MECHANISM] What is data independence and why does it matter?**
 
 🗣️ "Data independence: the ability to change the physical storage layout
 without changing application queries. Two levels: (1) Physical data
@@ -1058,7 +1074,7 @@ affect old queries). This is why databases are fundamental infrastructure:
 the application's query layer is decoupled from the storage layer's
 evolution."
 
-**Q5: How did the CAP theorem change how people think about distributed databases?**
+**[MID] Q5 - [MECHANISM] How did the CAP theorem change how people think about distributed databases?**
 
 🗣️ "Eric Brewer's CAP conjecture (2000), formally proved by Gilbert and
 Lynch (2002): in a distributed system, you can guarantee at most two of
@@ -1072,7 +1088,7 @@ node, no partition) with optional sync replication for CP. Practical implication
 understand the consistency requirement of each data type before choosing
 a storage system."
 
-**Q6: Why did NoSQL emerge in the late 2000s?**
+**[SENIOR] Q6 - [MECHANISM] Why did NoSQL emerge in the late 2000s?**
 
 🗣️ "Three forces: (1) Scale - Google, Amazon, Facebook had data volumes
 and traffic beyond what a single SQL node could handle. Horizontal
@@ -1086,7 +1102,7 @@ workloads - key-value lookups, graph traversal, time-series data do not
 map well to relational tables. NoSQL databases optimized for specific
 patterns outperform general-purpose SQL for those patterns."
 
-**Q7: What lessons from file-based systems should inform modern distributed design?**
+**[SENIOR] Q7 - [DESIGN] What lessons from file-based systems should inform modern distributed design?**
 
 🗣️ "The same problems recur at a larger scale. Data redundancy in files
 became data inconsistency across microservices - each service owns its

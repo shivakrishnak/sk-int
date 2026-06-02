@@ -156,7 +156,7 @@ HIBERNATE STATISTICS (diagnostic):
     sessionFactory.getStatistics()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Connection Pool Tuning and Hibernate Performance Diagnostics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Pool size is NOT "one per thread." Most threads spend the majority of
@@ -185,6 +185,12 @@ can actually reduce throughput via connection overhead.
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: HikariCP configuration in Spring Boot
 // application.yml:
@@ -208,13 +214,19 @@ spring:
 # hikaricp.connections.pending (gauge - queue depth)
 ```
 
-> **Code walkthrough:** `maximum-pool-size: 10` is the correct starting
+> **Code walkthrough:** `maximum-pool-size: 10` is the correct startingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > point for most services. `connection-timeout: 5000` (5 seconds, not the
 > default 30) fails fast when the pool is exhausted, allowing upstream
 > systems to apply back-pressure instead of accumulating blocked threads.
 > `max-lifetime: 1800000` ensures connections are recycled before firewalls
 > kill them (many firewalls terminate idle TCP connections after 30 minutes).
 > `keepalive-time: 30000` pings idle connections to detect drops.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Enabling Hibernate statistics for diagnostics
@@ -252,12 +264,18 @@ public void printStats() {
 }
 ```
 
-> **Code walkthrough:** `generate_statistics=true` enables the statistics
+> **Code walkthrough:** `generate_statistics=true` enables the statisticsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > collector with minimal overhead in development. `show_sql=true` prints
 > all SQL to stdout - essential for N+1 detection during development.
 > Never enable `show_sql` in production: it floods logs and adds I/O
 > overhead. The statistics call `getSessionOpenCount()` vs
 > `getSessionCloseCount()` - if they diverge, sessions are leaking.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Micrometer metrics for production monitoring
@@ -295,6 +313,12 @@ public void printStats() {
 > by a code change. The pool exhaustion alert fires immediately on any
 > timeout - this should be zero in a healthy system.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: Detecting N+1 in development with query count assertion
 // Use Hypersistence Optimizer or custom query counter:
@@ -315,7 +339,7 @@ void testOrderListNoNPlusOne() {
 // Fails the test immediately if N+1 is introduced by a code change
 ```
 
-> **Code walkthrough:** Query count assertions are the most effective
+> **Code walkthrough:** Query count assertions are the most effectiveice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > way to prevent N+1 regressions in CI. When a developer adds a new
 > field to the Order DTO that navigates a lazy association, the test
 > fails immediately with "Expected <= 2 queries, got: 52". This surfaces
@@ -422,7 +446,7 @@ spring.datasource.hikari.leak-detection-threshold: 5000
 # Logs a warning if connection held > 5 seconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Logs a warning if connection held > 5 seconds example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```java
@@ -438,7 +462,7 @@ EntityManager em = emf.createEntityManager(); // manual
 // MUST call em.close() in finally block
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Logs a warning if connection held > 5 seconds example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -467,7 +491,7 @@ LIMIT 10;
 # N+1 pattern: same query repeated many times with different IDs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This N+1 pattern: same query repeated many times with different IDs example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:*
 ```java
@@ -485,7 +509,7 @@ List<Order> findAllWithItems();
 List<Order> findAll();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This N+1 pattern: same query repeated many times with different IDs example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -509,7 +533,7 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 stats.getEntityCount()  # entities in all sessions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate statistics: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```java
@@ -532,7 +556,7 @@ public void processAll() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate statistics: example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -561,7 +585,7 @@ WHERE o.status = 'PENDING';
 -- Look: nested loop with high row estimate = wrong statistics
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate statistics: example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Run `ANALYZE orders` to refresh statistics. Add a covering
 index. Rewrite the query in native SQL if Hibernate-generated SQL
@@ -618,7 +642,7 @@ Alerting:
   hikaricp_connections_pending > 5 -> Warning
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate statistics: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min):
 Connection pool per pod: HikariCP maximumPoolSize=10. 50 pods * 10 = 500
@@ -765,8 +789,7 @@ flowchart TD
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is a database connection pool and why is pool size important?
+**[JUNIOR] Q1 - [MECHANISM] What is a database connection pool and why is pool size important?**
 
 *Why they ask:* Connection pools are fundamental to production backend services.
 
@@ -803,9 +826,7 @@ of connections - not just the application-side waiting behavior.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-Walk me through how HikariCP handles a connection request when
-the pool is at capacity.
+**[MID] Q2 - [MECHANISM] Walk me through how HikariCP handles a connection request when the pool is at capacity.**
 
 *Why they ask:* Tests understanding of the connection acquisition path.
 
@@ -837,7 +858,7 @@ Connection leak detection (`leakDetectionThreshold`):
 ```java
 spring.datasource.hikari.leak-detection-threshold: 5000
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 HikariCP starts a per-connection timer when a connection is borrowed.
 If the connection is not returned within 5 seconds, it logs a stack
@@ -850,9 +871,7 @@ connection, forgotten `close()`).
 
 ---
 
-**Q3 [SENIOR] - MECHANISM**
-How do you calculate the correct connection pool size? What is the
-formula?
+**[SENIOR] Q3 - [MECHANISM] How do you calculate the correct connection pool size? What is the formula?**
 
 *Why they ask:* Most engineers over-size pools; this tests production insight.
 
@@ -893,9 +912,7 @@ demonstrating that "pool size = thread count" is a common over-sizing mistake.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-An API endpoint is slow. Hibernate statistics show 200 SELECT
-statements for a request that should need 3. How do you diagnose and fix?
+**[SENIOR] Q4 - [DEBUGGING] An API endpoint is slow. Hibernate statistics show 200 SELECT statements for a request that should need 3. How do you diagnose and fix?**
 
 *Why they ask:* N+1 diagnosis is a critical Hibernate production skill.
 
@@ -931,9 +948,15 @@ ORDER BY calls DESC LIMIT 5;
 // Shows the same customers query called 100 times
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // Find the root query: orders are loaded without customers
 // BAD - causes N+1:
@@ -949,7 +972,7 @@ List<Order> findByStatusWithCustomer(String s);
 // 1 query with JOIN: returns all data
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Preventing regressions in CI:
 ```java
@@ -962,16 +985,14 @@ void orderListUsesOneQuery() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The `pg_stat_statements` diagnostic
 and the query count assertion for CI - catching N+1 at both ends.
 
 ---
 
-**Q5 [STAFF] - DEBUGGING**
-Your service has connection pool timeouts occurring only during
-deployments. Outside of deployments, the pool is healthy. What is happening?
+**[STAFF] Q5 - [DEBUGGING] Your service has connection pool timeouts occurring only during deployments. Outside of deployments, the pool is healthy. What is happening?**
 
 *Why they ask:* Tests knowledge of pool behavior during rolling deployments.
 
@@ -1013,7 +1034,7 @@ spring:
 # Gives the load balancer time to stop routing before shutdown
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Gives the load balancer time to stop routing before shutdown example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Cause 3: Schema migration (Flyway/Liquibase) during startup holds a
 connection for the duration of the migration. If migration takes 60
@@ -1026,9 +1047,7 @@ traffic before shutdown begins.
 
 ---
 
-**Q6 [MID] - COMPARISON**
-When should you use `StatelessSession` instead of a regular
-`Session` for batch processing?
+**[MID] Q6 - [TRADE-OFF] When should you use `StatelessSession` instead of a regular `Session` for batch processing?**
 
 *Why they ask:* StatelessSession is an important Hibernate feature for
 performance-sensitive batch operations.
@@ -1080,7 +1099,7 @@ try {
 // Performance: no snapshot comparison, no L1C growth
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Gives the load balancer time to stop routing before shutdown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Features NOT supported by `StatelessSession`:
 - First-level cache (no entity identity within the session)
@@ -1100,9 +1119,7 @@ load eagerly or throw), which can change the query plan unexpectedly.
 
 ---
 
-**Q7 [SENIOR] - TRADE-OFF**
-Your team wants to enable Hibernate second-level cache for read
-performance. What are the trade-offs?
+**[SENIOR] Q7 - [TRADE-OFF] Your team wants to enable Hibernate second-level cache for read performance. What are the trade-offs?**
 
 *Why they ask:* L2C is both powerful and dangerous; trade-off analysis matters.
 
@@ -1154,9 +1171,7 @@ the distributed cache vs message-bus invalidation trade-off.
 
 ---
 
-**Q8 [STAFF] - ARCHITECTURE**
-How do you design the connection pool configuration for a service
-that uses both a primary database (writes) and a read replica (queries)?
+**[STAFF] Q8 - [DESIGN] How do you design the connection pool configuration for a service that uses both a primary database (writes) and a read replica (queries)?**
 
 *Why they ask:* Read replica routing with connection pools is a common
 production architecture decision.
@@ -1212,7 +1227,7 @@ public List<ProductDTO> listProducts() { ... }
 public Product createProduct(ProductDTO dto) { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Pool sizing for each:
 - Write pool: sized for write throughput (typically smaller: 5-10)
@@ -1225,7 +1240,7 @@ Replica lag monitoring:
 SELECT now() - pg_last_xact_replay_timestamp()
 AS replica_lag_seconds;
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Alert if replica lag > 5 seconds. Route reads back to primary when
 replica is lagging (prevents stale reads in time-sensitive operations).
@@ -1236,8 +1251,7 @@ is the Spring idiom for routing without code changes in the service layer.
 
 ---
 
-**Q9 [JUNIOR] - MECHANISM**
-How do you enable and read Hibernate statistics?
+**[JUNIOR] Q9 - [MECHANISM] How do you enable and read Hibernate statistics?**
 
 *Why they ask:* Statistics are the primary tool for Hibernate diagnostics.
 
@@ -1253,7 +1267,7 @@ spring:
         generate_statistics: true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Access via code:
 ```java
@@ -1284,7 +1298,7 @@ System.out.println("Slowest query: " +
     stats.getQueryExecutionMaxTimeQueryString());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The most useful statistic for N+1 detection:
 `queryExecutionCount` - if this is 50x the expected count, N+1 is present.
@@ -1297,7 +1311,7 @@ System.out.println(stats.getQueryExecutionCount());
 // Shows only queries from myOperation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 In production, expose via Actuator:
 `management.endpoint.health.show-details=always` with Micrometer
@@ -1309,10 +1323,7 @@ session leak indicator.
 
 ---
 
-**Q10 [SENIOR] - DEBUGGING**
-HikariCP is logging "Connection is not available, request timed out
-after 30000ms" intermittently during business hours. The database
-CPU is < 10%. How do you diagnose?
+**[SENIOR] Q10 - [DEBUGGING] HikariCP is logging "Connection is not available, request timed out after 30000ms" intermittently during business hours. The database CPU is < 10%. How do you diagnose?**
 
 *Why they ask:* Pool exhaustion with low database CPU is a common
 counterintuitive production scenario.
@@ -1338,7 +1349,7 @@ spring.datasource.hikari.leak-detection-threshold: 5000
 // Stack trace shows the code holding the connection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Cause 2: Connection leak - `close()` not called.
 Some code path obtains a connection but does not return it. The pool
@@ -1355,7 +1366,7 @@ Diagnostic:
 # check for manual EntityManager usage)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This check for manual EntityManager usage) example demonstrates shell script pattern using @Transactional. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Cause 3: Application thread count exceeds connection pool.
 200 threads all request connections simultaneously during a traffic burst.
@@ -1376,9 +1387,7 @@ metrics, then code analysis.
 
 ---
 
-**Q11 [SENIOR] - TRADE-OFF**
-Should you use `show_sql=true` in production for debugging?
-What is the alternative?
+**[SENIOR] Q11 - [TRADE-OFF] Should you use `show_sql=true` in production for debugging? What is the alternative?**
 
 *Why they ask:* Tests knowledge of production-safe diagnostics.
 
@@ -1407,7 +1416,7 @@ log_min_duration_statement = 500  -- log queries > 500ms
 log_statement = 'none'            -- don't log all queries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This check for manual EntityManager usage) example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 2. Hibernate statistics via Micrometer (low overhead):
 ```yaml
@@ -1416,7 +1425,7 @@ spring.jpa.properties.hibernate.generate_statistics: true
 # Exposes metrics without logging individual SQLs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exposes metrics without logging individual SQLs example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 3. DataSource proxy (query-level logging with control):
 ```java
@@ -1425,7 +1434,7 @@ spring.jpa.properties.hibernate.generate_statistics: true
 // Configurable, can be toggled at runtime
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Exposes metrics without logging individual SQLs example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 4. Application Performance Monitoring (APM):
 New Relic, Datadog APM, Elastic APM - all capture SQL queries with
@@ -1442,9 +1451,7 @@ for temporary production SQL logging without application deployment.
 
 ---
 
-**Q12 [STAFF] - BEHAVIORAL**
-Describe how you designed or improved the observability strategy
-for a Hibernate-based service in production.
+**[STAFF] Q12 - [BEHAVIORAL] Describe how you designed or improved the observability strategy for a Hibernate-based service in production.**
 
 *Why they ask:* Tests experience designing production monitoring for ORM-backed services.
 

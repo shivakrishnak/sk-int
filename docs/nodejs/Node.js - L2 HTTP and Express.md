@@ -109,7 +109,7 @@ HTTP module vs Express:
     next(err)                      // pass to error handler
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTTP Module and Express Basics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -180,7 +180,7 @@ export function errorHandler(err, req, res, next) {
 }
 ```
 
-> **Code walkthrough:** The `asyncRoute` wrapper is non-negotiable in
+> **Code walkthrough:** The `asyncRoute` wrapper is non-negotiable inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Express - without it, `async` route handlers that throw won't forward
 > the error to Express's error handler. `express.json({ limit: '1mb' })`
 > limits request body size (without this, a client can send an arbitrarily
@@ -389,13 +389,18 @@ Middleware execution pipeline:
     app.use(rateLimit(100, 60000)); // 100 req/minute
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Middleware Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Production) - Security middleware stack:**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 import express from 'express';
@@ -458,7 +463,7 @@ app.use(async (req, res, next) => {
 });
 ```
 
-> **Code walkthrough:** `helmet()` sets dozens of security-critical
+> **Code walkthrough:** `helmet()` sets dozens of security-criticalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > HTTP headers in one middleware call (Content-Security-Policy,
 > X-Frame-Options, HSTS, etc). CORS middleware must come before routes
 > so OPTIONS preflight requests are handled. The rate limiter on `/api/`
@@ -534,7 +539,7 @@ app.use((req, res, next) => {
 // If a middleware never calls next(), the timeout fires
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 

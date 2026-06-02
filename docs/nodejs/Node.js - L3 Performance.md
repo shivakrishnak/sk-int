@@ -125,7 +125,7 @@ Profiling tools and what they reveal:
      }, 100);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Produces HTML report with recommendations example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -186,7 +186,7 @@ app.get('/api/search', asyncRoute(async (req, res) => {
 }));
 ```
 
-> **Code walkthrough:** `performance.mark` and `performance.measure`
+> **Code walkthrough:** `performance.mark` and `performance.measure`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > instrument code without external tools. This identifies the bottleneck
 > is in the `filter()` call, not the database query. 50,000 synchronous
 > filter operations blocking the event loop is the root cause. Three
@@ -268,7 +268,7 @@ setInterval(() => {
 }, 5000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prometheus metric for GC pauses: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Reduce object allocation rate, use Buffer pools, use
 streaming instead of building large arrays.
@@ -409,7 +409,7 @@ V8 memory structure:
        }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Memory Management in Node.js example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -467,7 +467,7 @@ setInterval(logMemory, 30000); // log every 30s
 // external: C++ objects bound to JS (Buffers)
 ```
 
-> **Code walkthrough:** `v8.writeHeapSnapshot` dumps the current heap
+> **Code walkthrough:** `v8.writeHeapSnapshot` dumps the current heapice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > state to a `.heapsnapshot` file. Loading two snapshots in Chrome
 > DevTools "Memory" tab and using the "Comparison" view shows which
 > object types grew between snapshots - the ones with the most retained
@@ -562,7 +562,7 @@ Step 2 - Trigger GC manually (for baseline):
 ```javascript
 if (global.gc) global.gc(); // requires --expose-gc flag
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 If memory drops significantly after GC, objects were reachable.
 If memory doesn't drop, objects are still referenced somewhere.

@@ -145,7 +145,7 @@ USE METHOD per resource
   Errors: are requests failing due to capacity limits?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Capacity Planning and Load Forecasting example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Most catastrophic capacity failures are predictable in advance. Black
@@ -177,6 +177,11 @@ scaling without formal capacity planning. The overhead is not justified.
 ### 💻 Code Example
 
 **Example 1: Load forecasting with seasonal decomposition**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: Capacity planning using only the average
@@ -272,7 +277,7 @@ def forecast_capacity_requirement(
     }
 ```
 
-> **Code walkthrough:** The BAD approach uses only the rolling average
+> **Code walkthrough:** The BAD approach uses only the rolling averageice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for capacity decisions, missing seasonality entirely. The GOOD approach
 > uses STL (Seasonal and Trend decomposition using Loess) which separates
 > the time series into trend (long-term growth), seasonal (weekly pattern),
@@ -341,7 +346,7 @@ capacity stabilizes.
 #        "reactive mode"?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "reactive mode"? example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Historical peak analysis: find all known peak events (holidays,
 product launches, viral events). Build a peak multiplier table:
@@ -640,7 +645,7 @@ M/M/1 QUEUE SATURATION CURVE
   95%         | 19.0            | 19.0x
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Performance Degradation and Saturation Analysis example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Most performance problems are explained by a single bottleneck at one
@@ -679,6 +684,11 @@ Resolving the bottleneck restores linear latency behavior.
 ### 💻 Code Example
 
 **Example 1: Saturation analysis automation script**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -794,7 +804,7 @@ def check_system_saturation() -> list[ResourceStatus]:
     )
 ```
 
-> **Code walkthrough:** The BAD approach checks CPU only and concludes
+> **Code walkthrough:** The BAD approach checks CPU only and concludesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > no saturation if CPU is healthy - missing the most common actual
 > bottlenecks (file descriptors, memory swap, database connections).
 > The GOOD approach implements the USE method as a checklist across
@@ -804,6 +814,11 @@ def check_system_saturation() -> list[ResourceStatus]:
 > disk I/O using the same pattern.
 
 **Example 2: Identifying hidden connection pool saturation**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: Observing "high latency" and scaling up CPU
@@ -870,7 +885,7 @@ def diagnose_latency_spike(
     }
 ```
 
-> **Code walkthrough:** The BAD approach scales CPU when observing
+> **Code walkthrough:** The BAD approach scales CPU when observingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > high latency - the intuitive but usually wrong diagnosis for web
 > services. The GOOD approach applies a prioritized diagnostic checklist
 > with database connection pool at position 1 (most common bottleneck
@@ -951,7 +966,7 @@ jstack <PID> | grep "WAITING" | head -20
 # Likely: threads blocked on DB connection acquire
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Likely: threads blocked on DB connection acquire example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Database connection timeout + thread pool queue limit.
 Set connection acquire timeout to 500ms (fail fast rather than block).
@@ -984,7 +999,7 @@ grep "Pause Full" gc.log | \
 # APM. If they align: GC is the cause.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This APM. If they align: GC is the cause. example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Tune GC for latency: G1GC with MaxGCPauseMillis=200,
 increase heap to reduce GC frequency, or migrate to ZGC/Shenandoah

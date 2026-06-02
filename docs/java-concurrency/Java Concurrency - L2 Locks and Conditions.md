@@ -132,7 +132,7 @@ try { /* critical section */ }
 finally { lock.unlock(); }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Locks and Conditions example demonstrates exception handling using concurrency primitive. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Multiple conditions (the key advantage):
 ```java
@@ -159,7 +159,7 @@ void consume() throws InterruptedException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Locks and Conditions example demonstrates exception handling using concurrency primitive. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 With `synchronized`, you'd need `notifyAll()` which wakes both
 producers AND consumers - inefficient for high-concurrency buffers.
@@ -199,7 +199,7 @@ itself is interruptible and time-bounded.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example uses synchronized in a context
+> **Code walkthrough:** The BAD example uses synchronized in a contextice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that needs timeout - there's no way to implement lock timeout with
 > synchronized. The GOOD example uses tryLock(timeout). The production
 > example shows the full bounded buffer with separate producer/consumer
@@ -215,7 +215,7 @@ public synchronized void processWithTimeout()
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L2 Locks and Conditions example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ```java
 // GOOD: ReentrantLock with timeout
@@ -234,7 +234,7 @@ public void processWithTimeout() throws TimeoutException,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates exception handling using concurrency primitive. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // PRODUCTION: efficient bounded buffer with separate conditions
@@ -272,7 +272,7 @@ class EfficientBuffer<T> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using concurrency primitive. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -534,7 +534,7 @@ class ResourcePool {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using async/await. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Design notes: `Condition.await(time, unit)` returns false if timed out.
 The deadline calculation using `nanoTime()` is correct for elapsed-time
@@ -613,7 +613,7 @@ boolean lockBoth(Lock lockA, Lock lockB)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Real use case: transferring between two bank accounts where both
 accounts need to be locked. The accounts are not always in a fixed
@@ -636,7 +636,7 @@ void transfer(Account from, Account to, int amount) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* The livelock risk in try-lock-release:
 if two threads each grab their first lock and both fail to get the second,
@@ -766,7 +766,7 @@ public void doWork() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using coice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing that the JDK itself has been
 updated extensively in Java 21 to replace `synchronized` blocks with
@@ -778,18 +778,18 @@ migration in the OpenJDK community.
 
 ### ⚖️ Comparison Table
 
-| Feature | synchronized | ReentrantLock | AtomicInteger |
-|---|---|---|---|
-| Auto-unlock | Yes | No (must use finally) | N/A |
-| Try-lock | No | Yes | N/A |
-| Timed lock | No | Yes | N/A |
-| Interruptible | No | Yes | N/A |
-| Fair mode | No | Yes | N/A |
-| Conditions | One | Multiple | N/A |
-| Virtual thread safe | No (pins) | Yes | Yes |
-| Reentrancy | Yes | Yes | N/A |
-| Compound atomic ops | No | Via Condition | Yes (CAS) |
-| Complexity | Low | Medium | Low |
+| Feature| synchronized| ReentrantLock| AtomicInteger|
+|-------------------|------------|---------------------|-------------|
+| Auto-unlock| Yes| No (must use finally)| N/A|
+| Try-lock| No| Yes| N/A|
+| Timed lock| No| Yes| N/A|
+| Interruptible| No| Yes| N/A|
+| Fair mode| No| Yes| N/A|
+| Conditions| One| Multiple| N/A|
+| Virtual thread safe| No (pins)| Yes| Yes|
+| Reentrancy| Yes| Yes| N/A|
+| Compound atomic ops| No| Via Condition| Yes (CAS)|
+| Complexity| Low| Medium| Low|
 
 **The deciding factor:**
 Use `synchronized` for simple critical sections. Use `ReentrantLock`
@@ -902,7 +902,7 @@ Invariant:
   readCount>0       → writeLocked=false (no writing while readers active)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Read lock acquisition: allowed if write lock is not held. Increment
 read count. Multiple readers hold simultaneously.
@@ -941,7 +941,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 ReadWriteLock only improves performance when reads are truly dominant
@@ -978,7 +978,7 @@ reads are naturally parallelizable as they don't modify state.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example uses a single ReentrantLock for
+> **Code walkthrough:** The BAD example uses a single ReentrantLock forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > read operations, serializing all reads. The GOOD example uses
 > ReadWriteLock to allow concurrent reads. The StampedLock example shows
 > the next-level optimization with optimistic reads - avoiding lock
@@ -1004,7 +1004,7 @@ class UserRegistry {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exceptionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // GOOD: ReadWriteLock - reads run concurrently
@@ -1029,7 +1029,7 @@ class UserRegistry {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // ADVANCED: StampedLock with optimistic read
@@ -1064,7 +1064,7 @@ class StampedUserRegistry {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1160,17 +1160,17 @@ Fix: JMH benchmark with your actual read:write ratio. If writes >
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 30-60 seconds |
-| Mechanism | 1-2 minutes |
-| Comparison | 2-3 minutes |
-| Scenario | 2-3 minutes |
-| Debugging | 2-3 minutes |
-| Upgrade/Downgrade | 2-3 minutes |
-| StampedLock | 2-3 minutes |
-| Trade-off | 1-2 minutes |
-| Advanced | 2-3 minutes |
+  | Question Category | Time to Answer |  
+|-----------------|--------------|
+  | Definition        | 30-60 seconds  |  
+  | Mechanism         | 1-2 minutes    |  
+  | Comparison        | 2-3 minutes    |  
+  | Scenario          | 2-3 minutes    |  
+  | Debugging         | 2-3 minutes    |  
+  | Upgrade/Downgrade | 2-3 minutes    |  
+  | StampedLock       | 2-3 minutes    |  
+  | Trade-off         | 1-2 minutes    |  
+  | Advanced          | 2-3 minutes    |  
 
 ---
 
@@ -1236,7 +1236,7 @@ try {
 // re-validation is essential.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Lock downgrade (write → read) IS
 supported and safe. A thread holding the write lock can acquire the
@@ -1351,7 +1351,7 @@ class RoutingTable {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrappiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The lock downgrade in `reloadRoutes()`
 ensures no other writer can interpose between the update and the
@@ -1425,7 +1425,7 @@ if (!lock.validate(stamp)) { // did a write occur since stamp?
 // Use localX, localY
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 `validate(stamp)` returns false if a write lock was acquired since
 the stamp was obtained. This is implemented via a version counter that

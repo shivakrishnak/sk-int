@@ -67,7 +67,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **FetchType behavior and OSIV:**
-```
+```plaintext
 DEFAULT FETCH TYPES:
 
   @ManyToOne:   EAGER by default (JPA spec default)
@@ -149,8 +149,8 @@ OPEN-SESSION-IN-VIEW (OSIV):
   Spring Boot default: spring.jpa.open-in-view=true
   
   OSIV: binds an EntityManager to the HTTP request thread for the full duration.
-  Lifecycle: HTTP request starts -> EM opened -> service method -> transaction -> commit
-             -> view/serializer phase -> lazy collections accessed (no exception!) -> HTTP response
+  Lifecycle: HTTP request starts -> EM opened -> service method -> transaction...
+             -> view/serializer phase -> lazy collections accessed (no...
   
   Benefit: lazy collections can be accessed in Jackson serializer or Thymeleaf templates.
            No LazyInitializationException in the web layer.
@@ -171,7 +171,7 @@ OPEN-SESSION-IN-VIEW (OSIV):
     disable this warning."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L2 Fetch Strategies example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **WHAT BREAKS: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -179,6 +179,17 @@ OPEN-SESSION-IN-VIEW (OSIV):
 
 > **Code walkthrough:** The DTO approach is the correct fix for `LazyInitializationException`.
 > It assembles all needed data within the transaction and returns a plain Java object.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // BAD: Entity returned from service (lazy access in web layer):
@@ -267,7 +278,7 @@ query, or (2) return a DTO assembled within the transaction.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: `LazyInitializationException` in production but not in local tests.**
-```
+```plaintext
 Symptom: exception in production, works in local development.
 
 Root cause: OSIV enabled locally, disabled in production.
@@ -292,7 +303,7 @@ Prevention:
   Controller should never access entity lazy collections.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -380,7 +391,13 @@ released immediately after the service method returns (well before the HTTP resp
 ### 📘 Concept Explanation
 
 **N+1 patterns and fixes:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 N+1 MANIFESTATIONS:
 
   1. OneToMany collection in loop:
@@ -416,7 +433,7 @@ FIXES:
     List<Author> findActiveWithBooks();
     // 1 SQL: SELECT a.*, b.* FROM authors a LEFT JOIN books b ON b.author_id = a.id
     // All data in one roundtrip.
-    // DISTINCT may be needed: author with 3 books -> 3 rows in result (same author).
+    // DISTINCT may be needed: author with 3 books -> 3 rows in result (same...
     @Query("SELECT DISTINCT a FROM Author a LEFT JOIN FETCH a.books WHERE a.active = true")
     List<Author> findActiveWithBooks();
   
@@ -478,7 +495,7 @@ DETECTING N+1 IN PRODUCTION:
   New Relic / Datadog: query count per transaction (alert on > 20 queries/request).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates metadata declaration using SQL. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **WHAT BREAKS: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 ---
 
@@ -624,7 +641,7 @@ Fix:
     1 query regardless of user count.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

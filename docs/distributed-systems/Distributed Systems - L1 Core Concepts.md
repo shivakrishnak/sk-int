@@ -179,7 +179,7 @@ public String readUserEmail(String userId) {
 }
 ```
 
-> **Code walkthrough:** The CP example (ZooKeeper) throws an exception
+> **Code walkthrough:** The CP example (ZooKeeper) throws an exceptionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > when the cluster cannot reach a quorum - it sacrifices availability
 > to maintain the guarantee that returned data is correct. The AP
 > example (Cassandra with ONE consistency level) reads from any single
@@ -240,7 +240,7 @@ PREFER_ONE consistency for reads where stale data is acceptable.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Explain CAP Theorem in one minute.**
+**[JUNIOR] Q1 - [MECHANISM] Explain CAP Theorem in one minute.**
 
 🗣️ "CAP: a distributed data store can guarantee at most two of:
 Consistency (reads always return the most recent write), Availability
@@ -253,7 +253,7 @@ respond to every request, even if the response is stale. Cassandra,
 DynamoDB, CouchDB are AP. The choice depends on your use case: bank
 transactions need CP. Social media likes can tolerate AP."
 
-**Q2: What does it mean that 'CA' is not a valid choice in CAP?**
+**[JUNIOR] Q2 - [MECHANISM] What does it mean that 'CA' is not a valid choice in CAP?**
 
 🗣️ "'CA' means consistent and available but NOT partition tolerant.
 This is impossible to guarantee in a real distributed system because
@@ -266,7 +266,7 @@ relational databases as 'CA' - which is technically true since they
 have no partition to tolerate, but that is not a meaningful distributed
 systems design choice."
 
-**Q3: How does the PACELC theorem extend CAP?**
+**[JUNIOR] Q3 - [MECHANISM] How does the PACELC theorem extend CAP?**
 
 🗣️ "PACELC (Daniel Abadi, 2012) extends CAP to include the latency
 vs consistency trade-off during NORMAL operation (no partition).
@@ -280,7 +280,7 @@ consistent). Cassandra is PA/EL. ZooKeeper is PC/EC. This better
 describes real-world databases where the latency-consistency trade-off
 matters every request, not just during partitions."
 
-**Q4: How do you use CAP to choose a database for a given use case?**
+**[MID] Q4 - [MECHANISM] How do you use CAP to choose a database for a given use case?**
 
 🗣️ "The decision tree: (1) Does the data have strong consistency
 requirements - would returning stale data cause data corruption, money
@@ -295,7 +295,7 @@ brief data loss is acceptable). Inventory available-for-sale count =
 CP (overselling is a business problem). User profile = AP (seeing
 2-second-old profile data is fine)."
 
-**Q5: Does a database have to be permanently CP or AP?**
+**[MID] Q5 - [MECHANISM] Does a database have to be permanently CP or AP?**
 
 🗣️ "No. Most distributed databases allow tunable consistency per
 operation. Cassandra has consistency levels: ALL (every replica must
@@ -308,7 +308,7 @@ read with eventual consistency for bulk analytics, read with QUORUM
 for financial operations. One database, different CAP behaviors
 depending on the consistency level you choose per operation."
 
-**Q6: What are real-world examples of CP vs AP failures?**
+**[SENIOR] Q6 - [TRADE-OFF] What are real-world examples of CP vs AP failures?**
 
 🗣️ "CP failure example: ZooKeeper cluster loses quorum (majority of
 nodes unreachable). Kafka, Hadoop, and any service using ZooKeeper
@@ -323,7 +323,7 @@ their profile might see the old email. The system was available
 Both failures are real; which is worse depends entirely on the
 use case."
 
-**Q7: How does the CAP theorem apply to microservices?**
+**[SENIOR] Q7 - [MECHANISM] How does the CAP theorem apply to microservices?**
 
 🗣️ "In microservices, each service owns its database. Cross-service
 data consistency requires distributed transactions (2PC or Saga).
@@ -439,14 +439,14 @@ the answer is "maybe."
 
 **The consistency spectrum:**
 
-```
+```plaintext
 Weakest                                        Strongest
 |                                                      |
 Eventual  Causal  Read-your  Monotonic  Sequential  Linearizable
                   -writes    reads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Consistency Models example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Key models:
 1. **Eventual Consistency:** Replicas may diverge temporarily; given
@@ -506,6 +506,12 @@ model is a point on this wait/respond spectrum."
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // DEMONSTRATING CONSISTENCY LEVEL IMPACT
 
@@ -553,7 +559,7 @@ public BigDecimal getBalance(String accountId) {
 }
 ```
 
-> **Code walkthrough:** The BAD example uses `ONE` consistency -
+> **Code walkthrough:** The BAD example uses `ONE` consistency -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the fastest option but one that reads from a single, potentially
 > lagging replica. After a write, the user may see stale data.
 > For balances, this is a user-experience bug. The GOOD example uses
@@ -621,7 +627,7 @@ and enforce uniqueness at write time.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between eventual consistency and
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between eventual consistency and**
 causal consistency?**
 
 🗣️ "Eventual consistency makes one guarantee: given no new writes,
@@ -637,7 +643,7 @@ MongoDB's causal sessions implement this: within a session, reads
 are causally consistent - you see your own writes and their causal
 consequences."
 
-**Q2: What is linearizability and why is it the gold standard?**
+**[JUNIOR] Q2 - [MECHANISM] What is linearizability and why is it the gold standard?**
 
 🗣️ "Linearizability means every operation appears to execute atomically
 at a single indivisible point in time, and these points are consistent
@@ -652,7 +658,7 @@ assumptions about state. The cost: higher latency (requires quorum
 acknowledgment) and lower availability during partitions (CP in CAP
 terms)."
 
-**Q3: What is read-your-writes consistency and when is it essential?**
+**[JUNIOR] Q3 - [MECHANISM] What is read-your-writes consistency and when is it essential?**
 
 🗣️ "Read-your-writes (also called monotonic read consistency for
 your own writes) guarantees that after a write, the same client
@@ -669,7 +675,7 @@ reads to the same replica that received their write, or use sticky
 sessions, or read with a session token that carries the write's
 logical timestamp."
 
-**Q4: What are the practical performance implications of choosing
+**[MID] Q4 - [MECHANISM] What are the practical performance implications of choosing**
 stronger consistency?**
 
 🗣️ "Stronger consistency requires more coordination. Linearizable
@@ -685,7 +691,7 @@ round-trip. For most applications: choose QUORUM within a single
 region (low added latency), and eventual consistency for cross-region
 reads unless the use case demands otherwise."
 
-**Q5: How does an application implement session-level consistency
+**[MID] Q5 - [MECHANISM] How does an application implement session-level consistency**
 guarantees?**
 
 🗣️ "Several approaches: (1) Sticky sessions: route all of a user's
@@ -702,7 +708,7 @@ vector clock representing its causal dependencies. Replicas delay
 a read until all its causal dependencies are applied. MongoDB
 causal sessions use this approach."
 
-**Q6: What is the BASE acronym and how does it relate to
+**[SENIOR] Q6 - [MECHANISM] What is the BASE acronym and how does it relate to**
 consistency models?**
 
 🗣️ "BASE stands for Basically Available, Soft state, Eventually
@@ -719,7 +725,7 @@ developer says 'we are using a BASE system,' they are communicating:
 we have accepted eventual consistency as the trade-off to gain
 availability and write performance."
 
-**Q7: How do you explain consistency models to a non-technical
+**[SENIOR] Q7 - [MECHANISM] How do you explain consistency models to a non-technical**
 stakeholder?**
 
 🗣️ "I use a bank account analogy. Strong consistency: you deposit $100.
@@ -840,7 +846,7 @@ any individual component failure is invisible to users.
 
 **Availability math:**
 
-```
+```plaintext
 Availability = MTBF / (MTBF + MTTR)
 
 MTBF = mean time between failures
@@ -854,7 +860,7 @@ Nines table:
 99.9999% = 31 seconds/year
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Availability and Fault Tolerance Fundamentals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Redundancy patterns:**
 
@@ -908,6 +914,12 @@ complexity vs three nines."
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // HEALTH CHECK ENDPOINT: foundation of automatic failover
 
@@ -958,7 +970,7 @@ public class HealthController {
 }
 ```
 
-> **Code walkthrough:** The BAD example has no health endpoint, so
+> **Code walkthrough:** The BAD example has no health endpoint, soice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a load balancer or Kubernetes has no way to detect that this instance
 > is unhealthy. Traffic continues to flow to it even when the database
 > connection is broken. The GOOD example separates liveness (is the
@@ -1026,7 +1038,7 @@ for slow-starting dependencies.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between high availability and fault
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between high availability and fault**
 tolerance?**
 
 🗣️ "High availability means the system responds to requests with high
@@ -1041,7 +1053,7 @@ is both: respond to every request AND return correct data.
 Achieving this requires both redundancy (for availability) and
 correct consistency protocols (for fault tolerance during failures)."
 
-**Q2: Walk through how a load balancer implements automatic failover.**
+**[JUNIOR] Q2 - [MECHANISM] Walk through how a load balancer implements automatic failover.**
 
 🗣️ "The load balancer continuously sends health check requests to all
 upstream instances - either HTTP GET /health or TCP connection checks.
@@ -1057,7 +1069,7 @@ detection and routing change in response to instance health.
 MTTR is reduced to the health check interval times the failure threshold
 - typically 10-30 seconds."
 
-**Q3: How do you achieve database high availability?**
+**[JUNIOR] Q3 - [MECHANISM] How do you achieve database high availability?**
 
 🗣️ "Three patterns. First: replication with automatic promotion.
 Primary + read replicas, where a replica auto-promotes if the primary
@@ -1072,7 +1084,7 @@ and replicated across nodes. Loss of minority of nodes is transparent
 to clients. Each approach has different RTO (recovery time objective)
 and RPO (recovery point objective - how much data can you lose)."
 
-**Q4: What is the 'split brain' problem and how do you prevent it?**
+**[MID] Q4 - [MECHANISM] What is the 'split brain' problem and how do you prevent it?**
 
 🗣️ "Split brain occurs when two nodes each believe they are the primary/
 leader and both accept writes independently. When the network partition
@@ -1088,7 +1100,7 @@ fencing: every write includes an epoch number (the leader's election
 term). When the old leader reconnects, any writes with the old epoch
 are rejected by the replicas - preventing stale writes."
 
-**Q5: What is the relationship between MTBF, MTTR, and availability?**
+**[MID] Q5 - [MECHANISM] What is the relationship between MTBF, MTTR, and availability?**
 
 🗣️ "Availability = MTBF / (MTBF + MTTR). MTBF is the average time
 between failures. MTTR is the average time to detect and recover
@@ -1103,7 +1115,7 @@ Kubernetes automatic pod restarts reduce recovery time to seconds,
 pre-tested runbooks reduce manual intervention. For five-nines
 availability: you need MTTR in seconds, not minutes."
 
-**Q6: How do cascading failures occur and how do you prevent them?**
+**[SENIOR] Q6 - [MECHANISM] How do cascading failures occur and how do you prevent them?**
 
 🗣️ "Cascading failure: Service A depends on Service B. Service B slows
 down. Service A's threads queue waiting for B's responses. Service A
@@ -1119,7 +1131,7 @@ D is unaffected. Backpressure: when overloaded, services shed load
 explicitly (return 429 Too Many Requests) rather than silently
 degrading, allowing upstreams to adapt."
 
-**Q7: What is RTO and RPO, and how do they guide HA design?**
+**[SENIOR] Q7 - [DESIGN] What is RTO and RPO, and how do they guide HA design?**
 
 🗣️ "RTO: Recovery Time Objective - how quickly must the system recover
 after a failure? E.g., RTO = 1 minute means within 1 minute of a

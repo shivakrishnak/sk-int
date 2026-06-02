@@ -176,7 +176,7 @@ The more automated the verification, the faster and safer the feedback.
 #   forgotten configuration, no rollback plan
 ```
 
-> **Code walkthrough:** This anti-pattern shows the typical manual
+> **Code walkthrough:** This anti-pattern shows the typical manualice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > process that CI/CD replaces. It relies on humans not making
 > mistakes, remembering every step, and having the right environment
 > configured. Each manual step is a failure opportunity. The real
@@ -184,6 +184,7 @@ The more automated the verification, the faster and safer the feedback.
 
 **GOOD: GitHub Actions CI/CD pipeline**
 
+{% raw %}
 ```yaml
 # .github/workflows/ci-cd.yml
 name: CI/CD Pipeline
@@ -233,8 +234,9 @@ jobs:
           echo "Deploying to staging..."
           # Deploy script here
 ```
+{% endraw %}
 
-> **Code walkthrough:** This pipeline triggers on every push to main
+> **Code walkthrough:** This pipeline triggers on every push to mainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > or develop and on pull requests. The `ci` job compiles, tests, and
 > creates an artifact. The `cd` job runs only after `ci` succeeds and
 > only on main branch. The `needs: ci` dependency is critical - it
@@ -1414,7 +1416,7 @@ steps.
 # "What version is in staging?" requires checking 3 systems
 ```
 
-> **Code walkthrough:** This represents the typical "toolchain
+> **Code walkthrough:** This represents the typical "toolchainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > sprawl" anti-pattern - each tool was chosen independently without
 > considering how they communicate. Jenkins cannot automatically
 > trigger an ArgoCD rollout. Terraform state is on one developer's
@@ -1423,6 +1425,7 @@ steps.
 
 **GOOD: Integrated toolchain with data flowing end-to-end**
 
+{% raw %}
 ```yaml
 # .github/workflows/ci-cd.yml
 # GitHub Actions (CI) -> ECR (registry) -> ArgoCD (CD)
@@ -1471,8 +1474,9 @@ jobs:
           git commit -am "ci: update image to $IMAGE_TAG"
           git push
 ```
+{% endraw %}
 
-> **Code walkthrough:** This pipeline demonstrates toolchain
+> **Code walkthrough:** This pipeline demonstrates toolchainice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > integration. OIDC-based AWS authentication eliminates long-lived
 > secrets stored in CI variables. The image tag is the Git commit SHA,
 > creating a direct traceability link from running code to the exact

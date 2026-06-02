@@ -172,7 +172,7 @@ public User getUser(long id) throws RemoteException {
 }
 ```
 
-> **Code walkthrough:** The critical difference between single-node
+> **Code walkthrough:** The critical difference between single-nodeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and distributed code is the "unknown" outcome. A local function call
 > has binary outcomes: return a value or throw. A network call has a
 > third outcome: timeout, where the server may have processed the
@@ -232,7 +232,7 @@ add epoch fencing.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is a distributed system and what problem does it solve?**
+**[JUNIOR] Q1 - [MECHANISM] What is a distributed system and what problem does it solve?**
 
 🗣️ "A distributed system is multiple computers working together,
 appearing as one coherent service. The core problems it solves are:
@@ -246,7 +246,7 @@ challenge: how do you agree on state when communication can fail?
 That question leads to consistency models, consensus algorithms,
 and all the rest."
 
-**Q2: Why is a network call fundamentally different from a local
+**[JUNIOR] Q2 - [MECHANISM] Why is a network call fundamentally different from a local**
 function call?**
 
 🗣️ "A local function call has two outcomes: returns a value or throws
@@ -261,7 +261,7 @@ just because you got a timeout. Every distributed systems pattern -
 idempotency, retry with deduplication, two-phase commit - exists
 because of this fundamental difference."
 
-**Q3: When would you NOT build a distributed system?**
+**[JUNIOR] Q3 - [SCENARIO] When would you NOT build a distributed system?**
 
 🗣️ "I would not build a distributed system when a single well-tuned
 machine is sufficient. Many systems that end up distributed were
@@ -276,7 +276,7 @@ either capacity (cannot scale the single machine anymore) or
 availability (you need 99.99%+ uptime and cannot afford any single
 point of failure)."
 
-**Q4: What is partial failure and why does it matter?**
+**[MID] Q4 - [MECHANISM] What is partial failure and why does it matter?**
 
 🗣️ "Partial failure is the defining characteristic of distributed
 systems: some components fail while others continue running. In a
@@ -292,7 +292,7 @@ not all replicas have the latest data), and compensation transactions
 failure as the core challenge of distributed systems is the first
 step to reasoning about them correctly."
 
-**Q5: Name three real-world examples of distributed systems.**
+**[MID] Q5 - [MECHANISM] Name three real-world examples of distributed systems.**
 
 🗣️ "First, a web application with multiple application servers behind
 a load balancer: these nodes share no in-process state, but they
@@ -308,7 +308,7 @@ of nodes, multiple continents, still providing ACID transactions.
 These examples show the spectrum from 'accidentally distributed'
 (two app servers + database) to 'intentionally distributed at scale.'"
 
-**Q6: How do you explain the scale-out vs scale-up trade-off?**
+**[SENIOR] Q6 - [TRADE-OFF] How do you explain the scale-out vs scale-up trade-off?**
 
 🗣️ "Scale up (vertical scaling): buy a bigger machine. More CPU cores,
 more RAM, faster disk. Advantages: simple (no coordination), strong
@@ -324,7 +324,7 @@ is simpler. Only scale out when you have hit a genuine vertical
 limit or when the single-node failure risk is unacceptable for
 your SLA requirements."
 
-**Q7: What makes distributed systems debugging harder than
+**[SENIOR] Q7 - [DEBUGGING] What makes distributed systems debugging harder than**
 single-node debugging?**
 
 🗣️ "Three things. First: non-determinism. The same request can
@@ -519,6 +519,14 @@ enumeration of those broken assumptions."
 
 ### 💻 Code Example
 
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
+
 ```java
 // DEMONSTRATING FALLACY 1 AND 2 in real code
 
@@ -568,7 +576,7 @@ public ProductView getProduct(long id) {
 }
 ```
 
-> **Code walkthrough:** The BAD version has three sequential synchronous
+> **Code walkthrough:** The BAD version has three sequential synchronousice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > calls - a direct application of Fallacies 1 (reliable) and 2 (zero
 > latency). If any one service is slow or down, the whole endpoint
 > fails and the user waits the full sum of all call latencies.
@@ -633,7 +641,7 @@ client/server to each service directly.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Name the Eight Fallacies and which three matter most in
+**[JUNIOR] Q1 - [MECHANISM] Name the Eight Fallacies and which three matter most in**
 practice.**
 
 🗣️ "The eight are: (1) the network is reliable, (2) latency is zero,
@@ -649,7 +657,7 @@ parallel calls and async patterns are non-negotiable. Fallacy 4
 and represents a real attack surface - mTLS between services is
 the fix."
 
-**Q2: How does Fallacy 5 (topology does not change) affect system
+**[JUNIOR] Q2 - [MECHANISM] How does Fallacy 5 (topology does not change) affect system**
 design?**
 
 🗣️ "Fallacy 5 means that service locations (IP addresses, ports, even
@@ -663,7 +671,7 @@ in config files - a database failover moved the primary to a
 new IP and every service using the old IP was broken until manually
 reconfigured. Service discovery makes this automatic."
 
-**Q3: How does Fallacy 6 (one administrator) manifest in microservices?**
+**[JUNIOR] Q3 - [MECHANISM] How does Fallacy 6 (one administrator) manifest in microservices?**
 
 🗣️ "Fallacy 6 means: multiple teams own different services and change
 them independently. In a microservices architecture, Team A owns the
@@ -677,7 +685,7 @@ another daily), so the system must handle any combination of old and
 new versions running simultaneously. This drives backward compatibility
 requirements that are easy to underestimate."
 
-**Q4: What is the practical impact of Fallacy 3 (bandwidth infinite)?**
+**[MID] Q4 - [MECHANISM] What is the practical impact of Fallacy 3 (bandwidth infinite)?**
 
 🗣️ "In a microservices system returning large JSON payloads, bandwidth
 matters at two points: cost and throughput. On cloud infrastructure,
@@ -690,7 +698,7 @@ request only the fields they need, (3) compression - gzip JSON or use
 binary protocols (Protobuf), (4) locality - co-locate services that
 exchange large data in the same AZ to minimize egress."
 
-**Q5: How do the Eight Fallacies apply to a mobile app communicating
+**[MID] Q5 - [MECHANISM] How do the Eight Fallacies apply to a mobile app communicating**
 with a backend?**
 
 🗣️ "A mobile app dramatically amplifies every fallacy. Network
@@ -706,7 +714,7 @@ shop WiFi) - all traffic must be HTTPS, certificate pinning should
 prevent MITM. The fallacies were originally about enterprise networks
 but apply even more acutely at the edge."
 
-**Q6: How would you use the fallacies as a design review checklist?**
+**[SENIOR] Q6 - [DESIGN] How would you use the fallacies as a design review checklist?**
 
 🗣️ "For every system I am reviewing, I walk through each fallacy and
 ask: 'where are we assuming this is true, and what is our mitigation?'
@@ -720,7 +728,7 @@ This structured walk-through has caught real issues in design reviews -
 most commonly: sequential synchronous call chains (Fallacy 2) and
 missing retry logic (Fallacy 1)."
 
-**Q7: What should a junior engineer do differently after learning the
+**[SENIOR] Q7 - [MECHANISM] What should a junior engineer do differently after learning the**
 fallacies?**
 
 🗣️ "Three concrete changes: First, every HTTP call to another service
@@ -864,7 +872,7 @@ Observability:
   Prometheus  → metrics + alerting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Systems Ecosystem and Landscape example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Every distributed database or broker is a set of trade-off decisions
@@ -897,6 +905,12 @@ all nodes). The ecosystem maps to these four needs."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CHOOSING BETWEEN CASSANDRA AND POSTGRESQL
@@ -1003,7 +1017,7 @@ Fix: identify and move application data to an appropriate store.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How do you choose between Kafka and RabbitMQ?**
+**[JUNIOR] Q1 - [SCENARIO] How do you choose between Kafka and RabbitMQ?**
 
 🗣️ "The deciding factor is whether you need message replay and ordered
 processing at scale, or flexible routing and simpler acknowledgment
@@ -1019,7 +1033,7 @@ high throughput, or fan-out to many independent consumers.
 I use RabbitMQ when I need: complex routing, per-message priority,
 or simpler exactly-once semantics for task processing."
 
-**Q2: What is the role of ZooKeeper vs etcd?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the role of ZooKeeper vs etcd?**
 
 🗣️ "Both are strongly-consistent, highly-available coordination stores
 built for small amounts of critical state: configuration, leader
@@ -1034,7 +1048,7 @@ operations. ZooKeeper is still widely deployed but is legacy for
 new projects. Neither should store application data - only coordination
 metadata."
 
-**Q3: When would you choose CockroachDB over Cassandra?**
+**[JUNIOR] Q3 - [SCENARIO] When would you choose CockroachDB over Cassandra?**
 
 🗣️ "The CAP trade-off is the deciding factor. Cassandra chose AP:
 writes always succeed, consistency is tunable, but you accept
@@ -1048,7 +1062,7 @@ paramount (IoT, time-series, events), eventual consistency is
 acceptable, and you need multi-region writes without cross-region
 coordination latency."
 
-**Q4: What is a service mesh and when do you need one?**
+**[MID] Q4 - [MECHANISM] What is a service mesh and when do you need one?**
 
 🗣️ "A service mesh is an infrastructure layer that handles service-to-
 service communication concerns: mTLS, observability, load balancing,
@@ -1062,7 +1076,7 @@ these cross-cutting concerns infrastructure rather than application
 code. Trade-off: operational complexity, latency overhead per hop
 (2-5ms), and a steep learning curve (Istio config is complex)."
 
-**Q5: What does 'cloud-native' mean for distributed systems tools?**
+**[MID] Q5 - [MECHANISM] What does 'cloud-native' mean for distributed systems tools?**
 
 🗣️ "Cloud-native means: designed to run on ephemeral, containerized
 infrastructure where nodes can be added, removed, or fail at any
@@ -1077,7 +1091,7 @@ require taking it offline or careful manual orchestration. The
 ecosystem has largely converged on cloud-native design: Kafka,
 Cassandra, Redis all have Kubernetes operators."
 
-**Q6: How do you evaluate a new distributed tool before adopting it?**
+**[SENIOR] Q6 - [MECHANISM] How do you evaluate a new distributed tool before adopting it?**
 
 🗣️ "I evaluate on five dimensions. Consistency model: what guarantees
 does it provide, and are they sufficient for my use case? Failure
@@ -1091,7 +1105,7 @@ pricing, storage, and team time. I always run a failure injection test
 before production adoption: take down a minority of nodes, check that
 the system degrades gracefully rather than catastrophically."
 
-**Q7: Name two distributed systems tools that were replaced or
+**[SENIOR] Q7 - [MECHANISM] Name two distributed systems tools that were replaced or**
 deprecated, and why.**
 
 🗣️ "First: Apache ZooKeeper in Kafka. Kafka originally used ZooKeeper

@@ -211,7 +211,7 @@ COMMON DIAGNOSTIC COMMANDS
   curl jaeger:16686/api/traces/{trace_id}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (requires trace ID from log or error) example demonstrates a key concept in practice using HTTP client. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The most common error in incident diagnosis is fixing the immediate
@@ -237,6 +237,11 @@ runbook.
 ### 💻 Code Example
 
 **Example 1: Distributed trace analysis for latency diagnosis**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -341,7 +346,7 @@ for s in slow_spans[:5]:
     )
 ```
 
-> **Code walkthrough:** The BAD approach requires manually searching
+> **Code walkthrough:** The BAD approach requires manually searchingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > each service's logs to reconstruct which service in a chain was slow -
 > a 20-40 minute process in a complex distributed system. The GOOD approach
 > queries the Jaeger distributed tracing API to find slow spans automatically.
@@ -352,6 +357,11 @@ for s in slow_spans[:5]:
 > a span with high self time is the bottleneck.
 
 **Example 2: Five-why RCA structured documentation**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -503,7 +513,7 @@ else:
     )
 ```
 
-> **Code walkthrough:** The BAD postmortem is "fixed by restarting" -
+> **Code walkthrough:** The BAD postmortem is "fixed by restarting" -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the symptom was masked but the root cause (missing database index) and
 > the contributing factors (no circuit breaker, no slow query alert) are
 > unaddressed. The GOOD approach implements the five-why RCA as a structured
@@ -931,7 +941,7 @@ jmap -histo <PID> | head -30
 # A class with growing count across multiple samples = suspect
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This A class with growing count across multiple samples = suspect example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 2: capture a heap dump (minimal service disruption)
 ```
@@ -941,7 +951,7 @@ jmap -dump:format=b,file=/tmp/heap.hprof <PID>
 ls -lh /tmp/heap.hprof  # verify size (typically 1-10 GB)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Do during off-peak; notify on-call of expected pause example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 3: analyze with Eclipse MAT or similar
 ```
@@ -955,7 +965,7 @@ Phase 3: analyze with Eclipse MAT or similar
 #   OR many instances of same class
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR many instances of same class example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 4: correlate with code changes
 ```
@@ -964,7 +974,7 @@ Phase 4: correlate with code changes
 git log --since="30 days ago" -- src/main/java/...LeakClass.java
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cross-reference with recent changes to those classes example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Gives the specific commands (jmap,
 heap dump), addresses the "without restarting" constraint explicitly
@@ -1162,7 +1172,7 @@ OBSERVABILITY PLATFORM FOR FAST DIAGNOSIS
   SLO dashboard: current budget remaining, burn rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The design key: the correlation layer is the highest-value component.
 Without it, metrics, logs, and traces are three separate systems that

@@ -171,7 +171,7 @@ CROSSING BOUNDARIES:
     by the Use Case)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Clean Architecture example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Dependency Rule is the architecture. Everything else is
@@ -341,7 +341,7 @@ public class OrderResponsePresenter
 }
 ```
 
-> **Code walkthrough:** The dependency rule is fully enforced:
+> **Code walkthrough:** The dependency rule is fully enforced:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Order` and `PlaceOrderInteractor` have zero imports from outer
 > rings. `PlaceOrderInteractor` depends on two interfaces
 > (`OrderRepository`, `PlaceOrderPresenter`) defined in the Use Case
@@ -392,7 +392,7 @@ class PlaceOrderInteractorTest {
 // Tests run in < 5ms.
 ```
 
-> **Code walkthrough:** The test creates the interactor with two
+> **Code walkthrough:** The test creates the interactor with twoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > anonymous implementations of the interfaces: a lambda for the
 > repository and an anonymous class for the presenter. The test
 > verifies that placing an empty order causes the presenter to receive
@@ -476,7 +476,7 @@ grep -r "org.springframework\|javax.persistence\
 # Any hits = Dependency Rule violation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any hits = Dependency Rule violation example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Define interfaces in the Use Case ring. Move the
 framework-dependent implementation to the Interface Adapters or
@@ -730,7 +730,7 @@ conceptual pattern into a concrete, reproducible codebase structure.
 
 Package structure:
 
-```
+```plaintext
 src/main/java/com/example/
   domain/                    <- Entities ring
     model/
@@ -767,7 +767,7 @@ src/main/java/com/example/
     Main.java
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ArchUnit enforcement:
 ```java
@@ -779,7 +779,7 @@ static final ArchRule dependencyRule =
         .resideOutsideOfPackage("..domain..");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Most candidates give a conceptual
 description. Great candidates give the specific package tree and
@@ -849,7 +849,7 @@ static final ArchRule noOutwardDependencies =
         .should().dependOnClassesThat()
         .resideInAPackage("..adapter..");
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Any violation fails the build immediately.
 
@@ -973,7 +973,7 @@ QUALITY ATTRIBUTES ADDRESSED:
     a new GatewayAdapter; no inner ring changes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1194,7 +1194,7 @@ DEPENDENCY RULE:
   Domain Model depends on NOTHING external.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Onion Architecture example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The Domain Services ring captures the DDD Domain Service concept:
@@ -1406,7 +1406,7 @@ public class OrderApplicationService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Move business rules into domain objects. `Order.place()`
 validates its own state. Application Service is: load, call domain
@@ -1423,7 +1423,7 @@ grep -r "org.springframework\|javax.persistence" \
 # Any hits = infrastructure leaking into domain services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any hits = infrastructure leaking into domain services example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Extract the infrastructure call to an interface (defined
 in Domain Services ring), implement it in Infrastructure.

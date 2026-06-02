@@ -136,7 +136,7 @@ AUTHORIZATION PATTERN:
    }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MCP Authentication and Authorization example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -185,6 +185,11 @@ authorization per tool.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 """MCP server with API key auth and role-based authz."""
@@ -326,7 +331,7 @@ async def call_tool(
     raise ValueError(f"Unknown tool: {name}")
 ```
 
-> **Code walkthrough:** The BAD example is an unauthenticated
+> **Code walkthrough:** The BAD example is an unauthenticatedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > server - any client can call any tool. The GOOD
 > example implements two security layers. Authentication:
 > `validate_api_key()` extracts the Bearer token,
@@ -430,7 +435,7 @@ print(f"DEBUG: name={name}, role={role}, "
       f"allowed={check_permission(role, name)}",
       file=sys.stderr)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add temporary debug logging to the tool handler: example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Check: what role is being used, is it what you expect?
 
@@ -516,7 +521,7 @@ def get_user_id(authorization: str) -> str:
     return payload["sub"]  # subject = user_id
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JWT token payload contains user_id example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Step 2: Scope all database queries to the user:
 ```python
@@ -536,7 +541,7 @@ async def call_tool(name, arguments):
         )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ALWAYS filter by user_id example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 Step 3: Validate ownership before mutations:
 ```python
@@ -555,7 +560,7 @@ if name == "update_record":
     # Proceed with update
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Proceed with update example demonstrates context manager using async/await. **KEY MECHANISM:** __enter__ acquires the resource; __exit__ always runs for cleanup even on exception. **WHY IT MATTERS:** forgetting with for file/connection objects leaks file descriptors and DB connections. **TAKEAWAY: always use with for any resource with explicit cleanup.**
 
 *What separates good from great:* "Always filter
 by user_id at the query level - never rely on
@@ -628,7 +633,7 @@ Four things to check:
     print(test)  # compare to stored hash
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Proceed with update example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 (4) Key expiry: if implementing time-limited keys,
     check if the expiry validation logic has a timezone
@@ -641,7 +646,7 @@ curl -H "Authorization: Bearer your-key" \
      -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{}}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Proceed with update example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *What separates good from great:* "Test with curl
 first - eliminates client-side configuration issues
@@ -691,7 +696,7 @@ def validate_and_get_info(token: str) -> Optional[dict]:
     return key_info
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check expiry example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Access log monitoring: log the first 6 characters
 of the token hash (not the full hash) to identify
@@ -878,7 +883,7 @@ def audit_log(
     print(json.dumps(log_entry), file=sys.stderr)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Write to stderr (structured JSON for log aggregation) example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Compliance requirement: for SOC2/ISO27001, audit
 logs must be tamper-evident. Write to an append-only
@@ -1070,7 +1075,7 @@ CIRCUIT BREAKER (host level):
   [failure] -> open
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MCP Error Handling and Resilience example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1121,6 +1126,11 @@ while maximizing its recovery options.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 """MCP error handling: tiers, retries, timeouts."""
@@ -1246,7 +1256,7 @@ async def call_tool(
     raise ValueError(f"Unknown tool: {name}")
 ```
 
-> **Code walkthrough:** The BAD example raises an
+> **Code walkthrough:** The BAD example raises anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > exception which propagates as a JSON-RPC internal
 > error (-32603). The AI receives no content - it
 > just experiences a failed tool call with no explanation.
@@ -1360,7 +1370,7 @@ if elapsed > 2.0:
           file=sys.stderr)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add percentile timing logs to identify slow paths: example demonstrates Python code pattern using async/await. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 ---
 
@@ -1468,7 +1478,7 @@ class CircuitBreaker:
         return True  # HALF_OPEN: allow probe
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add percentile timing logs to identify slow paths: example demonstrates function definition using enum. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Apply per-server in the host. If the circuit is
 OPEN: return an immediate error to the AI ("Server
@@ -1507,7 +1517,7 @@ Retry rules for external API calls within MCP tools:
     ```
     delay = base * (2 ** attempt) + random(0, base)
     ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add percentile timing logs to identify slow paths: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
     Base: 1s. Cap: 30s. Max attempts: 3-5.
     Jitter prevents thundering herd.
@@ -1563,7 +1573,7 @@ result = await execute_tool(name, arguments)
 elapsed = time.monotonic() - start
 print(f"TIMING: {name} {elapsed:.3f}s", file=sys.stderr)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Log call timing per tool: example demonstrates Python code pattern using async/await. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Compare timing across multiple calls in the same session.
 
@@ -1611,7 +1621,7 @@ async def call_tool(name, arguments):
             )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancel if it takes > 30 seconds example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 Timeout values by operation type:
 - Fast lookups (cache, simple DB query): 1-2s
@@ -1648,7 +1658,7 @@ return [types.TextContent(
 )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancel if it takes > 30 seconds example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Tier 2 - Cached results: if the primary data source
 is unavailable, return cached results with a staleness warning:
@@ -1663,7 +1673,7 @@ return [types.TextContent(
 )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancel if it takes > 30 seconds example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Tier 3 - Alternative tool suggestion: if this tool
 is down, suggest a related one:
@@ -1677,7 +1687,7 @@ return [types.TextContent(
 )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancel if it takes > 30 seconds example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Tier 4 - Explicit failure with recovery guidance:
 ```python
@@ -1691,7 +1701,7 @@ return [types.TextContent(
 )]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancel if it takes > 30 seconds example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* "Return cached
 results with a staleness warning rather than failing
@@ -1775,7 +1785,7 @@ async def call_with_timeout(session, name, args, timeout=15.0):
         )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cancel if it takes > 30 seconds example demonstrates asyncio coroutine definition using async/await. **KEY MECHANISM:** the event loop schedules coroutines; await suspends execution until the awaited future resolves. **WHY IT MATTERS:** blocking call inside async def starves the event loop - all coroutines freeze. **TAKEAWAY: never use blocking I/O (requests, time.sleep) inside async def; use aiohttp, asyncio.sleep.**
 
 (2) Circuit breaker (see Q2): after N timeouts,
     open the circuit and fail fast for Server C.
@@ -1792,7 +1802,7 @@ results = await asyncio.gather(
 # Use whichever completed first successfully
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use whichever completed first successfully example demonstrates Python code pattern using async/await. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 (4) Session-level budget: track total tool call
     time per session. If a session has spent > 120s

@@ -71,7 +71,7 @@ Group B offset: 10 (currently at msg 10, catching up)
 Group C offset: 60 (ahead of Group A)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Choosing a Broker example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 RabbitMQ data model:
 ```
@@ -83,7 +83,7 @@ Exchange -> binding -> Queue -> Consumer
   Rich routing: direct, topic, fanout, headers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Choosing a Broker example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Kafka's retention model is the fundamental differentiator. Because messages are not removed on consumption, Kafka enables: replay (rewind consumer offset), multiple independent consumers, time-travel debugging, audit logs. RabbitMQ's ephemeral model enables: flexible routing, per-message metadata, priority queues, and first-class dead letter handling without application code.
@@ -247,51 +247,51 @@ Symptom: a second consumer team needs to process the same historical events; the
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is the fundamental difference between Kafka and RabbitMQ?"
-- "When would you choose Kafka over RabbitMQ?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is the fundamental difference between Kafka and RabbitMQ?**
+**[JUNIOR] Q2 - [MECHANISM] When would you choose Kafka over RabbitMQ?**
 
 🗣️ "The fundamental difference is the data model. Kafka is an immutable distributed log - messages are appended and retained for a configured period regardless of consumption. Multiple consumer groups can read the same messages independently and replay from any offset. RabbitMQ is a traditional message broker - messages are removed from the queue after a consumer acknowledges them. No replay is possible. I choose Kafka when I need replay, multiple independent consumers, high throughput event streaming, or stream processing. I choose RabbitMQ when I need complex routing, per-message properties like TTL and priority, first-class DLQ support, or simple task queue semantics."
 
-#### Mechanism
-- "How does Kafka's consumer offset model differ from RabbitMQ's ACK model?"
-- "Walk me through how message retention works differently in Kafka vs RabbitMQ."
+
+**[MID] Q3 - [MECHANISM] How does Kafka's consumer offset model differ from RabbitMQ's ACK model?**
+**[MID] Q4 - [MECHANISM] Walk me through how message retention works differently in Kafka vs RabbitMQ.**
 
 🗣️ "In Kafka, the broker does not track per-consumer message state - each consumer group tracks its own position via committed offsets. A message at offset 100 stays in the partition log until retention expires, regardless of whether any consumer has read it. In RabbitMQ, the broker tracks each message's delivery state - undelivered, delivered-unacknowledged, or acknowledged. An acknowledged message is deleted. Kafka retention is time-based or size-based and applies to the entire partition. RabbitMQ retention is consumption-based - messages exist only as long as they are unacknowledged, unless you configure x-message-ttl or x-max-length."
 
-#### Comparison
-- "Compare Kafka and RabbitMQ on throughput, latency, routing, and replay."
-- "What are the operational trade-offs between the two?"
+
+**[SENIOR] Q5 - [TRADE-OFF] Compare Kafka and RabbitMQ on throughput, latency, routing, and replay.**
+**[SENIOR] Q6 - [TRADE-OFF] What are the operational trade-offs between the two?**
 
 🗣️ "Throughput: Kafka wins significantly - millions of messages per second with horizontal partitioning. RabbitMQ handles hundreds of thousands per second before clustering complexity increases. Latency: RabbitMQ wins on per-message latency - push-based delivery achieves single-digit milliseconds. Kafka's poll-based consumer adds latency overhead depending on poll interval. Routing: RabbitMQ wins - exchanges and bindings support complex patterns natively. Kafka routing is topic subscription only, with consumer-side filtering. Replay: Kafka wins entirely - RabbitMQ has no replay. Operationally: RabbitMQ is simpler to set up and manage for small-to-medium workloads. Kafka requires ZooKeeper or KRaft, schema registry, careful partition planning, and deep consumer group management knowledge."
 
-#### Scenario
-- "Your team needs to process 200,000 images per hour with different processing pipelines for each image type - which broker do you choose and why?"
-- "You are building an event-sourced order management system where the warehouse, billing, and analytics systems all need to react to order events - which broker?"
+
+**[SENIOR] Q7 - [SCENARIO] Your team needs to process 200,000 images per hour with different processing pipelines for each image type - which broker do you choose and why?**
+**[SENIOR] Q8 - [SCENARIO] You are building an event-sourced order management system where the warehouse, billing, and analytics systems all need to react to order events - which broker?**
 
 🗣️ "For image processing at 200,000 per hour (about 55 per second): RabbitMQ is the better choice. This is a task queue - each image is processed once, you need routing by image type, per-task retry with exponential backoff, and TTL for stale tasks. RabbitMQ's topic exchange routes image.jpeg to the JPEG pipeline and image.raw to the RAW pipeline natively. For the event-sourced order system: Kafka is clearly correct. Three independent systems (warehouse, billing, analytics) need the same order events - separate consumer groups in Kafka. Each can independently replay from offset 0 if they need to reprocess historical orders. Schema registry enforces backward compatibility as the order event schema evolves."
 
-#### Debugging
-- "Messages are being processed but a new analytics service needs 3 months of historical order events - how do you provide them in a RabbitMQ-based system?"
-- "A Kafka consumer group has lag of 10 million messages - what do you do?"
+
+**[SENIOR] Q9 - [DEBUGGING] Messages are being processed but a new analytics service needs 3 months of historical order events - how do you provide them in a RabbitMQ-based system?**
+**[SENIOR] Q10 - [DEBUGGING] A Kafka consumer group has lag of 10 million messages - what do you do?**
 
 🗣️ "RabbitMQ with 3-month history needed: this is a fundamental limitation of the broker choice. Those messages are gone. Your options are: replay from the operational database by publishing all historical orders to a new queue, or build a projection from application logs. This is the anti-pattern that the Kafka retention model prevents. For Kafka with 10M message lag: first determine if lag is growing or stable. If growing, add consumer instances up to partition count or investigate slow processing. If stable, the consumer is keeping up with current rate but has a historical backlog. To recover faster, temporarily increase consumer instances, verify the bottleneck is CPU/network not downstream system, and check if any single partition is disproportionately lagging."
 
-#### Deep Dive
-- "What are the failure modes unique to Kafka that do not exist in RabbitMQ?"
-- "When would you use both Kafka and RabbitMQ in the same architecture?"
+
+**[SENIOR] Q11 - [MECHANISM] What are the failure modes unique to Kafka that do not exist in RabbitMQ?**
+**[SENIOR] Q12 - [MECHANISM] When would you use both Kafka and RabbitMQ in the same architecture?**
 
 🗣️ "Kafka-specific failure modes: partition leadership election during broker restart causes a processing gap - the partition is temporarily unavailable until a new leader is elected. Consumer group rebalancing causes a processing pause for all consumers in the group even for partitions not involved in the rebalance. Schema incompatibility causes deserialization failures that can block an entire partition. Hot partitions from non-uniform key distribution create throughput bottlenecks on specific brokers. For using both: the pattern I use is Kafka for the event backbone between bounded contexts - immutable event log, fan-out to many consumers, audit trail. RabbitMQ for internal task queues within a service - image processing, email delivery, scheduled jobs - where task lifecycle management, routing, and DLQ semantics matter."
 
-#### Misconception / Trap
-- "Kafka is always better than RabbitMQ because it is more scalable, right?"
-- "Since Kafka persists messages, it is safer than RabbitMQ for critical workloads, right?"
+
+**[MID] Q13 - [MECHANISM] Kafka is always better than RabbitMQ because it is more scalable, right?**
+**[MID] Q14 - [MECHANISM] Since Kafka persists messages, it is safer than RabbitMQ for critical workloads, right?**
 
 🗣️ "Both are misconceptions. Kafka is more scalable for specific workloads, but scalability is not the only dimension. For a task queue processing 500 jobs/hour, Kafka's partition management, schema registry, and consumer group complexity add weeks of operational overhead that RabbitMQ solves in a day. Scalability you do not need is just complexity. On safety: Kafka's durability is excellent for event streaming, but it does not make it universally safer. RabbitMQ with persistent messages, publisher confirms, and manual ACK is also durable. The difference is what happens after message delivery - Kafka retains for replay, RabbitMQ removes after ACK. For a critical payment task queue where each task must execute exactly once and you need DLQ with retry - RabbitMQ's task lifecycle model is actually safer than Kafka for that use case."
 
-#### Performance & Scalability
-- "What is Kafka's throughput ceiling per broker, and how do you scale beyond it?"
-- "At what point does RabbitMQ's routing model become a performance bottleneck?"
+
+**[STAFF] Q15 - [MECHANISM] What is Kafka's throughput ceiling per broker, and how do you scale beyond it?**
+**[STAFF] Q16 - [MECHANISM] At what point does RabbitMQ's routing model become a performance bottleneck?**
 
 🗣️ "Kafka throughput per broker is typically 500MB/s to 1GB/s depending on disk speed, network, and replication settings. You scale beyond it by adding brokers and increasing partition count - Kafka's partition-level parallelism distributes load across brokers linearly. A single topic with 100 partitions spread across 10 brokers can sustain 5-10GB/s of aggregate throughput. For RabbitMQ: the routing model becomes a bottleneck when a topic exchange has hundreds of bindings - binding evaluation is O(N) for wildcard patterns. Above 1,000-2,000 messages per second to a heavily-bound exchange, routing CPU becomes the bottleneck. The fix is to simplify routing hierarchies or shard across multiple exchanges. RabbitMQ clustering also has limits - a 3-node cluster with quorum queues can sustain ~200,000 messages per second before reaching network and coordination limits."
 
@@ -391,7 +391,7 @@ Requester                  Broker             Responder
   | delete reply-to queue    |                    |
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Request-Reply Pattern example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The correlation ID is the contract linker. The reply-to queue is ephemeral - created per request (or per requester instance) and deleted after use. Without correlation IDs, concurrent requesters receiving responses on the same reply queue cannot match responses to their original requests. This is not a theoretical concern - in a service with high concurrency, dozens of requests are in-flight simultaneously.
@@ -568,51 +568,51 @@ Symptom: the requester's thread pool fills with blocked threads waiting for repl
 
 ### 🎯 Interview Deep-Dive
 
-#### Definition
-- "What is the request-reply pattern in messaging?"
-- "What are the two mandatory fields in a request-reply message?"
+
+**[JUNIOR] Q1 - [MECHANISM] What is the request-reply pattern in messaging?**
+**[JUNIOR] Q2 - [MECHANISM] What are the two mandatory fields in a request-reply message?**
 
 🗣️ "The request-reply pattern uses messaging to implement a call-response interaction over an asynchronous channel. The requester publishes a message with two mandatory fields: a reply-to address - the queue or topic where the response should be sent - and a correlation ID - a unique identifier that links the response back to the original request. The responder processes the request, generates a response, and publishes it to the reply-to address with the same correlation ID. The requester receives the response and uses the correlation ID to match it to the original request."
 
-#### Mechanism
-- "How does correlation ID prevent responses from being delivered to the wrong requester?"
-- "What happens if the responder is slow and the requester times out?"
+
+**[MID] Q3 - [MECHANISM] How does correlation ID prevent responses from being delivered to the wrong requester?**
+**[MID] Q4 - [MECHANISM] What happens if the responder is slow and the requester times out?**
 
 🗣️ "Each requester generates a unique correlation ID, typically a UUID, when it sends a request. The responder copies this ID to the response. When the response arrives on the reply queue, the requester looks up the correlation ID in its pending requests map and delivers the response to the waiting future or callback associated with that ID. If two concurrent requesters are waiting on the same reply queue, they each only accept responses whose correlation IDs match their own pending requests. If the responder is slow and the requester times out: the requester fails with a timeout exception and should remove the pending request from its map. The response, when it eventually arrives, finds no matching pending request and is discarded - or consumed by a cleanup consumer."
 
-#### Comparison
-- "When would you use request-reply over messaging instead of direct REST calls?"
-- "Compare request-reply over RabbitMQ with gRPC for inter-service communication."
+
+**[SENIOR] Q5 - [TRADE-OFF] When would you use request-reply over messaging instead of direct REST calls?**
+**[SENIOR] Q6 - [TRADE-OFF] Compare request-reply over RabbitMQ with gRPC for inter-service communication.**
 
 🗣️ "Request-reply over messaging is the right choice when you want uniform messaging infrastructure - all communication through the broker - and when service location should be discovered via routing rather than hardcoded URLs. It also fits when you want the broker's buffering: a slow responder queues requests rather than causing caller failures. REST is better when latency is critical, the team knows HTTP well, and point-to-point discovery via service registry is acceptable. gRPC is better for high-performance typed RPCs, especially when streaming responses are needed - request-reply over messaging is a poor fit for streaming. The main trade-off: messaging adds broker hop latency (typically 1-5ms) vs direct REST which is typically sub-millisecond."
 
-#### Scenario
-- "Design a pricing service that handles 5,000 price calculation requests per second over RabbitMQ."
-- "How would you implement timeout and retry for request-reply in a high-concurrency system?"
+
+**[SENIOR] Q7 - [SCENARIO] Design a pricing service that handles 5,000 price calculation requests per second over RabbitMQ.**
+**[SENIOR] Q8 - [SCENARIO] How would you implement timeout and retry for request-reply in a high-concurrency system?**
 
 🗣️ "For 5,000 RPS over RabbitMQ: use a fixed reply queue per service instance with correlation-based dispatch (not per-request temporary queues - the overhead of creating/deleting temporary queues at that rate is significant). Configure the pricing request queue with a sufficient depth to buffer bursts. The pricing service should be stateless and scalable - multiple instances consuming from the same queue with basicQos(100) for fair distribution. For timeout and retry: on the requester side, each pending request has a scheduled timeout task. On timeout, remove from pending map, fail the future, and optionally retry by creating a new request with a new correlation ID. Do not retry the old correlation ID - the original response may still arrive and corrupt state. Use exponential backoff with jitter for retries."
 
-#### Debugging
-- "Responses are being lost - callers time out but the responder processes requests successfully."
-- "How do you diagnose orphaned reply queues accumulating in RabbitMQ?"
+
+**[SENIOR] Q9 - [DEBUGGING] Responses are being lost - callers time out but the responder processes requests successfully.**
+**[SENIOR] Q10 - [DEBUGGING] How do you diagnose orphaned reply queues accumulating in RabbitMQ?**
 
 🗣️ "Lost responses: check the reply-to address in the request message - use the RabbitMQ management UI to inspect the message properties. A common mistake is the reply-to queue name being wrong or the queue not existing when the response is published. If using exclusive queues, verify the queue still exists when the response is published - exclusive queues are deleted when the declaring channel closes, and if the channel closed before the response arrived, the response is dropped. Orphaned queues: in the RabbitMQ management UI, look for queues matching your temporary queue naming pattern with zero consumers and growing message count. These are unprocessed responses to timed-out requesters. Fix by using exclusive queues (auto-deleted by broker), or by implementing a cleanup job that deletes empty queues older than the request timeout period."
 
-#### Deep Dive
-- "How does the request-reply pattern interact with horizontal scaling of the responder?"
-- "What is the scatter-gather variant and when do you use it?"
+
+**[SENIOR] Q11 - [MECHANISM] How does the request-reply pattern interact with horizontal scaling of the responder?**
+**[SENIOR] Q12 - [MECHANISM] What is the scatter-gather variant and when do you use it?**
 
 🗣️ "With horizontally scaled responders all consuming from the same request queue: each message goes to exactly one responder instance, which sends the response to the reply-to address. The requester does not care which responder instance handled the request - it just waits on its reply queue. Scaling the responder horizontally is transparent to the pattern. The reply-to address must be routable from all responder instances - in RabbitMQ, the reply queue must be accessible to all responder nodes. Scatter-gather: publish one request to N responders simultaneously, typically via a fanout exchange or by sending to N separate queues. Each responder sends a partial response. The requester aggregates responses as they arrive, typically with a timeout after which it uses whatever partial results it has. Use cases: federated search, price comparison across suppliers, consensus collection. The aggregation logic must handle partial results gracefully and be aware of how many responses to expect."
 
-#### Misconception / Trap
-- "Request-reply over messaging gives you the same latency as direct REST calls, just with more decoupling, right?"
-- "If you use request-reply, you get all the benefits of async messaging without the complexity."
+
+**[MID] Q13 - [MECHANISM] Request-reply over messaging gives you the same latency as direct REST calls, just with more decoupling, right?**
+**[MID] Q14 - [MECHANISM] If you use request-reply, you get all the benefits of async messaging without the complexity.**
 
 🗣️ "Both wrong. Request-reply over messaging adds broker latency that direct REST does not have. A direct HTTP call might take 0.5ms; a message published, routed, delivered, responded, and correlated adds 2-10ms of broker overhead in ideal conditions, more under load. If you need sub-millisecond latency, avoid the broker hop. The second misconception: request-reply is actually more complex than async messaging. You now have correlation ID management, reply queue lifecycle, concurrent pending request maps, timeout handling, and potential response-to-wrong-requester bugs. If you do not need the response, pure async messaging is significantly simpler."
 
-#### Performance & Scalability
-- "What is the throughput ceiling for request-reply over RabbitMQ?"
-- "How does temporary reply queue creation affect broker performance at scale?"
+
+**[STAFF] Q15 - [MECHANISM] What is the throughput ceiling for request-reply over RabbitMQ?**
+**[STAFF] Q16 - [MECHANISM] How does temporary reply queue creation affect broker performance at scale?**
 
 🗣️ "Request-reply throughput ceiling: typically 10,000-50,000 round trips per second per RabbitMQ cluster, depending on message size and network latency. Each round trip involves at minimum two message publish operations (request and response), two delivery notifications, and two ACK operations. This is roughly 10x the cost of one-way message delivery. Temporary queue creation at scale: creating and deleting a queue per request at 5,000 RPS means 10,000 queue management operations per second on the broker. This becomes a significant management plane load on the RabbitMQ controller. The solution is: use a fixed reply queue per service instance (one queue shared by all requests from that instance, differentiated by correlation ID), or use RabbitMQ's direct reply-to pseudo-queue feature which handles this without creating real queues."
 

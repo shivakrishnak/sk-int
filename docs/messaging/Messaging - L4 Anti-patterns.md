@@ -77,7 +77,7 @@ Fix:
   store (EventStoreDB, Axon) not raw Kafka
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging Anti-patterns and Failure Recovery example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Anti-pattern 2: Missing Consumer Idempotency**
 ```
@@ -102,7 +102,7 @@ Fix:
 - Deduplication table with TTL
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging Anti-patterns and Failure Recovery example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Anti-pattern 3: Fat Messages / God Events**
 ```
@@ -134,7 +134,7 @@ OrderPlaced {
 // only the fields needed by all consumers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging Anti-patterns and Failure Recovery example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Anti-pattern 4: No Dead Letter Queue**
 ```
@@ -162,7 +162,7 @@ Fix:
 - DLQ consumer for investigation and replay
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging Anti-patterns and Failure Recovery example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Anti-pattern 5: Chatty Messaging**
 ```
@@ -183,7 +183,7 @@ order_customer_details_updated
 order_line_items_adjusted
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging Anti-patterns and Failure Recovery example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Anti-pattern 6: Missing Monitoring**
 ```
@@ -197,7 +197,7 @@ Fix: monitor consumer lag per group per partition,
   under-replicated partitions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Messaging Anti-patterns and Failure Recovery example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Every messaging anti-pattern has a single root cause: treating the message broker as if it were a synchronous, exactly-once, strongly-consistent system. It is not. Design for the actual properties: async, at-least-once, eventually consistent.
@@ -415,7 +415,7 @@ kafka-consumer-groups.sh \
 #   tail -20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This tail -20 example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: add DLQ routing after N retries. For immediate recovery: use kafka-consumer-groups.sh to shift the consumer offset past the poison message (data loss - document the incident).
 
@@ -439,7 +439,7 @@ grep "Revoke\|Assign.*partitions" kafka.log
 # duplicate processing frequency
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This duplicate processing frequency example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: make processing idempotent. Use a deduplication table with the message ID as the key. Commit the offset in the same transaction as the business write.
 
@@ -471,7 +471,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 | Scale | 3 min | 1-2 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - Definition
+**[JUNIOR] Q1 - [CONCEPTUAL] Definition**
 **"What is the 'fat message' anti-pattern and why is it a problem?"**
 
 *What they are really asking:* Do you understand event design principles - specifically that events should represent business facts, not data models?
@@ -483,7 +483,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q2 - Mechanism
+**[JUNIOR] Q2 - [CONCEPTUAL] Mechanism**
 **"Explain exactly when and why a consumer produces duplicate records, with a specific code path."**
 
 *What to say:*
@@ -493,7 +493,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q3 - Comparison
+**[JUNIOR] Q3 - [CONCEPTUAL] Comparison**
 **"Compare 'Kafka as a database' to proper event sourcing - what is the difference?"**
 
 *What to say:*
@@ -503,7 +503,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q4 - Scenario
+**[MID] Q4 - [CONCEPTUAL] Scenario**
 **"Review this design: services write audit events to Kafka with no DLQ, acks=1, no idempotency on the consumer. What risks do you identify?"**
 
 *What to say:*
@@ -513,7 +513,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q5 - Debugging
+**[MID] Q5 - [DEBUGGING] Debugging**
 **"A consumer has been running for 3 months with no issues. After a deployment, it starts producing duplicate database records. What changed and how do you diagnose?"**
 
 *What to say:*
@@ -523,7 +523,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q6 - Deep Dive
+**[MID] Q6 - [CONCEPTUAL] Deep Dive**
 **"Explain the 'chatty messaging' anti-pattern and how it emerges from domain model events vs business events."**
 
 *What to say:*
@@ -533,7 +533,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q7 - Misconception
+**[SENIOR] Q7 - [CONCEPTUAL] Misconception**
 **"Our broker is Kafka with acks=all and transactions enabled - so we have exactly-once delivery and do not need idempotency in our consumers."**
 
 *What to say:*
@@ -543,7 +543,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q8 - Behavioral
+**[SENIOR] Q8 - [CONCEPTUAL] Behavioral**
 **"Tell me about a time you identified and fixed a messaging anti-pattern in production."**
 
 *What to say (structure):*
@@ -553,7 +553,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q9 - Scale
+**[SENIOR] Q9 - [ARCHITECTURE] Scale**
 **"How does the 'Kafka as database' anti-pattern manifest differently at 1 million messages per day vs 1 billion per day?"**
 
 *What to say:*
@@ -563,7 +563,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q10 - Deep Dive
+**[STAFF] Q10 - [CONCEPTUAL] Deep Dive**
 **"What is the 'thundering herd' anti-pattern in messaging and how do you prevent it?"**
 
 *What to say:*
@@ -573,7 +573,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q11 - Comparison
+**[STAFF] Q11 - [CONCEPTUAL] Comparison**
 **"Compare the DLQ pattern to infinitely retrying a failed message. What are the trade-offs?"**
 
 *What to say:*
@@ -583,7 +583,7 @@ Fix: store important events in a database as events are consumed. Do not rely on
 
 ---
 
-#### Q12 - Edge Case
+**[STAFF] Q12 - [CONCEPTUAL] Edge Case**
 **"What happens when a DLQ consumer itself has a failure? How do you prevent infinite DLQ recursion?"**
 
 *What to say:*
@@ -658,7 +658,7 @@ Monitoring:
 - Rebalance frequency: alert at > 3/hour
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key design decisions:**
 1. Outbox pattern prevents lost events at the producer

@@ -93,7 +93,7 @@ event.fire(new OrderPlaced(order));
   -> Any observer throws: propagates to caller
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDI Events and Producers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Qualifier narrowing:**
 
@@ -109,7 +109,7 @@ public void onUpdate(@Observes @Updated Order o) { }
 // No @Updated qualifier = receives ALL Order events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDI Events and Producers example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Producer method:**
 
@@ -127,7 +127,7 @@ public class LoggerProducer {
 // Any bean: @Inject Logger log; -> class-specific
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDI Events and Producers example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -226,7 +226,7 @@ public class ConfigProducer {
 // Usage: @Inject @Named("maxRetries") int maxRetries;
 ```
 
-> **Code walkthrough:** OrderService fires an OrderPlaced
+> **Code walkthrough:** OrderService fires an OrderPlacedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > event without knowing any observers - complete decoupling.
 > EmailNotificationService and AnalyticsService observe
 > independently with no import of OrderService.
@@ -303,9 +303,15 @@ grep -E "Observer|fire" server.log | grep -i exception
   value=true)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: catch in observer, do not propagate
 public void onOrderPlaced(@Observes OrderPlaced e) {
@@ -322,7 +328,7 @@ event.fireAsync(new OrderPlaced(order));
 // @ObservesAsync exceptions do NOT affect caller's TX
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -420,7 +426,7 @@ public void onAny(@Observes Order o) {}
 // receives ALL Order events (including @Updated)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using SQL. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* "An observer without
 a qualifier receives ALL events of that type, including
@@ -446,7 +452,7 @@ public void sendEmail(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Default IN_PROGRESS
 runs before commit. Data may never persist if TX rolls
@@ -471,7 +477,7 @@ public Logger logger(InjectionPoint ip) {
 // @Inject Logger log; -> class-specific logger
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "InjectionPoint gives
 the producer context about where injection happens.
@@ -499,7 +505,7 @@ public void sendEmail(@ObservesAsync OrderPlaced e) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Async observer exceptions do NOT affect caller's TX.
 
@@ -529,7 +535,7 @@ public void close(@Disposes Connection conn) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* "Forgetting @Disposes
 for resource-producing methods causes leaks."
@@ -574,7 +580,7 @@ public class InventoryProcessor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 All in one TX: if any step fails, all roll back.
 
@@ -619,12 +625,120 @@ void test() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Integration tests
 catch AFTER_SUCCESS observer issues that unit tests miss.
 Quarkus @TestTransaction is simplest for transactional
 observer testing."
+
+---
+
+**[SENIOR] Q10 - [DEBUGGING] A CDI observer is silently not executing in production. How do you diagnose?**
+
+Diagnosis steps:
+
+1. Verify the event type matches exactly. CDI uses type
+   equality including generics. `Event<OrderPlaced>` fired
+   with `OrderPlaced` subclass will not reach observer
+   expecting `OrderPlaced` exactly unless `@Observes`
+   includes the subtype.
+
+2. Check `@Observes(notifyObserver=IF_EXISTS)`. If the
+   observer bean has `@Dependent` or narrower scope and
+   this flag is used, the observer only fires if an instance
+   exists. Default is `ALWAYS`.
+
+3. Verify transaction phase. `AFTER_SUCCESS` observer does
+   not fire if no transaction is active, or if the transaction
+   rolled back. Log inside `AFTER_COMPLETION` instead to
+   confirm the observer was reached at all.
+
+4. Check for exception swallowing. CDI event exceptions in
+   synchronous observers propagate to the caller. Check
+   application logs for `ObserverException`.
+
+5. Add `@Any` qualifier to rule out qualifier mismatch.
+   If the firing side uses a qualifier the observer does
+   not declare, it will not match.
+
+*What separates good from great:* "The `notifyObserver=IF_EXISTS`
+flag combined with dependent scope is the hardest-to-diagnose
+cause. It silently skips the observer with no log entry.
+Always test observer execution in integration scope."
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] When should you use CDI events vs a direct method call?**
+
+CDI events: use when the firing side should not know
+about the receiving side. Classic cases:
+- Cross-cutting side effects (audit trail, metrics)
+  that should not be in domain logic
+- Multiple observers may register independently
+  (extensible plugin system)
+- Decoupled module boundaries (payment module fires
+  PaymentCompleted; notification module observes it)
+
+Direct method call: use when:
+- The action is part of the same bounded context
+  (not a side effect, but the main action)
+- You need the return value of the called method
+- You need transactional guarantee in one call chain
+  (CDI async events escape the transaction context)
+- Ordering and error handling must be explicit
+
+The anti-pattern: using CDI events within the same
+class or between tightly coupled classes as a way to
+"decouple" them. This creates invisible dependencies
+that are harder to trace than direct calls.
+
+*What separates good from great:* "CDI events are for
+extension points and cross-cutting concerns. They are
+not a general-purpose substitute for method calls.
+The test: if removing an observer would break core
+business behavior, it should be a method call."
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] Describe how CDI events have been used in a production application you worked on.**
+
+> Structure: what event was fired, who observed, why
+> it was the right design, what problem it solved.
+
+Example answer:
+"In an e-commerce platform, we fired OrderCompleted
+events from the order service. Three observers:
+(1) EmailService - sends confirmation emails.
+(2) InventoryService - decrements stock.
+(3) AnalyticsService - records conversion metrics.
+
+Before CDI events: OrderService had direct calls
+to EmailService.sendConfirmation() and
+InventoryService.decrementStock(). Adding analytics
+required modifying OrderService. Each addition
+increased coupling.
+
+With CDI events: OrderService fires one event.
+New modules subscribe without touching OrderService.
+We added fraud scoring as a fourth observer six months
+later with zero changes to OrderService.
+
+The key design decision: InventoryService observer
+used @Observes(during=AFTER_SUCCESS) to only decrement
+stock after the transaction confirmed. This prevented
+inventory reduction on failed orders.
+
+What I would do differently: AFTER_SUCCESS observers
+are asynchronous in effect - they run after commit.
+Email confirmations sent before inventory was confirmed
+decremented in some edge cases. I would use async CDI
+events with compensation logic for the email observer."
+
+*What separates good from great:* "The retrospective
+about AFTER_SUCCESS timing and the proposal for async
+events with compensation shows production experience
+with the actual failure modes, not just the happy path."
 
 ---
 
@@ -736,7 +850,7 @@ Client -> CDI Proxy:
 Client <- result
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDI Interceptors and Decorators example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decorator call chain:**
 
@@ -748,7 +862,7 @@ Client -> Decorator.placeOrder()
        <- result (possibly modified)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CDI Interceptors and Decorators example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Self-invocation bypass:**
 
@@ -758,6 +872,12 @@ the CDI proxy - interceptors on that method do not fire.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // 1. Interceptor binding annotation
@@ -870,7 +990,7 @@ public class PremiumOrderDecorator
 }
 ```
 
-> **Code walkthrough:** AuditInterceptor is pure
+> **Code walkthrough:** AuditInterceptor is pureice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > infrastructure: no domain imports, no business logic.
 > @AroundInvoke wraps every @Audited method. ctx.proceed()
 > invokes the next interceptor or real method. try/finally
@@ -950,7 +1070,7 @@ grep -r "@Priority" src/main/java/
 -Dorg.jboss.cdi.DEBUG=true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```java
@@ -964,7 +1084,7 @@ public class AuditInterceptor { ... }
 notification.send(order); // goes through CDI proxy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1067,7 +1187,7 @@ public Object timeConstruction(InvocationContext ctx)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* "@AroundConstruct
 is useful for diagnosing expensive @ApplicationScoped
@@ -1094,7 +1214,7 @@ public class AuditInterceptor { ... }
 //        method() -> Audit(out) -> Logging(out)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Security interceptors
 run outermost (lower priority): fail early, no TX started.
@@ -1127,7 +1247,7 @@ public class ValidationDecorator
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Multiple decorators
 stack in @Priority order. Each @Delegate gets the
@@ -1152,7 +1272,7 @@ public void processOrder(Order o) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Most common interceptor
 bug. Methods needing their own TX boundary or cross-cutting
@@ -1179,7 +1299,7 @@ public void registerBean(InvocationContext ctx)
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Lifecycle interceptors
 are useful for bean registration in metrics and service
@@ -1206,7 +1326,7 @@ verify(auditService).record(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Integration tests
 catch self-invocation bypasses that unit tests miss."
@@ -1260,6 +1380,12 @@ should you avoid?**
 *Why they ask:* Common mistake awareness.
 
 Anti-pattern 1: Business logic in interceptor
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: business rule in infrastructure
 Order order = (Order) ctx.getParameters()[0];
@@ -1269,7 +1395,7 @@ if (order.getTotal() > 10000) {
 // GOOD: use a Decorator
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Anti-pattern 2: Swallowing exceptions
 ```java
@@ -1280,7 +1406,7 @@ catch (Exception e) { return null; } // hides errors
 // GOOD: log and rethrow, or handle specifically
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 Anti-pattern 3: Not calling ctx.proceed() without documentation
 (legitimate for circuit breaker/cache patterns, but
@@ -1289,6 +1415,121 @@ must be explicitly documented)
 *What separates good from great:* "Cleanest interceptors:
 one responsibility, no domain imports, always call
 ctx.proceed() unless intentionally bypassing."
+
+---
+
+**[SENIOR] Q10 - [DEBUGGING] An interceptor is being applied to the wrong beans in production. How do you diagnose?**
+
+Step 1: Verify binding annotation scope. If the
+interceptor binding is applied to a package-level
+or class hierarchy rather than specific methods,
+it may catch more beans than intended. Use
+`@InterceptorBinding` at method level to narrow.
+
+Step 2: Check CDI extension or producer methods.
+If beans are produced via producer methods that
+return a type which the binding matches, the
+interceptor fires on all such beans.
+
+Step 3: Enable CDI diagnostics (Quarkus: `quarkus.log.
+category."io.quarkus.arc".level=DEBUG`; Jakarta EE:
+`jboss.logging.provider=slf4j`). The diagnostic output
+shows which interceptors are bound to which beans at
+deployment.
+
+Step 4: Add explicit `@Priority` ordering and a
+logging line to the interceptor to confirm which
+methods it intercepts at runtime.
+
+Step 5: If the binding is on a superclass or interface,
+all subclasses/implementations inherit it. Move the
+binding to concrete classes if this was unintended.
+
+*What separates good from great:* "CDI deployment
+diagnostics are the first step - they show the
+interceptor binding map before the application starts
+taking traffic. Debugging at runtime means an interceptor
+is already executing on unintended beans in production."
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] When should you use a CDI interceptor vs Spring AOP (in a mixed environment)?**
+
+CDI interceptors:
+- Standard Jakarta EE; portable across all CDI runtimes
+- Annotation-based binding; no proxies or bytecode weaving
+- Limited to CDI-managed beans
+- No pointcut language; binding is explicit per-annotation
+
+Spring AOP:
+- Richer pointcut language (AspectJ expressions)
+- Works on any Spring bean (not just CDI-managed)
+- Proxy-based (JDK dynamic proxy or CGLIB)
+- Can intercept by class name pattern, annotation,
+  method signature
+
+When to use CDI interceptors:
+- Jakarta EE / Quarkus environment without Spring
+- Simple cross-cutting annotations (logging, retry,
+  transaction) on specific beans
+- Portability matters (no Spring dependency)
+
+When Spring AOP is better:
+- Complex pointcut matching (all methods in a package,
+  all public methods except getters)
+- Legacy Spring codebase without CDI
+- Need to intercept Spring-specific infrastructure beans
+
+*What separates good from great:* "The self-invocation
+limitation applies to both: CDI interceptors and Spring
+AOP proxies don't intercept internal calls within the
+same bean. For method-level cross-cutting concerns on
+internal calls, AspectJ load-time weaving is needed."
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] Describe a situation where you used interceptors to solve a cross-cutting concern and what trade-offs you made.**
+
+> Structure: the problem, the interceptor design, the
+> trade-offs accepted, and what you'd do differently.
+
+Example answer:
+"We needed to add rate limiting to our JAX-RS endpoints.
+Each endpoint had different limits (some 100 req/min,
+some 1000 req/min).
+
+I designed `@RateLimit(limit=100, window=60)` as an
+interceptor binding. The interceptor checked a Redis
+sliding window counter using the JWT subject as the key.
+If the limit was exceeded: threw a custom exception
+mapped to 429 Too Many Requests.
+
+Trade-offs accepted:
+(1) The interceptor had a dependency on Redis. This made
+    unit testing harder - I had to mock Redis in tests.
+    Ideally, cross-cutting concerns should have no
+    domain dependencies. I accepted this because the
+    alternative (putting rate limiting in each endpoint)
+    was worse.
+(2) Rate limit configuration was in the annotation at
+    compile time. Changing limits required a redeployment.
+    I later added a `configKey` to the annotation so
+    limits could be read from a config service at runtime.
+(3) The interceptor added 1-2ms latency per request
+    (Redis round-trip). Acceptable for our SLA.
+
+What I'd do differently: use an API gateway (Nginx,
+AWS API Gateway) for rate limiting instead. Interceptors
+are better for business-level concerns (audit, validation)
+than infrastructure concerns (rate limiting, auth). The
+gateway does it better with zero latency added to the
+application."
+
+*What separates good from great:* "The retrospective
+acknowledging that API gateway rate limiting is a better
+architectural choice shows maturity. The best interceptor
+usage is domain-level cross-cutting concerns, not
+infrastructure concerns that belong in the network layer."
 
 ---
 

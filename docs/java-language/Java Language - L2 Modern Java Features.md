@@ -160,7 +160,7 @@ WHEN TO USE RECORDS:
     Mutable data                   (use a regular class)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Modern Java Features example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -169,6 +169,18 @@ WHEN TO USE RECORDS:
 > **Code walkthrough:** Records shine in API boundary code where you receive or send structured
 > data. The `ApiResponse` record is a perfect use case: immutable, typed, with validation in the
 > compact constructor. The pattern matching deconstruction (Java 21) shows the future direction.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DTO / API RESPONSE with records:
@@ -284,7 +296,7 @@ the list. True immutability: use `List.copyOf(items)` in the compact constructor
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Record used as JPA entity throws exception.**
-```
+```plaintext
 Symptom: Spring Data repository with a record entity throws:
   "No default constructor found; nested exception is:
    java.lang.NoSuchMethodException: com.example.User.<init>()"
@@ -328,7 +340,7 @@ Prevention: entities are stateful (JPA manages their state).
   Rule: records for data transfer, regular classes for entities.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -422,7 +434,7 @@ record TaggedItem(String name, List<String> tags) {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `List.copyOf()` creates an immutable copy and throws NullPointerException if the list
 or any element is null. After this: `record.tags()` returns an immutable list.
@@ -578,7 +590,7 @@ before using what's inside."
 ### 📘 Concept Explanation
 
 **Optional API and usage rules:**
-```
+```plaintext
 OPTIONAL CREATION:
   Optional.of(value)           <- value must be non-null; NPE if null
   Optional.empty()             <- empty Optional
@@ -587,15 +599,15 @@ OPTIONAL CREATION:
 ACCESSING THE VALUE:
   opt.isPresent()              <- boolean: true if value present
   opt.isEmpty()                <- boolean: true if empty (Java 11+)
-  opt.get()                    <- returns value; throws NoSuchElementException if empty
-  opt.orElse(default)          <- returns value or default (default always created)
+  opt.get()                    <- returns value; throws NoSuchElementException...
+  opt.orElse(default)          <- returns value or default (default always...
   opt.orElseGet(supplier)      <- returns value or default via lazy supplier
-  opt.orElseThrow()            <- returns value or throws NoSuchElementException
+  opt.orElseThrow()            <- returns value or throws NoSuchElementExceptio...
   opt.orElseThrow(supplier)    <- returns value or throws supplier's exception
 
 TRANSFORMATION (functional):
   opt.map(f)                   <- f: T -> R; wraps result in Optional
-  opt.flatMap(f)               <- f: T -> Optional<R>; returns Optional<R> directly
+  opt.flatMap(f)               <- f: T -> Optional<R>; returns Optional<R>...
   opt.filter(predicate)        <- keeps value if predicate true, else empty
   opt.ifPresent(consumer)      <- executes consumer if value present
   opt.ifPresentOrElse(c, r)    <- executes consumer OR runnable (Java 9+)
@@ -631,7 +643,7 @@ USAGE RULES:
     In JPA entity: @Column private Optional<String> name  // JPA can't handle
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using Stream. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -749,7 +761,7 @@ of Optional (which is to eliminate explicit null checks). Correct idiom: use `ma
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Optional field in JPA entity causes issues.**
-```
+```plaintext
 Symptom: Jackson serializes Optional field as {"present":true,"value":"..."} (raw Optional JSON).
   Or: Hibernate throws error mapping Optional fields.
 
@@ -794,7 +806,7 @@ Prevention:
   Jackson + Jdk8Module: handles Optional return types correctly.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Optional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -910,7 +922,7 @@ User user = findInCache(id);
 if (user == null) user = findInDatabase(id);
 if (user == null) user = findInRemoteApi(id);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 With: `findInCache(id).or(() -> findInDatabase(id)).or(() -> findInRemoteApi(id)).orElseThrow(...)`.
 The chain is lazy: if the cache returns a value, database and remote API are never called.

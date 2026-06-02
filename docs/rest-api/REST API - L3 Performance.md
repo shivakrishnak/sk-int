@@ -75,7 +75,7 @@ Origin returns 200 with new ETag: "def456"
 CDN and browser update their caches.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTTP Caching for REST APIs example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 `no-cache` does NOT mean "don't cache." It means "cache but always revalidate before serving." `no-store` means "don't cache." This naming confusion causes many misconfigured APIs. `no-cache` is actually useful for authenticated resources where you want cache efficiency (304 No Modified saves bandwidth) but always want the server to confirm currency.
@@ -211,45 +211,71 @@ Fix: Multiple options: (1) CDN cache invalidation on update: when a user updates
 | Trade-off | 2 min | 1 |
 | Security | 2 min | 1 |
 
-#### Q1 - "Explain the difference between Cache-Control max-age, no-cache, and no-store."
+**[JUNIOR] Q1 - [CONCEPTUAL] "Explain the difference between Cache-Control max-age, no-cache, and no-store."**
 > "Three distinct caching behaviors: `max-age=N`: store the response for N seconds. Serve from cache without contacting the server for N seconds. After N seconds: revalidate (send If-None-Match, may get 304). `no-cache`: store the response but NEVER serve without revalidation. Every time the client needs this resource: contact the server. Server returns 304 (empty body) if unchanged, 200 with new data if changed. No-cache still saves bandwidth (304 has no body) but adds a round trip. `no-store`: never store the response anywhere. Every request hits the origin. No browser cache, no CDN cache, no proxy cache. The practical use cases: `max-age=300`: product catalog, help articles, configuration data. Changes infrequently, 5-minute stale is acceptable. `no-cache`: user profile data. Always verify with the server (304 if unchanged). Never serve stale profile data. But save bandwidth when unchanged. `no-store`: financial statements, account balance, sensitive personal data. Never cache anywhere - not even in browser temp files. Combinations: `Cache-Control: no-cache, no-store, must-revalidate` is belt-and-suspenders for maximally sensitive data. `Cache-Control: public, max-age=86400` for static public resources (images, CSS, JS)."
 
 *What separates good from great:* "The clarification that no-cache 'stores but revalidates every time' while no-store 'never stores' is the precise HTTP spec distinction. Most candidates confuse these, and the confusion leads to misconfigured APIs either serving stale sensitive data or missing CDN offload benefits."
 
 ---
 
-#### Q2 - "How do ETags work and when are they better than max-age?"
+**[JUNIOR] Q2 - [TRADE-OFF] "How do ETags work and when are they better than max-age?"**
 > "ETags are entity tags - fingerprints of a response's content. Server generates an ETag from the response body (content hash) or a version number. Server sends `ETag: \"v3-abc123\"` with every cacheable response. Browser stores the ETag. On next request: `If-None-Match: \"v3-abc123\"`. Server compares current ETag: same = 304 Not Modified (no body). Changed = 200 OK with new ETag. ETags are better than max-age for: resources that change infrequently but unpredictably. With max-age, you must choose a TTL: too short = unnecessary server requests. Too long = clients see stale data. ETags solve both: the browser revalidates every time (no guessing the TTL), but if unchanged, the 304 has no body (bandwidth savings). The combination: use both. `Cache-Control: public, max-age=300` + `ETag: "abc"`. For 5 minutes: serve from cache without revalidating. After 5 minutes: send If-None-Match. If unchanged: 304 and reset 5-minute window. The 304 path: generates the ETag, compares it, returns empty body. Much cheaper than full serialization. Especially valuable for large response bodies (paginated lists, report data). 304 for a 2MB response is essentially free."
 
 *What separates good from great:* "The 'use both' recommendation (max-age + ETag) and the explanation of how they combine (serve from cache within max-age, revalidate with ETag after max-age expires) shows you understand the complete caching strategy, not just individual headers."
 
 ---
 
-#### Q3 - "Design a caching strategy for a product catalog API that updates frequently."
+**[JUNIOR] Q3 - [DEBUGGING] "Design a caching strategy for a product catalog API that updates frequently."**
 > "Product catalog with frequent updates: the challenge is balancing freshness (users see current prices/stock) with performance (CDN offload). Data characteristics: product names/descriptions: change rarely (hours/days). Product prices: change frequently (minutes/hours for flash sales). Stock levels: change constantly (seconds for popular items). Caching strategy by data type: Product details (name, description, images): `Cache-Control: public, max-age=3600` + ETag. CDN caches for 1 hour. Use CDN cache tags to invalidate when a product is edited (tag each response with the product ID, invalidate by tag on update). Product pricing: `Cache-Control: private, max-age=60` - only browser cache, 60 seconds. Or `no-cache` with ETag for always-current pricing. Stock levels: `Cache-Control: no-store` - real-time inventory must not be cached. Practical implementation: separate endpoint `/products/{id}` (cacheable product info) from `/products/{id}/inventory` (non-cacheable stock). Client fetches both; renders from cached product info + fresh inventory data. CDN cache invalidation on write: when a product is updated, publish a `ProductUpdated` event. A consumer calls the CDN API to invalidate all cached responses tagged with `product-{id}`."
 
 *What separates good from great:* "Splitting the product endpoint (cacheable) from the inventory endpoint (non-cacheable) and the CDN cache tag invalidation pattern (invalidate by product ID tag on update) are the production caching design decisions."
 
 ---
 
-#### Q4 - "A CDN is serving stale API responses after you deployed new data. How do you fix it immediately?"
+**[MID] Q4 - [CONCEPTUAL] "A CDN is serving stale API responses after you deployed new data. How do you fix it immediately?"**
 > "Immediate fix for stale CDN cache: CDN purge/invalidation API. Most CDNs support programmatic cache invalidation. CloudFront: `create-invalidation --distribution-id --paths '/*'` or specific paths. Cloudflare: `POST /zones/{zone_id}/purge_cache` with specific URLs or cache tags. Fastly: PURGE request to the specific URL. Immediate: `curl -X PURGE https://api.mysite.com/products/123`. This is the emergency break-glass option - use for urgent corrections (wrong price, recalled product). Medium-term fix: implement CDN cache tag invalidation as part of your write path. When a product is updated: (1) write to DB, (2) publish ProductUpdated event, (3) event handler calls CDN purge API for `product-{id}` cache tag. This automated invalidation runs within seconds of the write. Long-term fix: review max-age values. If stale data causes incidents, max-age may be too high. Reduce it at the cost of more origin requests. Prevention: use cache-busted URLs for resources that change (content hash in URL: `/products/abc123`). When the content changes, the URL changes (new hash). No invalidation needed - the old URL is now dead, clients get new URL from API responses."
 
 *What separates good from great:* "Knowing the specific CDN purge API commands (CloudFront create-invalidation, Cloudflare POST /purge_cache, Fastly PURGE) shows you've done CDN cache invalidation in production, not just read about it."
 
 ---
 
-#### Q5 - "How does caching affect REST API security?"
+**[MID] Q5 - [CONCEPTUAL] "How does caching affect REST API security?"**
 > "Three caching security concerns: (1) Private data in shared caches. User-specific data (profile, account) cached in a CDN is served to all users requesting the same URL. Ensure `Cache-Control: private` on all user-specific responses. A common mistake: forgetting to set private on a newly added personalization feature. The CDN caches the first user's personalized response and serves it to everyone. (2) Security headers must also be cached correctly. `Strict-Transport-Security` (HSTS) must reach the browser. If a CDN strips HSTS headers: first visit may not enforce HTTPS. Set `Cache-Control: no-store` for security-sensitive responses, or configure the CDN to pass through security headers. (3) Cache poisoning attacks. If the CDN uses a URL as the cache key and an attacker can influence the URL (Host header injection, URL manipulation): attacker serves malicious cached responses to legitimate users. Mitigation: normalize cache keys at the CDN. Validate the Host header at the origin. Never use unvalidated user input in cache keys. The `Vary` header creates additional cache dimensions: `Vary: Accept-Language` means the CDN caches separate responses per language. An attacker who can control the Accept-Language header can fill CDN cache with invalid entries (cache DOS)."
 
 *What separates good from great:* "The cache poisoning attack vector (controlling cache keys to serve malicious cached responses) and the Vary header cache DOS are sophisticated security considerations that show you've thought through the complete caching threat model."
 
 ---
 
-#### Q6 - "How does HTTP caching interact with REST API versioning?"
+**[MID] Q6 - [CONCEPTUAL] "How does HTTP caching interact with REST API versioning?"**
 > "API versioning and caching interact at the cache key. For URI versioning (`/v1/users` vs `/v2/users`): different URLs = different cache keys. CDN caches v1 and v2 separately. Safe: updating v2 doesn't affect v1 cache. For header versioning (Accept: application/vnd.myapp.v2+json): same URL, different version in header. CDN caches by URL only by default. The cache key problem: CDN may serve v1 response to a v2 request (or vice versa). Fix: add `Vary: Accept` to responses so the CDN includes the Accept header in the cache key. Performance cost: Vary: Accept reduces cache hit rate (separate entries per Accept value). Most CDNs handle Vary headers, but efficiency decreases. The correct approach: prefer URI versioning for CDN-fronted APIs. URI versioning is cache-friendly by design. Header versioning requires explicit CDN Vary configuration and reduces cache efficiency. When sunsetting old versions: purge the old version's CDN cache after sunset. Old URLs still cached in CDN will return stale 'version not supported' responses until the CDN entries expire."
 
 *What separates good from great:* "The Vary: Accept requirement for header versioned APIs and the cache efficiency reduction are the production CDN concerns that connect API versioning and HTTP caching in a way most candidates don't connect."
+
+---
+
+**[SENIOR] Q7 - [DEBUGGING] "Your CDN cache hit rate dropped from 85% to 30%
+overnight. How do you diagnose this?"**
+> "Cache hit rate drops have a short list of causes: (1) Cache key explosion:
+someone added a query parameter that varies per request (e.g., a timestamp,
+session ID, or random nonce) to cacheable URLs. Each request generates a unique
+cache key - 100% miss rate. Diagnose: compare URL patterns in CDN access logs
+before and after the drop. (2) New URL patterns: a recent deploy changed URL
+structure. Old cache entries still exist but new requests miss. Fix: review
+deploy diff for URL changes. (3) Cache-Control header change: a developer
+changed `max-age=3600` to `no-cache` or `no-store`. Diagnose: check current
+cache headers with `curl -I https://api.example.com/endpoint`. Compare to
+previous headers in version control. (4) Vary header addition: `Vary: Cookie`
+or `Vary: Authorization` was added, fragmenting the cache by cookie/auth values.
+Most authenticated responses should not be CDN-cached at all. (5) Purge event:
+manual or automated cache purge. Check CDN purge logs. The diagnosis workflow:
+CDN access logs -> identify URL patterns -> correlate with recent deploys ->
+check response headers."
+
+*What separates good from great:* "Query parameter cache key explosion is the
+most common cause and the hardest to notice in code review. A tracking pixel
+or debug parameter added to API calls by a frontend developer can silently
+destroy CDN cache efficiency. CDN URL normalization rules (strip known tracking
+parameters) are a production defense."
 
 ---
 
@@ -344,7 +370,7 @@ Rate limit headers in response:
   Retry-After: 30  (seconds to wait)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rate Limiting and Throttling Design example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Rate limiting enforced BEFORE heavy processing (at the API gateway level) is vastly more effective than rate limiting inside the application. If the application must process a request to check the rate limit, the expensive work is already done. Gateway-level rate limiting (checked with a Redis lookup before the request reaches application code) protects the application from even executing the handler.
@@ -480,45 +506,73 @@ Fix: Ensure the rate limiting filter covers ALL paths. Use `/**` pattern. Check 
 | Trade-off | 2 min | 1 |
 | Behavioral | 2 min | 1 |
 
-#### Q1 - "Compare token bucket, leaky bucket, and fixed window algorithms."
+**[JUNIOR] Q1 - [TRADE-OFF] "Compare token bucket, leaky bucket, and fixed window algorithms."**
 > "Fixed window: count requests in the current time window (e.g., the current minute). Simple Redis INCR with TTL. The problem: the boundary. At 11:59:59 a client sends 100 requests (fills the window). At 12:00:01 a new window starts, they send 100 more. 200 requests in 2 seconds. The window boundary allows bursting at 2x the rate limit. Sliding window: track exact request timestamps. Count requests in the last 60 seconds (not since the last minute mark). More accurate, no boundary vulnerability. Cost: must store timestamps for all requests in the window. Expensive for high request rates. Token bucket: a virtual bucket fills with tokens at a fixed rate (10/second). Each request consumes one token. Empty bucket = reject. Full bucket = can burst. The bucket has a maximum capacity (the burst limit). Burst until full, then sustained at fill rate. Practical for real-world clients who have bursty patterns. Leaky bucket: requests flow in at any rate but flow out at a fixed constant rate. Excess requests queue or are dropped. Enforces a strictly constant outflow rate. Better for backends that need smooth constant load (downstream services). The recommendation: token bucket for client-facing APIs (allows bursting, fair to legitimate clients). Leaky bucket for protecting downstream systems (smooth constant rate)."
 
 *What separates good from great:* "The boundary attack (200 requests in 2 seconds with fixed window) and the use case distinction (token bucket for client-facing, leaky bucket for downstream protection) shows understanding of both the algorithms' weaknesses and their appropriate use cases."
 
 ---
 
-#### Q2 - "How do you implement distributed rate limiting across multiple API server instances?"
+**[JUNIOR] Q2 - [HANDS-ON] "How do you implement distributed rate limiting across multiple API server instances?"**
 > "Centralized counter: Redis is the standard distributed rate limiting store. All API server instances share a Redis rate limit store. Atomic Redis operations: `INCR` for fixed window (INCR returns new count; compare to limit; if over limit, reject). `SETEX` to set the TTL for the window. Bucket4j or Resilience4j with Redis backend: libraries handle the distributed case with Lua scripts ensuring atomic check-and-increment. The Redis Lua script approach: `local count = redis.call('INCR', key); if count == 1 then redis.call('EXPIRE', key, 60) end; if count > limit then return 0 else return 1 end`. Runs atomically (no race conditions). The failure mode: Redis goes down. Options: fail open (allow all requests, no rate limiting - service could be overwhelmed), fail closed (reject all requests - service unavailable), or use a local in-memory fallback counter (approximate rate limiting without cross-instance coordination). My recommendation: fail open but alert. When Redis is down, accept requests at a reduced local rate limit (per-instance local counter) to maintain service while alerting on the degraded rate limiting. This balances availability against protection. For Redis HA: use Redis Sentinel or Redis Cluster. Rate limiting keys are small and numerous - this is a good Redis Cluster use case."
 
 *What separates good from great:* "The Redis Lua script for atomic check-and-increment and the fail-open/fail-closed decision (with the recommendation to fail open with local fallback) shows production distributed rate limiting implementation experience."
 
 ---
 
-#### Q3 - "How do you design rate limit tiers for different client types?"
+**[JUNIOR] Q3 - [ARCHITECTURE] "How do you design rate limit tiers for different client types?"**
 > "Multi-tier rate limiting: different limits for different client classifications. Tiers: unauthenticated (IP-based): 10 req/min. Safeguard against scraping, DDoS. Free API key: 100 req/min, 10K req/day. Basic registered clients. Paid API key: 1,000 req/min, 1M req/day. Paying customers. Partner API key: 10,000 req/min, unlimited daily. Contract-based partners. Internal services: unlimited (or very high, for DoS protection from bugs). The tier is stored in the API key record (or JWT claim). On each request: look up the tier, apply the corresponding bucket configuration. Implementation: `Tier tier = apiKeyService.getTier(apiKey); BucketConfiguration config = tierConfig.get(tier); Bucket bucket = buckets.computeIfAbsent(apiKey, k -> Bucket4j.builder().addLimit(config).build());`. The key design: per-endpoint limits in addition to global limits. A data export endpoint (heavy) might have 10 req/hour even for paid tier. A simple read endpoint might have 10,000 req/min. Per-endpoint limits prevent one heavyweight endpoint from consuming the entire quota. Return tier information in headers: `X-RateLimit-Tier: paid`, `X-RateLimit-Limit: 1000`. Clients know their tier and plan accordingly."
 
 *What separates good from great:* "Per-endpoint limits in addition to global tier limits (export endpoints get very low limits regardless of tier) is the production design that prevents resource exhaustion from heavy operations."
 
 ---
 
-#### Q4 - "A client reports they're being rate limited despite sending very few requests. What do you investigate?"
+**[MID] Q4 - [CONCEPTUAL] "A client reports they're being rate limited despite sending very few requests. What do you investigate?"**
 > "False positive rate limiting investigation: (1) Shared client ID: the client is behind a shared API key or IP being used by many other processes. The rate limit counter is for the API key, not just their process. Check if the API key is shared by multiple services or environments (staging and production sharing a key). (2) Clock synchronization: the rate limit window reset time is based on server clock. If the client's retry logic is based on client clock (Retry-After), and client and server clocks are skewed, the client may retry before the server has reset the window. Check if the 429 Retry-After value matches the actual reset time. (3) Header not being read: the client's rate limit code may not be reading X-RateLimit-Remaining. They're unaware they're approaching the limit and send a burst of requests. (4) Request fan-out: one 'logical request' in the client triggers multiple API calls (the UI component loads user + preferences + notifications simultaneously). The client thinks they made 1 request; the server counted 3. Check if there are multiple concurrent requests per user action. (5) Rate limit key collision: if rate limit keys are generated from a hash of the API key and the hash has collisions - two different keys map to the same rate limit bucket. Check the key generation logic."
 
 *What separates good from great:* "The request fan-out scenario (one UI action triggers multiple API calls) is the production debugging insight. Clients who think in 'user actions' but APIs that count individual HTTP requests have a constant mismatch in how 'usage' is perceived."
 
 ---
 
-#### Q5 - "How should clients implement retry logic for rate-limited requests?"
+**[MID] Q5 - [DEBUGGING] "How should clients implement retry logic for rate-limited requests?"**
 > "Client-side rate limit handling: (1) Read X-RateLimit-Remaining on every response (not just 429). When remaining < 10%: voluntarily add delay before next request. Proactive throttling prevents hitting the limit. (2) On 429: stop immediately. Do NOT retry immediately (this is the mistake: receive 429, immediately retry, get 429, immediately retry - hammering the server). (3) Read Retry-After header: `Retry-After: 30` means wait 30 seconds. Honor this value exactly. (4) After waiting: resume at a reduced rate. If you were sending 100 req/s when you hit the limit, resume at 50 req/s. The server told you 100/s was too fast. (5) Exponential backoff for repeated 429s: if you hit the limit again after waiting: wait 30s, then 60s, then 120s. Don't lock at 30s. (6) Circuit breaker for rate limiting: if 50% of requests in the last 30 seconds were 429, open the circuit and wait 60 seconds before trying again. The anti-pattern: `while (429) { Thread.sleep(1000); retry(); }`. This creates retry storms if many clients synchronize on the same Retry-After reset time. Add jitter: `Thread.sleep(retryAfter * 1000 + random(500))`."
 
 *What separates good from great:* "The jitter recommendation (adding random delay to Retry-After waits) prevents the thundering herd problem where all clients reset at the exact same time and spike the origin simultaneously."
 
 ---
 
-#### Q6 - "How do you handle rate limiting gracefully in a mobile app?"
+**[MID] Q6 - [CONCEPTUAL] "How do you handle rate limiting gracefully in a mobile app?"**
 > "Mobile-specific rate limiting considerations: (1) Background sync: mobile apps often sync data in background. Rate limit the sync frequency in the app code before it reaches the API. Respect sync intervals (15-30 min for non-critical data). (2) Token pre-fetching: when the app starts, request rate limit status and cache it locally. Use remaining budget information to schedule subsequent requests. (3) Offline-first: design the app to function offline. Sync when connected. This naturally reduces request frequency. Rate limit of 100/min is trivial for an offline-first app. (4) Push notifications over polling: instead of polling 'are there new messages?' every 30 seconds: receive a push notification when a new message arrives. One FCM/APNs push is free. Thousands of API polls per hour is expensive and rate-limited. (5) Batch requests where possible: instead of 10 separate GET /product/{id} calls: one GET /products?ids=1,2,3,4,5,6,7,8,9,10. Reduces request count by 10x. (6) Exponential backoff library: use existing battle-tested libraries (Android's `java.net.HttpURLConnection` has retry support, iOS `URLSession` with `URLSessionConfiguration.timeoutIntervalForRequest`). Don't roll your own retry logic - it's complex to get right."
 
 *What separates good from great:* "Push notifications over polling as a rate limit reduction strategy is the architectural solution that eliminates the polling problem rather than just managing it. Batch requests as a 10x request reduction is a practical API design optimization."
+
+---
+
+**[SENIOR] Q7 - [ARCHITECTURE] "How do you design rate limiting that is fair
+across different use patterns - a client that sends 100 small requests vs
+one that sends 1 large request?"**
+> "Standard rate limiting counts requests regardless of payload size or
+computational cost. This is unfair: a simple GET /health request and a complex
+POST /reports/generate request both consume one rate limit token but have
+drastically different server costs. Cost-based rate limiting solutions: (1)
+Request weight tiers: assign weight to each endpoint category. Simple GETs:
+1 credit. List endpoints: 2 credits. Complex operations: 10 credits. Client
+has 1000 credits/minute. (2) Response size billing: charge credits proportional
+to response size. Large paginated responses cost more. GraphQL APIs use this:
+API cost is calculated based on query complexity (field count, depth, resolver
+calls). (3) Processing time billing: measure actual CPU time and bill accordingly.
+Complex: requires accurate measurement, hard to communicate to clients in advance.
+Pragmatic production approach: Stripe-style tiered endpoint costs. Simple CRUD
+endpoints: 1 unit. Batch endpoints: N units (where N is batch size). Reporting/
+export endpoints: 50 units. Document costs in API reference. Provide a cost
+calculator. The benefit: clients design their usage patterns efficiently.
+A client generating large exports during off-peak hours is treated fairly
+compared to one making constant small requests."
+
+*What separates good from great:* "Knowing that cost-based rate limiting
+couples API design decisions to client economics. When an endpoint is marked
+as 10 credits, teams debate whether it's worth the cost. This organically
+prioritizes efficient API design and discourages expensive patterns."
 
 ---
 

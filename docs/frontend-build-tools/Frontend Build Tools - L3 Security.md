@@ -98,7 +98,7 @@ Defense layers:
     View at: npmjs.com/package/<name>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Supply Chain Security (npm audit, lockfiles, provenance) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -140,7 +140,7 @@ jobs:
         # Dev vulns reported but not blocking (lower risk)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dev vulns reported but not blocking (lower risk) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```bash
 # Local audit workflow:
@@ -162,7 +162,7 @@ npm install some-package@^4.0.0    # update to safe version
 # 3. Either update calling code or pin to safe version
 ```
 
-> **Code walkthrough:** Separating production and dev audit levels
+> **Code walkthrough:** Separating production and dev audit levelsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reflects risk difference: production deps run in users' browsers;
 > dev deps run only in CI. A critical vulnerability in ESLint (dev
 > dep) is less urgent than one in a production auth library. The `||
@@ -199,7 +199,7 @@ cat package-lock.json | jq '
 # - Integrity hash changes (package content changed?)
 ```
 
-> **Code walkthrough:** The `integrity` field in package-lock.json is
+> **Code walkthrough:** The `integrity` field in package-lock.json isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a SHA-512 hash of the package content. When `npm ci` runs, it verifies
 > each installed package matches the lockfile hash. This is why `npm ci`
 > is secure: even if a malicious actor replaced the package on the
@@ -431,7 +431,7 @@ Build-time CSP solutions:
   -> Works for static scripts but not dynamic content
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Build-time Security and CSP Integration example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -445,6 +445,11 @@ violations are a symptom of a misconfigured build.
 ### 💻 Code Example
 
 **Example 1: Production-safe source maps and CSS**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // webpack.prod.js - CSP-compatible production config
@@ -530,7 +535,7 @@ grep -r 'import.meta.env\.' dist/assets/*.js |
     fi
 ```
 
-> **Code walkthrough:** The post-build secret scan is a safety net:
+> **Code walkthrough:** The post-build secret scan is a safety net:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > even if a developer accidentally adds `VITE_` prefix to a secret,
 > the CI step catches it before deploy. Pattern matching for `sk_live_`
 > (Stripe live secret key prefix) and common naming conventions catches
@@ -633,7 +638,7 @@ the browser refuses to execute it.
 </script>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This In CI: add as a mandatory security check step example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 webpack support: `webpack-subresource-integrity` plugin automatically
 adds `integrity` attributes to all `<script>` and `<link>` tags

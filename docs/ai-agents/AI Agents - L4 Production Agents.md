@@ -140,7 +140,7 @@ GOVERNANCE:
   Target: HITL checkpoints, audit log, scope definition
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Production Agent Engineering example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The agent reliability equation:**
 
@@ -154,7 +154,7 @@ Reliability = f(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Production Agent Engineering example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 All five must be present. A highly reliable loop
 that lacks observability is effectively broken in
@@ -467,7 +467,7 @@ class ProductionAgentLoop:
         }
 ```
 
-> **Code walkthrough:** `TokenBudget` tracks cumulative
+> **Code walkthrough:** `TokenBudget` tracks cumulativeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > input+output tokens and stops the loop before hitting
 > the API limit (with a 5000-token buffer). `CircuitBreaker`
 > prevents a repeatedly-failing tool from blocking the
@@ -693,7 +693,7 @@ class CircuitBreaker:
         self.failures = 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 When the circuit is open, return: "Tool X is
 temporarily unavailable. Try a different approach."
@@ -736,7 +736,7 @@ for iteration in range(max_iter):
     )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Update budget from usage metadata example demonstrates Python code pattern using SQL. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Why pre-terminate with a buffer: if the agent
 detects budget exhaustion exactly at 0, there are
@@ -758,7 +758,7 @@ if budget.is_exhausted():
     return final_resp
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This based on what you know so far." example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *What separates good from great:* The "buffer"
 concept and the graceful final answer generation
@@ -796,7 +796,7 @@ def cache_key(tool_name: str, args: dict) -> str:
     ).hexdigest()[:16]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This based on what you know so far." example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Benefit in agents: agents frequently call the
 same read-only tools with the same arguments at
@@ -895,7 +895,7 @@ def hitl_via_slack(
     return user_approved_in_slack(tool_name, tool_args)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block until response received example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* Pre-flight plan
 approval as an alternative to per-action HITL -
@@ -932,7 +932,7 @@ def check_injection(text: str) -> bool:
     return any(p in t for p in INJECTION_PATTERNS)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block until response received example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Layer 2 - Tool result sandboxing:
 Tool results may contain adversarial content from
@@ -953,7 +953,7 @@ not instructions:
 </tool_result>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block until response received example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Layer 3 - Output validation:
 Before returning the agent's final answer, check
@@ -997,7 +997,7 @@ class AgentCheckpoint:
     created_at: float
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block until response received example demonstrates class definition. **KEY MECHANISM:** Python builds the class dict at definition time; instances share the class dict via __mro__. **WHY IT MATTERS:** class-level mutable attributes are shared across all instances - mutating one affects all. **TAKEAWAY: declare mutable attributes in __init__, not at class level.**
 
 (2) Store checkpoints in a persistent store (Redis,
     DynamoDB) keyed by (user_id, task_id).
@@ -1157,7 +1157,7 @@ Budget Compliance:
   Target: >= 99%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 SLO-based alerting:
 - Alert: completion rate < 90% in 30-min window
@@ -1284,7 +1284,7 @@ USER REQUEST
                               - Alerting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Scale analysis for 10,000 req/day:**
 

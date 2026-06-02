@@ -1,6 +1,6 @@
 ---
 title: "Node.js"
-nav_order: 56
+nav_order: 42
 has_children: true
 ---
 
@@ -18,6 +18,8 @@ Covers junior through staff/principal across all company types.
 | [Node.js - L0 Orientation.md](Node.js - L0 Orientation.md) | L0 | 3 | ★☆☆ | complete |
 | [Node.js - L1 Core Concepts.md](Node.js - L1 Core Concepts.md) | L1 | 3 | ★☆☆ | complete |
 | [Node.js - L1 File System and Streams.md](Node.js - L1 File System and Streams.md) | L1 | 3 | ★☆☆ | complete |
+| [Node.js - L1 Core Modules.md](Node.js - L1 Core Modules.md) | L1 | 3 | ★☆☆ | complete |
+| [Node.js - L1 Module System.md](Node.js - L1 Module System.md) | L1 | 3 | ★☆☆ | complete |
 | [Node.js - L2 Async Patterns.md](Node.js - L2 Async Patterns.md) | L2 | 2 | ★★☆ | complete |
 | [Node.js - L2 HTTP and Express.md](Node.js - L2 HTTP and Express.md) | L2 | 2 | ★★☆ | complete |
 | [Node.js - L2 Worker Threads.md](Node.js - L2 Worker Threads.md) | L2 | 2 | ★★☆ | complete |
@@ -55,6 +57,22 @@ Covers junior through staff/principal across all company types.
 | 1 | Node.js File System Module | complete |
 | 2 | Node.js Streams | complete |
 | 3 | Buffers and Binary Data | complete |
+
+### Node.js - L1 Core Modules.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | Node.js File System Module | complete |
+| 2 | Node.js HTTP and Net Modules | complete |
+| 3 | Node.js Path, OS, and Utility Modules | complete |
+
+### Node.js - L1 Module System.md (★☆☆)
+
+| # | Keyword | Status |
+|---|---------|--------|
+| 1 | CommonJS Modules | complete |
+| 2 | ES Modules in Node.js | complete |
+| 3 | Node.js Module Resolution Algorithm | complete |
 
 ### Node.js - L2 Async Patterns.md (★★☆)
 

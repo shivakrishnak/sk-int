@@ -119,7 +119,7 @@ hCPS(2, 3, hResult =>
 // This IS callback hell: nesting is the cost of CPS composition
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continuation-Passing Style and the Promise Connection example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ```javascript
 // NODE.JS IS CPS:
@@ -140,7 +140,7 @@ fs.readFile('config.json', (err, data) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continuation-Passing Style and the Promise Connection example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ```javascript
 // PROMISES ARE CPS WITH FLATMAP:
@@ -162,7 +162,7 @@ readFilePromise('config.json')
 // Flat chain: same semantics, no nesting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Continuation-Passing Style and the Promise Connection example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ```javascript
 // ASYNC/AWAIT DESUGARS TO PROMISES (CPS transform at compile time):
@@ -190,7 +190,7 @@ function loadUsers() {
 // Promise chains are CPS with flatMap flattening
 ```
 
-> **Code walkthrough:** The four code blocks show the
+> **Code walkthrough:** The four code blocks show theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > transformation chain: direct-style (returns value) -> CPS
 > (passes to continuation) -> Node.js callbacks (CPS applied
 > to I/O) -> Promises (CPS with flatMap to prevent nesting) ->
@@ -247,7 +247,7 @@ function getUserOrders(userId, callback) {
 // manual error propagation, callback hell risk
 ```
 
-> **Code walkthrough:** The explicit CPS pattern requires
+> **Code walkthrough:** The explicit CPS pattern requiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > threading the `err` parameter through every level manually.
 > There is no automatic error propagation, no stack trace
 > clarity, and each additional async step adds another nesting
@@ -270,7 +270,7 @@ async function getUserOrders(userId) {
 // Which is CPS: each .then() is a continuation
 ```
 
-> **Code walkthrough:** `async/await` eliminates the explicit
+> **Code walkthrough:** `async/await` eliminates the explicitice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > CPS structure while preserving the CPS semantics. Each
 > `await` is a continuation boundary - the function is paused
 > and the rest becomes the continuation that runs when the
@@ -341,7 +341,7 @@ for (const item of items) {
 await Promise.all(items.map(item => processItem(item))); // parallel
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Failure 2: Unhandled CPS error in mixed style**
 ```javascript
@@ -358,7 +358,7 @@ const data = await util.promisify(someCallbackFn)();
 const result = await doSomethingAsync(data);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -372,8 +372,7 @@ const result = await doSomethingAsync(data);
 | Debugging | 1 | Stack trace loss in CPS |
 | Design | 1 | Promisification pattern |
 
-**Q1. What is Continuation-Passing Style and why does
-it matter for JavaScript developers?**
+**[JUNIOR] Q1 - [MECHANISM] What is Continuation-Passing Style and why does it matter for JavaScript developers?**
 
 CPS is a function style where the "return address" is explicit:
 instead of returning a value, the function receives a callback
@@ -399,7 +398,7 @@ just API knowledge.
 
 ---
 
-**Q2. How does async/await desugar to Promises?**
+**[JUNIOR] Q2 - [MECHANISM] How does async/await desugar to Promises?**
 
 The transformation is a state machine or continuation chain:
 
@@ -421,7 +420,7 @@ function f() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 The engine (V8) generates a state machine internally:
 ```
@@ -430,7 +429,7 @@ State 1: resume with p1 result (a). Call p2(a). Suspend.
 State 2: resume with p2 result (b). Return b+1.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Each `await` creates a "suspension point." The microtask
 queue resumes the continuation when the Promise resolves.
@@ -443,7 +442,7 @@ intermediate Promise objects for each step.
 
 ---
 
-**Q3. How are Promises monads?**
+**[JUNIOR] Q3 - [MECHANISM] How are Promises monads?**
 
 A monad is a type constructor M with two operations:
 - `unit` (also called `return` or `of`): `a -> M<a>`
@@ -467,7 +466,7 @@ promise.then(f).then(g) // ===
 promise.then(x => f(x).then(g));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 The monad structure is what enables composing async operations
 in a flat chain instead of nested callbacks.
@@ -480,7 +479,7 @@ to Promise<T>.
 
 ---
 
-**Q4. What is the difference between generators and async/await?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between generators and async/await?**
 
 Generators (function*):
 - Can be paused and resumed by the caller
@@ -521,7 +520,7 @@ function asyncToGenerator(generatorFn) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using Promise. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing that generators
 are pull-based (caller drives iteration) while async/await
@@ -531,7 +530,7 @@ functions are one-shot (run to completion).
 
 ---
 
-**Q5. How does the microtask queue relate to CPS?**
+**[MID] Q5 - [MECHANISM] How does the microtask queue relate to CPS?**
 
 The microtask queue IS the CPS continuation queue. When a
 Promise resolves, its `.then()` callbacks (continuations) are
@@ -554,7 +553,7 @@ CPS in the browser event loop:
 -> Event loop picks next task
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 This is why:
 ```javascript
@@ -565,7 +564,7 @@ console.log('sync');
 // Promise.then is microtask; setTimeout is macrotask
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Understanding that "infinite
 microtask loop" is possible:
@@ -576,11 +575,11 @@ function loop() {
 loop(); // blocks: microtask queue never empties, no macrotasks run
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 ---
 
-**Q6. How do you promisify a callback-based function?**
+**[SENIOR] Q6 - [MECHANISM] How do you promisify a callback-based function?**
 
 Manual promisification:
 ```javascript
@@ -607,7 +606,7 @@ someLib.fetch[util.promisify.custom] = (url) =>
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using generic type. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 This demonstrates the CPS-to-Promise isomorphism: any CPS
 function is convertible to a Promise-returning function.
@@ -619,8 +618,7 @@ multiple success arguments), manual promisification is needed.
 
 ---
 
-**Q7. What are the limitations of Promise as a monad in
-JavaScript?**
+**[SENIOR] Q7 - [MECHANISM] What are the limitations of Promise as a monad in JavaScript?**
 
 JavaScript's Promise has departures from a pure monad:
 
@@ -651,8 +649,7 @@ cases (wrapping a Promise in a Promise is not representable).
 
 ---
 
-**Q8. What is the relationship between generators, async
-iterators, and async data pipelines?**
+**[SENIOR] Q8 - [MECHANISM] What is the relationship between generators, async iterators, and async data pipelines?**
 
 Async generators: `async function*` - produces values
 asynchronously, can yield multiple values over time:
@@ -675,7 +672,7 @@ for await (const item of paginatedResults('/api/users')) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 CPS connection: `for await...of` desugars to `iterator.next()`
 calls, each returning a Promise. The awaited result triggers
@@ -690,8 +687,7 @@ operators (bufferTime, throttleTime).
 
 ---
 
-**Q9. What is Effect-TS and how does it relate to CPS
-and typed async programming?**
+**[SENIOR] Q9 - [MECHANISM] What is Effect-TS and how does it relate to CPS and typed async programming?**
 
 Effect-TS is a library that provides a typed monad for
 JavaScript async programming:
@@ -721,7 +717,7 @@ const program = pipe(
 await Effect.runPromise(program);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type assertion using async/await. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **TAKEAWAY: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 Relationship to CPS:
 - Effect is a lazy continuation: it describes the computation,
@@ -879,7 +875,7 @@ const eventLoop$ = merge(
 // concatMap: no concurrency, events processed sequentially
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Event-Driven Architecture Theory in JavaScript example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ```javascript
 // ACTOR PATTERN with Web Workers
@@ -912,7 +908,7 @@ self.onmessage = async (e) => {
 // - Limited fault tolerance (no supervisor trees)
 ```
 
-> **Code walkthrough:** The Reactor pattern code shows the
+> **Code walkthrough:** The Reactor pattern code shows theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > conceptual structure: register, block, dispatch. The Observable
 > mental model makes it concrete - `concatMap` enforces
 > sequential processing (one event at a time), which is how
@@ -974,7 +970,7 @@ http.createServer((req, res) => {
 // (each request waits for all others to complete)
 ```
 
-> **Code walkthrough:** The Reactor model assumes handlers
+> **Code walkthrough:** The Reactor model assumes handlersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are non-blocking. When a handler blocks the event loop
 > thread with synchronous CPU work, the entire server stops
 > processing events. 100 concurrent 500ms computations become
@@ -1016,7 +1012,7 @@ if (isMainThread) {
 // Each Worker thread = separate OS thread + separate V8 heap
 ```
 
-> **Code walkthrough:** The Worker threads pattern implements
+> **Code walkthrough:** The Worker threads pattern implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the Actor model: isolated heap per Worker, message-only
 > communication via `postMessage`/`on('message')`. The main
 > thread remains free to handle incoming requests while
@@ -1095,7 +1091,7 @@ emitter.on('data', handler);
 return () => emitter.off('data', handler);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: Back-pressure missing in event streams**
 ```javascript
@@ -1118,7 +1114,7 @@ readableStream.on('data', chunk => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates arrow function using Stream. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **WHAT BREAKS: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -1132,8 +1128,7 @@ readableStream.on('data', chunk => {
 | Debugging | 1 | EventEmitter diagnostics |
 | Design | 1 | Distributed EDA with Kafka |
 
-**Q1. What is the Reactor pattern and how does the
-JavaScript event loop implement it?**
+**[JUNIOR] Q1 - [SCENARIO] What is the Reactor pattern and how does the JavaScript event loop implement it?**
 
 Reactor pattern (Douglas Schmidt, 1995):
 1. Initiation: application registers handlers for events
@@ -1159,7 +1154,7 @@ applies to JavaScript execution, not to libuv internals.
 
 ---
 
-**Q2. How does the Actor model differ from the Reactor model?**
+**[JUNIOR] Q2 - [MECHANISM] How does the Actor model differ from the Reactor model?**
 
 | Property | Reactor (Node.js) | Actor (Erlang/Web Workers) |
 |---|---|---|
@@ -1183,8 +1178,7 @@ deployments: actors restart independently.
 
 ---
 
-**Q3. How do you implement a Worker thread pool for CPU-
-bound work?**
+**[JUNIOR] Q3 - [SCENARIO] How do you implement a Worker thread pool for CPU- bound work?**
 
 ```javascript
 const { Worker } = require('worker_threads');
@@ -1232,7 +1226,7 @@ const results = await Promise.all(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* The pool `drain()` pattern:
 after any worker finishes, check the queue for pending work.
@@ -1241,8 +1235,7 @@ and work is never dropped because all workers are busy.
 
 ---
 
-**Q4. How does distributed event-driven architecture
-(Kafka, EventBridge) relate to the in-process EDA patterns?**
+**[MID] Q4 - [DESIGN] How does distributed event-driven architecture (Kafka, EventBridge) relate to the in-process EDA patterns?**
 
 In-process EDA (EventEmitter, RxJS Subject):
 - Events: in-memory, ephemeral
@@ -1284,7 +1277,7 @@ await consumer.run({
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing that Kafka's
 consumer group model allows independent scaling: adding a
@@ -1294,7 +1287,7 @@ has no effect (one partition = max one active consumer per group).
 
 ---
 
-**Q5. How do you diagnose and fix EventEmitter memory leaks?**
+**[MID] Q5 - [DEBUGGING] How do you diagnose and fix EventEmitter memory leaks?**
 
 Detection:
 ```javascript
@@ -1319,7 +1312,7 @@ setInterval(() => {
 }, 5000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Common causes:
 1. `addEventListener` in component setup without cleanup
@@ -1340,7 +1333,7 @@ const cleanup = setupListeners(emitter);
 cleanup(); // removes the specific handler
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* The cleanup function
 pattern is universal: same pattern as React's `useEffect`
@@ -1350,8 +1343,7 @@ call) for `.off()` to remove the correct listener.
 
 ---
 
-**Q6. How does the CSP (Communicating Sequential Processes)
-model compare to the Actor model and Reactor?**
+**[SENIOR] Q6 - [MECHANISM] How does the CSP (Communicating Sequential Processes) model compare to the Actor model and Reactor?**
 
 CSP (Tony Hoare, 1978): concurrent processes communicate
 through synchronous channels. A send blocks until a receive
@@ -1387,7 +1379,7 @@ class Channel {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing that Go's channel
 model (CSP) provides natural backpressure: a goroutine
@@ -1398,8 +1390,7 @@ synchronization primitives.
 
 ---
 
-**Q7. What are the performance implications of the event-
-driven model vs thread-per-request?**
+**[SENIOR] Q7 - [TRADE-OFF] What are the performance implications of the event- driven model vs thread-per-request?**
 
 Thread-per-request (traditional Java/PHP):
 - Pros: simple mental model, CPU affinity per request
@@ -1432,8 +1423,7 @@ handlers are non-blocking.
 
 ---
 
-**Q8. How does CQRS (Command Query Responsibility Segregation)
-apply to frontend async architecture?**
+**[SENIOR] Q8 - [DESIGN] How does CQRS (Command Query Responsibility Segregation) apply to frontend async architecture?**
 
 CQRS separates reads (queries) from writes (commands):
 - Queries: read data, no side effects, can be cached
@@ -1466,7 +1456,7 @@ const { data: orders } = useQuery({
 // Separate: read model and write model
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Recognizing that TanStack
 Query's query/mutation split is CQRS applied to the frontend
@@ -1476,8 +1466,7 @@ invalidate the read model's cache.
 
 ---
 
-**Q9. What is back-pressure and how is it implemented
-in JavaScript streams?**
+**[SENIOR] Q9 - [SCENARIO] What is back-pressure and how is it implemented in JavaScript streams?**
 
 Back-pressure: a mechanism for a consumer to signal to a
 producer to slow down. Without it, a fast producer overwhelms
@@ -1505,7 +1494,7 @@ readable.on('data', (chunk) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 RxJS back-pressure: no built-in (push-based). Requires operators:
 - `bufferTime`: accumulate, emit batch
@@ -1524,13 +1513,13 @@ handles it automatically.
 
 ### ⚖️ Comparison Table
 
-| Pattern | Concurrency | State | Communication | Fault Isolation | Best For |
-|---|---|---|---|---|---|
-| Reactor | Single thread | Shared | Direct call | None | I/O-bound, web server |
-| Proactor | Single thread | Shared | Completion callback | None | OS async I/O |
-| Actor | Multi-process | Isolated | Message passing | Actor-level | Fault tolerance |
-| CSP | Multi-goroutine | Isolated | Synchronous channel | Goroutine-level | Coordinated pipelines |
-| Thread pool | Multi-thread | Shared (with locks) | Shared memory | None (locks) | CPU-bound |
+| Pattern| Concurrency| State| Communication| Fault Isolation| Best For|
+|---|---|------------|-------------------|---------------|---------------------|
+| Reactor| Single thread| Shared| Direct call| None| I/O-bound, web server|
+| Proactor| Single thread| Shared| Completion callback| None| OS async I/O|
+| Actor| Multi-process| Isolated| Message passing| Actor-level| Fault tolerance|
+| CSP| Multi-goroutine| Isolated| Synchronous channel| Goroutine-level| Coordina
+| Thread pool| Multi-thread| Shared (with locks)| Shared memory| None (locks)| C
 
 ---
 

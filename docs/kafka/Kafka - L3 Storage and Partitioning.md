@@ -73,7 +73,7 @@ with the record of contact."
 ### 📘 Concept Explanation
 
 **Compaction lifecycle, configuration, and Kafka Streams state stores:**
-```
+```plaintext
 PARTITION LOG STRUCTURE:
 
   Offset: 0  1  2  3  4  5  6  7  8  9
@@ -159,7 +159,7 @@ COMPACTION + EXACTLY-ONCE:
     Old transaction metadata (completed transactions) is compacted away.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Storage and Partitioning example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -216,11 +216,11 @@ public class StateRestorer {
 }
 ```
 
-> **Code walkthrough:** The restorer assigns all partitions directly (not subscribe) to ensure
-> it reads every partition's full history. `seekToBeginning` starts from offset 0. For each
-> record: null value = tombstone (delete from map), non-null = upsert. The loop exits when all
-> partitions reach their end offset. This produces the same in-memory state as if the service
-> had processed every change event in real time. Compaction ensures the topic only contains the
+> **Code walkthrough:** The restorer assigns all partitions directly (not subscrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> it reads every partition's full history. `seekToBeginning` starts from offset 
+> record: null value = tombstone (delete from map), non-null = upsert. The loop 
+> partitions reach their end offset. This produces the same in-memory state as i
+> had processed every change event in real time. Compaction ensures the topic on
 > latest value per key, so the restore is efficient even for long-lived topics.
 
 ---
@@ -228,21 +228,21 @@ public class StateRestorer {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Log compaction: a Kafka cleanup mode where only the latest value per key is kept.
-> `cleanup.policy=compact`. Tombstone: null value = delete marker. Use for changelog topics
-> where the consumer only cares about the current state of each key. Compaction runs in the
+> Log compaction: a Kafka cleanup mode where only the latest value per key is ke
+> `cleanup.policy=compact`. Tombstone: null value = delete marker. Use for chang
+> where the consumer only cares about the current state of each key. Compaction 
 > background - the log cleaner thread.
 
 ---
 
 **Senior / Staff (5+ years):**
-> Production compaction tuning: `min.cleanable.dirty.ratio=0.3` for more aggressive compaction
-> (compact earlier). `log.cleaner.max.compaction.lag.ms` to bound the maximum time a message
-> waits before compaction (important for latency-sensitive state stores). For Kafka Streams
-> changelog topics: the changelog retention is tied to the consumer lag. If the stream task
-> is down for a long time, the changelog may have been compacted past the last committed offset.
-> Kafka Streams: re-starts from the beginning of the compacted log (full state restore). Large
-> state stores: restore can take minutes. Optimize with RocksDB snapshots (Kafka Streams changelog
+> Production compaction tuning: `min.cleanable.dirty.ratio=0.3` for more aggress
+> (compact earlier). `log.cleaner.max.compaction.lag.ms` to bound the maximum ti
+> waits before compaction (important for latency-sensitive state stores). For Ka
+> changelog topics: the changelog retention is tied to the consumer lag. If the 
+> is down for a long time, the changelog may have been compacted past the last c
+> Kafka Streams: re-starts from the beginning of the compacted log (full state r
+> state stores: restore can take minutes. Optimize with RocksDB snapshots (Kafka
 > restore with standby replicas `num.standby.replicas=1`).
 
 ---
@@ -255,7 +255,7 @@ always appears after a record with a lower offset in the compacted log). But: it
 the original message ordering per key. Example: key A was written 10 times. Only the latest write
 is kept. A consumer reading the compacted log sees key A at offset 999, then key B at offset 1000.
 In the original log: key B may have been at offset 50 (between key A writes at 3, 7, 12). The
-consumer of the compacted log should treat the compacted log as a snapshot of current key-value
+consumer of the compacted log should treat the compacted log as a snapshot of cu
 state, not as a precise event history. If you need full event history: use `cleanup.policy=delete`
 (time/size retention). If you need only current state: use `cleanup.policy=compact`. If you need
 both bounded history AND current state: `cleanup.policy=compact,delete`.
@@ -264,11 +264,11 @@ both bounded history AND current state: `cleanup.policy=compact,delete`.
 
 ### ⚖️ Comparison Table
 
-| Policy | Records Kept | Bounded By | Use Case | Offset Gaps |
-|---|---|---|---|---|
-| delete (default) | All within window | Time / Size | Event streaming, logs | No |
-| compact | Latest per key | Key space | Changelogs, CDC, state | Yes |
-| compact,delete | Latest per key + recent | Key space + Time | CDC with TTL | Yes |
+| Policy| Records Kept| Bounded By| Use Case| Offset Gaps|
+|---|----------------------|----------------|----------------------|-----------|
+| delete (default)| All within window| Time / Size| Event streaming, logs| No|
+| compact| Latest per key| Key space| Changelogs, CDC, state| Yes|
+| compact,delete| Latest per key + recent| Key space + Time| CDC with TTL| Yes|
 
 ---
 
@@ -282,7 +282,7 @@ both bounded history AND current state: `cleanup.policy=compact,delete`.
 
 **Log compaction before and after:**
 
-```
+```plaintext
   BEFORE COMPACTION:
   
   Offset: 0  1  2  3  4  5  6  7  8  9
@@ -335,7 +335,7 @@ stateDiagram-v2
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Compacted topic growing unboundedly - compaction not running.**
-```
+```plaintext
 Symptom: topic with cleanup.policy=compact. Disk usage growing.
   Log cleaner not keeping up. Segment count increasing.
 
@@ -373,7 +373,7 @@ Fix:
   Increase log.cleaner.threads (broker config, requires restart).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -477,7 +477,7 @@ behind them waits."
 ### 📘 Concept Explanation
 
 **Partitioning strategies, hotspot detection, and custom partitioners:**
-```
+```plaintext
 DEFAULT PARTITIONING (Kafka 2.4+ with sticky batch):
 
   // Record WITH key:
@@ -597,7 +597,7 @@ HOTSPOT DETECTION AND REMEDIATION:
     C. Custom partitioner to distribute hot keys manually.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -657,11 +657,11 @@ public void handleOrder(ConsumerRecord<String, String> record) {
 }
 ```
 
-> **Code walkthrough:** The composite key `"US|3"` routes to a different partition than `"US|0"`,
-> distributing the US traffic across 10 partitions. The shard is derived deterministically from
-> `orderId` (not random), so the same order always maps to the same partition (idempotent).
-> The consumer strips the shard suffix before processing - the business logic sees only `"US"`.
-> This approach: no topic migration, no partition count change. Hotspot resolved by distributing
+ > **Code walkthrough:** The composite key `"US| 3"` routes to a different parti
+> distributing the US traffic across 10 partitions. The shard is derived determi
+> `orderId` (not random), so the same order always maps to the same partition (i
+> The consumer strips the shard suffix before processing - the business logic se
+> This approach: no topic migration, no partition count change. Hotspot resolved
 > the hot key across multiple synthetic keys.
 
 ---
@@ -669,20 +669,20 @@ public void handleOrder(ConsumerRecord<String, String> record) {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Kafka partitioning: key -> same partition (murmur2 hash). No key: sticky batch (one partition
-> per batch). Custom partitioner: implement `Partitioner` interface. Partition count = max
-> consumer parallelism. Hotspot: one key generating most of the traffic -> one partition overloaded.
+> Kafka partitioning: key -> same partition (murmur2 hash). No key: sticky batch
+> per batch). Custom partitioner: implement `Partitioner` interface. Partition c
+> consumer parallelism. Hotspot: one key generating most of the traffic -> one p
 
 ---
 
 **Senior / Staff (5+ years):**
-> Partition count planning is one of the most consequential early Kafka decisions. Changing
-> partition count is not a zero-downtime operation: key-to-partition mapping changes, consumers
-> need to re-process or accept ordering violations. Over-provision: start with 2-4x expected
-> peak. For systems where key ordering is critical (financial ledger, user activity stream): never
-> change partition count after launch. Use a separate topic with the new count and migrate. For
-> Kafka Streams: partition count of join topics must match (co-partitioning requirement). If a
-> join's input topics have different partition counts: use GlobalKTable (replicates all data to
+> Partition count planning is one of the most consequential early Kafka decision
+> partition count is not a zero-downtime operation: key-to-partition mapping cha
+> need to re-process or accept ordering violations. Over-provision: start with 2
+> peak. For systems where key ordering is critical (financial ledger, user activ
+> change partition count after launch. Use a separate topic with the new count a
+> Kafka Streams: partition count of join topics must match (co-partitioning requ
+> join's input topics have different partition counts: use GlobalKTable (replica
 > every instance) or repartition one topic first.
 
 ---
@@ -691,25 +691,25 @@ public void handleOrder(ConsumerRecord<String, String> record) {
 
 **Misconception: "Increasing partition count is a safe, online operation."**
 Increasing partition count can be done online (no downtime), but it is NOT safe for topics where
-key-to-partition routing matters. When you increase partitions from 16 to 32: the murmur2 hash
+key-to-partition routing matters. When you increase partitions from 16 to 32: th
 formula changes (`hash % 32` instead of `hash % 16`). Keys that were on partition 3 may now
-hash to partition 19. For consumers that depend on per-key ordering (processing all orders for
+hash to partition 19. For consumers that depend on per-key ordering (processing 
 customer C123 in sequence): records before the partition change are in partition 3, records after
-are in partition 19. The consumer would need to read from both partitions and merge-sort to
-maintain per-key ordering. This is extremely complex. Safe approach: treat partition count as
-immutable. Use a new topic with higher partition count and migrate. For non-ordering-sensitive
-topics (log aggregation, metrics): increasing partitions is fine - order doesn't matter.
+are in partition 19. The consumer would need to read from both partitions and me
+maintain per-key ordering. This is extremely complex. Safe approach: treat parti
+immutable. Use a new topic with higher partition count and migrate. For non-orde
+topics (log aggregation, metrics): increasing partitions is fine - order doesn't
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Strategy | Ordering | Distribution | Hotspot Risk | When |
-|---|---|---|---|---|
-| Key-based (default) | Per-key ordered | Hash-distributed | If key cardinality low | Orders, events by user |
-| No key (sticky) | None | Even | None | Logs, metrics |
-| Custom partitioner | Business-defined | Custom | If logic skewed | Priority, geo-routing |
-| Composite key | Per-compound-key | Even for hot keys | Low | High-traffic single keys |
+| Strategy| Ordering| Distribution| Hotspot Risk| When|
+|---|--------|-----------------|----------------------|------------------------|
+| Key-based (default)| Per-key ordered| Hash-distributed| If key cardinality low
+| No key (sticky)| None| Even| None| Logs, metrics|
+| Custom partitioner| Business-defined| Custom| If logic skewed| Priority, geo-r
+| Composite key| Per-compound-key| Even for hot keys| Low| High-traffic single k
 
 ---
 
@@ -834,7 +834,7 @@ Monitor:
   Alert: max partition lag > 5x average partition lag.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -142,13 +142,13 @@ EXAMPLE - Spring Boot Kafka consumer:
     -> OOMKilled when Kafka + Netty direct buffers + Metaspace exceed limit
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L5 Capacity Planning example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Measuring actual JVM memory consumption by region is the
+> **Code walkthrough:** Measuring actual JVM memory consumption by region is theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > foundation of accurate capacity planning. The GOOD pattern uses JVM native memory
 > tracking (NMT) and jcmd to produce a per-region breakdown that directly maps to the
 > sizing formula.
@@ -282,7 +282,7 @@ determined by the amount of live data, not by "bigger is better."
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: OOMKilled in Kubernetes after weeks of stable operation.**
-```
+```plaintext
 Symptom:
   Pod status: OOMKilled
   container_memory_usage_bytes metric: spiked to limits.memory then pod died
@@ -326,7 +326,7 @@ Diagnosis:
     Then: Option A or B to fix the root cause
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This capacity_report.sh: generate JVM memory recommendation from NMT + GC log example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -556,7 +556,7 @@ CGLib-generated#1                  3       0.05 MB        45   0.2 MB
 CGLib-generated#2                  3       0.05 MB        45   0.2 MB
 ... (100 more CGLib entries)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If there are hundreds of CGLib-generated ClassLoaders: each Spring bean that uses
 `@Scope("prototype")` with AOP proxying generates a new ClassLoader. Fix: use `@Scope`
@@ -695,7 +695,7 @@ PHASE 4: CONTINUOUS RIGHT-SIZING
     Potential saving if over-provisioned: 20-30% cluster cost reduction
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -703,7 +703,7 @@ PHASE 4: CONTINUOUS RIGHT-SIZING
 
 **JVM memory region breakdown and Kubernetes container limit calculation:**
 
-```
+```plaintext
 KUBERNETES CONTAINER MEMORY BUDGET:
 
   limits.memory: 3.0Gi (3072MB)

@@ -106,7 +106,7 @@ Request ->
   Return response to client
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Server, Scheduler, and Controller Manager Internals example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Why mutating before validating: mutating webhooks (e.g., Istio's sidecar injector)
 add fields (the sidecar container). Validating webhooks then check the FINAL object
@@ -138,7 +138,7 @@ webhooks:
   # Ignore = continue without mutation if webhook unavailable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Ignore = continue without mutation if webhook unavailable example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **kube-scheduler - Filter+Score pipeline:**
 
@@ -172,16 +172,16 @@ Every controller uses the same framework:
 4. Reconcile function: reads current state from cache, computes required actions, calls
    API server to effect changes
 
-```
+```plaintext
 etcd change -> API server -> watch event -> Informer (updates cache)
-                                         -> Event handler adds key to work queue
+                                         -> Event handler adds key to work...
                                          <- Reconcile loop dequeues key
                                             Reads object from cache
                                             Computes desired vs actual
                                             Calls API server to fix divergence
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Ignore = continue without mutation if webhook unavailable example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Level-triggered: if a reconcile fails, the key is re-queued (with backoff). The next
 reconcile reads CURRENT state (not the failed state). This is idempotent: repeated
@@ -204,7 +204,7 @@ spec:
   renewTime: "2024-01-01T12:00:00Z"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The active leader holds this Lease example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The active instance renews the Lease every `renewTime`. If it fails to renew within
 `leaseDurationSeconds`, the standby instances compete to acquire the Lease. New leader
@@ -214,7 +214,7 @@ detected within ~15-30 seconds.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Admission webhook implementation, scheduler policy, and
+> **Code walkthrough:** Admission webhook implementation, scheduler policy, andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > controller reconcile loop pattern.
 
 ```go
@@ -267,6 +267,13 @@ func (r *MyReconciler) Reconcile(
   // Already in desired state, nothing to do
   return ctrl.Result{}, nil
 }
+```
+
+
+```go
+// BAD: ignoring error
+f, _ := os.Open("config.json") // _ discards error
+defer f.Close()               // panic if f is nil
 ```
 
 ```go
@@ -635,7 +642,7 @@ kubectl describe deployment my-app -n team-a
 # Look at: Events, Conditions, and Replicas count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look at: Events, Conditions, and Replicas count example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: check the ReplicaSet created by the Deployment controller.
 ```bash
@@ -645,7 +652,7 @@ kubectl describe rs <new-rs-name> -n team-a
 # Events: was it unable to create Pods?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Events: was it unable to create Pods? example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: check the Pods.
 ```bash
@@ -655,7 +662,7 @@ kubectl describe pod <new-pod> -n team-a
 # Events: why is it Pending? Insufficient resources? Admission rejected?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Events: why is it Pending? Insufficient resources? Admission rejected? example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common causes by pod status:
 - Pending: no schedulable nodes (resources, taints, affinity), PVC not bound
@@ -669,7 +676,7 @@ Step 4: check Deployment controller logs if no ReplicaSet was created.
 kubectl logs -n kube-system kube-controller-manager-<node> | grep -i "my-app"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Events: why is it Pending? Insufficient resources? Admission rejected? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: check admission webhooks (if pod creation is rejected immediately).
 `kubectl describe pod <pod>` -> Events: "admission webhook denied"
@@ -760,7 +767,7 @@ func (p *CostPlugin) Score(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Events: why is it Pending? Insufficient resources? Admission rejected? example demonstrates Go pattern using container. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 To use: build as a Go plugin (or as a custom scheduler binary). Configure via
 KubeSchedulerConfiguration:
@@ -774,7 +781,7 @@ profiles:
         weight: 100
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Events: why is it Pending? Insufficient resources? Admission rejected? example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* The Filter plugin point is the most powerful for
 custom logic: it can block a node based on arbitrary criteria (license availability,
@@ -804,7 +811,7 @@ Mitigation:
       operator: NotIn
       values: [kube-system, kube-public, cert-manager]
   ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Events: why is it Pending? Insufficient resources? Admission rejected? example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 - Run webhook deployments with >= 2 replicas, anti-affinity rules
 - Use PodDisruptionBudget: `minAvailable: 1`
@@ -863,7 +870,7 @@ etcdctl endpoint status --write-out=json | \
 # Also: Prometheus etcd_disk_backend_commit_duration_seconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Also: Prometheus etcd_disk_backend_commit_duration_seconds example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Layer 3 - Root cause categories:
 
@@ -959,7 +966,7 @@ spec:
   leaderTransitions: 3               # how many times leadership has changed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Also: Prometheus etcd_disk_backend_commit_duration_seconds example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Active leader behavior:
 - Acquires the Lease (writes its identity) on startup
@@ -1079,15 +1086,15 @@ Architecture:
      Worker Nodes (communicate with NLB)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 kube-apiserver configuration:
 - 3 instances (one per AZ on control plane nodes)
 - ALL instances are active (API servers are stateless, all serve traffic)
 - NLB health checks: TCP port 6443. Unhealthy instance removed automatically
 - Resources: 8 vCPU, 32GB RAM per instance (large cache for 1000 nodes)
-- Rate limiting: `--max-requests-inflight=1200`, `--max-mutating-requests-inflight=600`
-- Audit: `--audit-log-path=/var/log/kubernetes/audit.log --audit-policy-file=/etc/k8s/audit-policy.yaml`
+- Rate limiting: `--max-requests-inflight=1200`, `--max-mutating-requests-inflig
+- Audit: `--audit-log-path=/var/log/kubernetes/audit.log --audit-policy-file=/et
 - etcd endpoints: all 3 etcd members specified (client-side load balancing)
 
 kube-scheduler:
@@ -1111,13 +1118,13 @@ Zero-downtime upgrade strategy:
 4. Upgrade worker nodes (drain -> upgrade -> uncordon, rolling)
 
 Admission webhook reliability:
-- All critical webhooks (PSA enforcement, Gatekeeper): 3 replicas minimum, anti-affinity
+- All critical webhooks (PSA enforcement, Gatekeeper): 3 replicas minimum, anti-
 - `failurePolicy: Fail` for security-critical; `Ignore` for non-critical
 - Webhooks exclude kube-system via namespaceSelector
 - Certificate rotation via cert-manager (auto-rotation 30 days before expiry)
 
-*What separates good from great:* API server resource sizing is frequently under-estimated.
-At 1000 nodes with 10 pods each, the API server's in-memory cache holds 10,000+ pod objects,
+*What separates good from great:* API server resource sizing is frequently under
+At 1000 nodes with 10 pods each, the API server's in-memory cache holds 10,000+ 
 thousands of configmaps/secrets, and serves thousands of watch streams. 32GB RAM per API
 server instance is the floor for this scale. Running API servers at OOMKilled risk means
 the control plane fails when it's most needed (peak load, incident response). Use actual

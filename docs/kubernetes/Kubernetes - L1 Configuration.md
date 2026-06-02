@@ -104,7 +104,7 @@ Via volume mount:
   (pod sees new file without restart)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ConfigMap and Secret example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When a ConfigMap is mounted as a volume, the files in the mount are symlinks into
 a configmap-managed directory. When the ConfigMap is updated, Kubernetes atomically
@@ -143,7 +143,7 @@ injection.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Creating ConfigMaps and Secrets, then referencing them
+> **Code walkthrough:** Creating ConfigMaps and Secrets, then referencing themice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in a Deployment. The env var injection vs volume mount patterns both shown.
 > The immutable ConfigMap pattern prevents accidental config changes in production.
 
@@ -220,11 +220,11 @@ spec:
         path: application.properties
 ```
 
-> **Code walkthrough:** `stringData` in Secret lets you write plain text values;
-> Kubernetes base64-encodes them automatically when storing. `immutable: true` on
-> ConfigMap prevents updates - if you need a change, create a new ConfigMap with a
+> **Code walkthrough:** `stringData` in Secret lets you write plain text values;ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> Kubernetes base64-encodes them automatically when storing. `immutable: true` o
+> ConfigMap prevents updates - if you need a change, create a new ConfigMap with
 > new name and update the Deployment reference. This is the GitOps-safe pattern:
-> treat ConfigMaps as immutable artifacts like container images. Volume mounts are
+> treat ConfigMaps as immutable artifacts like container images. Volume mounts a
 > updated dynamically by the kubelet when the ConfigMap changes (symlink swap);
 > env var injections are set at pod start and require pod restart to update.
 
@@ -234,8 +234,8 @@ spec:
 
 **Junior / Mid (0-5 years):**
 > ConfigMap stores application config like database URLs, feature flags, and log
-> levels. Secret stores sensitive data like passwords and API keys. You inject them
-> into pods either as environment variables or as mounted files. The key rule: never
+> levels. Secret stores sensitive data like passwords and API keys. You inject t
+> into pods either as environment variables or as mounted files. The key rule: n
 > put secrets in your Docker image or in source code - use Secrets. Never put
 > environment-specific URLs in your Docker image - use ConfigMaps.
 
@@ -245,14 +245,14 @@ spec:
 
 **Senior / Staff (5+ years):**
 > The security reality of Kubernetes Secrets: base64 is not encryption. Secrets
-> are stored in etcd and any process that can read etcd can read all your secrets.
-> For compliance environments (PCI, HIPAA), this is unacceptable without additional
+> are stored in etcd and any process that can read etcd can read all your secret
+> For compliance environments (PCI, HIPAA), this is unacceptable without additio
 > controls: enable etcd encryption at rest, restrict Secret access with RBAC
 > (use least-privilege ServiceAccounts), audit Secret access, and ideally use
 > the External Secrets Operator to sync from AWS Secrets Manager or Vault into
 > K8s Secrets. CSI Secret Store Driver is even better - mounts secrets directly
 > from Vault without creating a K8s Secret object, reducing the attack surface.
-> The other production concern: large ConfigMaps (> 1MB) hit etcd size limits and
+> The other production concern: large ConfigMaps (> 1MB) hit etcd size limits an
 > should be stored in object storage (S3, GCS) with a reference in ConfigMap.
 
 *Push deeper:* Immutable ConfigMaps and Secrets - once set, cannot be modified.
@@ -264,7 +264,7 @@ and enables GitOps-style versioned config management.
 ### ⚠️ Common Misconceptions
 
 **Misconception 1: "Kubernetes Secrets are encrypted."**
-Secrets are base64-encoded, not encrypted. Without etcd encryption at rest enabled,
+Secrets are base64-encoded, not encrypted. Without etcd encryption at rest enabl
 anyone with etcd access can read all Secrets. Treat Secrets as a convenience
 mechanism, not a security boundary, unless combined with encryption at rest and
 strict RBAC.
@@ -272,21 +272,21 @@ strict RBAC.
 **Misconception 2: "Env var injected secrets are safer than mounted volumes."**
 The opposite is often true. Env vars: visible in process listings (`/proc/PID/environ`),
 appear in crash dumps, logged by misbehaving apps. Volume mounts: can use tmpfs
-(in-memory), file permissions restrict access, not logged. For sensitive secrets,
+(in-memory), file permissions restrict access, not logged. For sensitive secrets
 volume mounts are generally safer.
 
 **Misconception 3: "ConfigMap changes are immediately visible to running pods."**
 Volume-mounted ConfigMaps are updated within ~60 seconds via the kubelet's cache
-invalidation. Env var-injected ConfigMaps require pod restart. The 60-second delay
-matters for fast-paced config changes - if you need instant updates, use a config
+invalidation. Env var-injected ConfigMaps require pod restart. The 60-second del
+matters for fast-paced config changes - if you need instant updates, use a confi
 reload mechanism in your application (Spring Boot Actuator /refresh endpoint,
 inotify file watcher).
 
 **Misconception 4: "One ConfigMap per application is the right pattern."**
 Large monolithic ConfigMaps that contain all config for all environments in one object
 are hard to manage and version. The better pattern: one ConfigMap per concern
-(app-config, feature-flags, logging-config), or one ConfigMap per version (immutable
-config-v1, config-v2). This enables targeted updates without touching all config.
+(app-config, feature-flags, logging-config), or one ConfigMap per version (immut
+config-v1, config-v2). This enables targeted updates without touching all config
 
 ---
 
@@ -310,7 +310,7 @@ rollout restart for env var config: `kubectl rollout restart deployment/<name>`.
 
 **Failure 3: Secret value appears as binary in application (double-base64)**
 Symptom: application receives garbled binary data instead of expected string.
-Cause: using `data:` field with already-base64-encoded value AND also base64-encoding
+Cause: using `data:` field with already-base64-encoded value AND also base64-enc
 when injecting (or vice versa).
 Diagnostic: `kubectl get secret <name> -o jsonpath='{.data.KEY}' | base64 -d`
 to check the actual decoded value.
@@ -321,29 +321,29 @@ Never manually base64-encode when using `stringData:`.
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 30-60 seconds |
-| Mechanism | 1-2 minutes |
-| Security | 2-3 minutes |
-| Scenario | 2-3 minutes |
-| Debugging | 1-2 minutes |
-| Trade-off | 1-2 minutes |
-| Advanced | 1-2 minutes |
+  | Question Category | Time to Answer |  
+|-----------------|--------------|
+  | Definition        | 30-60 seconds  |  
+  | Mechanism         | 1-2 minutes    |  
+  | Security          | 2-3 minutes    |  
+  | Scenario          | 2-3 minutes    |  
+  | Debugging         | 1-2 minutes    |  
+  | Trade-off         | 1-2 minutes    |  
+  | Advanced          | 1-2 minutes    |  
 
 ---
 
 **Q1 [JUNIOR] (Definition): What is the difference between a ConfigMap and a Secret?**
 
-A: Both store configuration data as key-value pairs. The difference is sensitivity.
+A: Both store configuration data as key-value pairs. The difference is sensitivi
 
 ConfigMap: stores non-sensitive configuration - database URLs (not passwords),
 log levels, feature flags, config file contents. Plain text storage in etcd. Anyone
 with kubectl access can read them. Appropriate for config that doesn't matter if
 seen by other developers.
 
-Secret: stores sensitive data - passwords, API keys, TLS certificates, OAuth tokens.
-Values are base64-encoded in etcd. Still readable by anyone with kubectl access to
+Secret: stores sensitive data - passwords, API keys, TLS certificates, OAuth tok
+Values are base64-encoded in etcd. Still readable by anyone with kubectl access 
 the Secret object (base64 is not encryption), but the intent is restricted access
 via RBAC.
 
@@ -351,11 +351,11 @@ In practice: the main difference is intent and access control. You apply stricte
 RBAC to Secrets than ConfigMaps. You'd give developers read access to ConfigMaps
 but only give pods the specific Secrets they need via ServiceAccount RBAC.
 
-Both can be injected as env vars or volume-mounted files. Both are namespace-scoped
+Both can be injected as env vars or volume-mounted files. Both are namespace-sco
 objects.
 
 *What separates good from great:* Clarifying that base64 is not encryption. The
-security boundary for Secrets is RBAC + etcd encryption at rest, not the encoding.
+security boundary for Secrets is RBAC + etcd encryption at rest, not the encodin
 
 ---
 
@@ -370,11 +370,11 @@ you must restart the pods. Command:
 
 Volume mount injection (configMap volume): the kubelet periodically syncs ConfigMap
 changes to mounted volumes. The update happens within approximately 60 seconds
-(controlled by `--sync-frequency` on kubelet, default 1m). The update is atomic -
+(controlled by `--sync-frequency` on kubelet, default 1m). The update is atomic 
 Kubernetes replaces the entire volume directory with a symlink swap, so applications
 never see partial file updates.
 
-Application behavior with volume updates: applications must re-read the config file
+Application behavior with volume updates: applications must re-read the config f
 to pick up changes. Apps that read config once at startup won't benefit. Apps with
 a reload mechanism (Spring Boot `/actuator/refresh`, inotify file watcher, SIGHUP
 handler) can pick up changes without restart.
@@ -383,8 +383,8 @@ For immediate reload scenarios: use a config reload sidecar that watches the mou
 config files (via inotify) and triggers the application's reload endpoint.
 
 *What separates good from great:* Immutable ConfigMaps (immutable: true) are NOT
-updated - by design. If you need a change, create a new ConfigMap with a new name
-and update the Deployment reference. This is version-controlled config management.
+updated - by design. If you need a change, create a new ConfigMap with a new nam
+and update the Deployment reference. This is version-controlled config managemen
 
 ---
 
@@ -393,12 +393,12 @@ and update the Deployment reference. This is version-controlled config managemen
 A: Kubernetes Secrets have several security weaknesses by default that require
 explicit hardening:
 
-Layer 1 - RBAC: restrict which ServiceAccounts, users, and groups can access Secrets.
-Pods should only access Secrets they explicitly need via per-pod ServiceAccounts,
-not the default ServiceAccount. Use `kubectl auth can-i get secrets -n <ns>` to audit.
+Layer 1 - RBAC: restrict which ServiceAccounts, users, and groups can access Sec
+Pods should only access Secrets they explicitly need via per-pod ServiceAccounts
+not the default ServiceAccount. Use `kubectl auth can-i get secrets -n <ns>` to 
 
 Layer 2 - Etcd encryption at rest: by default, Secrets are stored in etcd as
-base64 (NOT encrypted). Enable `EncryptionConfiguration` with an AES-CBC or AES-GCM
+base64 (NOT encrypted). Enable `EncryptionConfiguration` with an AES-CBC or AES-
 key to encrypt Secret data at rest. Without this, anyone with etcd access reads
 all secrets.
 
@@ -410,7 +410,7 @@ a dedicated secret manager (HashiCorp Vault, AWS Secrets Manager, GCP Secret Man
 and sync to K8s with External Secrets Operator. Alternatively, use CSI Secret Store
 Driver to mount secrets directly from Vault without creating K8s Secret objects.
 
-Layer 5 - Immutable Secrets: set `immutable: true` once the Secret is provisioned.
+Layer 5 - Immutable Secrets: set `immutable: true` once the Secret is provisione
 Prevents accidental modification. Reduces kubelet load (no watch needed).
 
 The threat model: a compromised application that can call the K8s API can read
@@ -418,7 +418,7 @@ Secrets in its namespace. The pod's ServiceAccount permissions determine blast r
 Least-privilege ServiceAccounts are the most important defense.
 
 *What separates good from great:* Recommending the CSI Secret Store Driver approach
-for regulated environments - it mounts secrets from Vault directly into the pod's
+for regulated environments - it mounts secrets from Vault directly into the pod'
 filesystem without ever creating a K8s Secret object in etcd. The smallest possible
 attack surface.
 
@@ -451,43 +451,43 @@ Step 5: Once all pods are using the new password, revoke the old password from
 the database.
 
 The recommended architecture for production: use External Secrets Operator with
-automatic rotation sync - when Vault or AWS Secrets Manager rotates the credential,
+automatic rotation sync - when Vault or AWS Secrets Manager rotates the credenti
 ESO automatically updates the K8s Secret and optionally triggers a pod restart.
 
 *What separates good from great:* The graceful rotation assumes the application
-handles authentication errors gracefully - if the DB rejects the old password before
+handles authentication errors gracefully - if the DB rejects the old password be
 all pods have updated, the app must retry with the new credential. Connection pool
 libraries (HikariCP, c3p0) typically handle this with reconnect logic.
 
 ---
 
-**Q5 [SENIOR] (Trade-off): Volume mount vs env var for Secrets - which is safer?**
+**Q5 [SENIOR] (Trade-off): Volume mount vs env var for Secrets - which is safer?
 
 A: Volume mounts are generally safer for sensitive secrets. Here's why:
 
 Env var weaknesses:
 - Visible in process listing: `/proc/<pid>/environ` on the node
 - Appear in container inspect output (Docker, CRI) which may be logged
-- Misbehaving apps often log all env vars on startup ("env dump") - secrets appear in logs
+- Misbehaving apps often log all env vars on startup ("env dump") - secrets appe
 - Child processes inherit all env vars (potential over-exposure)
 
 Volume mount advantages:
-- Can use `defaultMode: 0400` (read-only by owner only) to restrict file permissions
+- Can use `defaultMode: 0400` (read-only by owner only) to restrict file permiss
 - Can use `tmpfs` emptyDir as the mount base for in-memory-only secrets
-- File content doesn't appear in `kubectl describe pod` output (values truncated)
+- File content doesn't appear in `kubectl describe pod` output (values truncated
 - Not automatically inherited by child processes
 
 The practical tradeoff: env vars are simpler to configure and work with application
 frameworks that read from env vars (12-factor apps, Spring Boot). Volume mounts
 require the application to read from files, which not all frameworks support natively.
 
-My recommendation: use env vars for non-security-sensitive config (log levels, URLs).
+My recommendation: use env vars for non-security-sensitive config (log levels, U
 Use volume mounts for secrets that would cause security incidents if exposed (DB
 passwords, API keys, private keys). For the most sensitive secrets (TLS private keys),
-use CSI Secret Store with `ephemeral` volumes - the secret is mounted directly from
+use CSI Secret Store with `ephemeral` volumes - the secret is mounted directly f
 Vault, exists only in memory, and is never written to disk or stored in etcd.
 
-*What separates good from great:* Knowing that even volume-mounted secrets have a
+*What separates good from great:* Knowing that even volume-mounted secrets have 
 residual risk: the kubelet caches the secret on the node's disk to handle restart
 scenarios. With `--rotate-server-certificates` and kubelet encryption, even this
 cache can be protected.
@@ -505,10 +505,10 @@ external source, and ESO continuously syncs changes.
 Why use ESO over native Secrets:
 
 Centralized secret management: one Vault/Secrets Manager instance for all
-environments, not per-cluster K8s Secret management. Rotation in Vault propagates
+environments, not per-cluster K8s Secret management. Rotation in Vault propagate
 to all clusters automatically.
 
-Audit trail: external secret managers have comprehensive audit logging - who accessed
+Audit trail: external secret managers have comprehensive audit logging - who acc
 what secret, when. Kubernetes audit logging is coarser.
 
 Secret rotation automation: cloud providers rotate secrets automatically (AWS RDS
@@ -557,17 +557,17 @@ update the K8s Secret, trigger a rolling restart of the affected Deployment
 (kubectl rollout restart), verify the new pods came up healthy, then revoke the
 old credential.
 
-For prevention: I implemented three controls. (1) Added git-secrets pre-commit hook
+For prevention: I implemented three controls. (1) Added git-secrets pre-commit h
 scanning for AWS credentials and credential patterns. (2) Migrated all K8s Secrets
-to Sealed Secrets - encrypted in-cluster by our sealed-secrets controller, safe to
-store in Git. (3) Added a GitHub Actions workflow that runs detect-secrets on every
+to Sealed Secrets - encrypted in-cluster by our sealed-secrets controller, safe 
+store in Git. (3) Added a GitHub Actions workflow that runs detect-secrets on ev
 PR, blocking merges if secrets are detected.
 
 Result: no further secret exposures. The sealed-secrets migration took 3 sprints
 to complete for all services but eliminated the root cause.
 
 *What separates good from great:* The response shows systematic incident response
-(assess, remediate, prevent) and long-term architectural change, not just rotating
+(assess, remediate, prevent) and long-term architectural change, not just rotati
 the one credential. The behavioral question is testing whether you learn from incidents.
 
 ---
@@ -581,7 +581,7 @@ comparison, it is a complementary pair.)*
 
 ### 🏛️ System Design
 
-*(Omit: L1 foundational keyword - system design for secrets management at enterprise
+*(Omit: L1 foundational keyword - system design for secrets management at enterp
 scale covered at L4/L5 level.)*
 
 ---
@@ -738,7 +738,7 @@ RBAC: team-a user -> Role -> only namespace team-a
       platform admin -> ClusterRole -> all namespaces
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Namespace and Resource Quotas example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ResourceQuota admission: when a pod is created in a namespace, the ResourceQuota
 Admission Controller checks if the namespace's current usage plus the new pod's
@@ -839,13 +839,13 @@ spec:
       memory: "64Mi"
 ```
 
-> **Code walkthrough:** The ResourceQuota sets team-level hard limits - the sum of
+> **Code walkthrough:** The ResourceQuota sets team-level hard limits - the sum ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > all pod resource requests in the namespace cannot exceed 8 CPU / 16Gi memory.
 > Blocking `services.loadbalancers: "0"` prevents teams from creating expensive
-> cloud load balancers; they must use ClusterIP + Ingress instead. The LimitRange
-> provides defaults (applied when pods don't specify resources) - critical because
+> cloud load balancers; they must use ClusterIP + Ingress instead. The LimitRang
+> provides defaults (applied when pods don't specify resources) - critical becau
 > pods without requests are invisible to the quota controller. If a pod has no
-> requests, the LimitRange injects defaults at admission time, ensuring every pod
+> requests, the LimitRange injects defaults at admission time, ensuring every po
 > is accounted for.
 
 ---
@@ -853,29 +853,29 @@ spec:
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> A Namespace is like a virtual sub-cluster - it groups related resources together
-> and provides a scope for names (two apps can both have a service named "backend"
-> if they're in different namespaces). ResourceQuota sets limits on how much CPU,
+> A Namespace is like a virtual sub-cluster - it groups related resources togeth
+> and provides a scope for names (two apps can both have a service named "backen
+> if they're in different namespaces). ResourceQuota sets limits on how much CPU
 > memory, and how many objects a namespace can have. This prevents one team from
 > accidentally consuming all cluster resources.
 
-*Push deeper:* Explain that RBAC roles are namespace-scoped, which is how you grant
+*Push deeper:* Explain that RBAC roles are namespace-scoped, which is how you gr
 Team A admin rights to their namespace without affecting others.
 
 ---
 
 **Senior / Staff (5+ years):**
 > Namespace isolation is frequently misunderstood. Namespaces provide logical
-> isolation (API-level: objects in one namespace can't be seen by API calls scoped
+> isolation (API-level: objects in one namespace can't be seen by API calls scop
 > to another), RBAC isolation, and resource quota isolation. They do NOT provide
-> kernel-level isolation - pods in different namespaces run on the same host with
-> the same kernel, same system calls, same hardware. A container breakout affects
-> the whole node regardless of namespace. For hostile multi-tenancy (running customer
-> workloads), use separate clusters or strong node isolation (dedicated node pools
-> per tenant with taints and tolerations). Namespace isolation is appropriate for
-> same-organization multi-team scenarios, not cross-organization tenant isolation.
+> kernel-level isolation - pods in different namespaces run on the same host wit
+> the same kernel, same system calls, same hardware. A container breakout affect
+> the whole node regardless of namespace. For hostile multi-tenancy (running cus
+> workloads), use separate clusters or strong node isolation (dedicated node poo
+> per tenant with taints and tolerations). Namespace isolation is appropriate fo
+> same-organization multi-team scenarios, not cross-organization tenant isolatio
 
-*Push deeper:* Hierarchical Namespaces (HNC) - create namespace trees where child
+*Push deeper:* Hierarchical Namespaces (HNC) - create namespace trees where chil
 namespaces inherit policies (ResourceQuota, RBAC) from parents. Useful for organizing
 large organizations without duplicating policies.
 
@@ -884,14 +884,14 @@ large organizations without duplicating policies.
 ### ⚠️ Common Misconceptions
 
 **Misconception 1: "Namespaces provide strong security isolation."**
-Namespaces provide API-level and RBAC isolation, not kernel-level. Pods in different
+Namespaces provide API-level and RBAC isolation, not kernel-level. Pods in diffe
 namespaces share the node kernel. A container escape or node compromise gives access
 to all pods on that node regardless of namespace. For hostile multi-tenancy, use
 separate clusters.
 
 **Misconception 2: "ResourceQuota works without resource requests on pods."**
 ResourceQuota is based on pod resource requests. A pod with no resource requests
-is not counted against any quota - it slips through. Always pair ResourceQuota with
+is not counted against any quota - it slips through. Always pair ResourceQuota w
 LimitRange to enforce minimum requests on every pod.
 
 **Misconception 3: "Network traffic between namespaces is automatically blocked."**
@@ -900,7 +900,7 @@ namespace. Network isolation requires NetworkPolicy objects. Without NetworkPoli
 namespace is not a network boundary at all.
 
 **Misconception 4: "You can move objects between namespaces."**
-Kubernetes namespace-scoped objects cannot be moved. You must delete and recreate
+Kubernetes namespace-scoped objects cannot be moved. You must delete and recreat
 in the new namespace. Plan your namespace structure before creating resources -
 changing it later means downtime and re-creation.
 
@@ -911,22 +911,22 @@ changing it later means downtime and re-creation.
 **Failure 1: Pod creation rejected with quota exceeded**
 Symptom: `kubectl apply` returns "forbidden: exceeded quota" error.
 Cause: the pod's resource requests would push the namespace over its ResourceQuota.
-Diagnostic: `kubectl describe resourcequota -n <namespace>` shows current usage vs limits.
+Diagnostic: `kubectl describe resourcequota -n <namespace>` shows current usage 
 `kubectl get events -n <namespace> | grep Quota` for recent quota violations.
 Fix: request quota increase from platform team, or reduce resource requests in pod spec.
 
 **Failure 2: Namespace stuck in Terminating state**
-Symptom: `kubectl delete namespace <name>` returns immediately but namespace stays
+Symptom: `kubectl delete namespace <name>` returns immediately but namespace sta
 Terminating for minutes or hours.
 Cause: objects with finalizers in the namespace blocking deletion (custom resources,
 PVCs with pending operations, stuck Jobs).
 Diagnostic: `kubectl get all -n <namespace>` to find remaining objects.
-`kubectl api-resources --verbs=list --namespaced -o name | xargs -I{} kubectl get {} -n <namespace>`
+`kubectl api-resources --verbs=list --namespaced -o name | xargs -I{} kubectl ge
 to find all objects including custom resources.
 Fix: delete remaining objects manually; remove finalizers if controllers are gone.
 
 **Failure 3: Cross-namespace service call failing**
-Symptom: service A calls service B using short name `http://service-b` and gets NXDOMAIN.
+Symptom: service A calls service B using short name `http://service-b` and gets 
 Cause: short names only resolve within the same namespace.
 Fix: use full DNS name: `service-b.namespace-b.svc.cluster.local`.
 
@@ -934,35 +934,35 @@ Fix: use full DNS name: `service-b.namespace-b.svc.cluster.local`.
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 30-60 seconds |
-| Mechanism | 1-2 minutes |
-| Design | 2-3 minutes |
-| Scenario | 2-3 minutes |
-| Security | 1-2 minutes |
-| Trade-off | 1-2 minutes |
-| Advanced | 1-2 minutes |
+  | Question Category | Time to Answer |  
+|-----------------|--------------|
+  | Definition        | 30-60 seconds  |  
+  | Mechanism         | 1-2 minutes    |  
+  | Design            | 2-3 minutes    |  
+  | Scenario          | 2-3 minutes    |  
+  | Security          | 1-2 minutes    |  
+  | Trade-off         | 1-2 minutes    |  
+  | Advanced          | 1-2 minutes    |  
 
 ---
 
 **Q1 [JUNIOR] (Definition): What is a Kubernetes Namespace?**
 
 A: A Namespace is a virtual partition within a Kubernetes cluster. It groups related
-resources together and scopes their names - two different namespaces can both have
+resources together and scopes their names - two different namespaces can both ha
 a Service named "database" without conflict.
 
 Four default namespaces exist: `default` (where objects go without a namespace
-specified), `kube-system` (Kubernetes system components), `kube-public` (publicly
+specified), `kube-system` (Kubernetes system components), `kube-public` (publicl
 readable, for cluster info), and `kube-node-lease` (node heartbeat leases).
 
-In practice, teams use namespaces to separate environments (team-dev, team-staging,
+In practice, teams use namespaces to separate environments (team-dev, team-stagi
 team-production), applications (payments, orders, users), or access boundaries
 (admin namespace vs read-only namespace). RBAC Roles and RoleBindings are
-namespace-scoped, so you can give a developer admin access to their team's namespace
+namespace-scoped, so you can give a developer admin access to their team's names
 without granting cluster-wide permissions.
 
-*What separates good from great:* Some Kubernetes resources are cluster-scoped (not
+*What separates good from great:* Some Kubernetes resources are cluster-scoped (
 namespaced): Nodes, PersistentVolumes, ClusterRoles, StorageClasses, Namespaces
 themselves. These are cluster-wide resources not isolated by namespace.
 
@@ -972,17 +972,17 @@ themselves. These are cluster-wide resources not isolated by namespace.
 
 A: They operate at different scopes:
 
-ResourceQuota: namespace-level aggregate limits. Sets the total resource budget for
+ResourceQuota: namespace-level aggregate limits. Sets the total resource budget 
 the entire namespace. "This namespace can collectively use at most 10 CPU cores and
-20Gi memory." Applied at admission time - when a pod is created, the quota controller
+20Gi memory." Applied at admission time - when a pod is created, the quota contr
 checks if adding this pod's requests would exceed the namespace quota.
 
-LimitRange: per-pod or per-container defaults and bounds. "Each individual container
+LimitRange: per-pod or per-container defaults and bounds. "Each individual conta
 must request at least 50m CPU and at most 2 CPU cores." Also sets defaults for
 containers that don't specify requests/limits.
 
 Why both are needed: ResourceQuota tracks resource requests. If a pod has no resource
-requests, it contributes 0 to the quota. A namespace with 50 no-request pods could
+requests, it contributes 0 to the quota. A namespace with 50 no-request pods cou
 use all cluster resources while appearing to be within quota. LimitRange prevents
 this by injecting default requests for every container that doesn't specify them.
 
@@ -991,18 +991,18 @@ every container is bounded by LimitRange max, and the namespace total is bounded
 by ResourceQuota.
 
 *What separates good from great:* Understanding the quota scopes: `Terminating` and
-`NotTerminating` quota scopes let you set different quotas for batch jobs (short-lived)
-vs long-running services. BestEffort quota scope limits containers with no requests/limits.
+`NotTerminating` quota scopes let you set different quotas for batch jobs (short
+vs long-running services. BestEffort quota scope limits containers with no reque
 
 ---
 
-**Q3 [SENIOR] (Design): How would you structure namespaces for a 50-team organization?**
+**Q3 [SENIOR] (Design): How would you structure namespaces for a 50-team organiz
 
 A: For a 50-team organization, namespace-per-team is the right baseline, but the
 structure depends on the isolation requirements.
 
 Option A - Flat namespaces (simple):
-One namespace per team per environment: `payments-dev`, `payments-staging`, `payments-prod`.
+One namespace per team per environment: `payments-dev`, `payments-staging`, `pay
 150 namespaces. Simple to understand but duplicate policies everywhere.
 
 Option B - Environment-separated namespaces with RBAC:
@@ -1030,7 +1030,7 @@ with standard quota and RBAC templates.
 
 **Q4 [SENIOR] (Security): What are the limits of namespace isolation for security?**
 
-A: Namespace isolation provides API isolation and RBAC scoping - not kernel-level
+A: Namespace isolation provides API isolation and RBAC scoping - not kernel-leve
 or hardware-level isolation. The security limits:
 
 Shared kernel: all pods on a node share the Linux kernel. A container escape
@@ -1040,14 +1040,14 @@ host and all pods on it, regardless of namespace boundaries.
 Shared network (default): pods in different namespaces can communicate freely
 unless NetworkPolicy is configured. Network isolation is NOT automatic.
 
-Shared storage classes: PVCs in any namespace can use cluster-level StorageClasses
+Shared storage classes: PVCs in any namespace can use cluster-level StorageClass
 and provision PersistentVolumes from the same underlying storage. Data isolation
 between namespaces requires separate storage classes and backends.
 
 Node-level resources: a pod in any namespace can exhaust node disk I/O, network
 bandwidth, or system calls, affecting pods in other namespaces on the same node.
 
-What namespace isolation IS good for: same-organization multi-team scenarios where
+What namespace isolation IS good for: same-organization multi-team scenarios whe
 tenants are trusted (employees, internal teams). RBAC prevents accidental interference.
 ResourceQuota prevents resource starvation.
 
@@ -1061,18 +1061,18 @@ regardless of namespace. Defense in depth is required.
 
 ---
 
-**Q5 [STAFF] (Trade-off): One large cluster with many namespaces vs many small clusters?**
+**Q5 [STAFF] (Trade-off): One large cluster with many namespaces vs many small c
 
 A: This is the "big cluster" vs "small clusters" tradeoff:
 
 Large cluster advantages: lower operational overhead (one control plane to manage),
-better resource utilization (pods from light-traffic namespaces fill gaps left by
-busy ones), simpler networking (no cross-cluster service discovery needed), lower
+better resource utilization (pods from light-traffic namespaces fill gaps left b
+busy ones), simpler networking (no cross-cluster service discovery needed), lowe
 cost (one set of control plane nodes, not N).
 
 Large cluster disadvantages: blast radius - a bug in the K8s control plane, an
 etcd corruption, or a security compromise affects all tenants. Hard to enforce
-strong isolation. Noisy-neighbor issues even with quotas (shared CPU steal, disk I/O).
+strong isolation. Noisy-neighbor issues even with quotas (shared CPU steal, disk
 Complex upgrade coordination (100 teams all affected by one version bump).
 
 Small cluster advantages: complete blast radius isolation per cluster, independent
@@ -1081,7 +1081,7 @@ reason about (smaller etcd, fewer objects). Regulatory compliance: you can place
 regulated workloads (PCI, HIPAA) in dedicated clusters with specialized security controls.
 
 My decision framework: start with one cluster per environment (dev/staging/prod).
-Add per-team or per-application clusters when: (1) compliance requirements mandate
+Add per-team or per-application clusters when: (1) compliance requirements manda
 separation, (2) a team needs K8s API customizations incompatible with shared cluster
 policy, (3) blast radius from that team's workload is unacceptable for others, or
 (4) the team has SLA requirements beyond what a shared cluster can guarantee.
@@ -1099,10 +1099,10 @@ A: ResourceQuota scopes limit which pods a quota applies to, enabling more nuanc
 resource accounting.
 
 `Terminating` scope: applies to pods with `activeDeadlineSeconds` set (batch jobs,
-CronJobs). Lets you set a separate quota for short-lived workloads vs long-running services.
+CronJobs). Lets you set a separate quota for short-lived workloads vs long-runni
 Example: a namespace can have 50 cores of batch jobs but only 20 cores of services.
 
-`NotTerminating` scope: applies to pods WITHOUT `activeDeadlineSeconds` (long-running services).
+`NotTerminating` scope: applies to pods WITHOUT `activeDeadlineSeconds` (long-ru
 
 `BestEffort` scope: applies only to pods with BestEffort QoS (no resource requests).
 You can limit how many BestEffort pods exist in a namespace.
@@ -1114,13 +1114,13 @@ PriorityClass. Lets you set separate quotas per PriorityClass (guarantee batch j
 can run without starving from long-running services).
 
 Practical use: a data pipeline namespace needs bursty batch workloads (many short
-jobs) AND always-on services. Without scopes, they share one quota pool. With scopes:
+jobs) AND always-on services. Without scopes, they share one quota pool. With sc
 `Terminating` quota for batch (50 cores), `NotTerminating` quota for services (10 cores).
 The batch burst doesn't eat into the service allocation.
 
 *What separates good from great:* Knowing that quota scopes interact with the
-Priority and Fair Queuing (PFQ) scheduler - scoped quotas combined with PriorityClass
-enable sophisticated multi-workload-type resource management within a single namespace.
+Priority and Fair Queuing (PFQ) scheduler - scoped quotas combined with Priority
+enable sophisticated multi-workload-type resource management within a single nam
 
 ---
 
@@ -1128,10 +1128,10 @@ enable sophisticated multi-workload-type resource management within a single nam
 
 A (STAR format):
 
-Situation: Two teams in the same cluster - the ML training team and the web services
+Situation: Two teams in the same cluster - the ML training team and the web serv
 team - were sharing a production namespace. ML team launched a training job that
 consumed all available GPU and CPU, starving the web services team's pods during
-a high-traffic period. The web services team was unable to scale up during a Black
+a high-traffic period. The web services team was unable to scale up during a Bla
 Friday traffic spike.
 
 Task: provide both teams their needed resources without requiring a new cluster
@@ -1139,22 +1139,22 @@ Task: provide both teams their needed resources without requiring a new cluster
 
 Action: First, I separated the teams into dedicated namespaces with ResourceQuota.
 ML training namespace: `requests.cpu: "40"`, GPU limits set. Web services namespace:
-`requests.cpu: "20"`, `LimitRange` preventing any single pod from requesting >4 CPU.
+`requests.cpu: "20"`, `LimitRange` preventing any single pod from requesting >4 
 
-Then I implemented PriorityClasses: web services pods got `PriorityClass: high-priority`
+Then I implemented PriorityClasses: web services pods got `PriorityClass: high-p
 (1000). ML training jobs got `PriorityClass: batch` (100). The scheduler now preempts
 batch jobs when high-priority web services pods can't schedule.
 
 Created a `ResourceQuota` with `Terminating` scope for ML batch jobs specifically,
 separating their quota pool from the always-on services.
 
-Result: web services team can always scale (high-priority scheduling prevents starvation),
+Result: web services team can always scale (high-priority scheduling prevents st
 ML training jobs run when capacity is available and get preempted during traffic peaks.
 Both teams got their peak resource needs met within the cluster's total capacity.
 
 *What separates good from great:* The PriorityClass addition - simple namespace
 separation with quotas would still allow ML batch pods to consume all quota before
-web services pods needed to scale. PriorityClass + preemption makes the scheduling
+web services pods needed to scale. PriorityClass + preemption makes the scheduli
 hierarchy explicit.
 
 ---
@@ -1338,7 +1338,7 @@ HTTP GET https://api.my-cluster.com/api/v1/namespaces/default/pods
 JSON response -> formatted table output
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This kubectl CLI Basics example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 kubeconfig contexts let you switch between clusters and namespaces:
 `kubectl config use-context prod-cluster`
@@ -1650,7 +1650,7 @@ spec:
         kubectl.kubernetes.io/restartedAt: "2024-01-15T10:30:00Z"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This is safe for production because it respects the Deployment's rolling update
 strategy (maxSurge, maxUnavailable). The rollout can be paused, watched, or
@@ -1678,7 +1678,7 @@ Option 1: kubectl debug with an ephemeral container (K8s 1.25+):
 ```bash
 kubectl debug -it <pod> --image=busybox --target=app
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 This attaches an ephemeral busybox container to the running Pod, sharing its
 process namespace. You can see the app's processes and files without modifying
@@ -1690,7 +1690,7 @@ kubectl debug <pod> --copy-to=debug-pod \
   --container=app --image=ubuntu -- sleep infinity
 kubectl exec -it debug-pod -c app -- bash
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Creates a copy of the Pod with the app container's image replaced by ubuntu.
 Useful when you want a full shell in the same environment.
@@ -1732,7 +1732,7 @@ kubectl apply --server-side -f deployment.yaml
 kubectl apply --server-side --field-manager=argocd -f deployment.yaml
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Benefits for GitOps: Argo CD uses SSA by default in newer versions. It eliminates
 the common conflict where HPA, KEDA, or other operators modify resources that Argo CD

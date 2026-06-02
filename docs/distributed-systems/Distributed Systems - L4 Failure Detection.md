@@ -144,7 +144,7 @@ This is why failure detection is always a tunable trade-off
 between detection latency and false positive rate.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Failure Detection Algorithms example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Simple heartbeat failure detection:**
 
@@ -169,7 +169,7 @@ Problem: single-node monitoring = single point of failure
   Better: use a gossip protocol or quorum of monitors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Failure Detection Algorithms example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Phi Accrual Failure Detector:**
 
@@ -204,7 +204,7 @@ Advantages:
     during pause, resets when heartbeats resume)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Failure Detection Algorithms example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SWIM Protocol (Scalable Weakly-consistent Infection-style Membership):**
 
@@ -243,7 +243,7 @@ Used by: Consul, Serf, HashiCorp Vault clustering,
          but Consul's service mesh uses SWIM)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The fundamental tension in failure detection is the FLP
@@ -265,6 +265,12 @@ centralized monitoring by using gossip-based indirect probing.
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: naive heartbeat with fixed boolean timeout
@@ -387,7 +393,7 @@ public class ClusterMemberMonitor {
 }
 ```
 
-> **Code walkthrough:** The BAD `NaiveFailureDetector` uses a
+> **Code walkthrough:** The BAD `NaiveFailureDetector` uses aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fixed 5-second timeout, which is too rigid for production: a
 > 6-second JVM GC pause causes a false positive, ejecting a
 > healthy node. The GOOD `PhiAccrualDetector` maintains a rolling
@@ -554,7 +560,7 @@ Membership convergence:
   cluster in O(log N) = 7 rounds × 500ms = ~3.5s convergence
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -667,7 +673,7 @@ grep "GC pause\|FullGC" /var/log/cassandra/gc.log \
 # Or reduce GC pauses: tune heap, switch to G1GC/ZGC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or reduce GC pauses: tune heap, switch to G1GC/ZGC example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: increase `phi_convict_threshold` to 12-16 in high-GC
 environments. Alternatively: switch to G1GC or ZGC to reduce
@@ -702,7 +708,7 @@ ping -c 3 node-b
 ping -c 3 node-c
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check if node A has connectivity to B, C example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: enforce quorum before allowing leader election. A node
 MUST NOT become leader unless it can contact a majority
@@ -742,7 +748,7 @@ kubectl get endpoints <service> -w
 # Typical fix: tune probe aggressiveness
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Typical fix: tune probe aggressiveness example demoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix:
 ```yaml
@@ -763,7 +769,7 @@ livenessProbe:
   failureThreshold: 3  # keep conservative for liveness
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This → detects failure in 10s (was 30s) example demonstrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Also: set `terminationGracePeriodSeconds` and configure
 preStop sleep to allow graceful shutdown before Kubernetes
@@ -773,23 +779,22 @@ removes the pod from endpoints.
 
 ### 🎯 Interview Deep-Dive
 
-| Category | Count |
-|---|---|
-| Clarification | 1 |
-| Mechanism | 3 |
-| Failure / Debugging | 2 |
-| Trade-off | 2 |
-| System Design | 1 |
-| Code | 1 |
-| Behavioral | 1 |
-| Production | 1 |
+  | Category            | Count |  
+|-------------------|-----|
+  | Clarification       | 1     |  
+  | Mechanism           | 3     |  
+  | Failure / Debugging | 2     |  
+  | Trade-off           | 2     |  
+  | System Design       | 1     |  
+  | Code                | 1     |  
+  | Behavioral          | 1     |  
+  | Production          | 1     |  
 
 ---
 
-**Q1 (Clarification) - What is the FLP impossibility result and
-how does it relate to failure detection?**
+**[JUNIOR] Q1 - [MECHANISM] What is the FLP impossibility result and how does it relate to failure detection?**
 
-A: The FLP impossibility result (Fischer, Lynch, Paterson 1985)
+The FLP impossibility result (Fischer, Lynch, Paterson 1985)
 states: in an asynchronous distributed system where processes
 can fail (crash-stop), there is no deterministic protocol that
 can reach consensus (agreement) in all executions, even with
@@ -831,10 +836,9 @@ the FLP result.
 
 ---
 
-**Q2 (Mechanism) - Explain how the Phi Accrual detector computes
-phi and why it is better than a fixed threshold.**
+**[JUNIOR] Q2 - [MECHANISM] Explain how the Phi Accrual detector computes phi and why it is better than a fixed threshold.**
 
-A: The Phi Accrual Failure Detector (Hayashibara et al., 2004)
+The Phi Accrual Failure Detector (Hayashibara et al., 2004)
 replaces the binary alive/dead output with a continuous
 suspicion level φ (phi):
 
@@ -863,7 +867,7 @@ Example:
   t_diff = 300ms: P ≈ 10^-15, φ ≈ 15 (declare dead at 16)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This → detects failure in 10s (was 30s) example demonstrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why better than fixed threshold:**
 
@@ -894,11 +898,9 @@ This self-adaptation is the core production value of Phi Accrual.
 
 ---
 
-**Q3 (Mechanism) - How does the SWIM protocol handle the case
-where the indirect probe mechanism fails? What is the suspicion
-mechanism?**
+**[JUNIOR] Q3 - [MECHANISM] How does the SWIM protocol handle the case where the indirect probe mechanism fails? What is the suspicion mechanism?**
 
-A: SWIM's suspicion mechanism handles the case where both direct
+SWIM's suspicion mechanism handles the case where both direct
 and indirect probes fail but the node might still be alive (e.g.,
 under very high load, temporary partition):
 
@@ -949,7 +951,7 @@ Incarnation numbers:
   dominates old messages.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This → detects failure in 10s (was 30s) example demonstrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the incarnation number mechanism.
 This is a subtle but critical design in SWIM. Without incarnation
@@ -963,10 +965,9 @@ mechanism but few know the incarnation number solution to the
 
 ---
 
-**Q4 (Trade-off) - Compare failure detection in Raft vs. SWIM.
-When would you choose each?**
+**[MID] Q4 - [TRADE-OFF] Compare failure detection in Raft vs. SWIM. When would you choose each?**
 
-A: Two fundamentally different approaches:
+Two fundamentally different approaches:
 
 **Raft heartbeat-based failure detection:**
 - Leader sends heartbeat to all followers (O(N) from leader)
@@ -1025,10 +1026,9 @@ distribution when pauses are observed.
 
 ---
 
-**Q5 (Failure / Debugging) - Your ZooKeeper cluster repeatedly
-loses quorum. How do you debug the failure detection configuration?**
+**[MID] Q5 - [DEBUGGING] Your ZooKeeper cluster repeatedly loses quorum. How do you debug the failure detection configuration?**
 
-A: Structured investigation:
+Structured investigation:
 
 Step 1 - Identify if it's real failures or false positives:
 ```bash
@@ -1042,17 +1042,17 @@ grep "LEADER\|Following\|election\|expired" \
 # "LOOKING" = node started election = thinks leader is gone
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "LOOKING" = node started election = thinks leader iice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 2 - Check GC pause timing vs. session timeouts:
 ```bash
 # ZooKeeper tickTime (base unit) and session timeout
-grep "tickTime\|minSessionTimeout\|maxSessionTimeout" \
+ grep "tickTime\            | minSessionTimeout\ | maxSessionTimeout" \ 
   /etc/zookeeper/zoo.cfg
 
 # GC pause length
 grep -E "GC.*ms" /var/log/zookeeper/gc.log | \
-  awk -F'[=ms]' '{print $2}' | sort -rn | head -20
+ awk -F'[=ms]' '{print $2}' | sort -rn           | head -20             
 # If max GC pause > session_timeout: false positives guaranteed
 
 # ZooKeeper heartbeat: sent every tickTime ms (default 2000ms)
@@ -1060,7 +1060,7 @@ grep -E "GC.*ms" /var/log/zookeeper/gc.log | \
 # GC pause > 4000ms → session timeout fires → false positive
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GC pause > 4000ms → session timeout fires → false pice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3 - Diagnose network issues:
 ```bash
@@ -1075,7 +1075,7 @@ mtr --report --no-dns --report-cycles=100 zk1
 # Any packet loss causes artificial heartbeat delays
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any packet loss causes artificial heartbeat delays ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 - Fix recommendations:
 ```properties
@@ -1089,7 +1089,7 @@ syncLimit=5             # 5 ticks for sync
 # This makes ZK more tolerant of GC pauses
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This This makes ZK more tolerant of GC pauses example deice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 For JVM ZooKeeper with frequent GC pauses:
 ```bash
@@ -1099,7 +1099,7 @@ JVM_FLAGS="-XX:+UseG1GC -XX:MaxGCPauseMillis=200"
 # Goal: max GC pause < tickTime / 2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Goal: max GC pause < tickTime / 2 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* the GC-to-tickTime relationship.
 Many engineers debug ZooKeeper quorum loss by looking at network
@@ -1113,10 +1113,9 @@ is preferable long-term but tickTime increase is faster to deploy.
 
 ---
 
-**Q6 (Trade-off) - What are the trade-offs between a conservative
-failure detector (long timeout) and an aggressive one?**
+**[SENIOR] Q6 - [TRADE-OFF] What are the trade-offs between a conservative failure detector (long timeout) and an aggressive one?**
 
-A: The failure detection timeout is a single dial that controls
+The failure detection timeout is a single dial that controls
 two opposing costs:
 
 **Conservative (long timeout, 30-60 seconds):**
@@ -1176,8 +1175,7 @@ and documentation warns against lowering it without reducing GC pauses.
 
 ---
 
-**Q7 (Code) - Implement a simple SWIM-style membership protocol
-with indirect pinging.**
+**[SENIOR] Q7 - [SCENARIO] Implement a simple SWIM-style membership protocol with indirect pinging.**
 
 A:
 ```java
@@ -1310,7 +1308,7 @@ public class SwimMembership {
 }
 ```
 
-> **Code walkthrough:** The `SwimMembership` class implements
+> **Code walkthrough:** The `SwimMembership` class implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the core SWIM state machine. `probeCycle()` first attempts
 > a direct ping with a 500ms timeout. If the direct ping fails,
 > it asks up to 3 random other members (the K-indirect probers)
@@ -1328,8 +1326,7 @@ public class SwimMembership {
 
 ---
 
-**Q8 (System Design) - How would you design failure detection
-for a 1000-node distributed compute cluster?**
+**[SENIOR] Q8 - [DESIGN] How would you design failure detection for a 1000-node distributed compute cluster?**
 
 A:
 ```
@@ -1375,7 +1372,7 @@ SWIM implementation), which is production-tested at this scale.
 Custom implementation only if specific JVM/GC adaptation needed.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the hierarchical tier design.
 A flat SWIM for 1000 nodes works (O(N) is 1000 messages/cycle),
@@ -1387,10 +1384,9 @@ gossip to same-rack nodes) and AWS's internal cluster monitoring.
 
 ---
 
-**Q9 (Production) - How does Kubernetes handle pod failure
-detection? What are the relevant timeout parameters?**
+**[SENIOR] Q9 - [SCENARIO] How does Kubernetes handle pod failure detection? What are the relevant timeout parameters?**
 
-A: Kubernetes uses multiple layers of failure detection:
+Kubernetes uses multiple layers of failure detection:
 
 **Layer 1: Kubelet process monitoring (direct)**
 - Kubelet monitors all pods on its node via CRI (Container Runtime Interface)
@@ -1410,7 +1406,7 @@ livenessProbe:
   failureThreshold: 3       # 3 failures → restart pod
   # Total time to detect: 3 * 10 = 30 seconds
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Total time to detect: 3 * 10 = 30 seconds example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 - Purpose: restart pods that are running but deadlocked
   (process alive, but not responding to requests)
@@ -1428,7 +1424,7 @@ readinessProbe:
   failureThreshold: 2       # 2 failures → remove from Service
   # Time to stop routing traffic: 2 * 5 = 10 seconds
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Time to stop routing traffic: 2 * 5 = 10 seconds example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 - Purpose: stop routing traffic to pods that cannot handle it
 - Action: remove pod from Service endpoints (load balancer stops routing)
@@ -1444,7 +1440,7 @@ readinessProbe:
 # --node-monitor-grace-period: 40s (before marking NotReady)
 # --pod-eviction-timeout: 5m (before evicting pods from NotReady node)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --pod-eviction-timeout: 5m (before evicting pods frice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - Kubelet sends NodeStatus heartbeat to API server every 10s
 - NodeController: if no heartbeat for 40s → mark node NotReady
@@ -1464,10 +1460,9 @@ for stateful workloads.
 
 ---
 
-**Q10 (Behavioral) - Tell me about a time a failure detection
-misconfiguration caused an outage. How did you fix it?**
+**[SENIOR] Q10 - [BEHAVIORAL] Tell me about a time a failure detection misconfiguration caused an outage. How did you fix it?**
 
-A: Example structure:
+Example structure:
 
 "At [company], we ran a Cassandra cluster handling real-time
 recommendation data. We were running Spring Boot apps with
@@ -1517,10 +1512,9 @@ you.
 
 ---
 
-**Q11 (Mechanism) - What is the difference between liveness
-detection and readiness detection in distributed systems?**
+**[SENIOR] Q11 - [MECHANISM] What is the difference between liveness detection and readiness detection in distributed systems?**
 
-A: Two distinct failure modes with different appropriate responses:
+Two distinct failure modes with different appropriate responses:
 
 **Liveness: is the process alive?**
 - Detects: process crash, deadlock, OOM kill
@@ -1560,7 +1554,7 @@ Scenario: pod is overloaded (CPU spike)
     → Under sustained overload: restart loop
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This --pod-eviction-timeout: 5m (before evicting pods frice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Design principle:** liveness = "should this process be restarted?"
 readiness = "should this process receive traffic?"
@@ -1575,7 +1569,7 @@ management.endpoint.health.group.readiness.include: readinessState,db
 # Process restarts do not fix DB connection issues
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Process restarts do not fix DB connection issues exice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the backpressure use case for
 readiness. A service that is overloaded should fail its readiness
@@ -1589,9 +1583,7 @@ error condition but a deliberate traffic control mechanism.
 
 ---
 
-**Q12 (Behavioral) - How do you design a failure detection
-system that handles both crash-stop failures and slow/Byzantine
-nodes?**
+**[SENIOR] Q12 - [BEHAVIORAL] How do you design a failure detection system that handles both crash-stop failures and slow/Byzantine nodes?**
 
 A:
 ```
@@ -1645,7 +1637,7 @@ Practical design for slow nodes:
     (mutual TLS prevents spoofing; RBAC prevents unauthorized writes)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Process restarts do not fix DB connection issues example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* the practical layer 2 (slow
 node outlier detection) vs. the theoretical Byzantine discussion.

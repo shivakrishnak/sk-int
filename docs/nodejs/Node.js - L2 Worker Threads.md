@@ -99,13 +99,21 @@ Worker threads architecture:
     Libraries: piscina (recommended), workerpool
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Worker Threads and CPU-bound Tasks example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Production) - Worker pool with piscina:**
+
+
+```javascript
+// BAD: unhandled Promise rejection
+fetchData(url).then(data => {
+    processData(data);
+}); // no .catch() - rejection silently ignored
+```
 
 ```javascript
 // Using piscina - the recommended worker pool:
@@ -157,7 +165,7 @@ app.post('/process-image', asyncRoute(async (req, res) => {
 }));
 ```
 
-> **Code walkthrough:** `piscina` manages a pool of worker threads,
+> **Code walkthrough:** `piscina` manages a pool of worker threads,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reusing them across tasks to avoid the ~50ms startup cost per worker.
 > `maxThreads: 4` limits to 4 concurrent CPU-bound tasks - matching
 > available CPU cores minus one (leaving one for the main event loop).
@@ -239,7 +247,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -371,7 +379,7 @@ child_process methods:
     // args are passed directly to execv, no shell interpretation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Child Processes example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -442,7 +450,7 @@ process.on('message', async (task) => {
 });
 ```
 
-> **Code walkthrough:** `spawn` with an args array is the safe pattern
+> **Code walkthrough:** `spawn` with an args array is the safe patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for external programs - arguments are passed directly to `execv` without
 > shell interpretation. If user-supplied data ends up in `exec()` string,
 > it can inject shell commands (the classic shell injection vulnerability).
@@ -517,7 +525,7 @@ spawn('/usr/bin/ffmpeg', [...args]);
 # Or ensure PATH is set correctly in process.env
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or ensure PATH is set correctly in process.env example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 

@@ -68,7 +68,7 @@ Compaction: keep only the latest memo per subject (compact) vs keep all memos (d
 ### 📘 Concept Explanation
 
 **Topic creation, configuration settings, and compaction:**
-```
+```plaintext
 CREATING A TOPIC:
 
   # Production-grade topic creation:
@@ -101,7 +101,7 @@ MODIFYING EXISTING TOPIC CONFIG:
   
   # NOTE: cannot decrease partition count:
   kafka-topics.sh --alter --topic orders --partitions 8   # OK: 4->8
-  kafka-topics.sh --alter --topic orders --partitions 2   # Error: cannot decrease
+  kafka-topics.sh --alter --topic orders --partitions 2   # Error: cannot...
 
 RETENTION POLICIES:
 
@@ -155,7 +155,7 @@ PARTITION SIZING GUIDANCE:
       150,000 partition replicas. With ZooKeeper: painful. KRaft: handles 200K+ partitions.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This NOTE: cannot decrease partition count: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -200,11 +200,11 @@ producer.send(new ProducerRecord<>("user-profiles", "user-42",
 // Use null for deletion when using compact cleanup policy.
 ```
 
-> **Code walkthrough:** The compacted topic stores the latest value per key indefinitely. A new
-> consumer can join at any time and read the latest state for all keys by reading from the
-> beginning - it gets a consistent snapshot. Tombstones (null values) mark deletions: after
-> `delete.propagation.ms`, the key disappears from the log. Using a non-null "deleted" marker
-> is a common mistake: the cleaner thread keeps it (it's a valid value), and the space is never
+> **Code walkthrough:** The compacted topic stores the latest value per key indeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> consumer can join at any time and read the latest state for all keys by readin
+> beginning - it gets a consistent snapshot. Tombstones (null values) mark delet
+> `delete.propagation.ms`, the key disappears from the log. Using a non-null "de
+> is a common mistake: the cleaner thread keeps it (it's a valid value), and the
 > reclaimed.
 
 ---
@@ -212,21 +212,21 @@ producer.send(new ProducerRecord<>("user-profiles", "user-42",
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Topic key configs: `replication.factor` (default 1 in dev, 3 in production), `retention.ms`
-> (how long records kept, default 7 days), `cleanup.policy` (delete default, compact for
+> Topic key configs: `replication.factor` (default 1 in dev, 3 in production), `
+> (how long records kept, default 7 days), `cleanup.policy` (delete default, com
 > key-value store semantics). Partition count: cannot decrease once created. Use
 > `kafka-topics.sh` to create, `kafka-configs.sh` to modify.
 
 ---
 
 **Senior / Staff (5+ years):**
-> `min.insync.replicas` must be set at the topic level (or broker level) and match the
-> producer's `acks=all`. Without it: `acks=all` means "ack from all current ISR" which could be
-> ISR size 1 (just the leader) if followers lag. With `min.insync.replicas=2`: produce fails
-> if only 1 in-sync replica. Explicit failure beats silent data loss. The topic-level
-> `min.insync.replicas` overrides the broker-level default - use topic-level for critical topics,
-> broker-level as the fallback. Also: `unclean.leader.election.enable=false` (default in Kafka
-> 0.11+): prevents an out-of-sync replica from becoming leader (would lose data). Never enable
+> `min.insync.replicas` must be set at the topic level (or broker level) and mat
+> producer's `acks=all`. Without it: `acks=all` means "ack from all current ISR"
+> ISR size 1 (just the leader) if followers lag. With `min.insync.replicas=2`: p
+> if only 1 in-sync replica. Explicit failure beats silent data loss. The topic-
+> `min.insync.replicas` overrides the broker-level default - use topic-level for
+> broker-level as the fallback. Also: `unclean.leader.election.enable=false` (de
+> 0.11+): prevents an out-of-sync replica from becoming leader (would lose data)
 > `unclean.leader.election` for financial or transactional topics.
 
 ---
@@ -234,13 +234,13 @@ producer.send(new ProducerRecord<>("user-profiles", "user-42",
 ### ⚠️ Common Misconceptions
 
 **Misconception: "Increasing partition count is always safe after the topic is in production."**
-Increasing partition count is non-destructive (records are not moved). However: key-based partition
+Increasing partition count is non-destructive (records are not moved). However: 
 routing uses `murmur2(key) % numPartitions`. Before: 4 partitions. After: 8 partitions. A record
-with `key="order-42"` previously went to partition 2 (hash % 4 = 2). Now: hash % 8 = 6. Two
+with `key="order-42"` previously went to partition 2 (hash % 4 = 2). Now: hash %
 consequences: (1) Messages for the same key may now arrive in different partitions before and after
-the change. If a consumer relies on same-key = same partition for ordering: ordering violated for
+the change. If a consumer relies on same-key = same partition for ordering: orde
 keys that switched partitions. (2) Consumers that manually assigned specific partitions: must update
-their configuration. Kafka Streams: state stores are partition-scoped. Increasing input topic
+their configuration. Kafka Streams: state stores are partition-scoped. Increasin
 partitions requires repartition (expensive). Rule: determine the partition count correctly before
 going to production. For unbounded growth: use more consumers (up to current partition count)
 rather than adding partitions. Add partitions only when the partition count truly limits parallelism.
@@ -249,11 +249,11 @@ rather than adding partitions. Add partitions only when the partition count trul
 
 ### ⚖️ Comparison Table
 
-| cleanup.policy | Retention model | Guarantees | Use case |
-|---|---|---|---|
-| delete | Time or size based | Last N days/bytes | Logs, events, time-series |
-| compact | Key-based (latest only) | Latest value per key always present | CDC, state snapshots |
-| compact,delete | Latest value, but expires | Latest value until retention.ms | Bounded compacted stores |
+| cleanup.policy| Retention model| Guarantees| Use case|
+|---|------------|-----------------------------------|-------------------------|
+| delete| Time or size based| Last N days/bytes| Logs, events, time-series|
+| compact| Key-based (latest only)| Latest value per key always present| CDC, st
+| compact,delete| Latest value, but expires| Latest value until retention.ms| Bo
 
 ---
 
@@ -312,7 +312,7 @@ timeline
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Topic fills disk - retention not cleaning up.**
-```
+```plaintext
 Symptom: broker disk usage growing without bound. retention.ms=86400000 set.
   df -h shows /kafka/data at 95%.
 
@@ -329,7 +329,7 @@ Root cause options:
      Log retention checks segments, not individual records.
      If the active segment is 1 GB and is 6 days old: NOT deleted yet (not closed).
      A new segment is opened when segment.bytes reached or segment.ms elapsed.
-     Very low traffic: one segment spans all retention.ms -> never closed -> never deleted.
+     Very low traffic: one segment spans all retention.ms -> never closed ->...
      Fix: set segment.ms (e.g., 86400000 = 1 day) to force segment rotation.
 
 Diagnosis:
@@ -342,7 +342,7 @@ Fix for low-traffic topic not rotating:
     --add-config segment.ms=86400000   # force 1-day segment rotation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -449,13 +449,13 @@ correct gate (Elasticsearch, HDFS). The workers are the conveyor motors. SMTs: s
 CONNECT ARCHITECTURE:
 
   EXTERNAL SOURCE     CONNECT WORKER      KAFKA BROKER     CONNECT WORKER    EXTERNAL SINK
-  ┌─────────────┐    ┌──────────────┐    ┌─────────────┐  ┌──────────────┐  ┌────────────────┐
-  │ PostgreSQL  │ -> │ Source       │ -> │ orders topic│ -> │ Sink         │ ->│ Elasticsearch  │
-  │ MySQL       │    │ Connector    │    │ users topic │    │ Connector    │   │ S3 / HDFS      │
-  │ S3          │    │ (Task x N)   │    │ ...         │    │ (Task x N)   │   │ JDBC targets   │
-  └─────────────┘    └──────────────┘    └─────────────┘  └──────────────┘  └────────────────┘
-                     |              Coordination via Kafka internal topics              |
-                     └──────────────── config + offset + status topics ─────────────────┘
+  ┌─────────────┐    ┌──────────────┐    ┌─────────────┐  ┌──────────────┐ ...
+ │ PostgreSQL │ -> │ Source │ -> │ orders topic│ -> │ Sink │ ->│ Elasticsearch │
+  │ MySQL  │  │ Connector  │  │ users topic │  │ Connector  │  │ S3 / HDFS  │
+  │ S3  │  │ (Task x N)  │  │ ...  │  │ (Task x N)  │  │ JDBC targets  │
+  └─────────────┘    └──────────────┘    └─────────────┘  └──────────────┘ ...
+  |  Coordination via Kafka internal topics  |
+                     └──────────────── config + offset + status topics...
 
 DEPLOYING A CONNECTOR (REST API):
 
@@ -546,7 +546,7 @@ SINGLE MESSAGE TRANSFORMS (SMT):
   ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message format (Debezium envelope): example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -580,63 +580,63 @@ public void pollAndProduce() {
 //   Safe: no duplicate sends for updated rows (offset = max(id, timestamp) pair).
 ```
 
-> **Code walkthrough:** The custom polling approach has two failure modes: replay on restart (if
-> `lastId` is not durably persisted) or gaps (if `lastId` is stored in-memory and the process
-> crashes mid-poll). Connect JDBC Source handles both: offsets are stored in a Kafka topic
-> (`connect-offsets`) and committed after each batch. On restart: resumes exactly from the last
-> successfully sent record. `mode=timestamp+incrementing` handles both inserts (new ID) and
-> updates (changed timestamp), covering the full change surface without reading the full table.
+> **Code walkthrough:** The custom polling approach has two failure modes: replaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> `lastId` is not durably persisted) or gaps (if `lastId` is stored in-memory an
+> crashes mid-poll). Connect JDBC Source handles both: offsets are stored in a K
+> (`connect-offsets`) and committed after each batch. On restart: resumes exactl
+> successfully sent record. `mode=timestamp+incrementing` handles both inserts (
+> updates (changed timestamp), covering the full change surface without reading 
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Kafka Connect: integrates Kafka with external systems without writing producer/consumer code.
-> Source connector: data flows into Kafka. Sink connector: data flows out. Debezium: a source
-> connector that reads DB changes from the transaction log (not polling). Deploy via REST API or
+> Kafka Connect: integrates Kafka with external systems without writing producer
+> Source connector: data flows into Kafka. Sink connector: data flows out. Debez
+> connector that reads DB changes from the transaction log (not polling). Deploy
 > configuration file. `tasks.max`: parallelism.
 
 ---
 
 **Senior / Staff (5+ years):**
-> Connect cluster sizing: one worker can run many connectors. CPU-bound (e.g., many SMTs):
-> add workers. Memory: each task uses memory for buffering. For high-throughput Debezium: snapshot
-> mode memory usage can be high (reads entire table in initial snapshot). Tune `snapshot.fetch.size`.
-> Dead-letter queues (DLQ) in Connect: add `errors.deadletterqueue.topic.name` to a connector config.
-> Failed messages go to the DLQ topic (with error headers) instead of stopping the connector.
-> Without DLQ: one bad message stops the entire connector. Always configure DLQ for production
-> sink connectors. Monitoring: `curl /connectors/{name}/status` for connector health. Kafka metrics:
+> Connect cluster sizing: one worker can run many connectors. CPU-bound (e.g., m
+> add workers. Memory: each task uses memory for buffering. For high-throughput 
+> mode memory usage can be high (reads entire table in initial snapshot). Tune `
+> Dead-letter queues (DLQ) in Connect: add `errors.deadletterqueue.topic.name` t
+> Failed messages go to the DLQ topic (with error headers) instead of stopping t
+> Without DLQ: one bad message stops the entire connector. Always configure DLQ 
+> sink connectors. Monitoring: `curl /connectors/{name}/status` for connector he
 > `connect.connector.metrics` JMX beans.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-**Misconception: "Kafka Connect can achieve exactly-once semantics for all source connectors."**
-Exactly-once for source connectors depends on whether the source system supports idempotent reads
+**Misconception: "Kafka Connect can achieve exactly-once semantics for all sourc
+Exactly-once for source connectors depends on whether the source system supports
 or atomic position marking. JDBC Source in timestamp mode: if two records have the same timestamp,
-on restart both may be re-read (the connector's offset = max seen timestamp, not max seen ID). Use
-`mode=timestamp+incrementing` (both columns together) to reduce but not eliminate duplicates at
+on restart both may be re-read (the connector's offset = max seen timestamp, not
+`mode=timestamp+incrementing` (both columns together) to reduce but not eliminat
 timestamp boundaries. Debezium reading PostgreSQL WAL: each WAL record has a unique LSN
 (Log Sequence Number). The connector stores the LSN as the offset. On restart: resumes from the
-LSN, not the beginning. Near-exactly-once (duplicates only if the connector crashes after writing
-to Kafka but before committing the LSN offset - an extremely narrow window). For sink connectors:
-exactly-once depends on the sink. JDBC Sink with `idempotent=true`: uses upsert (`INSERT ... ON
+LSN, not the beginning. Near-exactly-once (duplicates only if the connector cras
+to Kafka but before committing the LSN offset - an extremely narrow window). For
+exactly-once depends on the sink. JDBC Sink with `idempotent=true`: uses upsert 
 CONFLICT DO UPDATE`). Elasticsearch: upsert by document ID. S3: object keys include offsets,
-so re-writing is safe (overwrite). Always verify the specific connector's exactly-once guarantees.
+so re-writing is safe (overwrite). Always verify the specific connector's exactl
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Integration | Kafka Connect | Custom Producer/Consumer | When |
-|---|---|---|---|
-| DB change capture | Debezium source | Custom WAL reader | Connect: always preferred |
-| DB polling | JDBC Source | Custom @Scheduled | Connect: better offset management |
-| Data lake ingest | S3 Sink | Custom consumer | Connect: handles partitioning |
-| Heavy transformation | Not ideal | Kafka Streams | Streams: better for complex logic |
-| One-off migration | Either | Simple script | Script for simplicity |
+| Integration| Kafka Connect| Custom Producer/Consumer| When|
+|---|---------------|------------------------|---------------------------------|
+| DB change capture| Debezium source| Custom WAL reader| Connect: always preferr
+| DB polling| JDBC Source| Custom @Scheduled| Connect: better offset management|
+| Data lake ingest| S3 Sink| Custom consumer| Connect: handles partitioning|
+| Heavy transformation| Not ideal| Kafka Streams| Streams: better for complex lo
+| One-off migration| Either| Simple script| Script for simplicity|
 
 ---
 
@@ -652,12 +652,12 @@ so re-writing is safe (overwrite). Always verify the specific connector's exactl
 
 ```
   PostgreSQL DB             Kafka Connect Worker        Kafka Broker
-  ┌──────────────┐         ┌────────────────────┐      ┌────────────────────────┐
-  │ orders table │ WAL     │ Debezium Connector │      │ orders-db.public.orders│
-  │  INSERT/     │-------> │  read WAL via      │----> │  {op:c, after:{...}}   │
-  │  UPDATE/     │ repl.   │  replication slot  │      │  {op:u, before, after} │
-  │  DELETE      │         │  LSN tracking      │      │  {op:d, before:{...}}  │
-  └──────────────┘         └────────────────────┘      └────────────────────────┘
+  ┌────────────┐         ┌────────────────────┐      ┌───────────────────────...
+  │ orders table │ WAL  │ Debezium Connector │  │ orders-db.public.orders│
+ │ INSERT/ │-------> │ read WAL via │----> │ {op:c, after:{...}} │
+  │  UPDATE/  │ repl.  │  replication slot  │  │  {op:u, before, after} │
+  │  DELETE  │  │  LSN tracking  │  │  {op:d, before:{...}}  │
+  └────────────┘         └────────────────────┘      └───────────────────────...
   
   No DB queries. No performance impact.
   One record per DB change. Order guaranteed (WAL is ordered).
@@ -726,7 +726,7 @@ Fix:
       ON LIMIT EXCEEDED: slot is automatically dropped (better than disk full).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

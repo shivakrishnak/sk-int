@@ -1,6 +1,6 @@
 ---
 title: "Async JavaScript"
-nav_order: 58
+nav_order: 36
 has_children: true
 ---
 

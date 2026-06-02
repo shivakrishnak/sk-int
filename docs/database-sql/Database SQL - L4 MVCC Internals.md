@@ -106,7 +106,7 @@ TX 110 snapshot (after TX 105 committed):
   -> sees Slot 3 (xmin=105 committed, xmax=0 = alive)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MVCC (Multi-Version Concurrency Control) Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Snapshot structure:**
 
@@ -127,7 +127,7 @@ Visibility rule for a row version (xmin_ver, xmax_ver):
      xmax_ver >= snapshot.xmax (future TX)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MVCC (Multi-Version Concurrency Control) Internals example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -260,7 +260,7 @@ VACUUM FREEZE ANALYZE orders;
 -- Prevents wraparound for these rows.
 ```
 
-> **Code walkthrough:** XID wraparound is one of the most catastrophic events
+> **Code walkthrough:** XID wraparound is one of the most catastrophic eventsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in PostgreSQL operations. The XID counter is 32-bit: after ~4 billion transactions,
 > it wraps to 0. PostgreSQL uses a circular comparison: XIDs more than 2^31 behind
 > the current XID are "in the past" (visible). If a row's xmin is behind the
@@ -354,7 +354,7 @@ Connection pool and long transactions:
              pg_stat_activity WHERE state = 'idle in transaction'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **XID wraparound protection in production:**
 
@@ -373,7 +373,7 @@ Preventive maintenance:
            $$VACUUM FREEZE ANALYZE orders$$);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -463,7 +463,7 @@ ORDER BY n_dead_tup DESC
 LIMIT 10;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Resolution: increase autovacuum aggressiveness. Run `VACUUM ANALYZE` manually
 during low-traffic period. For severe bloat: `VACUUM FULL` during maintenance
@@ -482,7 +482,7 @@ FROM pg_database ORDER BY age(datfrozenxid) DESC;
 -- age > 2,000,000,000 = critical
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Emergency resolution:
 ```sql
@@ -494,7 +494,7 @@ SELECT phase, heap_blks_scanned, heap_blks_total
 FROM pg_stat_progress_vacuum WHERE relid = 'orders'::regclass;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Failure 3: Long idle-in-transaction blocks VACUUM progress**
 
@@ -510,7 +510,7 @@ WHERE state = 'idle in transaction'
 ORDER BY xact_start;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 A transaction open for 5+ minutes holds the xmin horizon. VACUUM cannot reclaim
 any tuple newer than this transaction's start.
@@ -522,7 +522,7 @@ Prevention: `SET idle_in_transaction_session_timeout = '60s'` in `postgresql.con
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Walk me through exactly what happens when an UPDATE is executed in PostgreSQL.**
+**[JUNIOR] Q1 - [FAILURE] Walk me through exactly what happens when an UPDATE is executed in PostgreSQL.**
 
 🗣️ "PostgreSQL UPDATE does NOT modify the row in place. The process:
 (1) The UPDATE statement acquires a row-level exclusive lock on the existing row version.
@@ -533,53 +533,53 @@ page if there is room, or a new page). The new version has xmin=current_txid, xm
 (5) On COMMIT: xmin becomes visible to other transactions.
 (6) On ROLLBACK: xmin is never committed; the new version is invisible; the old version's xmax is cleared."
 
-**Q2: What is a HOT update and why is it important for performance?**
+**[JUNIOR] Q2 - [MECHANISM] What is a HOT update and why is it important for performance?**
 
 🗣️ "HOT (Heap Only Tuple) update: an optimization for updates that do not change any indexed column. Conditions for a HOT update: (1) no indexed column is changed; (2) the new row version fits on the same heap page as the old version.
 When both conditions are met: PostgreSQL writes the new version on the same page.
 No new index entry is created (savings: no index write). The old index entry's pointer is followed to the old heap tuple, then the ctid chain (old->new version) is followed to find the live version. Benefits: (1) no index write (significant for tables with many indexes); (2) the old version and all index pruning are handled lazily (heap-only pruning during access or VACUUM). Cost: the page must have free space for the new version. If the page is full: HOT is not possible; the update proceeds normally. Monitor: `n_hot_upd / n_upd` ratio in `pg_stat_user_tables`. Low ratio: either pages are full or indexed columns are frequently updated."
 
-**Q3: How does the visibility map work with MVCC?**
+**[JUNIOR] Q3 - [MECHANISM] How does the visibility map work with MVCC?**
 
 🗣️ "The visibility map is a bitmap with one bit per heap page. A bit is set if ALL rows on that page are visible to all active transactions (no dead tuples, all tuples frozen or committed and visible). When the visibility map bit is set for a page: (1) Index Only Scans can skip the heap check for that page (all rows are visible; no need to verify with the heap). (2) VACUUM can skip the page (no cleanup needed). The visibility map bit is set by VACUUM after it processes a page and finds all tuples visible. The bit is cleared when: a DELETE or UPDATE adds a dead tuple to the page, or a tuple's xmax becomes committed (new dead tuple). For Index Only Scans: `EXPLAIN ANALYZE` shows `Heap Fetches: N` - this is the count of pages where the visibility map bit was NOT set, requiring a heap check. High Heap Fetches = infrequent VACUUM."
 
-**Q4: How does MVCC implement Repeatable Read without holding locks?**
+**[MID] Q4 - [MECHANISM] How does MVCC implement Repeatable Read without holding locks?**
 
 🗣️ "Repeatable Read in PostgreSQL: the snapshot is taken at the start of the transaction (first statement). The snapshot records: xmax_horizon (all transactions committed before this point) and xip (active transactions at snapshot time). Every row version check uses this fixed snapshot. When another transaction commits an UPDATE: it creates a new row version with xmin = its XID. This XID is after xmax_horizon or is in xip: the version is NOT visible to the Repeatable Read transaction. The transaction's view of the data does not change. No locks are held on read rows (unlike 2PL Repeatable Read which holds S-locks on all read rows). No contention. The snapshot is the mechanism, not the lock."
 
-**Q5: What is the difference between VACUUM and VACUUM FULL?**
+**[MID] Q5 - [TRADE-OFF] What is the difference between VACUUM and VACUUM FULL?**
 
 🗣️ "VACUUM: marks dead tuple slots as reusable. Does NOT return disk space to the OS; the space remains in the table's file (used by future inserts). Does NOT compact the table. Runs concurrently (no exclusive lock; reads and writes proceed normally). Essential for: (1) reclaiming slots for new rows; (2) updating the visibility map; (3) advancing the freeze horizon.
 VACUUM FULL: rewrites the entire table into a new file, excluding dead tuples. Returns space to the OS (actual file size reduction). Requires an exclusive lock: no reads or writes during the operation. Duration: proportional to table size (potentially hours for large tables). Use: when disk space is genuinely critical AND a maintenance window is available. Never in production without a planned outage window. The compacted table has better cache efficiency (fewer heap pages to scan) after FULL. But the cost is availability during the operation."
 
-**Q6: How does PostgreSQL handle MVCC visibility for system catalogs?**
+**[SENIOR] Q6 - [MECHANISM] How does PostgreSQL handle MVCC visibility for system catalogs?**
 
 🗣️ "System catalogs (pg_class, pg_attribute, pg_index, etc.) use MVCC like user tables.
 A DDL statement (CREATE TABLE, ALTER TABLE): creates or modifies catalog rows.
 The new catalog row has xmin=current_txid. It's not visible until the DDL transaction commits. This is how DDL atomicity works: a partial CREATE TABLE (if it errors mid-way) does not leave a partially-visible catalog state. The DDL transaction rolls back: the catalog rows are never committed. After commit: the schema change is visible to all new transactions. MVCC on system catalogs also means: a long-running transaction takes a snapshot of the catalogs. If a DDL drops a table while the transaction is running: the transaction still sees the table in its catalog snapshot. It can still access the dropped table's data until it commits (or until VACUUM cleans it up)."
 
-**Q7: How do you diagnose and fix table bloat without a maintenance window?**
+**[SENIOR] Q7 - [DEBUGGING] How do you diagnose and fix table bloat without a maintenance window?**
 
 🗣️ "Without exclusive lock: pg_repack extension. pg_repack creates a new compact copy of the table while the original is live. It tracks changes during the copy using triggers. After the copy is complete: swaps the old and new table atomically (very brief lock). Steps: (1) Install extension: `CREATE EXTENSION pg_repack`. (2) Run: `pg_repack -t orders --no-kill-on-error`. Duration: proportional to table size (reads all rows, inserts into new table). Brief exclusive lock only at the final swap (milliseconds). Alternative: VACUUM FULL equivalent without the long lock. When to use: table is 50%+ dead tuples, autovacuum cannot keep up, disk space is running low, no maintenance window available. Monitor progress: pg_repack outputs progress. The original table remains fully readable and writable throughout."
 
-**Q8: What is the freeze age mechanism and how does it prevent XID wraparound?**
+**[SENIOR] Q8 - [MECHANISM] What is the freeze age mechanism and how does it prevent XID wraparound?**
 
 🗣️ "XID wraparound: 32-bit XID counter wraps after ~4B transactions. When new_xid - row_xmin > 2^31: the row appears 'in the future' (invisible). Data corruption. The freeze mechanism: when a row's xmin is old enough (more than `vacuum_freeze_min_age` transactions old, default 50M): VACUUM marks it as frozen. Frozen rows have xmin replaced with FrozenTransactionId (a special value = 2). Frozen rows are visible to ALL transactions regardless of their snapshot. Effectively: frozen rows are "immortally old" (always visible). The freeze horizon advances when VACUUM runs. `relfrozenxid` per table: the oldest non-frozen XID. `age(relfrozenxid)` = how many transactions have elapsed since the oldest non-frozen row. Autovacuum starts freezing aggressively at `autovacuum_freeze_max_age` (default 200M). Manual emergency: `VACUUM FREEZE ANALYZE` runs freeze unconditionally."
 
-**Q9: How does MVCC interact with SERIALIZABLE isolation in PostgreSQL?**
+**[SENIOR] Q9 - [MECHANISM] How does MVCC interact with SERIALIZABLE isolation in PostgreSQL?**
 
 🗣️ "PostgreSQL Serializable uses SSI (Serializable Snapshot Isolation) built on top of MVCC. MVCC provides the snapshot mechanism (each transaction sees a consistent snapshot). SSI adds rw-dependency tracking: a structure called `pg_serial` (not a user-visible table) tracks which transactions read data that other transactions wrote. When T1 reads data that T2 will write (or writes data T2 already read): a rw-anti-dependency is recorded. At commit time: SSI checks if the accumulated dependencies form a cycle (T1 depends on T2 depends on T1 = cycle). If a cycle is found: one transaction is aborted (serialization failure, SQLSTATE 40001). No locks on read rows (unlike 2PL). Readers are never blocked. The overhead: in-memory tracking of rw-dependencies. For read-only transactions: no abort possible (they contribute no writes to the cycle). High read volume does not cause serialization failures. Only read-write transactions can form cycles."
 
-**Q10: How do you handle a bloated index after heavy updates?**
+**[SENIOR] Q10 - [MECHANISM] How do you handle a bloated index after heavy updates?**
 
 🗣️ "Index bloat: indexes accumulate dead entries for deleted/updated row versions, similar to heap bloat. Index dead entries are not immediately removed by VACUUM (VACUUM marks them for reuse but does not compact). Detection: `pgstattuple` extension:
 `SELECT * FROM pgstattuple('idx_orders_customer')`. Shows: `dead_leaf_percent` (dead index entries as % of total). High dead_leaf_percent: index scans are slower (more pages to traverse). Fix: (1) REINDEX INDEX CONCURRENTLY idx_orders_customer (PG12+). Rebuilds the index from scratch while reads proceed normally. Brief lock only at the swap. Duration: proportional to index size. (2) In older PostgreSQL: REINDEX INDEX (requires exclusive lock). (3) pg_repack also rebuilds indexes. Preventive: ensure autovacuum runs frequently enough that index entries are cleaned lazily. The `VACUUM` (not VACUUM FULL) marks index dead entries for reuse during the next access. Over time, index bloat stabilizes if VACUUM runs frequently."
 
-**Q11: What happens to MVCC visibility for rows in a failed transaction?**
+**[SENIOR] Q11 - [FAILURE] What happens to MVCC visibility for rows in a failed transaction?**
 
 🗣️ "When a transaction is aborted (ROLLBACK or error): its row versions remain on disk (PostgreSQL does not immediately undo the writes). The row versions have xmin=aborted_txid. The abort is recorded in the commit log (pg_xact): a 2-bit record per transaction (committed/aborted/in-progress/subxact-committed). When another transaction evaluates visibility: if xmin is in pg_xact as aborted: the row version is invisible (treated as if it never existed). The 'hint bits' optimization: after checking pg_xact and finding the transaction aborted: the row's infomask is updated to mark xmin as 'aborted'. Subsequent visibility checks use the hint bit directly (no pg_xact lookup). VACUUM eventually removes rows with aborted xmin (they are dead, no transaction can see them)."
 
-**Q12: How do you size and monitor shared_buffers and its interaction with MVCC?**
+**[SENIOR] Q12 - [MECHANISM] How do you size and monitor shared_buffers and its interaction with MVCC?**
 
 🗣️ "shared_buffers: PostgreSQL's in-memory buffer pool. All heap and index page reads go through shared_buffers. For MVCC: when VACUUM processes dead tuples, it reads heap pages into shared_buffers. When active transactions read data, they read from shared_buffers (if cached) or disk (if not). Sizing: typically 25% of total RAM for dedicated PostgreSQL servers. For a 32GB server: shared_buffers=8GB. Check hit ratio: `SELECT sum(blks_hit) / (sum(blks_hit) + sum(blks_read)) AS cache_hit_ratio FROM pg_stat_database`. Target: > 95% hit ratio. For MVCC specifically: if shared_buffers is too small: VACUUM must constantly re-read pages from disk (slow VACUUM). And active queries read more disk I/Os (stale data not cached). Monitor: `pg_statio_user_tables` - `heap_blks_hit` vs `heap_blks_read`. High `heap_blks_read` on a hot table: increase shared_buffers or reduce table bloat."
 

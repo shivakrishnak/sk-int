@@ -69,7 +69,7 @@ conditions (logic), and unenforceable promises (incorrect assumptions)."
 
 **Five-dimension code review checklist:**
 
-```
+```plaintext
 1. CORRECTNESS
    - Does the algorithm implement the specification?
    - Off-by-one: < vs <=, 0-based vs 1-based indexing
@@ -93,7 +93,7 @@ conditions (logic), and unenforceable promises (incorrect assumptions)."
 
 4. PERFORMANCE
    - String concatenation in loop (use StringBuilder)
-   - Unnecessary object creation (new String(bytes) -> new String(bytes, charset))
+   - Unnecessary object creation (new String(bytes) -> new String(bytes,...
    - Inefficient data structure (LinkedList where ArrayList fits, HashMap without capacity)
    - N+1 query: loading entities in a loop (use JOIN FETCH)
    - Missing cache: repeated expensive computation
@@ -106,16 +106,23 @@ conditions (logic), and unenforceable promises (incorrect assumptions)."
    - Duplication: same logic in two places
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This META Patterns example demonstrates Java Stream pipeline using interface. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The review of `getUserData` shows the most common
+> **Code walkthrough:** The review of `getUserData` shows the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Java safety issues in a realistic method: null dereference, unclosed resources,
 > exception swallowing, and type-unsafe access. The fixed version addresses
 > each with the standard Java idiom.
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
 
 ```java
 // BAD: multiple code review findings in one method
@@ -164,7 +171,7 @@ Optional<String> getUserData(Long userId) {
 // - "static mutable field" -> global state / threading issues
 ```
 
-> **Code walkthrough:** The fixed version uses try-with-resources for all
+> **Code walkthrough:** The fixed version uses try-with-resources for allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > resources (Connection, PreparedStatement, ResultSet - each is `AutoCloseable`).
 > PreparedStatement prevents SQL injection (parameterized query). `Optional<String>`
 > makes the absent case explicit in the type system. The `DataAccessException`
@@ -248,7 +255,7 @@ public int hashCode() {
 // IDE will warn: "equals() but not hashCode()" via IntelliJ inspection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -323,7 +330,7 @@ if (instance == null) {
 // Fix: volatile instance, or class holder idiom, or enum singleton
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using SQL. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 *What separates good from great:* Thread safety bugs are notoriously hard
 to reproduce (intermittent, timing-dependent). The review strategy: look for
@@ -371,7 +378,7 @@ ExecutorService exec = Executors.newFixedThreadPool(4);
 // is Closeable in Java 19+ via AutoCloseable)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 *What separates good from great:* Connection pool exhaustion is the most
 common resource leak symptom in production. The log shows: "Timeout waiting
@@ -425,7 +432,7 @@ catch (Exception e) { // catches NPE, OutOfMemoryError, etc.
 // Fix: catch specific exceptions; let unexpected exceptions propagate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Design smell detection requires context.
 Not every long method or large class is a problem: a 100-line method in a
@@ -474,7 +481,7 @@ sr.nextBytes(token); // cryptographically random
 String tokenHex = HexFormat.of().formatHex(token); // 64-char hex token
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline using SQL. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Security review is the highest-risk review
 dimension. A single SQL injection can exfiltrate the entire database. A single
@@ -529,7 +536,7 @@ try { doWork(); }
 finally { cleanup(); } // always runs: normal AND exception paths
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Exception handling strategy should be
 defined at the architecture level, not method by method. The "log at the
@@ -586,7 +593,7 @@ class SecurityConfig {
 // - Is this class used across threads? -> must be thread-safe (immutable or synchronized)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using coice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Immutability review is about anticipating
 where sharing goes wrong. A `List<String>` field that's never shared across
@@ -675,7 +682,7 @@ outlets = removed APIs), and have rollback (old JDK available)."
 ### 📘 Concept Explanation
 
 **LTS Release Timeline:**
-```
+```plaintext
 Java 8  (2014) - Extended support 2030 (Oracle) / 2026 (community)
 Java 11 (2018) - Extended support 2026 (Oracle) / 2024 (community)
 Java 17 (2021) - Extended support 2029 (Oracle) / 2027 (community)
@@ -693,17 +700,29 @@ Decision:
   -> Always run on latest LTS with active support
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The migration toolchain uses `jdeps` (dependency
+> **Code walkthrough:** The migration toolchain uses `jdeps` (dependencyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > scanner) to find illegal internal API usage, the `--release` flag to enforce
 > source compatibility, and `jlink` to produce minimal runtime images. Running
 > `jdeps --jdk-internals` before upgrading catches the most common migration
 > blockers (sun.misc.* access, removed APIs).
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // STEP 1: Check for internal API usage before upgrading
@@ -758,7 +777,7 @@ ExecutorService exec = Executors.newVirtualThreadPerTaskExecutor();
 // But now 1 physical thread can run thousands of virtual threads
 ```
 
-> **Code walkthrough:** The `jdeps --jdk-internals` command is the most
+> **Code walkthrough:** The `jdeps --jdk-internals` command is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > important pre-upgrade step: it reveals direct dependencies on JDK internal
 > APIs that are blocked in Java 17+. The `--add-opens` flags are the migration
 > bridge: they re-enable reflective access for frameworks that haven't updated
@@ -844,7 +863,7 @@ Mockito fix: Mockito 5+ is Java 17 compatible (uses Byte Buddy, not reflection)
 PowerMock: ABANDONED, no Java 17 support -> migrate to Mockito 5 + @Spy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -943,7 +962,7 @@ Migration steps:
   8. Adopt new features incrementally
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most common Java 11 to 17 migration
 failure: PowerMock or old Mockito versions that use reflection into JDK
@@ -991,7 +1010,7 @@ try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
 // Use ScopedValue (Java 21 preview, GA in 23) for structured value passing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Virtual threads don't eliminate the need
 to understand blocking. A virtual thread blocked on a `synchronized` block
@@ -1013,6 +1032,12 @@ Records are the right choice when:
 - All fields should be required (no optional fields)
 - Immutability is desired
 - equals/hashCode/toString by field identity is correct
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: use record
@@ -1047,7 +1072,7 @@ double area(Shape shape) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates null-safe value wrapping using interface. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* Records replace 80% of Lombok's `@Data`
 use cases natively. The migration: `@Data class Foo { String a; int b; }` ->
@@ -1092,7 +1117,7 @@ seq.addFirst("z"); // add to front (for mutable collections)
 // LinkedHashMap, TreeMap implement SequencedMap
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Sequenced collections filled a long-standing
 gap. The `Iterable` interface has `iterator()` but no `first()` or `last()`.
@@ -1106,7 +1131,7 @@ recently added entry - common in LRU cache implementations.
 **Q7 (GC evolution): How have JVM garbage collectors evolved across versions?**
 
 A:
-```
+```plaintext
 Java 8:  Default GC = Parallel GC (throughput-focused)
          G1 GC available (--XX:+UseG1GC) but not default
 Java 9:  Default GC = G1 GC (balances throughput + latency)
@@ -1136,7 +1161,7 @@ Diagnosing GC after upgrade:
   JFR GC events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Java 8 to 11 GC default change
 (Parallel -> G1) is usually transparent but can cause latency changes in
@@ -1230,7 +1255,7 @@ High CPU:
 
 Memory increasing / OutOfMemoryError:
   1. jcmd <pid> GC.heap_info -> current heap usage summary
-  2. jcmd <pid> VM.native_memory -> native memory breakdown (Java heap vs metaspace vs off-heap)
+  2. jcmd <pid> VM.native_memory -> native memory breakdown (Java heap vs...
   3. jmap -dump:format=b,file=heap.hprof <pid> -> full heap dump (pauses JVM!)
   4. Eclipse MAT / IntelliJ heap analysis -> find retained sets, leak suspects
 
@@ -1245,13 +1270,13 @@ High latency / Slow requests:
   3. Distributed traces (Jaeger, Zipkin): find slow downstream services
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The JFR diagnostic session covers the most common
+> **Code walkthrough:** The JFR diagnostic session covers the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > production scenario: unexplained latency increase. Recording a 30-second
 > JFR snapshot while the symptom is active, then analyzing with JDK Mission
 > Control, reveals method hotspots, GC pressure, and lock contention in
@@ -1317,7 +1342,7 @@ try (Recording recording = new Recording(config)) {
 // - Static Map used as cache (never GC'd, grows with every unique key)
 ```
 
-> **Code walkthrough:** The `jcmd <pid> GC.class_histogram` is the most
+> **Code walkthrough:** The `jcmd <pid> GC.class_histogram` is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > production-safe first step for memory investigation: no JVM pause, output
 > in seconds. It answers "what types of objects dominate heap?" before
 > committing to a full heap dump (which pauses the JVM for seconds to minutes
@@ -1372,7 +1397,7 @@ OOM occurs: `java.lang.OutOfMemoryError: Java heap space` = heap, `java.lang.Out
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Thread deadlock - application hangs, requests time out.**
-```
+```plaintext
 Symptom: requests timeout, JVM is running (not crashed), CPU near 0%
          Health checks pass but actual work is frozen
 
@@ -1400,7 +1425,7 @@ Step 4: Fix
   Option D: use optimistic concurrency (ConcurrentHashMap.compute)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1450,7 +1475,7 @@ Thread naming: use meaningful names for debugging
   // Thread dump shows: "payment-processor-1" not "Thread-42"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Thread naming is a production
 first-responder technique: when you get a thread dump with 200 threads,
@@ -1475,7 +1500,7 @@ A:
 5. **JFR `OldObjectSample` events:** identifies long-lived objects without
    full heap dump (low overhead, continuous)
 
-```
+```plaintext
 Heap dump analysis workflow (Eclipse MAT):
   1. Open .hprof file
   2. Run "Leak Suspects" report -> auto-detects common patterns
@@ -1490,7 +1515,7 @@ Common findings:
   - Classloader leak: webapp redeployment in app server, old ClassLoader retained
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "path to GC roots" is the key operation
 in MAT. A leaked object is leaked because something is holding a reference to
@@ -1523,7 +1548,7 @@ jcmd <pid> JFR.dump filename=/tmp/incident.jfr maxage=5m
 # -> returns Recording with last N minutes of events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> returns Recording with last N minutes of events example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Key JFR event categories and what they reveal:
 ```
@@ -1537,7 +1562,7 @@ jdk.ThreadSleep          -> where threads are sleeping
 jdk.CPULoad              -> CPU usage over time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> returns Recording with last N minutes of events example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The continuous JFR recording setup is the
 difference between "we have data" and "we have no idea what happened."
@@ -1598,7 +1623,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> returns Recording with last N minutes of events example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The ThreadLocal leak is the most insidious:
 it's not just a memory leak, it's a data leak between requests. User A's
@@ -1640,7 +1665,7 @@ jstack <java_pid> | grep "nid=0x3039" -A 20
 #   -> Use timeout: Pattern.CASE_INSENSITIVE + input length check
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Use timeout: Pattern.CASE_INSENSITIVE + input length check example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The native thread ID to hex conversion
 is the key link between `top -H` (OS-level thread view) and `jstack` (JVM-level
@@ -1685,7 +1710,7 @@ jcmd <pid> JFR.start duration=60s settings=default filename=/tmp/gc.jfr
 # jvm_gc_live_data_size_bytes (baseline heap after full GC)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This jvm_gc_live_data_size_bytes (baseline heap after full GC) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* `jvm_gc_live_data_size_bytes` (or equivalent)
 is the most important long-term GC metric. This is the heap required for
@@ -1738,7 +1763,7 @@ stack com.example.DatabasePool getConnection
 # Find: who is calling getConnection without closing it!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find: who is calling getConnection without closing it! example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Arthas `trace` is the production equivalent
 of a profiler for a specific code path: you get the call tree of ONE specific

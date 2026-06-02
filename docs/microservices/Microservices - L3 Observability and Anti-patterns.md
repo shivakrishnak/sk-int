@@ -75,7 +75,7 @@ DISTRIBUTED TRACES (Jaeger / Tempo):
   Use for: identifying which service is slow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Tracing, Logs, Metrics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Trace propagation:**
 ```
@@ -94,7 +94,7 @@ Spring Boot auto-configuration:
   management.tracing.sampling.probability=0.1 # 10% sampling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Tracing, Logs, Metrics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SLO / SLA / SLI:**
 ```
@@ -116,7 +116,7 @@ Error budget:
   focus on reliability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Distributed Tracing, Logs, Metrics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Observability data is useless if not correlated. Logs, metrics, and traces must all carry the same trace ID. When an alert fires (metrics), you need to find the traces from that time window, then find the logs for those trace IDs. The trace ID is the correlation key across all three pillars.
@@ -258,63 +258,63 @@ Fix: Use Micrometer's instrumented executors (ContextPropagatingExecutorService)
 | Scale | 2 min | 1 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - "How does distributed tracing work technically?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "How does distributed tracing work technically?"**
 > "Trace: a collection of spans representing a request's journey. Span: a unit of work with a start time, end time, operation name, service name, and metadata (tags). Trace ID: a 128-bit random ID generated at the entry point (API gateway or first service). Propagated in HTTP headers (W3C TraceContext: traceparent header). Parent span ID: each span knows its parent span, enabling the tree structure visualization. Implementation: when Service A calls Service B, A's Envoy sidecar (or application code) adds the traceparent header to the outgoing request. Service B extracts the header, creates a child span with the same trace ID and a new span ID, and reports the span to the tracing backend (Jaeger, Zipkin, Tempo). The tracing backend assembles all spans with the same trace ID into the trace visualization."
 
 *What separates good from great:* "Head-based vs tail-based sampling. Head-based: decide to sample at the entry point, propagate the sampling decision. Simple but can't ensure all slow or error traces are sampled (the sampling decision was made before the outcome was known). Tail-based: collect all spans, decide after the fact which traces to keep (all errors, all slow traces). Better signal but requires buffering all spans before the sampling decision."
 
 ---
 
-#### Q2 - "What is the three pillars model and how do you implement it end-to-end?"
+**[JUNIOR] Q2 - [HANDS-ON] "What is the three pillars model and how do you implement it end-to-end?"**
 > "Three pillars: metrics, logs, traces. End-to-end implementation: (1) Metrics: Micrometer in Spring Boot auto-instruments JVM, HTTP, DB. Add custom business metrics. Prometheus scrapes every 15 seconds. Grafana dashboards + alerting rules. (2) Logs: Logback with JSON encoder (Logstash encoder). MDC auto-populated with trace ID, span ID, service name. Logs shipped to Loki (lightweight) or Elasticsearch (powerful). Kibana/Grafana queries. (3) Traces: Micrometer Tracing with Brave (Zipkin) or OpenTelemetry bridge. Configured with sampling rate (1-10%). Spans exported to Jaeger or Grafana Tempo. (4) Correlation: Grafana Exemplars: link from a metric anomaly directly to a representative trace. Grafana Explore: switch from metrics to logs to traces with the same time range and filter."
 
 *What separates good from great:* "OpenTelemetry (OTel) is the emerging standard for all three pillars. OTel auto-instrumentation: a Java agent that instruments all major frameworks (Spring, JDBC, Kafka, gRPC) without code changes. Sends spans, metrics, and logs to an OTel Collector. The Collector fans out to Jaeger (traces), Prometheus (metrics), and Loki (logs). Single instrumentation library, backend-agnostic - vendor lock-in eliminated."
 
 ---
 
-#### Q3 - "A request is slow. Walk me through how you diagnose it using observability tools."
+**[JUNIOR] Q3 - [DEBUGGING] "A request is slow. Walk me through how you diagnose it using observability tools."**
 > "Step 1: Metrics alert fires: PaymentService P99 latency > 2s for 5 minutes. Step 2: Open Grafana dashboard for PaymentService. Metrics show elevated P99 starting 10 minutes ago. Throughput is normal (not overloaded). Error rate is normal. Step 3: Open Distributed Traces (Jaeger). Query: service=payment-service, minDuration=1s, time range: last 30 minutes. Find traces with high PaymentService span durations. Step 4: Click a slow trace. Trace view shows: Gateway (4ms) -> OrderService (12ms) -> PaymentService (2,150ms) -> back. Expand PaymentService span: child span 'db.query' took 1,900ms. Step 5: Copy the trace ID. Open Grafana Logs. Query: traceId=abc123 OR service=payment-service time:30min ago to now. Find the log line: 'Slow query detected: SELECT * FROM payment_charges WHERE customer_id=? took 1892ms.' Step 6: Check the query. Missing index on customer_id. Index created. P99 drops to 50ms."
 
 *What separates good from great:* "The diagnosis took 10 minutes because: (a) Prometheus alerted on the right metric, (b) traces were sampled and available, (c) logs were structured with trace IDs. Without any of these: the same diagnosis might take hours of log grepping across multiple services."
 
 ---
 
-#### Q4 - "How do you set up alerting for a microservices system?"
+**[MID] Q4 - [ARCHITECTURE] "How do you set up alerting for a microservices system?"**
 > "Alert levels: (1) SLO breach: the most important alert. 'Error rate > 1% for 10 minutes' or 'P99 latency > 2s for 5 minutes'. Correlated with error budget. Alerts when the SLO is at risk. (2) Saturation: 'CPU > 80% for 10 minutes', 'Memory > 85%', 'DB connection pool > 90%'. Leading indicators before SLO breach. (3) Component health: 'Circuit breaker is OPEN', 'Kafka consumer lag > 10,000', 'Dead letter queue non-empty'. Targeted component issues. Alert fatigue prevention: alerts must be actionable. 'CPU > 80%' that requires no action is noise. Alert when human intervention is needed. Runbook: every alert links to a runbook with investigation steps and remediation procedures. Alert routing: PagerDuty by severity. P1 (SLO breach) = immediate on-call page. P2 (saturation) = Slack + email. P3 (minor) = ticket creation."
 
 *What separates good from great:* "Multiburn-rate alerts (Google SRE-derived): alert when the error budget is burning too fast. 'At this rate, you will exhaust your error budget in 1 hour' fires an immediate alert. 'At this rate, you will exhaust in 24 hours' fires a slower alert. This links alerts directly to SLO impact rather than arbitrary thresholds."
 
 ---
 
-#### Q5 - "How do you implement distributed tracing in an event-driven architecture?"
+**[MID] Q5 - [ARCHITECTURE] "How do you implement distributed tracing in an event-driven architecture?"**
 > "HTTP tracing is straightforward (traceparent header). Events (Kafka) require different handling. W3C TraceContext in Kafka headers: producer sets traceparent as a Kafka message header. Consumer extracts traceparent from headers and creates a child span. In Spring Kafka: Micrometer auto-instrumentation handles this. Manual: extract header in @KafkaListener, create span, close span after processing. The trace shows: HTTP request -> Kafka produce span -> (async) Kafka consume span -> downstream service call. The async gap between produce and consume is visible in the trace with a temporal gap (shows event processing delay). Sampling: use the same trace for the entire event flow. If the HTTP request is sampled (sampling decision in traceparent header), the async processing is also sampled. Consistent sampling = complete trace visibility for sampled requests."
 
 *What separates good from great:* "The trace for an event-driven flow visualizes the async nature: produce span at time T, consume span at time T+30ms (Kafka processing latency). This makes Kafka lag visible in traces. A consumer that is 5 minutes behind shows traces with a 5-minute gap between produce and consume spans."
 
 ---
 
-#### Q6 - "What is sampling in distributed tracing and how do you choose the right strategy?"
+**[MID] Q6 - [TRADE-OFF] "What is sampling in distributed tracing and how do you choose the right strategy?"**
 > "Problem: at 10K req/s, storing spans for every request costs ~100GB/day (10K * 100 spans * 100 bytes * 86400 seconds). Sampling: only record a percentage of traces. Strategies: (1) Head-based (random): sample X% of requests at the entry point. Simple. Misses rare events (errors are rare - if 0.1% error rate and 1% sample rate, most errors are not traced). (2) Head-based (adaptive): sample more aggressively when errors or high latency detected. (3) Tail-based: buffer all spans, decide after request completes. Always keep errors and slow traces. Expensive buffering. (4) Consistent sampling: propagate sampling decision. Either sample the entire trace or none of it. No orphaned spans. Recommendation: 10% head-based sampling as default. Always-on sampling for endpoints with low traffic (never sampled at 1%). Always keep error traces (100% sample on error responses)."
 
 *What separates good from great:* "Dynamic sampling based on service criticality: payment flow sampled at 100% (every transaction traced for audit and debugging), homepage product listing sampled at 0.1% (high volume, low risk). Reduces storage cost while maintaining high visibility for critical paths."
 
 ---
 
-#### Q7 - "How do you calculate and track SLOs for a microservices application?"
+**[SENIOR] Q7 - [CONCEPTUAL] "How do you calculate and track SLOs for a microservices application?"**
 > "Define SLIs first: what is the right measurement? Request success rate (exclude health checks). Latency (99th percentile for user-facing, 95th for internal). Availability (service is up and responding). SLO example: OrderService: 99.5% success rate over 30 days. P99 < 1 second for order creation. Prometheus recording rules: record:request_success_rate = sum(rate(http_requests_total{code=~'2..'}[5m])) / sum(rate(http_requests_total[5m])). Error budget: 0.5% errors allowed in 30 days = 1440 minutes * 0.5% = 7.2 minutes of 100% error rate OR 14.4 minutes of 50% error rate. Grafana SLO dashboard: rolling 30-day success rate, error budget remaining, burn rate. Alert when burn rate > 5% of budget consumed per hour."
 
 *What separates good from great:* "Error budgets change the conversation from 'was there an incident?' to 'how much of our reliability budget did we spend?' A team that deploys frequently and burns 30% of their error budget each month on deployment issues has data to motivate better deployment practices. The error budget is a shared team goal, not just an ops metric."
 
 ---
 
-#### Q8 - "How does observability differ from monitoring?"
+**[SENIOR] Q8 - [PRODUCTION] "How does observability differ from monitoring?"**
 > "Monitoring: watching pre-defined metrics for known failure modes. 'Alert if CPU > 90%'. 'Alert if error rate > 5%'. Known-unknown: you know what to watch, you don't know when it will fail. Observability: the ability to ask arbitrary questions about the system's behavior and get answers. Unknown-unknown: failures you didn't anticipate, interactions you didn't predict. Observability enables questions like: 'why did this specific user's request fail?' or 'what was different about the requests that failed vs succeeded?' Monitoring says 'there is a problem'. Observability lets you understand 'why'. Monitoring is a subset of observability. In practice: monitoring dashboards and alerts for known failure modes + observability data (traces, structured logs) for investigation and unknown failures."
 
 *What separates good from great:* "Observability-driven development: design systems with observability from the start. Every new feature includes: which metrics will show this feature is healthy, which structured log fields are needed to debug this feature, which trace spans represent this feature's work. Retrofitting observability onto an existing system is much harder than designing it in."
 
 ---
 
-#### Q9 - "Tell me about a time you debugged a production issue using observability tools."
+**[SENIOR] Q9 - [DEBUGGING] "Tell me about a time you debugged a production issue using observability tools."**
 > "Structure the answer using STAR (Situation, Task, Action, Result). Example framework: Situation: P1 incident. Users reporting checkout failures. 2% error rate spike. Task: diagnose root cause within SLA (30 minutes). Action: (1) Checked Grafana alert: PaymentService error rate spiked to 15% 8 minutes ago. (2) Queried Jaeger for traces with PaymentService errors in last 10 minutes. Found traces with 500 errors from PaymentService. (3) Clicked a failing trace. Saw PaymentService -> ExternalPaymentGateway span timing out. Span shows 30-second timeout. (4) Checked PaymentService logs with the trace ID. Found: 'External gateway connection refused on port 443'. (5) Checked infrastructure: external payment gateway was experiencing an outage. (6) Implemented circuit breaker: fail fast instead of 30-second timeouts. Users see immediate error (checkout unavailable) instead of 30-second wait. Notified users. Result: diagnosis in 8 minutes. Circuit breaker prevented thread exhaustion. No other services affected."
 
 *What separates good from great:* "The behavioral question tests whether you actually used these tools or just know about them academically. Prepare 1-2 specific production incidents where observability tools helped. Include what the metrics showed, how you navigated to traces, what the trace revealed, how you used logs for detail. Specific details (which dashboard, which query, what the span showed) demonstrate practical experience."
@@ -433,7 +433,7 @@ Microservices anti-patterns are implementation choices that produce systems hard
    Fix: circuit breakers + bulkheads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Microservices Anti-patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Anti-patterns usually emerge from applying microservices decomposition without changing the data access and communication patterns. Splitting a monolith along class lines (one service per repository class) produces tiny services with maximum inter-service coupling. The correct decomposition is by business capability (bounded context) where each capability is independently deployable and owns its data.
@@ -560,63 +560,63 @@ Fix: Break the coupling at its root: establish database-per-service (migration),
 | Design | 3 min | 1 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - "What is a distributed monolith and how do you detect it?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "What is a distributed monolith and how do you detect it?"**
 > "A distributed monolith is a system where services are deployed separately but remain tightly coupled in ways that eliminate the benefits of microservices. Detection tests: (1) Deployment coupling: can ServiceA be deployed without deploying ServiceB? If a deployment to OrderService requires simultaneously deploying InventoryService, you have coupling. (2) Shared database: do multiple services read from or write to the same database tables? Direct evidence of distributed monolith. (3) Synchronous call chains: ServiceA -> ServiceB -> ServiceC -> ServiceD. A failure in ServiceD fails the entire chain. (4) Circular dependencies: ServiceA calls ServiceB; ServiceB calls ServiceA. (5) 'Big Bang' deployments: all services must be deployed together to keep working. If any of these are true: you have a distributed monolith."
 
 *What separates good from great:* "The distributed monolith is often worse than the original monolith. The original monolith had simple debugging (one call stack, one log). The distributed monolith has complex debugging (distributed traces, multiple logs, network failures) without the benefits of independent deployability. Before adding microservices complexity: validate that the deployment independence is actually achievable given the coupling in the data model and APIs."
 
 ---
 
-#### Q2 - "How do you identify and fix chatty service communication?"
+**[JUNIOR] Q2 - [CONCEPTUAL] "How do you identify and fix chatty service communication?"**
 > "Detection: instrument API calls per user request. If a single user-facing request triggers more than 3-5 inter-service API calls, investigate. Common causes: N+1 API calls (calling a service once per item in a list), deep call chains (A calls B calls C calls D calls E), and design that mirrors a relational database (each service = each table, cross-service JOIN = multiple API calls). Fixes: (1) Batch APIs: add a bulk GET endpoint that accepts a list of IDs and returns all results in one response. (2) Data composition at query time: the requesting service issues one API call with a list of IDs, gets all data, joins in memory. (3) Precomputed aggregates: maintain a read model (CQRS projection) that has all the needed data pre-joined. One query against the read model instead of N service calls. (4) Co-location: if two services are always called together and are owned by the same team, merge them."
 
 *What separates good from great:* "Count the API calls in a performance profiler, not by reading the code. Code review won't reveal N+1 patterns because they're hidden in loops. Instrument the actual HTTP calls per request. A dashboard showing 'average API calls per user request' exposes chatty patterns immediately."
 
 ---
 
-#### Q3 - "What are the signs that a microservice is too small or too large?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "What are the signs that a microservice is too small or too large?"**
 > "Too small (nano-service): single function microservice (AuthenticateUserService, GetUserByIdService). Every user request requires coordination with 5+ services. Service has fewer than 1,000 lines of code. The service has no independent deployment value - nothing changes in it without changing related services. A team cannot make a meaningful release in it alone. Too large (macrolithe disguised as microservice): a service has 20+ endpoints and 10 team members working on it. It has multiple subdomains within it that are developed at different rates. It has multiple databases. Teams are creating PRs that conflict regularly. The right size: the team test. One team (5-8 engineers) should be able to own and deploy the service independently. The service should represent one bounded context where all data and logic is cohesive."
 
 *What separates good from great:* "The 'two-pizza team' rule is a proxy, not the measure. The real measure: can this team deploy their service and deliver value to users without coordinating a release with other teams? If yes: the service is the right size. The deployment independence test is the definitive measure."
 
 ---
 
-#### Q4 - "Identify the anti-patterns in this architecture: UserService calls OrderService calls InventoryService calls UserService."
+**[MID] Q4 - [ARCHITECTURE] "Identify the anti-patterns in this architecture: UserService calls OrderService calls InventoryService calls UserService."**
 > "Anti-patterns: (1) Circular dependency: UserService -> OrderService -> InventoryService -> UserService. This is a cycle. When resolving a request, you can end up in a dependency loop. A failure at any point fails the entire chain. (2) Deep synchronous call chain: 3 hops of synchronous calls. Latency = sum of all service latencies. Availability = product of all service availabilities (99% * 99% * 99% = 97%). (3) Tight coupling: InventoryService should not need to call UserService for most inventory operations. This suggests InventoryService is accessing user data it shouldn't need, or user data should have been included in the original request. Fix: break the cycle. InventoryService gets user context from the JWT (passed in the request), not by calling UserService. Or: refactor to pass user data forward through the chain rather than making back-calls."
 
 *What separates good from great:* "Circular dependencies indicate wrong service boundaries. If A needs B and B needs A, they may be the same bounded context disguised as two services. Evaluate: can A and B be merged? If they truly represent different bounded contexts, redesign the dependency direction: one should own the relationship, the other should subscribe to events."
 
 ---
 
-#### Q5 - "How do you migrate from a distributed monolith to properly decoupled services?"
+**[MID] Q5 - [CONCEPTUAL] "How do you migrate from a distributed monolith to properly decoupled services?"**
 > "Migration strategy: don't do it all at once. (1) Identify the worst coupling: which service dependency causes the most deployment coordination and most failures? Fix that first. (2) Break shared database: introduce database-per-service for the highest-coupled pair. Add an API between them. Data migration: the service that previously owned nothing now owns a copy. Synchronize via events during migration, then cut over. (3) Break synchronous chains: for synchronous call chains that can be async: replace with events. Use transactional outbox to publish events from the first service. (4) Add circuit breakers to all remaining synchronous calls: this stops cascading failures while the deeper decoupling work continues. (5) Migrate in priority order: highest impact first. This is a 6-18 month project for a mature distributed monolith."
 
 *What separates good from great:* "The strangler fig pattern: incrementally replace components of the distributed monolith rather than attempting a 'big bang' refactoring. New features are built as properly decoupled services. Old coupling is migrated in small steps. The distributed monolith gradually strangles as new services replace old coupling points."
 
 ---
 
-#### Q6 - "What is the 'wrong cuts' anti-pattern and how does it differ from DDD-correct decomposition?"
+**[MID] Q6 - [ARCHITECTURE] "What is the 'wrong cuts' anti-pattern and how does it differ from DDD-correct decomposition?"**
 > "Wrong cuts: decomposing services along technical layers (a 'database service', a 'UI service', a 'business logic service') or along individual domain objects (UserService, AddressService, PhoneNumberService). These cuts result in services that must be called together for any user action - they have no independent value. DDD-correct decomposition: services aligned with bounded contexts. The Order Management context owns: orders, line items, order status, order history. Everything related to a customer placing and tracking an order. The Identity context owns: users, authentication, roles. The Catalog context owns: products, pricing, categories. Each context can operate independently. A team that works primarily on Order Management never needs to modify the Catalog service for most order-related features."
 
 *What separates good from great:* "Event storming is a workshop technique that identifies bounded contexts correctly. Teams map out domain events (OrderPlaced, PaymentProcessed, ItemShipped) on a timeline. Natural clusters of events indicate bounded contexts. Services emerge from these context clusters, not from existing code structure or database table names."
 
 ---
 
-#### Q7 - "A team argues that shared libraries are acceptable to avoid code duplication. How do you respond?"
+**[SENIOR] Q7 - [HANDS-ON] "A team argues that shared libraries are acceptable to avoid code duplication. How do you respond?"**
 > "Shared library guidelines: share if: it is truly infrastructure code (logging configuration, HTTP client configuration, common error types), it has no business logic, and changes do not require cross-team coordination. Do NOT share if: the library contains business logic (pricing rules, validation logic), changing it requires redeploying multiple services simultaneously, or ownership is unclear. The 'copy for domain code' principle: for domain-specific utilities, copying is better than sharing across service boundaries. The coupling cost of a shared library (one team's change breaks another team's service) exceeds the DRY benefit for domain code. Use semantic versioning: shared libraries use semver. Services pin to specific versions. Teams upgrade on their own schedule. A major version (breaking change) is released; consuming services migrate when ready. This preserves independence."
 
 *What separates good from great:* "The monorepo pattern enables shared code with controlled coupling: all services in one repository. Shared libraries are in the same monorepo. CI runs across all affected services when a shared library changes. Breaking changes are caught at commit time, not at deployment time. Bazel, Nx, or Gradle multi-project builds support this. The tradeoff: monorepo adds coordination overhead but enables safe code sharing."
 
 ---
 
-#### Q8 - "How do you prevent anti-patterns from emerging as an organization scales?"
+**[SENIOR] Q8 - [ARCHITECTURE] "How do you prevent anti-patterns from emerging as an organization scales?"**
 > "Organizational mechanisms: (1) Architecture Review Board (ARB): changes to service boundaries or introduction of new shared data access require review. Catches distributed monolith formation before it solidifies. (2) Service catalog: every service registered with: owner, dependencies, APIs, event contracts. Makes coupling visible. Regular dependency audits. (3) Team topology: inverse Conway maneuver. Design the team structure to produce the service architecture you want. Teams that own end-to-end capability (not technical layer) produce bounded-context services. (4) ADRs (Architecture Decision Records): document decisions about service boundaries and data ownership. Future teams understand why services are structured as they are. (5) Anti-pattern metrics: deployment coupling frequency (how often services are deployed together), API calls per request (chatty service detection), service latency vs dependency count (blast radius)."
 
 *What separates good from great:* "The organizational challenge is harder than the technical challenge. A technical architect cannot enforce microservices anti-pattern prevention at scale through code review alone. The organization needs: incentive structures that reward deployment independence (not shared code), team structures aligned with service ownership (not technical layers), and automated metrics that make anti-patterns visible before they become entrenched."
 
 ---
 
-#### Q9 - "Tell me about a microservices anti-pattern you've seen or experienced in production."
+**[SENIOR] Q9 - [ARCHITECTURE] "Tell me about a microservices anti-pattern you've seen or experienced in production."**
 > "Use STAR format with specific details. Framework for the answer: Situation: describe the system (what it was, rough scale, team structure). Anti-pattern: name the specific anti-pattern (distributed monolith, chatty services, no circuit breakers). Symptoms: what production impact did it cause (deployment failures, cascading outages, slow response times). Root cause: why did it happen (wrong decomposition, shared database, no circuit breakers). Resolution: what was done to fix it. Lessons: what the team changed to prevent recurrence. Example answer: 'We had a distributed monolith where 12 services all shared one PostgreSQL database. A schema migration for the catalog service locked tables for 3 minutes and took down order processing for all 12 services simultaneously. We spent the next quarter migrating each service to its own schema with read-only cross-service access via events. The root cause was that the initial microservices migration was done by splitting code but not splitting data.'"
 
 *What separates good from great:* "Specific details show real experience. The interviewer is testing whether you've seen these patterns in the wild or only know them academically. Use numbers: 12 services, 3 minutes downtime, one quarter to fix. Mention the organizational dynamics: why the anti-pattern formed and what organizational change prevented recurrence, not just the technical fix."

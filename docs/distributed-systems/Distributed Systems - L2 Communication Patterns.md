@@ -119,7 +119,7 @@ HTTP/2 multiplexing.
 7. Handler serializes response, sends back
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remote Procedure Call and gRPC example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **HTTP/2 advantages:**
 
@@ -136,7 +136,7 @@ HTTP/2:
   - Server push (proactive data push)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remote Procedure Call and gRPC example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Streaming types:**
 
@@ -148,7 +148,7 @@ Bidirectional: Client sends N, server sends N
                (independent streams, not request-response)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Remote Procedure Call and gRPC example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 gRPC's schema-first approach (.proto) is both its strength and its
@@ -265,7 +265,7 @@ public class OrderClient {
 }
 ```
 
-> **Code walkthrough:** The server extends the generated base class
+> **Code walkthrough:** The server extends the generated base classice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and overrides the handler methods. The `StreamObserver` pattern
 > handles both unary (call `onNext` once then `onCompleted`) and
 > streaming (call `onNext` multiple times) responses uniformly.
@@ -367,10 +367,9 @@ Symptom: client-streaming or bidirectional streaming calls leak resources - serv
 
 #### Production Failures
 
-Q: gRPC calls between services start failing with DEADLINE_EXCEEDED
-after a deploy. What do you investigate?
+**[JUNIOR] Q1 - [DEBUGGING] gRPC calls between services start failing with DEADLINE_EXCEEDED after a deploy. What do you investigate?**
 
-A: DEADLINE_EXCEEDED means the server is not responding within the
+DEADLINE_EXCEEDED means the server is not responding within the
 client's configured deadline. Root causes: (1) the deployed service
 is slower due to a bug (N+1 query, missing index, increased load).
 (2) the deadline is too tight for the new code path. (3) downstream
@@ -383,10 +382,9 @@ the slow path). Always propagate deadlines: the server should subtract
 processing time from the incoming deadline before passing it to
 downstream calls.
 
-Q: gRPC load is not distributed evenly across backend instances.
-One instance receives 80% of traffic.
+**[JUNIOR] Q2 - [MECHANISM] gRPC load is not distributed evenly across backend instances. One instance receives 80% of traffic.**
 
-A: This is the HTTP/2 load balancing problem. HTTP/2 multiplexes
+This is the HTTP/2 load balancing problem. HTTP/2 multiplexes
 all requests over one TCP connection. An L4 load balancer (TCP level)
 sees one connection per client and routes it to one backend for the
 connection lifetime. All subsequent requests from that client go
@@ -399,7 +397,7 @@ transparently.
 
 #### Candidate Mistakes
 
-Q: How do you handle breaking changes in a gRPC API?
+**[JUNIOR] Q3 - [MECHANISM] How do you handle breaking changes in a gRPC API?**
 
 **What NOT to say:** "Just change the .proto and redeploy."
 
@@ -415,14 +413,12 @@ simultaneously - that is a breaking deployment."
 
 #### Questions to Ask the Interviewer
 
-Q: "Are services in the same language or polyglot? gRPC's code
-generation value is highest in polyglot environments."
+**[MID] Q4 - [MECHANISM] "Are services in the same language or polyglot? gRPC's code generation value is highest in polyglot environments."**
 
 *Why:* Reveals whether gRPC's schema-based code generation aligns
 with the actual tech stack diversity.
 
-Q: "How is load balancing implemented for gRPC services?
-L4 or L7?"
+**[MID] Q5 - [MECHANISM] "How is load balancing implemented for gRPC services? L4 or L7?"**
 
 *Why:* gRPC load balancing at L4 (TCP) is broken for HTTP/2 - shows
 you understand the non-obvious issue.
@@ -545,7 +541,7 @@ One consumer processes each message.
 Used for: task distribution, work queues.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Passing and Event-Driven Architecture exampice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Topic/Pub-Sub (Broadcast):**
 ```
@@ -556,7 +552,7 @@ Each consumer group gets every message.
 Used for: event fan-out, notifications.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Passing and Event-Driven Architecture example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Event log (Kafka-style):**
 ```
@@ -567,7 +563,7 @@ Ordered log, retained for configurable time.
 Consumers can replay from any offset.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Passing and Event-Driven Architecture exampice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Outbox Pattern (crucial):**
 
@@ -590,7 +586,7 @@ SOLUTION: Outbox table
   Atomic because both writes are in one DB transaction.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Passing and Event-Driven Architecture example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Event schema design:**
 
@@ -639,6 +635,17 @@ message stays in the buffer until B confirms processing)."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: calling @Transactional method from same class
+// Spring proxy is bypassed - no transaction started
+public void processOrder(Order order) {
+    saveOrder(order); // self-call bypasses proxy
+}
+@Transactional
+public void saveOrder(Order order) { /* ... */ }
+```
 
 ```java
 // OUTBOX PATTERN: atomic DB write + event publish
@@ -696,7 +703,7 @@ public void publishOutboxEvents() {
 }
 ```
 
-> **Code walkthrough:** The BAD example has a dual-write problem: the
+> **Code walkthrough:** The BAD example has a dual-write problem: theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > database write and the Kafka publish are two separate operations with
 > no atomicity guarantee. A crash between them leaves the system in an
 > inconsistent state. The GOOD example uses the Outbox pattern: both
@@ -800,10 +807,9 @@ Symptom: consumer group shows members connected but lag grows; active heartbeats
 
 #### Production Failures
 
-Q: A consumer is processing messages from a Kafka topic but getting
-the same message processed multiple times. Why?
+**[JUNIOR] Q1 - [MECHANISM] A consumer is processing messages from a Kafka topic but getting the same message processed multiple times. Why?**
 
-A: Kafka provides at-least-once delivery by default. A consumer
+Kafka provides at-least-once delivery by default. A consumer
 processes a message, then crashes before committing the offset.
 On restart, it reads the same message again (offset was not advanced).
 Root cause: either the consumer is not committing offsets reliably,
@@ -815,10 +821,9 @@ result. Use a unique event ID to detect and skip duplicates:
 API for exactly-once semantics within the Kafka ecosystem (does not
 cover external effects like database writes).
 
-Q: Consumer lag on a Kafka topic has been growing for 2 hours.
-Messages are accumulating. What happened?
+**[JUNIOR] Q2 - [MECHANISM] Consumer lag on a Kafka topic has been growing for 2 hours. Messages are accumulating. What happened?**
 
-A: Consumer lag growing = consumers not keeping up with producers.
+Consumer lag growing = consumers not keeping up with producers.
 Possible causes: (1) consumer is too slow (processing bottleneck -
 N+1 DB queries, slow external call). (2) consumer is failing and
 retrying (check DLQ for failed messages). (3) producer rate spiked
@@ -832,8 +837,7 @@ or optimize the slow step.
 
 #### Candidate Mistakes
 
-Q: How do you ensure that a downstream service has processed an
-event before you return a response to the user?
+**[JUNIOR] Q3 - [MECHANISM] How do you ensure that a downstream service has processed an event before you return a response to the user?**
 
 **What NOT to say:** "Just wait for the consumer to finish before
 returning."
@@ -852,13 +856,12 @@ asynchronously?"
 
 #### Questions to Ask the Interviewer
 
-Q: "How do you monitor consumer lag and alert on it?"
+**[MID] Q4 - [MECHANISM] "How do you monitor consumer lag and alert on it?"**
 
 *Why:* Consumer lag is the key health metric for event-driven systems.
 Lack of monitoring = silent failures.
 
-Q: "Do consumers need to be idempotent, and is that enforced
-today?"
+**[MID] Q5 - [MECHANISM] "Do consumers need to be idempotent, and is that enforced today?"**
 
 *Why:* Most async systems have at-least-once delivery. Idempotency
 is required but often overlooked.

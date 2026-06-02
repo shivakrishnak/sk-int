@@ -91,7 +91,7 @@ PostgreSQL note: Repeatable Read in PG also prevents
 phantom reads (MVCC snapshot covers the full transaction).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Read Phenomena and Trade-offs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **PostgreSQL-specific behavior:**
 
@@ -117,7 +117,7 @@ Serializable (SSI):
   - Application must retry serialization failures.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Read Phenomena and Trade-offs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -155,7 +155,7 @@ SELECT balance FROM accounts WHERE id = 1;
 COMMIT;
 ```
 
-> **Code walkthrough:** Under Read Committed: each SELECT statement takes
+> **Code walkthrough:** Under Read Committed: each SELECT statement takesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a fresh snapshot of the database at the moment it executes. Transaction A's
 > second SELECT sees transaction B's committed update because the snapshot
 > is refreshed per-statement. Under Repeatable Read: the snapshot is taken
@@ -206,7 +206,7 @@ COMMIT;
 -- reads 1 doctor on call -> refuses to go off call.
 ```
 
-> **Code walkthrough:** Write skew: two transactions each read a condition,
+> **Code walkthrough:** Write skew: two transactions each read a condition,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > make decisions based on it, write changes that together invalidate the
 > condition. Neither individual transaction is wrong alone - the problem
 > is the interaction. Read Committed allows write skew because each
@@ -318,13 +318,13 @@ while (retries < 5) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How does PostgreSQL implement Read Committed using MVCC?**
+**[JUNIOR] Q1 - [MECHANISM] How does PostgreSQL implement Read Committed using MVCC?**
 
 🗣️ "MVCC (Multi-Version Concurrency Control): PostgreSQL keeps multiple versions
 of each row. Each row version has xmin (transaction that created it) and
@@ -338,7 +338,7 @@ that executes multiple SELECTs sees a different snapshot for each SELECT
 non-repeatable reads: the second SELECT sees commits that happened between
 the two statements."
 
-**Q2: What is write skew and which isolation level prevents it?**
+**[JUNIOR] Q2 - [MECHANISM] What is write skew and which isolation level prevents it?**
 
 🗣️ "Write skew: two transactions read overlapping data, each writes different
 data, but their combined effect violates a constraint that each individual
@@ -350,7 +350,7 @@ SSI detects that both transactions read the same predicate (on_call count)
 and both wrote to the doctors table. This is a rw-dependency cycle (T1 read
 what T2 wrote would affect, T2 read what T1 wrote would affect). One is aborted."
 
-**Q3: What is the difference between snapshot isolation and serializable?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between snapshot isolation and serializable?**
 
 🗣️ "Snapshot Isolation (SI): each transaction works on a consistent snapshot
 taken at transaction start. No dirty reads or non-repeatable reads. But:
@@ -363,7 +363,7 @@ SSI is fully serializable but has minimal additional overhead over SI.
 PostgreSQL's REPEATABLE READ: this is SI (consistent snapshot, but write skew possible).
 PostgreSQL's SERIALIZABLE: this is SSI (detects write skew cycles)."
 
-**Q4: How do you choose the right isolation level for a given use case?**
+**[MID] Q4 - [MECHANISM] How do you choose the right isolation level for a given use case?**
 
 🗣️ "Decision framework: (1) Is dirty read acceptable? Never acceptable in production.
 Use at least Read Committed. (2) Is the transaction a simple read-then-write
@@ -376,7 +376,7 @@ Use Serializable. (5) Is the transaction read-only (analytics)? Use Read Committ
 or Repeatable Read. Serializable read-only transactions are never aborted in
 PostgreSQL - they are safe and have no conflict overhead."
 
-**Q5: What happens to a long-running transaction under Read Committed?**
+**[MID] Q5 - [FAILURE] What happens to a long-running transaction under Read Committed?**
 
 🗣️ "Under Read Committed: each statement sees data committed before that statement.
 A transaction running for 1 hour: its SELECT statements see progressively
@@ -390,7 +390,7 @@ xmin. Monitor: `pg_stat_activity` for long-running transactions.
 `idle in transaction`: a transaction that started but is not executing -
 still holds its xmin."
 
-**Q6: How does SELECT FOR UPDATE interact with isolation levels?**
+**[SENIOR] Q6 - [MECHANISM] How does SELECT FOR UPDATE interact with isolation levels?**
 
 🗣️ "`SELECT ... FOR UPDATE`: acquires a row-level exclusive lock on the selected rows.
 Blocks concurrent transactions that try to update or lock the same rows.
@@ -405,7 +405,7 @@ must retry. SELECT FOR UPDATE is useful for: (1) read-then-update patterns
 where no other transaction should modify the row between the read and update;
 (2) preventing lost updates at Read Committed."
 
-**Q7: What is a lost update and how do you prevent it?**
+**[SENIOR] Q7 - [MECHANISM] What is a lost update and how do you prevent it?**
 
 🗣️ "Lost update: two transactions read a value, both increment it, both write
 back. The second write overwrites the first. Example: T1 reads count=10,
@@ -420,7 +420,7 @@ version changed; UPDATE affects 0 rows; application retries.
 (4) Serializable: SSI detects the rw-dependency pattern for lost updates
 and aborts one transaction."
 
-**Q8: What is two-phase locking (2PL) and why does PostgreSQL not use it?**
+**[SENIOR] Q8 - [MECHANISM] What is two-phase locking (2PL) and why does PostgreSQL not use it?**
 
 🗣️ "2PL: traditional serializable isolation approach. Phase 1 (growing): transaction
 acquires locks but does not release them. Phase 2 (shrinking): transaction releases
@@ -433,7 +433,7 @@ holding read locks. Benefits: higher concurrency, better read scalability.
 Cost: serialization failures need application retry logic. 2PL still used
 in some databases (MySQL with S locks in Serializable mode)."
 
-**Q9: How do you debug isolation level issues in production?**
+**[SENIOR] Q9 - [DEBUGGING] How do you debug isolation level issues in production?**
 
 🗣️ "Step 1: identify the symptom. Non-repeatable read: same query in a transaction
 returns different data. Write skew: invariant violated despite each individual
@@ -550,7 +550,7 @@ FOR KEY SHARE      -- weakest shared lock
                    -- used by foreign key enforcement
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Optimistic vs Pessimistic Locking example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **Optimistic locking: version column pattern:**
 
@@ -572,7 +572,7 @@ WHERE id = :id
 -- If 1 row updated -> success
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Optimistic vs Pessimistic Locking example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -601,7 +601,7 @@ COMMIT;
 -- Locks released. Other transactions can proceed.
 ```
 
-> **Code walkthrough:** `FOR UPDATE` acquires an exclusive lock on both
+> **Code walkthrough:** `FOR UPDATE` acquires an exclusive lock on bothice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > account rows. Any other transaction attempting `FOR UPDATE` or `UPDATE`
 > on account 1 or 2 is blocked until this transaction commits. The consistent
 > ordering (`ORDER BY id`) is critical: if T1 locks [1, 2] and T2 locks [2, 1]
@@ -693,7 +693,7 @@ FOR UPDATE;
 -- No deadlock possible.
 ```
 
-> **Code walkthrough:** The deadlock scenario: T1 holds lock on account 1 and
+> **Code walkthrough:** The deadlock scenario: T1 holds lock on account 1 andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > waits for account 2. T2 holds lock on account 2 and waits for account 1.
 > Neither can proceed - PostgreSQL's deadlock detector identifies the cycle
 > and aborts the one with the least work done (throws `ERROR: deadlock detected`).
@@ -802,7 +802,7 @@ aggregated periodically).
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How would you implement optimistic locking without a version column?**
+**[JUNIOR] Q1 - [MECHANISM] How would you implement optimistic locking without a version column?**
 
 🗣️ "Two options besides a version integer: (1) Timestamp: store `updated_at TIMESTAMP`
 in the row. Read: get updated_at. Write: `UPDATE ... WHERE id=? AND updated_at=?`.
@@ -814,7 +814,7 @@ expensive hash computation per write. (3) Checksum or etag: same principle.
 Version integer is preferred: simple, atomic increment, no precision issues,
 O(1) check."
 
-**Q2: When would you use SELECT FOR SHARE instead of FOR UPDATE?**
+**[JUNIOR] Q2 - [SCENARIO] When would you use SELECT FOR SHARE instead of FOR UPDATE?**
 
 🗣️ "`FOR UPDATE`: exclusive lock. Blocks all concurrent writes and FOR UPDATE/FOR SHARE.
 Use when you intend to modify the row. `FOR SHARE`: shared lock. Blocks writers but
@@ -826,7 +826,7 @@ order_item. FOR SHARE: another transaction can also FOR SHARE (both are reading)
 A transaction trying to DELETE the product: blocks until both FOR SHARE transactions
 commit. FOR UPDATE would be overkill: you are not modifying the product row."
 
-**Q3: How does Spring's @Version annotation work with database-generated versions?**
+**[JUNIOR] Q3 - [MECHANISM] How does Spring's @Version annotation work with database-generated versions?**
 
 🗣️ "`@Version` with `Long`: JPA adds `version bigint NOT NULL DEFAULT 0` to the schema.
 On every `UPDATE` issued by JPA: `WHERE version = :loaded_version`. On success:
@@ -839,7 +839,7 @@ both using JPA optimistic locking on the same entity: version conflicts are caug
 correctly. Across microservices that each have their own database: optimistic locking
 must be implemented at the API layer (ETags) or event sourcing."
 
-**Q4: How do you handle optimistic locking in a batch update scenario?**
+**[MID] Q4 - [MECHANISM] How do you handle optimistic locking in a batch update scenario?**
 
 🗣️ "Batch update: update 1,000 order statuses in a single transaction.
 Optimistic locking with version check per row:
@@ -853,7 +853,7 @@ operations: `SELECT ... WHERE id IN (...) FOR UPDATE` - locks all rows upfront,
 no conflict during the batch update. Pessimistic is often better for batch scenarios:
 the batch runs faster and no retries are needed."
 
-**Q5: What is the difference between a lost update and write skew?**
+**[MID] Q5 - [TRADE-OFF] What is the difference between a lost update and write skew?**
 
 🗣️ "Lost update: two transactions read and write the SAME rows. T1 reads x=10,
 T2 reads x=10, T1 writes x=11, T2 writes x=11. T1's write is lost: x should be 12.
@@ -867,7 +867,7 @@ Prevented by: Serializable isolation only. FOR UPDATE on the rows does not help
 (the predicate is on the COUNT, not specific rows). Optimistic locking per-row
 does not help either."
 
-**Q6: How do you detect long-held locks in PostgreSQL?**
+**[SENIOR] Q6 - [MECHANISM] How do you detect long-held locks in PostgreSQL?**
 
 🗣️ "Query `pg_locks` joined with `pg_stat_activity`:
 ```sql
@@ -878,7 +878,7 @@ JOIN pg_stat_activity a ON a.pid = l.pid
 WHERE NOT l.granted
 ORDER BY a.query_start;
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Not granted = blocked transaction. `query_start` = when it started waiting.
 Find the blocker: same relation, `granted = true`. Look at the blocking query.
@@ -887,7 +887,7 @@ a connection acquired a lock and then sat idle (connection leak, crashed client)
 Fix: `pg_cancel_backend(pid)` to cancel the blocking query. Or set
 `idle_in_transaction_session_timeout = '5min'` in postgresql.conf to auto-cancel."
 
-**Q7: How does optimistic locking work in a NoSQL or distributed database?**
+**[SENIOR] Q7 - [MECHANISM] How does optimistic locking work in a NoSQL or distributed database?**
 
 🗣️ "Distributed databases without a central lock manager use conditional writes:
 (1) DynamoDB: `ConditionExpression='version = :v'`. If condition fails: throws

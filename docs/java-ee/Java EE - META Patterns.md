@@ -109,6 +109,24 @@ Anti-patterns map to eras:
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // ANTI-PATTERN 1: Service Locator
 // BAD - manual JNDI lookup:
@@ -223,7 +241,7 @@ public OrderDTO getOrderGood(@PathParam("id") Long id) {
 }
 ```
 
-> **Code walkthrough:** The Service Locator comparison shows
+> **Code walkthrough:** The Service Locator comparison showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the hidden cost of JNDI: ctx.lookup returns Object, requiring
 > unchecked cast; the JNDI name is a string constant that
 > fails at runtime not compile time; and the InitialContext
@@ -316,7 +334,7 @@ Appears in REST response serialization, not in DB query.
 grep -rn "FetchType.LAZY\|@OneToMany\|@ManyToMany" src/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check: does Order.items have FetchType.LAZY? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Add JOIN FETCH to query, or use @EntityGraph to
 define fetch strategy per use case.
@@ -339,7 +357,7 @@ many threads waiting for connection.
 # HikariCP exposes: /actuator/metrics/hikaricp.connections.active
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HikariCP exposes: /actuator/metrics/hikaricp.connections.active example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -353,8 +371,7 @@ many threads waiting for connection.
 | Debugging | 1 | Reading Hibernate statistics output |
 | Behavioral | 1 | Fixing legacy code with multiple anti-patterns |
 
-**Q1. What is the N+1 select problem and how do you detect
-and fix it in a Jakarta EE application?**
+**[JUNIOR] Q1 - [MECHANISM] What is the N+1 select problem and how do you detect and fix it in a Jakarta EE application?**
 
 N+1: loading a list of N entities, then for each entity executing
 a separate query to load a related association. Total queries: 1 + N.
@@ -379,7 +396,7 @@ long queryCount = stats.getQueryExecutionCount();
 // Shows every SQL statement with parameters
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HikariCP exposes: /actuator/metrics/hikaricp.connections.active example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix:
 ```java
@@ -400,7 +417,7 @@ Optional<Order> findById(Long id);
 private List<OrderItem> items;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HikariCP exposes: /actuator/metrics/hikaricp.connections.active example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* Knowing that JOIN FETCH and
 `@EntityGraph` solve N+1 but can cause a different problem:
@@ -411,8 +428,7 @@ queries or `@BatchSize` for multiple collections.
 
 ---
 
-**Q2. What causes `LazyInitializationException` in Hibernate
-and what are the three canonical fixes?**
+**[JUNIOR] Q2 - [MECHANISM] What causes `LazyInitializationException` in Hibernate and what are the three canonical fixes?**
 
 Cause: a persistent entity with `FetchType.LAZY` association is
 accessed after the JPA persistence context (EntityManager) has been
@@ -433,7 +449,7 @@ order.getItems().size(); // CRASH: LazyInitializationException
 // No active session to load items
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HikariCP exposes: /actuator/metrics/hikaricp.connections.active example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Fix 1 - Eager fetch within transaction:
 ```java
@@ -445,7 +461,7 @@ public Order loadOrderWithItems(Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HikariCP exposes: /actuator/metrics/hikaricp.connections.active example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Fix 2 - DTO projection (no proxy, pure data):
 ```java
@@ -455,7 +471,7 @@ List<OrderDTO> findOrderProjection(@Param("id") Long id);
 // DTO has no associations, no proxy, no LazyInitializationException
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HikariCP exposes: /actuator/metrics/hikaricp.connections.active example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 3 - `spring.jpa.open-in-view=false` (anti-fix warning):
 Open Session in View keeps EntityManager open for the entire
@@ -470,8 +486,7 @@ and completely immune to LazyInitializationException.
 
 ---
 
-**Q3. What is connection pool exhaustion in a Java EE app and
-how do you prevent it?**
+**[JUNIOR] Q3 - [MECHANISM] What is connection pool exhaustion in a Java EE app and how do you prevent it?**
 
 Pool exhaustion: all connections in the pool are acquired but not
 released. New requests wait (then timeout) because no connection
@@ -492,7 +507,7 @@ curl localhost:8080/actuator/metrics/hikaricp.connections.active
 # Look for: ActiveCount == MaxPoolSize, WaitCount > 0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: ActiveCount == MaxPoolSize, WaitCount > 0 example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Prevention:
 ```java
@@ -511,7 +526,7 @@ hikari.connectionTimeout=3000 // 3s wait, then fail fast
 hikari.maxLifetime=1800000   // 30min max age, prevents stale connections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: ActiveCount == MaxPoolSize, WaitCount > 0 example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* The distinction between pool
 exhaustion (active == max) and pool leak (active grows over time,
@@ -521,8 +536,7 @@ legitimate high load. Different root causes, different fixes.
 
 ---
 
-**Q4. What is EJB over-use (over-EJB-ification) and what are
-the symptoms?**
+**[MID] Q4 - [MECHANISM] What is EJB over-use (over-EJB-ification) and what are the symptoms?**
 
 Over-EJB-ification: using EJBs (typically `@Stateless`) for every
 object in the application, treating EJB as a service wrapper for
@@ -554,9 +568,7 @@ no CDI equivalent in the full Jakarta EE spec.
 
 ---
 
-**Q5. DEBUGGING: Your application is running out of database
-connections at production load. How do you diagnose
-systematically?**
+**[MID] Q5 - [DEBUGGING] DEBUGGING: Your application is running out of database connections at production load. How do you diagnose systematically?**
 
 Step 1: Confirm pool exhaustion (not other cause):
 ```bash
@@ -566,7 +578,7 @@ Step 1: Confirm pool exhaustion (not other cause):
 # These confirm pool exhaustion (not connectivity)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This These confirm pool exhaustion (not connectivity) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Check pool metrics during the incident:
 ```bash
@@ -577,7 +589,7 @@ curl /actuator/metrics/hikaricp.connections.pending
 # pending > 0: confirmed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pending > 0: confirmed example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Step 3: Find which code holds connections longest:
 ```bash
@@ -588,7 +600,7 @@ hikari.leakDetectionThreshold=10000 # 10s - logs stack trace
 # Stack trace shows exactly where the connection was acquired
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stack trace shows exactly where the connection was acquired example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Thread dump to see what active transactions are doing:
 ```bash
@@ -597,7 +609,7 @@ jstack <pid> | grep -A 20 "jdbc"
 /core-service=management/service=management-operations:read-resource
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in WildFly CLI: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The leak detection threshold.
 Setting it to 2x the expected maximum query time catches connections
@@ -607,8 +619,7 @@ before the pool is fully exhausted.
 
 ---
 
-**Q6. What is the anemic domain model anti-pattern and when
-does it appear in Java EE applications?**
+**[SENIOR] Q6 - [FAILURE] What is the anemic domain model anti-pattern and when does it appear in Java EE applications?**
 
 Anemic domain model: domain entities (JPA Entities) contain only
 fields and getters/setters. All business logic lives in `@Stateless`
@@ -636,7 +647,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in WildFly CLI: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Problems: business rules scattered across services, duplicated
 checks, entity invariants not enforced by the entity itself.
@@ -655,7 +666,7 @@ public class Order {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or in WildFly CLI: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing when anemic is acceptable.
 For report-only queries and data transfer, anemic DTOs (not entities)
@@ -664,8 +675,7 @@ anemic pattern to domain entities that SHOULD enforce business rules.
 
 ---
 
-**Q7. What is the TRADE-OFF between `FetchType.EAGER` and
-`FetchType.LAZY` and when should you use each?**
+**[SENIOR] Q7 - [TRADE-OFF] What is the TRADE-OFF between `FetchType.EAGER` and `FetchType.LAZY` and when should you use each?**
 
 | Dimension | EAGER | LAZY |
 |---|---|---|
@@ -840,7 +850,7 @@ Or at runtime via CLI (no restart needed):
     write-attribute(name=level,value=DEBUG)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Debugging Enterprise Java Applications example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -960,7 +970,7 @@ bin/jboss-cli.sh --connect --command=\
   subsystem=ejb3:read-resource(recursive=true)"
 ```
 
-> **Code walkthrough:** The diagnostic progression mirrors
+> **Code walkthrough:** The diagnostic progression mirrorsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > real incident response: start with log grepping (seconds),
 > escalate to CLI statistics (minutes), then JVM tools (longer).
 > The WildFly CLI datasource statistics command is critical for
@@ -1048,7 +1058,7 @@ grep "WELD-001409\|Ambiguous" \
 # and which beans are the candidates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This and which beans are the candidates example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Add @Qualifier to disambiguate, or use @Alternative
 to select specific implementation.
@@ -1074,7 +1084,7 @@ grep "com.example.MyClass" server.log
 # Check module dependencies in jboss-deployment-structure.xml
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check module dependencies in jboss-deployment-structure.xml example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -1087,8 +1097,7 @@ grep "com.example.MyClass" server.log
 | Failure Mode | 2 | Server hang diagnosis, memory leak detection |
 | Debugging | 2 | jstack workflow, jcmd heap histogram |
 
-**Q1. How do you take a thread dump from WildFly and what
-do you look for in the output?**
+**[JUNIOR] Q1 - [MECHANISM] How do you take a thread dump from WildFly and what do you look for in the output?**
 
 ```bash
 # Method 1: jstack (attaches to JVM process)
@@ -1103,7 +1112,7 @@ jstack 12345 > thread-dump.txt
 kill -3 12345  # WildFly must be started with console output
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This writes to stdout/log example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 What to look for:
 - **BLOCKED threads**: waiting to acquire a monitor held by
@@ -1127,8 +1136,7 @@ stuck. This eliminates false positives from timing coincidences.
 
 ---
 
-**Q2. What is the WildFly management CLI and what can you
-diagnose with it without restarting the server?**
+**[JUNIOR] Q2 - [DEBUGGING] What is the WildFly management CLI and what can you diagnose with it without restarting the server?**
 
 ```bash
 # Connect to WildFly CLI:
@@ -1158,7 +1166,7 @@ deployment-info
 reload
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 6. Reload config changes (without restart): example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The `statistics-enabled=true`
 command is runtime-changeable. You can enable pool statistics
@@ -1168,8 +1176,7 @@ require a restart.
 
 ---
 
-**Q3. How do you read Hibernate SQL statistics and what do
-the key numbers mean?**
+**[JUNIOR] Q3 - [MECHANISM] How do you read Hibernate SQL statistics and what do the key numbers mean?**
 
 ```java
 // Enable Hibernate statistics:
@@ -1192,7 +1199,7 @@ stats.getSecondLevelCacheMissCount() // L2 cache misses
 stats.getConnectCount()            // DB connections obtained
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 6. Reload config changes (without restart): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 N+1 detection: `queryExecutionCount >> expectedCount`.
 If loading 20 orders produces 200 query executions = N+1 on items.
@@ -1207,8 +1214,7 @@ after the fact. Continuous export catches it during gradual regression.
 
 ---
 
-**Q4. What is the difference between a heap histogram and a
-full heap dump, and when do you use each?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between a heap histogram and a full heap dump, and when do you use each?**
 
 Heap histogram (`jcmd <pid> GC.heap_info` or `jmap -histo <pid>`):
 - Lists all classes with instance count and total bytes
@@ -1236,7 +1242,7 @@ jcmd <pid> GC.heap_dump /tmp/heap.hprof
 # MAT: Leak Suspects Report identifies retention path automatically
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This MAT: Leak Suspects Report identifies retention path automatically example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Always starting with the histogram.
 A full heap dump on a 4GB heap causes a multi-second GC pause that
@@ -1245,8 +1251,7 @@ answers 80% of memory questions without the risk.
 
 ---
 
-**Q5. DEBUGGING: Your WildFly server handles requests but
-responds very slowly. How do you diagnose systematically?**
+**[MID] Q5 - [DEBUGGING] DEBUGGING: Your WildFly server handles requests but responds very slowly. How do you diagnose systematically?**
 
 Step 1: Thread dump (is the slowness CPU or waiting?):
 ```bash
@@ -1255,7 +1260,7 @@ jstack <pid> | grep -c "RUNNABLE"
 # All TIMED_WAITING or WAITING = threads blocked on I/O or locks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This All TIMED_WAITING or WAITING = threads blocked on I/O or locks example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: If threads BLOCKED (lock contention):
 ```bash
@@ -1265,7 +1270,7 @@ jstack <pid> | grep -A 5 "BLOCKED"
 # Search for that address to find the owner thread and what it is doing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Search for that address to find the owner thread and what it is doing example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: If threads WAITING on datasource:
 ```bash
@@ -1275,7 +1280,7 @@ Step 3: If threads WAITING on datasource:
 # WaitCount > 0 = pool exhaustion causing slowness
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WaitCount > 0 = pool exhaustion causing slowness example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: If no thread contention, check GC:
 ```bash
@@ -1284,7 +1289,7 @@ jstat -gcutil <pid> 1000 10  # GC stats every 1s, 10 samples
 # Time in GC > 5% of elapsed time: memory tuning needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Time in GC > 5% of elapsed time: memory tuning needed example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The sequencing. Most engineers
 check database first. Thread dumps are faster and tell you whether
@@ -1293,8 +1298,7 @@ any application-level data.
 
 ---
 
-**Q6. How do you enable remote debugging for a WildFly-deployed
-application?**
+**[SENIOR] Q6 - [DEBUGGING] How do you enable remote debugging for a WildFly-deployed application?**
 
 ```bash
 # Option 1: Modify standalone.conf (persistent):
@@ -1315,7 +1319,7 @@ JAVA_OPTS_EXTRA="-agentlib:jdwp=transport=dt_socket,\
   get-system-properties  # check if already set
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Option 3: WildFly CLI (no restart needed in some versions): example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 IntelliJ IDEA remote debug config:
 - Run -> Edit Configurations -> Remote JVM Debug
@@ -1329,7 +1333,7 @@ ssh -L 8787:localhost:8787 server-host
 # Connect IDEA to localhost:8787 - tunnelled to server
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This tunnelled to server example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The SSH tunnel pattern. Exposing
 JDWP directly to the network is a critical security vulnerability
@@ -1337,8 +1341,7 @@ JDWP directly to the network is a critical security vulnerability
 
 ---
 
-**Q7. What transaction timeout diagnostic information appears
-in WildFly logs and how do you use it?**
+**[SENIOR] Q7 - [DEBUGGING] What transaction timeout diagnostic information appears in WildFly logs and how do you use it?**
 
 ```bash
 # WildFly transaction timeout log pattern:
@@ -1361,7 +1364,7 @@ grep -A 10 "ARJUNA016051" server.log
 # Usually followed by stack trace showing the slow operation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Usually followed by stack trace showing the slow operation example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Tuning transaction timeout:
 ```xml
@@ -1372,7 +1375,7 @@ Tuning transaction timeout:
 </subsystem>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Usually followed by stack trace showing the slow operation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing ARJUNA error codes.
 A search for `ARJUNA016051` immediately identifies transaction
@@ -1541,7 +1544,7 @@ SCHEDULING:
   = runs at midnight daily
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reading Legacy Java EE Code example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1669,7 +1672,7 @@ public class OrderServiceEjb
 */
 ```
 
-> **Code walkthrough:** The annotated EJB code shows how to
+> **Code walkthrough:** The annotated EJB code shows how toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > read transaction boundaries: @Stateless + no annotation =
 > REQUIRED = transactional by default. Every method in a
 > @Stateless EJB joins a transaction unless explicitly overridden.
@@ -1762,7 +1765,7 @@ grep -rn "new OrderService\|new.*ServiceEjb" src/
 # Any 'new' on an @Stateless/@Inject bean = injection skipped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any 'new' on an @Stateless/@Inject bean = injection skipped example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Always obtain managed beans through @Inject or @EJB.
 Never use new on CDI beans or EJBs.
@@ -1788,7 +1791,7 @@ Without it, CDI is disabled (in some containers).
 </beans>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any 'new' on an @Stateless/@Inject bean = injection skipped example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1801,8 +1804,7 @@ Without it, CDI is disabled (in some containers).
 | Failure Mode | 2 | @EJB null injection, transaction not propagating |
 | Debugging | 2 | Transaction log tracing, CDI activation |
 
-**Q1. How do you identify transaction boundaries in legacy
-Java EE code without running it?**
+**[JUNIOR] Q1 - [SCENARIO] How do you identify transaction boundaries in legacy Java EE code without running it?**
 
 Transaction boundary markers in legacy code:
 
@@ -1833,7 +1835,7 @@ public void processOrder(Order order) {
 // Wrapped: javax.transaction.RollbackException
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any 'new' on an @Stateless/@Inject bean = injection skipped example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing that `@Stateless` without
 any `@TransactionAttribute` annotation defaults to `REQUIRED` on ALL
@@ -1843,9 +1845,7 @@ its own private method does not get a transaction for that method.
 
 ---
 
-**Q2. What is the significance of `@Stateless`, `@Stateful`, and
-`@Singleton` EJBs in legacy code and when does each pattern
-indicate a design concern?**
+**[JUNIOR] Q2 - [DESIGN] What is the significance of `@Stateless`, `@Stateful`, and `@Singleton` EJBs in legacy code and when does each pattern indicate a design concern?**
 
 - **`@Stateless`**: pooled, no per-client state, most common. Correct
   use: service layer with transaction/security requirements.
@@ -1871,8 +1871,7 @@ steadily growing memory.
 
 ---
 
-**Q3. How do you determine if CDI is enabled for a deployment
-archive in legacy code?**
+**[JUNIOR] Q3 - [SCENARIO] How do you determine if CDI is enabled for a deployment archive in legacy code?**
 
 CDI enablement rules by Jakarta EE version:
 
@@ -1905,7 +1904,7 @@ jar tf legacy-app.war | grep beans.xml
 # require-bean-descriptor=false: implicit activation (EE 7+)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This require-bean-descriptor=false: implicit activation (EE 7+) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The `require-bean-descriptor`
 WildFly subsystem setting. If enabled (legacy WildFly config),
@@ -1915,8 +1914,7 @@ server-level setting controls whether it is actually required.
 
 ---
 
-**Q4. What are common patterns for dependency injection in
-legacy Java EE code predating CDI?**
+**[MID] Q4 - [SCENARIO] What are common patterns for dependency injection in legacy Java EE code predating CDI?**
 
 Pre-CDI injection patterns (Java EE 2.x - 5.x era):
 
@@ -1928,7 +1926,7 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
        "java:/comp/env/jdbc/MyDS");
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This require-bean-descriptor=false: implicit activation (EE 7+) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **`@EJB` annotation**: EJB-to-EJB injection (predates CDI `@Inject`):
    ```java
@@ -1939,7 +1937,7 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This require-bean-descriptor=false: implicit activation (EE 7+) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **`@Resource` annotation**: resource injection (DataSource,
    Queue, Topic, Environment entries):
@@ -1948,7 +1946,7 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
    private DataSource dataSource;
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This require-bean-descriptor=false: implicit activation (EE 7+) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 4. **ServiceLocator pattern**: factory class performing JNDI lookup,
    used to inject dependencies in non-EJB classes:
@@ -1956,7 +1954,7 @@ Pre-CDI injection patterns (Java EE 2.x - 5.x era):
    PaymentService ps = ServiceLocator.getInstance(PaymentService.class);
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This require-bean-descriptor=false: implicit activation (EE 7+) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing that `@EJB` and `@Inject`
 have different semantics for local EJB lookup. `@EJB` looks up by
@@ -1967,8 +1965,7 @@ requires a proper CDI scope annotation.
 
 ---
 
-**Q5. DEBUGGING: A `@EJB` injection is silently returning null
-at runtime. How do you diagnose?**
+**[MID] Q5 - [DEBUGGING] DEBUGGING: A `@EJB` injection is silently returning null at runtime. How do you diagnose?**
 
 Causes (in order of frequency):
 
@@ -1979,7 +1976,7 @@ Causes (in order of frequency):
    svc.paymentService; // null - container never injected it
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This require-bean-descriptor=false: implicit activation (EE 7+) example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. **EJB not deployed**: the target EJB failed to deploy (deployment
    error, missing dependency), JNDI lookup returns null without
@@ -2006,7 +2003,7 @@ grep -rn 'new OrderService' src/
 # Any 'new' on an EJB class = container injection bypassed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any 'new' on an EJB class = container injection bypassed example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The `new` anti-pattern detection.
 `grep -rn 'new .*Service\|new .*Repository\|new .*EJB'` in the
@@ -2016,8 +2013,7 @@ methods and test setup code.
 
 ---
 
-**Q6. How do you distinguish application-managed JPA from
-container-managed JPA in legacy code?**
+**[SENIOR] Q6 - [SCENARIO] How do you distinguish application-managed JPA from container-managed JPA in legacy code?**
 
 Container-managed JPA:
 ```java
@@ -2030,7 +2026,7 @@ public class OrderRepository {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any 'new' on an EJB class = container injection bypassed example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Application-managed JPA:
 ```java
@@ -2054,7 +2050,7 @@ public class LegacyReportService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any 'new' on an EJB class = container injection bypassed example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Warning signs for application-managed JPA:
 - `@PersistenceUnit` (not `@PersistenceContext`) in EJB code
@@ -2071,8 +2067,7 @@ rolls back.
 
 ---
 
-**Q7. What are the warning signs that legacy Java EE code is not
-properly managing resources?**
+**[SENIOR] Q7 - [SCENARIO] What are the warning signs that legacy Java EE code is not properly managing resources?**
 
 Resource leak patterns (static analysis checklist):
 
@@ -2103,7 +2098,7 @@ grep -n 'createConnection\|getConnection' src/ -r |
 # Files with getConnection but no 'finally' block = leak suspect
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Files with getConnection but no 'finally' block = leak suspect example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The unmanaged thread pattern
 (item 6) is both a resource leak AND a specification violation.

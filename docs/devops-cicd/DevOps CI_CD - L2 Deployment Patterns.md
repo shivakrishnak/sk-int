@@ -208,7 +208,7 @@ ENTRYPOINT ["java", "-jar", "/app.jar"]
 # 5. No .dockerignore (copies test files, git history)
 ```
 
-> **Code walkthrough:** The fatal mistake is `COPY . .` before the
+> **Code walkthrough:** The fatal mistake is `COPY . .` before theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Maven dependency resolution. Docker's layer cache is key-addressed
 > by the checksum of each layer's inputs. Copying all source code
 > before downloading dependencies means that any source change
@@ -230,7 +230,7 @@ hardening**
 # Dockerfile
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Dockerfile example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```dockerfile
 # Multi-stage: lean production image, optimized build cache
@@ -292,8 +292,9 @@ ENTRYPOINT ["java", \
     "/app/app.jar"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Health check for Kubernetes liveness/readiness probes example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
+{% raw %}
 ```yaml
 # .github/workflows/docker.yml
 name: Docker Build and Push
@@ -338,8 +339,9 @@ jobs:
           severity: 'CRITICAL,HIGH'
           exit-code: '1'  # Gate: fail on critical/high CVEs
 ```
+{% endraw %}
 
-> **Code walkthrough:** Three-stage Dockerfile maximizes cache
+> **Code walkthrough:** Three-stage Dockerfile maximizes cacheice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > efficiency. Stage 1 (`deps`) copies only `pom.xml` - this layer
 > is only invalidated when dependencies change. Stage 2 (`builder`)
 > copies source code and builds - this layer is invalidated on source
@@ -583,7 +585,7 @@ cache mounts or GitHub Actions cache. BuildKit does.
 - uses: docker/setup-buildx-action@v3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 2: Configure layer caching with GitHub Actions cache:
 ```yaml
@@ -593,7 +595,7 @@ Step 2: Configure layer caching with GitHub Actions cache:
     cache-to: type=gha,mode=max
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 3: Audit the Dockerfile for cache order. The dependency
 download step must come before source code copying:
@@ -608,7 +610,7 @@ COPY src/ src/
 RUN mvn package -DskipTests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 4. Compile (fast: dependencies are already cached) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4: Add a .dockerignore file. Without it, `COPY . .` includes
 the entire git history, all test reports, and other files that
@@ -729,6 +731,8 @@ Enhanced Scanning (Amazon Inspector, AWS-native). All integrate
 with GitHub Actions.
 
 Implementation pattern:
+
+{% raw %}
 ```yaml
 - name: Scan image for vulnerabilities
   uses: aquasecurity/trivy-action@master
@@ -744,8 +748,9 @@ Implementation pattern:
   with:
     sarif_file: 'trivy-results.sarif'
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 4. Compile (fast: dependencies are already cached) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The SARIF upload makes vulnerability results visible directly in
 the PR's Security tab, linking findings to the specific files that
@@ -815,7 +820,7 @@ COPY --chown=appuser:appuser target/app.jar /app.jar
 USER appuser
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Switch to non-root user example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Mitigation in Kubernetes:
 ```yaml
@@ -828,7 +833,7 @@ securityContext:
     drop: ["ALL"]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Switch to non-root user example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Enforcement: the Kubernetes `PodSecurity` admission controller can
 be set to `Restricted` policy for namespaces, which automatically
@@ -987,7 +992,7 @@ Green Deployment (new/candidate)
 6. After validation period, delete Blue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Blue-Green and Canary example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Canary in Kubernetes with Argo Rollouts:**
 ```
@@ -1004,7 +1009,7 @@ Progression: 5% → 20% → 50% → 80% → 100%
 Each step: wait N minutes, analyze metrics, auto-advance or pause
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Blue-Green and Canary example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Database migration compatibility requirement:**
 Both strategies require the new application version to be able to
@@ -1078,7 +1083,7 @@ spec:
           # No readinessProbe = traffic sent to unhealthy pods
 ```
 
-> **Code walkthrough:** Default rolling deployments have three
+> **Code walkthrough:** Default rolling deployments have threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > production-dangerous properties. The `maxUnavailable: 25%` setting
 > terminates old pods before replacement pods are healthy, creating
 > brief capacity reduction under load. No `readinessProbe` means
@@ -1171,7 +1176,7 @@ spec:
             periodSeconds: 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Green Deployment (new version being deployed) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ```bash
 #!/bin/bash
@@ -1228,7 +1233,7 @@ fi
 echo "Deployment successful. Old version remains for rollback."
 ```
 
-> **Code walkthrough:** The blue-green implementation has two
+> **Code walkthrough:** The blue-green implementation has twoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Kubernetes Deployments running simultaneously, each with a distinct
 > `version` label. The Service selector determines which version
 > receives traffic. The cutover script is a `kubectl patch` on the
@@ -1452,7 +1457,7 @@ spec:
         - setWeight: 80
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Traffic splitting: Argo Rollouts works with Ingress controllers
 (Nginx, Traefik) and service meshes (Istio, Linkerd) to split
@@ -1481,7 +1486,7 @@ spec:
             }[5m]))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 If the success rate falls below 99%, the analysis fails, the rollout
 pauses, and the operator (or automation) decides whether to rollback.

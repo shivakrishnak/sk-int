@@ -110,7 +110,7 @@ RESULT: failure of B is isolated
   A recovers automatically when B recovers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud-Native Architecture Principles example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Immutable Infrastructure:**
 
@@ -133,7 +133,7 @@ IMMUTABLE (cloud-native):
   Benefits: no SSH, no config drift, instant rollback
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud-Native Architecture Principles example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -249,7 +249,7 @@ spec:
       app: order-service
 ```
 
-> **Code walkthrough:** The Deployment manifest shows four
+> **Code walkthrough:** The Deployment manifest shows fourice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cloud-native patterns. Rolling update strategy ensures
 > zero-downtime deployment: Kubernetes adds one new pod,
 > waits for it to pass readiness, then removes one old pod.
@@ -348,7 +348,7 @@ kubectl logs deployment/service-a | grep -i "timeout\|slow"
 # jaeger query -> trace for recent slow request
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This jaeger query -> trace for recent slow request example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Add Hystrix/Resilience4j circuit breaker +
 timeout on every service-to-service HTTP call.
@@ -377,7 +377,7 @@ livenessProbe:
 # GC pause < 30s: pod not killed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GC pause < 30s: pod not killed example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -391,8 +391,7 @@ livenessProbe:
 | Debugging | 1 | Bottleneck identification in distributed scale-out |
 | Behavioral | 2 | Monolith migration, service mesh adoption |
 
-**Q1. What are the core cloud-native architecture principles
-and how do they differ from traditional application design?**
+**[JUNIOR] Q1 - [DESIGN] What are the core cloud-native architecture principles and how do they differ from traditional application design?**
 
 Cloud-native principles (CNCF definition):
 
@@ -428,8 +427,7 @@ one step is a high-risk bet.
 
 ---
 
-**Q2. What is the strangler fig pattern and when is it the
-correct approach for cloud-native migration?**
+**[JUNIOR] Q2 - [MECHANISM] What is the strangler fig pattern and when is it the correct approach for cloud-native migration?**
 
 Strangler fig (Martin Fowler): gradually replace a monolith by
 building new functionality as microservices and routing traffic
@@ -451,7 +449,7 @@ Over time: more routes point to new services,
            monolith handles fewer and fewer requests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GC pause < 30s: pod not killed example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When to use:
 - Large monolith that cannot be rewritten in one shot
@@ -472,8 +470,7 @@ independent. The hardest part of the strangler is the data layer.
 
 ---
 
-**Q3. What is the difference between cloud-native and
-cloud-enabled ("lift and shift")?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between cloud-native and cloud-enabled ("lift and shift")?**
 
 Cloud-enabled (lift and shift):
 - Same application, moved to cloud VMs
@@ -506,8 +503,7 @@ justifies cloud-native re-architecture.
 
 ---
 
-**Q4. DEBUGGING: A microservice is scaling out (more pods/instances)
-but overall system throughput is not improving. How do you diagnose?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: A microservice is scaling out (more pods/instances) but overall system throughput is not improving. How do you diagnose?**
 
 This is Amdahl's Law applied to distributed systems: the serial
 bottleneck limits parallel scaling benefit.
@@ -542,7 +538,7 @@ aws cloudwatch get-metric-statistics \
 # Global rate limiter backed by Redis? Single-instance Redis?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Global rate limiter backed by Redis? Single-instance Redis? example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Starting with the database, not
 the application tier. In 80% of cases where horizontal scaling
@@ -551,8 +547,7 @@ only increases database connection pressure, making things worse.
 
 ---
 
-**Q5. How do service meshes (Istio, Linkerd) relate to cloud-native
-principles and when do you need one?**
+**[MID] Q5 - [MECHANISM] How do service meshes (Istio, Linkerd) relate to cloud-native principles and when do you need one?**
 
 Service mesh: infrastructure layer that handles service-to-service
 communication. Implemented as sidecar proxies (Envoy in Istio)
@@ -587,8 +582,7 @@ control plane itself requires dedicated capacity. This is not a
 
 ---
 
-**Q6. TRADE-OFF: Microservices vs monolith. When does a
-microservices architecture make things worse?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: Microservices vs monolith. When does a microservices architecture make things worse?**
 
 Microservices make things worse when:
 
@@ -620,8 +614,7 @@ boundaries is often better than poorly-decomposed microservices.
 
 ---
 
-**Q7. What is the sidecar pattern and what problems does it
-solve in cloud-native systems?**
+**[SENIOR] Q7 - [MECHANISM] What is the sidecar pattern and what problems does it solve in cloud-native systems?**
 
 Sidecar: a secondary container that runs alongside the main
 application container in the same Kubernetes pod, sharing the
@@ -645,7 +638,7 @@ spec:
     # Reads logs from shared volume, ships to Elasticsearch
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reads logs from shared volume, ships to Elasticsearch example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Problems solved:
 - **Cross-cutting concerns**: add logging, tracing, auth, proxying
@@ -663,8 +656,7 @@ per-pod sidecars to reduce overhead.
 
 ---
 
-**Q8. How do you handle state in a stateless cloud-native service
-and what are the data storage options?**
+**[SENIOR] Q8 - [MECHANISM] How do you handle state in a stateless cloud-native service and what are the data storage options?**
 
 Stateless means: a pod can be terminated and replaced at any time
 without data loss. Any state must be external to the pod.
@@ -695,8 +687,7 @@ For HA stateful workloads: use multi-AZ managed services, not EBS.
 
 ---
 
-**Q9. BEHAVIORAL: Your team has a Java monolith serving 10M daily
-users. How do you approach making it cloud-native?**
+**[SENIOR] Q9 - [MECHANISM] BEHAVIORAL: Your team has a Java monolith serving 10M daily users. How do you approach making it cloud-native?**
 
 Phased migration roadmap:
 
@@ -930,7 +921,7 @@ XII. Admin processes: run as one-off processes
      (database migrations, maintenance tasks)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 12-Factor App in the Cloud example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Factor VI Violation (Sticky Sessions):**
 
@@ -949,11 +940,23 @@ GOOD: stateless process
   (session data is in Redis, not in any server's memory)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 12-Factor App in the Cloud example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // JAVA: 12-Factor App patterns
@@ -1050,7 +1053,7 @@ public class GracefulShutdown implements
 // Fluentd/Fluent Bit aggregates to Elasticsearch/CloudWatch
 ```
 
-> **Code walkthrough:** Four patterns matching 12-factor
+> **Code walkthrough:** Four patterns matching 12-factorice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > principles. Factor III (config): Spring's `@ConfigurationProperties`
 > with environment variable binding. The `${DATABASE_URL:default}`
 > syntax provides a development default while allowing production
@@ -1139,6 +1142,12 @@ image layer inspection.
 or hardcoded in application.properties.
 
 *Fix:*
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```dockerfile
 # BAD: secret in build arg or hardcoded file
 # ARG DB_PASSWORD=secret
@@ -1152,7 +1161,7 @@ COPY application.properties .
 # No actual values - all from env at runtime
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This all from env at runtime example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1199,7 +1208,7 @@ public class OrderConsumer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This all from env at runtime example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -1213,8 +1222,7 @@ public class OrderConsumer {
 | Debugging | 1 | Identifying 12-factor violations in code |
 | Behavioral | 2 | Fixing sticky session anti-pattern, 12-factor review |
 
-**Q1. What are the 12 factors and what problem were they
-designed to solve?**
+**[JUNIOR] Q1 - [DESIGN] What are the 12 factors and what problem were they designed to solve?**
 
 The 12-factor app methodology (Heroku, 2012) defines practices
 for building software-as-a-service applications that are:
@@ -1247,8 +1255,7 @@ startup are not disposable), Dev/prod parity ("local Redis" vs
 
 ---
 
-**Q2. Which 12-factor violations are most impactful for
-cloud deployments and what do they cost operationally?**
+**[JUNIOR] Q2 - [MECHANISM] Which 12-factor violations are most impactful for cloud deployments and what do they cost operationally?**
 
 Most impactful violations:
 
@@ -1262,7 +1269,7 @@ private static final String DB_URL =
 // Config changes require redeployment
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This all from env at runtime example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Factor VI (Processes) violation - local state:**
 ```java
@@ -1274,7 +1281,7 @@ session.setAttribute("user", user);
 // Cannot roll deploy without session loss
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This all from env at runtime example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Factor IX (Disposability) violation - slow startup:**
 ```
@@ -1284,7 +1291,7 @@ session.setAttribute("user", user);
 // Cost: slow deploys, poor self-healing, can't scale quickly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This all from env at runtime example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Factor XI (Logs) violation - log files:**
 ```bash
@@ -1294,7 +1301,7 @@ session.setAttribute("user", user);
 # Cost: cannot debug after pod crash
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cost: cannot debug after pod crash example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Knowing Factor IX (Disposability)
 is the most expensive violation in Kubernetes. Kubernetes assumes
@@ -1303,8 +1310,7 @@ require `startupProbe` to avoid restart loops during deployment.
 
 ---
 
-**Q3. How does Factor III (Config) apply in Kubernetes
-and what are the three mechanisms?**
+**[JUNIOR] Q3 - [MECHANISM] How does Factor III (Config) apply in Kubernetes and what are the three mechanisms?**
 
 Factor III: config stored in environment variables, separate from
 code. Same code image deploys to dev/staging/prod with different
@@ -1327,7 +1333,7 @@ spec:
     - configMapRef: { name: app-config }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cost: cannot debug after pod crash example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **2. Secret (sensitive config):**
 ```yaml
@@ -1339,7 +1345,7 @@ data:
 # Better: use External Secrets Operator + AWS Secrets Manager
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Better: use External Secrets Operator + AWS Secrets Manager example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **3. AWS Secrets Manager via External Secrets Operator (production):**
 ```yaml
@@ -1355,7 +1361,7 @@ spec:
 # Rotation: External Secrets re-syncs when AWS secret rotates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Rotation: External Secrets re-syncs when AWS secret rotates example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Kubernetes Secrets are base64-
 encoded, not encrypted at rest by default. For production: enable
@@ -1365,8 +1371,7 @@ use External Secrets Operator to keep secrets in AWS Secrets Manager
 
 ---
 
-**Q4. DEBUGGING: Two instances of your service behave differently
-in production. What 12-factor violations could cause this?**
+**[MID] Q4 - [DEBUGGING] DEBUGGING: Two instances of your service behave differently in production. What 12-factor violations could cause this?**
 
 Different instance behavior indicates one of:
 
@@ -1380,7 +1385,7 @@ kubectl exec pod-b -- cat /app/config.properties > b.conf
 diff a.conf b.conf
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Diagnosis: exec into both pods and diff the config files: example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Factor VI (Processes) violation - local cached state:**
 ```bash
@@ -1391,7 +1396,7 @@ diff a.conf b.conf
 kubectl exec pod-a -- curl localhost:8080/metrics | grep cache
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Diagnosis: check application metrics per-pod: example demonstrates HTTP request from shell using container. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 **Factor X (Dev/prod parity) violation - different image:**
 ```bash
@@ -1401,7 +1406,7 @@ kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}
 # If different hashes: rolling deploy in progress, or image pull issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If different hashes: rolling deploy in progress, or image pull issue example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Factor IX violation - startup-time initialisation not complete:**
 ```bash
@@ -1410,7 +1415,7 @@ kubectl get pods -o jsonpath='{range .items[*]}{.metadata.name}
 kubectl describe pod pod-b | grep 'Start Time\|Ready'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check pod start time vs when traffic started: example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Factor VI (local cache state)
 is the hardest to diagnose because the warm-cache instance
@@ -1419,8 +1424,7 @@ which pod the ALB routes to.
 
 ---
 
-**Q5. What is Factor XI (Logs) and how do you correctly
-implement it in a Java service on Kubernetes?**
+**[MID] Q5 - [SCENARIO] What is Factor XI (Logs) and how do you correctly implement it in a Java service on Kubernetes?**
 
 Factor XI: "A twelve-factor app never concerns itself with routing
 or storage of its output stream. It should not attempt to write to
@@ -1443,7 +1447,7 @@ In Java with Logback:
 </configuration>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check pod start time vs when traffic started: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Kubernetes collects stdout and routes to log aggregator:
 ```yaml
@@ -1452,7 +1456,7 @@ Kubernetes collects stdout and routes to log aggregator:
 # Application has zero configuration for log routing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Application has zero configuration for log routing example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Why it matters in Kubernetes:
 - Pod ephemeral storage: files written to container filesystem
@@ -1468,8 +1472,7 @@ configuring parsers.
 
 ---
 
-**Q6. TRADE-OFF: When is it correct to deviate from 12-factor
-compliance?**
+**[SENIOR] Q6 - [TRADE-OFF] TRADE-OFF: When is it correct to deviate from 12-factor compliance?**
 
 Pragmatic exceptions:
 
@@ -1504,8 +1507,7 @@ it discovers the divergence during incidents.
 
 ---
 
-**Q7. How do you implement Factor IX (Disposability) for a
-Java Spring Boot service?**
+**[SENIOR] Q7 - [SCENARIO] How do you implement Factor IX (Disposability) for a Java Spring Boot service?**
 
 Disposability requires: fast startup, graceful shutdown on SIGTERM.
 
@@ -1530,7 +1532,7 @@ startupProbe:
   periodSeconds: 5
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 3. startupProbe to extend the startup window without blocking: example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Graceful shutdown (Spring Boot 2.3+):
 ```yaml
@@ -1542,7 +1544,7 @@ spring.lifecycle.timeout-per-shutdown-phase: 30s
 # Set terminationGracePeriodSeconds > 30s to match
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Set terminationGracePeriodSeconds > 30s to match example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Coordinating Spring's shutdown
 timeout with Kubernetes' `terminationGracePeriodSeconds`. If
@@ -1552,8 +1554,7 @@ MUST be longer than Spring's shutdown timeout.
 
 ---
 
-**Q8. What is the relationship between 12-factor and GitOps
-and how do they complement each other?**
+**[SENIOR] Q8 - [MECHANISM] What is the relationship between 12-factor and GitOps and how do they complement each other?**
 
 GitOps: Git is the single source of truth for all desired
 infrastructure and application state. Changes are made by
@@ -1588,9 +1589,7 @@ drift.
 
 ---
 
-**Q9. BEHAVIORAL: A code review reveals the app stores session
-state on local disk. How do you explain the problem and lead
-the fix?**
+**[SENIOR] Q9 - [SCENARIO] BEHAVIORAL: A code review reveals the app stores session state on local disk. How do you explain the problem and lead the fix?**
 
 Explaining the problem:
 "Storing session state on local disk violates Factor VI (stateless
@@ -1621,7 +1620,7 @@ Step 5: Remove sticky sessions from ALB
   (no longer needed once state is external)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Set terminationGracePeriodSeconds > 30s to match example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Removing sticky sessions after
 the migration. Teams often add Redis but forget to remove sticky

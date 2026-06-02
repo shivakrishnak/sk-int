@@ -813,7 +813,7 @@ DEVOPS AT LARGE SCALE (30+ teams):
   Junior engineers: blocked without DevOps training
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why DevOps Scaling Fails Without a Platform Team example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Three failure modes in detail:**
 
@@ -926,7 +926,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 # Different base image - separate CVE lifecycle
 ```
 
-> **Code walkthrough:** Two teams, two Dockerfiles,
+> **Code walkthrough:** Two teams, two Dockerfiles,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > both "working" but with different security postures
 > (Team B runs as root), different base images (separate
 > CVE patch cycles), and different configurations.
@@ -952,7 +952,7 @@ FROM registry.internal/java-base:17-lts
 # OOMKiller protection set by platform-tuned JVM flags
 ```
 
-> **Code walkthrough:** The golden path base image
+> **Code walkthrough:** The golden path base imageice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > centralizes all security, compliance, and runtime
 > configuration. When a CVE appears, the platform team
 > patches `registry.internal/java-base:17-lts` once.
@@ -964,6 +964,11 @@ FROM registry.internal/java-base:17-lts
 > tax elimination in code.
 
 **Example 3: Onboarding time comparison**
+
+
+```bash
+# BAD: unsafe shell scripting pattern
+```
 
 ```bash
 # BAD: Pure DevOps onboarding (2 weeks)
@@ -990,7 +995,7 @@ git push  # triggers golden path CI/CD automatically
 # Engineer focused on product code, not infrastructure
 ```
 
-> **Code walkthrough:** The onboarding comparison
+> **Code walkthrough:** The onboarding comparisonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > shows the concrete time cost of DevOps scaling
 > failure: two weeks per engineer per team vs two
 > hours on the golden path. At an organization hiring

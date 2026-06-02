@@ -68,13 +68,18 @@ southstar/
 - Code lines: max 70 characters
 - ASCII diagrams: max 59 characters wide
 - **Liquid safety:** Every content file frontmatter MUST include
-  `render_with_liquid: false`. This is belt-and-suspenders over the
-  global `_config.yml` default (which is unreliable across Jekyll
-  versions when `Gemfile.lock` is not committed). Code examples with
-  `{{ }}` or `{% %}` (GitHub Actions, Docker inspect, Prometheus, JSX,
-  Angular templates, CSS custom properties) do NOT need
-  `{% raw %}` / `{% endraw %}` wrappers - the per-file frontmatter
-  flag handles it. Do NOT add `{% raw %}` tags.
+  `render_with_liquid: false`. However, this flag is INSUFFICIENT on its
+  own - Jekyll's Liquid PARSER scans file content BEFORE checking the
+  flag (confirmed with `error_mode: warn` in `_config.yml`), emitting
+  Liquid Exceptions/warnings for `{{ }}` and `{% %}` inside code blocks.
+  **MANDATORY:** Any code fence containing `{{ }}` or `{% %}` patterns
+  (GitHub Actions, Docker inspect, Prometheus, JSX, Angular templates,
+  CSS custom properties, etc.) MUST be wrapped with `{% raw %}` /
+  `{% endraw %}` tags OUTSIDE the fence:
+  - Place `{% raw %}` on the line IMMEDIATELY BEFORE the opening ` ``` `
+  - Place `{% endraw %}` on the line IMMEDIATELY AFTER the closing ` ``` `
+  The tags are consumed by the Liquid parser and do NOT appear in output.
+  Validation rule R28 enforces this at pre-commit.
   NOTE: `assets/` is excluded - the just-the-docs theme SCSS files
   use Liquid `{% include %}` for CSS generation.
 - Diagrams: DUAL format - ASCII block first (universal fallback),

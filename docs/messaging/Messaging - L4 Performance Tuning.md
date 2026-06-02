@@ -90,7 +90,7 @@ max.in.flight.requests.per.connection (default 5):
   enable.idempotence=true.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Queue Performance Tuning example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Consumer tuning levers:
 ```
@@ -114,7 +114,7 @@ auto.offset.reset (earliest/latest):
   offset exists. latest for production.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Queue Performance Tuning example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Broker/partition tuning:
 ```
@@ -137,7 +137,7 @@ OS page cache:
   Avoid JVM heap > 6GB (GC pressure).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Message Queue Performance Tuning example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Kafka throughput is primarily limited by network bandwidth and partition parallelism, not by broker CPU. The key optimization path: increase producer batch size and use compression to reduce bytes-per-message, ensure consumer parallelism matches partition count, and size the broker's page cache to hold the working set of hot data.
@@ -343,7 +343,7 @@ kafka-producer-perf-test.sh \
 # Output: throughput MB/s and latency percentiles
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Output: throughput MB/s and latency percentiles example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: increase linger.ms to 10-50ms, increase batch.size to 65536+, enable compression.
 
@@ -367,7 +367,7 @@ kafka-consumer-groups.sh \
 # "max.poll.interval.ms exceeded"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "max.poll.interval.ms exceeded" example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: decrease max.poll.records, increase max.poll.interval.ms, optimize processing logic to be faster.
 
@@ -391,7 +391,7 @@ kafka-topics.sh \
 # kafka_server_BrokerTopicMetrics_ReplicationBytesInPerSec
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This kafka_server_BrokerTopicMetrics_ReplicationBytesInPerSec example demonstrates shell script pattern using Kafka messaging. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity, or temporarily reduce replication factor.
 
@@ -411,7 +411,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 | Scale | 3 min | 1-2 |
 | Behavioral | 3 min | 1 |
 
-#### Q1 - Definition
+**[JUNIOR] Q1 - [CONCEPTUAL] Definition**
 **"What is the first thing you do when asked to improve Kafka performance?"**
 
 *What they are really asking:* Do you profile first or tune blindly? Do you understand that different bottlenecks require different solutions?
@@ -423,7 +423,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q2 - Mechanism
+**[JUNIOR] Q2 - [CONCEPTUAL] Mechanism**
 **"Walk me through how producer batching works and what happens when linger.ms is set to 0 vs 50ms."**
 
 *What to say:*
@@ -433,7 +433,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q3 - Comparison
+**[JUNIOR] Q3 - [CONCEPTUAL] Comparison**
 **"Compare lz4, snappy, gzip, and zstd compression for Kafka. When do you choose each?"**
 
 *What to say:*
@@ -443,7 +443,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q4 - Scenario
+**[MID] Q4 - [CONCEPTUAL] Scenario**
 **"Your order processing Kafka consumer is 2 hours behind on a topic that receives 50,000 messages per minute. How do you recover and ensure it does not happen again?"**
 
 *What to say:*
@@ -453,7 +453,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q5 - Debugging
+**[MID] Q5 - [DEBUGGING] Debugging**
 **"A Kafka producer is sending at only 5,000 messages per second but needs to reach 100,000. Walk me through your diagnosis."**
 
 *What to say:*
@@ -463,7 +463,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q6 - Deep Dive
+**[MID] Q6 - [CONCEPTUAL] Deep Dive**
 **"Explain how Kafka achieves high throughput using the OS page cache and sequential I/O, and how this influences broker tuning."**
 
 *What to say:*
@@ -473,7 +473,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q7 - Scenario (Production)
+**[SENIOR] Q7 - [PRODUCTION] Scenario (Production)**
 **"Design a Kafka deployment that can handle 1 million messages per second with 99th percentile latency under 50ms."**
 
 *What to say:*
@@ -483,7 +483,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q8 - Behavioral
+**[SENIOR] Q8 - [CONCEPTUAL] Behavioral**
 **"Tell me about a time you diagnosed and fixed a Kafka performance problem in production."**
 
 *What to say (structure):*
@@ -493,7 +493,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q9 - Deep Dive
+**[SENIOR] Q9 - [CONCEPTUAL] Deep Dive**
 **"What is the ISR (In-Sync Replicas) mechanism and how does it affect performance under different failure scenarios?"**
 
 *What to say:*
@@ -503,7 +503,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q10 - Misconception
+**[STAFF] Q10 - [CONCEPTUAL] Misconception**
 **"We need maximum throughput - should we set replication factor to 1 and acks=0?"**
 
 *What to say:*
@@ -513,7 +513,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q11 - Scale
+**[STAFF] Q11 - [ARCHITECTURE] Scale**
 **"How does Kafka performance change when you go from 10 million to 10 billion messages per day?"**
 
 *What to say:*
@@ -523,7 +523,7 @@ Fix: identify the slow broker (disk I/O, network, GC pause), add broker capacity
 
 ---
 
-#### Q12 - Edge Case
+**[STAFF] Q12 - [CONCEPTUAL] Edge Case**
 **"What happens to Kafka performance when a GC pause hits a broker?"**
 
 *What to say:*
@@ -570,7 +570,7 @@ Order Service    Kafka Cluster      Consumers
                  64GB RAM (6GB JVM heap)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This kafka_server_BrokerTopicMetrics_ReplicationBytesInPerSec example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Math:**
 - 500,000 orders/hour = ~139 orders/second

@@ -85,7 +85,7 @@ sedan with active suspension (never hits a speedbump, high cost)."
 ### 📘 Concept Explanation
 
 **JVM ecosystem and deployment options:**
-```
+```plaintext
 JVM DISTRIBUTION COMPARISON:
 
   HotSpot (OpenJDK / Oracle JDK):
@@ -145,7 +145,7 @@ CONTAINER DEPLOYMENT ARCHITECTURE:
     -Xlog:gc*:file=/var/log/gc.log:time,level,tags:filecount=3,filesize=10m
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L5 Deployment Architecture example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -227,7 +227,7 @@ public class VirtualThreadConfig {
 // No code changes needed in request handlers (virtual thread = regular thread to app code)
 ```
 
-> **Code walkthrough:** The AppCDS workflow is a build-time optimization with zero
+> **Code walkthrough:** The AppCDS workflow is a build-time optimization with zeroice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > runtime overhead after the archive is created. The key: the shared archive file
 > (`app.jsa`) is memory-mapped read-only by all JVM instances on the same host. The
 > OS kernel de-duplicates identical read-only pages across processes. This means
@@ -338,7 +338,7 @@ Fix:
     # Commit the generated config (don't regenerate every build)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Commit the generated config (don't regenerate every build) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -561,7 +561,7 @@ JVM_OPTS: >-
   -XX:NativeMemoryTracking=summary
   -Xlog:gc*:file=/var/log/gc.log:time:filecount=3,filesize=10m
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Services extend (add service-specific flags) but cannot remove baseline flags.
 Flag governance: any `--add-opens`, `-XX:+UnlockExperimentalVMOptions`, or
@@ -726,7 +726,7 @@ SHARED INFRASTRUCTURE:
   Crash capture: PVC at /var/crash/, sidecar ships to S3
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

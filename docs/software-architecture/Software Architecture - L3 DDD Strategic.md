@@ -147,7 +147,7 @@ CONTEXT MAP - E-COMMERCE EXAMPLE
     +---------------------+   +--------------------+
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bounded Contexts example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Context integration patterns:**
 
@@ -211,7 +211,7 @@ public class Customer {
 // One change breaks three contexts.
 ```
 
-> **Code walkthrough:** The universal `Customer` model accumulates
+> **Code walkthrough:** The universal `Customer` model accumulatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fields from every context that needs customer data. The CRM,
 > billing, and shipping teams all share this class. A billing
 > requirement change triggers a change to this shared class,
@@ -220,6 +220,12 @@ public class Customer {
 > Testing billing logic requires a full `Customer` object with
 > CRM, shipping, and billing fields populated. This is the "canonical
 > data model" anti-pattern.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Bounded Context per business area
@@ -272,7 +278,7 @@ public class CrmCustomerAdapter {
 // The ACL absorbs external instability.
 ```
 
-> **Code walkthrough:** Each Bounded Context defines its own
+> **Code walkthrough:** Each Bounded Context defines its ownice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `Customer` concept - or renames it entirely (`BillingAccount`)
 > for clarity. The `CrmCustomerAdapter` (Anti-Corruption Layer)
 > translates CRM's model to the Order Context's local model.
@@ -315,7 +321,7 @@ public class Product {
 // The rest of each context's Product concept is independent.
 ```
 
-> **Code walkthrough:** The Shared Kernel contains only `ProductId`
+> **Code walkthrough:** The Shared Kernel contains only `ProductId`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > - the minimum shared element needed for cross-context references.
 > The Order Context stores a denormalized `productName` and `unitPrice`
 > at order time (so the order line is self-contained even if the
@@ -396,7 +402,7 @@ public class Order {
 // When CRM changes CrmCustomerDto -> Order breaks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *Fix:*
 ```java
@@ -415,7 +421,7 @@ public class CrmAdapter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Failure 2: Anemic Context Map - implicit integration**
 
@@ -435,7 +441,7 @@ WHERE datname = 'main_db'
 -- Multiple service users = shared schema = no context boundary
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Each Bounded Context owns its schema exclusively. Other
 contexts access it only through its API or event stream.
@@ -938,7 +944,7 @@ MICROSERVICES PRINCIPLES
    No cross-service schema writes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Microservices Architecture Principles example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The eight fallacies of distributed computing:**
 (Peter Deutsch, 1994 - apply directly to microservices)
@@ -999,7 +1005,7 @@ public class OrderService {
 // may break OrderService's queries.
 ```
 
-> **Code walkthrough:** `OrderService` imports and uses
+> **Code walkthrough:** `OrderService` imports and usesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `InventoryRepository` directly - it writes to Inventory's data.
 > This is the distributed monolith anti-pattern: separately deployed
 > services that are tightly coupled through a shared database. A
@@ -1055,7 +1061,7 @@ public class InventoryServiceClient {
 // OrderService is isolated from InventoryService internals.
 ```
 
-> **Code walkthrough:** `OrderService` communicates with
+> **Code walkthrough:** `OrderService` communicates withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `InventoryService` through its published API (via `InventoryServiceClient`)
 > or through events (`OrderPlaced`). It never writes to Inventory's
 > database. The `CircuitBreaker` wraps the HTTP call - if
@@ -1133,7 +1139,7 @@ A: 5000ms (timeout)
 # All threads in A, B, C, D are blocked waiting for E
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This All threads in A, B, C, D are blocked waiting for E example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* (1) Circuit breaker on each client: break the chain before
 thread exhaustion. (2) Timeout + fallback: each service has a
@@ -1154,7 +1160,7 @@ WHERE query LIKE '%service_b_owned_table%';
 -- Multiple different client IPs = shared table = coupling
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This All threads in A, B, C, D are blocked waiting for E example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Services access only their own tables. Other services
 access data via API or events. Schema migrations become internal

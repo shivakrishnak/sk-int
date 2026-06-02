@@ -134,7 +134,7 @@ mTLS (mutual TLS):
   Benefit: service identity (not just network identity)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Mesh example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Traffic management:**
 
@@ -183,7 +183,7 @@ Fault injection (chaos testing):
   No code change: Istio config only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Service Mesh example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -224,7 +224,7 @@ spec:
             paths: ["/orders/*"]
 ```
 
-> **Code walkthrough:** PeerAuthentication STRICT mode enforces mTLS for every
+> **Code walkthrough:** PeerAuthentication STRICT mode enforces mTLS for everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > call to every service in the production namespace. No service can call another
 > over plain HTTP - the Envoy sidecar will reject the connection (missing or
 > invalid certificate). The AuthorizationPolicy adds the second layer: even with
@@ -276,7 +276,7 @@ spec:
         pendingRequests: 100
 ```
 
-> **Code walkthrough:** VirtualService defines per-call behavior: 10-second total
+> **Code walkthrough:** VirtualService defines per-call behavior: 10-second totalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > timeout, up to 3 retry attempts (each attempt has a 3-second timeout), and
 > the retry conditions (don't retry on 4xx business errors, only on connect
 > failures and server errors). DestinationRule defines circuit breaking (outlier
@@ -322,7 +322,7 @@ public class CheckoutController {
 // Jaeger: correlates both spans into one trace
 ```
 
-> **Code walkthrough:** The application code is completely clean of networking
+> **Code walkthrough:** The application code is completely clean of networkingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > concerns. The paymentClient makes a plain HTTP POST. The checkout Envoy sidecar
 > intercepts it, establishes an mTLS connection to the payment service's Envoy,
 > adds the tracing headers (traceparent, b3), and applies retries per the
@@ -394,7 +394,7 @@ Fix: restart the pod (rolling restart) to get new pod with sidecar injected.
 
 ---
 
-#### Q1 - How does Istio implement mTLS without changing application code?
+**[JUNIOR] Q1 - [HANDS-ON] How does Istio implement mTLS without changing application code?**
 
 mTLS transparent injection: Envoy intercepts all traffic via iptables.
 
@@ -437,7 +437,7 @@ Mechanism:
   Benefit: no sidecar = no extra container = less memory
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The iptables interception mechanism has
 a subtle implication: localhost traffic (127.0.0.1) within the same pod is NOT
@@ -451,11 +451,11 @@ overhead; behavior differences in localhost handling.
 
 ---
 
-#### Q2 - How does Istio's traffic shifting enable zero-downtime canary deployments?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does Istio's traffic shifting enable zero-downtime canary deployments?**
 
 Canary with Istio: traffic-weighted routing to two deployment versions.
 
-```
+```plaintext
 Setup:
   order-service-v1: Deployment (10 replicas, label version:v1)
   order-service-v2: Deployment (1 replica, label version:v2)
@@ -501,7 +501,7 @@ Header-based routing (dark launch):
   Real users: never see v2 until ready
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The combination of traffic shifting + automatic
 metrics comparison is "progressive delivery" (implemented by Flagger for Istio).
@@ -515,7 +515,7 @@ reliable automated process.
 
 ---
 
-#### Q3 - How does circuit breaking work in Istio vs application-level Resilience4j?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does circuit breaking work in Istio vs application-level Resilience4j?**
 
 Circuit breaking layers: Istio vs application.
 
@@ -565,7 +565,7 @@ Using both together:
     Complementary, not redundant
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The key confusion: Istio outlier detection
 and Resilience4j circuit breaker do different things. Istio removes unhealthy
@@ -579,11 +579,11 @@ service-level failure (DB outage, deployment with a bug affecting all pods).
 
 ---
 
-#### Q4 - How do you debug a service mesh connectivity issue?
+**[MID] Q4 - [DEBUGGING] How do you debug a service mesh connectivity issue?**
 
 Service mesh debugging: when two services can't communicate.
 
-```
+```plaintext
 Symptom: ServiceA can't reach ServiceB
   Error: "connection refused" or "RBAC: access denied" or timeout
 
@@ -630,7 +630,7 @@ Step 5: istioctl
   -> Is the inbound listener configured correctly?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most common service mesh debugging mistake
 is jumping to Istio configuration issues when the problem is simpler. Check first:
@@ -644,7 +644,7 @@ exactly what routing rules Envoy received from Istiod.
 
 ---
 
-#### Q5 - How does Istio handle multi-cluster service mesh?
+**[MID] Q5 - [CONCEPTUAL] How does Istio handle multi-cluster service mesh?**
 
 Multi-cluster Istio: service mesh spanning multiple Kubernetes clusters.
 
@@ -683,10 +683,10 @@ Network topology:
   Flat network: clusters on same VPC, direct pod-to-pod
   Non-flat (common): clusters in different VPCs, no direct pod access
   East-west gateway: each cluster has a gateway for cross-cluster traffic
-    Service-a(A) -> east-west-gateway(A) -> internet -> east-west-gateway(B) -> service-b(B)
+    Service-a(A) -> east-west-gateway(A) -> internet -> east-west-gateway(B) ...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Multi-cluster service mesh adds operational
 complexity that compounds the base Istio complexity. The certificate trust story
@@ -699,11 +699,11 @@ Istio with better multi-cluster tooling than upstream Istio.
 
 ---
 
-#### Q6 - How does service mesh affect application performance?
+**[MID] Q6 - [CONCEPTUAL] How does service mesh affect application performance?**
 
 Service mesh overhead: quantifying the cost.
 
-```
+```plaintext
 Overhead sources:
 
 1. CPU overhead (Envoy sidecar per pod):
@@ -744,7 +744,7 @@ Optimizations:
   Limit trace sampling rate: 100% tracing = 2x overhead; 10% = manageable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The service mesh latency overhead (1-2ms per
 call) compounds across a request path. A user request that calls 5 internal
@@ -758,7 +758,7 @@ the actual overhead in your environment.
 
 ---
 
-#### Q7 - What are Istio Ingress Gateway vs Kubernetes Ingress?
+**[SENIOR] Q7 - [CONCEPTUAL] What are Istio Ingress Gateway vs Kubernetes Ingress?**
 
 Kubernetes Ingress vs Istio IngressGateway: two different external access models.
 
@@ -829,7 +829,7 @@ When to use which:
   Both: technically possible (different paths) but confusing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Gateway API (networking.k8s.io/v1beta1 Gateway)
 is the Kubernetes SIG-Network evolution beyond Ingress: a standardized API that
@@ -843,11 +843,11 @@ Istio-specific resources.
 
 ---
 
-#### Q8 - How does Istio implement distributed tracing?
+**[SENIOR] Q8 - [HANDS-ON] How does Istio implement distributed tracing?**
 
 Istio distributed tracing: automatic trace context propagation.
 
-```
+```plaintext
 How Istio generates trace spans:
   Inbound request to pod:
     Envoy(A) receives request
@@ -898,7 +898,7 @@ Sampling:
   Use: Jaeger adaptive sampling (auto-adjusts based on traffic)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The application header propagation requirement
 is the most important operational concern. Istio can't force application code to
@@ -913,7 +913,7 @@ to debug a cross-service issue and realizes the trace stops at the service bound
 
 ---
 
-#### Q9 - What is Istio ambient mode and how does it differ from sidecar mode?
+**[SENIOR] Q9 - [CONCEPTUAL] What is Istio ambient mode and how does it differ from sidecar mode?**
 
 Istio ambient mode: ztunnel and waypoints instead of sidecars.
 
@@ -957,7 +957,7 @@ Migration:
   For L7 features: deploy waypoint proxy for that namespace
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Ambient mode is the future direction for Istio
 and represents a significant operational simplification. The sidecar model has
@@ -972,11 +972,11 @@ ambient mode. For established Istio deployments: migrate carefully after the
 
 ---
 
-#### Q10 - How does Istio integrate with Prometheus and Grafana?
+**[STAFF] Q10 - [CONCEPTUAL] How does Istio integrate with Prometheus and Grafana?**
 
 Istio observability: automatic metrics without application code changes.
 
-```
+```plaintext
 Istio metrics (generated by Envoy, NOT application):
 
 Inbound request metrics (per service):
@@ -1020,7 +1020,7 @@ Application metrics vs mesh metrics:
     Istio success, application failure: possible (200 response with error body)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Istio metrics provide the "golden signals"
 (rate, error, latency) for every service without any application instrumentation.
@@ -1036,7 +1036,7 @@ metrics (a 200 HTTP response with a business error body looks fine to Istio).
 
 ---
 
-#### Q11 - How do you scale Istio control plane for large clusters?
+**[STAFF] Q11 - [ARCHITECTURE] How do you scale Istio control plane for large clusters?**
 
 Istio control plane scaling: Istiod at 1000+ services.
 
@@ -1084,7 +1084,7 @@ Istiod scaling challenges:
   istiod_cpu/memory usage metrics
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* At large scale, Istiod becomes the cluster-wide
 configuration bus. Every service, every pod, every policy change: processed by
@@ -1098,7 +1098,7 @@ Monitor and set alerts on push time as an SLO for your control plane.
 
 ---
 
-#### Q12 - Design a zero-trust security architecture using service mesh for a financial system.
+**[STAFF] Q12 - [ARCHITECTURE] Design a zero-trust security architecture using service mesh for a financial system.**
 
 Zero-trust with service mesh: strict identity and authorization for every call.
 
@@ -1164,7 +1164,7 @@ Threat model:
   Lateral movement: NetworkPolicy blocks pod-to-pod without Istio path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Zero-trust in a financial context must satisfy
 auditors, not just security engineers. The audit trail (who called what, when,

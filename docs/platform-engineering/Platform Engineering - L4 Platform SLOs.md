@@ -7,6 +7,16 @@ permalink: /platform-engineering/l4-platform-slos/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Platform SLO Design and Error Budgets](#platform-slo-design-and-error-budgets) | |
+
+---
+
+
 # Platform SLO Design and Error Budgets
 
 ---
@@ -190,7 +200,7 @@ STEP 6: ERROR BUDGET POLICY
   Budget exhausted:        Incident review + root cause fix before resuming.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Platform SLO Design and Error Budgets example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 SLOs without error budget policies are reporting mechanisms. SLOs with
@@ -220,6 +230,7 @@ engineers), not end-user experience. This means:
 # No way to justify reliability work to leadership.
 ```
 
+{% raw %}
 ```yaml
 # GOOD: SLO-based reliability with burn-rate alerting
 
@@ -272,8 +283,9 @@ groups:
       severity: warning
       slo: argocd-availability
 ```
+{% endraw %}
 
-> **Code walkthrough:** The Prometheus recording rules calculate the
+> **Code walkthrough:** The Prometheus recording rules calculate theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ArgoCD sync success rate as a ratio of succeeded syncs to total syncs.
 > The burn rate recording rule normalizes the error rate against the
 > SLO budget (0.005 for 99.5% SLO) - a burn rate of 1.0 means the error
@@ -344,7 +356,7 @@ if not allowed:
     exit(1)
 ```
 
-> **Code walkthrough:** The `ErrorBudgetPolicy` class queries Prometheus
+> **Code walkthrough:** The `ErrorBudgetPolicy` class queries Prometheusice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for the remaining error budget and returns a deployment decision. When
 > budget is below 10% (exhausted), all platform deployments are blocked.
 > When below 25%, only hotfixes are allowed. This is called from the
@@ -388,7 +400,7 @@ def generate_slo_report(period_days: int = 7) -> dict:
     return slos
 ```
 
-> **Code walkthrough:** The report generator collects actual SLO values
+> **Code walkthrough:** The report generator collects actual SLO valuesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for the reporting period and compares them against targets. Each SLO
 > shows target, actual, and MET/MISSED status. For met SLOs, it calculates
 > remaining error budget. This report is generated automatically weekly
@@ -572,7 +584,7 @@ operational tools.
 
 ---
 
-#### Q1 - What are the four golden signals and how do they apply to platform SLOs?
+**[JUNIOR] Q1 - [CONCEPTUAL] What are the four golden signals and how do they apply to platform SLOs?**
 
 The four golden signals (Latency, Traffic, Errors, Saturation) from
 Google's SRE book are a framework for instrumenting any service. Applied
@@ -611,7 +623,7 @@ platform is actually functioning correctly.
 
 ---
 
-#### Q2 - How do you negotiate SLO targets with product teams and leadership?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you negotiate SLO targets with product teams and leadership?**
 
 SLO negotiation is a business conversation, not a technical one.
 
@@ -651,7 +663,7 @@ skepticism about whether the SLO is meaningful.
 
 ---
 
-#### Q3 - How do you differentiate SLOs for different platform capabilities?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you differentiate SLOs for different platform capabilities?**
 
 Platform SLOs should be granular enough to be actionable. A single
 "platform availability" SLO is too coarse to drive operational decisions.
@@ -687,7 +699,7 @@ programs.
 
 ---
 
-#### Q4 - How do you handle planned maintenance windows within the error budget?
+**[MID] Q4 - [CONCEPTUAL] How do you handle planned maintenance windows within the error budget?**
 
 Planned maintenance (Kubernetes upgrades, node pool replacements, stateful
 component upgrades) consumes error budget just like unplanned incidents.
@@ -712,7 +724,7 @@ from error rate calculations.
 # if maintenance window inactive = 1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This if maintenance window inactive = 1 example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Option 2 - Maintenance windows consume error budget (simpler):**
 All downtime, planned or unplanned, consumes error budget. This forces
@@ -737,7 +749,7 @@ and avoid platform maintenance during those periods.
 
 ---
 
-#### Q5 - What is the difference between SLOs, SLAs, and SLIs?
+**[SENIOR] Q5 - [TRADE-OFF] What is the difference between SLOs, SLAs, and SLIs?**
 
 These terms are related but distinct:
 
@@ -778,7 +790,7 @@ reliability rather than negotiating penalties.
 
 ---
 
-#### Q6 - How do you bootstrap a platform SLO program from zero?
+**[SENIOR] Q6 - [MECHANISM] How do you bootstrap a platform SLO program from zero?**
 
 Starting from scratch, the sequence:
 
@@ -818,7 +830,7 @@ targets are guesses. The first time the guessed SLO is violated in month
 
 ---
 
-#### Q7 - How do you use error budgets to drive platform team sprint planning?
+**[SENIOR] Q7 - [MECHANISM] How do you use error budgets to drive platform team sprint planning?**
 
 Error budget remaining is the primary input to sprint planning for a
 mature platform team.
@@ -859,7 +871,7 @@ another platform engineer to focus on reliability." Error budgets convert
 
 ---
 
-#### Q8 - How do you communicate SLO status to product teams?
+**[STAFF] Q8 - [MECHANISM] How do you communicate SLO status to product teams?**
 
 Platform SLO communication requires different formats for different audiences.
 
@@ -887,7 +899,7 @@ Action items this week:
   Fix: deployed in PR #1234.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This if maintenance window inactive = 1 example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Monthly SLO review (stakeholder meeting):**
 Trend charts showing SLO attainment over the past 3-6 months, error
@@ -904,7 +916,7 @@ organization learns about it simultaneously - no escalation needed.
 
 ---
 
-#### Q9 - How do you handle multi-cluster SLOs?
+**[STAFF] Q9 - [MECHANISM] How do you handle multi-cluster SLOs?**
 
 A platform serving 5 clusters needs SLOs that span clusters, not just
 individual cluster SLOs.
@@ -950,7 +962,7 @@ that matters to the teams on that cluster.
     )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Per-cluster SLI (for root cause) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Error budget policy for multi-cluster:**
 The global error budget policy is triggered by the aggregate SLO.
@@ -967,7 +979,7 @@ highest-volume clusters first for fastest global SLO recovery.
 
 ---
 
-#### Q10 - What happens when you consistently miss your SLOs?
+**[STAFF] Q10 - [FAILURE] What happens when you consistently miss your SLOs?**
 
 Consistently missing SLOs (3+ consecutive months) is a systemic signal
 that requires organizational response, not just technical response.
@@ -1018,7 +1030,7 @@ measuring actual progress."
 
 ---
 
-#### Q11 - How do you define SLOs for developer experience rather than system availability?
+**[STAFF] Q11 - [MECHANISM] How do you define SLOs for developer experience rather than system availability?**
 
 Developer experience SLOs measure the platform from the developer's
 perspective, not the infrastructure's perspective.
@@ -1068,7 +1080,7 @@ def measure_ttfd_synthetic():
     delete_service("synthetic-test-svc")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Clean up example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* Developer experience SLOs using
 synthetic monitoring are the most direct measure of platform quality
@@ -1081,7 +1093,7 @@ files a ticket.
 
 ---
 
-#### Q12 - How do you retire or upgrade SLOs as the platform matures?
+**[STAFF] Q12 - [MECHANISM] How do you retire or upgrade SLOs as the platform matures?**
 
 SLOs should become more stringent as the platform matures. A 99.0%
 availability SLO appropriate for a year-1 platform is inadequate for

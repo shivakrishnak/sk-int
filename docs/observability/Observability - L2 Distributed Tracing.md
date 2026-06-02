@@ -203,7 +203,7 @@ spec:
 # Jaeger recommends replacing with OTel Collector
 ```
 
-> **Code walkthrough:** The BAD example uses the Jaeger Agent,
+> **Code walkthrough:** The BAD example uses the Jaeger Agent,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which was the original collection pattern. The Agent uses UDP
 > (port 6831) for span reception, which has no acknowledgement,
 > no retry, and no persistence. Under network congestion, spans
@@ -274,7 +274,7 @@ spec:
           exporters: [otlp/jaeger]
 ```
 
-> **Code walkthrough:** The GOOD setup uses the OTel Collector
+> **Code walkthrough:** The GOOD setup uses the OTel Collectorice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with three key processors. The batch processor groups spans
 > for efficient transmission. The memory_limiter prevents OOM
 > on burst traffic. The tail_sampling processor buffers complete
@@ -380,7 +380,7 @@ curl http://elasticsearch:9200/_cluster/health | \
 # OTEL_TRACES_SAMPLER_ARG=1.0  (1.0 = 100%, 0.01 = 1%)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OTEL_TRACES_SAMPLER_ARG=1.0  (1.0 = 100%, 0.01 = 1%) example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Address whichever step fails. Most common: sampling
 environment variable was set to 0.0 in production for cost
@@ -410,7 +410,7 @@ curl -s http://elasticsearch:9200/_cat/indices/jaeger-span-* \
 # Most recent index shows current ingest rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Most recent index shows current ingest rate example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Enable index rollover and retention. Jaeger's Elasticsearch
 index cleaner job deletes indices older than N days. Reduce
@@ -690,7 +690,7 @@ Span span = tracer.spanBuilder("order.process")
     .setParent(ctx).startSpan();
 ```
 
-> **Code walkthrough:** The producer injects the current trace
+> **Code walkthrough:** The producer injects the current traceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > context into Kafka headers using OTel's TextMapPropagator, which
 > handles the W3C Trace Context header format. The consumer extracts
 > it back into a Context object. Creating the child span with
@@ -904,7 +904,7 @@ Error Response to User:
   - Header: X-Request-ID: req-8f2a1c9e
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Correlation IDs and Request Context example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Returning the correlation ID in the error response is critical
@@ -974,7 +974,7 @@ public ResponseEntity<Order> checkout(
 // PaymentService never received the requestId
 ```
 
-> **Code walkthrough:** The BAD example extracts the X-Request-ID
+> **Code walkthrough:** The BAD example extracts the X-Request-IDice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > header but does nothing with it. The downstream call to payment
 > service does not include the header, so payment service logs
 > cannot be correlated to checkout logs. The log statement does
@@ -1057,7 +1057,7 @@ public RestTemplate correlatingRestTemplate(
 }
 ```
 
-> **Code walkthrough:** The GOOD example uses a Servlet filter to
+> **Code walkthrough:** The GOOD example uses a Servlet filter toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > handle correlation ID lifecycle at the framework level. The filter
 > accepts a client-provided ID (with format validation to prevent
 > log injection attacks) or generates a new one. The MDC injection
@@ -1144,6 +1144,8 @@ header from inbound requests. Its logs include no correlation_id
 field.
 
 Diagnostic:
+
+{% raw %}
 ```bash
 # Check if payment service logs include correlation_id
 {app="payment"} | json | correlation_id != ""
@@ -1154,8 +1156,9 @@ Diagnostic:
   line_format "{{.http_request_headers}}"
 # Look for X-Request-ID in the request headers
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for X-Request-ID in the request headers example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add the correlation ID filter to the payment service.
 If it is a different language, implement equivalent MDC
@@ -1188,7 +1191,7 @@ Diagnostic:
 # (injected lines may not have service/trace_id fields)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (injected lines may not have service/trace_id fields) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Add format validation before MDC injection:
 `id.matches("[a-zA-Z0-9-]{8,64}")` - reject IDs

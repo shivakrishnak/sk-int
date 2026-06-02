@@ -134,7 +134,7 @@ hot.subscribe(v => console.log('B:', v));
 hot.next(1); // A: 1, B: 1 - both receive same value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RxJS Observables vs Promises example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 **The key insight:**
 Observables and Promises are not interchangeable. `from(promise)`
@@ -192,7 +192,7 @@ async function setupSearch(inputEl) {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern manually tries to
+> **Code walkthrough:** The BAD pattern manually tries toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > solve search-as-you-type but fails at three points: no
 > debouncing means an API call per keystroke; no cancellation
 > means stale responses can overwrite fresh results; and there
@@ -237,7 +237,7 @@ function setupSearch(inputEl) {
 }
 ```
 
-> **Code walkthrough:** `debounceTime(300)` waits for a 300ms
+> **Code walkthrough:** `debounceTime(300)` waits for a 300ms silence in user input before emitting the latest value. **KEY MECHANISM:** RxJS cancels the inner timer on each new emission and restarts it; only the final value after a 300ms pause is emitted downstream. **WHY IT MATTERS:** prevents an API call on every keystroke, reducing backend load dramatically. **WHAT BREAKS:** too short a delay causes excess requests; too long feels sluggish to users. **TAKEAWAY:** tune debounce delay to balance responsiveness and request frequency - 300ms is a common starting point for search inputs.
 > pause in typing before emitting, reducing API calls by 80-90%.
 > `distinctUntilChanged` prevents re-searching the same query.
 > `switchMap` is the key operator: it cancels the previous
@@ -304,6 +304,11 @@ and cancellation.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Subscription memory leak**
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: Never unsubscribing
 class Component {
@@ -335,7 +340,7 @@ class Component {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **WHAT BREAKS: use arrow functions for callbacks; use regular functions for object methods.**
 
 ---
 
@@ -350,8 +355,7 @@ class Component {
 | Design | 2 | Search-as-you-type, real-time data |
 | Behavioral | 1 | Introducing RxJS to a team |
 
-**Q1. What is the difference between cold and hot
-Observables?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between cold and hot Observables?**
 
 Cold Observable: the producer runs independently for each
 subscriber. Each subscription starts its own execution.
@@ -380,7 +384,7 @@ subject.subscribe(v => console.log('B:', v));
 subject.next(1); // both receive: A: 1, B: 1
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Knowing that cold Observables
 can be "warmed" (converted to hot) using `share()` and
@@ -389,7 +393,7 @@ idiomatic way to cache the most recent value for late subscribers.
 
 ---
 
-**Q2. When should you use Observables instead of async/await?**
+**[JUNIOR] Q2 - [SCENARIO] When should you use Observables instead of async/await?**
 
 Use Observables when:
 - The data source emits multiple values over time (user events,
@@ -418,8 +422,7 @@ RxJS learning curve.
 
 ---
 
-**Q3. How does `switchMap` eliminate the search-as-you-type
-race condition?**
+**[JUNIOR] Q3 - [MECHANISM] How does `switchMap` eliminate the search-as-you-type race condition?**
 
 `switchMap` maps each source emission to an inner Observable,
 and cancels the PREVIOUS inner Observable when a new source
@@ -443,7 +446,7 @@ input$.pipe(
 // Only "jav" results ever display
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 The key: when `switchMap` receives a new source value, it
 calls `unsubscribe()` on the current inner observable.
@@ -459,7 +462,7 @@ new-while-processing.
 
 ---
 
-**Q4. Describe the four mapping operators and when to use each.**
+**[MID] Q4 - [SCENARIO] Describe the four mapping operators and when to use each.**
 
 `switchMap(fn)`: cancel previous inner, start new. Use for:
 search, autocomplete, navigation (any time new supersedes old).
@@ -490,7 +493,7 @@ messages$.pipe(concatMap(m => sendMessage(m)))
 submit$.pipe(exhaustMap(() => submitForm()))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 Memory device: Switch = latest wins. Merge = all concurrent.
 Concat = ordered queue. Exhaust = first wins while active.
@@ -502,13 +505,13 @@ buffering if the source emits faster than the inner processes.
 
 ---
 
-**Q5. What is the async pipe in Angular and what does it
-automate?**
+**[MID] Q5 - [MECHANISM] What is the async pipe in Angular and what does it automate?**
 
 Angular's `async` pipe subscribes to an Observable (or Promise)
 in a template, updates the view on each emission, and
 automatically unsubscribes when the component is destroyed.
 
+{% raw %}
 ```typescript
 // Without async pipe: manual subscription management
 class Component implements OnDestroy {
@@ -532,8 +535,9 @@ class Component {
 // Template: {{ (data$ | async)?.value }}
 // async pipe subscribes, updates, and unsubscribes automatically
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using SQL. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 The `async` pipe also triggers change detection when the
 Observable emits - critical for `OnPush` change detection
@@ -547,8 +551,7 @@ integration.
 
 ---
 
-**Q6. How do you debug an RxJS stream that is not emitting
-expected values?**
+**[SENIOR] Q6 - [DEBUGGING] How do you debug an RxJS stream that is not emitting expected values?**
 
 Step 1: Add `tap` operators to log intermediate values:
 ```javascript
@@ -561,7 +564,7 @@ data$.pipe(
 ).subscribe(v => console.log('subscriber:', v));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 Step 2: Check subscription - is the Observable cold and
 never subscribed?
@@ -584,7 +587,7 @@ scheduler.run(({ cold, expectObservable }) => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Marble testing syntax
 and the TestScheduler pattern. It allows testing time-based
@@ -593,8 +596,7 @@ in unit tests.
 
 ---
 
-**Q7. How does `shareReplay` solve the "late subscriber"
-problem?**
+**[SENIOR] Q7 - [MECHANISM] How does `shareReplay` solve the "late subscriber" problem?**
 
 Without `shareReplay`, a cold Observable re-runs its source
 for each subscriber. This means two components each subscribing
@@ -618,7 +620,7 @@ data$.subscribe(d => console.log('B:', d)); // same call
 // Late subscriber receives cached value immediately
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using HTTP client. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 `shareReplay(1)` is the standard pattern for shared HTTP
 requests in Angular services.
@@ -632,8 +634,7 @@ some patterns.
 
 ---
 
-**Q8. What happens to a Subject's emissions if there are
-no subscribers?**
+**[SENIOR] Q8 - [FAILURE] What happens to a Subject's emissions if there are no subscribers?**
 
 Emissions are lost. A Subject is hot - it does not buffer.
 `subject.next(1)` when no one is subscribed: 1 is gone forever.
@@ -645,7 +646,7 @@ subject.subscribe(v => console.log(v)); // subscribes
 subject.next(2); // received: 2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Solutions for late subscribers:
 - `BehaviorSubject(initialValue)`: replays the last value
@@ -668,15 +669,15 @@ current state is the most common pattern in Angular services.
 
 ### ⚖️ Comparison Table
 
-| Feature | Promise | Observable (Cold) | Observable (Hot) |
-|---|---|---|---|
-| Cardinality | 1 value | 0-N values | 0-N values |
-| Execution | Eager (on create) | Lazy (on subscribe) | Independent |
-| Cancellation | No (needs AbortController) | Yes (unsubscribe) | Yes (unsubscribe) |
-| Multicasting | Built-in (same resolution) | No (each sub = new execution) | Yes |
-| Error handling | .catch() / try/catch | catchError operator | catchError operator |
-| Completion | Implicit after resolve | Explicit complete() | Explicit/never |
-| Use case | Single async result | Streams, events | Shared event streams |
+| Feature| Promise| Observable (Cold)| Observable (Hot)|
+|---|-----------------------|-----------------------------|--------------------|
+| Cardinality| 1 value| 0-N values| 0-N values|
+| Execution| Eager (on create)| Lazy (on subscribe)| Independent|
+| Cancellation| No (needs AbortController)| Yes (unsubscribe)| Yes (unsubscribe)
+| Multicasting| Built-in (same resolution)| No (each sub = new execution)| Yes|
+| Error handling| .catch() / try/catch| catchError operator| catchError operator
+| Completion| Implicit after resolve| Explicit complete()| Explicit/never|
+| Use case| Single async result| Streams, events| Shared event streams|
 
 **The deciding factor:**
 One async result: Promise. Stream of values: Observable.
@@ -903,7 +904,7 @@ const component$ = stream$.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Core RxJS Operators example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **The key insight:**
 The `takeUntil(destroy$)` pattern is the correct way to
@@ -970,7 +971,7 @@ inputEl.addEventListener('input', event => {
 // 30+ lines of manual state management
 ```
 
-> **Code walkthrough:** The BAD pattern manually implements
+> **Code walkthrough:** The BAD pattern manually implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > what three RxJS operators handle declaratively: `debounceTime`
 > (the setTimeout), `distinctUntilChanged` (the `previousQuery`
 > check), and `switchMap` (the AbortController cancellation).
@@ -1012,7 +1013,7 @@ function setupAutocomplete(inputEl, containerEl) {
 }
 ```
 
-> **Code walkthrough:** The pipeline reads as a specification:
+> **Code walkthrough:** The pipeline reads as a specification:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > "on input events, map to value, wait for 300ms pause, skip
 > duplicates, cancel previous and fetch new, handle errors,
 > stop when destroyed." Each operator has a single responsibility.
@@ -1075,6 +1076,11 @@ preservation, use `concatMap` (sequential) or `switchMap`
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: switchMap with fetch does not cancel HTTP**
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: from(fetch()) not cancellable
 const results$ = search$.pipe(
@@ -1090,7 +1096,7 @@ const results$ = search$.pipe(
 // fetchAborted: actual network request cancelled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Failure 2: combineLatest blocks until all sources emit**
 ```javascript
@@ -1105,7 +1111,7 @@ const combined$ = combineLatest([a$, b$]).subscribe(
 // which source is not emitting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1120,8 +1126,7 @@ const combined$ = combineLatest([a$, b$]).subscribe(
 | Design | 2 | Real-time dashboard, form validation |
 | Behavioral | 1 | Code review of incorrect operator choice |
 
-**Q1. What is the difference between `combineLatest` and
-`withLatestFrom`?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between `combineLatest` and `withLatestFrom`?**
 
 Both combine two Observables, but they differ in what triggers
 an emission:
@@ -1152,7 +1157,7 @@ const saveWithUser$ = saveButton$.pipe(
 // uses current user at that moment
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Choosing based on "what
 drives the emission": if both sources drive it, `combineLatest`;
@@ -1161,8 +1166,7 @@ from secondary, `withLatestFrom`.
 
 ---
 
-**Q2. How do you implement real-time form validation with
-RxJS?**
+**[JUNIOR] Q2 - [SCENARIO] How do you implement real-time form validation with RxJS?**
 
 ```javascript
 const username$ = fromEvent(usernameInput, 'input').pipe(
@@ -1197,7 +1201,7 @@ submitEnabled$.subscribe(enabled => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Using `combineLatest` for
 form-wide validity that combines individual field streams.
@@ -1206,7 +1210,7 @@ into a holistic form state without manual coordination.
 
 ---
 
-**Q3. What is the `tap` operator and when should you use it?**
+**[JUNIOR] Q3 - [SCENARIO] What is the `tap` operator and when should you use it?**
 
 `tap(fn)` performs a side effect for each emission without
 affecting the value. The stream passes through unchanged.
@@ -1226,7 +1230,7 @@ const data$ = api$.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 `tap` is the operator-safe way to include side effects.
 Putting side effects inside `map` works but implies a relationship
@@ -1240,8 +1244,7 @@ a development/debugging tool. Production `tap` use cases
 
 ---
 
-**Q4. How do `retry` and `retryWhen` differ for error
-recovery?**
+**[MID] Q4 - [MECHANISM] How do `retry` and `retryWhen` differ for error recovery?**
 
 `retry(N)`: resubscribes to the source Observable N times
 on error. No delay, no backoff.
@@ -1272,7 +1275,7 @@ api$.pipe(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 RxJS 7+: `retry({count: 3, delay: (err, i) => timer(...)})` -
 cleaner API combining both behaviors.
@@ -1283,8 +1286,7 @@ Unauthorized is wrong. Only retry transient errors.
 
 ---
 
-**Q5. How do you implement a "real-time dashboard" that
-combines multiple data streams?**
+**[MID] Q5 - [SCENARIO] How do you implement a "real-time dashboard" that combines multiple data streams?**
 
 ```javascript
 // Multiple data sources
@@ -1317,7 +1319,7 @@ const urgentAlerts$ = alerts$.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using SQL. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The `throttleTime` with
 `{leading: true, trailing: true}` - this emits the first
@@ -1327,7 +1329,7 @@ overwhelming rendering.
 
 ---
 
-**Q6. What are scheduler in RxJS and when do they matter?**
+**[SENIOR] Q6 - [MECHANISM] What are scheduler in RxJS and when do they matter?**
 
 RxJS schedulers control when Observable subscriptions and
 emissions happen. They determine the execution context.
@@ -1354,7 +1356,7 @@ positions$.pipe(
 ).subscribe(pos => updateDOMPosition(pos));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Knowing that `animationFrameScheduler`
 is the correct scheduler for DOM updates - it synchronizes
@@ -1363,7 +1365,7 @@ from updating DOM between frames.
 
 ---
 
-**Q7. How do you test RxJS code, and what is marble testing?**
+**[SENIOR] Q7 - [SCENARIO] How do you test RxJS code, and what is marble testing?**
 
 Marble testing uses a string notation to describe Observable
 timing and values, enabling synchronous testing of async
@@ -1399,7 +1401,7 @@ it('debounceTime works correctly', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The TestScheduler virtualizes time - the entire test runs
 synchronously while simulating the passage of time.
@@ -1413,16 +1415,16 @@ the timing clearly in the test string.
 
 ### ⚖️ Comparison Table
 
-| Operator | Behavior | Concurrent | Order | Use Case |
-|---|---|---|---|---|
-| `switchMap` | Cancel prev, start new | 1 (latest) | N/A | Search, navigation |
-| `mergeMap` | All concurrent | Unlimited | Not preserved | Bulk saves |
-| `concatMap` | Queue sequentially | 1 (oldest) | Preserved | Ordered messages |
-| `exhaustMap` | Ignore while active | 1 (first) | Preserved | Submit buttons |
-| `debounceTime` | Emit after quiet period | N/A | Yes | Search, resize |
-| `throttleTime` | Rate limit | N/A | Yes | Scroll, mousemove |
-| `combineLatest` | Emit on any source | N/A | Yes | Derived state |
-| `withLatestFrom` | Emit on primary only | N/A | Yes | Sampling context |
+| Operator| Behavior| Concurrent| Order| Use Case|
+|----------|-----------------------|----------|-------------|------------------|
+| `switchMap`| Cancel prev, start new| 1 (latest)| N/A| Search, navigation|
+| `mergeMap`| All concurrent| Unlimited| Not preserved| Bulk saves|
+| `concatMap`| Queue sequentially| 1 (oldest)| Preserved| Ordered messages|
+| `exhaustMap`| Ignore while active| 1 (first)| Preserved| Submit buttons|
+| `debounceTime`| Emit after quiet period| N/A| Yes| Search, resize|
+| `throttleTime`| Rate limit| N/A| Yes| Scroll, mousemove|
+| `combineLatest`| Emit on any source| N/A| Yes| Derived state|
+| `withLatestFrom`| Emit on primary only| N/A| Yes| Sampling context|
 
 **The deciding factor:**
 For inner Observables: draw the use case as a marble diagram,

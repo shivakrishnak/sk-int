@@ -106,7 +106,7 @@ VALUES ('a@b.com', 'Alice')
 ON DUPLICATE KEY UPDATE name = VALUES(name);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Modifying Table Data example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 **UPDATE forms:**
 
@@ -126,7 +126,7 @@ FROM order_totals i
 WHERE i.order_id = o.id;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Modifying Table Data example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 **DELETE vs TRUNCATE:**
 
@@ -168,7 +168,7 @@ DO UPDATE SET
 -- Atomic: no race condition between SELECT and INSERT.
 ```
 
-> **Code walkthrough:** Multi-row INSERT is a fundamental performance
+> **Code walkthrough:** Multi-row INSERT is a fundamental performanceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > optimization. A 1,000-row single-statement INSERT is 10-100x faster
 > than 1,000 individual inserts because: one network round trip, one
 > transaction overhead, and the database can batch index updates.
@@ -204,7 +204,7 @@ WHERE created_at < '2020-01-01'
   AND status = 'PENDING';
 ```
 
-> **Code walkthrough:** The BAD `UPDATE orders SET status = 'CANCELLED'`
+> **Code walkthrough:** The BAD `UPDATE orders SET status = 'CANCELLED'`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > has no WHERE - every row is affected. In production this is a
 > catastrophic mistake. The safe discipline: write the SELECT version
 > first to confirm which rows match, then replace `SELECT columns` with
@@ -321,13 +321,13 @@ BEGIN
 END $$;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between DELETE, TRUNCATE, and DROP?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between DELETE, TRUNCATE, and DROP?**
 
 🗣️ "DELETE: removes rows matching a WHERE clause (or all rows if no WHERE).
 Row-level transactional. Generates per-row WAL. Fires row-level triggers.
@@ -338,7 +338,7 @@ a transaction. DROP: removes the entire table definition and all its data.
 Cannot be undone without restoring from backup. Use DELETE for conditional
 removal, TRUNCATE for clearing a table entirely, DROP for removing a table."
 
-**Q2: What is an UPSERT and how does it prevent race conditions?**
+**[JUNIOR] Q2 - [MECHANISM] What is an UPSERT and how does it prevent race conditions?**
 
 🗣️ "UPSERT is an atomic insert-or-update. Without UPSERT: application
 checks if a row exists (SELECT), then INSERTs if not found. Between
@@ -350,7 +350,7 @@ updates if present. `INSERT ON CONFLICT DO UPDATE` in PostgreSQL.
 operations: creating or updating user settings, caching computed values,
 maintaining counters."
 
-**Q3: How does MVCC affect UPDATE performance in PostgreSQL?**
+**[JUNIOR] Q3 - [MECHANISM] How does MVCC affect UPDATE performance in PostgreSQL?**
 
 🗣️ "PostgreSQL MVCC implements UPDATE as: (1) mark the old row version
 as dead (set xmax to current transaction ID); (2) insert a new row version
@@ -362,7 +362,7 @@ reclaims space. `HOT updates` (Heap-Only Tuple) are an optimization:
 if the update does not change any indexed column, the new version stays
 on the same heap page and the index is not updated - much faster."
 
-**Q4: What is the RETURNING clause and when should you use it?**
+**[MID] Q4 - [SCENARIO] What is the RETURNING clause and when should you use it?**
 
 🗣️ "RETURNING (PostgreSQL, also in SQL:2003) returns the affected rows
 from INSERT, UPDATE, or DELETE. `INSERT INTO orders ... RETURNING id`
@@ -374,7 +374,7 @@ separate SELECT); (2) you want to confirm what was updated/deleted;
 Without RETURNING: `INSERT` + `SELECT LASTVAL()` is two round trips
 and not concurrency-safe for all scenarios."
 
-**Q5: How do you safely run a large UPDATE in production without downtime?**
+**[MID] Q5 - [MECHANISM] How do you safely run a large UPDATE in production without downtime?**
 
 🗣️ "Four steps: (1) Test on a dev/staging database first with representative
 data volume. (2) Run as a SELECT first: `SELECT COUNT(*) WHERE condition`
@@ -386,7 +386,7 @@ blocking queries. For schema changes (ALTER TABLE): use tools like
 pt-online-schema-change (MySQL) or pg_repack (PostgreSQL) that build the
 new table structure online and swap atomically."
 
-**Q6: What is a soft delete and what are the trade-offs?**
+**[SENIOR] Q6 - [TRADE-OFF] What is a soft delete and what are the trade-offs?**
 
 🗣️ "Soft delete: add a `deleted_at TIMESTAMPTZ` column. Deletion becomes
 `UPDATE ... SET deleted_at = now()`. All queries filter on `WHERE deleted_at IS NULL`.
@@ -399,7 +399,7 @@ deleted rows to an archive table; use a boolean `is_deleted` flag
 (same problem but simpler). Soft delete is widely used but requires
 discipline to maintain correctly."
 
-**Q7: How does DELETE with JOIN work and when do you need it?**
+**[SENIOR] Q7 - [MECHANISM] How does DELETE with JOIN work and when do you need it?**
 
 🗣️ "PostgreSQL: `DELETE FROM table USING other_table WHERE condition`.
 MySQL: `DELETE table FROM table JOIN other_table WHERE condition`.
@@ -534,7 +534,7 @@ JSON:
   JSONB  - stored as binary, indexable (PostgreSQL)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Organizing Data Structures example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Schema organization:**
 
@@ -554,7 +554,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA analytics
     TO reporting_user;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Organizing Data Structures example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -602,7 +602,7 @@ CREATE INDEX idx_orders_status_created
     ON orders(status, created_at DESC);
 ```
 
-> **Code walkthrough:** The BAD table uses FLOAT for money (binary float
+> **Code walkthrough:** The BAD table uses FLOAT for money (binary floatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > precision errors make `0.1 + 0.2 = 0.30000000000000004`), VARCHAR for
 > dates (cannot ORDER BY, cannot use date functions), and integers for
 > booleans. The GOOD table: `amount_cents` stores money as integer cents
@@ -673,7 +673,7 @@ displays in local timezone. UTC has no DST ambiguity.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between VARCHAR and TEXT in PostgreSQL?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between VARCHAR and TEXT in PostgreSQL?**
 
 🗣️ "In PostgreSQL: identical. Both store variable-length character data.
 Both use the same TOAST mechanism for large values (> 2KB). VARCHAR(n)
@@ -683,7 +683,7 @@ TEXT has no length limit. Performance: identical. Storage: identical
 you specifically need to enforce a maximum length. VARCHAR(255) is a
 MySQL convention; it adds nothing in PostgreSQL."
 
-**Q2: Why should you never store money as a FLOAT?**
+**[JUNIOR] Q2 - [MECHANISM] Why should you never store money as a FLOAT?**
 
 🗣️ "FLOAT uses IEEE 754 binary floating point. Binary fractions cannot
 represent most decimal fractions exactly. `1.10` in binary float is
@@ -696,7 +696,7 @@ float for math-heavy operations. `NUMERIC(12, 2)` for amounts up to
 Convert to dollars for display (`price_cents / 100.0`). Preferred in
 high-volume financial systems."
 
-**Q3: What is table partitioning and when should you use it?**
+**[JUNIOR] Q3 - [SCENARIO] What is table partitioning and when should you use it?**
 
 🗣️ "Partitioning: divide a large table into smaller physical segments
 (partitions) based on a column's value range (range partitioning),
@@ -709,7 +709,7 @@ and most queries filter on the partition key. Overhead: more complex
 queries (cross-partition joins), FK constraints from partitioned tables
 are limited."
 
-**Q4: What are generated columns and when are they useful?**
+**[MID] Q4 - [MECHANISM] What are generated columns and when are they useful?**
 
 🗣️ "Generated columns (PostgreSQL 12+, MySQL 5.7+): a column whose value
 is automatically computed from other columns. Two types: (1) virtual
@@ -721,7 +721,7 @@ from lat/lon (for PostGIS indexing), computed prices
 (computed by the database, not the application), indexable (stored
 generated columns can be indexed), eliminates application-side redundancy."
 
-**Q5: What is a table's physical storage structure?**
+**[MID] Q5 - [MECHANISM] What is a table's physical storage structure?**
 
 🗣️ "In PostgreSQL: a table is a heap file. A heap is an unordered
 collection of 8KB pages. Each page contains a header, item pointers,
@@ -733,7 +733,7 @@ A clustered table (Oracle/SQL Server) stores rows in primary key order.
 PostgreSQL: CLUSTER command reorganizes a table by an index but does
 not maintain the order on subsequent writes."
 
-**Q6: How do you handle schema changes on large production tables?**
+**[SENIOR] Q6 - [MECHANISM] How do you handle schema changes on large production tables?**
 
 🗣️ "ALTER TABLE in PostgreSQL: some changes are instant (add a nullable
 column, add a constraint as NOT VALID), some require a full table rewrite
@@ -745,7 +745,7 @@ add NOT NULL; (2) use pg_repack for online reordering without table locks;
 without locking writes, takes longer but is online.
 Zero-downtime schema changes require planning and tooling."
 
-**Q7: What is a schema version and why is it important?**
+**[SENIOR] Q7 - [MECHANISM] What is a schema version and why is it important?**
 
 🗣️ "A schema version (migration version) is a sequential identifier for
 each database schema change. Tools: Flyway, Liquibase (Java), Alembic
@@ -863,7 +863,7 @@ JSON (indexed):     JSONB (PostgreSQL)
 Enums:              CHECK constraint OR lookup table
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Choosing Correct Column Types example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **UUID vs BIGINT as primary key:**
 
@@ -890,7 +890,7 @@ UUIDv7 (time-ordered):
   - Relatively new (not in all UUID libraries yet)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Choosing Correct Column Types example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -925,7 +925,7 @@ FROM invoices_cents;
 -- Result: 0.30  (correct, exact integer arithmetic)
 ```
 
-> **Code walkthrough:** The FLOAT table demonstrates the binary float
+> **Code walkthrough:** The FLOAT table demonstrates the binary floatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > precision problem: `0.1 + 0.2 = 0.30000000000000004`. Even one cent
 > of error can cause financial discrepancies in high-volume systems.
 > NUMERIC uses exact decimal arithmetic internally - stored as a
@@ -968,7 +968,7 @@ SELECT
 FROM orders;
 ```
 
-> **Code walkthrough:** `TIMESTAMPTZ` (Timestamp With Time Zone) stores
+> **Code walkthrough:** `TIMESTAMPTZ` (Timestamp With Time Zone) storesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the moment in UTC, regardless of the session's timezone. When reading:
 > the database converts UTC to the session's timezone. `TIMESTAMP` (without
 > timezone) stores exactly what you give it with no timezone conversion.
@@ -1046,13 +1046,13 @@ WHERE ABS(amount - 10.50) < 0.001  -- float range check
 -- Better: migrate to NUMERIC or integer cents
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Why is TIMESTAMPTZ preferred over TIMESTAMP in PostgreSQL?**
+**[JUNIOR] Q1 - [TRADE-OFF] Why is TIMESTAMPTZ preferred over TIMESTAMP in PostgreSQL?**
 
 🗣️ "TIMESTAMPTZ (with timezone) stores the absolute moment in time as
 UTC. When reading: the session timezone converts UTC to local. TIMESTAMP
@@ -1064,7 +1064,7 @@ is wrong (both appear as numbers, but they represent different moments).
 TIMESTAMPTZ eliminates all these: every value is unambiguously UTC.
 Use TIMESTAMPTZ for all datetime columns."
 
-**Q2: What is the SERIAL type and should you use it in new PostgreSQL schemas?**
+**[JUNIOR] Q2 - [SCENARIO] What is the SERIAL type and should you use it in new PostgreSQL schemas?**
 
 🗣️ "SERIAL is a shorthand: `id SERIAL` is equivalent to creating an INTEGER
 column and a sequence, with the sequence as the default value. `BIGSERIAL`
@@ -1076,7 +1076,7 @@ syntax, prevents manual inserts to the identity column (ALWAYS), and
 makes the intent explicit. In existing schemas: SERIAL continues to work
 fine."
 
-**Q3: When should you use JSONB vs. individual columns?**
+**[JUNIOR] Q3 - [SCENARIO] When should you use JSONB vs. individual columns?**
 
 🗣️ "Individual columns when: the fields are known at design time, queried
 or filtered frequently (need indexes), or have relational integrity requirements.
@@ -1089,7 +1089,7 @@ core fields as columns, metadata as JSONB. This gives you the best of
 both worlds - fast indexed queries on core fields, flexible storage for
 variable metadata."
 
-**Q4: What is the N+1 problem with ENUM types?**
+**[MID] Q4 - [MECHANISM] What is the N+1 problem with ENUM types?**
 
 🗣️ "Most databases have a native ENUM type. PostgreSQL `CREATE TYPE status AS ENUM ('pending', 'active', 'archived')`.
 Problem: adding a new ENUM value is a schema change (ALTER TYPE ... ADD VALUE).
@@ -1102,7 +1102,7 @@ change. Or: a lookup table with a FK reference (most flexible, allows
 adding metadata to each status). For simple, stable value sets: ENUM
 is fine. For frequently-changing value sets: CHECK constraint or lookup table."
 
-**Q5: How do binary data types work and when should you store files in a DB?**
+**[MID] Q5 - [SCENARIO] How do binary data types work and when should you store files in a DB?**
 
 🗣️ "PostgreSQL `BYTEA` stores binary data. MySQL `BLOB`. Both store arbitrary
 bytes. Storage limits: PostgreSQL BYTEA: up to 1GB per value (via TOAST).
@@ -1114,7 +1114,7 @@ no - store in object storage (S3, GCS), store only the path/URL in the
 database. Reasons: databases are expensive storage (disk + memory);
 large BLOBs slow backup/restore; object storage is designed for large files."
 
-**Q6: What are domain types and when are they useful?**
+**[SENIOR] Q6 - [MECHANISM] What are domain types and when are they useful?**
 
 🗣️ "A domain (PostgreSQL) is a named type based on an existing type with
 additional constraints: `CREATE DOMAIN email AS VARCHAR(255) CHECK (VALUE ~ '^.+@.+$')`.
@@ -1126,7 +1126,7 @@ Adding a new check for emails: alter the domain once, all email columns
 get the constraint. Use for: email, phone number, positive integer, money,
 URL - any column type with application-wide validation rules."
 
-**Q7: How does column ordering in a table affect storage efficiency?**
+**[SENIOR] Q7 - [MECHANISM] How does column ordering in a table affect storage efficiency?**
 
 🗣️ "In PostgreSQL: tables are heap files, and rows are stored sequentially.
 NULL values in variable-length columns take only 1-2 bytes in the column

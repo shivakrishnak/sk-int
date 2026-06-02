@@ -302,7 +302,7 @@ HTML STANDARDS AT SCALE - GOVERNANCE APPROACH:
        as the adoption threshold for new projects
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -360,7 +360,7 @@ function ButtonBad({ onClick, variant = 'primary', children }) {
 </form>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **WHAT BREAKS: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```jsx
 // GOOD: semantically correct design system button
@@ -421,7 +421,7 @@ function LinkButton({ href, external, children, ...rest }) {
 // WRONG: using <button> for navigation or <a> for actions
 ```
 
-> **Code walkthrough:** The bad Button wraps a `<div>` which has
+> **Code walkthrough:** The bad Button wraps a `<div>` which hasice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > no implicit role, no keyboard activation (only mouse click works),
 > no focus management, and can't participate in form submission.
 > The good Button uses native `<button>` which provides all of
@@ -555,38 +555,37 @@ Verify fix:
     Key test: can user navigate form + submit without mouse?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| How does WHATWG govern HTML | 3 min | Living Standard model |
-| Why is there no HTML6 | 2 min | WHATWG Living Standard |
-| Semantic HTML contracts in design systems | 4-5 min | div-as-button problem |
-| Button vs LinkButton distinction | 3 min | Navigation vs action semantics |
-| First rule of ARIA | 2-3 min | ARIA vs native elements |
-| Heading levels in components | 3 min | Document outline |
-| Automated accessibility testing at scale | 4 min | axe-core + CI |
-| Baseline concept for feature adoption | 2-3 min | Browser support policy |
-| Feature detection for new HTML | 3 min | Progressive enhancement |
-| Design system HTML snapshot testing | 3-4 min | Regression detection |
-| FormAssociated elements | 3-4 min | Custom element spec |
-| ARIA contract documentation | 3 min | Component API design |
-| Heading hierarchy enforcement | 3-4 min | heading level prop |
-| Polyfill vs feature detection | 3 min | Engineering decision |
-| Heuristics for when to use native HTML | 4 min | Architecture principles |
-| HTML spec change process | 3 min | GitHub PR + vendor signoff |
-| Browser compatibility threshold policy | 3 min | Baseline Widely Available |
-| Semantic erosion audit approach | 4-5 min | Scale governance |
-| WebAssembly + HTML integration | 3 min | WASM component model |
+| Scenario| Recommended Time| Key Signal|
+|---|-------------------------------------------|------------------------------|
+| How does WHATWG govern HTML| 3 min| Living Standard model|
+| Why is there no HTML6| 2 min| WHATWG Living Standard|
+| Semantic HTML contracts in design systems| 4-5 min| div-as-button problem|
+| Button vs LinkButton distinction| 3 min| Navigation vs action semantics|
+| First rule of ARIA| 2-3 min| ARIA vs native elements|
+| Heading levels in components| 3 min| Document outline|
+| Automated accessibility testing at scale| 4 min| axe-core + CI|
+| Baseline concept for feature adoption| 2-3 min| Browser support policy|
+| Feature detection for new HTML| 3 min| Progressive enhancement|
+| Design system HTML snapshot testing| 3-4 min| Regression detection|
+| FormAssociated elements| 3-4 min| Custom element spec|
+| ARIA contract documentation| 3 min| Component API design|
+| Heading hierarchy enforcement| 3-4 min| heading level prop|
+| Polyfill vs feature detection| 3 min| Engineering decision|
+| Heuristics for when to use native HTML| 4 min| Architecture principles|
+| HTML spec change process| 3 min| GitHub PR + vendor signoff|
+| Browser compatibility threshold policy| 3 min| Baseline Widely Available|
+| Semantic erosion audit approach| 4-5 min| Scale governance|
+| WebAssembly + HTML integration| 3 min| WASM component model|
 
 ---
 
-**Q1: What is the WHATWG Living Standard and why did it replace versioned HTML?**
-`[SENIOR]` DEFINITION
+**[SENIOR] Q1 - [MECHANISM] What is the WHATWG Living Standard and why did it replace versioned HTML?**
 
 *Why they ask:* Architectural context.
 
@@ -664,12 +663,11 @@ Verify fix:
 
 ---
 
-**Q2: What is the first rule of ARIA and when should you add role attributes?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] What is the first rule of ARIA and when should you add role attributes?**
 
 *Why they ask:* ARIA misuse is pervasive.
 
-*Likely follow-up:* "What is the difference between aria-label and aria-labelledby?"
+*Likely follow-up:* "What is the difference between aria-label and aria-labelled
 
 > **Answer:**
 >
@@ -776,8 +774,7 @@ Verify fix:
 
 ---
 
-**Q3: How do you build a heading component that doesn't break document outline?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q3 - [SCENARIO] How do you build a heading component that doesn't break document outline?**
 
 *Why they ask:* Design system architecture.
 
@@ -830,7 +827,7 @@ Verify fix:
 >   children,
 >   ...rest
 > }) => {
->   if (level < 1 || level > 6) {
+ >   if (level < 1|| level > 6) {
 >     throw new Error(
 >       `Heading level must be 1-6, got ${level}`
 >     );
@@ -909,7 +906,7 @@ Verify fix:
 
 ---
 
-**Q4: How do you implement a design system button that works correctly
+**[MID] Q4 - [DESIGN] How do you implement a design system button that works correctly**
 in forms?** `[JUNIOR]` SCENARIO
 
 *Why they ask:* Subtle HTML behavior that breaks in practice.
@@ -989,7 +986,7 @@ in forms?** `[JUNIOR]` SCENARIO
 > ```jsx
 > // Every Input must connect label to input:
 > const Input = ({ id, label, ...inputProps }) => {
->   const inputId = id || `input-${useId()}`;
+ >   const inputId = id|| `input-${useId()}`;
 >   return (
 >     <div className="input-wrapper">
 >       <label htmlFor={inputId}>{label}</label>
@@ -1023,7 +1020,7 @@ in forms?** `[JUNIOR]` SCENARIO
 
 ---
 
-**Q5: How do you enforce semantic HTML standards across 30 teams
+**[MID] Q5 - [MECHANISM] How do you enforce semantic HTML standards across 30 teams**
 using a shared design system?** `[STAFF]` SCENARIO
 
 *Why they ask:* Scale engineering + governance.
@@ -1054,7 +1051,7 @@ using a shared design system?** `[STAFF]` SCENARIO
 > 3. Design system package restrictions:
 >    TypeScript overloads force semantic types:
 >    type ButtonProps = {
->      type: 'button' | 'submit' | 'reset'; // required
+ >      type: 'button'| 'submit'| 'reset'; // required
 >      href?: never;  // use LinkButton for links
 >    } | {
 >      href: string;  // navigation
@@ -1121,7 +1118,7 @@ using a shared design system?** `[STAFF]` SCENARIO
 
 ---
 
-**Q6: What are FormAssociated Custom Elements and why do they matter
+**[SENIOR] Q6 - [MECHANISM] What are FormAssociated Custom Elements and why do they matter**
 for design systems?** `[STAFF]` MECHANISM
 
 *Why they ask:* Deep spec knowledge.
@@ -1187,7 +1184,7 @@ for design systems?** `[STAFF]` MECHANISM
 >
 >   // Responds to form reset:
 >   formResetCallback() {
->     this.value = this.getAttribute('value') || '';
+ >     this.value = this.getAttribute('value')|| '';
 >   }
 >
 >   // Responds to form disable:
@@ -1232,14 +1229,178 @@ for design systems?** `[STAFF]` MECHANISM
 > on Web Components (like Adobe's Spectrum Web Components, SAP's UI5)
 > use FormAssociated for all form-field components as of 2024.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Staff Panel | FormAssociated elements + heading context system |
-| Design System Lead | Component API + ESLint enforcement |
-| Frontend Architect | Baseline policy + governance tooling |
-| Bar Raiser | ARIA rules + div-as-button failure modes |
+**[SENIOR] Q7 - [MECHANISM] How does the WHATWG standards process differ from traditional W3C standardization?**
+
+*Why they ask:* Tests knowledge of standards governance.
+
+W3C uses a formal stages process (Working Draft →
+Candidate Recommendation → Proposed Recommendation →
+Recommendation) with versioned snapshots (HTML 4.01,
+XHTML 1.0, HTML5). The process is slow (HTML5 took
+10+ years to become a formal Recommendation) but
+produces stable, versioned specs. WHATWG operates a
+"Living Standard" - a continuously updated single
+document with no versioned releases. Browser vendors
+are the primary participants; browser implementation
+drives the spec rather than spec driving implementation.
+This accelerates feature delivery (e.g., `<dialog>`,
+`popover` API went from proposal to implementation
+in months) but creates risks: features can change
+between browser versions during development.
+
+*What separates good from great:* The "patchwork"
+reality - in practice, the HTML spec is now the WHATWG
+Living Standard; the W3C HTML spec is a snapshot of
+the WHATWG spec. The W3C/WHATWG collaboration agreement
+(2019) formalized this relationship.
+
+---
+
+**[SENIOR] Q8 - [TRADE-OFF] When should design system components use custom elements versus React/Vue components?**
+
+*Why they ask:* Tests framework-agnostic design thinking.
+
+Custom elements (web components): framework-agnostic -
+the same `<design-button>` works in React, Angular, Vue,
+and plain HTML. Lower-level, no virtual DOM overhead.
+Downside: no ecosystem of React hooks, no server-side
+rendering without special configuration (Declarative
+Shadow DOM required for SSR), state management is manual.
+React/Vue components: rich ecosystem, server-side
+rendering, established patterns for state and events.
+Downside: framework-coupled - a React component cannot
+be used in an Angular app without a wrapper.
+Decision: if the design system serves multiple frameworks
+or needs to be embedded in partner sites → custom elements.
+If the design system is for a single framework ecosystem
+→ framework components. Hybrid: custom elements for the
+HTML/CSS layer, framework components as wrappers on top.
+
+*What separates good from great:* Declarative Shadow DOM
+(DSD) as the SSR solution for custom elements - knowledge
+of this 2023 API shows current standards awareness.
+
+---
+
+**[STAFF] Q9 - [DESIGN] Design an HTML architecture for a high-traffic news site targeting Core Web Vitals scores.**
+
+*Why they ask:* Tests performance-first HTML architecture.
+
+Architecture decisions: (1) Server-side rendering with
+streaming (Node.js streaming HTML, starts painting before
+full page rendered). LCP target: < 2.5s.
+(2) Critical CSS inlined in `<head>`, all other CSS
+deferred. No render-blocking stylesheets.
+(3) Hero images: `<img>` with explicit `width`/`height`,
+`fetchpriority="high"`, no `loading="lazy"` for above-fold.
+(4) Below-fold content: `loading="lazy"` images,
+`<link rel="preconnect">` to CDN.
+(5) HTML structure: `<article>` with proper `<h1>` (one
+per page), `<section>` with `aria-label` for content
+regions, `<time datetime="...">` for publication dates.
+(6) Resource hints in `<head>`: preconnect to CDN,
+preload LCP image, dns-prefetch for analytics domains.
+CLS prevention: explicit image dimensions, font-display:
+swap with `size-adjust` to prevent text shift.
+
+*What separates good from great:* `fetchpriority="high"`
+on the LCP image - this browser hint tells the preload
+scanner to prioritize it above other discovered images.
+
+---
+
+**[STAFF] Q10 - [MECHANISM] How does Declarative Shadow DOM enable server-side rendering of web components?**
+
+*Why they ask:* Tests cutting-edge web standards knowledge.
+
+Traditionally, custom elements' shadow DOM is only
+created via JavaScript (`attachShadow()`). During SSR,
+the server renders HTML but the shadow DOM is empty
+until JavaScript hydrates - causing a Flash of
+Unstyled Content (FOUC) or layout shift. Declarative
+Shadow DOM (DSD, Chrome 90+, 2021) allows the server to
+render shadow DOM in HTML: `<template shadowrootmode="open">
+<style>...</style><slot></slot></template>` inside
+the custom element tag. The browser attaches the shadow
+root from this template before JavaScript runs. The
+JavaScript `connectedCallback` then receives an already-
+populated shadowRoot (no need to call `attachShadow`).
+This enables server-rendered web components with
+progressive enhancement: the component is functional
+without JS, JS enhances behavior.
+
+*What separates good from great:* The fallback detection
+in JavaScript: `if (!this.shadowRoot) { this.attachShadow({mode: 'open'}); }` 
+- checking if DSD already created the shadow root before
+creating it programmatically prevents double-attachment.
+
+---
+
+**[STAFF] Q11 - [DEBUGGING] A design system upgrade breaks pages that embed the components. How do you design for backward compatibility?**
+
+*Why they ask:* Tests versioning and API stability thinking.
+
+Backward compatibility strategy for design system HTML
+components: (1) Semantic versioning - major version
+for breaking attribute API changes, minor for additions.
+(2) Attribute stability - once an attribute is public
+API, it cannot be renamed without a deprecation cycle.
+Keep `slot="header"` working even after introducing
+`slot="title"` alias. (3) Internal Shadow DOM structure
+is private API - consumers who override it with
+`::part()` or `::slotted()` are using semi-public API.
+Document which parts are stable. (4) Custom events
+are API - event names and detail structure must be
+versioned. (5) Migration guide with automated codemod
+for each major version. (6) Version flag attribute
+(`version="2"`) on the custom element to support
+running v1 and v2 simultaneously during migration.
+
+*What separates good from great:* `::part()` exposure
+design - explicitly defining which shadow DOM parts are
+public API (exposed via `part` attribute) versus private
+implementation details prevents consumer code from
+breaking on internal refactors.
+
+---
+
+**[STAFF] Q12 - [DESIGN] How do you approach HTML performance budgeting for a design system?**
+
+*Why they ask:* Tests performance governance thinking.
+
+Performance budget for a design system: (1) Component-
+level budgets: each component has a maximum initial
+render size (critical CSS + JS). A button component
+should not ship 50KB of JavaScript. (2) Composition
+budgets: a page using 10 components should not exceed
+a total transfer budget (100KB gzipped for critical
+path). (3) Metric tracking: track CLS, LCP, FCP in
+Storybook stories using Lighthouse CI. Each component
+change that increases CLS is a build failure.
+(4) Monitoring: Real User Monitoring (RUM) tracks
+performance by component usage - if a specific component
+correlates with poor CLS scores in production, it is
+flagged for investigation. (5) HTML budget: limit
+DOM depth (each component adds max 3 levels), avoid
+`<div>` soup that adds DOM nodes without semantic value.
+
+*What separates good from great:* RUM correlation -
+being able to attribute production performance regressions
+to specific components is the signal that drives focused
+optimization.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|-----------------------------|------------------------------------------------|
+| Staff Panel| FormAssociated elements + heading context system|
+| Design System Lead| Component API + ESLint enforcement|
+| Frontend Architect| Baseline policy + governance tooling|
+| Bar Raiser| ARIA rules + div-as-button failure modes|
 
 ---
 

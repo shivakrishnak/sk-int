@@ -76,7 +76,7 @@ curator, visitors must sign in at the reference desk (requires), and the restric
 ### 📘 Concept Explanation
 
 **Module resolution at startup:**
-```
+```plaintext
 MODULE SYSTEM RESOLUTION ALGORITHM:
 
   1. Start with the root module (your application's module).
@@ -90,11 +90,11 @@ MODULE SYSTEM RESOLUTION ALGORITHM:
   
   STARTUP FAILURE (FAST FAIL - BENEFIT):
   java.lang.module.FindException: Module com.example.lib not found
-  -> at startup, not at first use. Immediate fail vs silent ClassNotFoundException.
+  -> at startup, not at first use. Immediate fail vs silent ClassNotFoundExcept...
   
   CLASSPATH FAILURE (SLOW FAIL - RISK):
   java.lang.ClassNotFoundException: com.example.lib.SomeClass
-  -> at the moment the class is first loaded (could be minutes/hours into runtime)
+  -> at the moment the class is first loaded (could be minutes/hours into...
 
 LAYER ARCHITECTURE:
 
@@ -142,10 +142,10 @@ CLASSPATH + MODULE-PATH MIXED:
   
   -- The named module (mylib.jar) reads all classpath code via unnamed module.
   -- Classpath code can access exports of mylib.jar.
-  -- Not recommended for production: complexity without full encapsulation benefit.
+  -- Not recommended for production: complexity without full encapsulation...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L5 JPMS Architecture example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -155,6 +155,12 @@ CLASSPATH + MODULE-PATH MIXED:
 > is fully named (has `module-info.java` with `exports`). The `impl` module is named with
 > `opens` declarations for Spring. The `app` module uses `ServiceLoader` to decouple from impl.
 > The build.gradle shows how Gradle handles the module path automatically.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // SPLIT PACKAGE DETECTION AND RESOLUTION:
@@ -320,7 +326,7 @@ until the library adds `Automatic-Module-Name` to MANIFEST.MF.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Module migration fails at startup with Layer initialization error.**
-```
+```plaintext
 Symptom: Moving application JARs to --module-path causes:
   Error occurred during initialization of boot layer
   java.lang.module.FindException: Module some.module not found,
@@ -377,7 +383,7 @@ Split package failure:
     </exclusion>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using Optional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 

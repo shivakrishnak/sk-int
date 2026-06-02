@@ -150,7 +150,7 @@ Scalability:
   - Auto-scaling validation tests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Architecture Fitness Functions example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **ArchUnit - the primary structural fitness function tool:**
 ArchUnit is a Java testing library that allows describing and
@@ -186,7 +186,7 @@ public class OrderService {
 // Architecture.md says it's wrong; the code does it anyway.
 ```
 
-> **Code walkthrough:** Without an automated fitness function, the
+> **Code walkthrough:** Without an automated fitness function, theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > architectural rule "domain must not depend on infrastructure"
 > is aspirational. The `OrderService` domain class imports
 > `JdbcTemplate` (Spring infrastructure). This means the domain
@@ -261,7 +261,7 @@ public class ArchitectureTest {
 // Violation: OrderService in domain imports JdbcTemplate."
 ```
 
-> **Code walkthrough:** Each `@ArchTest` field is an ArchUnit rule
+> **Code walkthrough:** Each `@ArchTest` field is an ArchUnit ruleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that runs as a standard JUnit test. `domainMustNotDependOnInfrastructure`
 > scans all classes in `..domain..` packages and asserts none
 > import from infrastructure packages or Spring JDBC. `noCyclicDependencies`
@@ -352,7 +352,7 @@ void paymentProcessingMeetsSLA() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix:* Every performance fitness function must reference the QA
 scenario that defines its threshold. Document the source (e.g.,
@@ -450,7 +450,7 @@ class LayeredArchitectureTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 CI pipeline integration:
 ```yaml
@@ -460,7 +460,7 @@ CI pipeline integration:
 # ArchUnit tests are standard JUnit tests
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ArchUnit tests are standard JUnit tests example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* Most candidates describe rules
 in words. Great candidates write actual ArchUnit code with the
@@ -559,7 +559,7 @@ class UserServiceContractTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ArchUnit tests are standard JUnit tests example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 CI/CD integration: consumer runs pact tests -> uploads contract to
 Pact Broker -> provider downloads and verifies contract -> passes
@@ -666,7 +666,7 @@ export default function () {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 Threshold setting: thresholds must come from the QA scenario or
 ADR, not from the current performance. "Our payment SLA is P99 <
@@ -885,7 +885,7 @@ def test_no_deep_synchronous_chains():
         )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run integration tests and collect traces example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Fan-out measurement: number of synchronous downstream services
 called per request. High fan-out = coupling smell.

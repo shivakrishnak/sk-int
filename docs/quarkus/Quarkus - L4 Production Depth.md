@@ -213,7 +213,7 @@ java -agentlib:native-image-agent=\
   -Dquarkus.native.container-build=true
 ```
 
-> **Code walkthrough:** @RegisterForReflection on OrderDto
+> **Code walkthrough:** @RegisterForReflection on OrderDtoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the most common fix for Jackson serialization issues.
 > The static initializer failure happens because native-image
 > runs static blocks at build time - a database connection
@@ -239,7 +239,7 @@ quarkus.native.additional-build-args=\
   com.problematic.FrameworkClass
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fix: defer init example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 **Binary size too large (>200MB):**
 ```bash
@@ -254,7 +254,7 @@ quarkus.native.additional-build-args=\
 # - Profile-guided native (PGO) in GraalVM Enterprise
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - Profile-guided native (PGO) in GraalVM Enterprise example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 ---
 
@@ -268,6 +268,90 @@ under the agent, commit the generated configs."
 **Staff:** "Native image build failures are a one-time
 setup cost. After the configs are generated and committed,
 subsequent builds succeed. The ongoing maintenance:
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus native image diagnostics is the process of identifying
+and resolving build failures and runtime issues specific to GraalVM native image
+compilation. The most common issues are missing reflection registrations
+(`ClassNotFoundException` at runtime) and static initialization violations
+(code that assumes JVM dynamic loading).
+
+**Mechanism:** Native image closed-world analysis:
+1. `native-image` compiler traces all reachable code from `main()`.
+2. Any code path using `Class.forName()` without explicit registration is
+   treated as unreachable - the class is excluded.
+3. Static initializers that cannot run at build time (e.g., code reading
+   environment variables) cause `ExceptionInInitializerError` at runtime.
+4. GraalVM tracing agent (run with `-agentlib:native-image-agent=config-output-dir`)
+   records all reflection, resource, JNI, and proxy accesses during a test run,
+   generating `reflect-config.json` and related files automatically.
+
+**Trade-off:**
+
+**Positive:** The tracing agent automates reflection discovery - run integration
+tests and the agent generates all required config.
+
+**Negative:** Tracing agent only captures code paths exercised during the test
+run. Untested code paths may still fail in production native builds.
+
+**Production Reality:** The only reliable strategy for native image production
+readiness is comprehensive integration tests with `@QuarkusIntegrationTest`
+running against the native binary in CI on every PR.
+
+**Decision:** Always run `@QuarkusIntegrationTest` (native binary tests) in CI.
+Use tracing agent to bootstrap reflection config. Add `@RegisterForReflection`
+incrementally as new code paths are tested.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: JVM mode tests guarantee native mode correctness**
+**Reality:** JVM mode and native mode have fundamentally different class loading.
+Tests passing in JVM mode (`@QuarkusTest`) do NOT guarantee native mode success.
+A missing `@RegisterForReflection` annotation causes `ClassNotFoundException`
+ONLY in native mode. Always run `@QuarkusIntegrationTest` against the native
+binary to catch native-specific issues.
+
+**Misconception 2: All reflection issues show up at build time**
+**Reality:** GraalVM warns about some reflection usages at build time, but many
+fail silently at build time and only throw `ClassNotFoundException` at runtime
+in the native binary. Build warnings do not guarantee runtime correctness.
+Native integration tests are the only reliable validation.
+
+**Misconception 3: @RegisterForReflection on a class registers all its methods**
+**Reality:** `@RegisterForReflection` registers the class for reflective
+instantiation by default. To register methods and fields for reflection too,
+use `@RegisterForReflection(methods = true, fields = true)`. Jackson
+serialization requires both for DTO introspection.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: ClassNotFoundException in native binary at runtime**
+**Symptom:** Native binary throws `ClassNotFoundException` for a DTO, mapper,
+or service class. Works in JVM mode.
+**Diagnosis:** Class accessed via reflection without registration. Check stack
+trace for `Class.forName()` or Jackson/Gson instantiation. Run
+`./mvnw package -Pnative -Dquarkus.native.enable-reports=true` for reflection
+report.
+**Fix:** Add `@RegisterForReflection(methods=true, fields=true)` to the class.
+Or add to `META-INF/native-image/reflect-config.json`.
+
+**Failure 2: ExceptionInInitializerError in native binary**
+**Symptom:** Native binary fails immediately at startup with
+`ExceptionInInitializerError` in a static initializer block.
+**Diagnosis:** Static initializer reads environment variables, system properties,
+or performs network calls at class initialization time - all forbidden in native
+static init.
+**Fix:** Move the initialization logic to an `@PostConstruct` method or a
+Quarkus startup `@ApplicationScoped` bean with `void onStart(@Observes StartupEvent e)`.
+
 when adding new libraries. CI should run @QuarkusIntegrationTest
 against the native binary on every PR."
 
@@ -281,6 +365,160 @@ against the native binary on every PR."
 | Staff | 14 min | Static initializer internals, binary size, container build |
 
 ---
+
+---
+
+---
+
+**[MID] Q8 - [DEBUGGING] Production service using Quarkus Native Image Build and Diagnostics starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Native Image Build and Diagnostics-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last.
+
+For Quarkus Native Image Build and Diagnostics specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation.
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q9 - [TRADE-OFF] What are the key trade-offs of Quarkus Native Image Build and Diagnostics? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Native Image Build and Diagnostics, not just the benefits.
+
+Quarkus Native Image Build and Diagnostics is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance.
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity.
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q10 - [ARCHITECTURE] How does Quarkus Native Image Build and Diagnostics fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Native Image Build and Diagnostics in a real production system, not just in isolation.
+
+Quarkus Native Image Build and Diagnostics in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Native Image Build and Diagnostics typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion).
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Native Image Build and Diagnostics affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q11 - [PRODUCTION] What Quarkus Native Image Build and Diagnostics configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Native Image Build and Diagnostics.
+
+Critical pre-production checklist for Quarkus Native Image Build and Diagnostics: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents.
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured.
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q12 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Native Image Build and Diagnostics resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Native Image Build and Diagnostics knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome).
+
+Strong answers for Quarkus Native Image Build and Diagnostics include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Native Image Build and Diagnostics actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Native Image Build and Diagnostics in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Native Image Build and Diagnostics starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Native Image Build and Diagnostics-related issues. (- Profile-guided native (PGO) , Q2)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (- Profile-guided native (PGO) , Q2)
+
+For Quarkus Native Image Build and Diagnostics specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (- Profile-guided native (PGO) , Q2)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (- Profile-guided native (PGO) , Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Native Image Build and Diagnostics? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Native Image Build and Diagnostics, not just the benefits. (- Profile-guided native (PGO) , Q3)
+
+Quarkus Native Image Build and Diagnostics is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (- Profile-guided native (PGO) , Q3)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (- Profile-guided native (PGO) , Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (- Profile-guided native (PGO) , Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Native Image Build and Diagnostics fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Native Image Build and Diagnostics in a real production system, not just in isolation. (- Profile-guided native (PGO) , Q4)
+
+Quarkus Native Image Build and Diagnostics in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability). (- Profile-guided native (PGO) , Q4)
+
+Architectural enablements: Quarkus Native Image Build and Diagnostics typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden. (- Profile-guided native (PGO) , Q4)
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (- Profile-guided native (PGO) , Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Native Image Build and Diagnostics affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Native Image Build and Diagnostics configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Native Image Build and Diagnostics. (- Profile-guided native (PGO) , Q5)
+
+Critical pre-production checklist for Quarkus Native Image Build and Diagnostics: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs). (- Profile-guided native (PGO) , Q5)
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (- Profile-guided native (PGO) , Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (- Profile-guided native (PGO) , Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Native Image Build and Diagnostics resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Native Image Build and Diagnostics knowledge under pressure, and whether you learn from production experience. (- Profile-guided native (PGO) , Q6)
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (- Profile-guided native (PGO) , Q6)
+
+Strong answers for Quarkus Native Image Build and Diagnostics include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Native Image Build and Diagnostics actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence. (- Profile-guided native (PGO) , Q6)
+
+If you have not used Quarkus Native Image Build and Diagnostics in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts. (- Profile-guided native (PGO) , Q6)
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Native Image Build and Diagnostics handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Native Image Build and Diagnostics at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Native Image Build and Diagnostics is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes.
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern).
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
 
 **[SENIOR] Q1 - How does the tracing agent help
 with native image build failures?**
@@ -313,7 +551,7 @@ java -agentlib:native-image-agent=\
 # The generated configs are auto-included
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The generated configs are auto-included example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Limitation: agent only captures what's executed in
 the test run. If a code path is never tested, its
@@ -535,7 +773,7 @@ java -Xlog:gc*:gc.log \
 # Analyze with GCViewer or GCEasy
 ```
 
-> **Code walkthrough:** @Timed and @Counted from Micrometer
+> **Code walkthrough:** @Timed and @Counted from Micrometerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > add latency and count metrics to the createOrder method.
 > Hibernate statistics expose query execution time and count.
 > The N+1 signature: query count >> entity count in Hibernate
@@ -556,6 +794,89 @@ a suspicious span."
 **Staff:** "Systematic process: establish baseline metrics,
 load test under realistic traffic, identify the bottleneck
 layer (network, DB, CPU), instrument the hotspot with
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus performance diagnostics is the systematic process of
+identifying CPU hotspots, memory allocation pressure, I/O bottlenecks, and
+thread utilization issues in running Quarkus applications. The toolkit includes:
+async-profiler (CPU/allocation flame graphs), Micrometer/Prometheus (latency
+percentiles, throughput), GC log analysis, and OTel distributed traces.
+
+**Mechanism:** Performance diagnosis follows a hierarchy:
+1. Identify the bottleneck type: CPU-bound, memory-bound, I/O-bound, or
+   lock-contended (thread dump analysis).
+2. CPU profiling with async-profiler: attach to running JVM, generate flame
+   graph, identify widest bars (hottest methods).
+3. Memory profiling: allocation tracking with `-XX:+HeapDumpOnOutOfMemoryError`
+   and `jmap -histo <pid>` for histogram.
+4. I/O profiling: OTel traces show DB query time, external API latency.
+5. Measure -> hypothesis -> fix -> measure again. Never skip the before/after
+   measurement.
+
+**Trade-off:**
+
+**Positive:** Profiling under production-like load finds bottlenecks invisible
+in unit tests. Async-profiler has <2% overhead in sampling mode.
+
+**Negative:** Production profiling risks (async-profiler attach requires JVM
+access). Flame graphs require interpretation skill to read correctly.
+
+**Production Reality:** The most common Quarkus performance issue is blocking
+code on the Vert.x event loop thread (calls to JDBC, `Thread.sleep`, synchronous
+HTTP calls in a `@Incoming` handler). The symptom is high event loop utilization
+but low actual CPU in flamegraphs. Always check for blocking threads first.
+
+**Decision:** Establish a performance baseline before optimizing. Use Micrometer
+dashboard to detect regressions automatically. Profile in staging with production
+traffic volume before deploying optimizations.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Native image always has better performance than JVM**
+**Reality:** Native image has better STARTUP and MEMORY, but THROUGHPUT for
+CPU-intensive workloads is typically 20-40% LOWER than a warmed-up JVM (after
+10+ minutes of JIT optimization). Profile both modes under production load
+before deciding.
+
+**Misconception 2: Low CPU usage means the application is healthy**
+**Reality:** Low CPU with high latency indicates I/O blocking or lock contention.
+The threads are waiting (WAITING state) not burning CPU. Check thread dumps for
+threads in WAITING or TIMED_WAITING on JDBC, HTTP client, or `synchronized`
+blocks.
+
+**Misconception 3: Adding indexes always improves performance**
+**Reality:** Indexes improve read performance at the cost of write performance.
+For write-heavy tables (audit logs, event streams), excessive indexes cause
+insert/update slowdowns. Profile both read and write paths before adding indexes.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: High latency but low CPU - event loop blocking**
+**Symptom:** P99 latency high (>1s) under moderate load. CPU utilization <30%.
+Application handles fewer concurrent requests than expected.
+**Diagnosis:** Quarkus logs `io.vertx.core.impl.BlockedThreadChecker: Thread
+<io.vert.x-eventloop-thread-X> has been blocked for Xms, time limit is 2000ms`.
+**Fix:** Find the blocking code (Thread.sleep, JDBC, synchronous HTTP) and
+annotate the REST endpoint with `@Blocking`. Or migrate to reactive I/O.
+
+**Failure 2: Memory growing over time - allocation pressure**
+**Symptom:** Heap usage grows continuously. GC runs more frequently. Eventually
+OOM or GC pauses become noticeable.
+**Diagnosis:** `jmap -histo <pid>` shows top object types by count. Large counts
+of `String[]` or `byte[]` indicate serialization overhead. Enable GC logging:
+`-Xlog:gc*:file=gc.log` and analyze with GCViewer.
+**Fix:** Use `jfrec` (JFR) or async-profiler allocation mode to find allocation
+hotspots. Common fixes: object pooling, ByteBuf allocation via Vert.x buffer,
+or reducing unnecessary DTO copies.
+
 custom spans, profile, fix, re-measure. Never optimize
 without a measurement before and after."
 
@@ -569,6 +890,160 @@ without a measurement before and after."
 | Staff | 14 min | Systematic approach, reactive performance, GC tuning |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Performance Diagnostics starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Performance Diagnostics-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Analyze with GCViewer or GCEas, Q2)
+
+For Quarkus Performance Diagnostics specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Analyze with GCViewer or GCEas, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Performance Diagnostics? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Performance Diagnostics, not just the benefits.
+
+Quarkus Performance Diagnostics is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Analyze with GCViewer or GCEas, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Analyze with GCViewer or GCEas, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Performance Diagnostics fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Performance Diagnostics in a real production system, not just in isolation.
+
+Quarkus Performance Diagnostics in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Performance Diagnostics typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Analyze with GCViewer or GCEas, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Performance Diagnostics affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Performance Diagnostics configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Performance Diagnostics.
+
+Critical pre-production checklist for Quarkus Performance Diagnostics: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Analyze with GCViewer or GCEas, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Analyze with GCViewer or GCEas, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Performance Diagnostics resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Performance Diagnostics knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Analyze with GCViewer or GCEas, Q6)
+
+Strong answers for Quarkus Performance Diagnostics include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Performance Diagnostics actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Performance Diagnostics in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Performance Diagnostics handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Performance Diagnostics at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Performance Diagnostics is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Analyze with GCViewer or GCEas, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Analyze with GCViewer or GCEas, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Performance Diagnostics to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply.
+
+Start with the problem: what existed before Quarkus Performance Diagnostics and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Performance Diagnostics: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Performance Diagnostics and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Performance Diagnostics at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Performance Diagnostics beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Performance Diagnostics expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Performance Diagnostics, coordinated upgrade windows. (2) Internal shared library for common Quarkus Performance Diagnostics configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Performance Diagnostics extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Performance Diagnostics from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Performance Diagnostics correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load).
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?).
+
+Testing strategy for Quarkus Performance Diagnostics: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Performance Diagnostics starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Performance Diagnostics-related issues. (Analyze with GCViewer or GCEas, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Analyze with GCViewer or GCEas, Q11)
+
+For Quarkus Performance Diagnostics specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Analyze with GCViewer or GCEas, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Analyze with GCViewer or GCEas, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Performance Diagnostics? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Performance Diagnostics, not just the benefits. (Analyze with GCViewer or GCEas, Q12)
+
+Quarkus Performance Diagnostics is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Analyze with GCViewer or GCEas, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Analyze with GCViewer or GCEas, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Analyze with GCViewer or GCEas, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[STAFF] Q1 - How do you diagnose event loop blocking
 in a Quarkus reactive application?**
@@ -600,7 +1075,7 @@ kill -3 $(pgrep -f app-runner)
 # Blocked method appears wide in the flamegraph
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Blocked method appears wide in the flamegraph example demonstrates shell execution behavior. **KEY MECHANISM:** the shell executes each command in a subprocess, passing exit codes between pipeline stages. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting, breaking argument boundaries silently. **TAKEAWAY: always quote variables and use set -euo pipefail to catch all failures.**
 
 Fixes:
 1. Identify blocking call (JDBC, file I/O, sleep).
@@ -632,7 +1107,7 @@ public Uni<Order> findById(@PathParam("id") Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Blocked method appears wide in the flamegraph example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 *What separates good from great:* Wall-clock profiling
 (not CPU) to find blocking - CPU profiler misses blocked
@@ -865,7 +1340,7 @@ public class PaymentService {
 }
 ```
 
-> **Code walkthrough:** Anti-pattern 1 shows the classic
+> **Code walkthrough:** Anti-pattern 1 shows the classicice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > event loop blocking issue in RESTEasy Reactive - the
 > @Blocking annotation moves execution to the worker thread
 > pool. Anti-pattern 2 demonstrates the silent failure
@@ -903,6 +1378,94 @@ in code review."
 **Staff:** "The deeper anti-pattern: using reactive
 APIs for everything when @Blocking + JDBC is simpler
 and sufficient. Reactive complexity without reactive
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus anti-patterns are common development mistakes that
+negate Quarkus's performance advantages, introduce correctness bugs, or create
+maintenance burdens. The most critical anti-patterns: blocking event loop threads,
+overusing native image (when JVM is sufficient), ignoring extension ecosystem
+(using raw libraries), and misusing CDI scopes.
+
+**Mechanism:** Quarkus anti-patterns typically manifest in two ways:
+1. **Performance anti-patterns:** Blocking event loop (I/O on Vert.x thread),
+   non-reactive DB access with reactive HTTP layer, over-engineering with native
+   when JVM is sufficient.
+2. **Correctness anti-patterns:** Mutable state in `@ApplicationScoped` beans
+   (shared across requests), `@RequestScoped` in background threads (no context),
+   missing `@Transactional` on write methods.
+3. **Operational anti-patterns:** Not using Dev Services (environment drift),
+   not running `@QuarkusIntegrationTest` in CI (native issues in production).
+
+**Trade-off:**
+
+**Positive:** Identifying and avoiding anti-patterns prevents expensive
+production incidents.
+
+**Negative:** Anti-pattern avoidance requires deep Quarkus knowledge. Some
+anti-patterns are non-obvious (e.g., blocking thread detection requires
+profiling).
+
+**Production Reality:** The #1 Quarkus production incident category is blocking
+the event loop thread. The #2 is mutable state in `@ApplicationScoped` beans.
+Both are avoidable with linting (vert-x blocked thread checker) and code review.
+
+**Decision:** Establish team coding standards: `@Blocking` rule for all I/O
+in reactive handlers. Stateless rule for all `@ApplicationScoped` beans. Native
+only when startup/memory SLA requires it.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Using reactive everywhere is always better**
+**Reality:** Reactive programming model (Mutiny, SmallRye Reactive Messaging)
+adds complexity: no thread-local context, error propagation through reactive
+chains, backpressure management. For simple CRUD services under 500 req/s,
+blocking I/O (`@Blocking` + JDBC + `@Transactional`) is simpler, more
+maintainable, and performs sufficiently. Reactive is justified at high concurrency
+(>1,000 req/s with slow I/O).
+
+**Misconception 2: Quarkus's performance advantages are automatic**
+**Reality:** Quarkus provides the CAPABILITY for better performance, but
+realizing it requires correct usage. Blocking the event loop, using too many
+extensions, not enabling GZIP compression, using `@Dependent` beans in hot paths
+(new instance per call) - all negate the gains. Performance requires both the
+right framework AND correct usage patterns.
+
+**Misconception 3: All third-party libraries are safe to use in Quarkus**
+**Reality:** Libraries using Spring annotations, Guice injection, or CGLIB
+proxies do not work in Quarkus without adaptation. Libraries using `java.util.logging`
+work fine; libraries using Log4j 1.x need the JBoss logging adapter. Always
+verify library compatibility via Quarkiverse or test before committing to a
+library in a Quarkus project.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: ApplicationScoped bean with mutable state**
+**Symptom:** Intermittent incorrect data in responses. Concurrent requests see
+each other's data. Hard to reproduce - depends on timing.
+**Diagnosis:** `@ApplicationScoped` bean with instance fields modified by request
+handlers. Multiple threads update the same instance field concurrently.
+**Fix:** Make `@ApplicationScoped` beans STATELESS. For per-request state: use
+`@RequestScoped`. For shared counters: use `AtomicLong` or Micrometer meters.
+For per-user caches: use `ConcurrentHashMap` with explicit synchronization.
+
+**Failure 2: Using @Inject with @Singleton in a @RequestScoped bean**
+**Symptom:** `@Singleton` injected into `@RequestScoped` bean accumulates state
+across requests. `@Singleton` service's per-request state is shared.
+**Diagnosis:** CDI scope mismatch: a broader-scoped bean (`@Singleton`) injected
+into a narrower-scoped bean (`@RequestScoped`). The singleton holds state set
+by the first request and visible to all subsequent requests.
+**Fix:** Ensure services that hold per-request state are `@RequestScoped`. Use
+method parameters instead of instance fields for per-request state in
+`@ApplicationScoped` singletons.
+
 benefit. For most services: @Blocking JDBC is fine
 up to 500 req/s. Reactive matters above 1000 req/s."
 
@@ -916,6 +1479,160 @@ up to 500 req/s. Reactive matters above 1000 req/s."
 | Staff | 12 min | When reactive hurts, @Singleton vs @ApplicationScoped |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Anti-Patterns starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Anti-Patterns-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Anti-Patterns, Q2)
+
+For Quarkus Anti-Patterns specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Anti-Patterns, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Anti-Patterns? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Anti-Patterns, not just the benefits.
+
+Quarkus Anti-Patterns is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Anti-Patterns, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Anti-Patterns, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Anti-Patterns fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Anti-Patterns in a real production system, not just in isolation.
+
+Quarkus Anti-Patterns in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Anti-Patterns typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Quarkus Anti-Patterns, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Anti-Patterns affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Anti-Patterns configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Anti-Patterns.
+
+Critical pre-production checklist for Quarkus Anti-Patterns: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Quarkus Anti-Patterns, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Quarkus Anti-Patterns, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Anti-Patterns resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Anti-Patterns knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Quarkus Anti-Patterns, Q6)
+
+Strong answers for Quarkus Anti-Patterns include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Anti-Patterns actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Anti-Patterns in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Anti-Patterns handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Anti-Patterns at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Anti-Patterns is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Quarkus Anti-Patterns, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Quarkus Anti-Patterns, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Anti-Patterns to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply. (Quarkus Anti-Patterns, Q8)
+
+Start with the problem: what existed before Quarkus Anti-Patterns and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Anti-Patterns: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Anti-Patterns and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Anti-Patterns at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Anti-Patterns beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Anti-Patterns expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Anti-Patterns, coordinated upgrade windows. (2) Internal shared library for common Quarkus Anti-Patterns configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Anti-Patterns extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Anti-Patterns from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Anti-Patterns correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load). (Quarkus Anti-Patterns, Q10)
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?). (Quarkus Anti-Patterns, Q10)
+
+Testing strategy for Quarkus Anti-Patterns: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Anti-Patterns starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Anti-Patterns-related issues. (Quarkus Anti-Patterns, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Anti-Patterns, Q11)
+
+For Quarkus Anti-Patterns specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Quarkus Anti-Patterns, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Anti-Patterns, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Anti-Patterns? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Anti-Patterns, not just the benefits. (Quarkus Anti-Patterns, Q12)
+
+Quarkus Anti-Patterns is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Quarkus Anti-Patterns, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Anti-Patterns, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Anti-Patterns, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[SENIOR] Q1 - Why is @Singleton sometimes wrong
 even though it seems like it should be the default?**
@@ -1171,7 +1888,7 @@ curl -H "Origin: https://evil.com" \
 # Should NOT be *
 ```
 
-> **Code walkthrough:** The @PermitAll/@RolesAllowed bug
+> **Code walkthrough:** The @PermitAll/@RolesAllowed bugice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the most dangerous: @PermitAll on the class wins
 > over @RolesAllowed on methods - the delete endpoint
 > becomes public. The fix: @Authenticated at class level
@@ -1192,6 +1909,95 @@ All discoverable with 5-minute security review."
 check opportunity. Quarkus could validate: @PermitAll
 class with @RolesAllowed methods = warning. trust-all
 in prod profile = error. Dev UI route registered without
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus security misconfiguration covers common OWASP-class
+security mistakes: exposing Dev UI in production, missing authentication on
+management endpoints, CORS wildcards, missing audience validation in JWT tokens,
+and insecure HTTP (non-TLS) in production. Quarkus's rich configuration
+surface requires explicit security hardening.
+
+**Mechanism:** Key misconfiguration vectors:
+1. **Dev UI in production:** `quarkus.dev-ui.enabled=true` (default in dev mode)
+   exposes internal application state. Must be explicitly disabled in production
+   profiles.
+2. **Management endpoint exposure:** `/q/health`, `/q/metrics` exposed on the
+   main HTTP port without authentication. Contains system information useful
+   for attackers.
+3. **CORS wildcard:** `quarkus.http.cors.origins=*` allows any origin to make
+   cross-origin requests with user credentials.
+4. **JWT audience bypass:** Missing `quarkus.oidc.token.audience` allows any
+   valid token from the same OIDC provider to access the service.
+
+**Trade-off:**
+
+**Positive:** Quarkus provides `%prod.` profiles to override dev settings for
+production. Management endpoints can be moved to a separate port inaccessible
+from the public network.
+
+**Negative:** Configuration-based security requires discipline - security-sensitive
+settings must be explicitly reviewed for each environment. No compile-time
+enforcement of security config.
+
+**Production Reality:** Dev UI exposure in production is a critical finding in
+security audits. It exposes CDI bean graphs, configuration values (potentially
+including secrets), and internal metrics. Always verify with
+`curl http://production-host/q/dev-ui` - must return 404.
+
+**Decision:** Apply Quarkus production hardening checklist: (1) Disable Dev UI,
+(2) Move management to separate port, (3) Add authentication to `/q/metrics`,
+(4) Set explicit CORS origins, (5) Enable TLS, (6) Configure JWT audience.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Dev UI is automatically disabled in production builds**
+**Reality:** Dev UI is disabled in production mode (`%prod` profile) only if
+you use `quarkus.profile=prod`. If the application starts without an explicit
+profile (e.g., `java -jar app.jar` without `QUARKUS_PROFILE=prod`), the
+`dev` profile settings may apply. Explicitly set `%prod.quarkus.dev-ui.enabled=false`.
+
+**Misconception 2: @PermitAll on one endpoint bypasses security for all endpoints**
+**Reality:** `@PermitAll` only applies to the SPECIFIC annotated method/class.
+Other endpoints with `@RolesAllowed` or no annotation still require authentication
+if `quarkus.security.auth.enabled-in-dev-mode=true` (or prod mode security).
+`@PermitAll` does NOT disable application-wide security.
+
+**Misconception 3: Using HTTPS guarantees API security**
+**Reality:** TLS encrypts transport but does NOT authenticate or authorize
+requests. A service with HTTPS but no JWT validation accepts ALL requests.
+TLS is necessary but not sufficient - authentication (`quarkus.oidc.auth-server-url`)
+and authorization (`@RolesAllowed`) are separate and both required.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Secrets exposed via /q/configproperties endpoint**
+**Symptom:** Security audit finds database passwords, API keys, or JWT secrets
+accessible at `/q/dev-ui/io.quarkus.quarkus-vertx-http/config-editor` or
+`/q/info`.
+**Diagnosis:** Dev UI or SmallRye Config endpoints are enabled in production.
+Test: `curl https://api.example.com/q/dev-ui` - should return 404 in production.
+**Fix:** Add to `application.properties`: `%prod.quarkus.dev-ui.enabled=false`.
+Move management endpoints to a separate port:
+`quarkus.management.enabled=true; quarkus.management.port=9000` and restrict
+port 9000 to internal network only.
+
+**Failure 2: OIDC token from wrong audience accepted**
+**Symptom:** Security scan finds that a token issued for `service-B` can access
+`service-A` endpoints. Cross-service token replay vulnerability.
+**Diagnosis:** Missing `quarkus.oidc.token.audience` configuration. Quarkus OIDC
+validates signature and expiry but NOT audience claim by default.
+**Fix:** Set `quarkus.oidc.token.audience=service-a` (matching the `aud` claim
+in tokens issued specifically for service-A). Verify token issuance includes
+the service-specific audience.
+
 management port = warning. None of these are currently
 checked. Good candidate for a security-lint extension."
 
@@ -1205,6 +2011,160 @@ checked. Good candidate for a security-lint extension."
 | Staff | 12 min | Security extension opportunities, OWASP mapping |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Security Misconfiguration starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Security Misconfiguration-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Should NOT be *, Q2)
+
+For Quarkus Security Misconfiguration specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Should NOT be *, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Security Misconfiguration? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Security Misconfiguration, not just the benefits.
+
+Quarkus Security Misconfiguration is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Should NOT be *, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Should NOT be *, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Security Misconfiguration fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Security Misconfiguration in a real production system, not just in isolation.
+
+Quarkus Security Misconfiguration in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Security Misconfiguration typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Should NOT be *, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Security Misconfiguration affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Security Misconfiguration configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Security Misconfiguration.
+
+Critical pre-production checklist for Quarkus Security Misconfiguration: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Should NOT be *, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Should NOT be *, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Security Misconfiguration resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Security Misconfiguration knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Should NOT be *, Q6)
+
+Strong answers for Quarkus Security Misconfiguration include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Security Misconfiguration actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Security Misconfiguration in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Security Misconfiguration handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Security Misconfiguration at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Security Misconfiguration is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Should NOT be *, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Should NOT be *, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Security Misconfiguration to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply. (Should NOT be *, Q8)
+
+Start with the problem: what existed before Quarkus Security Misconfiguration and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Security Misconfiguration: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Security Misconfiguration and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Security Misconfiguration at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Security Misconfiguration beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Security Misconfiguration expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Security Misconfiguration, coordinated upgrade windows. (2) Internal shared library for common Quarkus Security Misconfiguration configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Security Misconfiguration extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Security Misconfiguration from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Security Misconfiguration correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load). (Should NOT be *, Q10)
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?). (Should NOT be *, Q10)
+
+Testing strategy for Quarkus Security Misconfiguration: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Security Misconfiguration starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Security Misconfiguration-related issues. (Should NOT be *, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Should NOT be *, Q11)
+
+For Quarkus Security Misconfiguration specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Should NOT be *, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Should NOT be *, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Security Misconfiguration? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Security Misconfiguration, not just the benefits. (Should NOT be *, Q12)
+
+Quarkus Security Misconfiguration is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Should NOT be *, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Should NOT be *, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Should NOT be *, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[SENIOR] Q1 - How do you harden a Quarkus service
 before production deployment?**
@@ -1444,7 +2404,7 @@ public class LazyCache {
 // ./mvnw package -Pnative
 ```
 
-> **Code walkthrough:** AppCDS pre-loads class metadata
+> **Code walkthrough:** AppCDS pre-loads class metadataice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > into a shared archive file; subsequent JVM startups
 > mmap the archive instead of loading class files, saving
 > ~500ms. -XX:MaxRAMPercentage=75 is safer than hardcoded
@@ -1466,6 +2426,93 @@ immediate startup improvement."
 **Staff:** "Memory budget calculation for K8s:
 Total container memory = Heap + Off-heap (Netty/Vert.x)
 + JVM overhead (50-100MB). Set -Xmx = limit - 150MB.
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus memory and startup optimization covers techniques to
+reduce JVM heap usage, RSS (resident set size), and startup time in both JVM
+mode (CDS, heap tuning, unused extension removal) and native mode (heap sizing,
+profile-guided optimization). The goal is to maximize pod density on Kubernetes
+and minimize autoscaling response time.
+
+**Mechanism:** Key optimization levers:
+1. **Remove unused extensions:** Each extension adds startup code and memory.
+   Only include extensions actually used. `./mvnw quarkus:list-extensions`
+   shows all active extensions.
+2. **AppCDS (Class Data Sharing):** Quarkus generates a CDS archive during build
+   that pre-loads and verifies classes. Reduces JVM startup by 20-30%.
+3. **Heap tuning:** Set `-Xms` = `-Xmx` to avoid heap expansion pauses.
+   Set `-XX:MaxRAMPercentage=75` to let JVM calculate from container limits.
+4. **Native heap sizing:** `quarkus.native.additional-build-args=-J-Xmx2g` for
+   build. Set `quarkus.native.native-image-xmx=2g` for sufficient build memory.
+
+**Trade-off:**
+
+**Positive:** CDS reduces startup by 25-30% with zero code changes. Proper heap
+tuning prevents GC overhead during normal operation.
+
+**Negative:** CDS archives are platform-specific and must be regenerated for
+each JVM version update. Native image optimization (PGO) requires an instrumented
+build followed by a profile run - adds complexity to the build pipeline.
+
+**Production Reality:** The most impactful optimization is often simply REMOVING
+unused extensions. A project that starts with `quarkus-jackson`, `quarkus-rest`,
+and `quarkus-smallrye-openapi` but never uses OpenAPI saves measurable startup
+time by removing it.
+
+**Decision:** Profile before optimizing. Establish baseline startup and RSS
+metrics. Apply optimizations in order of impact: (1) remove unused extensions,
+(2) enable CDS, (3) tune heap, (4) consider native if startup <1s is required.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: More heap always improves performance**
+**Reality:** Oversized heap causes longer GC pauses and wastes Kubernetes
+resources. For Quarkus applications serving typical REST workloads (short-lived
+objects), a well-sized heap of 200-400MB with `-XX:+UseZGC` (zero-pause GC)
+outperforms a 2GB heap with default GC. Larger heap = larger GC work.
+
+**Misconception 2: Native image always uses less memory than JVM**
+**Reality:** Native image RSS at startup is dramatically lower (50MB vs 300MB),
+but under load, native image heap expands. For a high-throughput service at
+steady load, native RSS can grow to 200-400MB - comparable to a well-tuned JVM.
+The native advantage is at REST (startup, idle), not necessarily at peak.
+
+**Misconception 3: Startup time optimization is only relevant for serverless**
+**Reality:** Even for long-running Kubernetes services, startup time affects
+deployment speed (rolling updates), recovery time from crashes, and horizontal
+autoscaling response time. A 5-second startup service recovers from a crash 5
+seconds slower than a 0.5-second startup service - critical for SLA compliance.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Container OOMKilled after native startup**
+**Symptom:** Native image pod starts successfully but crashes with OOMKilled
+(exit code 137) after receiving the first burst of traffic.
+**Diagnosis:** Native image heap expands under load. Container memory limit
+set based on idle RSS (50MB) insufficient for load RSS (200-400MB). Check
+`kubectl describe pod` for OOMKilled.
+**Fix:** Profile peak RSS under load: `kubectl top pod` during load test.
+Set container memory limit to `peak_rss + 20%`. For native images, the initial
+heap is small but grows dynamically - never set limit to idle RSS.
+
+**Failure 2: CDS archive causing slower startup after JVM update**
+**Symptom:** Startup time INCREASES after JVM update. CDS was working before
+the update.
+**Diagnosis:** CDS archives are JVM version-specific. An archive generated
+for JVM 17.0.5 is invalid for JVM 17.0.9. JVM logs: `CDS archive was created
+with JVM X, current JVM is Y. Skipping`. CDS is silently disabled and the
+overhead of checking the archive adds delay.
+**Fix:** Regenerate CDS archive after JVM updates. Automate CDS archive
+regeneration in the Docker image build step after any JVM version change.
+
 For native: RSS grows with concurrent requests (stack
 memory); right-size to peak_rss + 20% buffer."
 
@@ -1479,6 +2526,160 @@ memory); right-size to peak_rss + 20% buffer."
 | Staff | 12 min | Memory budget, GC selection, Kubernetes resource tuning |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Memory and Startup Optimization starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Memory and Startup Optimization-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Heap = 0.75 * 512 = 384MB, Q2)
+
+For Quarkus Memory and Startup Optimization specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Heap = 0.75 * 512 = 384MB, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Memory and Startup Optimization? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Memory and Startup Optimization, not just the benefits.
+
+Quarkus Memory and Startup Optimization is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Heap = 0.75 * 512 = 384MB, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Heap = 0.75 * 512 = 384MB, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Memory and Startup Optimization fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Memory and Startup Optimization in a real production system, not just in isolation.
+
+Quarkus Memory and Startup Optimization in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Memory and Startup Optimization typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Heap = 0.75 * 512 = 384MB, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Memory and Startup Optimization affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Memory and Startup Optimization configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Memory and Startup Optimization.
+
+Critical pre-production checklist for Quarkus Memory and Startup Optimization: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Heap = 0.75 * 512 = 384MB, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Heap = 0.75 * 512 = 384MB, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Memory and Startup Optimization resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Memory and Startup Optimization knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Heap = 0.75 * 512 = 384MB, Q6)
+
+Strong answers for Quarkus Memory and Startup Optimization include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Memory and Startup Optimization actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Memory and Startup Optimization in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Memory and Startup Optimization handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Memory and Startup Optimization at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Memory and Startup Optimization is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Heap = 0.75 * 512 = 384MB, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Heap = 0.75 * 512 = 384MB, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Memory and Startup Optimization to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply. (Heap = 0.75 * 512 = 384MB, Q8)
+
+Start with the problem: what existed before Quarkus Memory and Startup Optimization and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Memory and Startup Optimization: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Memory and Startup Optimization and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Memory and Startup Optimization at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Memory and Startup Optimization beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Memory and Startup Optimization expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Memory and Startup Optimization, coordinated upgrade windows. (2) Internal shared library for common Quarkus Memory and Startup Optimization configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Memory and Startup Optimization extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Memory and Startup Optimization from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Memory and Startup Optimization correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load). (Heap = 0.75 * 512 = 384MB, Q10)
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?). (Heap = 0.75 * 512 = 384MB, Q10)
+
+Testing strategy for Quarkus Memory and Startup Optimization: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Memory and Startup Optimization starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Memory and Startup Optimization-related issues. (Heap = 0.75 * 512 = 384MB, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Heap = 0.75 * 512 = 384MB, Q11)
+
+For Quarkus Memory and Startup Optimization specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Heap = 0.75 * 512 = 384MB, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Heap = 0.75 * 512 = 384MB, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Memory and Startup Optimization? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Memory and Startup Optimization, not just the benefits. (Heap = 0.75 * 512 = 384MB, Q12)
+
+Quarkus Memory and Startup Optimization is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Heap = 0.75 * 512 = 384MB, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Heap = 0.75 * 512 = 384MB, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Heap = 0.75 * 512 = 384MB, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[STAFF] Q1 - How do you right-size Quarkus JVM
 containers in Kubernetes?**

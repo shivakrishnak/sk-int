@@ -62,7 +62,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **N+1, Cartesian product, and cross join mechanics:**
-```
+```plaintext
 N+1 PROBLEM IN DETAIL:
 
   @Entity
@@ -158,7 +158,7 @@ IMPLICIT CROSS JOIN (JPQL BUG):
   List<Order> findBigOrdersSimplest();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Anti-Patterns example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -284,7 +284,7 @@ Read path decision tree:
      Query 2: SELECT p FROM Product p JOIN FETCH p.items WHERE p.id IN (...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -345,7 +345,7 @@ xychart-beta
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Production slowdown traced to JOIN FETCH + pagination.**
-```
+```plaintext
 Symptom: /api/orders?page=0&size=20 endpoint takes 45 seconds under load.
   Heap: 2GB used before GC kicks in.
   DB: CPU normal. But the single query transfers 100MB of data.
@@ -372,7 +372,7 @@ Fix:
   return new PageImpl<>(orders, pageable, ids.getTotalElements());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

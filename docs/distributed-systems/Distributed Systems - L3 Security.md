@@ -124,7 +124,7 @@ If client certificate is invalid or missing:
   → Server sends alert, closes connection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mTLS and Service-to-Service Authentication example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SPIFFE: Secure Production Identity Framework for Everyone**
 
@@ -158,7 +158,7 @@ Authorization policy can then use the SPIFFE URI:
    payment-service SPIFFE ID"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mTLS and Service-to-Service Authentication example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Certificate rotation:**
 
@@ -176,7 +176,7 @@ Istio Citadel automatic rotation:
   Mesh certificate: zero-downtime rotation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This mTLS and Service-to-Service Authentication example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 mTLS is most powerful when combined with authorization policies
@@ -218,6 +218,18 @@ this a protocol-level guarantee - no application code required."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // mTLS IN SPRING BOOT (server-side config)
@@ -278,7 +290,7 @@ public RestTemplate mtlsRestTemplate() throws Exception {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern configures HTTPS (one-way
+> **Code walkthrough:** The BAD pattern configures HTTPS (one-wayice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > TLS) without client authentication - any HTTP client can call
 > the service. The GOOD server configuration adds `client-auth: need`
 > which requires every client to present a valid certificate signed
@@ -360,14 +372,93 @@ Use OAuth 2.0 / API key with TLS.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Certificate rotation breaking mutual TLS connections**
+
+**Symptom:** After a certificate rotation, a subset of service-to-
+service calls start failing with TLS handshake errors. Services
+using the old certificate cannot communicate with services
+that have already rotated to the new certificate.
+
+**Root cause:** The CA root certificate was rotated without a
+transition period. Services that have not yet reloaded their
+trust store reject the new certificates as untrusted. There is
+a window where some services have the new cert and others have
+the old cert, and they cannot authenticate each other.
+
+**Diagnosis:**
+```bash
+# Check TLS errors in Istio sidecar logs
+kubectl logs <pod> -c istio-proxy 2>&1 | grep -i 'tls\|cert\|handshake'
+# Expected on healthy: no output
+# Problem indicator: CERTIFICATE_VERIFY_FAILED, HANDSHAKE_FAILURE
+
+# Check certificate expiry on both ends
+openssl s_client -connect <service-host>:443 -showcerts </dev/null 2>/dev/null \
+  | openssl x509 -noout -dates
+# notAfter should be in the future
+
+# Check which CA the pod currently trusts
+kubectl exec <pod> -- cat /etc/ssl/certs/ca-bundle.crt \
+  | openssl x509 -noout -subject -issuer 2>/dev/null | head -4
+```
+
+> **Code walkthrough:** The Istio sidecar log and the openssl certificate check reveal the trust mismatch. KEY MECHANISM: mTLS requires both endpoints to trust the issuing CA; if the CA is rotated without a dual-trust period, the trust chain breaks for any pair where one side has the old CA and the other has new certs. WHY IT MATTERS: a botched certificate rotation can cause a complete service-mesh outage if all services rotate simultaneously. WHAT BREAKS: any service-to-service call using mTLS fails with CERTIFICATE_VERIFY_FAILED; the service appears unavailable to its callers. TAKEAWAY: always use a certificate rotation strategy with a dual-trust period - trust both old and new CA simultaneously during the transition window before removing the old CA.
+
+**Fix:** Use Istio's `PeerAuthentication` with a grace period
+that trusts both old and new CA simultaneously. For manual
+mTLS: distribute the new CA before rotating leaf certificates,
+then remove the old CA only after all certs are rotated.
+
+---
+
+**Failure Mode 2 - mTLS SPIFFE identity mismatch after service rename**
+
+**Symptom:** After renaming a service (or changing its namespace),
+all calls to that service return 401 Unauthorized or TLS errors.
+The service itself is running and healthy.
+
+**Root cause:** The `AuthorizationPolicy` resources reference the
+old service account SPIFFE identity
+(`spiffe://cluster.local/ns/old-ns/sa/old-sa`). After rename,
+the new identity
+(`spiffe://cluster.local/ns/new-ns/sa/new-sa`) is not in any
+authorization policy, so all traffic is denied by default.
+
+**Diagnosis:**
+```bash
+# Check current SPIFFE identity of the service
+kubectl get pod <pod> -o jsonpath='{.spec.serviceAccountName}'
+# Compare to what's in AuthorizationPolicy
+
+kubectl get authorizationpolicy -A -o yaml \
+  | grep -A3 'principals'
+# Look for old service account name that no longer exists
+
+# Check Istio access logs for RBAC denials
+kubectl logs <pod> -c istio-proxy \
+  | grep 'rbac_access_denied_matched_policy'
+```
+
+> **Code walkthrough:** Istio's RBAC denial log message includes the exact policy that denied the request. KEY MECHANISM: Istio `AuthorizationPolicy` matches on SPIFFE principal URIs - when the service account or namespace changes, the principal changes and no policy matches, triggering a default deny. WHY IT MATTERS: service renames and namespace migrations are common; missing this step causes complete service outage immediately after deployment. WHAT BREAKS: the service appears to reject all traffic; upstream callers see 403 or connection reset. TAKEAWAY: always grep all `AuthorizationPolicy` resources for the old identity before any service account or namespace rename.
+
+**Fix:** Update all `AuthorizationPolicy` resources that reference
+the old SPIFFE identity before or simultaneously with the rename.
+Consider using `PrincipalBinding` CRDs to decouple identity
+from policy.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: Services are failing to connect after a certificate rotation.
-Some pods cannot communicate with others. How do you diagnose?
+**[JUNIOR] Q1 - [DEBUGGING] Services are failing to connect after a certificate rotation. Some pods cannot communicate with others. How do you diagnose?**
 
-A: Certificate rotation failures typically appear as TLS handshake
+Certificate rotation failures typically appear as TLS handshake
 errors. Diagnosis: (1) Check envoy sidecar logs for `CERTIFICATE_VERIFY`
 or `HANDSHAKE_FAILURE` errors: `kubectl logs <pod> -c istio-proxy | grep -i cert`.
 (2) Check certificate expiry: `openssl s_client -connect service:port -showcerts`
@@ -384,7 +475,7 @@ before revoking the old one (two-phase CA rotation).
 
 #### Candidate Mistakes
 
-Q: How does mTLS differ from regular HTTPS?
+**[JUNIOR] Q2 - [MECHANISM] How does mTLS differ from regular HTTPS?**
 
 **What NOT to say:** "mTLS uses a special certificate format."
 
@@ -542,11 +633,11 @@ Service B:
   4. Checks: does userId own resource X? YES → allow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authorization in Microservices example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Role-based access control (RBAC) vs. Attribute-based (ABAC):**
 
-```
+```plaintext
 RBAC - Role-Based Access Control:
   User has roles: ADMIN, VIEWER, EDITOR
   Service checks: does role EDITOR allow POST /orders? YES
@@ -582,7 +673,7 @@ OPA (Open Policy Agent) - ABAC with policy-as-code:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authorization in Microservices example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Multi-tenant authorization:**
 
@@ -605,11 +696,11 @@ Critical: tenant isolation
           forbidden - that leaks tenant data)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authorization in Microservices example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Token exchange (service-to-service with user context):**
 
-```
+```plaintext
 Problem: Service A calls Service B on behalf of User X.
          Service B needs to know: who is User X?
          But the original JWT is issued for Service A's audience.
@@ -631,7 +722,7 @@ OAuth 2.0 Token Exchange (RFC 8693):
                        sub = User X (carries user context) ✓
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Authorization in Microservices example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Authentication and authorization are separate concerns. mTLS
@@ -668,6 +759,18 @@ in a policy engine (OPA), or in a central AuthZ service."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // AUTHORIZATION IN SPRING BOOT MICROSERVICES
@@ -724,6 +827,7 @@ public class OrderController {
             @AuthenticationPrincipal Jwt jwt) {
         String userId = jwt.getSubject();
         String tenantId = jwt.getClaimAsString("tenantId");
+        // BAD: see prior example above (include tenantId in query (ten...)
         // GOOD: include tenantId in query (tenant isolation)
         return orderRepo
             .findByIdAndTenantId(orderId, tenantId)
@@ -742,7 +846,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern manually extracts and
+> **Code walkthrough:** The BAD pattern manually extracts andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > checks roles in every endpoint - duplicated logic, easy to
 > forget, not standardized. The GOOD pattern uses Spring Security's
 > `@oauth2ResourceServer` to validate the JWT automatically (signature
@@ -833,11 +937,9 @@ the authorization pattern chosen.
 
 #### Production Failures
 
-Q: A multi-tenant SaaS has a data breach: Tenant A's data was
-accessed by Tenant B's users. The API gateway was properly
-configured. How did this happen and how do you fix it?
+**[JUNIOR] Q1 - [DEBUGGING] A multi-tenant SaaS has a data breach: Tenant A's data was accessed by Tenant B's users. The API gateway was properly configured. How did this happen and how do you fix it?**
 
-A: This is a horizontal privilege escalation (tenant isolation
+This is a horizontal privilege escalation (tenant isolation
 failure). The gateway check authenticated the user and confirmed
 their role. The service authorized the role for the operation.
 But the query fetched the resource by ID without filtering by
@@ -853,7 +955,7 @@ all authorization decisions including tenantId for forensic analysis.
 
 #### Candidate Mistakes
 
-Q: How do you propagate user context through service-to-service calls?
+**[JUNIOR] Q2 - [MECHANISM] How do you propagate user context through service-to-service calls?**
 
 **What NOT to say:** "Each service calls the auth server to get
 the user's identity."
@@ -906,7 +1008,7 @@ istioctl proxy-config secret <pod> --name \
   base64 -d | openssl x509 -noout -dates
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check certificate expiry example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Use two-phase CA rotation. Phase 1: add new CA to all trust
 stores (both old and new CAs trusted). Phase 2: issue new leaf
@@ -932,7 +1034,7 @@ grep -r '"alg".*"none"' /var/log/auth-service/
 # io.jsonwebtoken (jjwt): must explicitly disallow none
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This io.jsonwebtoken (jjwt): must explicitly disallow none example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 ```java
@@ -954,7 +1056,7 @@ Jwts.parserBuilder()
 //     .build()))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This io.jsonwebtoken (jjwt): must explicitly disallow none example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -978,9 +1080,15 @@ GROUP BY tenant_id ORDER BY COUNT(*) DESC;
 -- vs the resource's tenantId
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This io.jsonwebtoken (jjwt): must explicitly disallow none example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: Add tenantId to all repository methods:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD:
 Order findById(String orderId);
@@ -992,7 +1100,7 @@ Optional<Order> findByIdAndTenantId(
 // → 404 response (not 403, no data leaked)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This io.jsonwebtoken (jjwt): must explicitly disallow none example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -1010,10 +1118,9 @@ Optional<Order> findByIdAndTenantId(
 
 ---
 
-**Q1 (Clarification) - Why is mTLS needed if the services are
-already inside a VPC?**
+**[JUNIOR] Q1 - [MECHANISM] Why is mTLS needed if the services are already inside a VPC?**
 
-A: A VPC is a network perimeter - it controls which IP addresses
+A VPC is a network perimeter - it controls which IP addresses
 and ports can communicate. It does NOT know which service is making
 a call. Inside a VPC, once an attacker compromises one service
 (through a dependency vulnerability, SSRF, or injection attack),
@@ -1039,10 +1146,9 @@ moat" - once inside, nothing stops an attacker. mTLS implements the
 
 ---
 
-**Q2 (Mechanism) - How does OPA (Open Policy Agent) make
-authorization decisions?**
+**[JUNIOR] Q2 - [MECHANISM] How does OPA (Open Policy Agent) make authorization decisions?**
 
-A: OPA is a general-purpose policy engine. It evaluates policies
+OPA is a general-purpose policy engine. It evaluates policies
 written in Rego (a declarative query language) against JSON input
 data.
 
@@ -1060,7 +1166,7 @@ Evaluation process:
      }
    }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This io.jsonwebtoken (jjwt): must explicitly disallow none example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. OPA evaluates the Rego policy:
    ```
@@ -1069,7 +1175,7 @@ Evaluation process:
      input.user.tenantId == input.resource.tenantId
    }
    ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This io.jsonwebtoken (jjwt): must explicitly disallow noice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 3. OPA returns `{"result": true}` or `{"result": false}`.
 4. The service allows or denies the request based on the response.
@@ -1093,10 +1199,9 @@ the service's response time budget.
 
 ---
 
-**Q3 (Mechanism) - How does the JWT flow work end-to-end in a
-microservices request?**
+**[JUNIOR] Q3 - [MECHANISM] How does the JWT flow work end-to-end in a microservices request?**
 
-A: End-to-end JWT flow:
+End-to-end JWT flow:
 
 1. User authenticates with the auth server (OAuth 2.0 Authorization
    Code or Password flow). Auth server returns an access token
@@ -1142,11 +1247,9 @@ requests with a JWT about to expire.
 
 ---
 
-**Q4 (Failure / Debugging) - A service is returning 403 for
-requests that should be authorized. The JWT is valid and the
-user has the correct role. What do you check?**
+**[MID] Q4 - [DEBUGGING] A service is returning 403 for requests that should be authorized. The JWT is valid and the user has the correct role. What do you check?**
 
-A: Systematic 403 diagnosis (role check passes but still 403):
+Systematic 403 diagnosis (role check passes but still 403):
 
 1. Confirm the role claim in the JWT. Decode the token:
    ```bash
@@ -1158,7 +1261,7 @@ A: Systematic 403 diagnosis (role check passes but still 403):
    # or "scope"? Many mistakes here.
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or "scope"? Many mistakes here. example demonstrateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. Check the security config: is the role prefix correct?
    Spring Security adds a `ROLE_` prefix by convention.
@@ -1190,10 +1293,9 @@ spend hours on this.
 
 ---
 
-**Q5 (Failure / Debugging) - mTLS is enabled in PERMISSIVE mode.
-How does this affect the security posture?**
+**[MID] Q5 - [DEBUGGING] mTLS is enabled in PERMISSIVE mode. How does this affect the security posture?**
 
-A: PERMISSIVE mode in Istio allows both mTLS and plaintext traffic.
+PERMISSIVE mode in Istio allows both mTLS and plaintext traffic.
 A pod in PERMISSIVE mode accepts connections from:
 - Services with sidecars (mTLS connections)
 - Services without sidecars (plaintext connections)
@@ -1220,7 +1322,7 @@ kubectl get peerauthentication -A -o yaml | \
 # "STRICT" = mTLS only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "STRICT" = mTLS only example demonstrates shell scrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: set PeerAuthentication to STRICT after verifying all services
 have sidecars injected:
@@ -1235,7 +1337,7 @@ spec:
     mode: STRICT
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This "STRICT" = mTLS only example demonstrates YAML configuration pattern using authentication. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* the insight that PERMISSIVE mode
 with SPIFFE-based AuthorizationPolicy has a silent gap: plaintext
@@ -1246,10 +1348,9 @@ guarantees all connections are authenticated.
 
 ---
 
-**Q6 (Trade-off) - JWT-based authorization vs. OPA sidecar -
-what are the trade-offs?**
+**[SENIOR] Q6 - [TRADE-OFF] JWT-based authorization vs. OPA sidecar - what are the trade-offs?**
 
-A: JWT-based authorization (in-code RBAC):
+JWT-based authorization (in-code RBAC):
 - Latency: zero additional latency (JWT is already present in memory)
 - Complexity: low (Spring Security annotations)
 - Flexibility: low (rule changes require code deploy + test + release)
@@ -1286,10 +1387,9 @@ authorization decisions.
 
 ---
 
-**Q7 (Production) - How do you handle token expiry in a long-running
-request that spans multiple microservices?**
+**[SENIOR] Q7 - [SCENARIO] How do you handle token expiry in a long-running request that spans multiple microservices?**
 
-A: Token expiry mid-request is a real operational challenge.
+Token expiry mid-request is a real operational challenge.
 Three strategies:
 
 Strategy 1 - Short TTL with refresh at the gateway:
@@ -1337,10 +1437,15 @@ The JWKS endpoint is called only when the cached key expires
 
 ---
 
-**Q8 (Code) - Implement a Spring Boot filter that propagates the
-Authorization header for all outbound service calls.**
+**[SENIOR] Q8 - [SCENARIO] Implement a Spring Boot filter that propagates the Authorization header for all outbound service calls.**
 
 A:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: propagating userId in the request body
 // (easy to tamper with, cannot be verified)
@@ -1393,7 +1498,7 @@ public RestTemplate restTemplate() {
 // carry the current user's JWT.
 ```
 
-> **Code walkthrough:** The BAD pattern passes the userId as
+> **Code walkthrough:** The BAD pattern passes the userId asice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a query parameter - any caller can forge this value because
 > it is not cryptographically signed. The GOOD pattern uses a
 > `ClientHttpRequestInterceptor` that automatically extracts the
@@ -1406,11 +1511,9 @@ public RestTemplate restTemplate() {
 
 ---
 
-**Q9 (Behavioral) - Describe how you would migrate a monolith with
-session-based authentication to a microservices architecture with
-JWT-based authorization.**
+**[SENIOR] Q9 - [BEHAVIORAL] Describe how you would migrate a monolith with session-based authentication to a microservices architecture with JWT-based authorization.**
 
-A: Migration in phases:
+Migration in phases:
 
 Phase 1 - Parallel auth (strangler fig):
 "Add JWT support to the monolith while keeping session-based auth

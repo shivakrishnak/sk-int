@@ -234,7 +234,7 @@ LIFECYCLE ORDER:
   5. disconnectedCallback()  (element removed from DOM)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -296,7 +296,7 @@ customElements.define('bad-button', BadButton);
 </script>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // GOOD: shadow DOM, lifecycle, accessibility, events
@@ -387,7 +387,7 @@ class AccessibleButton extends HTMLElement {
 customElements.define('accessible-button', AccessibleButton);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ```html
 <!-- Usage: -->
@@ -412,7 +412,7 @@ customElements.define('accessible-button', AccessibleButton);
 </style>
 ```
 
-> **Code walkthrough:** The custom element uses Shadow DOM for
+> **Code walkthrough:** The custom element uses Shadow DOM forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > CSS encapsulation - the button's internal styles don't affect
 > page CSS. CSS custom properties (`--btn-primary-bg`) allow
 > external styling to cross the shadow boundary for theming.
@@ -510,31 +510,30 @@ Diagnosis:
         Custom events are NOT composed by default
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Custom element lifecycle | 3 min | Four callbacks |
-| Shadow DOM open vs closed | 2-3 min | Accessibility implications |
-| CSS encapsulation in shadow | 3 min | ::part(), custom properties |
-| composed:true events | 2 min | Cross-boundary events |
-| Form-associated custom elements | 3-4 min | FACE API |
-| Customized built-ins | 2-3 min | is="" attribute |
-| Web Components vs framework | 3 min | Trade-off analysis |
-| observedAttributes | 2 min | Attribute reactivity |
-| Lit vs raw custom elements | 2-3 min | Practical choice |
-| Shadow DOM accessibility | 3-4 min | ARIA limitations |
-| connectedCallback timing | 2 min | When attrs are available |
-| CSS custom properties cross-boundary | 2 min | Theming |
+| Scenario| Recommended Time| Key Signal|
+|-------------|------------------------------------|---------------------------|
+| Custom element lifecycle| 3 min| Four callbacks|
+| Shadow DOM open vs closed| 2-3 min| Accessibility implications|
+| CSS encapsulation in shadow| 3 min| ::part(), custom properties|
+| composed:true events| 2 min| Cross-boundary events|
+| Form-associated custom elements| 3-4 min| FACE API|
+| Customized built-ins| 2-3 min| is="" attribute|
+| Web Components vs framework| 3 min| Trade-off analysis|
+| observedAttributes| 2 min| Attribute reactivity|
+| Lit vs raw custom elements| 2-3 min| Practical choice|
+| Shadow DOM accessibility| 3-4 min| ARIA limitations|
+| connectedCallback timing| 2 min| When attrs are available|
+| CSS custom properties cross-boundary| 2 min| Theming|
 
 ---
 
-**Q1: What are the Custom Element lifecycle callbacks?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What are the Custom Element lifecycle callbacks?** `[JUNIOR]`**
 
 *Why they ask:* Foundation knowledge for Web Components.
 
@@ -602,8 +601,7 @@ DEFINITION
 
 ---
 
-**Q2: What is the difference between open and closed Shadow DOM?**
-`[SENIOR]` COMPARISON
+**[SENIOR] Q2 - [TRADE-OFF] What is the difference between open and closed Shadow DOM?**
 
 *Why they ask:* Shadow DOM mode has real practical implications.
 
@@ -660,8 +658,7 @@ DEFINITION
 
 ---
 
-**Q3: How do CSS custom properties work with Shadow DOM?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How do CSS custom properties work with Shadow DOM?** `[SENIOR]`**
 
 *Why they ask:* Critical theming knowledge for Web Components.
 
@@ -747,12 +744,11 @@ MECHANISM
 
 ---
 
-**Q4: What are form-associated custom elements (FACE)?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What are form-associated custom elements (FACE)?** `[SENIOR]`**
 
 *Why they ask:* Critical gap in Web Components for forms.
 
-*Likely follow-up:* "How do you make a custom element participate in form validation?"
+*Likely follow-up:* "How do you make a custom element participate in form valida
 
 > **Answer:**
 >
@@ -839,12 +835,11 @@ MECHANISM
 
 ---
 
-**Q5: How do you handle accessibility in Shadow DOM components?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q5 - [SCENARIO] How do you handle accessibility in Shadow DOM components?**
 
 *Why they ask:* Shadow DOM + ARIA is a critical, often broken, combination.
 
-*Likely follow-up:* "Can aria-labelledby reference elements across shadow boundaries?"
+*Likely follow-up:* "Can aria-labelledby reference elements across shadow bounda
 
 > **Answer:**
 >
@@ -916,8 +911,7 @@ MECHANISM
 
 ---
 
-**Q6: When should you use Web Components vs a framework?**
-`[SENIOR]` TRADEOFF
+**[SENIOR] Q6 - [TRADEOFF] When should you use Web Components vs a framework?**
 
 *Why they ask:* Architecture decision awareness.
 
@@ -977,8 +971,7 @@ MECHANISM
 
 ---
 
-**Q7: What is declarative Shadow DOM and why does it matter?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is declarative Shadow DOM and why does it matter?**
 
 *Why they ask:* SSR for Web Components.
 
@@ -1053,7 +1046,7 @@ MECHANISM
 
 ---
 
-**Q8: How do you test Custom Elements?** `[SENIOR]` SCENARIO
+**[SENIOR] Q8 - [MECHANISM] How do you test Custom Elements?** `[SENIOR]` SCENARIO**
 
 *Why they ask:* Testing is production discipline.
 
@@ -1130,28 +1123,56 @@ MECHANISM
 > failing its accessible() assertion fails the PR - accessibility
 > is enforced at the component level.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lifecycle + Shadow DOM mechanics |
-| Hiring Manager | Web Components vs framework decision |
-| Bar Raiser | FACE API + accessibility + testing |
-| Peer Engineer | Practical Lit + event composition |
+**[STAFF] Q9 - [DESIGN] Design a custom element that wraps a third-party map SDK and exposes a simple API.**
+
+*Why they ask:* Tests Shadow DOM + external library integration.
+
+Design: `<map-view lat="40.7" lng="-74.0" zoom="12">`.
+Shadow DOM isolates the map container from global styles.
+`connectedCallback`: initialize the SDK inside
+`shadowRoot.querySelector('#map-container')`. Observed
+attributes: `lat`, `lng`, `zoom` - each triggers
+`attributeChangedCallback` that calls the SDK's pan/zoom
+API. Expose a `setMarkers(markers)` method for imperative
+use. Events: dispatch `CustomEvent('map:click')` on
+map click with `detail: {lat, lng}` - `composed: true`
+so events bubble through Shadow DOM boundary.
+Clean up in `disconnectedCallback`: destroy the SDK
+instance to prevent memory leaks. The wrapper API
+is 5 methods vs the SDK's 200 - consumers never
+touch the SDK directly.
+
+*What separates good from great:* `composed: true` on
+custom events - without it, events dispatched inside
+Shadow DOM do not bubble to the host document, breaking
+event listeners on the custom element itself.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|------------------------------------|------------------------------------|
+| Technical Panel| Lifecycle + Shadow DOM mechanics|
+| Hiring Manager| Web Components vs framework decision|
+| Bar Raiser| FACE API + accessibility + testing|
+| Peer Engineer| Practical Lit + event composition|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| | Custom Elements | React Components | Vue Components |
-|---|---|---|---|
-| Runtime required | None (native) | React runtime | Vue runtime |
-| Framework lock-in | None | React | Vue |
-| SSR support | Limited (decl. shadow DOM) | Full | Full |
-| TypeScript DX | Manual | Excellent | Excellent |
-| Ecosystem | Growing | Massive | Large |
-| Form integration | FACE API | React controlled | v-model |
-| Best for | Design systems | Applications | Applications |
+|| Custom Elements| React Components| Vue Components|
+|---|-------------------------------|---------------------------|--------------|
+| Runtime required| None (native)| React runtime| Vue runtime|
+| Framework lock-in| None| React| Vue|
+| SSR support| Limited (decl. shadow DOM)| Full| Full|
+| TypeScript DX| Manual| Excellent| Excellent|
+| Ecosystem| Growing| Massive| Large|
+| Form integration| FACE API| React controlled| v-model|
+| Best for| Design systems| Applications| Applications|
 
 ---
 
@@ -1440,7 +1461,7 @@ TEMPLATE PERFORMANCE:
   list.appendChild(fragment);  // single DOM mutation
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HTML Templates and Slots example demonstrates a keyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1567,7 +1588,7 @@ class InfoCard extends HTMLElement {
 customElements.define('info-card', InfoCard);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration uice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- Usage with all slots: -->
@@ -1587,7 +1608,7 @@ customElements.define('info-card', InfoCard);
 </info-card>
 ```
 
-> **Code walkthrough:** The InfoCard uses three slots: a named
+> **Code walkthrough:** The InfoCard uses three slots: a namedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > "title" slot with fallback content, the default slot for body
 > content, and a named "footer" slot for action buttons.
 > `::slotted(h2)` and `::slotted(p)` normalize typography for
@@ -1682,7 +1703,7 @@ Diagnosis:
   shows what content is assigned to each slot
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1702,8 +1723,7 @@ Diagnosis:
 
 ---
 
-**Q1: What is the `<template>` element and when do you use it?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the `<template>` element and when do you use it?**
 
 *Why they ask:* Tests knowledge of the template mechanism.
 
@@ -1770,8 +1790,7 @@ Diagnosis:
 
 ---
 
-**Q2: How does slot content projection work?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How does slot content projection work?** `[JUNIOR]`**
 
 *Why they ask:* Core Shadow DOM composition concept.
 
@@ -1837,8 +1856,7 @@ MECHANISM
 
 ---
 
-**Q3: What can `::slotted()` style and what are its limits?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q3 - [MECHANISM] What can `::slotted()` style and what are its limits?**
 
 *Why they ask:* CSS slot styling limitations.
 
@@ -1901,8 +1919,7 @@ MECHANISM
 
 ---
 
-**Q4: What is `slot.assignedNodes()` used for?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is `slot.assignedNodes()` used for?** `[SENIOR]`**
 
 *Why they ask:* Programmatic slot content access.
 
@@ -1972,6 +1989,133 @@ MECHANISM
 > screen readers announce the actual label text. Without this,
 > the shadow DOM button has no accessible name (the slotted
 > text is not automatically associated as the button's label).
+
+
+---
+
+**[MID] Q5 - [MECHANISM] How do named slots work and what is the difference between named and default slots?**
+
+*Why they ask:* Tests HTML template slot understanding.
+
+A default slot (`<slot>`) collects all light DOM children
+that are not assigned to a named slot. Named slots
+(`<slot name="header">`) collect children with matching
+`slot="header"` attributes. The light DOM author (the
+consumer) writes: `<my-card><h2 slot="header">Title</h2>
+<p>Body text</p></my-card>`. The Shadow DOM author
+defines where each appears. Multiple elements can
+slot into the same named slot (they appear in order).
+Slot fallback content: `<slot name="header"><h2>Default
+Title</h2></slot>` renders when no matching slotted
+element is provided. Key rule: slotted content stays
+in the light DOM - it is only projected for rendering.
+`slot.assignedNodes()` returns the actual light DOM nodes.
+
+*What separates good from great:* "Slotted content stays
+in the light DOM" - this means slotted content can be
+selected with document.querySelector, but ::slotted CSS
+selectors apply from the Shadow DOM side.
+
+---
+
+**[SENIOR] Q6 - [DEBUGGING] Slotted content is not rendering inside a web component. How do you debug?**
+
+*Why they ask:* Tests Shadow DOM debugging skills.
+
+Three causes: (1) The component is not using Shadow DOM
+(`attachShadow` not called) - without Shadow DOM, slots
+have no meaning. Check DevTools: does the element have a
+`#shadow-root` in the DOM tree? (2) The slot name does not
+match - `slot="header"` in light DOM needs `<slot name="header">`
+in Shadow DOM. Check both names exactly. (3) The Shadow DOM
+template was rendered before the slotted content was added -
+for programmatic slot assignment, use `slotchange` event.
+Debug in DevTools: expand the shadow root, check the slot
+element, use `slotElement.assignedNodes()` in console to
+see what is assigned.
+
+*What separates good from great:* The `slotchange` event
+on the slot element - fires when assigned nodes change,
+essential for reacting to dynamic slot content changes.
+
+---
+
+**[SENIOR] Q7 - [TRADE-OFF] When would you use HTML templates vs JavaScript template literals for component rendering?**
+
+*Why they ask:* Tests component rendering trade-off knowledge.
+
+`<template>` advantages: cloned, not parsed on each use
+(parse once, clone many - fast for repeated components);
+inert content (scripts inside do not execute, images do
+not load until cloned and inserted); CSP-compatible
+without `unsafe-eval`. Template literals advantages:
+dynamic content is trivially injected with `${expr}`;
+no need to select and set element properties
+individually - just rebuild the string. Trade-off:
+`<template>` + `cloneNode` is faster for many repeated
+identical structures (table rows, list items).
+Template literals are simpler for dynamic content.
+Security: template literals that inject user data into
+`innerHTML` create XSS risk - use DOM APIs for
+user-controlled content.
+
+*What separates good from great:* The XSS trap -
+`element.innerHTML = \`<li>${userInput}</li>\`` is
+dangerous; `<template>` + cloneNode + textContent
+assignment is safe.
+
+---
+
+**[STAFF] Q8 - [DESIGN] Design a slot architecture for a configurable card component with header, body, and actions.**
+
+*Why they ask:* Tests component API design with slots.
+
+Slot structure: `<card-component>` has three named slots:
+`slot="header"` (accepts heading elements), `slot="body"`
+(accepts any content), `slot="actions"` (accepts buttons).
+Default fallback content for each slot ensures the
+component is usable with partial configuration.
+Shadow DOM template: a flex column layout positions
+slots in the visual card structure.
+CSS: `::slotted(h2)` applies heading styles from within
+Shadow DOM. `::slotted(button)` applies action button
+styles. Consumer usage: `<card-component><h2 slot="header">
+Product</h2><p slot="body">Description</p>
+<button slot="actions">Buy</button></card-component>`.
+This separates structure (Shadow DOM) from content
+(light DOM), making the component reusable across
+contexts while maintaining styling control.
+
+*What separates good from great:* The `::slotted()`
+selector is the only way to style slotted content from
+inside Shadow DOM - you cannot use descendant selectors
+across Shadow DOM boundaries.
+
+---
+
+**[MID] Q9 - [MECHANISM] What happens to slotted content when a web component is removed from the DOM?**
+
+*Why they ask:* Tests lifecycle and memory understanding.
+
+When a custom element is removed from the DOM,
+`disconnectedCallback` fires on the element. The slotted
+light DOM children are also removed (they are children of
+the host element in the light DOM). The Shadow DOM
+subtree is detached. If the Shadow DOM registered event
+listeners on slotted nodes (via `slot.assignedNodes()`),
+those listeners must be cleaned up in `disconnectedCallback`
+to prevent memory leaks. The slot assignment itself is
+implicitly cleaned up - `slot.assignedNodes()` returns
+empty after disconnection. Any references to slotted
+nodes held in JavaScript closures will keep the nodes
+alive in memory even after DOM removal - release these
+references in `disconnectedCallback`.
+
+*What separates good from great:* The memory leak pattern -
+holding slot node references in component state without
+releasing them in `disconnectedCallback` is a common
+production memory leak in custom element implementations.
+
 
 ---
 

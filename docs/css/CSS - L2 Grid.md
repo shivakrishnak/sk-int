@@ -153,7 +153,7 @@ LINE NUMBERING:
   -4 = line 1, -3 = line 2, -2 = line 3, -1 = line 4
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Grid Layout example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -205,7 +205,7 @@ Flex which can't align items across rows.
 /* Fails: too narrow on mobile, items become tiny */
 ```
 
-> **Code walkthrough:** Hard-coded three columns don't
+> **Code walkthrough:** Hard-coded three columns don'tice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > adapt to the viewport. On mobile (375px wide), three
 > 1fr columns become ~125px each - too narrow for cards.
 > Requires a media query to fix, or a better column
@@ -225,7 +225,7 @@ Flex which can't align items across rows.
 /* Automatically goes from 1 to 2 to 3+ columns */
 ```
 
-> **Code walkthrough:** `repeat(auto-fill, minmax(280px, 1fr))`
+> **Code walkthrough:** `repeat(auto-fill, minmax(280px, 1fr))`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the responsive grid idiom. `auto-fill` creates as many
 > column tracks as fit. `minmax(280px, 1fr)` makes each column
 > at least 280px and at most 1fr (so columns grow to fill).
@@ -265,7 +265,7 @@ Flex which can't align items across rows.
 }
 ```
 
-> **Code walkthrough:** Named template areas make the layout
+> **Code walkthrough:** Named template areas make the layoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > self-documenting. The grid-template-areas ASCII art is
 > literally the page layout in code. The `grid-area` property
 > on children references these names. Mobile layout just
@@ -346,14 +346,14 @@ the auto-placement algorithm to the next row.
 
 **Symptom: grid items overflow or misalign**
 
-```
+```plaintext
 # DevTools: select container > Layout tab
 # "Grid" section shows overlay toggle
 # Enable grid overlay to visualize tracks and cells
 # Compare item placement to expected cells
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare item placement to expected cells example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -367,7 +367,7 @@ Cause: minmax minimum too small or too large.
 # If minimum is too large, only 1 column fits
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If minimum is too large, only 1 column fits exampleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -382,21 +382,21 @@ Grid track definitions constrain item sizes; Flex doesn't.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| "Explain the fr unit" | 3 min | After-fixed computation |
-| Grid vs Flex choice | 3-4 min | 2D vs 1D |
-| "Responsive grid no media query" | 3 min | auto-fill + minmax |
-| auto-fill vs auto-fit | 3 min | Empty track behavior |
-| grid-column: 1 / -1 | 2 min | Negative line numbers |
-| Subgrid explanation | 4 min | Cross-component alignment |
-| Grid for page layout | 4 min | template-areas pattern |
-| Alignment in Grid | 3 min | justify/align items/self |
-| Dense packing | 3-4 min | auto-flow: dense |
+| Scenario| Recommended Time| Key Signal|
+|------|---------------------------------------------|-------------------------|
+| "Explain the fr unit"| 3 min| After-fixed computation|
+| Grid vs Flex choice| 3-4 min| 2D vs 1D|
+| "Responsive grid no media query"| 3 min| auto-fill + minmax|
+| auto-fill vs auto-fit| 3 min| Empty track behavior|
+| grid-column: 1 / -1| 2 min| Negative line numbers|
+| Subgrid explanation| 4 min| Cross-component alignment|
+| Grid for page layout| 4 min| template-areas pattern|
+| Alignment in Grid| 3 min| justify/align items/self|
+| Dense packing| 3-4 min| auto-flow: dense|
 
 ---
 
-**Q1: How does the fr unit work?** `[MID]` MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] How does the fr unit work?** `[MID]` MECHANISM**
 
 *Why they ask:* `fr` is the key unit for flexible Grid
 tracks; understanding its computation reveals depth.
@@ -440,7 +440,7 @@ tracks; understanding its computation reveals depth.
 
 ---
 
-**Q2: What is the difference between auto-fill and
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between auto-fill and**
 auto-fit?** `[SENIOR]` MECHANISM
 
 *Why they ask:* These look identical but behave differently
@@ -486,7 +486,7 @@ with few items.
 
 ---
 
-**Q3: How do you create a responsive grid without
+**[JUNIOR] Q3 - [MECHANISM] How do you create a responsive grid without**
 media queries?** `[MID]` HANDS-ON
 
 *Why they ask:* The auto-fill + minmax pattern is a
@@ -536,8 +536,7 @@ minmax(200px, 1fr) and minmax(min-content, 200px)?"
 
 ---
 
-**Q4: What is negative grid line numbering?** `[SENIOR]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is negative grid line numbering?** `[SENIOR]`**
 
 *Why they ask:* Tests depth of grid line system knowledge.
 
@@ -585,8 +584,7 @@ regardless of column count?"
 
 ---
 
-**Q5: What is subgrid and why was it important?** `[STAFF]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] What is subgrid and why was it important?** `[STAFF]`**
 
 *Why they ask:* Subgrid solves a long-standing alignment
 problem; knowing it shows current CSS knowledge.
@@ -639,8 +637,7 @@ problem; knowing it shows current CSS knowledge.
 
 ---
 
-**Q6: How do you use grid-auto-flow: dense?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] How do you use grid-auto-flow: dense?** `[SENIOR]`**
 
 *Why they ask:* Dense packing is useful but has accessibility
 implications.
@@ -693,7 +690,7 @@ accessibility issues?"
 
 ---
 
-**Q7: How does Grid alignment differ from Flexbox
+**[SENIOR] Q7 - [MECHANISM] How does Grid alignment differ from Flexbox**
 alignment?** `[SENIOR]` COMPARISON
 
 *Why they ask:* Surfaces deep understanding of both models.
@@ -744,7 +741,7 @@ alignment?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q8: Debug: a grid item is in the wrong position.
+**[SENIOR] Q8 - [DEBUGGING] Debug: a grid item is in the wrong position.**
 How do you diagnose it?** `[MID]` DEBUGGING
 
 *Why they ask:* Grid debugging is a real skill with DevTools
@@ -796,7 +793,7 @@ support.
 
 ---
 
-**Q9: How would you implement a masonry-style layout
+**[SENIOR] Q9 - [MECHANISM] How would you implement a masonry-style layout**
 in CSS today?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Masonry is a common design requirement
@@ -856,27 +853,26 @@ with evolving CSS support.
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Walk through fr computation with numbers |
-| Hiring Manager | Frame as "2D layout that scales cleanly" |
-| Bar Raiser | Discuss subgrid and cross-component alignment |
-| Peer Engineer | Share auto-fill vs auto-fit mental model |
+| Interviewer Type| Emphasis|
+|--------------------------------|---------------------------------------------|
+| Technical Panel| Walk through fr computation with numbers|
+| Hiring Manager| Frame as "2D layout that scales cleanly"|
+| Bar Raiser| Discuss subgrid and cross-component alignment|
+| Peer Engineer| Share auto-fill vs auto-fit mental model|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Feature | CSS Grid | Flexbox |
-|---|---|---|
-| Dimensions | 2D (rows + columns) | 1D (row OR column) |
-| Track definition | Explicit rows + cols | Implicit (content-driven) |
-| Cross-axis alignment | Per-item (justify-self) | No justify-self |
-| Column alignment across rows | Yes (grid tracks) | No (each row independent) |
-| Named areas | Yes (template-areas) | No |
-| Responsive columns | auto-fill + minmax | flex-wrap (less precise) |
-| Subgrid | Yes (2023) | N/A |
-| Best for | Page layout, card grids | Components, toolbars |
+| Feature| CSS Grid| Flexbox|
+| Dimensions| 2D (rows + columns)| 1D (row OR column)|
+| Track definition| Explicit rows + cols| Implicit (content-driven)|
+| Cross-axis alignment| Per-item (justify-self)| No justify-self|
+| Column alignment across rows| Yes (grid tracks)| No (each row independent)|
+| Named areas| Yes (template-areas)| No|
+| Responsive columns| auto-fill + minmax| flex-wrap (less precise)|
+| Subgrid| Yes (2023)| N/A|
+| Best for| Page layout, card grids| Components, toolbars|
 
 ---
 
@@ -1091,7 +1087,7 @@ IMPLICIT NAMED LINES FROM AREAS:
   Usage: grid-column: header-start / header-end;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Grid Template Areas and Named Lines example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1178,7 +1174,7 @@ gap between design intent and implementation.
 .site-footer  { grid-area: footer; }
 ```
 
-> **Code walkthrough:** Reading the CSS immediately
+> **Code walkthrough:** Reading the CSS immediatelyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > communicates the layout. If a designer asks to move
 > the sidebar to the right, only the template-areas
 > string changes - not individual item placement.
@@ -1217,7 +1213,7 @@ gap between design intent and implementation.
 .site-footer  { grid-area: footer; }
 ```
 
-> **Code walkthrough:** Zero changes to child element CSS
+> **Code walkthrough:** Zero changes to child element CSSice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > across breakpoints. The media query only updates the
 > container's column definition and area map. Sidebar moves
 > from below header (mobile) to left of main (desktop) just
@@ -1296,14 +1292,14 @@ is a shorthand for row-start/column-start/row-end/column-end.
 
 Cause: attempting an L-shaped or non-rectangular area.
 
-```
+```plaintext
 /* INVALID: non-rectangular area */
 grid-template-areas:
   "header header"
   "header main"; /* "header" is an L-shape - INVALID */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: restructure layout so each area is rectangular,
 or split into separate areas.
@@ -1322,7 +1318,7 @@ Diagnosis:
 # Both must be exact match, no quotes on grid-area value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Both must be exact match, no quotes on grid-area value example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1342,8 +1338,7 @@ Diagnosis:
 
 ---
 
-**Q1: How does grid-template-areas work?** `[MID]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] How does grid-template-areas work?** `[MID]`**
 
 *Why they ask:* Foundation for any Grid architecture
 discussion.
@@ -1397,8 +1392,7 @@ area to occupy?"
 
 ---
 
-**Q2: Can you create an L-shaped area in template-areas?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] Can you create an L-shaped area in template-areas?**
 
 *Why they ask:* Tests understanding of area constraints.
 
@@ -1446,7 +1440,7 @@ limitation for a complex layout?"
 
 ---
 
-**Q3: How do template areas simplify mobile responsive
+**[JUNIOR] Q3 - [MECHANISM] How do template areas simplify mobile responsive**
 layouts?** `[MID]` PRODUCTION
 
 *Why they ask:* The core practical value of template-areas.
@@ -1510,7 +1504,7 @@ the HTML?"
 
 ---
 
-**Q4: What are named grid lines?** `[SENIOR]` MECHANISM
+**[MID] Q4 - [MECHANISM] What are named grid lines?** `[SENIOR]` MECHANISM**
 
 *Why they ask:* Named lines are the precision tool for
 complex component-level placement.
@@ -1570,7 +1564,7 @@ area-generated lines?"
 
 ---
 
-**Q5: How would you build a "full-bleed" content layout
+**[MID] Q5 - [DESIGN] How would you build a "full-bleed" content layout**
 with CSS Grid?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* A real production pattern that showcases
@@ -1633,8 +1627,7 @@ grid lines?"
 
 ---
 
-**Q6: What happens if an area isn't a rectangle?** `[MID]`
-DEBUGGING
+**[SENIOR] Q6 - [DEBUGGING] What happens if an area isn't a rectangle?** `[MID]`**
 
 *Why they ask:* The rectangle constraint is a common
 gotcha for beginners.
@@ -1682,8 +1675,7 @@ template-areas definition?"
 
 ---
 
-**Q7: How do implicit named lines from areas work?**
-`[STAFF]` MECHANISM
+**[STAFF] Q7 - [MECHANISM] How do implicit named lines from areas work?**
 
 *Why they ask:* Deep Grid knowledge; tests understanding
 of the area-to-lines mapping.
@@ -1733,7 +1725,7 @@ inside the grid area?"
 
 ---
 
-**Q8: How do you create a dashboard layout with multiple
+**[SENIOR] Q8 - [MECHANISM] How do you create a dashboard layout with multiple**
 panels using template-areas?** `[SENIOR]` HANDS-ON
 
 *Why they ask:* Tests practical application of complex
@@ -1791,7 +1783,7 @@ should be the same height?"
 
 ---
 
-**Q9: Compare grid-template-areas to explicit line
+**[SENIOR] Q9 - [MECHANISM] Compare grid-template-areas to explicit line**
 placement. When do you choose each?** `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Shows judgment about when each approach

@@ -91,7 +91,7 @@ This couples pods to specific infrastructure: the pod can only run on a specific
 abstraction - pods request storage by capability, not by location.
 
 **How it works:**
-```
+```plaintext
 STATIC:
 Admin creates PV (spec: 100Gi, RWO, storageClass: "")
 Developer creates PVC (request: 50Gi, RWO, storageClass: "")
@@ -107,7 +107,7 @@ Developer creates PVC (request: 50Gi, RWO, storageClass: "fast-ssd")
   Pod mounts PVC -> pod mounts cloud disk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This PersistentVolume and PVC example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Access modes:**
 - `ReadWriteOnce` (RWO): mounted read/write by ONE node at a time
@@ -229,7 +229,7 @@ spec:
       claimName: app-storage    # references the PVC
 ```
 
-> **Code walkthrough:** The static PV specifies the actual NFS server location
+> **Code walkthrough:** The static PV specifies the actual NFS server locationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > and total capacity. The PVC requests 50Gi - the control plane binds it to any
 > PV with at least 50Gi, RWO, and matching storageClassName. The empty `storageClassName: ""`
 > is critical for static binding - if omitted, K8s uses the default StorageClass
@@ -449,7 +449,7 @@ driver: ebs.csi.aws.com
 deletionPolicy: Delete
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This VolumeSnapshotClass: defines the snapshot driver example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Backup - Create a snapshot:
 ```yaml
@@ -462,7 +462,7 @@ spec:
   source:
     persistentVolumeClaimName: data-postgres-0
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This VolumeSnapshotClass: defines the snapshot driver example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 This creates a point-in-time snapshot of the PVC.
 For consistency: quiesce the database first (`CHECKPOINT` in Postgres) before
@@ -484,14 +484,14 @@ spec:
     requests:
       storage: 100Gi
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This VolumeSnapshotClass: defines the snapshot driver exice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The CSI driver provisions a new volume pre-populated with the snapshot data.
 
-Production tooling: Velero automates snapshot scheduling, retention, and cross-cluster
+Production tooling: Velero automates snapshot scheduling, retention, and cross-c
 restore. It also backs up K8s resource definitions alongside the volume snapshots.
 
-*What separates good from great:* Application-consistent backups require coordinating
+*What separates good from great:* Application-consistent backups require coordin
 the snapshot with the application. A raw volume snapshot while the database is writing
 transactions may capture an inconsistent state. Always use `fsfreeze` (filesystem quiesce)
 or database-specific PITR backup for true consistency.
@@ -505,7 +505,7 @@ always a pod still mounting the volume.
 
 Step 1: check the PVC's finalizers.
 `kubectl get pvc <name> -o jsonpath='{.metadata.finalizers}'`
-You'll see `kubernetes.io/pvc-protection` - this finalizer is added automatically
+You'll see `kubernetes.io/pvc-protection` - this finalizer is added automaticall
 by the PVC protection admission controller and removed ONLY when no pods are using it.
 
 Step 2: find the pods mounting this PVC.
@@ -517,7 +517,7 @@ for p in d['items']:
     if v.get('persistentVolumeClaim',{}).get('claimName') == '<pvc-name>':
       print(p['metadata']['namespace'], p['metadata']['name'])
 "`
-Or simpler: `kubectl get pods --all-namespaces | grep <namespace-containing-app>`
+Or simpler: `kubectl get pods --all-namespaces | grep <namespace-containing-app>
 
 Step 3: if pods are terminating but stuck:
 Check if the node hosting those pods is unavailable.
@@ -527,7 +527,7 @@ Force-delete stuck pods: `kubectl delete pod <name> --force --grace-period=0`
 Step 4: after all pods using the PVC are gone:
 The pvc-protection controller removes the finalizer and PVC deletion completes.
 
-*What separates good from great:* `--force --grace-period=0` on a pod is a last resort.
+*What separates good from great:* `--force --grace-period=0` on a pod is a last 
 If the node is just temporarily unavailable and comes back, the pod will restart and
 the PVC will be in use again. The safe approach: confirm the node is truly dead
 (via cloud console, not just NotReady status) before force-deleting pods.
@@ -537,7 +537,7 @@ the PVC will be in use again. The safe approach: confirm the node is truly dead
 **Q6 [STAFF] (Architecture): Explain the CSI (Container Storage Interface) architecture.**
 
 A: CSI is the standard interface between Kubernetes and external storage systems.
-Before CSI, storage drivers were compiled into the Kubernetes core (in-tree) - adding
+Before CSI, storage drivers were compiled into the Kubernetes core (in-tree) - a
 a new storage provider required a Kubernetes release.
 
 CSI architecture:
@@ -566,8 +566,8 @@ This architecture means every storage provider ships a CSI driver as a set of
 containers - no kernel module required, no Kubernetes core changes needed.
 AWS EBS, GCE PD, Azure Disk, Ceph, NetApp, Pure Storage, MinIO all have CSI drivers.
 
-*What separates good from great:* Volume snapshots are also a CSI extension - not
-all CSI drivers support them. Check `kubectl get volumesnapshotclass` - if empty,
+*What separates good from great:* Volume snapshots are also a CSI extension - no
+all CSI drivers support them. Check `kubectl get volumesnapshotclass` - if empty
 the installed CSI driver doesn't support snapshots. Different CSI drivers have
 different feature matrices (snapshots, clones, volume expansion, topology).
 
@@ -587,7 +587,7 @@ Security note: hostPath can give containers access to sensitive host data.
 `emptyDir`: temporary storage created when the pod starts, deleted when the pod ends.
 All containers in the pod share the emptyDir. Size is limited by node disk space
 (or memory if `medium: Memory` is set for tmpfs).
-Use when: inter-container data sharing (init container downloads file, main container
+Use when: inter-container data sharing (init container downloads file, main cont
 processes it), caching within a pod's lifetime, temporary scratch space.
 Don't use when: data must survive pod restarts/reschedules.
 
@@ -603,7 +603,7 @@ Quick reference:
 - High-performance temp storage? -> emptyDir with `medium: Memory`
 
 *What separates good from great:* emptyDir with `medium: Memory` uses tmpfs
-(RAM-backed filesystem). Dramatically faster than disk for temp data (sorting large
+(RAM-backed filesystem). Dramatically faster than disk for temp data (sorting la
 datasets, shuffling in data pipelines). Be careful: counts against container memory
 limit; too large causes OOM.
 
@@ -619,7 +619,7 @@ Requirements:
 - PVC must be in Bound state
 
 Expansion process:
-1. Edit PVC: `kubectl patch pvc <name> -p '{"spec":{"resources":{"requests":{"storage":"200Gi"}}}}'`
+1. Edit PVC: `kubectl patch pvc <name> -p '{"spec":{"resources":{"requests":{"st
    (or kubectl edit pvc)
 2. PVC status shows `resizeStatus: InProgress`
 3. The external-resizer sidecar (CSI driver component) detects the PVC change
@@ -636,33 +636,33 @@ filesystem is resized at node mount time, restart the pod.
 
 Shrinking: NOT supported. PVC capacity can only increase.
 
-*What separates good from great:* The expansion is two-phase: cloud disk expansion
-(ControllerExpandVolume - happens first, independent of pod) and filesystem expansion
-(NodeExpandVolume - requires the pod to be running on the node). If the pod is not
+*What separates good from great:* The expansion is two-phase: cloud disk expansi
+(ControllerExpandVolume - happens first, independent of pod) and filesystem expa
+(NodeExpandVolume - requires the pod to be running on the node). If the pod is n
 running (pod was deleted), the filesystem won't be expanded until the pod restarts
 and mounts the volume again. `kubectl describe pvc` will show "filesystem resize
 required" if waiting for pod.
 
 ---
 
-**Q9 [STAFF] (Behavioral): Tell me about a storage-related incident you handled or
+**Q9 [STAFF] (Behavioral): Tell me about a storage-related incident you handled 
 designed around in production.**
 
 A (STAR format):
 
 Situation: We were running a MongoDB replica set (3 nodes) in Kubernetes on AWS with
 EBS volumes. During a routine Kubernetes node upgrade, the cluster autoscaler terminated
-a node that had mongo-2's EBS volume. The EBS volume detached from the terminated
-node. Due to a bug in our setup, the volume attachment was not properly released -
+a node that had mongo-2's EBS volume. The EBS volume detached from the terminate
+node. Due to a bug in our setup, the volume attachment was not properly released
 the volume remained "in-use" according to AWS but the node was gone.
 
-Task: restore mongo-2 to the replica set without data loss and prevent recurrence.
+Task: restore mongo-2 to the replica set without data loss and prevent recurrenc
 
 Action:
-Immediate: `kubectl describe pod mongo-2` showed the pod Pending with "volume in use
+Immediate: `kubectl describe pod mongo-2` showed the pod Pending with "volume in
 by another node" error. Confirmed via AWS console the EBS volume showed detached node.
 Ran `aws ec2 detach-volume --volume-id <id> --force` to force-detach.
-`kubectl delete pod mongo-2` - forced pod rescheduling. Volume attached to new node.
+`kubectl delete pod mongo-2` - forced pod rescheduling. Volume attached to new n
 mongo-2 re-joined the replica set and caught up via replication.
 
 Root cause: the old node had terminated before kubelet could gracefully unmount the
@@ -673,13 +673,13 @@ Prevention implemented:
 1. Added Liveness probe to mongo pods so unhealthy pods are restarted faster.
 2. Added node termination handler (AWS Node Termination Handler) to gracefully drain
    nodes before spot instance termination.
-3. Switched to `gp3` EBS volumes with Multi-Attach disabled (single-attach enforced
+3. Switched to `gp3` EBS volumes with Multi-Attach disabled (single-attach enfor
    at AWS level).
 4. Added Velero backup taking daily EBS snapshots - restored confidence in RPO.
 
-*What separates good from great:* The force-detach step is a judgment call. Force-detach
+*What separates good from great:* The force-detach step is a judgment call. Forc
 can corrupt a filesystem if the node was still writing. Confirming the node was
-genuinely terminated (not just temporarily unavailable) before force-detaching was
+genuinely terminated (not just temporarily unavailable) before force-detaching w
 critical. This is the "is the node really dead?" problem that all distributed storage
 systems face.
 
@@ -687,14 +687,14 @@ systems face.
 
 ### ⚖️ Comparison Table
 
-| Dimension | hostPath | emptyDir | PVC (RWO) | PVC (RWX) |
-|---|---|---|---|---|
-| Durability | Survives pod | Dies with pod | Survives pod | Survives pod |
-| Portability | Node-pinned | Any node | Any node (same AZ) | Any node |
-| Sharing | Node processes | Same pod | One pod | Multiple pods |
-| Performance | Node disk | Node disk (or RAM) | Network disk | Network file |
-| Use case | Infrastructure | Temp/cache | Database | Shared files |
-| Cloud support | All | All | EBS, GCE PD, Disk | EFS, NFS, CephFS |
+| Dimension| hostPath| emptyDir| PVC (RWO)| PVC (RWX)|
+|--------|--------------|------------------|------------------|----------------|
+| Durability| Survives pod| Dies with pod| Survives pod| Survives pod|
+| Portability| Node-pinned| Any node| Any node (same AZ)| Any node|
+| Sharing| Node processes| Same pod| One pod| Multiple pods|
+| Performance| Node disk| Node disk (or RAM)| Network disk| Network file|
+| Use case| Infrastructure| Temp/cache| Database| Shared files|
+| Cloud support| All| All| EBS, GCE PD, Disk| EFS, NFS, CephFS|
 
 **Decision framework:**
 - Data must survive pod restart? -> PVC
@@ -723,7 +723,7 @@ Developer creates: PVC [50Gi, RWO]  -------+--> Bound
 Pod mounts:        volumeMounts:/data ------+
 
 Node 1: Pod -> mounts PVC -> PV -> NFS server:/data
-Node 2: (Pod rescheduled) -> unmounts from Node 1 -> mounts on Node 2 -> same PV
+Node 2: (Pod rescheduled) -> unmounts from Node 1 -> mounts on Node 2 -> same...
 ```
 
 ```mermaid
@@ -877,7 +877,7 @@ K8s creates PV pointing to the new EBS volume
 PVC binds to PV -> pod can start
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This StorageClass and Dynamic Provisioning example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key StorageClass fields:**
 - `provisioner`: CSI driver identifier (ebs.csi.aws.com, pd.csi.storage.gke.io)
@@ -921,7 +921,7 @@ just reference the name.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Multiple StorageClasses modeling storage tiers, a PVC
+> **Code walkthrough:** Multiple StorageClasses modeling storage tiers, a PVCice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > using dynamic provisioning, and the WaitForFirstConsumer configuration for
 > AZ-safe provisioning.
 
@@ -1002,7 +1002,7 @@ spec:
       storage: 100Gi
 ```
 
-> **Code walkthrough:** Three StorageClasses model three storage tiers: fast-ssd
+> **Code walkthrough:** Three StorageClasses model three storage tiers: fast-ssdice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for databases (gp3 with high IOPS), standard-hdd for cold data (sc1), and retain-ssd
 > for critical databases where data must be preserved after PVC deletion. All use
 > `WaitForFirstConsumer` - essential for EBS which is AZ-locked. Without it, the
@@ -1190,7 +1190,7 @@ allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For all 5 database StatefulSets example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Tier 2 - Application tier (`fast-ssd`, default):
 ```yaml
@@ -1204,7 +1204,7 @@ allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For 10 stateless services that occasionally need cache/temp storage example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Tier 3 - Shared files (`efs-rwo`):
 ```yaml
@@ -1216,7 +1216,7 @@ allowVolumeExpansion: false        # EFS is elastic, no capacity concept
 volumeBindingMode: Immediate       # EFS is multi-zone, no topology issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For any service needing ReadWriteMany (shared ML models, user uploads) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Operational policies:
 - `retain-ssd` PVs are reviewed weekly by the DB team
@@ -1301,7 +1301,7 @@ metadata:
   name: local-nvme
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For any service needing ReadWriteMany (shared ML models, user uploads) example demonstrates YAML configuration pattern using Kafka messaging. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 PVs must be created manually pointing to specific node paths.
 Or: use the Local Path Provisioner (Rancher) for auto-provisioning from local paths.
@@ -1403,7 +1403,7 @@ spec:
     persistentVolumeClaimName: data-postgres-0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Take a snapshot example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 For application-consistent backup, coordinate with the database:
 ```bash
@@ -1414,7 +1414,7 @@ kubectl apply -f snapshot.yaml
 # Post-snapshot: resume normal operations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Post-snapshot: resume normal operations example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Restore from snapshot:
 ```yaml
@@ -1432,7 +1432,7 @@ spec:
     requests:
       storage: 100Gi
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Post-snapshot: resume normal operations example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The CSI driver provisions a new EBS volume pre-cloned from the snapshot.
 No data copy needed (copy-on-write at the block level) - very fast.

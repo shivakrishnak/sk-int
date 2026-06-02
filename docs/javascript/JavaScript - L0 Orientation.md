@@ -151,7 +151,7 @@ DESIGN DECISIONS:
     CPU-intensive work: Web Workers / Worker Threads.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Origins and Purpose example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -209,7 +209,7 @@ console.log('4. End');
 // Stack completes -> microtasks -> macrotasks
 ```
 
-> **Code walkthrough:** Dynamic typing allows variables to change
+> **Code walkthrough:** Dynamic typing allows variables to changeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > type freely - powerful but error-prone, motivating TypeScript.
 > The `==` vs `===` distinction reflects 1995 design: `==` performs
 > type coercion, `===` does not. The async output (1, 4, 2, 3) reveals
@@ -268,7 +268,7 @@ console.log([] == ![]);  // true (complex coercion chain)
 // TypeScript catches these at compile time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ---
 
@@ -286,8 +286,7 @@ console.log([] == ![]);  // true (complex coercion chain)
 
 ---
 
-**Q1: What is ECMAScript and how does it relate to JavaScript?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is ECMAScript and how does it relate to JavaScript?**
 
 > **Answer:**
 >
@@ -474,13 +473,18 @@ MONOMORPHIC/POLYMORPHIC/MEGAMORPHIC:
     -> TurboFan gives up: falls to generic slow path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Engine Overview example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Hidden classes and JIT optimization**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: inconsistent property initialization
@@ -590,7 +594,7 @@ node --prof-process isolate-*.log  # human-readable output
 # Look for: "Not Optimized", "Deoptimized" in flame chart
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for: "Not Optimized", "Deoptimized" in flame chart example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -608,8 +612,7 @@ node --prof-process isolate-*.log  # human-readable output
 
 ---
 
-**Q1: What is JIT compilation and why does JavaScript use it?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is JIT compilation and why does JavaScript use it?**
 
 > **Answer:**
 >
@@ -732,7 +735,7 @@ ecosystem fills these gaps.
 
 **How it works:**
 
-```
+```plaintext
 JAVASCRIPT ECOSYSTEM MAP:
 
 RUNTIMES:
@@ -801,7 +804,7 @@ META-FRAMEWORKS (full-stack):
   Astro: content-focused, islands architecture
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Ecosystem Map example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -853,7 +856,7 @@ npm test       # run tests
 npm run build  # production bundle
 ```
 
-> **Code walkthrough:** `package.json` is the manifest for every
+> **Code walkthrough:** `package.json` is the manifest for everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > JavaScript project. `"type": "module"` opts into ES Modules as
 > the default (imports work natively). The scripts map short names
 > to tool commands - `npm run dev` runs `vite`. The split between
@@ -924,7 +927,7 @@ npx duplicate-package-checker-webpack-plugin
 # or in Vite: npx vite-bundle-analyzer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or in Vite: npx vite-bundle-analyzer example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -942,8 +945,7 @@ npx duplicate-package-checker-webpack-plugin
 
 ---
 
-**Q1: What is the difference between Node.js, Deno, and Bun?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between Node.js, Deno, and Bun?**
 
 > **Answer:**
 >

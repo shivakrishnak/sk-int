@@ -124,7 +124,7 @@ user_id              1,000,000       x1,000,000
 Total series:        600 x 1,000,000 = 600,000,000 (CATASTROPHIC)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cardinality in Metrics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Prometheus holds two hours of head samples in memory. At 15s
 scrape interval that is 480 samples per series. At 10 bytes
@@ -192,7 +192,7 @@ badCounter.labels("checkout", "success", userId).inc();
 // After 1M unique users: 1M time series, ~500MB RAM
 ```
 
-> **Code walkthrough:** The BAD example adds user_id as a
+> **Code walkthrough:** The BAD example adds user_id as aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > label alongside service and status. With 1M users, this
 > creates 1M time series for this counter alone. Each series
 > needs memory for its sample history, index entry, and WAL
@@ -223,7 +223,7 @@ log.atInfo()
     .log("Checkout succeeded");
 ```
 
-> **Code walkthrough:** The GOOD example uses only
+> **Code walkthrough:** The GOOD example uses onlyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > low-cardinality labels: service (bounded by service count)
 > and status (bounded by HTTP status codes). User context
 > is routed to structured logs where it belongs - logs can
@@ -249,7 +249,7 @@ increase(prometheus_tsdb_head_series_created_total[5m]) > 10000
 topk(10, count by (job) ({__name__=~".+"}))
 ```
 
-> **Code walkthrough:** These PromQL queries form the
+> **Code walkthrough:** These PromQL queries form theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > cardinality investigation toolkit. The first query identifies
 > the worst offenders by metric name. The second monitors the
 > total memory pressure. The third creates an alert for
@@ -341,7 +341,7 @@ curl -s http://prometheus:9090/api/v1/query \
     series: .value[1]}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find offending metric example demonstrates HTTP request from shell using container. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Identify the offending metric and remove the
 high-cardinality label via a relabel rule:
@@ -352,7 +352,7 @@ metric_relabel_configs:
     regex: user_id
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This drop user_id label example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Prevention: Enforce cardinality limits in CI with a
 metric schema linting step. Alert on
@@ -382,7 +382,7 @@ histogram_quantile(0.99,
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check prometheus_engine_query_duration_seconds P99 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Create recording rules to pre-aggregate expensive
 queries. Or redesign the metric to remove the
@@ -418,7 +418,7 @@ increase(
 ) > 100
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find churning metrics example demonstrates a key coice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Remove ephemeral labels. Use only stable values:
 service name, environment, region, version. Pod hash
@@ -432,17 +432,17 @@ must not contain auto-generated suffixes.
 
 ### 🎯 Interview Deep-Dive
 
-| Question type | Time budget | Goal |
-| ------------- | ----------- | ---- |
-| Conceptual | 60 sec | Define cardinality precisely |
-| Debugging | 90 sec | Diagnose cardinality OOM |
-| Comparison | 60 sec | Labels vs logs vs traces for user context |
-| Scenario | 2 min | Design a label schema for a checkout service |
-| Trade-off | 90 sec | Cardinality vs observability richness |
-| Production | 2 min | Describe a cardinality incident you handled |
-| Behavioral | 2-3 min | STAR story of preventing a cardinality problem |
-| Architecture | 90 sec | Cardinality governance at 50 services |
-| Misconception | 60 sec | Why exemplars are better than trace_id labels |
+| Question type| Time budget| Goal|
+|---|---------------------------|----------------------------------------------|
+| Conceptual| 60 sec| Define cardinality precisely|
+| Debugging| 90 sec| Diagnose cardinality OOM|
+| Comparison| 60 sec| Labels vs logs vs traces for user context|
+| Scenario| 2 min| Design a label schema for a checkout service|
+| Trade-off| 90 sec| Cardinality vs observability richness|
+| Production| 2 min| Describe a cardinality incident you handled|
+| Behavioral| 2-3 min| STAR story of preventing a cardinality problem|
+| Architecture| 90 sec| Cardinality governance at 50 services|
+| Misconception| 60 sec| Why exemplars are better than trace_id labels|
 
 ---
 
@@ -526,36 +526,7 @@ scrapes a Histogram metric, the exemplar is stored as a
 separate data point associated with a specific bucket
 observation - not as a time series label. In the Prometheus
 exposition format, an exemplar looks like:
-`http_request_duration_seconds_bucket{le="0.5"} 12
-
----
-
-### 💻 Code Example
-
-*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
-
-
----
-
-### 🏛️ System Design
-
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
-
-
----
-
-### ⚖️ Comparison Table
-
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
-
-
----
-
-### 📊 Diagram
-
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
-
-# {trace_id="abc123"} 0.437 1620000000.000`. In OpenMetrics
+`http_request_duration_seconds_bucket{le="0.5"} 129 # {trace_id="abc123"} 0.437 1620000000.000`. In OpenMetrics
 format (required for exemplar support), the exemplar is
 a named sample attached to the bucket value. Grafana
 renders exemplars as dots on time series panels. When an
@@ -575,11 +546,35 @@ with Tempo as an associated trace data source.
 
 ---
 
+### 💻 Code Example
+
+*(Omit: this concept does not have a programmatic interface that can be demonstrated in code. The conceptual explanation above is sufficient.)*
+
+---
+
+### 🏛️ System Design
+
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
+
+---
+
+### ⚖️ Comparison Table
+
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
+
+---
+
+### 📊 Diagram
+
+*(Omit: no standalone visual diagram required for this concept - the explanation
+
+---
+
 **Q4 [MID] What labels are safe to add to a Prometheus metric?**
 
 *Why they ask:* Tests metric schema design judgment.
 
-*Likely follow-up:* What is the maximum cardinality you would accept for a label?
+*Likely follow-up:* What is the maximum cardinality you would accept for a label
 
 Safe labels have a small, stable, and bounded set of values.
 The categories I use: environment (prod, staging, dev - 3
@@ -737,9 +732,9 @@ metric label or as a Loki stream selector.
 
 *What separates good from great:* Great candidates describe
 Loki's specific design choice: only stream labels (in `{}`)
-are indexed; pipeline fields (after `| json |`) are not
+ are indexed; pipeline fields (after `| json| `) are not
 indexed. This means `{user_id="u-123"}` is a cardinality
-bomb in Loki, but `{app="checkout"} | json | user_id="u-123"`
+ bomb in Loki, but `{app="checkout"}| json| user_id="u-123"`
 is a sequential scan (slower but not catastrophic).
 
 ---
@@ -781,24 +776,24 @@ blocks, which also removes high-cardinality historical data.
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with the cardinality formula: product of distinct values per label |
-| Hiring Manager | Lead with the business impact: cardinality OOM during an incident doubles MTTR |
-| Bar Raiser | Lead with exemplars and governance: the non-obvious solution to trace correlation without cardinality cost |
-| Peer Engineer | Collaborative: "The first time I saw a Prometheus OOM in prod it was from user_id - now I review every new metric in PRs" |
+| Interviewer Type| Emphasis|
+|---|--------------------------------------------------------------------------|
+| Technical Panel| Lead with the cardinality formula: product of distinct values
+| Hiring Manager| Lead with the business impact: cardinality OOM during an incid
+| Bar Raiser| Lead with exemplars and governance: the non-obvious solution to tr
+| Peer Engineer| Collaborative: "The first time I saw a Prometheus OOM in prod i
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Approach | Cardinality | Use Case | Storage | Querying | Choose When |
-| -------- | ----------- | -------- | ------- | -------- | ----------- |
-| **Prometheus labels** | Low (< 10K series) | Rate, count, latency by stable dimensions | RAM (TSDB head) | PromQL - fast, indexed | Aggregated signals: error rate, p99 by service/method |
-| Logs with fields | No cardinality limit | Per-event context, user actions, audit | Disk (Loki/ES) | LogQL/Lucene - sequential | User ID, session ID, any high-cardinality event attribute |
-| Trace data | Per-trace storage | Causality, per-request timing breakdown | Trace backend | TraceQL - span search | End-to-end request flow, dependency analysis |
-| Exemplars | Zero labels added | Metric-to-trace bridge | Exemplar store (separate) | Click-through in Grafana | Correlating latency spikes to specific traces without labels |
-| High-cardinality metrics (Honeycomb, DD) | Unlimited | Per-user analytics, feature flagging | Columnar backend | Field-value queries | When you need both aggregation AND user-level breakdown on metrics |
+| Approach| Cardinality| Use Case| Storage| Querying| Choose When|
+|---|---|---|---|---|----------------------------------------------------------|
+| **Prometheus labels**| Low (< 10K series)| Rate, count, latency by stable dime
+| Logs with fields| No cardinality limit| Per-event context, user actions, audit
+| Trace data| Per-trace storage| Causality, per-request timing breakdown| Trace 
+| Exemplars| Zero labels added| Metric-to-trace bridge| Exemplar store (separate
+| High-cardinality metrics (Honeycomb, DD)| Unlimited| Per-user analytics, featu
 
 **The deciding factor:**
 If the dimension scales with user count or request volume,
@@ -997,7 +992,7 @@ Request arrives at Service A
   -> Final trace: either fully stored or fully dropped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Trace Sampling Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 TAIL-BASED SAMPLING - decision after trace completes:
 ```
@@ -1013,7 +1008,7 @@ Request arrives at Service A, B, C, D
   -> Dropped traces: spans discarded from buffer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Trace Sampling Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Head-based and tail-based are fundamentally different problems.
@@ -1096,7 +1091,7 @@ SdkTracerProvider goodProvider = SdkTracerProvider.builder()
     .build();
 ```
 
-> **Code walkthrough:** The BAD example uses no explicit sampler,
+> **Code walkthrough:** The BAD example uses no explicit sampler,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > defaulting to 100% trace export. The GOOD example uses
 > traceIdRatioBased(0.01) wrapped in parentBased. The parentBased
 > sampler is critical: it ensures downstream services respect the
@@ -1143,7 +1138,7 @@ service:
       exporters: [otlp/tempo]
 ```
 
-> **Code walkthrough:** The tail_sampling processor buffers all
+> **Code walkthrough:** The tail_sampling processor buffers allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > incoming spans by trace_id for decision_wait=30s. After 30s,
 > the complete trace is evaluated against policies in priority
 > order. The three-policy stack - errors first, then latency,
@@ -1238,7 +1233,7 @@ curl http://collector:8888/metrics | grep tail_sampling
 otelcol_processor_tail_sampling_sampling_decision_timer_count
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check sampled vs unsampled ratios example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Add tail-based sampling with error policy to the OTel
 Collector. Keep head-based for non-error traces.
@@ -1271,7 +1266,7 @@ otelcol_processor_tail_sampling_sampling_trace_dropped_count
 process_runtime_go_mem_stats_heap_alloc_bytes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert: heap > 6GB on an 8GB Collector example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Scale Collector horizontally using consistent hash-based
 load balancing (LoadBalancingExporter) to distribute traces
@@ -1309,7 +1304,7 @@ kubectl exec -it service-b-pod -- \
 # If traceparent sampled flag = 00: service B is dropping
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If traceparent sampled flag = 00: service B is dropice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Ensure all services use Sampler.parentBased() wrapping
 their local sampler. The parentBased sampler respects the
@@ -1325,17 +1320,17 @@ spans from all services appear in Jaeger for sampled traces.
 
 ### 🎯 Interview Deep-Dive
 
-| Question type | Time budget | Goal |
-| ------------- | ----------- | ---- |
-| Conceptual | 60 sec | Explain head-based vs tail-based core difference |
-| Debugging | 90 sec | Diagnose missing error traces |
-| Comparison | 60 sec | Head vs tail vs adaptive |
-| Scenario | 2 min | Design sampling strategy for checkout service |
-| Trade-off | 90 sec | When NOT to use tail-based |
-| Production | 2 min | Describe a sampling misconfiguration incident |
-| Behavioral | 2-3 min | STAR story of improving trace debuggability |
-| Architecture | 90 sec | Consistent hashing for tail-based Collectors |
-| Technical depth | 90 sec | Exemplars as head-based complement |
+| Question type| Time budget| Goal|
+|---|-------------------------|------------------------------------------------|
+| Conceptual| 60 sec| Explain head-based vs tail-based core difference|
+| Debugging| 90 sec| Diagnose missing error traces|
+| Comparison| 60 sec| Head vs tail vs adaptive|
+| Scenario| 2 min| Design sampling strategy for checkout service|
+| Trade-off| 90 sec| When NOT to use tail-based|
+| Production| 2 min| Describe a sampling misconfiguration incident|
+| Behavioral| 2-3 min| STAR story of improving trace debuggability|
+| Architecture| 90 sec| Consistent hashing for tail-based Collectors|
+| Technical depth| 90 sec| Exemplars as head-based complement|
 
 ---
 
@@ -1665,24 +1660,22 @@ Tempo's compaction configuration.
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Lead with the probability argument for why 1% sampling misses errors, then describe the tail-based architecture |
-| Hiring Manager | Lead with cost vs debuggability trade-off and the specific dollar figures |
-| Bar Raiser | Lead with the consistent hash routing requirement for tail-based and why StatefulSet is mandatory |
-| Peer Engineer | Collaborative: "The first thing I always check in a new codebase is whether they are using parentBased sampler - without it traces are partial and useless" |
+| Interviewer Type| Emphasis|
+| Technical Panel| Lead with the probability argument for why 1% sampling misses
+| Hiring Manager| Lead with cost vs debuggability trade-off and the specific dol
+| Bar Raiser| Lead with the consistent hash routing requirement for tail-based a
+| Peer Engineer| Collaborative: "The first thing I always check in a new codebas
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Strategy | Decision Point | Error Capture | Storage Cost | Complexity | Choose When |
-| -------- | -------------- | ------------- | ------------ | ---------- | ----------- |
-| **Head probabilistic (1%)** | Trace entry | ~0% of errors at 0.1% error rate | Low (1% of all traces) | Minimal (SDK only) | Dev/staging, or services with high error rates where statistical sampling is sufficient |
-| Head rate-limited (N/sec) | Trace entry | Low (rate-limited to N/sec) | Predictable (N x size) | Minimal (SDK only) | Baseline visibility + burst protection |
-| **Tail error + probabilistic** | After completion | 100% of errors | Medium (all errors + 1% healthy) | High (StatefulSet Collector) | Production user-facing services |
-| Adaptive | Dynamic | Variable | Dynamic | High (feedback loop) | High-variability error rates needing automatic adjustment |
-| Always-on (100%) | N/A | 100% | Very high | Minimal | Dev environments, very low-volume services (< 10 RPS) |
+| Strategy| Decision Point| Error Capture| Storage Cost| Complexity| Choose When
+| **Head probabilistic (1%)**| Trace entry| ~0% of errors at 0.1% error rate| Lo
+| Head rate-limited (N/sec)| Trace entry| Low (rate-limited to N/sec)| Predictab
+| **Tail error + probabilistic**| After completion| 100% of errors| Medium (all 
+| Adaptive| Dynamic| Variable| Dynamic| High (feedback loop)| High-variability e
+| Always-on (100%)| N/A| 100%| Very high| Minimal| Dev environments, very low-vo
 
 **The deciding factor:**
 If error trace loss during incidents is acceptable, use

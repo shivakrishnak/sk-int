@@ -134,7 +134,7 @@ PERFORMANCE TIMELINE:
   └──────────────────────────────────────────────┘
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This JavaScript Performance Profiling and Debugging example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -163,6 +163,11 @@ request cause heap exhaustion in hours at production traffic.
 ### 💻 Code Example
 
 **Profiling workflow and common fixes**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // =========== BROWSER: PERFORMANCE API ===========
@@ -278,7 +283,7 @@ class CacheFixed {
 }
 ```
 
-> **Code walkthrough:** The layout thrashing example shows one of
+> **Code walkthrough:** The layout thrashing example shows one ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the most common browser performance pitfalls. `offsetHeight` is a
 > "dirty read" - it forces the browser to immediately perform style
 > recalculation and layout to return an accurate value. If a write
@@ -377,7 +382,7 @@ PRODUCTION PERFORMANCE MONITORING:
   - Service Worker: cache static assets
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -517,7 +522,7 @@ class Poller {
 // Should plateau at a stable level (not grow indefinitely)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 ---
 
@@ -540,7 +545,7 @@ class Poller {
 
 ---
 
-**Q1: How do you use Chrome DevTools to find a performance bottleneck
+**[JUNIOR] Q1 - [MECHANISM] How do you use Chrome DevTools to find a performance bottleneck**
 in a slow web page?** `[SENIOR]` DEBUGGING
 
 > **Answer:**
@@ -617,8 +622,7 @@ in a slow web page?** `[SENIOR]` DEBUGGING
 > engineers look at the flame chart; great engineers look at both
 > and cross-reference.
 
-**Q2: How do you find a memory leak in a Node.js application?**
-`[STAFF]` DEBUGGING
+**[STAFF] Q2 - [DEBUGGING] How do you find a memory leak in a Node.js application?**
 
 > **Answer:**
 >
@@ -685,8 +689,7 @@ in a slow web page?** `[SENIOR]` DEBUGGING
 > (snapshots show WHAT leaked; allocation profiles show WHERE it
 > was created).
 
-**Q3: What is layout thrashing and how do you fix it?** `[SENIOR]`
-MECHANISM
+**[MID] Q3 - [MECHANISM] What is layout thrashing and how do you fix it?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -753,7 +756,7 @@ MECHANISM
 > thread and don't require JavaScript) over JavaScript-driven animation
 > for any property that can be animated with `transform` or `opacity`.
 
-**Q4: What metrics do you track for a Node.js service in production?**
+**[MID] Q4 - [MECHANISM] What metrics do you track for a Node.js service in production?**
 `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -827,7 +830,7 @@ MECHANISM
 > lag - lag measures latency, ELU measures saturation.
 > `perf_hooks.eventLoopUtilization()` provides this metric.
 
-**Q5: How would you optimize a React application with poor Largest
+**[MID] Q5 - [MECHANISM] How would you optimize a React application with poor Largest**
 Contentful Paint (LCP) score?** `[STAFF]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -901,7 +904,7 @@ Contentful Paint (LCP) score?** `[STAFF]` SYSTEM-DESIGN
 > network requests. Combined with preload hints, this is consistently
 > the highest-ROI LCP optimization for image-heavy pages.
 
-**Q6: Explain React Profiler and how you use it to optimize component
+**[SENIOR] Q6 - [DEBUGGING] Explain React Profiler and how you use it to optimize component**
 rendering.** `[SENIOR]` DEBUGGING
 
 > **Answer:**
@@ -981,7 +984,7 @@ rendering.** `[SENIOR]` DEBUGGING
 > moving frequently-updating state down the component tree to minimize
 > the subtree that re-renders.
 
-**Q7: What causes a "long task" in the browser and how do you break
+**[SENIOR] Q7 - [MECHANISM] What causes a "long task" in the browser and how do you break**
 it up?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -1054,8 +1057,7 @@ it up?** `[SENIOR]` MECHANISM
 > responsive to input: `scheduler.yield`. For true background work
 > that shouldn't impact UX at all: `requestIdleCallback`.
 
-**Q8: How do you profile and optimize a slow Node.js API endpoint?**
-`[STAFF]` DEBUGGING
+**[STAFF] Q8 - [DEBUGGING] How do you profile and optimize a slow Node.js API endpoint?**
 
 > **Answer:**
 >

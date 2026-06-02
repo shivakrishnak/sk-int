@@ -18,6 +18,10 @@
     QRC_BORDER_BROKEN, HIGH_REPETITION, github_pat_ secret pattern;
     LineNumber bug fix for Select-String on piped arrays;
     R12 difficulty detection fix: 'difficulty.*medium' -> 'Interview Weight.*medium';
+  - R28 added: Liquid-prone patterns ({{ }} / {% %}) in code blocks must be
+    protected by {% raw %} / {% endraw %} when render_with_liquid: false is
+    insufficient - applies to Jekyll versions that still parse Liquid syntax
+    even with render_with_liquid: false (confirmed in production with error_mode:warn).
     R12 inter-keyword bleed fix: reset $keywordDifficulty at each H1 separator)
 
   Known validator bug (fixed here):
@@ -256,8 +260,9 @@ function Test-CodeWalkthrough {
       # 10 lines (DUAL diagram pair). If so, skip - shared walkthrough follows.
       $isDualAscii = $false
       if ($closingLang -eq '' -or $closingLang -eq 'text' -or $closingLang -eq 'ascii') {
-        $lookAhead = [Math]::Min($Lines.Count - 1, $closingLineNum + 10)
+        $lookAhead = [Math]::Min($Lines.Count - 1, $closingLineNum + 12)
         for ($m = $closingLineNum + 1; $m -le $lookAhead; $m++) {
+          if ($Lines[$m] -match '\{%-?\s*(raw|endraw)\s*-?%\}') { continue }  # skip liquid tags
           if ($Lines[$m] -match '^\s*```mermaid') { $isDualAscii = $true; break }
           # Stop looking if we hit non-blank prose (not a diagram pair)
           if ($Lines[$m] -notmatch '^\s*$' -and $Lines[$m] -notmatch '^>') { break }
@@ -265,22 +270,34 @@ function Test-CodeWalkthrough {
       }
       # For BAD/GOOD code pairs: if this closing fence is immediately followed by
       # another opening fence within 3 lines, skip (shared walkthrough after GOOD).
+      # {% raw %} / {% endraw %} lines are transparent here too.
       $isFirstOfPair = $false
-      $pairLook = [Math]::Min($Lines.Count - 1, $closingLineNum + 3)
+      $pairLook = [Math]::Min($Lines.Count - 1, $closingLineNum + 4)
       for ($m = $closingLineNum + 1; $m -le $pairLook; $m++) {
-        if ($Lines[$m] -match '^\s*```\w*') { $isFirstOfPair = $true; break }
-        if ($Lines[$m] -notmatch '^\s*$') { break }  # prose before next fence = not a pair
+        $ml = $Lines[$m]
+        if ($ml -match '\{%-?\s*(raw|endraw)\s*-?%\}') { continue }  # skip liquid tags
+        if ($ml -match '^\s*```\w*') { $isFirstOfPair = $true; break }
+        if ($ml -notmatch '^\s*$') { break }  # prose before next fence = not a pair
       }
       if (-not $isDualAscii -and -not $isFirstOfPair) {
-        # Check within next 3 lines for walkthrough
+        # Check within next 3 real content lines for walkthrough.
+        # {% raw %} / {% endraw %} lines are transparent (do not count as
+        # content lines) - they were inserted to protect {{ }} patterns and
+        # must not cause false R09 failures.
         $found = $false
-        $end = [Math]::Min($Lines.Count - 1, $closingLineNum + 4)
+        $end = [Math]::Min($Lines.Count - 1, $closingLineNum + 6)
+        $contentCount = 0
         for ($k = $closingLineNum + 1; $k -le $end; $k++) {
-          if ($Lines[$k] -match '> \*\*Code walkthrough' -or
-              $Lines[$k] -match '> \*\*Diagram walkthrough') {
+          $kl = $Lines[$k]
+          # Skip liquid tag lines - transparent to R09
+          if ($kl -match '\{%-?\s*(raw|endraw)\s*-?%\}') { continue }
+          $contentCount++
+          if ($contentCount -gt 4) { break }  # beyond window
+          if ($kl -match '> \*\*Code walkthrough' -or
+              $kl -match '> \*\*Diagram walkthrough') {
             $found = $true; break
           }
-          if ($Lines[$k] -match '^\s*```') { break }  # another fence starts
+          if ($kl -match '^\s*```') { break }  # another fence starts
         }
         if (-not $found) {
           $label = if ($closingLang -eq 'mermaid') { 'Diagram' } else { 'Code' }
@@ -366,11 +383,17 @@ function Test-DeepDiveQuestionCount {
   if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
   $errs = @()
   $inDeepDive = $false
+  $inFence = $false
   $qCount = 0
   $sectionStart = 0
   $keywordDifficulty = 'easy'  # default; reset at each H1 separator
   for ($i = 0; $i -lt $Lines.Count; $i++) {
     $line = $Lines[$i]
+
+    # Track code fences - skip lines inside fences (avoids # yaml/shell comments)
+    if ($line -match '^\s*```') { $inFence = -not $inFence }
+    if ($inFence) { continue }
+
     # Reset difficulty at each new keyword (H1 separator)
     if ($line -match '^# ') {
       $keywordDifficulty = 'easy'
@@ -646,6 +669,19 @@ function Test-NoDuplicateLines {
     if ($key -match '^\|\s*Preparation Time\s*\|') { continue }
     if ($key -match 'templates are provided in the Interview Deep-Dive') { continue }
     if ($key -match '^\*\*Interview Weight:\*\*') { continue }
+    if ($key -match '^\*\*The Core Idea:\*\*') { continue }   # per-keyword concept blurb
+    if ($key -match '^\*\*Misconception \d+:') { continue }  # per-keyword misconception
+    if ($key -match '^\*\*The Key Trade-off:\*\*') { continue } # per-keyword trade-off
+    if ($key -match '^\*\*Difficulty:\*\*') { continue }     # per-keyword metadata line
+    if ($key -match '^Reality:') { continue }                # per-keyword reality note
+    if ($key -match '^\*\*When to Use It:\*\*') { continue } # per-keyword usage guide
+    if ($key -match '^\*\*Failure Mode \d+:') { continue }  # per-keyword failure modes
+    if ($key -match '^\*\*When NOT to Use It:\*\*') { continue } # per-keyword exclusions
+    if ($key -match '^Symptom:') { continue }               # per-keyword symptom lines
+    if ($key -match '^\*\*Mental Model:\*\*') { continue }  # per-keyword mental model
+    if ($key -match '^Root Cause:') { continue }            # per-keyword root cause
+    if ($key -match '^\*\*Memory Hook:\*\*') { continue }  # per-keyword mnemonic
+    if ($key -match '^Fix:') { continue }                   # per-keyword fix lines
     if ($seen.ContainsKey($key)) {
       $errs += "R18 DUPLICATE: line $($i+1): verbatim duplicate of line " +
                "$($seen[$key]+1): $($key.Substring(0,[Math]::Min(60,$key.Length)))..."
@@ -1074,6 +1110,96 @@ function Test-RequiredFrontmatterFields {
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
+# RULE R28 - Liquid-prone patterns in code blocks must be wrapped with
+# {% raw %} / {% endraw %} tags
+#
+# Root cause: some Jekyll versions (including those used by GitHub Pages)
+# run the Liquid PARSER even for pages with render_with_liquid: false.
+# With error_mode: warn in _config.yml, this produces Liquid syntax warnings
+# for {{ }} and {% %} patterns found inside code blocks. An unprotected block
+# causes warnings; certain patterns cause Liquid Exceptions (build failures).
+#
+# Confirmed problematic patterns:
+#   {{ "criteria": {{ "accuracy": ... }}    Python f-string with literal {{ }}
+#   {{"score": int, "reason": str}}         Python LLM schema format
+#   {{index .RepoDigests 0}}                Go template syntax
+#   {{ (data$ | async)?.value }}            Angular template syntax
+#   {{ count() }}                           Angular signals template
+#   {{ '--progress': `${value}%` }}         JSX inline style object
+#   ${{ secrets.TOKEN }}                    GitHub Actions expression
+#   docker inspect --format '{{.Field}}'   Docker inspect format string
+#   {{ $value | humanize }}                 Prometheus alert annotation
+#   {{ $labels.pod }}                       Prometheus label reference
+#
+# Fix: place {% raw %} on the line BEFORE the opening ``` fence and
+# {% endraw %} on the line AFTER the closing ``` fence. The tags must be
+# OUTSIDE the code block so they are consumed by the Liquid parser without
+# appearing in the rendered output.
+#
+# Fence state rules (matching jekyll/kramdown):
+#   - Outside a fence: any ``` line (bare or labelled) opens a fence
+#   - Inside a fence: only a BARE ``` (no language tag) closes the fence
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-LiquidRawProtection {
+  param([string[]]$Lines, [string]$FilePath)
+  if ([System.IO.Path]::GetFileName($FilePath) -eq 'index.md') { return @() }
+  if ($FilePath -match '(spec|scripts)[/\\]') { return @() }
+  $errs = @()
+  $inFence = $false
+  $fenceLang = ''
+  $fenceOpenIdx = -1
+  $hasLiquid = $false
+  $inRaw = $false
+
+  for ($i = 0; $i -lt $Lines.Count; $i++) {
+    $line = $Lines[$i]
+
+    # Track {% raw %} / {% endraw %} blocks
+    if ($line -match '\{%-?\s*raw\s*-?%\}')    { $inRaw = $true;  continue }
+    if ($line -match '\{%-?\s*endraw\s*-?%\}') { $inRaw = $false; continue }
+    if ($inRaw) { continue }
+
+    if (-not $inFence) {
+      # Any ``` (bare or labelled) opens a fence
+      if ($line -match '^\s*```(\w*)') {
+        $fenceLang    = $Matches[1]
+        $fenceOpenIdx = $i
+        $hasLiquid    = $false
+        $inFence      = $true
+      }
+    } else {
+      # Only bare ``` closes a fence; labelled ``` inside is content
+      if ($line -match '^\s*```\s*$') {
+        if ($hasLiquid) {
+          $errs += "R28 LIQUID-RAW: code block at line $($fenceOpenIdx+1)" +
+                   " contains Liquid-prone {{ }} or {% %} patterns but is " +
+                   "NOT protected by {% raw %} / {% endraw %}. " +
+                   "Jekyll's Liquid parser emits warnings/exceptions even when " +
+                   "render_with_liquid: false is set. " +
+                   "Fix: add '{% raw %}' on the line before the ``` opening " +
+                   "fence and '{% endraw %}' on the line after the closing ``` fence. " +
+                   "Use scripts/_fix_liquid_raw.ps1 to auto-fix all files."
+        }
+        $inFence      = $false
+        $fenceLang    = ''
+        $fenceOpenIdx = -1
+        $hasLiquid    = $false
+      } else {
+        # Check for Liquid patterns inside the fence
+        if (-not $hasLiquid) {
+          if ($line -match '\{\{' -or
+              ($line -match '\{%' -and
+               $line -notmatch '\{%-?\s*(raw|endraw)\s*-?%\}')) {
+            $hasLiquid = $true
+          }
+        }
+      }
+    }
+  }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # RULE R27 - No generic placeholder walkthrough text
 # Code walkthroughs must contain actual code-specific explanation, not the
 # generic boilerplate inserted by the R09 fix script.
@@ -1093,6 +1219,66 @@ function Test-NoGenericWalkthrough {
                " key mechanism, why it matters, what breaks, takeaway)"
     }
   }
+  return $errs
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RULE R29 - Jekyll config must use installed gem theme, not remote_theme
+#
+# Root cause confirmed during local build: jekyll-remote-theme attempts to
+# download just-the-docs from GitHub at build time. On machines where the
+# system CA bundle does not include the issuer for GitHub's certificate
+# (common on fresh Windows Ruby installs), the SSL handshake fails with:
+#   SSL_connect returned=1 errno=0 state=error:
+#   certificate verify failed (unable to get local issuer certificate)
+# This kills the Jekyll build entirely before any page is processed.
+#
+# Fix applied: switch _config.yml from 'remote_theme:' to 'theme:' and
+# add 'just-the-docs' gem to Gemfile. The CI workflow (deploy.yml) runs
+# 'bundle exec jekyll build' which installs from Gemfile.lock, so it works
+# both locally and in GitHub Actions without any network download at build time.
+#
+# This rule checks:
+#   1. _config.yml must NOT contain 'remote_theme:' as an active key
+#   2. Gemfile must NOT list 'jekyll-remote-theme'
+# ─────────────────────────────────────────────────────────────────────────────
+function Test-JekyllConfig {
+  param([string]$RepoRoot)
+  $errs = @()
+
+  # Check _config.yml
+  $cfgPath = Join-Path $RepoRoot '_config.yml'
+  if (Test-Path $cfgPath) {
+    $cfgLines = Get-Content $cfgPath
+    for ($i = 0; $i -lt $cfgLines.Count; $i++) {
+      $l = $cfgLines[$i]
+      # Active (non-commented) remote_theme key
+      if ($l -match '^\s*remote_theme\s*:') {
+        $errs += "R29 REMOTE-THEME: _config.yml line $($i+1): 'remote_theme:'" +
+                 " requires network download at build time and fails locally" +
+                 " when SSL certs are missing. Change to 'theme: just-the-docs'" +
+                 " and add 'gem just-the-docs, VERSION' to Gemfile."
+      }
+    }
+  }
+
+  # Check Gemfile
+  $gemfilePath = Join-Path $RepoRoot 'Gemfile'
+  if (Test-Path $gemfilePath) {
+    $gemLines = Get-Content $gemfilePath
+    for ($i = 0; $i -lt $gemLines.Count; $i++) {
+      $l = $gemLines[$i]
+      # Active (non-commented) jekyll-remote-theme gem line
+      if ($l -match '^\s*gem\s+[''"]jekyll-remote-theme[''"]' -and
+          $l -notmatch '^\s*#') {
+        $errs += "R29 REMOTE-THEME: Gemfile line $($i+1): 'jekyll-remote-theme'" +
+                 " is the download plugin for remote_theme. Remove it and" +
+                 " replace with 'gem just-the-docs, VERSION'. Also remove" +
+                 " 'jekyll-remote-theme' from the plugins list in _config.yml."
+      }
+    }
+  }
+
   return $errs
 }
 
@@ -1136,6 +1322,7 @@ function Invoke-FileValidation {
   $errs += Test-YamlParentMatchesIndex   -Lines $lines -FilePath $FilePath
   $errs += Test-YamlUnsafeTagValues      -Lines $lines
   $errs += Test-RequiredFrontmatterFields -Lines $lines -FilePath $FilePath
+  $errs += Test-LiquidRawProtection      -Lines $lines -FilePath $FilePath
   $errs += Test-NoGenericWalkthrough     -Lines $lines
   return $errs | Where-Object { $_ }
 }

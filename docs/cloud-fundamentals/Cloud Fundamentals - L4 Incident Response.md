@@ -110,7 +110,7 @@ SSM SESSION MANAGER LOGS:
   Gap: SSH sessions (not through SSM) not captured
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Incident Response and Forensics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Isolation Without Termination:**
 
@@ -133,7 +133,7 @@ ISOLATION SG:
   SSM agent still accessible via VPC endpoint (if configured)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cloud Incident Response and Forensics example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -267,7 +267,7 @@ def lambda_handler(event, context):
     return {'statusCode': 200}
 ```
 
-> **Code walkthrough:** The ordering is critical: EBS snapshots
+> **Code walkthrough:** The ordering is critical: EBS snapshotsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are taken BEFORE the isolation SG is applied. If you isolate
 > first and the instance needs to be restarted for any reason,
 > you may lose forensic evidence. The isolation SG is created
@@ -364,7 +364,7 @@ aws cloudtrail put-event-selectors \
 # Cost: ~$0.10 per 100,000 events - budget accordingly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This budget accordingly example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 
@@ -469,7 +469,7 @@ flowchart TB
 
 ---
 
-#### CONCEPT 1: What evidence sources exist in cloud IR and what are their limitations?
+**[SENIOR] Q1 - [MECHANISM] What evidence sources exist in cloud IR and what are their limitations?**
 
 **CloudTrail:** Every AWS API call: identity ARN, source IP,
 action, resource, timestamp. Available 90 days via console,
@@ -509,7 +509,7 @@ between effective and ineffective investigation.
 
 ---
 
-#### CONCEPT 2: What is MTTD vs MTTR and how does cloud architecture affect both?
+**[SENIOR] Q2 - [MECHANISM] What is MTTD vs MTTR and how does cloud architecture affect both?**
 
 **MTTD - Mean Time To Detect:** Average time from incident
 start to detection. GuardDuty detection: minutes for known
@@ -547,7 +547,7 @@ case for investing in detection speed.
 
 ---
 
-#### DEBUGGING 1: GuardDuty triggers "Recon:EC2/PortProbeUnprotectedPort." How do you triage and respond?
+**[SENIOR] Q3 - [DEBUGGING] GuardDuty triggers "Recon:EC2/PortProbeUnprotectedPort." How do you triage and respond?**
 
 **Step 1: Retrieve finding details:**
 ```bash
@@ -560,7 +560,7 @@ aws guardduty get-findings \
   }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This budget accordingly example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: Understand the finding:** GuardDuty detected an
 EC2 instance has an open port reachable from the internet
@@ -576,7 +576,7 @@ aws ec2 describe-instances \
 # Find which SG allows the probed port from 0.0.0.0/0
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find which SG allows the probed port from 0.0.0.0/0 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Triage decision:**
 - Port 80/443 on public web tier: expected. Confirm WAF in front.
@@ -596,7 +596,7 @@ whether any request on that port SUCCEEDED before detection.
 
 ---
 
-#### DEBUGGING 2: CloudTrail shows API calls from an IAM role at 3 AM. No deployment or job is scheduled. How do you triage?
+**[SENIOR] Q1 - [DEBUGGING] CloudTrail shows API calls from an IAM role at 3 AM. No deployment or job is scheduled. How do you triage?**
 
 **Step 1: Retrieve the events:**
 ```bash
@@ -613,7 +613,7 @@ jq '.Events[] | {
 }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find which SG allows the probed port from 0.0.0.0/0 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: Analyze source IP and user agent:**
 
@@ -642,7 +642,7 @@ aws logs insights query \
 # Compare the 3 AM spike to typical hours
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Compare the 3 AM spike to typical hours example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* User agent analysis is
 an underused signal. Legitimate AWS SDKs report standard
@@ -653,7 +653,7 @@ job always runs at 3 AM and is legitimate.
 
 ---
 
-#### TRADE-OFF 1: What are the risks of over-automating incident response?
+**[SENIOR] Q2 - [TRADE-OFF] What are the risks of over-automating incident response?**
 
 **Case for automation:** MTTD-to-containment in seconds
 vs human response in 15+ minutes. GuardDuty + Lambda +
@@ -696,7 +696,7 @@ The attacker-induced DoS angle shows adversarial thinking.
 
 ---
 
-#### TRADE-OFF 2: Forensics account vs in-place investigation.
+**[SENIOR] Q3 - [TRADE-OFF] Forensics account vs in-place investigation.**
 
 **In-place (within production account):**
 - Faster setup: no snapshot sharing required
@@ -732,7 +732,7 @@ operational experience.
 
 ---
 
-#### DESIGN 1: Design a GuardDuty + automated response pipeline for a 20-account AWS Organization.
+**[SENIOR] Q4 - [DESIGN] Design a GuardDuty + automated response pipeline for a 20-account AWS Organization.**
 
 **Architecture layers:**
 
@@ -767,7 +767,7 @@ maturity. Pre-launched forensics workspace reduces MTTR-Investigate.
 
 ---
 
-#### DESIGN 2: How would you implement cloud security posture management for a multi-account AWS Organization?
+**[SENIOR] Q5 - [DESIGN] How would you implement cloud security posture management for a multi-account AWS Organization?**
 
 **CSPM definition:** Continuous visibility into misconfigurations,
 policy violations, and compliance gaps.
@@ -808,7 +808,7 @@ security posture.
 
 ---
 
-#### BEHAVIORAL 1: Describe a time you responded to a cloud security incident.
+**[SENIOR] Q6 - [BEHAVIORAL] Describe a time you responded to a cloud security incident.**
 
 **STAR format:**
 
@@ -846,7 +846,7 @@ credential exfiltration attack surface entirely.
 
 ---
 
-#### BEHAVIORAL 2: How do you balance thorough investigation with the need to restore services quickly?
+**[SENIOR] Q7 - [BEHAVIORAL] How do you balance thorough investigation with the need to restore services quickly?**
 
 **The tension:** Thorough investigation preserves compromised
 instance (process memory, network state, disk context).
@@ -884,7 +884,7 @@ Together they show an engineer who designs for failure proactively.
 
 ---
 
-#### SCENARIO 1: GuardDuty triggers "InstanceCredentialExfiltration.OutsideAWS" - an ECS task's credentials used from external IP. What do you do?
+**[SENIOR] Q8 - [SCENARIO] GuardDuty triggers "InstanceCredentialExfiltration.OutsideAWS" - an ECS task's credentials used from external IP. What do you do?**
 
 **Immediate containment (first 5 minutes):**
 
@@ -911,7 +911,7 @@ aws iam put-role-policy \
 # New deployments get new tokens: work normally
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This New deployments get new tokens: work normally example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Investigation (next 30 minutes):**
 ```bash
@@ -922,7 +922,7 @@ jq '.Events[] | {time: .EventTime, event: .EventName, ip: .SourceIPAddress}'
 # What did the attacker do with the credentials?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What did the attacker do with the credentials? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Root cause - two vectors:**
 
@@ -948,7 +948,7 @@ as root cause vectors shows operational depth.
 
 ---
 
-#### SCENARIO 2: Former employee's AWS credentials may be leaked. They left 3 months ago. What do you do?
+**[SENIOR] Q9 - [SCENARIO] Former employee's AWS credentials may be leaked. They left 3 months ago. What do you do?**
 
 **Step 1: Immediate credential revocation:**
 ```bash
@@ -963,7 +963,7 @@ aws iam update-access-key \
 aws iam delete-login-profile --user-name former-employee
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check/remove console access: example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 2: 3-month CloudTrail lookback:**
 ```bash
@@ -975,7 +975,7 @@ aws cloudtrail lookup-events \
 # Any DescribeInstances / ListBuckets (enumeration)?
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any DescribeInstances / ListBuckets (enumeration)? example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Step 3: Scope the "leaked" scenario:**
 If credentials were in a public GitHub repo:

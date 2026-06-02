@@ -82,7 +82,7 @@ new String("Hello") -> heap object (outside pool)
 "Hello".intern() -> look up pool, return pooled reference
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 String Processing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **String manipulation methods (key ones):**
 ```java
@@ -115,7 +115,7 @@ s.repeat(3)          // "ha".repeat(3) = "hahaha"
 s.lines()            // Stream<String> of lines
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 String Processing example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **StringBuilder:**
 ```java
@@ -128,19 +128,25 @@ sb.setCharAt(0, 'h');        // modify char at index
 String result = sb.toString();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 String Processing example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The O(n^2) string concatenation in loops is one
+> **Code walkthrough:** The O(n^2) string concatenation in loops is oneice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of Java's most common performance bugs. Every `+=` in a loop creates
 > a new String: first iteration allocates 2 chars, second 4, third 6...
 > total allocations = n*(n+1)/2. For n=10,000: 50M character allocations.
 > StringBuilder accumulates into a single growable buffer: amortized O(n).
 > The regex examples show both correct usage (static final Pattern) and
 > the dangerous ReDoS pattern.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: string concatenation in loop - O(n^2)
@@ -204,7 +210,7 @@ if (m.matches()) {
 // Safe: atomic group: "(?> a+)b"
 ```
 
-> **Code walkthrough:** The `'\\n'` vs `"\n"` in `append()` matters:
+> **Code walkthrough:** The `'\\n'` vs `"\n"` in `append()` matters:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `append('\n')` appends a char (faster, no String allocation); `append("\n")`
 > appends a String (requires string lookup). For high-frequency loops,
 > prefer char literals for single characters. Pre-sizing StringBuilder
@@ -281,7 +287,7 @@ Pattern.compile("^a+$"); // equivalent simpler form
 // Java 8 regex has NO timeout - vulnerable to runaway regexes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -328,7 +334,7 @@ Arrays.fill(password, '\0'); // zero out after use - preventss heap dump exposur
 // vs: String password = "secret" -> can't clear! stays in pool
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The security implication is subtle.
 `String` in the pool can outlive the use - a heap dump taken after the
@@ -368,7 +374,7 @@ class LogAggregator {
 // you'll almost never need it. StringBuilder for everything.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The JVM JIT can sometimes "destack"
 `StringBuilder` allocations in tight loops (escape analysis). If the
@@ -410,7 +416,7 @@ String intern(String s) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Interning is a space-time trade-off.
 If you have millions of record fields that are frequently the same string
@@ -466,7 +472,7 @@ String result = Pattern.compile("\\d+")
 // "abc 246 def 912"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Pattern.compile()` is expensive because
 it builds a finite automaton from the regex string. In microbenchmarks, it's
@@ -527,7 +533,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 *What separates good from great:* ReDoS is a real attack vector. In 2016,
 a regex in the Node.js `moment` library caused a severe ReDoS vulnerability.
@@ -546,6 +552,12 @@ complex grammar validation.
 A: `String.format()` parses the format string on every call and uses
 varargs (boxing primitives). For high-frequency logging or string building:
 prefer concatenation or StringBuilder.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Benchmark: 1 million iterations
@@ -580,7 +592,7 @@ String json = """
     """.formatted(name, age); // .formatted() on text blocks (Java 15)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The SLF4J pattern (`log.debug("x {}", y)`)
 is far more important than `String.format` for performance. If debug logging
@@ -643,7 +655,7 @@ String sql = """
     """.formatted(userId);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Text blocks improve correctness, not
 just readability. The stripping algorithm is deterministic: indentation
@@ -658,6 +670,24 @@ messages where trailing spaces are significant.
 **Q8 (Locale-sensitive): When does Locale matter for string operations?**
 
 A:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: locale-sensitive comparison in code logic
 String country = userInput.toLowerCase();
@@ -688,7 +718,7 @@ collator.setStrength(Collator.PRIMARY); // ignore case and accents
 int cmp = collator.compare("straße", "STRASSE"); // 0 (same in German)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Locale bugs are among the hardest to
 reproduce - they only manifest on machines with non-English system locales.
@@ -737,7 +767,7 @@ Collator de = Collator.getInstance(Locale.GERMAN);
 names.sort(de); // handles German umlauts correctly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **WHAT BREAKS: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `Objects.equals(a, b)` is the standard
 null-safe equality check. In Spring/JPA code, null checks before
@@ -845,7 +875,7 @@ public @interface MyAnnotation {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 **Defining and using custom annotations:**
 ```java
@@ -883,13 +913,13 @@ void validate(Object obj) throws ValidationException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The custom `@RateLimit` annotation with AOP processing
+> **Code walkthrough:** The custom `@RateLimit` annotation with AOP processingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > shows the standard framework pattern: define the annotation (metadata),
 > implement the processor (behavior), wire them together (AOP / annotation
 > processor). The annotation carries the configuration (max calls, period);
@@ -958,7 +988,7 @@ public class RateLimitProcessor extends AbstractProcessor {
 }
 ```
 
-> **Code walkthrough:** The AOP aspect uses `@annotation(rateLimit)` to
+> **Code walkthrough:** The AOP aspect uses `@annotation(rateLimit)` toice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > intercept any method annotated with `@RateLimit` and inject the annotation
 > instance as a parameter (`rateLimit`). The `computeIfAbsent` on
 > `ConcurrentHashMap` creates a separate `RateLimiter` (Guava) per method
@@ -1033,7 +1063,7 @@ class UserServiceImpl implements UserService {
 // OR: use AspectJ weaving instead of CGLIB proxy (full bytecode instrumentation)
 // @EnableTransactionManagement(mode = AdviceMode.ASPECTJ)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Diagnosis: enable debug logging for `org.springframework.transaction`.
 Check `TransactionSynchronizationManager.isActualTransactionActive()` in
@@ -1095,7 +1125,7 @@ for (Field f : fields) {
 class ValidateProcessor extends AbstractProcessor { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 *What separates good from great:* The choice between APT and runtime
 reflection is primarily a "when do you want the cost?" question.
@@ -1133,7 +1163,7 @@ public @interface Cacheable {
 // method.getAnnotation(Cacheable.class).ttlSeconds()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* `CLASS` retention is the rare middle
 ground: useful for bytecode instrumentation tools that process .class
@@ -1198,7 +1228,7 @@ class AuditAspect {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using Spring annotation. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* Custom annotations work best when they
 express business intent cleanly. `@Audit(action="CREATE_ORDER")` is more
@@ -1250,7 +1280,7 @@ for (Schedule s : schedules) {
 Schedules container = method.getAnnotation(Schedules.class);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using container. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* `@Repeatable` solves the "wrapper array
 annotation" boilerplate. Before Java 8: `@Schedules({@Schedule("cron1"), @Schedule("cron2")})`.
@@ -1302,7 +1332,7 @@ class UserService {
 // This is why Quarkus starts in 50ms vs Spring's 2000ms+
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The performance difference matters at
 scale. In a microservices architecture with 50 services, Spring's runtime
@@ -1367,7 +1397,7 @@ class UserService {
     public void createUser(@Valid UserDTO dto) { // NOW it works
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* The "same-class method call bypasses AOP
 proxy" is one of the most common Spring bugs. It's invisible in unit tests
@@ -1422,7 +1452,7 @@ class Child extends Base {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* Spring has a meta-annotation search
 (`AnnotationUtils.findAnnotation()`) that walks the class and interface
@@ -1488,7 +1518,7 @@ class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using Spring annotation. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Custom `ConstraintValidator` beans can be
 Spring-managed (injection works!). This enables database-backed validation
@@ -1513,7 +1543,7 @@ A:
    // Real risk: annotation processor that reads other config files
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 2. **Reflection bypass of access controls:** `field.setAccessible(true)` bypasses `private`.
    ```java
@@ -1524,7 +1554,7 @@ A:
    // Java 9 module system prevents this for JDK classes without --add-opens
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **Deserialization of annotated types (Jackson):**
    ```java
@@ -1535,7 +1565,7 @@ A:
    // Or: disable default typing (objectMapper.disableDefaultTyping())
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 4. **Spring SpEL injection in annotation values:**
    ```java
@@ -1545,7 +1575,7 @@ A:
    // SpEL evaluates: #{T(java.lang.Runtime).getRuntime().exec('...')}
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Jackson polymorphic deserialization
 vulnerability (CVE-2017-7525 and related CVEs) was among the most severe

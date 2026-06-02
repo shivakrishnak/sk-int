@@ -153,7 +153,7 @@ BYTECODE ENHANCEMENT (dirty tracking):
     // Only changed field, not all fields
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hibernate Internals: Bytecode Enhancement and Proxies example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Proxies are SUBCLASSES of your entity. `entity instanceof OrderProxy`
@@ -200,7 +200,7 @@ public final class Order { // WRONG - Hibernate cannot subclass
 }
 ```
 
-> **Code walkthrough:** `final` prevents Hibernate from generating
+> **Code walkthrough:** `final` prevents Hibernate from generatingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a proxy subclass. Hibernate will fall back to loading the association
 > eagerly (defeating the `fetch = LAZY` setting) or throw an error
 > depending on configuration. Never make entities `final` unless you
@@ -245,6 +245,12 @@ Order realOrder = Hibernate.unproxy(order, Order.class);
 > real entity - essential when you need `instanceof` checks or when
 > passing to libraries that use reflection on the concrete type.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // GOOD: Bytecode enhancement for lazy attribute loading
 @Entity
@@ -269,12 +275,24 @@ public class Document {
 // </plugin>
 ```
 
-> **Code walkthrough:** `@Basic(fetch = LAZY)` on a field requires
+> **Code walkthrough:** `@Basic(fetch = LAZY)` on a field requiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > bytecode enhancement - regular proxy interception works at the entity
 > level, not the field level. The Maven plugin modifies the compiled
 > `.class` files to intercept field reads. Loading 1000 Document headers
 > for a list view no longer loads 5GB of content. The `content` field
 > only fetches its 5MB when `document.getContent()` is called.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Diagnosing proxy issues in production
@@ -304,7 +322,7 @@ if (!loaded) {
 }
 ```
 
-> **Code walkthrough:** These four diagnostics cover the most common
+> **Code walkthrough:** These four diagnostics cover the most commonice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > proxy-related bugs. `HibernateProxy` check detects whether an object
 > is proxied. `Hibernate.unproxy()` is the safe unwrapping method.
 > `Hibernate.isInitialized()` checks if the proxy has loaded its data.
@@ -402,7 +420,7 @@ boolean loaded = Hibernate.isInitialized(entity);
 // false = proxy not yet initialized, session likely closed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *Fix (choose based on context):*
 ```java
@@ -423,7 +441,7 @@ Optional<Order> findWithCustomer(Long id);
 Optional<Order> findById(Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -436,6 +454,12 @@ be cast to com.example.Order`
 parameter, or uses reflection to check the class name.
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: Direct cast after load()
 Order order = (Order) session.load(Order.class, id);
@@ -447,7 +471,7 @@ Order unproxied = Hibernate.unproxy(order, Order.class);
 p.process(unproxied); // real Order instance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -478,7 +502,7 @@ public int hashCode() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -498,7 +522,7 @@ javap -p -c target/classes/com/example/Document.class | grep "hibernate"
 # If absent: enhancement did not run
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If absent: enhancement did not run example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix - Maven plugin:*
 ```xml
@@ -518,7 +542,7 @@ javap -p -c target/classes/com/example/Document.class | grep "hibernate"
 </plugin>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If absent: enhancement did not run example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -567,7 +591,7 @@ Client -> API Gateway -> Product Service
   +-> CDN for product images
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If absent: enhancement did not run example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4 DEEP DIVE (~10 min):
 For the 1000-product list query: use bytecode-enhanced lazy attribute
@@ -705,8 +729,7 @@ stateDiagram-v2
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is a Hibernate proxy and why does it exist?
+**[JUNIOR] Q1 - [MECHANISM] What is a Hibernate proxy and why does it exist?**
 
 *Why they ask:* Tests understanding of the foundation of lazy loading.
 
@@ -740,7 +763,7 @@ Long id = proxy.getId(); // No SQL - ID is in the proxy
 Date date = proxy.getOrderDate(); // SQL fires here
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This is why `session.load()` is useful: it creates the proxy without
 a SQL round-trip, which is valuable when you need to set a foreign key
@@ -752,8 +775,7 @@ extra SELECT.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-Why does `LazyInitializationException` happen and how do you fix it?
+**[MID] Q2 - [MECHANISM] Why does `LazyInitializationException` happen and how do you fix it?**
 
 *Why they ask:* This is one of the most common Hibernate bugs in production.
 
@@ -778,7 +800,7 @@ OrderDTO getOrder(Long id) {
 order.getCustomer().getName(); // Session is closed - LIE!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The three solutions, in order of preference:
 
@@ -788,7 +810,7 @@ The three solutions, in order of preference:
 Optional<Order> findWithCustomer(@Param("id") Long id);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 2. Use `@EntityGraph` for declarative loading:
 ```java
@@ -797,7 +819,7 @@ Optional<Order> findById(Long id);
 // Hibernate generates a JOIN for each attribute path
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 3. Force-initialize within the transaction:
 ```java
@@ -809,7 +831,7 @@ public OrderDTO getOrder(Long id) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Avoid: Open Session In View (OSIV) pattern - it extends the session
 through the view/controller layer. It resolves `LIE` but hides N+1
@@ -820,10 +842,7 @@ anti-pattern at scale - it hides N+1 problems rather than fixing them.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-An entity's lazy association loads fine in tests but throws
-`LazyInitializationException` in production. Tests pass.
-How do you diagnose the discrepancy?
+**[SENIOR] Q3 - [DEBUGGING] An entity's lazy association loads fine in tests but throws `LazyInitializationException` in production. Tests pass. How do you diagnose the discrepancy?**
 
 *Why they ask:* Tests knowledge of test vs production transaction boundary differences.
 
@@ -863,7 +882,7 @@ logging.level.org.springframework.transaction=DEBUG
 // Then see if any lazy access happens after that line
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: once the boundary is identified, use `@EntityGraph` or JOIN FETCH
 in the repository query called by the service method to ensure all
@@ -875,9 +894,7 @@ this replicates production transaction boundaries in tests.
 
 ---
 
-**Q4 [SENIOR] - MECHANISM**
-How does bytecode enhancement improve Hibernate flush performance?
-When would you enable it?
+**[SENIOR] Q4 - [MECHANISM] How does bytecode enhancement improve Hibernate flush performance? When would you enable it?**
 
 *Why they ask:* Bytecode enhancement is an advanced tuning technique
 for high-throughput Hibernate applications.
@@ -910,7 +927,7 @@ Enable bytecode enhancement when:
 <!-- enableAssociationManagement=true auto-syncs bidirectional FKs -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Risks of enabling bytecode enhancement:
 - Build-time: the compiled class files are modified - debugging tools
@@ -930,9 +947,7 @@ class files, line number shifts in debugger).
 
 ---
 
-**Q5 [SENIOR] - TRADE-OFF**
-When should you NOT use Hibernate proxies and instead load
-everything eagerly?
+**[SENIOR] Q5 - [TRADE-OFF] When should you NOT use Hibernate proxies and instead load everything eagerly?**
 
 *Why they ask:* Tests ability to reason against defaults.
 
@@ -965,7 +980,7 @@ loading simplifies the code (no risk of `LIE`).
 List<OrderSummary> findOrderSummaries(String s);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Global default: `spring.jpa.properties.hibernate.default_fetch_mode=select`
 is the default (lazy by default for collections, eager for @ManyToOne).
@@ -982,9 +997,7 @@ entirely for read-only queries."
 
 ---
 
-**Q6 [STAFF] - DEEP DIVE**
-How does Hibernate's proxy affect `equals()` and `hashCode()`
-implementations? What is the correct implementation for entities?
+**[STAFF] Q6 - [MECHANISM] How does Hibernate's proxy affect `equals()` and `hashCode()` implementations? What is the correct implementation for entities?**
 
 *Why they ask:* A subtle, real-world bug that affects set-based collections
 and bidirectional association management.
@@ -1009,7 +1022,7 @@ public boolean equals(Object o) {
 // They differ - equals returns false for proxy vs entity comparison
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Problem 2: `hashCode()` using `id` causes issues in collections.
 If `id` is null before persist, all new entities have `hashCode() = 0`.
@@ -1037,7 +1050,7 @@ public int hashCode() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The Hibernate documentation recommendation: use the same ID-based check
 with `instanceof` (not `getClass()`) and a stable `hashCode()` based on
@@ -1050,11 +1063,7 @@ the entity class) and why `instanceof` works (because proxy IS-A entity).
 
 ---
 
-**Q7 [STAFF] - DEBUGGING**
-You serialize Hibernate entities to JSON (Jackson) and see
-unexpected fields like `handler`, `hibernateLazyInitializer`,
-or the serialization includes the entire proxy internals.
-What is happening and how do you fix it?
+**[STAFF] Q7 - [DEBUGGING] You serialize Hibernate entities to JSON (Jackson) and see unexpected fields like `handler`, `hibernateLazyInitializer`, or the serialization includes the entire proxy internals. What is happening and how do you fix it?**
 
 *Why they ask:* Tests knowledge of proxy/serialization interaction.
 
@@ -1082,7 +1091,7 @@ Fix 1 (most common): Use Jackson's `hibernate5-integration` module
 // - Skips Hibernate internal fields
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 2 (explicit): Unproxy before serialization:
 ```java
@@ -1090,7 +1099,7 @@ Fix 2 (explicit): Unproxy before serialization:
 // Custom serializer that calls Hibernate.unproxy() first
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 3 (architectural): Never serialize entities directly. Map to
 DTOs before returning from the controller:
@@ -1101,7 +1110,7 @@ DTOs before returning from the controller:
 return mapper.toDTO(entity);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix 3 is the architectural best practice. Fix 1 is the pragmatic
 short-term solution. Fix 2 is for edge cases.
@@ -1118,8 +1127,7 @@ boundaries, DTOs should.
 
 ---
 
-**Q8 [MID] - COMPARISON**
-What is the difference between `session.get()` and `session.load()`?
+**[MID] Q8 - [TRADE-OFF] What is the difference between `session.get()` and `session.load()`?**
 
 *Why they ask:* This is a classic Hibernate interview question testing
 proxy knowledge.
@@ -1149,7 +1157,7 @@ Customer proxy = session.load(Customer.class, 999L);
 proxy.getName(); // SQL fires here. ObjectNotFoundException if 999 not found
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 When to use `load()` (proxy):
 1. Setting a foreign key reference - you have the ID and need the entity
@@ -1161,7 +1169,7 @@ order.setCustomer(session.load(Customer.class, customerId));
 session.save(order); // INSERT uses customerId directly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 When to use `get()` (real entity):
 - When you need actual entity data
@@ -1176,9 +1184,7 @@ In Spring Data: `findById()` = `find()`, `getReferenceById()` = `getReference()`
 
 ---
 
-**Q9 [SENIOR] - PERFORMANCE**
-How does the number of proxied entities in a session affect
-Hibernate flush performance, and how do you profile this?
+**[SENIOR] Q9 - [MECHANISM] How does the number of proxied entities in a session affect Hibernate flush performance, and how do you profile this?**
 
 *Why they ask:* Tests understanding of the session's snapshot mechanism.
 
@@ -1214,7 +1220,7 @@ long flushCount = stats.getFlushCount();
 long secondLevelCacheHits = stats.getSecondLevelCacheHitCount();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - In code: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fixes:
 1. Enable dirty tracking (bytecode enhancement): O(changes) not O(entities)
@@ -1231,7 +1237,7 @@ for (int i = 0; i < entities.size(); i++) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - In code: example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The dual-copy memory overhead
 (current state + snapshot) and the StatelessSession as the solution
@@ -1239,9 +1245,7 @@ for batch processing.
 
 ---
 
-**Q10 [STAFF] - ARCHITECTURE**
-A team wants to cache detached Hibernate entities in Redis.
-What are the issues and how do you design around them?
+**[STAFF] Q10 - [DESIGN] A team wants to cache detached Hibernate entities in Redis. What are the issues and how do you design around them?**
 
 *Why they ask:* Tests understanding of proxy lifecycle and session binding.
 
@@ -1284,7 +1288,7 @@ public OrderDTO getOrderDTO(Long id) {
 // But: stale data + no lazy navigation = effectively a DTO anyway
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - In code: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Rule: cached objects should be DTOs, not entities. The moment an entity
 leaves its session (via cache, API response, or async queue), it is no
@@ -1297,9 +1301,7 @@ conclusion that DTOs should be used explicitly.
 
 ---
 
-**Q11 [SENIOR] - DEBUGGING**
-After enabling bytecode enhancement, some tests that use
-reflection start failing. What is happening?
+**[SENIOR] Q11 - [DEBUGGING] After enabling bytecode enhancement, some tests that use reflection start failing. What is happening?**
 
 *Why they ask:* Tests knowledge of the impact of bytecode enhancement
 on the class structure.
@@ -1342,7 +1344,7 @@ boolean enhanced = entity instanceof SelfDirtinessTracker;
 // Should see $$_hibernate_ methods
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - In code: example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Prevention: design reflection-based tests to filter Hibernate metadata
 fields, or use field-name-based assertions rather than field-count assertions.
@@ -1353,9 +1355,7 @@ enhancement was applied.
 
 ---
 
-**Q12 [STAFF] - BEHAVIORAL**
-Describe a situation where a proxy-related bug reached production
-and how you diagnosed and fixed it.
+**[STAFF] Q12 - [BEHAVIORAL] Describe a situation where a proxy-related bug reached production and how you diagnosed and fixed it.**
 
 *Why they ask:* Tests real-world experience with Hibernate internals.
 
@@ -1403,7 +1403,7 @@ Hibernate.initialize(order.getCustomer());
 // Ensure proxy is loaded before serializing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This - In code: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Phase 2 (correct): Replace entity serialization with DTO serialization:
 ```java
@@ -1417,7 +1417,7 @@ OrderEvent event = new OrderEvent(
 // Serialize OrderEvent to queue - no proxies, no Hibernate state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **R (Result):** Zero pricing errors after Phase 2. Added a test that
 verified OrderEvent contains all data needed by the pricing service

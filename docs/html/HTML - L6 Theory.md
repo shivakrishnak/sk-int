@@ -241,7 +241,7 @@ FOREIGN CONTENT (SVG and MathML):
   approach of defining interoperability explicitly.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -295,7 +295,7 @@ console.log(div.innerHTML);
 -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // Observing tokenizer states via the HTML spec's test suite
@@ -318,7 +318,7 @@ console.log(div2.innerHTML);
 // Reason: Adoption Agency Algorithm reconstructs nesting
 ```
 
-> **Code walkthrough:** The first example shows the spec's rule
+> **Code walkthrough:** The first example shows the spec's ruleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > about block elements inside paragraph elements. The `<p>` element
 > has an optional end tag - the spec defines it as "implicitly
 > closeable" when certain block-level elements are opened. Crucially,
@@ -411,29 +411,29 @@ Diagnosis:
     Fixes prevent unexpected DOM structure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| Two phases of HTML parsing | 3 min | Tokenizer + tree builder |
-| Why browsers produce same DOM from invalid HTML | 3 min | Spec-defined error recovery |
-| What tokens does the HTML parser emit | 2 min | Token types |
-| Parser pausing for scripts | 2-3 min | Parser-blocking explanation |
-| Why `<p><div></div></p>` produces 3 elements | 3 min | Optional end tags |
-| Adoption Agency Algorithm | 3-4 min | Formatting nesting |
-| Why `<p />` isn't self-closing | 2 min | HTML vs XML parsing |
-| document.write and the parser | 3 min | Dynamic markup insertion |
-| Stack of open elements | 3 min | Tree construction internals |
-| Tokenizer state machine states | 2-3 min | 80 states overview |
-| HTML parser vs XML parser differences | 3 min | Error tolerance |
+| Scenario| Recommended Time| Key Signal|
+|------|-------------------------------------------|---------------------------|
+| Two phases of HTML parsing| 3 min| Tokenizer + tree builder|
+| Why browsers produce same DOM from invalid HTML| 3 min| Spec-defined error rec
+| What tokens does the HTML parser emit| 2 min| Token types|
+| Parser pausing for scripts| 2-3 min| Parser-blocking explanation|
+| Why `<p><div></div></p>` produces 3 elements| 3 min| Optional end tags|
+| Adoption Agency Algorithm| 3-4 min| Formatting nesting|
+| Why `<p />` isn't self-closing| 2 min| HTML vs XML parsing|
+| document.write and the parser| 3 min| Dynamic markup insertion|
+| Stack of open elements| 3 min| Tree construction internals|
+| Tokenizer state machine states| 2-3 min| 80 states overview|
+| HTML parser vs XML parser differences| 3 min| Error tolerance|
 
 ---
 
-**Q1: What are the two phases of HTML parsing?** `[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What are the two phases of HTML parsing?** `[JUNIOR]` DEFINITION**
 
 > **Answer:**
 >
@@ -482,8 +482,7 @@ Diagnosis:
 
 ---
 
-**Q2: How does the HTML parser handle `<script>` elements?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How does the HTML parser handle `<script>` elements?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -529,13 +528,209 @@ MECHANISM
 > is undefined - this is when calling `document.write` triggers
 > the implicit `document.open()` that destroys the page.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Theory Interview | 80-state machine + insertion modes |
-| Senior Technical | Script execution pause + document.write |
-| Curiosity Probe | Why browsers produce same DOM from bad HTML |
+**[SENIOR] Q3 - [MECHANISM] What is the "insertion mode" concept in the HTML5 parsing algorithm and why does it exist?**
+
+*Why they ask:* Tests deep parsing algorithm knowledge.
+
+The HTML parser has 18 defined insertion modes (Initial,
+BeforeHTML, BeforeHead, InHead, InBody, InTable,
+InSelect, AfterBody, etc.). Each mode defines which
+tokens are valid and what tree construction operations
+to perform. The parser transitions between modes based
+on context - the same token has different semantics
+depending on current mode. For example, `<td>` in
+"InBody" mode triggers foster parenting (the TD
+is placed outside the table, which is invalid HTML,
+but the parser recovers). In "InTable" mode, `<td>`
+is valid. Insertion modes exist because HTML is
+context-sensitive - the meaning of a tag depends on
+where it appears in the document structure. A pure
+tokenizer (context-free) cannot handle this;
+the tree constructor needs contextual state.
+
+*What separates good from great:* Foster parenting -
+the specific recovery mechanism for misplaced table
+content is a signal that the candidate has read
+the actual spec, not just a summary.
+
+---
+
+**[SENIOR] Q4 - [TRADE-OFF] Why does the HTML spec mandate specific error recovery behavior rather than rejecting malformed HTML?**
+
+*Why they ask:* Tests understanding of web compatibility philosophy.
+
+In the early web (1990s), browser vendors implemented
+error recovery inconsistently - one browser ignored
+an unclosed tag while another inferred a closing tag
+at different points. This caused the same document to
+render differently across browsers. The HTML5 spec
+(2008+) decision: define exact error recovery behavior
+so all browsers produce identical DOMs from identical
+malformed input. This sacrificed the "fail loud, fail
+early" principle (which XML enforces - one syntax error
+stops parsing) in favor of backward compatibility.
+Breaking the web by rejecting billions of existing
+HTML pages was not an option. The trade-off: malformed
+HTML silently "works" but with potentially unintended
+structure. Developers who rely on error recovery build
+fragile pages that may fail on future parser spec updates.
+
+*What separates good from great:* XHTML's failure as a
+counter-example - XHTML 1.0 enforced strict parsing
+(any error = blank page), was widely deployed 2000-2008,
+then abandoned because the error-strict policy broke
+too many production sites.
+
+---
+
+**[MID] Q5 - [MECHANISM] How does the speculative preload scanner differ from the main HTML parser?**
+
+*Why they ask:* Tests HTML performance optimization knowledge.
+
+The main HTML parser is single-threaded and can block
+on `<script>` tags (executes synchronously, blocking
+further parsing). The speculative preload scanner runs
+concurrently with the main parser on a separate thread.
+It scans ahead in the raw HTML (not a full parse) looking
+for resource references (`<script src>`, `<link href>`,
+`<img src>`) and dispatches network fetches early.
+This means images and scripts start downloading while
+earlier scripts are still executing. The scanner is
+"speculative" because it does not fully parse the
+document - if JavaScript manipulates the DOM in a way
+that removes a resource, the speculative fetch was
+wasted. Scripts injected with `document.write()` bypass
+the speculative scanner (injected dynamically, invisible
+to the pre-scan). This is one reason `document.write`
+is deprecated.
+
+*What separates good from great:* `document.write`
+defeating the speculative scanner - this explains why
+Google PageSpeed specifically flags `document.write`
+as a performance issue even for small resource loads.
+
+---
+
+**[SENIOR] Q6 - [DEBUGGING] An HTML page takes 4 seconds to render despite a fast server. The HTML file is 15KB. What do you investigate?**
+
+*Why they ask:* Tests render-blocking resource diagnosis.
+
+Parser blocking causes: (1) A synchronous `<script>`
+in `<head>` without `defer` or `async` - the browser
+fetches and executes it before continuing. Check the
+Network waterfall for a script that delays HTML parsing.
+(2) A CSS file in `<head>` - CSS is render-blocking
+(not parser-blocking, but blocks paint). Large CSS
+files delay First Contentful Paint. (3) A slow DNS
+resolution for a cross-origin resource referenced
+early in `<head>`. Fix priority: add `defer` or `async`
+to all `<head>` scripts, inline critical CSS (above-fold
+styles), add `<link rel="preconnect">` for critical
+third-party origins. Use Chrome DevTools "Coverage"
+to find unused CSS that can be deferred.
+
+*What separates good from great:* CSS render-blocking
+vs parser-blocking distinction - CSS does not block
+parsing but blocks rendering; a 500KB CSS file will
+show up as a long render-blocking period in the DevTools
+Performance trace even if parsing completes quickly.
+
+---
+
+**[SENIOR] Q7 - [MECHANISM] What is the difference between the tokenizer and tree builder in the HTML parsing algorithm?**
+
+*Why they ask:* Tests parsing architecture understanding.
+
+The HTML parser has two stages: (1) Tokenizer: reads
+raw bytes and produces a stream of tokens (DOCTYPE,
+start tag, end tag, character, comment). The tokenizer
+is a state machine with 80+ states that handles character
+encoding, entity references, and raw text elements
+(script/style which suppress normal tokenization).
+(2) Tree builder: consumes tokens and builds the DOM
+tree. It maintains insertion modes and implements all
+error recovery logic. The separation matters: the
+tokenizer handles lexical analysis (what are the tokens),
+the tree builder handles syntactic analysis (how do
+tokens form a tree). The script execution pause affects
+the tree builder (it pauses waiting for script to execute),
+not the tokenizer.
+
+*What separates good from great:* "The tokenizer is
+suspended during scripted parsing" - when `document.write`
+is called during a parser-blocking script, a new tokenizer
+is started for the injected markup, nested within the
+paused tokenizer. This two-level nesting is why
+`document.write` is pathological for parsing performance.
+
+---
+
+**[STAFF] Q8 - [DESIGN] How would you design an HTML sanitizer that preserves safe markup while blocking XSS?**
+
+*Why they ask:* Tests security-aware HTML processing knowledge.
+
+A safe HTML sanitizer must parse using the browser's
+actual HTML parsing algorithm (not a regex) to handle
+all the edge cases the spec defines. Implementation:
+(1) Parse the input HTML into a DOM using a sandboxed
+parser (DOMParser API or a server-side HTML5 parser like
+`html5lib`). (2) Walk the resulting DOM tree. (3) For
+each element: check against an allowlist of permitted
+tags (not a blocklist - new dangerous tags keep being
+added). (4) For each attribute: check against a per-tag
+allowlist of safe attributes. (5) URL attributes
+(`href`, `src`, `action`) must be validated against
+a URL allowlist (permit only `http:`, `https:`, `mailto:`
+- never `javascript:`, `data:`, `vbscript:`).
+(6) Event handler attributes (`on*`) are never permitted.
+Key insight: blocklist approaches always miss edge cases
+(e.g., SVG's `<animate onbegin="alert(1)">`).
+
+*What separates good from great:* Parser-based vs
+regex-based sanitization - regex can be bypassed with
+malformed HTML that browsers correct during parsing.
+Only parsing with an HTML5-compliant parser and then
+filtering the resulting DOM is provably safe.
+
+---
+
+**[STAFF] Q9 - [MECHANISM] How do HTML modules and import maps change HTML architecture for future applications?**
+
+*Why they ask:* Tests forward-looking standards awareness.
+
+HTML Modules (proposed, partial implementation):
+allows importing HTML files as modules via
+`import template from './component.html' assert {type: 'html'}`.
+The imported module provides a DocumentFragment that
+can be cloned into the DOM. This eliminates the current
+workaround of fetching HTML strings with `fetch()` and
+setting `innerHTML` (XSS risk) or hardcoding templates
+as JS template literals. Import Maps (Chrome 89+, 2021):
+allows remapping bare module specifiers in the browser
+without a bundler: `{"imports": {"lodash": "/node_modules/lodash/index.js"}}`.
+This enables `import _ from 'lodash'` in browser code
+without build step. Architecture implication: native
+module loading for HTML components becomes possible,
+reducing build tool dependency for development and
+simple deployments.
+
+*What separates good from great:* Import maps enabling
+"no build step" development - this is a real architectural
+shift for simple apps and internal tools, reducing the
+webpack/vite requirement that has been necessary since
+2015.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|----------------------------------|-------------------------------------------|
+| Theory Interview| 80-state machine + insertion modes|
+| Senior Technical| Script execution pause + document.write|
+| Curiosity Probe| Why browsers produce same DOM from bad HTML|
 
 ---
 
@@ -550,21 +745,21 @@ MECHANISM
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # HTML Specification History and Browser Divergence
@@ -799,7 +994,7 @@ REMAINING BROWSER DIVERGENCE (2025):
   "Baseline Newly Available" covers 90%+ of users for most features.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -869,7 +1064,7 @@ if ('loading' in HTMLImageElement.prototype) {
 <!DOCTYPE html>
 ```
 
-> **Code walkthrough:** The progression from user-agent detection
+> **Code walkthrough:** The progression from user-agent detectionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to feature detection to Baseline-based assumptions reflects the
 > evolution of browser compatibility. User-agent detection failed
 > because browsers lied about their identity for compatibility.
@@ -967,7 +1162,7 @@ Quirks mode differences (what breaks):
 Fix: add <!DOCTYPE html> as first line of every HTML document
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -988,8 +1183,7 @@ Fix: add <!DOCTYPE html> as first line of every HTML document
 
 ---
 
-**Q1: Why does `<!DOCTYPE html>` exist and what happens without it?**
-`[JUNIOR]` DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] Why does `<!DOCTYPE html>` exist and what happens without it?**
 
 > **Answer:**
 >
@@ -1032,8 +1226,7 @@ Fix: add <!DOCTYPE html> as first line of every HTML document
 
 ---
 
-**Q2: What is the browser wars era and why does it matter for web development today?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What is the browser wars era and why does it matter for web development today?**
 
 > **Answer:**
 >
@@ -1083,6 +1276,204 @@ Fix: add <!DOCTYPE html> as first line of every HTML document
 > required polyfills for IE11 but are now universally supported.
 > Removing IE11 support from a codebase typically removes 10-30%
 > of the JavaScript bundle (polyfills).
+
+
+---
+
+**[SENIOR] Q3 - [MECHANISM] Why did XHTML fail to replace HTML despite technical advantages?**
+
+*Why they ask:* Tests understanding of web standards evolution.
+
+XHTML 1.0 (2000) required well-formed XML: every tag
+closed, lowercase elements, quoted attributes, no
+`<br>` without `<br/>`. The advantages: clear, parseable
+documents; XML tooling compatibility; path to semantic
+web. The failure: (1) Served as `text/html` MIME type,
+browsers parsed it with the lenient HTML parser - the
+strict rules had no enforcement. (2) Content served
+as `application/xhtml+xml` (the correct MIME type)
+caused any single syntax error to display a blank page
+("Yellow Screen of Death"). (3) Legacy content (blogs,
+CMSs, user-generated content) could not realistically
+enforce XHTML rules. (4) Server and tool support was
+inconsistent. By 2008, the WHATWG/HTML5 trajectory was
+clear: spec-defined error recovery over strict syntax.
+XHTML 2.0 (fundamentally incompatible with HTML) was
+abandoned in 2009.
+
+*What separates good from great:* The MIME type trap -
+knowing that `text/html` XHTML is a lie (browsers parse
+it as HTML4 with the error-tolerant parser) vs
+`application/xhtml+xml` XHTML which is strict. Most
+"XHTML" sites were using the former, getting none of
+the actual XHTML benefits.
+
+---
+
+**[MID] Q4 - [MECHANISM] What is quirks mode and what triggers it?**
+
+*Why they ask:* Tests DOCTYPE and browser history knowledge.
+
+Quirks mode is a browser rendering mode that emulates
+old (pre-CSS-standard) behavior of Netscape 4 and IE5
+to maintain backward compatibility with pre-standard
+web pages. Trigger: missing, malformed, or old DOCTYPE.
+`<!DOCTYPE html>` triggers standards mode. `<!DOCTYPE
+HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">`
+without a URL triggers almost-standards mode (standards
+except for image cell behavior). No DOCTYPE triggers
+quirks mode. The three modes differ in: box model
+(quirks uses IE5 box model: padding included in width),
+table cell height calculation, line height in table cells.
+Modern browsers all implement standards mode consistently.
+Quirks mode exists only for compatibility with pre-2000
+web pages.
+
+*What separates good from great:* The "almost standards"
+mode - a third mode between quirks and standards, triggered
+by specific old DOCTYPEs, that matches standards mode
+except for one image placement behavior. Most candidates
+only know two modes.
+
+---
+
+**[SENIOR] Q5 - [TRADE-OFF] Why does the HTML Living Standard model (continuous updates) create risks for production applications?**
+
+*Why they ask:* Tests standards stability awareness.
+
+Living Standard risks: (1) Feature behavior can change
+between browser versions as the spec evolves. An API
+that shipped in Chrome 90 may have behavioral clarifications
+in Chrome 95 that break assumptions. (2) No versioned
+"stable" snapshot to pin to - a production app cannot
+say "we target HTML 5.3." (3) Feature detection is the
+only stable strategy - detecting capability rather than
+relying on version numbers. (4) Experimental features
+behind flags may ship broadly before spec stabilization,
+locking in behavior that the spec later changes.
+Mitigation: use BrowserStack/Playwright for cross-browser
+testing, subscribe to browser changelogs (Chrome Platform
+Status, MDN), run integration tests on browser canary
+builds in CI to detect spec changes early.
+
+*What separates good from great:* Canary testing in CI -
+running end-to-end tests against browser canary/beta
+detects spec behavior changes 6-8 weeks before stable
+release, giving teams time to adapt.
+
+---
+
+**[SENIOR] Q6 - [DEBUGGING] An HTML page renders correctly in Chrome but shows blank content in Safari. The page uses valid HTML5. What do you investigate?**
+
+*Why they ask:* Tests cross-browser compatibility debugging.
+
+Safari lags Chrome in implementing newer HTML features.
+Investigation: (1) Open Safari Technology Preview or
+BrowserStack. (2) Check Safari's error console for
+unrecognized elements (custom elements without polyfill,
+`<dialog>` before 15.4, `<details>`/`<summary>` before
+2012). (3) Check caniuse.com for each HTML5 API or
+element used - filter to Safari version in use.
+(4) Declarative Shadow DOM - not supported in Safari
+until 16.4 (2023). Web components, `popover` API,
+`<dialog>` are common Safari-lag candidates.
+Fix: feature detection (`'showModal' in document.createElement('dialog')`),
+polyfills for critical elements, progressive enhancement
+fallback for non-critical features.
+
+*What separates good from great:* Knowing specific
+Safari lag dates - `<dialog>` shipping in Safari 15.4
+(March 2022) is a real production issue affecting
+enterprise users on older Safari versions.
+
+---
+
+**[STAFF] Q7 - [DESIGN] How would you design an HTML5 migration strategy for a large legacy website still using HTML4 patterns?**
+
+*Why they ask:* Tests migration architecture thinking.
+
+Migration strategy: (1) Audit - crawl the site, identify
+HTML4 patterns: `<center>`, `<font>`, `<b>`/`<i>` for
+semantics, table-based layout, missing DOCTYPE,
+non-semantic wrapper `<div>` structures. (2) DOCTYPE
+first - add `<!DOCTYPE html>` to all pages. Low risk,
+enables HTML5 rendering mode. (3) Semantic layer -
+add landmark elements (`<header>`, `<nav>`, `<main>`,
+`<footer>`) as wrappers around existing divs. These
+are additive; they do not break existing CSS.
+(4) Form upgrade - add `type="email"`, `type="tel"`,
+`required`, `pattern` attributes. Progressive enhancement:
+old browsers render as `type="text"`. (5) Remove
+presentational HTML - replace `<b>` with `<strong>`,
+`<i>` with `<em>` or `<cite>`, `<center>` with CSS.
+(6) Validate after each phase with W3C Validator.
+Never do all phases at once - each phase can be
+deployed and tested independently.
+
+*What separates good from great:* The additive landmark
+approach - wrapping existing divs in semantic elements
+rather than restructuring the entire DOM reduces risk
+by making the semantic migration independent of styling.
+
+---
+
+**[STAFF] Q8 - [MECHANISM] How does the HTML Content Security Policy interact with inline HTML and script execution?**
+
+*Why they ask:* Tests security headers and HTML integration.
+
+CSP `script-src` controls which scripts can execute.
+`'unsafe-inline'` allows all inline scripts -
+functionally disabling XSS protection. Modern CSP uses
+nonces: the server generates a per-request nonce
+(random token), adds it to the `Content-Security-Policy`
+header (`script-src 'nonce-<token>'`) and to each
+trusted inline script tag (`<script nonce="<token">`).
+The browser only executes inline scripts with matching
+nonces. An injected script from XSS does not know the
+nonce. HTML implications: dynamically generated scripts
+(from `innerHTML`) do not execute even if the static
+page has a nonce - the nonce applies to the script
+element in the HTML response, not to DOM-injected scripts.
+This makes nonce-based CSP compatible with server-side
+rendering but incompatible with client-side `innerHTML`
+script injection.
+
+*What separates good from great:* The `innerHTML` script
+suppression rule - browsers do not execute scripts
+inserted via `innerHTML` regardless of CSP, as a
+separate security measure. This is distinct from CSP
+and confuses developers who expect `innerHTML` to
+execute scripts.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the trade-offs of using `<template shadowrootmode>` (Declarative Shadow DOM) versus JavaScript-based shadow root attachment?**
+
+*Why they ask:* Tests emerging web standards trade-off knowledge.
+
+Declarative Shadow DOM (DSD): server-rendered shadow root
+in HTML, works before JavaScript loads, enables SSR for
+web components. Trade-offs: (1) Verbose - the shadow DOM
+markup is repeated for each instance in the HTML (server
+must serialize full shadow template per component instance).
+For 100 instances of the same component: 100× the shadow
+DOM HTML in the response. JavaScript `attachShadow` +
+shared `<template>` avoids this by cloning one template.
+(2) Browser support: Chrome 90+, Firefox 123+, Safari 16.4+.
+Requires polyfill for older browsers. (3) Streaming HTML
+advantage - DSD enables streaming: the shadow root is
+available immediately when that element's HTML is streamed,
+before the rest of the page loads. JavaScript `attachShadow`
+requires waiting for DOMContentLoaded (or earlier with
+careful placement). Use DSD for SSR-critical components,
+JavaScript attachment for client-side-only components.
+
+*What separates good from great:* The per-instance
+verbosity trade-off - for components rendered many times,
+DSD's serialization cost may outweigh the SSR benefit.
+Hybrid: DSD for the first critical above-fold instance,
+JS cloning for subsequent instances.
+
 
 ---
 

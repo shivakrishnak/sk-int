@@ -190,7 +190,7 @@ COMMON PATTERN - FONT OPTIMIZATION:
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter">
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Resource Hints and Preloading example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -287,7 +287,7 @@ enabling parallel fetching from the moment the HTML is parsed.
 </head>
 ```
 
-> **Code walkthrough:** The head is structured by performance
+> **Code walkthrough:** The head is structured by performanceice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > priority. Preconnect to CDN eliminates TCP/TLS from the first
 > CDN resource request. Preconnect with `crossorigin` to fonts.gstatic.com
 > starts the connection that the subsequent font request needs.
@@ -373,28 +373,27 @@ Root cause C: wrong font URL (preloaded != actual font)
   Fix: ensure URLs match exactly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| preconnect vs dns-prefetch | 2-3 min | Difference knowledge |
-| preload 'as' values | 2 min | Critical attribute |
-| Font optimization pattern | 3 min | Double-fetch prevention |
-| preload vs prefetch | 2 min | Current vs future page |
-| fetchpriority attribute | 2-3 min | Priority boost |
-| LCP optimization with hints | 3-4 min | Core Web Vitals connection |
-| modulepreload | 2 min | ES modules optimization |
-| 103 Early Hints | 2-3 min | Next-level optimization |
-| When NOT to preload | 2 min | Tradeoffs |
+| Scenario| Recommended Time| Key Signal|
+|------------------|--------------------------------|--------------------------|
+| preconnect vs dns-prefetch| 2-3 min| Difference knowledge|
+| preload 'as' values| 2 min| Critical attribute|
+| Font optimization pattern| 3 min| Double-fetch prevention|
+| preload vs prefetch| 2 min| Current vs future page|
+| fetchpriority attribute| 2-3 min| Priority boost|
+| LCP optimization with hints| 3-4 min| Core Web Vitals connection|
+| modulepreload| 2 min| ES modules optimization|
+| 103 Early Hints| 2-3 min| Next-level optimization|
+| When NOT to preload| 2 min| Tradeoffs|
 
 ---
 
-**Q1: What is the difference between preload and prefetch?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between preload and prefetch?**
 
 *Why they ask:* Most fundamental resource hints comparison.
 
@@ -448,8 +447,7 @@ Root cause C: wrong font URL (preloaded != actual font)
 
 ---
 
-**Q2: Why does preloading a font require the crossorigin attribute?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q2 - [MECHANISM] Why does preloading a font require the crossorigin attribute?**
 
 *Why they ask:* Common real-world pitfall with specific explanation.
 
@@ -510,8 +508,7 @@ Root cause C: wrong font URL (preloaded != actual font)
 
 ---
 
-**Q3: What is `fetchpriority` and how does it affect LCP?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q3 - [MECHANISM] What is `fetchpriority` and how does it affect LCP?**
 
 *Why they ask:* New performance attribute with high impact.
 
@@ -573,7 +570,7 @@ Root cause C: wrong font URL (preloaded != actual font)
 
 ---
 
-**Q4: What is `103 Early Hints` and how does it improve on
+**[MID] Q4 - [MECHANISM] What is `103 Early Hints` and how does it improve on**
 `<link rel="preload">`?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Next-generation optimization knowledge.
@@ -639,7 +636,7 @@ Root cause C: wrong font URL (preloaded != actual font)
 
 ---
 
-**Q5: When should you NOT use preload?** `[SENIOR]` TRADEOFF
+**[MID] Q5 - [SCENARIO] When should you NOT use preload?** `[SENIOR]` TRADEOFF**
 
 *Why they ask:* Tests tradeoff awareness, not just feature knowledge.
 
@@ -704,8 +701,7 @@ Root cause C: wrong font URL (preloaded != actual font)
 
 ---
 
-**Q6: What is `modulepreload` and when is it better than `preload`?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What is `modulepreload` and when is it better than `preload`?**
 
 *Why they ask:* ES module performance optimization.
 
@@ -759,8 +755,7 @@ Root cause C: wrong font URL (preloaded != actual font)
 
 ---
 
-**Q7: How do you measure the impact of resource hints?** `[SENIOR]`
-SCENARIO
+**[SENIOR] Q7 - [SCENARIO] How do you measure the impact of resource hints?** `[SENIOR]`**
 
 *Why they ask:* Measurement closes the feedback loop.
 
@@ -828,27 +823,78 @@ SCENARIO
 > Chrome DevTools is good for development; WebPageTest is the
 > industry standard for benchmarking.
 
+
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Preload mechanics + as attribute |
-| Hiring Manager | Core Web Vitals impact |
-| Bar Raiser | 103 Early Hints + measurement |
-| Peer Engineer | Font double-fetch prevention |
+**[MID] Q8 - [DEBUGGING] Resource hints (`<link rel="preload">`) are not improving LCP. How do you diagnose?**
+
+*Why they ask:* Tests preload debugging skills.
+
+Preload not helping LCP: (1) The preloaded resource is
+not the LCP element - verify which element Chrome flags
+as LCP in DevTools Performance panel. (2) The `as`
+attribute is missing or wrong - browser ignores preloads
+without `as` or with wrong type (preloading a font without
+`as="font"` results in double-download). (3) The preload
+is lower priority than the LCP image already is - if the
+image is in viewport with no `loading="lazy"`, the browser
+already fetches it at high priority. (4) Cross-origin
+preload without `crossorigin` attribute for fonts results
+in double-download. Check the Network panel: is the
+resource fetched early (before HTML parsing finishes)?
+Is it fetched twice (preload + normal discovery)?
+
+*What separates good from great:* The double-download
+trap - `<link rel="preload" as="font">` without
+`crossorigin` attribute downloads the font twice because
+font fetches are always CORS and the non-CORS preload
+is not matched.
+
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] When does `rel="preconnect"` help versus `rel="dns-prefetch"`?**
+
+*Why they ask:* Tests connection optimization knowledge.
+
+`dns-prefetch` resolves DNS only (~20ms savings).
+`preconnect` does DNS + TCP handshake + TLS negotiation
+(~150-300ms savings for HTTPS). Use `preconnect` for:
+origins you are certain will be used soon (CDN domain,
+critical API endpoint). Use `dns-prefetch` for: origins
+you might use (third-party analytics, A/B test CDN)
+where paying the TCP/TLS cost upfront may be wasted.
+Cost of `preconnect`: holds open a TCP connection in
+the browser's connection pool - too many preconnects
+compete for connections. Recommendation: 2-3 preconnects
+for critical origins, dns-prefetch for the rest.
+
+*What separates good from great:* The connection pool
+limit - Chrome limits connections per origin to 6;
+excessive preconnects can actually cause connection
+queuing for real requests.
+
+
+---
+
+| Interviewer Type| Emphasis|
+|---------------------------|--------------------------------|
+| Technical Panel| Preload mechanics + as attribute|
+| Hiring Manager| Core Web Vitals impact|
+| Bar Raiser| 103 Early Hints + measurement|
+| Peer Engineer| Font double-fetch prevention|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Hint | What It Does | Priority | Use For |
-|---|---|---|---|
-| `preconnect` | DNS + TCP + TLS | n/a (connection) | 3rd-party origins |
-| `dns-prefetch` | DNS only | n/a (connection) | Non-critical origins |
-| `preload` | Fetch specific resource | High | LCP image, fonts, CSS |
-| `prefetch` | Future-nav resource | Idle | Next page resources |
-| `modulepreload` | Fetch + parse ES module | High | ES module graphs |
-| `fetchpriority="high"` | Boost resource priority | Highest | LCP image boost |
+| Hint| What It Does| Priority| Use For|
+|---|-------------------------|--------------------------|---------------------|
+| `preconnect`| DNS + TCP + TLS| n/a (connection)| 3rd-party origins|
+| `dns-prefetch`| DNS only| n/a (connection)| Non-critical origins|
+| `preload`| Fetch specific resource| High| LCP image, fonts, CSS|
+| `prefetch`| Future-nav resource| Idle| Next page resources|
+| `modulepreload`| Fetch + parse ES module| High| ES module graphs|
+| `fetchpriority="high"`| Boost resource priority| Highest| LCP image boost|
 
 ---
 
@@ -1133,7 +1179,7 @@ CONTENT-VISIBILITY (CSS lazy rendering):
   /* Can reduce rendering time 3-4x for long pages */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Lazy Loading and Deferred Resource Loading example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1220,7 +1266,7 @@ interaction, navigation). This converts "load all upfront" to
 <!-- Never loading="lazy" on the LCP element -->
 ```
 
-> **Code walkthrough:** The `width` and `height` attributes enable
+> **Code walkthrough:** The `width` and `height` attributes enableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the browser to calculate the image's aspect ratio from the HTML
 > before the image loads, reserving the correct space and preventing
 > Cumulative Layout Shift (CLS). The `srcset` provides multiple
@@ -1267,7 +1313,7 @@ interaction, navigation). This converts "load all upfront" to
 -->
 ```
 
-> **Code walkthrough:** The three loading modes differ in when
+> **Code walkthrough:** The three loading modes differ in whenice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the script executes relative to HTML parsing. `defer` is the
 > safe default: parallel download, ordered post-parse execution.
 > `async` is for analytics and embeds that are fully self-contained
@@ -1352,7 +1398,7 @@ Check if hero image is lazy:
   If the LCP image has loading=lazy: remove it
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1372,8 +1418,7 @@ Check if hero image is lazy:
 
 ---
 
-**Q1: What is the difference between `defer` and `async` scripts?**
-`[JUNIOR]` COMPARISON
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between `defer` and `async` scripts?**
 
 *Why they ask:* Core script loading knowledge.
 
@@ -1428,8 +1473,7 @@ Check if hero image is lazy:
 
 ---
 
-**Q2: How does `loading="lazy"` work and what is its threshold?**
-`[JUNIOR]` MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How does `loading="lazy"` work and what is its threshold?**
 
 *Why they ask:* Modern browser lazy loading knowledge.
 
@@ -1485,8 +1529,7 @@ Check if hero image is lazy:
 
 ---
 
-**Q3: How do you prevent CLS from lazy-loaded images?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How do you prevent CLS from lazy-loaded images?** `[SENIOR]`**
 
 *Why they ask:* CLS is a Core Web Vitals metric; common production issue.
 
@@ -1556,8 +1599,7 @@ MECHANISM
 
 ---
 
-**Q4: How does Intersection Observer enable custom lazy loading?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] How does Intersection Observer enable custom lazy loading?**
 
 *Why they ask:* Tests API knowledge beyond native lazy loading.
 
@@ -1625,8 +1667,7 @@ MECHANISM
 
 ---
 
-**Q5: What is `content-visibility: auto` and when should you use it?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] What is `content-visibility: auto` and when should you use it?**
 
 *Why they ask:* CSS-level performance optimization.
 
@@ -1682,7 +1723,7 @@ MECHANISM
 
 ---
 
-**Q6: What is the difference between `loading="lazy"` on images
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between `loading="lazy"` on images**
 and iframes?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Demonstrates full attribute knowledge.
@@ -1744,8 +1785,7 @@ and iframes?** `[JUNIOR]` COMPARISON
 
 ---
 
-**Q7: How do you lazy-load JavaScript modules with dynamic import?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] How do you lazy-load JavaScript modules with dynamic import?**
 
 *Why they ask:* Code splitting beyond HTML attributes.
 
@@ -1822,6 +1862,55 @@ and iframes?** `[JUNIOR]` COMPARISON
 > The `/* webpackPrefetch: true */` comment hint in Webpack or
 > Vite's `import(..., { prefetch: true })` adds a `<link rel="prefetch">`
 > to the HTML automatically for the chunk.
+
+
+---
+
+**[MID] Q8 - [DEBUGGING] Images with `loading="lazy"` are causing layout shift (CLS). How do you fix?**
+
+*Why they ask:* Tests lazy loading + CLS interaction.
+
+CLS from lazy images: the image loads after the page
+is laid out, causing content to shift down when the
+image appears. Fix: always specify explicit `width` and
+`height` attributes on lazy-loaded images. This allows
+the browser to reserve space before the image loads
+(aspect ratio box). Without dimensions, the browser
+does not know the image's space requirement until it
+loads. CSS alternative: `aspect-ratio: 16/9` on the
+image container. Do NOT use `loading="lazy"` on images
+in the initial viewport (LCP images) - it delays their
+loading. Use lazy loading only for images below the fold
+(outside the first viewport height).
+
+*What separates good from great:* The `width`+`height`
+attributes trigger intrinsic size reservation in modern
+browsers - this is a HTML attribute job, not CSS.
+
+---
+
+**[SENIOR] Q9 - [TRADE-OFF] `<script defer>` vs `<script async>` - when does each matter?**
+
+*Why they ask:* Tests script loading performance knowledge.
+
+`defer`: downloads in parallel with HTML parsing,
+executes after HTML parsing completes, in document order.
+Use for: scripts that depend on the DOM or on each other
+(analytics setup, then event tracking). `async`: downloads
+in parallel, executes immediately when downloaded (may
+interrupt parsing), in download-completion order (not
+document order). Use for: fully independent scripts with
+no DOM dependency and no dependency on other scripts
+(ads, social widgets). Common mistake: `async` on scripts
+that depend on a library loaded before them - if the
+library loads second, the dependent script throws. Rule:
+default to `defer` for application scripts; `async` only
+for truly isolated third-party snippets.
+
+*What separates good from great:* Document-order
+guarantee of `defer` - essential for scripts with
+dependencies, impossible to guarantee with `async`.
+
 
 ---
 

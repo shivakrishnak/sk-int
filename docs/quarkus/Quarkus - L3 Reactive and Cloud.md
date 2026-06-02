@@ -229,7 +229,7 @@ mp.messaging.outgoing.order-events-out\
   .JsonbSerializer
 ```
 
-> **Code walkthrough:** @Incoming("payment-processed")
+> **Code walkthrough:** @Incoming("payment-processed")ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > with Message<T> return gives manual control: message.ack()
 > commits the Kafka offset, message.nack() sends to the
 > dead-letter-queue topic. The reactive chain (.chain(() ->
@@ -283,6 +283,93 @@ application.properties."
 crash. Manual ack with Message<T> ensures ack only
 after successful processing. DLQ configuration is
 essential for production: messages that repeatedly
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus Reactive Messaging (via SmallRye Reactive Messaging)
+provides a declarative, annotation-driven API for connecting application methods
+to messaging systems. `@Incoming("channel")` and `@Outgoing("channel")` annotate
+methods to consume from or produce to Kafka topics (or AMQP, MQTT, in-memory).
+The Reactive Messaging layer handles deserialization, back-pressure, and
+acknowledgment semantics.
+
+**Mechanism:** At build time, SmallRye Reactive Messaging processes `@Incoming`
+and `@Outgoing` annotations and wires message channels into a Mutiny reactive
+pipeline. At runtime:
+1. `@Incoming` methods subscribe to the configured channel (Kafka consumer).
+2. Messages flow through the pipeline as `Message<T>` or deserialized `T`.
+3. Method return type determines acknowledgment: `void` = auto-ack, `Uni<Void>` =
+   explicit async ack, `Message<T>` = manual ack/nack.
+4. Kafka configuration (bootstrap servers, group ID, topic) is set in
+   `application.properties` via the `mp.messaging.*` MicroProfile Config namespace.
+
+**Trade-off:**
+
+**Positive:** Declarative messaging with zero boilerplate consumer loop code.
+Back-pressure is handled automatically by the reactive pipeline.
+
+**Negative:** Error handling semantics (retry, DLQ, nack) require explicit
+configuration. Default behavior is auto-ack, which can cause message loss on
+processing failure.
+
+**Production Reality:** Auto-ack means messages are acknowledged BEFORE
+processing completes. A processing exception after ack loses the message
+permanently. Always use `@Incoming` with `Message<T>` return for explicit
+ack after successful processing, and `message.nack(cause)` on failure.
+
+**Decision:** Use Reactive Messaging for event-driven processing, Kafka consumer
+groups, and reactive pipelines. Use `@Channel` injection + `Emitter<T>` for
+imperative-style message production from REST endpoints.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: @Incoming methods auto-acknowledge messages safely**
+**Reality:** Auto-ack (default) acknowledges the message BEFORE the method body
+executes. If the method throws an exception, the message is already acknowledged
+and permanently lost. For at-least-once delivery guarantees, return
+`Uni<Void>` and explicitly acknowledge with `message.ack()` after successful
+processing.
+
+**Misconception 2: Reactive Messaging handles Kafka consumer group rebalancing automatically**
+**Reality:** SmallRye Reactive Messaging handles rebalancing at the Kafka client
+level, but application-level state (in-flight processing, uncommitted work)
+must be handled explicitly. Long-running processing tasks should use manual
+partition assignment or idempotent processing patterns.
+
+**Misconception 3: @Outgoing always delivers messages reliably**
+**Reality:** `@Outgoing` sends to Kafka asynchronously. A Kafka unavailability
+causes the producer to block and eventually fail. Without a DLQ or retry
+channel, failed outgoing messages are silently dropped. Configure
+`mp.messaging.outgoing.channel.acks=all` and `retries=3` for production
+reliability.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Messages lost due to auto-ack on processing failure**
+**Symptom:** Kafka lag does not grow despite processing exceptions. Messages
+disappear from the topic with no DLQ entry. Data loss discovered post-mortem.
+**Diagnosis:** `@Incoming` method signature is `void` or returns non-Message
+type - auto-ack mode is active. Processing exceptions are swallowed.
+**Fix:** Change to `Message<T>` parameter and return `Uni<Void>`:
+`return msg.ack()` on success, `return msg.nack(cause)` on failure to trigger
+nack handling (retry or DLQ routing).
+
+**Failure 2: Consumer group stuck - no progress on topic**
+**Symptom:** Kafka consumer lag grows. No messages processed. No exceptions in
+logs.
+**Diagnosis:** `@Incoming` method is blocking the event loop thread (blocking
+I/O, `Thread.sleep`). Vert.x event loop is blocked, preventing new message
+polls.
+**Fix:** Annotate `@Incoming` method with `@Blocking` to run on worker thread.
+Or use reactive I/O (`Hibernate Reactive`, reactive HTTP client) throughout.
+
 fail get sent to a DLQ topic for investigation, not
 silently dropped."
 
@@ -296,6 +383,90 @@ silently dropped."
 | Staff | 14 min | Exactly-once, consumer lag, partition design |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Reactive Messaging and Kafka starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Reactive Messaging and Kafka-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last.
+
+For Quarkus Reactive Messaging and Kafka specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation.
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Reactive Messaging and Kafka? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Reactive Messaging and Kafka, not just the benefits.
+
+Quarkus Reactive Messaging and Kafka is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance.
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity.
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Reactive Messaging and Kafka fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Reactive Messaging and Kafka in a real production system, not just in isolation.
+
+Quarkus Reactive Messaging and Kafka in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Reactive Messaging and Kafka typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion).
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Reactive Messaging and Kafka affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Reactive Messaging and Kafka configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Reactive Messaging and Kafka.
+
+Critical pre-production checklist for Quarkus Reactive Messaging and Kafka: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents.
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured.
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Reactive Messaging and Kafka resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Reactive Messaging and Kafka knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome).
+
+Strong answers for Quarkus Reactive Messaging and Kafka include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Reactive Messaging and Kafka actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Reactive Messaging and Kafka in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Reactive Messaging and Kafka handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Reactive Messaging and Kafka at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Reactive Messaging and Kafka is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes.
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern).
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
 
 **[SENIOR] Q1 - How do you achieve idempotent
 processing with Quarkus Kafka consumers?**
@@ -343,7 +514,7 @@ public class IdempotentOrderConsumer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Producer channel example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 The idempotency key is topic+partition+offset - unique
 per message in Kafka. Store in DB (small table). Check
@@ -569,7 +740,7 @@ quarkus.oidc-client.credentials.secret=${OIDC_SECRET}
 quarkus.oidc-client.grant.type=client-credentials
 ```
 
-> **Code walkthrough:** @Authenticated on the class requires
+> **Code walkthrough:** @Authenticated on the class requiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a valid JWT for every endpoint. @RolesAllowed("admin")
 > on listAllOrders() additionally requires the "admin"
 > role. SecurityIdentity.getPrincipal().getName() returns
@@ -624,6 +795,92 @@ OIDC in application.properties."
 no network hop per request. @OidcClientFilter automates
 service-to-service token management. Multi-tenancy:
 implement TenantResolver to select tenant config from
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus Security provides RBAC (role-based access control) via
+Jakarta Security annotations (`@RolesAllowed`, `@PermitAll`, `@DenyAll`).
+The OIDC extension (`quarkus-oidc`) integrates with any OpenID Connect provider
+(Keycloak, Auth0, Okta, Cognito) to validate Bearer tokens and extract user
+roles. OIDC tokens are validated against the provider JWKS endpoint.
+
+**Mechanism:** Token validation flow:
+1. HTTP request arrives with `Authorization: Bearer <JWT>`.
+2. Quarkus OIDC extension extracts the JWT from the header.
+3. The JWT's `kid` (key ID) header is used to find the signing key from the
+   OIDC provider's JWKS endpoint (cached by Quarkus).
+4. JWT signature is verified. Claims (`sub`, `exp`, `roles`) are extracted.
+5. `SecurityIdentity` is built from JWT claims, mapping role claims via
+   `quarkus.oidc.roles.role-claim-path` configuration.
+6. `@RolesAllowed("admin")` is evaluated against the `SecurityIdentity` roles.
+
+**Trade-off:**
+
+**Positive:** Declarative RBAC. No manual token parsing code. Works with any
+OIDC provider. Build-time role annotation discovery catches mistyped role names.
+
+**Negative:** OIDC validation requires HTTP call to JWKS endpoint (cached).
+Token expiry is short - clients must refresh tokens. Role claim path differences
+between providers require configuration adjustments per environment.
+
+**Production Reality:** JWKS cache expiry is critical: if OIDC provider rotates
+signing keys and JWKS cache has not expired, all requests fail with
+`JWT verification failed`. Configure `quarkus.oidc.token.cache.max-size=100`
+and a short `token-max-age` to balance security vs availability.
+
+**Decision:** Use Quarkus OIDC for stateless REST APIs with Bearer token auth.
+Use Quarkus OIDC Code Flow for web applications with session-based auth.
+Use `quarkus-security-jpa` for username/password auth with DB-backed users.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: @RolesAllowed checks are enforced at build time**
+**Reality:** `@RolesAllowed` generates interceptors checked at RUNTIME.
+Build-time processing generates the security interceptor code, but actual
+role evaluation happens when the method is invoked with an authenticated request.
+An incorrect role name in `@RolesAllowed("admni")` typo is a runtime 403, not
+a build error.
+
+**Misconception 2: Quarkus OIDC only works with Keycloak**
+**Reality:** Quarkus OIDC works with ANY OpenID Connect 1.0 compliant provider.
+Set `quarkus.oidc.auth-server-url=https://<provider>/.well-known/openid-configuration`.
+Tested with Keycloak, Auth0, Okta, Azure AD, Google, and Cognito. Provider-specific
+configuration (role claim paths, audience validation) is configurable.
+
+**Misconception 3: JWT tokens are secure by default**
+**Reality:** JWT validation only verifies the token's SIGNATURE and EXPIRY.
+It does NOT verify the audience (`aud` claim) unless explicitly configured with
+`quarkus.oidc.token.audience=my-service`. Without audience validation, a valid
+token for ANY service at the same OIDC provider can access your service.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: 401 Unauthorized after OIDC provider key rotation**
+**Symptom:** All requests return 401 suddenly. OIDC provider recently rotated
+signing keys. Quarkus logs: `JWT verification failed: Key not found`.
+**Diagnosis:** Quarkus OIDC caches the JWKS public keys. After key rotation,
+the cache still has old keys. The new tokens are signed with new keys not in cache.
+**Fix:** Configure `quarkus.oidc.connection-delay` to 0 to force immediate JWKS
+refresh on failure. Set `quarkus.oidc.jwks-path` or reduce JWKS cache TTL. As
+emergency fix: restart the application to clear JWKS cache.
+
+**Failure 2: Roles not extracted from JWT - @RolesAllowed returns 403**
+**Symptom:** Valid JWT token present but all `@RolesAllowed` endpoints return 403.
+User roles ARE in the token when decoded manually.
+**Diagnosis:** Quarkus OIDC default role claim path is `groups`. If roles are in
+`realm_access.roles` (Keycloak) or `https://myapp.com/roles` (Auth0), the
+default path does not find them.
+**Fix:** Set `quarkus.oidc.roles.role-claim-path=realm_access/roles` for
+Keycloak, or the appropriate claim path for your provider. Verify with
+`quarkus.oidc.token.principal-claim=preferred_username` for user identification.
+
 request headers. Role claim path mapping: different
 OIDC providers put roles in different JWT fields."
 
@@ -637,6 +894,160 @@ OIDC providers put roles in different JWT fields."
 | Staff | 14 min | Multi-tenancy, JWKS rotation, JWT claim mapping |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Security and OIDC starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Security and OIDC-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Service-to-service client, Q2)
+
+For Quarkus Security and OIDC specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Service-to-service client, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Security and OIDC? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Security and OIDC, not just the benefits.
+
+Quarkus Security and OIDC is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Service-to-service client, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Service-to-service client, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Security and OIDC fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Security and OIDC in a real production system, not just in isolation.
+
+Quarkus Security and OIDC in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Security and OIDC typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Service-to-service client, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Security and OIDC affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Security and OIDC configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Security and OIDC.
+
+Critical pre-production checklist for Quarkus Security and OIDC: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Service-to-service client, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Service-to-service client, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Security and OIDC resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Security and OIDC knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Service-to-service client, Q6)
+
+Strong answers for Quarkus Security and OIDC include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Security and OIDC actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Security and OIDC in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Security and OIDC handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Security and OIDC at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Security and OIDC is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Service-to-service client, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Service-to-service client, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Security and OIDC to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply.
+
+Start with the problem: what existed before Quarkus Security and OIDC and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Security and OIDC: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Security and OIDC and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Security and OIDC at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Security and OIDC beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Security and OIDC expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Security and OIDC, coordinated upgrade windows. (2) Internal shared library for common Quarkus Security and OIDC configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Security and OIDC extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Security and OIDC from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Security and OIDC correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load).
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?).
+
+Testing strategy for Quarkus Security and OIDC: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Security and OIDC starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Security and OIDC-related issues. (Service-to-service client, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Service-to-service client, Q11)
+
+For Quarkus Security and OIDC specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Service-to-service client, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Service-to-service client, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Security and OIDC? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Security and OIDC, not just the benefits. (Service-to-service client, Q12)
+
+Quarkus Security and OIDC is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Service-to-service client, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Service-to-service client, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Service-to-service client, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[SENIOR] Q1 - How do you handle JWKS key rotation
 without downtime in Quarkus?**
@@ -660,7 +1071,7 @@ quarkus.oidc.token.forced-jwks-refresh-interval=5M
 quarkus.oidc.token.jwks-refresh-interval=1H
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Cache JWKS for 1 hour example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Manual rotation scenario (cert expiry):
 - OIDC provider announces new key.
@@ -897,7 +1308,7 @@ quarkus.otel.resource.attributes=\
   deployment.environment=${quarkus.profile}
 ```
 
-> **Code walkthrough:** @WithSpan on createOrder auto-creates
+> **Code walkthrough:** @WithSpan on createOrder auto-createsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a span with name "order.createOrder" and ends it when
 > the Uni completes. The manual span in calculateTotal
 > adds attributes (order ID, total) and records exceptions
@@ -919,6 +1330,92 @@ for custom spans."
 sampling expensive. Trace context propagates through
 Kafka headers automatically - Kafka consumer spans have
 the producer span as parent. Log-to-trace correlation:
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus OpenTelemetry (OTel) integration auto-instruments HTTP
+requests, Hibernate SQL, Kafka messages, and CDI beans to generate distributed
+traces. Traces are exported via OTLP protocol to Jaeger, Zipkin, or any OTel
+collector. The trace ID is automatically injected into MDC for log correlation.
+
+**Mechanism:** The Quarkus OTel extension registers Vert.x interceptors and
+CDI interceptors at build time:
+1. Incoming HTTP requests: extract `traceparent` header (W3C Trace Context).
+   If present: continue the distributed trace. If absent: create a new trace.
+2. Outgoing HTTP calls (`quarkus-rest-client-reactive`): inject `traceparent`
+   header automatically.
+3. Hibernate ORM: wraps SQL execution in child spans showing SQL text and timing.
+4. Reactive Messaging: propagates trace context through Kafka message headers.
+5. All spans are batched and exported via OTLP to the configured endpoint.
+
+**Trade-off:**
+
+**Positive:** Zero-code distributed tracing across service boundaries. Automatic
+MDC injection enables log-trace correlation in any log aggregation system.
+
+**Negative:** OTel exporter adds ~1-5ms latency per request (async export
+minimizes this). Sampling 100% of traces in production generates significant
+telemetry volume. Use head-based sampling for high-traffic services.
+
+**Production Reality:** Without distributed tracing, debugging a multi-service
+latency issue requires correlating logs across 5+ services manually. With OTel,
+one trace ID reveals the entire request path, all service calls, and exact
+timing in seconds.
+
+**Decision:** Use OTel for all multi-service applications. Configure OTLP export
+to Jaeger/Grafana Tempo in staging and production. Use 10% head-based sampling
+for high-traffic endpoints and 100% for error traces.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: OpenTelemetry only provides distributed tracing**
+**Reality:** OpenTelemetry covers three signals: traces, metrics, and logs.
+Quarkus OTel extension integrates all three. `quarkus-micrometer` uses OTel
+metrics exporter. OTel logging appender correlates log records with trace IDs.
+Full observability stack from a single OTel dependency.
+
+**Misconception 2: OTel tracing significantly impacts performance**
+**Reality:** Quarkus OTel uses ASYNC batched export. Spans are enqueued in
+memory and exported in background batches every 200ms. The impact on request
+latency is typically <1ms. The main overhead is memory for the span buffer.
+Benchmark under load before optimizing sampling rates.
+
+**Misconception 3: You must add @WithSpan to every method to trace it**
+**Reality:** Quarkus OTel auto-instruments HTTP endpoints, database calls, Kafka,
+and REST clients without any annotations. `@WithSpan` is for adding CUSTOM spans
+around specific business logic that you want to time. Auto-instrumentation covers
+infrastructure calls automatically.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Traces not appearing in Jaeger**
+**Symptom:** Application is running and making requests but no traces appear
+in Jaeger UI.
+**Diagnosis:** Check OTLP endpoint configuration:
+`quarkus.otel.exporter.otlp.traces.endpoint`. Check if Jaeger OTLP receiver is
+enabled (port 4317 for gRPC, 4318 for HTTP). Check logs for OTel exporter errors.
+**Fix:** Set `quarkus.otel.exporter.otlp.endpoint=http://jaeger:4317`. Verify
+Jaeger config has `--collector.otlp.enabled=true`. Test with
+`quarkus.otel.traces.exporter=logging` to dump traces to console first.
+
+**Failure 2: Trace context not propagated through Kafka messages**
+**Symptom:** Traces end at Kafka producer. Consumer service creates new unrelated
+traces. No cross-service trace visibility.
+**Diagnosis:** Kafka trace propagation requires both producer and consumer to use
+SmallRye Reactive Messaging with OTel integration. Check if consumer has
+`quarkus-opentelemetry` extension. Check if OTel instrumentation is configured
+for Reactive Messaging channels.
+**Fix:** Add `quarkus-opentelemetry` to both producer and consumer services.
+Set `quarkus.otel.instrument.reactive-messaging=true`. Verify trace header
+`traceparent` appears in Kafka message headers via a test consumer.
+
 Quarkus injects trace_id to MDC; find the trace for
 any log line in Jaeger."
 
@@ -932,6 +1429,160 @@ any log line in Jaeger."
 | Staff | 10 min | Sampling strategy, Kafka tracing, log correlation |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus OpenTelemetry and Tracing starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus OpenTelemetry and Tracing-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Add service version to spans, Q2)
+
+For Quarkus OpenTelemetry and Tracing specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Add service version to spans, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus OpenTelemetry and Tracing? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus OpenTelemetry and Tracing, not just the benefits.
+
+Quarkus OpenTelemetry and Tracing is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Add service version to spans, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Add service version to spans, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus OpenTelemetry and Tracing fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus OpenTelemetry and Tracing in a real production system, not just in isolation.
+
+Quarkus OpenTelemetry and Tracing in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus OpenTelemetry and Tracing typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Add service version to spans, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus OpenTelemetry and Tracing affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus OpenTelemetry and Tracing configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus OpenTelemetry and Tracing.
+
+Critical pre-production checklist for Quarkus OpenTelemetry and Tracing: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Add service version to spans, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Add service version to spans, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus OpenTelemetry and Tracing resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus OpenTelemetry and Tracing knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Add service version to spans, Q6)
+
+Strong answers for Quarkus OpenTelemetry and Tracing include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus OpenTelemetry and Tracing actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus OpenTelemetry and Tracing in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus OpenTelemetry and Tracing handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus OpenTelemetry and Tracing at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus OpenTelemetry and Tracing is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Add service version to spans, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Add service version to spans, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus OpenTelemetry and Tracing to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply. (Add service version to spans, Q8)
+
+Start with the problem: what existed before Quarkus OpenTelemetry and Tracing and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus OpenTelemetry and Tracing: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus OpenTelemetry and Tracing and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus OpenTelemetry and Tracing at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus OpenTelemetry and Tracing beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus OpenTelemetry and Tracing expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus OpenTelemetry and Tracing, coordinated upgrade windows. (2) Internal shared library for common Quarkus OpenTelemetry and Tracing configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus OpenTelemetry and Tracing extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus OpenTelemetry and Tracing from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus OpenTelemetry and Tracing correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load). (Add service version to spans, Q10)
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?). (Add service version to spans, Q10)
+
+Testing strategy for Quarkus OpenTelemetry and Tracing: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus OpenTelemetry and Tracing starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus OpenTelemetry and Tracing-related issues. (Add service version to spans, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Add service version to spans, Q11)
+
+For Quarkus OpenTelemetry and Tracing specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Add service version to spans, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Add service version to spans, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus OpenTelemetry and Tracing? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus OpenTelemetry and Tracing, not just the benefits. (Add service version to spans, Q12)
+
+Quarkus OpenTelemetry and Tracing is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Add service version to spans, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Add service version to spans, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Add service version to spans, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[SENIOR] Q1 - How do you correlate Quarkus logs
 with distributed traces in production?**
@@ -950,7 +1601,7 @@ quarkus.log.console.format=
   %-5p [%c{2.}] (%t) %s%e%n
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Add service version to spans example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Output:
 ```
@@ -959,7 +1610,7 @@ Output:
   (executor-0) Creating order 12345
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates the concept in a production context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics of this API. **WHY IT MATTERS:** applying this pattern incorrectly causes subtle production failures under load. **TAKEAWAY: understand the execution model and failure modes before using this in production.**
 
 Workflow:
 1. User reports error at 10:23:45.
@@ -1208,7 +1859,7 @@ public class DatabaseDeploymentDR
 }
 ```
 
-> **Code walkthrough:** The Reconciler is called whenever
+> **Code walkthrough:** The Reconciler is called wheneverice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the Database CR changes. It checks the actual pod state
 > and updates the CR's status. UpdateControl.rescheduleAfter()
 > tells the SDK to call reconcile() again after the delay -
@@ -1232,6 +1883,93 @@ Return UpdateControl to signal done or reschedule."
 upgrades, backups, scaling, failure recovery. The reconcile
 loop is the control loop from control theory. Dependent
 resources separate the what (Reconciler spec) from
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus Kubernetes Operator Pattern uses the JOSDK (Java Operator
+SDK) with Quarkus integration (`quarkus-operator-sdk`) to build Kubernetes
+operators in Java. An operator watches Custom Resources (CRDs) and reconciles
+the desired state (CRD spec) with the actual state (Kubernetes resources).
+Quarkus provides CDI injection, live coding, and native image support for operators.
+
+**Mechanism:** An operator reconciler implements `Reconciler<T>` where T extends
+`CustomResource<Spec, Status>`:
+1. Kubernetes informers (long-polling watches) detect CRD create/update/delete.
+2. JOSDK's reconciliation queue dispatches events to the `reconcile()` method.
+3. `reconcile()` reads the CRD spec, computes desired state, and uses the
+   Kubernetes API client to create/update/delete Kubernetes resources.
+4. Status updates write reconciliation results back to the CRD status subresource.
+5. `@ControllerConfiguration` specifies which CRD type and namespaces to watch.
+
+**Trade-off:**
+
+**Positive:** Automates complex operational workflows as code. CDI injection
+enables testable reconcilers. Native image build produces a tiny operator binary
+(<50MB container image) for minimal cluster overhead.
+
+**Negative:** Operator pattern has high conceptual overhead (reconciliation
+loops, leader election, CRD versioning). Watch events may be delayed - operators
+are eventually consistent, not immediately consistent.
+
+**Production Reality:** Operators are the standard mechanism for Day 2 operations:
+automated backup, failover, schema migration, and blue/green deployments.
+Quarkus-based operators in native image use <50MB RAM vs 300-500MB for JVM
+Go-based operators.
+
+**Decision:** Build an operator when: operational workflows involve multiple
+K8s API calls, human operators follow a runbook with >5 steps, and the workflow
+must react to cluster events automatically. Use GitOps for simple static
+configuration deployments.
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Operators can only manage custom resources**
+**Reality:** Operators can manage any Kubernetes resource - Deployments, Services,
+ConfigMaps, PVCs. Custom Resources define the desired state API, but the
+reconciler creates/modifies ANY Kubernetes resource to achieve that state. An
+operator can create an entire application stack (Deployment + Service + Ingress)
+from a single custom resource.
+
+**Misconception 2: The reconcile() method runs exactly once per event**
+**Reality:** JOSDK guarantees at-least-once delivery of reconciliation events.
+The reconciler may be called multiple times for the same state. Reconcile methods
+MUST be IDEMPOTENT - applying the same reconciliation multiple times must produce
+the same result as applying it once.
+
+**Misconception 3: Operators are only for stateful applications**
+**Reality:** Operators are useful for ANY complex multi-step operational workflow:
+certificate rotation, cross-service secret synchronization, custom autoscaling,
+multi-cluster deployments. The operator pattern applies whenever a workflow has
+decision logic that exceeds what GitOps or basic controllers provide.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Reconciler called in infinite loop**
+**Symptom:** Operator logs show `Reconciling <resource>` continuously. CPU usage
+elevated. No actual changes needed but reconciler keeps running.
+**Diagnosis:** `reconcile()` method returns `UpdateControl.updateStatus()` on
+every call even when no changes are needed. This triggers another watch event
+(status update), causing infinite recursion.
+**Fix:** Check if current status equals desired status before updating:
+`if (currentStatus.equals(desiredStatus)) return UpdateControl.noUpdate()`.
+
+**Failure 2: Operator crashes on CRD schema version upgrade**
+**Symptom:** After CRD version upgrade, operator throws deserialization errors
+for older CRD instances.
+**Diagnosis:** CRD spec changed (new required fields) but existing CRD instances
+have the old schema. `io.fabric8.kubernetes.api.model.apiextensions.v1.
+CustomResourceDefinition` deserialization fails for old spec.
+**Fix:** Implement CRD version conversion webhook. Use `x-kubernetes-preserve-unknown-fields:
+true` in CRD schema for backward compatibility during migration. Always use
+`storage: true` on the latest CRD version.
+
 the how (creating K8s primitives). Quarkus operator-sdk
 adds CDI injection and hot reload to operator development."
 
@@ -1244,6 +1982,160 @@ adds CDI injection and hot reload to operator development."
 | Staff | 10 min | Operator pattern, reconcile loop, dependent resources |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Kubernetes Operator Pattern starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Kubernetes Operator Pattern-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Kubernetes Operator Pa, Q2)
+
+For Quarkus Kubernetes Operator Pattern specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Kubernetes Operator Pa, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Kubernetes Operator Pattern? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Kubernetes Operator Pattern, not just the benefits.
+
+Quarkus Kubernetes Operator Pattern is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Kubernetes Operator Pa, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Kubernetes Operator Pa, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Kubernetes Operator Pattern fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Kubernetes Operator Pattern in a real production system, not just in isolation.
+
+Quarkus Kubernetes Operator Pattern in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Kubernetes Operator Pattern typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Quarkus Kubernetes Operator Pa, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Kubernetes Operator Pattern affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Kubernetes Operator Pattern configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Kubernetes Operator Pattern.
+
+Critical pre-production checklist for Quarkus Kubernetes Operator Pattern: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Quarkus Kubernetes Operator Pa, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Quarkus Kubernetes Operator Pa, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Kubernetes Operator Pattern resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Kubernetes Operator Pattern knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Quarkus Kubernetes Operator Pa, Q6)
+
+Strong answers for Quarkus Kubernetes Operator Pattern include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Kubernetes Operator Pattern actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Kubernetes Operator Pattern in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Kubernetes Operator Pattern handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Kubernetes Operator Pattern at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Kubernetes Operator Pattern is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Quarkus Kubernetes Operator Pa, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Quarkus Kubernetes Operator Pa, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Kubernetes Operator Pattern to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply. (Quarkus Kubernetes Operator Pa, Q8)
+
+Start with the problem: what existed before Quarkus Kubernetes Operator Pattern and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Kubernetes Operator Pattern: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Kubernetes Operator Pattern and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Kubernetes Operator Pattern at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Kubernetes Operator Pattern beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Kubernetes Operator Pattern expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Kubernetes Operator Pattern, coordinated upgrade windows. (2) Internal shared library for common Quarkus Kubernetes Operator Pattern configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Kubernetes Operator Pattern extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Kubernetes Operator Pattern from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Kubernetes Operator Pattern correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load). (Quarkus Kubernetes Operator Pa, Q10)
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?). (Quarkus Kubernetes Operator Pa, Q10)
+
+Testing strategy for Quarkus Kubernetes Operator Pattern: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Kubernetes Operator Pattern starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Kubernetes Operator Pattern-related issues. (Quarkus Kubernetes Operator Pa, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Quarkus Kubernetes Operator Pa, Q11)
+
+For Quarkus Kubernetes Operator Pattern specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Quarkus Kubernetes Operator Pa, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Quarkus Kubernetes Operator Pa, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Kubernetes Operator Pattern? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Kubernetes Operator Pattern, not just the benefits. (Quarkus Kubernetes Operator Pa, Q12)
+
+Quarkus Kubernetes Operator Pattern is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Quarkus Kubernetes Operator Pa, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Quarkus Kubernetes Operator Pa, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Quarkus Kubernetes Operator Pa, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[STAFF] Q1 - How do you handle long-running
 reconciliation without blocking the operator?**
@@ -1269,7 +2161,7 @@ public UpdateControl<Database> reconcile(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 Solution 2: Event sources for watching dependent resources:
 ```java
@@ -1289,7 +2181,7 @@ public List<EventSource> prepareEventSources(
 // No polling needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 Solution 3: Reactive reconciler:
 ```java
@@ -1297,7 +2189,7 @@ Solution 3: Reactive reconciler:
 // if using the reactive variant
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This concept example demonstrates Java runtime behavior. **KEY MECHANISM:** the JVM executes this via bytecode interpretation and JIT compilation of hot paths. **WHY IT MATTERS:** incorrect usage causes subtle concurrency bugs or memory leaks under load. **TAKEAWAY: understand the object lifecycle and threading model before using this API.**
 
 *What separates good from great:* Event source for
 watching dependent resources instead of polling loops.
@@ -1506,7 +2398,7 @@ quarkus.oidc.tenant-globex.auth-server-url=\
 quarkus.oidc.tenant-globex.client-id=app
 ```
 
-> **Code walkthrough:** TenantContext is @RequestScoped -
+> **Code walkthrough:** TenantContext is @RequestScoped -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > each request gets its own instance. TenantRequestFilter
 > reads X-Tenant-ID and sets it on the TenantContext.
 > TenantSchemaResolver returns the schema name for Hibernate
@@ -1528,6 +2420,94 @@ Schema-per-tenant is the most common SaaS pattern."
 filter leaks all tenants' data. Hibernate's @Filter
 with @FilterDef is the safest approach - enable the
 filter at session start, then all queries are automatically
+
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:** Quarkus multi-tenancy refers to serving multiple tenants from
+a single application deployment. Three main patterns: (1) Schema-per-tenant
+(each tenant has its own database schema), (2) Database-per-tenant (each tenant
+has its own database), and (3) Row-level security (all tenants share tables,
+discriminated by a tenant ID column). Quarkus supports all three via Hibernate
+ORM multi-tenancy and per-tenant OIDC configuration.
+
+**Mechanism:** Hibernate ORM multi-tenancy with schema-per-tenant:
+1. A `TenantConnectionResolver` CDI bean maps tenant ID to a `ConnectionProvider`.
+2. `TenantIdentifierResolver` extracts the tenant ID from the request context
+   (HTTP header, JWT claim, subdomain).
+3. Hibernate applies the tenant ID to each session: `schema_search_path` is
+   set per connection for schema isolation.
+4. OIDC multi-tenancy: `quarkus.oidc.tenant-config-resolver` maps tenant IDs
+   to OIDC provider configurations, allowing different OIDC realms per tenant.
+
+**Trade-off:**
+
+**Positive:** Schema-per-tenant provides strong data isolation. Row-level
+security (Hibernate Filters) is simpler to implement but requires careful
+query review.
+
+**Negative:** Schema-per-tenant requires N database schemas to maintain and
+migrate. Hibernate Filters are bypass-able if raw SQL or native queries are
+used without the filter.
+
+**Production Reality:** Schema migration with multi-tenancy is the hardest
+operational challenge: applying a schema change to 1,000 tenant schemas requires
+a carefully orchestrated migration tool (e.g., Flyway Tenant Migrator pattern)
+that applies migrations per tenant in batches.
+
+**Decision:** Database-per-tenant for strict data residency/compliance
+requirements. Schema-per-tenant for good isolation with shared infrastructure.
+Row-level for low-isolation SaaS with many small tenants (>1,000).
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Row-level multi-tenancy with Hibernate Filter is fully secure**
+**Reality:** Hibernate `@Filter` is a JPQL/HQL-level filter. Native SQL queries
+(`entityManager.createNativeQuery()`), direct JDBC operations, and queries using
+`nativeQuery=true` in Spring Data BYPASS the filter entirely. For security-sensitive
+multi-tenancy, always use Row Level Security at the DATABASE level (PostgreSQL RLS)
+as the authoritative enforcement mechanism.
+
+**Misconception 2: Schema-per-tenant migrations are automated by Flyway out of the box**
+**Reality:** Flyway does not natively support multi-schema migrations. You must
+implement a migration runner that: discovers all tenant schemas, runs Flyway
+migration against each schema, handles failures per-tenant without blocking other
+tenants. This is custom operational code, not a Flyway built-in feature.
+
+**Misconception 3: OIDC multi-tenancy requires one Keycloak realm per tenant**
+**Reality:** OIDC multi-tenancy in Quarkus is about TOKEN VALIDATION configuration
+per tenant, not about requiring separate realms. A single Keycloak realm with
+tenant-specific claims (tenant_id in JWT) can serve multiple tenants. Separate
+realms are appropriate for complete isolation but not required.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure 1: Tenant data cross-contamination with connection pool reuse**
+**Symptom:** Tenant A sees Tenant B's data intermittently. Logs show correct
+tenant ID resolution but incorrect data returned.
+**Diagnosis:** Connection pool is sharing connections between tenants without
+resetting `search_path` (PostgreSQL) between requests. Schema context persists
+across pooled connections.
+**Fix:** Ensure `TenantConnectionResolver` sets the schema search path on every
+connection checkout, not just on initial creation. For PostgreSQL:
+`SET search_path TO tenant_schema` must execute on every connection acquisition.
+
+**Failure 2: Performance degradation with many tenant schemas**
+**Symptom:** Query planning time increases significantly with 100+ tenant schemas.
+Database query latency grows beyond expected.
+**Diagnosis:** PostgreSQL's `search_path` resolution scales with schema count.
+At 1,000 schemas, `pg_catalog` lookups for table resolution become slow.
+**Fix:** Use explicit schema-qualified table names in queries:
+`FROM tenant_001.orders` instead of relying on `search_path` resolution.
+Alternatively, switch to database-per-tenant or row-level tenancy for large
+tenant counts.
+
 filtered. Still: audit queries for any HQL that bypasses
 the filter."
 
@@ -1541,6 +2521,160 @@ the filter."
 | Staff | 12 min | Strategy selection, discriminator risk, OIDC multi-tenancy |
 
 ---
+
+---
+
+**[MID] Q2 - [DEBUGGING] Production service using Quarkus Multi-Tenancy Patterns starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Multi-Tenancy Patterns-related issues.
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Per-tenant OIDC config, Q2)
+
+For Quarkus Multi-Tenancy Patterns specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence.
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Per-tenant OIDC config, Q2)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q3 - [TRADE-OFF] What are the key trade-offs of Quarkus Multi-Tenancy Patterns? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Multi-Tenancy Patterns, not just the benefits.
+
+Quarkus Multi-Tenancy Patterns is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not.
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Per-tenant OIDC config, Q3)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Per-tenant OIDC config, Q3)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
+
+---
+
+**[SENIOR] Q4 - [ARCHITECTURE] How does Quarkus Multi-Tenancy Patterns fit into a cloud-native microservices architecture? What architectural decisions does it constrain or enable?**
+
+*Why they ask:* Tests whether you can reason about Quarkus Multi-Tenancy Patterns in a real production system, not just in isolation.
+
+Quarkus Multi-Tenancy Patterns in a microservices architecture affects: service boundaries (what belongs in the same service vs separate), communication patterns (synchronous vs asynchronous), data management (shared vs service-owned data), and operational concerns (deployment, scaling, observability).
+
+Architectural enablements: Quarkus Multi-Tenancy Patterns typically makes certain cross-cutting concerns easier (auth, observability, config management) when the ecosystem around it is adopted consistently. The constraint is that partial adoption creates dual maintenance burden.
+
+Integration with Kubernetes: health probes (liveness vs readiness distinction is critical), resource requests/limits (size based on measured usage not estimates), graceful shutdown (SIGTERM handling, in-flight request completion). (Per-tenant OIDC config, Q4)
+
+*What separates good from great:* Recognizing that architectural decisions made for Quarkus Multi-Tenancy Patterns affect the entire service mesh, not just the service using it.
+
+---
+
+**[SENIOR] Q5 - [PRODUCTION] What Quarkus Multi-Tenancy Patterns configurations are most critical to validate before go-live in production? What happens if you miss them?**
+
+*Why they ask:* Tests production readiness awareness - distinguishing nice-to-have from must-have for Quarkus Multi-Tenancy Patterns.
+
+Critical pre-production checklist for Quarkus Multi-Tenancy Patterns: resource limits (memory and CPU sized to measured p99 not averages), connection pool sizes (database, HTTP client, message broker connections - undersized pools are the most common production incident cause), timeout values (request timeout, connection timeout, idle timeout aligned with upstream SLAs).
+
+Health check configuration: liveness probe should not check external dependencies (causes cascading restarts), readiness probe SHOULD check critical dependencies (prevents premature traffic routing). This distinction saves on-call engineers hours of debugging during incidents. (Per-tenant OIDC config, Q5)
+
+Logging and observability: structured JSON logging enabled, correlation IDs propagated, metrics endpoint accessible to Prometheus, distributed tracing configured. (Per-tenant OIDC config, Q5)
+
+*What separates good from great:* Having a written runbook of the go-live checklist with owner and verification step for each item, rather than relying on individual memory.
+
+---
+
+**[SENIOR] Q6 - [BEHAVIORAL] Tell me about a specific situation where your knowledge of Quarkus Multi-Tenancy Patterns resolved a production problem or prevented a significant issue. What was the context, what did you discover, and what was the outcome?**
+
+*Why they ask:* Tests real-world application of Quarkus Multi-Tenancy Patterns knowledge under pressure, and whether you learn from production experience.
+
+Structure using STAR: Situation (what was the system and the problem), Task (your responsibility), Action (specific technical steps you took), Result (measurable outcome). (Per-tenant OIDC config, Q6)
+
+Strong answers for Quarkus Multi-Tenancy Patterns include: specific configuration changes made and why, the diagnostic tool or technique that led to the root cause, a non-obvious insight about how Quarkus Multi-Tenancy Patterns actually behaves vs. how you expected it to behave, and a process change (monitoring, runbook, test) added afterward to prevent recurrence.
+
+If you have not used Quarkus Multi-Tenancy Patterns in production: describe a deliberate investigation you conducted - a proof of concept, a failure mode you tested, or a performance benchmark you ran. Intellectual curiosity counts.
+
+*What separates good from great:* Specific numbers and a clear before/after comparison. 'Latency dropped from 400ms to 50ms' is more credible than 'performance improved greatly'.
+
+---
+
+**[STAFF] Q7 - [SYSTEM DESIGN] Design a production system where Quarkus Multi-Tenancy Patterns handles peak load of 10,000 requests/second with 99.9% availability SLA. What does your architecture look like and what are the failure modes?**
+
+*Why they ask:* Tests whether you understand Quarkus Multi-Tenancy Patterns at scale and can anticipate failure modes before they happen.
+
+At 10,000 RPS: single-instance Quarkus Multi-Tenancy Patterns is not sufficient; horizontal scaling with load balancer is required. Calculate the required replica count: target_rps / (single_instance_rps * safety_factor). Add 20% headroom for autoscaling lag.
+
+99.9% availability = 8.7 hours downtime/year = ~43 minutes/month. This requires: multi-AZ deployment (no single AZ brings down the service), rolling deployments (zero-downtime updates), circuit breakers (prevent cascade failures from downstream service degradation), and queue buffering for traffic spikes. (Per-tenant OIDC config, Q7)
+
+Failure modes at scale: connection pool exhaustion (add monitoring alert at 80% pool utilization), GC pressure in JVM mode (profile allocation rate under load), rate limiting on upstream dependencies (implement bulkhead pattern). (Per-tenant OIDC config, Q7)
+
+*What separates good from great:* Calculating the math (replica count, pool size, timeout values) rather than describing the architecture qualitatively.
+
+---
+
+**[JUNIOR] Q8 - [CONCEPTUAL] Explain Quarkus Multi-Tenancy Patterns to a new team member with 1 year of experience. What mental model helps, and what misconceptions do developers typically have about it?**
+
+*Why they ask:* Tests depth of understanding - if you can teach it clearly, you understand it deeply. (Per-tenant OIDC config, Q8)
+
+Start with the problem: what existed before Quarkus Multi-Tenancy Patterns and what problem did it solve? This gives the 'why' that makes the 'what' and 'how' memorable. The best mental model is an analogy from everyday experience that maps to the core mechanism.
+
+Common misconceptions developers have about Quarkus Multi-Tenancy Patterns: assuming it works like a more familiar technology, not understanding which layer it operates at, underestimating configuration requirements, or treating it as a drop-in replacement for something similar when there are behavioral differences.
+
+The key insight that separates understanding from memorization: the design principle behind Quarkus Multi-Tenancy Patterns and why its creators made that specific design choice. Understanding the design intent lets you predict behavior in edge cases without needing to look it up.
+
+*What separates good from great:* Using a concrete example from the team's actual codebase rather than abstract documentation language.
+
+---
+
+**[STAFF] Q9 - [TRADE-OFF] What are the long-term organizational and maintenance implications of adopting Quarkus Multi-Tenancy Patterns at scale across a large engineering team? What governance would you establish?**
+
+*Why they ask:* Tests strategic thinking about Quarkus Multi-Tenancy Patterns beyond the immediate technical decision.
+
+Long-term implications: skill investment (hiring, training, onboarding time increases when Quarkus Multi-Tenancy Patterns expertise is required), dependency risk (version upgrades, security patches, end-of-life planning), and ecosystem lock-in (how hard is it to migrate away if a better solution emerges?).
+
+Governance to establish: (1) Standardized version policy - all services use the same major version of Quarkus Multi-Tenancy Patterns, coordinated upgrade windows. (2) Internal shared library for common Quarkus Multi-Tenancy Patterns configuration patterns, reducing per-team setup time. (3) Metrics baseline - track startup time, memory usage, and error rate per service, alerting on regression.
+
+Decision framework: build vs. adopt - for each Quarkus Multi-Tenancy Patterns extension or configuration, evaluate: does this provide strategic differentiation, or is it commodity infrastructure that a managed service handles better?
+
+*What separates good from great:* Quantifying the total cost of ownership including engineering hours, not just infrastructure costs.
+
+---
+
+**[SENIOR] Q10 - [HANDS-ON] Walk me through implementing Quarkus Multi-Tenancy Patterns from scratch in a new service. What are the non-obvious configuration choices that most engineers miss on first implementation?**
+
+*Why they ask:* Tests practical hands-on knowledge - can you actually implement Quarkus Multi-Tenancy Patterns correctly, not just describe it?
+
+The obvious steps (add dependency, basic configuration) are documented. The non-obvious choices that affect production behavior: timeout configuration (many engineers use defaults that are too long or too short for their use case), retry policies (retrying non-idempotent operations causes duplicate side effects), and resource sizing (defaults are for development, not production load). (Per-tenant OIDC config, Q10)
+
+Security checklist that is often deferred until too late: secrets management (environment variables vs secrets manager), TLS configuration (hostname verification, certificate rotation), and authorization boundaries (which callers are allowed?). (Per-tenant OIDC config, Q10)
+
+Testing strategy for Quarkus Multi-Tenancy Patterns: unit tests with mocked dependencies, integration tests with testcontainers or embedded instances, and a smoke test that validates the specific non-obvious configuration choices were applied correctly.
+
+*What separates good from great:* Having a personal implementation checklist that encodes lessons from previous mistakes.
+
+---
+
+**[MID] Q11 - [DEBUGGING] Production service using Quarkus Multi-Tenancy Patterns starts logging errors after a deployment. No code changes were made. What is your diagnostic approach and what do you check first?**
+
+*Why they ask:* Tests systematic debugging over guesswork for Quarkus Multi-Tenancy Patterns-related issues. (Per-tenant OIDC config, Q11)
+
+Start by checking deployment artifacts: was configuration changed even if code was not? Diff the deployed config against the previous version. Check error logs for stack traces - the first exception in the chain is the root cause, not the last. (Per-tenant OIDC config, Q11)
+
+For Quarkus Multi-Tenancy Patterns specifically: verify that all required dependencies and configuration properties are present. Check if the runtime environment (JVM flags, resource limits, external service endpoints) changed between deployments. Enable DEBUG logging temporarily to see detailed initialization sequence. (Per-tenant OIDC config, Q11)
+
+Use health check endpoints to distinguish between startup failure (readiness probe failing) vs runtime failure (liveness probe failing after successful start). Correlate error timestamps with infrastructure events: pod restarts, autoscaling events, downstream service degradation. (Per-tenant OIDC config, Q11)
+
+*What separates good from great:* Building a timeline of events (deployment time, first error time, scale events) before touching any configuration.
+
+---
+
+**[MID] Q12 - [TRADE-OFF] What are the key trade-offs of Quarkus Multi-Tenancy Patterns? In what scenarios would you recommend an alternative, and why?**
+
+*Why they ask:* Evaluates architectural judgment and whether you understand the limitations of Quarkus Multi-Tenancy Patterns, not just the benefits. (Per-tenant OIDC config, Q12)
+
+Quarkus Multi-Tenancy Patterns is optimized for specific use cases with clear advantages and constraints. The advantages justify adoption when those use cases apply; the constraints become blockers when they do not. (Per-tenant OIDC config, Q12)
+
+Key trade-offs: performance vs. operational complexity, developer productivity vs. runtime flexibility, standard APIs vs. vendor-specific features. Each trade-off has a cost in team skill investment, migration risk, and ongoing maintenance. (Per-tenant OIDC config, Q12)
+
+Recommend alternatives when: the team's existing expertise makes the learning curve ROI negative, when a specific feature requirement is better served by a competing solution, or when the scale of the problem does not justify the added complexity. (Per-tenant OIDC config, Q12)
+
+*What separates good from great:* Quantifying the trade-off - actual latency numbers, memory difference, or developer hours saved - instead of citing qualitative claims.
 
 **[STAFF] Q1 - How do you migrate a single-tenant
 Quarkus app to schema-per-tenant multi-tenancy?**

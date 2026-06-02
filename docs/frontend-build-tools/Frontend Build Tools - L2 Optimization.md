@@ -90,7 +90,7 @@ Code splitting mechanisms:
   // Added to <link rel="preload"> - downloads immediately
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Code Splitting and Lazy Loading example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -200,7 +200,7 @@ function BlogPost({ initialContent }: { initialContent: string }) {
 }
 ```
 
-> **Code walkthrough:** RichTextEditor (likely 100KB+) is split into
+> **Code walkthrough:** RichTextEditor (likely 100KB+) is split intoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > its own chunk and only downloaded when editing starts. The hover
 > prefetch is a UX optimization: when the user hovers over the Edit
 > button, the chunk starts downloading. By the time they click, the
@@ -428,7 +428,7 @@ Real-world: lodash vs lodash-es
   import { sortBy } from 'lodash-es'; // ESM: only sortBy included
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tree Shaking and Dead Code Elimination example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -449,6 +449,11 @@ in your own packages.
 ### 💻 Code Example
 
 **Example 1: The barrel file anti-pattern**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: barrel file imports (defeats tree shaking)
@@ -479,7 +484,7 @@ import { optimizeBarrel } from 'vite-plugin-barrel'; // plugin
 // to: import Button from '@mui/material/Button/Button'
 ```
 
-> **Code walkthrough:** Barrel files are index.ts files that re-export
+> **Code walkthrough:** Barrel files are index.ts files that re-exportice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from many sub-modules. They improve developer experience (one import
 > path) but disable tree shaking if the bundler cannot statically
 > analyze which exports are used. The fix: direct imports. For large
@@ -506,7 +511,7 @@ import { optimizeBarrel } from 'vite-plugin-barrel'; // plugin
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tree Shaking and Dead Code Elimination example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // Check if tree shaking is working:
@@ -524,7 +529,7 @@ grep -c 'multiply' dist/main.js
 # >0 - tree shaking didn't work for this export
 ```
 
-> **Code walkthrough:** `sideEffects: false` is a package.json field
+> **Code walkthrough:** `sideEffects: false` is a package.json fieldice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that signals to bundlers: "you can remove any of my exports that
 > are not imported." CSS files are always side effects (importing them
 > adds CSS to the page even if no exports are used). The bundle analyzer

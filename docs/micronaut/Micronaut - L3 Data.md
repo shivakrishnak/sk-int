@@ -205,7 +205,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** @MappedEntity maps the class
+> **Code walkthrough:** @MappedEntity maps the classice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to the "orders" table. @DateCreated/@DateUpdated are
 > automatically set by Micronaut on save/update - no
 > DB trigger needed. The repository extends
@@ -270,6 +270,49 @@ names are for simple lookups.
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Data JDBC is a compile-time-generated data access
+layer that executes SQL queries without ORM overhead. Unlike
+JPA/Hibernate, JDBC repositories operate directly on SQL,
+with queries generated at compile time based on repository
+method names and `@Query` annotations.
+
+**How it works:**
+
+```java
+@JdbcRepository(dialect = Dialect.POSTGRES)
+interface UserRepository extends CrudRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+
+    @Query("SELECT * FROM users WHERE role = :role")
+    List<User> findByRole(String role);
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Micronaut's APT generates the SQL for `findByEmail` at compile
+time (based on the method name convention). The generated
+implementation uses `JdbcOperations` (thin JDBC wrapper).
+No runtime query building.
+
+Entity mapping: `@MappedEntity("users")` maps a class to a
+table. Fields map to columns by convention (camelCase to
+snake_case). `@Id` marks the primary key; `@GeneratedValue`
+for auto-increment.
+
+**Why it matters:**
+
+Compile-time SQL generation catches query errors at build time
+(misspelled columns, wrong types). No ORM overhead:
+no lazy loading, no dirty checking, no first-level cache.
+Results are simple POJOs, not managed entities.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Extend JdbcRepository. Method names generate
@@ -318,7 +361,7 @@ orders.forEach(o -> {
 // 1 + N SQL queries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Solution 1: @Join on the repository method:
 ```java
@@ -328,7 +371,7 @@ List<Order> findAllWithItems();
 // 1 SQL query
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Solution 2: Batch loading:
 ```java
@@ -342,7 +385,7 @@ List<OrderItem> items =
 // 2 SQL queries total
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Solution 3: Explicit @Query with JOIN:
 ```java
@@ -355,7 +398,7 @@ Solution 3: Explicit @Query with JOIN:
 List<OrderWithItems> findAllWithItems();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* @Join as the
 idiomatic Micronaut Data JDBC solution vs the manual
@@ -388,7 +431,7 @@ javap -p -c \
   com/example/$OrderRepository$Intercepted.class
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Decompile with javap example demonstrates shell scrice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 You can see the exact SQL Micronaut will use without
 running the application. Useful for debugging unexpected
@@ -397,12 +440,12 @@ query behavior.
 *What separates good from great:* Inspect the
 generated SQL at compile time - no need to run the app.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Repository interface, @Query, @Join, pagination. |
-| Hiring Manager | Compile-time repositories = faster startup. |
-| Bar Raiser | N+1 solutions, dirty tracking absence, JDBC vs JPA trade-off. |
-| Peer Engineer | "Moved from JPA to Micronaut Data JDBC for our read-heavy service. Query latency dropped 30%. Added explicit update() calls - small change, big win." |
+| Interviewer Type| Emphasis|
+|---|--------------------------------------------------------------------------|
+| Technical Panel| Repository interface, @Query, @Join, pagination.|
+| Hiring Manager| Compile-time repositories = faster startup.|
+| Bar Raiser| N+1 solutions, dirty tracking absence, JDBC vs JPA trade-off.|
+| Peer Engineer| "Moved from JPA to Micronaut Data JDBC for our read-heavy servi
 
 ---
 
@@ -412,21 +455,21 @@ generated SQL at compile time - no need to run the app.
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
@@ -582,7 +625,7 @@ public interface OrderRepository
 //       hibernate.format_sql: true
 ```
 
-> **Code walkthrough:** The @Entity and @OneToMany are
+> **Code walkthrough:** The @Entity and @OneToMany areice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > standard JPA. @Cache(READ_WRITE) enables Hibernate
 > L2 cache for Order entities - frequently-accessed
 > orders served from memory. @Version provides optimistic
@@ -590,6 +633,47 @@ public interface OrderRepository
 > The JOIN FETCH in @Query prevents N+1 for items.
 > The repository extends JpaRepository which Micronaut
 > Data implements at compile time, not runtime.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Data JPA combines Micronaut's compile-time query
+generation with Hibernate/JPA for rich object-relational
+mapping. It provides type-safe repository interfaces with
+Hibernate-backed persistence.
+
+**How it works:**
+
+```java
+@Repository
+interface UserRepository extends JpaRepository<User, Long> {
+    @Query("FROM User u WHERE u.email = :email")
+    Optional<User> findByEmail(String email);
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Micronaut generates the repository implementation at compile
+time; Hibernate handles entity-to-table mapping and
+transaction management. The combination: Micronaut's compile-
+time safety + Hibernate's JPA features (relationships,
+lazy loading, L2 cache).
+
+Transactions: `@Transactional` AOP annotation applies
+compile-time AOP weaving for transaction demarcation.
+The transaction interceptor wraps method calls in a
+Hibernate session transaction.
+
+**Why it matters:**
+
+Compile-time query validation (JPQL syntax checked at build
+time via Hibernate's `HibernateJpaOperations`). Startup-
+time Hibernate schema validation. Native image support
+(Hibernate's reflection usage pre-configured by Micronaut).
 
 ---
 
@@ -605,6 +689,89 @@ itself is unchanged - L2 cache, lazy loading, dirty
 checking, optimistic locking all work identically.
 For Micronaut Native: Hibernate has GraalVM support
 since Hibernate 6.2. Reflection config mostly auto-generated."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut Data JPA generates the
+same SQL as direct JPA/Hibernate usage.**
+
+Micronaut Data JPA uses Hibernate as the JPA provider but
+wraps it with compile-time repository generation. The generated
+SQL may differ slightly from hand-written JPQL - specifically,
+derived query methods (`findByNameAndRole`) are converted to
+JPQL at compile time. The resulting SQL is valid Hibernate
+but may not be the most optimal SQL for complex queries.
+For performance-critical queries, use `@Query` with explicit
+JPQL or `@NativeQuery` to control SQL generation.
+
+**Misconception 2: @Transactional on a Micronaut Data JPA
+repository method wraps the entire Hibernate session.**
+
+Each Micronaut Data JPA repository call participates in
+whatever transaction is active at the call site. `@Transactional`
+on a SERVICE method wraps multiple repository calls in one
+transaction. Repository methods themselves do NOT require
+`@Transactional` for simple CRUD - Micronaut Data manages
+session handling internally. Complex multi-operation workflows
+should have `@Transactional` at the service layer, not on
+individual repository methods.
+
+**Misconception 3: Hibernate's first-level cache in
+Micronaut Data JPA prevents duplicate database queries.**
+
+Hibernate's session-scoped first-level cache is active
+within a single `@Transactional` context. Once the
+transaction ends, the session is closed and the cache is
+cleared. Subsequent calls to the same repository method
+re-query the database. For read-heavy scenarios, configure
+Hibernate's second-level cache (EhCache, Caffeine) for
+entity caching across transactions.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: LazyInitializationException in Micronaut
+Data JPA when accessing associations outside transaction.**
+
+Symptom: `org.hibernate.LazyInitializationException:
+could not initialize proxy - no Session` when accessing a
+lazy association outside of a `@Transactional` method.
+Root cause: JPA entity returned from a repository has lazy
+associations (default); accessing `user.getOrders()` after
+the session is closed throws. Diagnosis: check if the
+association access is outside a transaction boundary.
+Fix: use `@Transactional` to keep the session open; use
+`@Query("FROM User u LEFT JOIN FETCH u.orders WHERE u.id = :id")`
+to eager-load; or use DTOs with all data pre-fetched.
+
+**Failure Mode 2: N+1 query problem - each entity in
+a list triggers a separate query for an association.**
+
+Symptom: fetching a list of 50 users triggers 51 database
+queries (1 for the user list + 1 for each user's orders).
+Diagnosis: enable Hibernate SQL logging (`show_sql: true`,
+`format_sql: true`); count the SQL statements for one list
+fetch. Fix: use `JOIN FETCH` in the JPQL query to load
+associations in one query; configure `@EntityGraph` on
+the repository method; or use Micronaut Data's `@Join`
+annotation for compile-time join specification.
+
+**Failure Mode 3: Optimistic locking conflicts under
+high concurrency cause DataAccessException.**
+
+Symptom: `DataAccessException: Row was updated or deleted
+by another transaction` during concurrent updates to the
+same entity. Root cause: optimistic locking (`@Version`
+field) detects a version conflict when two transactions
+try to update the same entity. Diagnosis: analyze which
+entities are updated concurrently. Fix: implement a retry
+mechanism for optimistic lock failures; or use pessimistic
+locking (`@Lock(LockModeType.PESSIMISTIC_WRITE)`) for
+entities with high contention; or redesign the data model
+to reduce concurrent updates to the same record.
 
 ---
 
@@ -664,7 +831,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 readOnly=true optimization: Hibernate skips dirty
 checking and flush at transaction end. Saves time
@@ -880,7 +1047,7 @@ List<OrderSummary> findSummariesByCustomer(
     @Parameter Long customerId);
 ```
 
-> **Code walkthrough:** The nullable parameter pattern
+> **Code walkthrough:** The nullable parameter patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > uses SQL's `:param IS NULL OR column = :param` to
 > conditionally include the filter. When customerId is
 > null, `null IS NULL` is true, so the condition is
@@ -889,6 +1056,49 @@ List<OrderSummary> findSummariesByCustomer(
 > The DTO projection uses the JPA constructor expression
 > to map query results directly to OrderSummary without
 > loading the full Order entity.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Data Repositories are compile-time-generated
+interfaces for data access. They extend abstract base
+interfaces (`CrudRepository`, `PageableRepository`,
+`JpaRepository`) and declare data access methods that
+Micronaut translates to queries at build time.
+
+**How it works:**
+
+Method name conventions for derived queries:
+- `findById(Long id)` → `SELECT * FROM entity WHERE id = ?`
+- `findByNameAndRole(String name, Role role)` → combined WHERE clause
+- `findTop10ByOrderByCreatedAtDesc()` → limited ordered results
+- `countByStatus(Status status)` → COUNT query
+- `deleteByStatusIn(List<Status> statuses)` → bulk DELETE
+
+The APT reads the method signature, parses the naming
+convention, and generates the corresponding SQL/JPQL at
+compile time. Compilation fails if the method references
+a non-existent property.
+
+`@Query` annotation for custom queries:
+```java
+@Query("SELECT u FROM User u WHERE u.joinedAt > :since")
+List<User> findActiveUsers(LocalDate since);
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+Pagination: `Pageable pageable` parameter enables
+pagination; returns `Page<T>` with metadata.
+
+**Why it matters:**
+
+Query errors detected at compile time, not at runtime.
+No query builder overhead at startup. Consistent query
+generation across the team.
 
 ---
 
@@ -905,6 +1115,90 @@ composition is cleaner than @Query strings. DTO projections
 (constructor expressions) are critical for list endpoints
 where loading full entities with lazy associations
 would be wasteful."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Derived query method names can be
+arbitrarily complex and Micronaut will generate optimal SQL.**
+
+Micronaut Data's query derivation handles common patterns
+but has limits. Complex queries with subqueries, GROUP BY,
+HAVING, multiple JOINs, or computed columns cannot be
+expressed as method names. These require `@Query` with
+explicit JPQL/SQL. Attempting to encode complex logic in
+method names produces unwieldy names and may not be
+supported. Use derived queries for simple filters; use
+`@Query` for anything involving joins, aggregations, or
+multi-table operations.
+
+**Misconception 2: @Transactional is always required for
+write operations in Micronaut Data repositories.**
+
+Micronaut Data's default `save()`, `update()`, `delete()`
+methods in `CrudRepository` are transactional by default
+(they wrap the operation in a transaction). You do NOT
+need to add `@Transactional` for single-repository
+operations. `@Transactional` is needed at the SERVICE layer
+when multiple repository operations must be atomic together.
+Adding `@Transactional` to individual repository methods that
+are already transactional is redundant and can cause nested
+transaction issues.
+
+**Misconception 3: Returning Optional<T> from a repository
+method means the query returns at most one result.**
+
+Returning `Optional<T>` from a derived query method enforces
+a COMPILE-TIME constraint that the developer intends
+exactly-zero-or-one results. At RUNTIME, if the query finds
+multiple results, Micronaut Data throws `NonUniqueResultException`.
+The return type documents intent but does not guarantee
+uniqueness - only a `UNIQUE` database constraint guarantees
+uniqueness. Always ensure the WHERE clause uniquely identifies
+the target rows when returning `Optional<T>`.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Derived query method compilation fails
+because entity field name is misspelled.**
+
+Symptom: build fails with `Unable to establish repository
+method ... Could not resolve property [misspelledField]`.
+Root cause: the method name references a property that does
+not exist on the entity (`findByUserName` but entity has
+`username` not `userName`). Diagnosis: this is a COMPILE-
+TIME error - check the exact property name in the entity.
+Fix: correct the method name to match the entity property
+name; use `@Query` if the naming convention is insufficient.
+
+**Failure Mode 2: Pagination query returns wrong total
+count because filter conditions are applied inconsistently.**
+
+Symptom: `Page<User>` has correct content but `getTotalElements()`
+is wrong - it shows the total count without the filter.
+Root cause: Micronaut Data generates a separate COUNT query
+for pagination metadata; if the COUNT query does not apply
+the same WHERE conditions as the data query, totals are wrong.
+Diagnosis: enable SQL logging and compare the SELECT and
+COUNT queries. Fix: use a `@Query` with matching `countQuery`
+attribute for complex queries: `@Query(value="SELECT u FROM
+User u WHERE ...", countQuery="SELECT COUNT(u) FROM User u WHERE ...")`.
+
+**Failure Mode 3: @Query with named parameters fails at
+startup because parameter names are not preserved.**
+
+Symptom: `@Query("FROM User WHERE email = :email")` fails
+with "Unknown parameter: email" at startup. Root cause:
+Java compiler removes method parameter names by default;
+Micronaut cannot read `:email` binding from the compiled
+class. Diagnosis: check if `-parameters` flag is set in
+the Micronaut compiler plugin. Fix: add `compilerArgs
+"-parameters"` to the Gradle compiler configuration;
+Micronaut's build tools usually include this automatically
+but custom builds may miss it.
 
 ---
 
@@ -945,7 +1239,7 @@ spec = spec.and(withItems())
 // Generates SELECT with JOIN FETCH items
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Or: use @EntityGraph on the repository method:
 ```java
@@ -955,7 +1249,7 @@ Page<Order> findAll(
     Pageable pageable);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* FETCH JOIN inside
 the specification (not just in the predicate). And
@@ -1076,6 +1370,12 @@ works because AOP is compile-time."
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: transaction not covering all operations
 @Singleton
@@ -1153,7 +1453,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The BAD case has no @Transactional:
+> **Code walkthrough:** The BAD case has no @Transactional:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > each service call runs in its own transaction. If
 > createShipment throws, inventory is already deducted
 > with no rollback. The GOOD case wraps all three ops
@@ -1204,6 +1504,44 @@ MyCheckedException.class) for checked exceptions.
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Transaction Management provides declarative
+transaction control via `@Transactional` AOP annotations.
+Transactions wrap database operations to ensure atomicity -
+either all operations succeed or all are rolled back.
+
+**How it works:**
+
+`@Transactional` is a compile-time AOP annotation. Micronaut
+generates a subclass of the annotated class that overrides
+`@Transactional` methods to:
+1. Begin a transaction (or join an existing one)
+2. Execute the original method
+3. Commit on success, rollback on unchecked exception
+
+Propagation behaviors (mirrors Spring semantics):
+- `REQUIRED` (default): join existing transaction or create new
+- `REQUIRES_NEW`: always create a new transaction (suspends current)
+- `MANDATORY`: must join existing; throws if no active transaction
+- `SUPPORTS`: join if exists; proceed without if not
+- `NEVER`: throw if transaction exists
+
+Rollback rules: by default, rolls back on `RuntimeException`
+and `Error`. Checked exceptions do NOT trigger rollback.
+Use `rollbackFor = [CheckedException.class]` to roll back
+on checked exceptions.
+
+**Why it matters:**
+
+Transaction boundaries ensure database consistency. Misplaced
+`@Transactional` (on wrong layer, wrong propagation) causes
+data inconsistency that is difficult to debug in production.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "@Transactional makes a method transactional.
@@ -1227,10 +1565,10 @@ instead of a distributed transaction."
 
 ### 🎯 Interview Deep-Dive
 
-| Experience | Time | Depth |
-|---|---|---|
-| Senior | 8 min | Propagation, isolation, readOnly, failure modes |
-| Staff | 12 min | Transaction boundaries, outbox pattern, saga, lock contention |
+| Experience| Time| Depth|
+|---|------------|-------------------------------------------------------------|
+| Senior| 8 min| Propagation, isolation, readOnly, failure modes|
+| Staff| 12 min| Transaction boundaries, outbox pattern, saga, lock contention|
 
 ---
 
@@ -1280,18 +1618,17 @@ public void processOutbox() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative traice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Outbox is a pattern,
 not a feature. The transactional guarantee comes from
 writing to the DB in the same transaction.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Propagation semantics, isolation levels, @Transactional self-invocation. |
-| Hiring Manager | Transaction = data integrity. |
-| Bar Raiser | REQUIRES_NEW for audit, readOnly optimization, outbox pattern, lock contention. |
-| Peer Engineer | "Moved event publishing from inside the transaction to the outbox poller. Lost zero events in the last 6 months." |
+| Interviewer Type| Emphasis|
+| Technical Panel| Propagation semantics, isolation levels, @Transactional self-
+| Hiring Manager| Transaction = data integrity.|
+| Bar Raiser| REQUIRES_NEW for audit, readOnly optimization, outbox pattern, loc
+| Peer Engineer| "Moved event publishing from inside the transaction to the outb
 
 ---
 
@@ -1301,21 +1638,21 @@ writing to the DB in the same transaction.
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
@@ -1516,7 +1853,7 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** ReactiveStreamsCrudRepository
+> **Code walkthrough:** ReactiveStreamsCrudRepositoryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > provides reactive CRUD with Mono/Flux return types.
 > All operations are non-blocking via R2DBC. @Transactional
 > on Mono<Order> creates a reactive transaction - the
@@ -1545,6 +1882,47 @@ reactive chain from @Transactional methods.
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Data Reactive Repositories provide non-blocking
+database access using R2DBC (Reactive Relational Database
+Connectivity) - the reactive SQL driver specification. All
+repository methods return reactive types (`Mono<T>`, `Flux<T>`)
+instead of blocking objects.
+
+**How it works:**
+
+```java
+@R2dbcRepository(dialect = Dialect.POSTGRES)
+interface UserRepository extends ReactiveStreamsRepository<User, Long> {
+    Mono<User> findByEmail(String email);
+    Flux<User> findByRole(Role role);
+}
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+R2DBC uses non-blocking database drivers (PostgreSQL R2DBC,
+MySQL R2DBC). Queries execute on the R2DBC driver's I/O
+thread pool, not blocking the caller. The reactive type
+(Mono/Flux) allows composition with other reactive operations.
+
+Connection pooling: `r2dbc-pool` manages a reactive
+connection pool. Connections are acquired non-blockingly
+and returned when the reactive pipeline completes.
+
+**Why it matters:**
+
+In fully-reactive services (Netty + R2DBC), no thread is
+blocked waiting for I/O. A single JVM thread can serve
+thousands of concurrent requests by interleaving database
+operations. This enables very high throughput with minimal
+thread overhead.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Reactive repositories return Mono/Flux.
@@ -1564,6 +1942,53 @@ gateway, real-time services): reactive provides
 tangible scaling. The code complexity cost of reactive
 is real - weigh it against the actual concurrency
 requirement."
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Reactive repository method hangs
+indefinitely because the Mono is never subscribed.**
+
+Symptom: requests hang and eventually time out; no database
+activity visible. Root cause: the controller or service calls
+a reactive repository method but does not subscribe to the
+returned `Mono` (does not return it in the reactive chain or
+call `.block()`). In reactive programming, nothing executes
+until subscribed. Diagnosis: add `doOnSubscribe` and
+`doOnTerminate` logging to the reactive chain to verify
+subscription. Fix: ensure the `Mono` is returned to the
+controller, which subscribes to it when assembling the response.
+
+**Failure Mode 2: R2DBC connection pool exhaustion under
+concurrent load.**
+
+Symptom: requests start timing out under load; R2DBC
+connection pool shows all connections in use; new requests
+wait for a free connection. Root cause: R2DBC connection pool
+size is too small for the concurrency level; or reactive
+pipeline holds connections longer than necessary (not releasing
+after the query completes). Diagnosis: monitor R2DBC pool
+metrics. Fix: tune pool size (`r2dbc.pool.max-size`); ensure
+reactive pipelines release connections promptly by not holding
+a connection across unrelated operations; use `.flatMap` to
+compose database calls (each gets/releases its own connection)
+rather than nesting them.
+
+**Failure Mode 3: Reactive transactions not applied because
+@Transactional is missing or misconfigured.**
+
+Symptom: reactive repository calls that should be atomic are
+not rolled back when one fails; partially committed state
+in the database. Root cause: `@Transactional` for reactive
+code requires Micronaut's reactive transaction manager
+(`R2dbcTransactionManager`), not the standard
+`DataSourceTransactionManager`. Using the wrong manager
+(or no manager) means `@Transactional` has no effect on
+reactive code. Diagnosis: enable transaction logging; check
+if transaction boundaries appear in the log. Fix: configure
+`R2dbcTransactionManager`; ensure `@Transactional` is on
+a non-private method called through the Micronaut AOP proxy.
 
 ---
 
@@ -1614,7 +2039,7 @@ R2DBC driver stable → Reactive
 Otherwise → JDBC + @Blocking
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Start with JDBC. Migrate to reactive if profiling
 shows thread exhaustion under load.

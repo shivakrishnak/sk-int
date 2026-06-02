@@ -361,13 +361,13 @@ COMPLETE MAPPING: COMPOSE -> KUBERNETES
                     number: 8080
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This For production web services: Ingress + ClusterIP: example in section 'Unknown' demonstrates the concept in a realistic context. **KEY MECHANISM:** the runtime processes these instructions with the specific semantics shown - study the structure to understand the execution path. **WHY IT MATTERS:** applying this pattern correctly prevents the most common production failure modes for this concept. **WHAT BREAKS:** misapplying this pattern causes subtle bugs that appear only under concurrent load. **TAKEAWAY:** internalize the execution model before using this in production code.
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A complete docker-compose.yml -> Kubernetes
+> **Code walkthrough:** A complete docker-compose.yml -> Kubernetesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > migration for a three-service application (frontend, API, database).
 
 ```yaml
@@ -421,7 +421,7 @@ volumes:
   postgres_data:
 ```
 
-> **Code walkthrough:** The BAD Compose file has multiple migration
+> **Code walkthrough:** The BAD Compose file has multiple migrationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > challenges: mutable tags (`:latest`), single healthcheck serving both
 > traffic-routing and restart purposes, a monolithic `.env` file mixing
 > sensitive and non-sensitive config, flat service networking with DNS
@@ -624,7 +624,7 @@ spec:
       targetPort: 8080
 ```
 
-> **Code walkthrough:** The migration transforms every Compose concept
+> **Code walkthrough:** The migration transforms every Compose conceptice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to its K8s equivalent while resolving the anti-patterns. The database
 > uses StatefulSet (stable network identity and ordered pod management).
 > The API uses Deployment (stateless, horizontal scale). ConfigMap + ESO
@@ -827,7 +827,7 @@ Diagnosis:
   # it is blocked.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This it is blocked. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

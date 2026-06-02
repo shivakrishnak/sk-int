@@ -107,7 +107,7 @@ Thread E: latch.await() -> returns immediately (count already 0)
 Thread B: latch.countDown() -> no effect (count already 0)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Synchronizers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Backed by AQS: `CountDownLatch` uses a custom `Sync` extending AQS.
 The AQS state = count. `countDown()` uses a CAS loop to decrement
@@ -148,7 +148,7 @@ pattern, backed by AQS for efficiency.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example uses a busy-wait loop to check
+> **Code walkthrough:** The BAD example uses a busy-wait loop to checkice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for readiness, wasting CPU. The GOOD example uses CountDownLatch to
 > park threads efficiently. The production example shows parallel test
 > execution with a start gate and a completion latch.
@@ -168,7 +168,7 @@ void initialize() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L3 Synchronizers example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // GOOD: CountDownLatch - park threads until signal
@@ -187,7 +187,7 @@ void initialize() throws InterruptedException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This L3 Synchronizers example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // PRODUCTION: parallel task execution with completion tracking
@@ -225,7 +225,7 @@ class ParallelTestHarness {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -291,7 +291,7 @@ try { doWork(); }
 finally { latch.countDown(); } // always count down, even on exception
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Failure 2: Wrong initial count**
 Symptom: await() returns too early (count reaches 0 before all work done)
@@ -336,7 +336,7 @@ CountDownLatch startGate = new CountDownLatch(1);
 // N threads: startGate.await();
 // Orchestrator: startGate.countDown(); // releases all N at once
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use: concurrent stress tests, coordinated service startup.
 
@@ -347,7 +347,7 @@ CountDownLatch done = new CountDownLatch(N);
 // N tasks: done.countDown(); // after task completion
 // Waiter: done.await(); // unblocks when all N done
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Use: fan-out/fan-in, waiting for async tasks.
 
@@ -430,7 +430,7 @@ for (int i = 0; i < threadCount; i++) {
 startGate.countDown(); // open the gate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Without the start gate, threads would start at slightly different
 times (staggered). With the gate, all 20 attempt `incrementAndGet()`
@@ -500,7 +500,7 @@ class ServiceStartup {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Key decisions:
 - 30-second timeout: prevents infinite hang if a dependency fails
@@ -545,7 +545,7 @@ monitor.scheduleAtFixedRate(() ->
     0, 1, TimeUnit.SECONDS);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool managementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: ensure `countDown()` is ALWAYS in a `finally` block. If a
 worker fails, still signal the latch so waiters can detect the
@@ -633,7 +633,7 @@ CompletableFuture.allOf(
 ).orTimeout(5, TimeUnit.SECONDS).join();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* The start-gate pattern (CountDownLatch(1)
 signaling many threads) has no direct CompletableFuture equivalent.
@@ -679,7 +679,7 @@ void testConcurrentAccess() throws InterruptedException {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 This pattern:
 1. Creates maximum contention (start gate ensures simultaneous start)
@@ -728,7 +728,7 @@ for (Thread t : workers) {
 // Instead of three separate CountDownLatches
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 When CountDownLatch is still better: when the simpler API is sufficient.
 Phaser has higher complexity and learning curve. For a fixed,
@@ -744,14 +744,14 @@ aggregating. CyclicBarrier and CountDownLatch cannot tier.
 
 ### ⚖️ Comparison Table
 
-| Feature | CountDownLatch | CyclicBarrier | Phaser |
-|---|---|---|---|
-| Reusable | No | Yes (auto-reset) | Yes (phases) |
-| Dynamic participants | No | No | Yes |
-| Symmetric | No (asymmetric) | Yes | Configurable |
-| Barrier action | No | Yes | Per-phase |
-| Result collection | No | No | No |
-| Best for | One-time events | Repeated barriers | Dynamic, multi-phase |
+| Feature| CountDownLatch| CyclicBarrier| Phaser|
+|--------------------|---------------|-----------------|--------------------|
+| Reusable| No| Yes (auto-reset)| Yes (phases)|
+| Dynamic participants| No| No| Yes|
+| Symmetric| No (asymmetric)| Yes| Configurable|
+| Barrier action| No| Yes| Per-phase|
+| Result collection| No| No| No|
+| Best for| One-time events| Repeated barriers| Dynamic, multi-phase|
 
 **The deciding factor:**
 One-time gate or fan-out: CountDownLatch. Repeated synchronization
@@ -851,7 +851,7 @@ phase K before any can start phase K+1. Without synchronization,
 fast threads could start phase K+1 with stale data from slow threads.
 
 **CyclicBarrier - How it works:**
-```
+```plaintext
 Phase 1:
 T1 arrives -> wait (1/3 arrived)
 T2 arrives -> wait (2/3 arrived)
@@ -864,7 +864,7 @@ T3 arrives -> barrier trip!
 ...repeats
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Optional barrier action (`Runnable` passed to constructor): runs
 in the last thread to arrive. Use for phase boundary processing
@@ -898,7 +898,7 @@ Thread A: release() -> permits=1, D unblocked
 Thread D: acquire() -> permits=0, proceed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Semaphore(1): binary semaphore - mutex without ownership. Unlike
 ReentrantLock, any thread can `release()` (not just the one that
@@ -939,7 +939,7 @@ Semaphore:
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The CyclicBarrier example shows a parallel matrix
+> **Code walkthrough:** The CyclicBarrier example shows a parallel matrixice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > computation where all threads must synchronize at each row boundary.
 > The Semaphore example shows connection pool limiting - a production
 > pattern for controlling downstream resource concurrency.
@@ -983,7 +983,7 @@ class ParallelMatrixProcessor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ```java
 // Semaphore: connection pool limiting
@@ -1021,7 +1021,7 @@ class DatabaseConnectionLimiter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using Optional. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ---
 
@@ -1102,7 +1102,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using error handling. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 **Failure 2: Semaphore permit leak**
 Symptom: over time, available permits decrease to 0. System permanently
@@ -1116,7 +1116,7 @@ try { doWork(); }
 finally { semaphore.release(); } // even if doWork throws
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Failure 3: Semaphore.release() called without acquire()**
 Symptom: concurrent access exceeds the intended limit. More threads
@@ -1131,17 +1131,17 @@ double-release paths.
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 30-60 seconds |
-| Broken barrier | 2-3 minutes |
-| Semaphore vs Lock | 2-3 minutes |
-| Pattern (Semaphore) | 2-3 minutes |
-| Pattern (CyclicBarrier) | 2-3 minutes |
-| Debugging | 2-3 minutes |
-| Advanced | 2-3 minutes |
-| Trade-off | 1-2 minutes |
-| Phaser comparison | 1-2 minutes |
+  | Question Category       | Time to Answer |  
+|-----------------------|--------------|
+  | Definition              | 30-60 seconds  |  
+  | Broken barrier          | 2-3 minutes    |  
+  | Semaphore vs Lock       | 2-3 minutes    |  
+  | Pattern (Semaphore)     | 2-3 minutes    |  
+  | Pattern (CyclicBarrier) | 2-3 minutes    |  
+  | Debugging               | 2-3 minutes    |  
+  | Advanced                | 2-3 minutes    |  
+  | Trade-off               | 1-2 minutes    |  
+  | Phaser comparison       | 1-2 minutes    |  
 
 ---
 
@@ -1209,7 +1209,7 @@ if (barrier.isBroken()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The barrier is also broken by
 `barrier.reset()` itself when called while threads are waiting.
@@ -1305,7 +1305,7 @@ class ConcurrentRateLimiter {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Note: this limits concurrent operations (at most N in flight), not
 throughput (requests per second). For rate-per-second limiting, use
@@ -1366,7 +1366,7 @@ class ParallelImageProcessor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 The barrier ensures: all threads complete phase N before any thread
 starts phase N+1. Without the barrier, a fast thread could start
@@ -1393,7 +1393,7 @@ monitor.scheduleAtFixedRate(() -> {
     log.info("Queue length: {}", semaphore.getQueueLength());
 }, 0, 10, TimeUnit.SECONDS);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 Trend: if `availablePermits()` decreases over time, there are unreleased
 permits.
@@ -1417,7 +1417,7 @@ try {
 semaphore.release(); // only reached if no return
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Fix: every acquire must have a corresponding release in `finally`:
 ```java
@@ -1430,7 +1430,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `semaphore.availablePermits()` monitoring
 as a gauge metric in production monitoring. Alert if it reaches 0 or
@@ -1473,7 +1473,7 @@ Key behavior difference:
 // For connection pools: fair prevents starvation of specific threads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The default `Semaphore(N)` (non-fair)
 is usually correct for resource pool limiting where we care about
@@ -1557,7 +1557,7 @@ Thread consumer = new Thread(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Use cases:
 - Double-buffering: producer fills one buffer while consumer empties

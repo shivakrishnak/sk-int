@@ -125,7 +125,7 @@ PEER-TO-PEER (Network):
   (Direct communication, no central coordinator)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Agent Coordination Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Agent-to-agent communication options:**
 
@@ -146,7 +146,7 @@ Option 3: Direct message passing (Anthropic SDK)
   Simple but tightly coupled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Multi-Agent Coordination Patterns example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -294,7 +294,7 @@ async def orchestrated_research(
     return synth.content[0].text
 ```
 
-> **Code walkthrough:** This implements orchestrator-
+> **Code walkthrough:** This implements orchestrator-ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > worker with parallel fan-out. The orchestrator
 > uses Claude Sonnet (capable planning model) while
 > workers use Claude Haiku (cheaper, faster for simple
@@ -907,7 +907,7 @@ CHOREOGRAPHY:
   No orchestrator. Event bus connects everything.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Orchestration vs Choreography example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decision criteria:**
 
@@ -927,7 +927,7 @@ USE CHOREOGRAPHY when:
   - Fan-out to many independent handlers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Agent Orchestration vs Choreography example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1094,7 +1094,7 @@ bus.subscribe("research_done", analysis_handler)
 bus.subscribe("analysis_done", writing_handler)
 ```
 
-> **Code walkthrough:** The orchestration version is
+> **Code walkthrough:** The orchestration version isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > explicit: step 1 runs, its result is checked (the
 > orchestrator can validate before continuing), then
 > passed to step 2, whose result is passed to step 3.
@@ -1322,7 +1322,7 @@ bus.subscribe("analysis_done", writing_agent)
 bus.publish("task_received", {"topic": "AI trends"})
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Start the workflow: example demonstrates function definition using Kafka messaging. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 For production: use a persistent message queue
 (Redis Pub/Sub, AWS SQS, Kafka) instead of an

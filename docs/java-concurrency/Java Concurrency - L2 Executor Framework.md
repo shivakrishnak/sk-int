@@ -112,7 +112,7 @@ Task Submission → Work Queue → Thread Pool → Execution
            (AbortPolicy/CallerRunsPolicy/DiscardPolicy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Executor Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Core `ThreadPoolExecutor` parameters:
 - `corePoolSize`: threads kept alive even when idle
@@ -163,7 +163,7 @@ explicit.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD example uses `newCachedThreadPool()`
+> **Code walkthrough:** The BAD example uses `newCachedThreadPool()`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which creates unlimited threads under load - a production disaster.
 > The GOOD example uses bounded `ThreadPoolExecutor` with explicit queue
 > size and rejection policy. The production example shows full lifecycle
@@ -179,7 +179,7 @@ ExecutorService exec2 = Executors.newFixedThreadPool(10);
 // Under sustained load: queue grows to millions -> OOM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L2 Executor Framework example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **WHAT BREAKS: always name threads and bound queue size to detect saturation.**
 
 ```java
 // GOOD: bounded ThreadPoolExecutor for production
@@ -202,7 +202,7 @@ ThreadPoolExecutor exec = new ThreadPoolExecutor(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This L2 Executor Framework example demonstrates Java API usage using thread pool. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ```java
 // PRODUCTION: full lifecycle with graceful shutdown
@@ -245,7 +245,7 @@ class PaymentProcessor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool managementice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -330,17 +330,17 @@ uncaught exception handler on the thread factory.
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Definition | 30-60 seconds |
-| Mechanism | 1-2 minutes |
-| Comparison | 1-2 minutes |
-| Scenario | 2-3 minutes |
-| Debugging | 2-3 minutes |
-| Configuration | 2-3 minutes |
-| Advanced | 2-3 minutes |
-| Trade-off | 1-2 minutes |
-| Best Practice | 1-2 minutes |
+  | Question Category | Time to Answer |  
+|-----------------|--------------|
+  | Definition        | 30-60 seconds  |  
+  | Mechanism         | 1-2 minutes    |  
+  | Comparison        | 1-2 minutes    |  
+  | Scenario          | 2-3 minutes    |  
+  | Debugging         | 2-3 minutes    |  
+  | Configuration     | 2-3 minutes    |  
+  | Advanced          | 2-3 minutes    |  
+  | Trade-off         | 1-2 minutes    |  
+  | Best Practice     | 1-2 minutes    |  
 
 ---
 
@@ -520,7 +520,7 @@ and how would you fix it?**
 ExecutorService exec = Executors.newFixedThreadPool(100);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 A: This has several production issues:
 
@@ -570,7 +570,7 @@ CompletableFuture.supplyAsync(() -> fetchUser(), myExecutor)
     .thenAcceptAsync(user -> sendEmail(user), emailExecutor); // different pool
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Why executor choice matters:
 - Common ForkJoinPool: shared with parallel streams and all
@@ -687,7 +687,7 @@ public class WorkerPool {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using thread pool. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Key elements: named threads, daemon=false, uncaught exception handler,
 explicit rejection with metrics, graceful shutdown with timeout,
@@ -863,7 +863,7 @@ ThreadPoolExecutor(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using thread pool. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Queue types and their effect on pool behavior:
 
@@ -916,7 +916,7 @@ requires understanding the workload characteristics.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The BAD examples show the `Executors` factory
+> **Code walkthrough:** The BAD examples show the `Executors` factoryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > pitfalls - unbounded queues and thread counts. The GOOD example shows
 > a production-safe ThreadPoolExecutor with all seven parameters
 > explicitly configured. The monitoring example shows how to expose
@@ -933,7 +933,7 @@ ExecutorService bad2 = Executors.newCachedThreadPool();
 // Creates 10,000 threads for 10,000 simultaneous tasks -> OOM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **WHAT BREAKS: always name threads and bound queue size to detect saturation.**
 
 ```java
 // GOOD: ThreadPoolExecutor with safe, explicit configuration
@@ -966,7 +966,7 @@ ThreadPoolExecutor executor = new ThreadPoolExecutor(
 executor.allowCoreThreadTimeOut(true);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates null-safe value wrapping using thread pool. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 ```java
 // MONITORING: expose pool health via hooks
@@ -999,7 +999,7 @@ class InstrumentedExecutor extends ThreadPoolExecutor {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using thread pool. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -1156,7 +1156,7 @@ new ThreadPoolExecutor(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using thread pool. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Rationale:
 - 40 threads: each thread is blocked 80% → only 8 are on CPU at once,
@@ -1274,7 +1274,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Key states during shutdown:
 - `isShutdown()`: true after `shutdown()` or `shutdownNow()`
@@ -1319,7 +1319,7 @@ protected void afterExecute(Runnable r, Throwable t) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 `terminated()`: called when the executor transitions to TERMINATED state.
 Use for cleanup (metrics flush, connection pool shutdown).
@@ -1430,7 +1430,7 @@ executor.getCompletedTaskCount()// cumulative completed tasks
 executor.getTaskCount()         // total submitted (queued + running)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using thread pool. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Metrics to alert on:
 - `queue.size / queue.capacity` > 0.8: approaching saturation
@@ -1448,7 +1448,7 @@ In Spring Boot + Micrometer, wrap the executor:
 ```java
 ExecutorServiceMetrics.monitor(registry, executor, "myPool");
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 This auto-exposes all the above metrics with `executor.pool.name` tags.
 

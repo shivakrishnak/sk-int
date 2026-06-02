@@ -103,7 +103,7 @@ MINOR GC PHASES (stop-the-world):
 TYPICAL DURATION: 1-30ms (proportional to live Young Gen objects, not dead)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 GC Mechanics example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **G1 GC phases:**
 ```
@@ -125,7 +125,7 @@ FULL GC (fallback, avoid in production):
   STW for entire duration: seconds to minutes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 GC Mechanics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -180,7 +180,7 @@ if (gcOverheadPct > 5.0) {
 }
 ```
 
-> **Code walkthrough:** `GarbageCollectorMXBean` provides cumulative GC count and
+> **Code walkthrough:** `GarbageCollectorMXBean` provides cumulative GC count andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > time since JVM start. For monitoring: compute the delta between polling intervals.
 > A service where `G1 Old Generation: count` increments more than once per hour
 > under normal load signals Old Gen pressure (potential leak or undersized heap).
@@ -232,7 +232,7 @@ STW for concurrent relocation).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: G1 falls back to Full GC - "G1 is doing Full GC" in logs.**
-```
+```plaintext
 Symptom: GC log shows:
   [serious][gc] GC(234) Pause Full (G1 Compaction Pause)
   1024M->512M(2048M) 8.456s
@@ -266,7 +266,7 @@ Fix:
      -XX:+DisableExplicitGC (ignore System.gc() calls)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -427,7 +427,7 @@ grep "Pause Young" gc.log | awk 'NR>1 {print prev, $1} {prev=$1}'
 # Time between Minor GCs = 1/allocation_rate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Time between Minor GCs = 1/allocation_rate example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* GC log analysis is an O(1) diagnostic step
 that often reveals the root cause immediately. Before taking a heap dump
@@ -586,7 +586,7 @@ PHANTOM REFERENCE:
   - Modern: use java.lang.ref.Cleaner instead
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Time between Minor GCs = 1/allocation_rate example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -656,7 +656,7 @@ class ResourceHolder implements AutoCloseable {
 }
 ```
 
-> **Code walkthrough:** The EventBus_BAD pattern is the most common memory
+> **Code walkthrough:** The EventBus_BAD pattern is the most common memoryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > leak in Java applications. Every registered listener (e.g., a UI component)
 > is held by a strong reference in the List. Even after the UI component is
 > "destroyed" (removed from screen), it's still alive because EventBus holds
@@ -713,7 +713,7 @@ with soft values, or Caffeine with `weakValues()` or explicit eviction.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Memory leak via static field reference accumulation.**
-```
+```plaintext
 Symptom: Old Gen grows unboundedly over time
   GC.class_histogram shows: growing count of one specific class
   Heap dump shows: static field holding large growing collection
@@ -745,7 +745,7 @@ Prevention:
   - Load test with memory profiling before release
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -827,7 +827,7 @@ while ((polled = queue.poll()) != null) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Cleaner API (Java 9+) is built on top
 of PhantomReference + ReferenceQueue but hides the plumbing. Cleaner is the
@@ -911,7 +911,7 @@ class Buffer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `reachabilityFence` is needed only in the
 narrow case of: (1) object has post-GC cleanup (Cleaner/PhantomRef), (2) method
@@ -975,6 +975,12 @@ thread keeps running: the value stored in ThreadLocalMap remains until the key
 running). Therefore: ThreadLocal values in thread pool threads persist indefinitely
 unless explicitly removed.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: ThreadLocal not cleaned up in pool thread
 ExecutorService pool = Executors.newFixedThreadPool(10);
@@ -996,7 +1002,7 @@ pool.execute(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **WHAT BREAKS: always name threads and bound queue size to detect saturation.**
 
 *What separates good from great:* The ThreadLocal leak is the most common
 memory leak in Java web applications. Servlet containers (Tomcat, Jetty) use

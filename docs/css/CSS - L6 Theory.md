@@ -191,7 +191,7 @@ CSS PAINT API:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Object Model (CSSOM) and Houdini example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -242,7 +242,7 @@ function animateSize(el, targetPx) {
 // Every frame: layout flush + float parse + string alloc
 ```
 
-> **Code walkthrough:** Calling `getComputedStyle` in a
+> **Code walkthrough:** Calling `getComputedStyle` in aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > rAF loop forces a layout flush. Parsing the string to
 > float and re-stringifying adds GC-visible allocations.
 > At 60fps with multiple elements, this degrades performance.
@@ -265,7 +265,7 @@ async function animateWithTypedOM(el, targetPx) {
 }
 ```
 
-> **Code walkthrough:** `computedStyleMap()` returns
+> **Code walkthrough:** `computedStyleMap()` returnsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `CSSUnitValue` objects. The `.add()` method performs
 > typed arithmetic. `attributeStyleMap.set()` writes
 > without stringification. For hot-path animation code,
@@ -300,7 +300,7 @@ async function animateWithTypedOM(el, targetPx) {
 /* Without @property: no interpolation (string) */
 ```
 
-> **Code walkthrough:** Without `@property`, `--hue` is
+> **Code walkthrough:** Without `@property`, `--hue` isice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a string - browsers can't interpolate strings. `@property`
 > registers `--hue` as `<number>`, enabling numeric
 > interpolation. The `hsl()` gradient changes smoothly on
@@ -387,27 +387,27 @@ Checklist:
    }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| CSSOM getComputedStyle | 3 min | Cascade resolution |
-| CSSStyleSheet insertRule | 3 min | CSS-in-JS mechanism |
-| @property syntax types | 3 min | Typed custom properties |
-| CSS Paint API worklet | 4 min | Off-thread rendering |
-| CSS Typed OM vs getComputedStyle | 3-4 min | Performance |
-| Houdini Layout API | 3 min | Custom display values |
-| CSS Animation Worklet | 3 min | Off-thread animation |
-| Constructable Stylesheets | 3-4 min | Shadow DOM tokens |
-| @property browser support | 2 min | Progressive enhancement |
+| Scenario| Recommended Time| Key Signal|
+|----------------------|-------------------------------|-----------------------|
+| CSSOM getComputedStyle| 3 min| Cascade resolution|
+| CSSStyleSheet insertRule| 3 min| CSS-in-JS mechanism|
+| @property syntax types| 3 min| Typed custom properties|
+| CSS Paint API worklet| 4 min| Off-thread rendering|
+| CSS Typed OM vs getComputedStyle| 3-4 min| Performance|
+| Houdini Layout API| 3 min| Custom display values|
+| CSS Animation Worklet| 3 min| Off-thread animation|
+| Constructable Stylesheets| 3-4 min| Shadow DOM tokens|
+| @property browser support| 2 min| Progressive enhancement|
 
 ---
 
-**Q1: What is `getComputedStyle` and how does it differ
+**[JUNIOR] Q1 - [MECHANISM] What is `getComputedStyle` and how does it differ**
 from `el.style`?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Fundamental CSSOM API distinction.
@@ -458,8 +458,7 @@ for custom properties?"
 
 ---
 
-**Q2: How does the CSS Paint API work?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] How does the CSS Paint API work?** `[SENIOR]`**
 
 *Why they ask:* Tests depth of Houdini knowledge.
 
@@ -529,7 +528,7 @@ MECHANISM
 
 ---
 
-**Q3: What is the CSS Typed Object Model and when should
+**[JUNIOR] Q3 - [SCENARIO] What is the CSS Typed Object Model and when should**
 you use it?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Typed OM is the performance and ergonomics
@@ -585,8 +584,7 @@ upgrade to CSSOM.
 
 ---
 
-**Q4: What is the CSS Layout API and what would it enable?**
-`[STAFF]` ARCHITECTURE
+**[STAFF] Q4 - [ARCHITECTURE] What is the CSS Layout API and what would it enable?**
 
 *Why they ask:* Staff engineers track CSS capabilities.
 
@@ -649,7 +647,7 @@ upgrade to CSSOM.
 
 ---
 
-**Q5: What are Constructable Stylesheets and why do they
+**[MID] Q5 - [MECHANISM] What are Constructable Stylesheets and why do they**
 matter for Web Components?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Modern Shadow DOM architecture pattern.
@@ -721,7 +719,7 @@ matter for Web Components?** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q6: How does understanding CSSOM help with CSS-in-JS
+**[SENIOR] Q6 - [MECHANISM] How does understanding CSSOM help with CSS-in-JS**
 library selection?** `[SENIOR]` PRODUCTION
 
 *Why they ask:* Practical CSSOM implications for framework choices.
@@ -777,7 +775,7 @@ library selection?** `[SENIOR]` PRODUCTION
 
 ---
 
-**Q7: What is the browser rendering pipeline and where
+**[SENIOR] Q7 - [MECHANISM] What is the browser rendering pipeline and where**
 do Houdini hooks fit?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Holistic understanding of CSS engine architecture.
@@ -789,7 +787,7 @@ do Houdini hooks fit?** `[STAFF]` ARCHITECTURE
 > ```
 > Browser pipeline:
 > Style → Layout → Paint → Composite
->   |         |        |        |
+ >||||
 > @property  Layout  Paint  Animation
 >   API       API     API     Worklet
 > ```
@@ -839,7 +837,7 @@ do Houdini hooks fit?** `[STAFF]` ARCHITECTURE
 
 ---
 
-**Q8: How does @property integrate with CSS animations
+**[SENIOR] Q8 - [MECHANISM] How does @property integrate with CSS animations**
 and keyframes?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Practical animation pattern.
@@ -921,8 +919,7 @@ and keyframes?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q9: How will fully-shipped Houdini change CSS polyfilling?**
-`[STAFF]` ARCHITECTURE
+**[STAFF] Q9 - [ARCHITECTURE] How will fully-shipped Houdini change CSS polyfilling?**
 
 *Why they ask:* Architectural implication of extensible CSS.
 
@@ -974,26 +971,26 @@ and keyframes?** `[SENIOR]` MECHANISM
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | CSSOM API + @property mechanism |
-| Hiring Manager | CSS-in-JS selection via CSSOM |
-| Bar Raiser | Houdini pipeline hooks |
-| Peer Engineer | getComputedStyle vs Typed OM |
+| Interviewer Type| Emphasis|
+|--------------------------------|-------------------------------|
+| Technical Panel| CSSOM API + @property mechanism|
+| Hiring Manager| CSS-in-JS selection via CSSOM|
+| Bar Raiser| Houdini pipeline hooks|
+| Peer Engineer| getComputedStyle vs Typed OM|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| API | Phase | Thread | Production Ready | Use Case |
-|---|---|---|---|---|
-| getComputedStyle | Post-layout | Main | Yes | Read resolved styles |
-| el.style | Pre-layout | Main | Yes | Inline style mutation |
-| @property | Style | Main | Yes | Typed token animation |
-| CSS Paint API | Paint | Worklet | Mostly (Safari 17.2+) | Custom backgrounds |
-| CSS Typed OM | Any | Main | Yes | Type-safe style reads |
-| CSS Layout API | Layout | Worklet | No | Custom display values |
-| Constructable StyleSheets | Any | Main | Yes | Shadow DOM token sharing |
+| API| Phase| Thread| Production Ready| Use Case|
+|---|---|-----------------------|---------------------|------------------------|
+| getComputedStyle| Post-layout| Main| Yes| Read resolved styles|
+| el.style| Pre-layout| Main| Yes| Inline style mutation|
+| @property| Style| Main| Yes| Typed token animation|
+| CSS Paint API| Paint| Worklet| Mostly (Safari 17.2+)| Custom backgrounds|
+| CSS Typed OM| Any| Main| Yes| Type-safe style reads|
+| CSS Layout API| Layout| Worklet| No| Custom display values|
+| Constructable StyleSheets| Any| Main| Yes| Shadow DOM token sharing|
 
 ---
 
@@ -1017,7 +1014,7 @@ API      API      API      Worklet
 
 ```mermaid
 flowchart LR
-    S[Style\nCalculation] -->|@property\nCSS Props & Values| B1[Typed\nCustom Props]
+    S[Style\nCalculation] -->|@property\nCSS Props & Values| B1[Typed\nCustom Pr
     S --> L[Layout]
     L -->|CSS Layout API\nLayout Worklet| B2[Custom\ndisplay]
     L --> P[Paint]
@@ -1053,21 +1050,21 @@ flowchart LR
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # CSS Specification Process and Levels
@@ -1187,7 +1184,7 @@ BROWSER IMPLEMENTATION SIGNALS:
   Interop (wpt.fyi): vendor coordination priorities
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS Specification Process and Levels example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1236,7 +1233,7 @@ is a real spec; "CSS4" is not.
 }
 ```
 
-> **Code walkthrough:** The layered approach uses Baseline
+> **Code walkthrough:** The layered approach uses Baselineice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > status as the decision criterion: "widely available"
 > features need no @supports; "newly available" features
 > use @supports for graceful degradation; experimental
@@ -1319,27 +1316,27 @@ Diagnosis:
    /* .default in non-@supports block */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| CSS spec stages | 3 min | ED → WD → CR → REC |
-| CSS3 vs CSS modules | 3 min | Modular versioning |
-| Baseline signal | 3 min | Newly/Widely available |
-| Interop projects | 3 min | Vendor coordination |
-| Feature flags vs Origin Trials | 3 min | Experimental testing |
-| @supports usage | 3-4 min | Progressive enhancement |
-| Vendor prefixes history | 2-3 min | Why they existed |
-| CSS Nesting and @scope | 3-4 min | Architecture impact |
-| Design system CSS adoption | 3-4 min | Conservative model |
+| Scenario| Recommended Time| Key Signal|
+|--------------------|---------------------------------|-----------------------|
+| CSS spec stages| 3 min| ED → WD → CR → REC|
+| CSS3 vs CSS modules| 3 min| Modular versioning|
+| Baseline signal| 3 min| Newly/Widely available|
+| Interop projects| 3 min| Vendor coordination|
+| Feature flags vs Origin Trials| 3 min| Experimental testing|
+| @supports usage| 3-4 min| Progressive enhancement|
+| Vendor prefixes history| 2-3 min| Why they existed|
+| CSS Nesting and @scope| 3-4 min| Architecture impact|
+| Design system CSS adoption| 3-4 min| Conservative model|
 
 ---
 
-**Q1: What does it mean for a CSS feature to be at
+**[JUNIOR] Q1 - [MECHANISM] What does it mean for a CSS feature to be at**
 Candidate Recommendation?** `[SENIOR]` CONCEPTUAL
 
 *Why they ask:* Spec stages help with adoption decisions.
@@ -1375,7 +1372,7 @@ Candidate Recommendation?** `[SENIOR]` CONCEPTUAL
 
 ---
 
-**Q2: What is the Interop initiative and why does it
+**[JUNIOR] Q2 - [MECHANISM] What is the Interop initiative and why does it**
 matter?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Interop is where browser vendor coordination happens.
@@ -1418,7 +1415,7 @@ matter?** `[SENIOR]` ARCHITECTURE
 
 ---
 
-**Q3: How do Origin Trials work?** `[SENIOR]` PRODUCTION
+**[JUNIOR] Q3 - [MECHANISM] How do Origin Trials work?** `[SENIOR]` PRODUCTION**
 
 *Why they ask:* Origin Trials enable testing experimental features.
 
@@ -1460,7 +1457,7 @@ matter?** `[SENIOR]` ARCHITECTURE
 
 ---
 
-**Q4: Why did vendor prefixes exist and why were they
+**[MID] Q4 - [MECHANISM] Why did vendor prefixes exist and why were they**
 deprecated?** `[SENIOR]` CONCEPTUAL
 
 *Why they ask:* Historical context explains CSS evolution.
@@ -1507,7 +1504,7 @@ deprecated?** `[SENIOR]` CONCEPTUAL
 
 ---
 
-**Q5: How should a design system manage CSS feature
+**[MID] Q5 - [DESIGN] How should a design system manage CSS feature**
 adoption for 50+ consuming teams?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Staff-level adoption strategy for high-impact systems.
@@ -1564,7 +1561,7 @@ adoption for 50+ consuming teams?** `[STAFF]` ARCHITECTURE
 
 ---
 
-**Q6: How do CSS Nesting and @scope change CSS
+**[SENIOR] Q6 - [MECHANISM] How do CSS Nesting and @scope change CSS**
 architecture?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* These features reshape CSS authoring patterns.
@@ -1637,7 +1634,7 @@ architecture?** `[SENIOR]` ARCHITECTURE
 
 ---
 
-**Q7: What CSS features will significantly impact development
+**[SENIOR] Q7 - [MECHANISM] What CSS features will significantly impact development**
 in the next 2 years?** `[STAFF]` ARCHITECTURE
 
 *Why they ask:* Staff engineers advise on technology strategy.
@@ -1695,7 +1692,7 @@ in the next 2 years?** `[STAFF]` ARCHITECTURE
 
 ---
 
-**Q8: How does @supports improve on vendor prefixes for
+**[SENIOR] Q8 - [MECHANISM] How does @supports improve on vendor prefixes for**
 progressive enhancement?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Practical @supports usage.
@@ -1759,7 +1756,7 @@ progressive enhancement?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q9: How does the CSS specification interact with
+**[STAFF] Q9 - [MECHANISM] How does the CSS specification interact with**
 accessibility standards?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Holistic web standards understanding.
@@ -1822,26 +1819,25 @@ accessibility standards?** `[SENIOR]` ARCHITECTURE
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Spec stages + Interop |
-| Hiring Manager | Design system adoption strategy |
-| Bar Raiser | Baseline + Origin Trials |
-| Peer Engineer | @supports and CSS nesting |
+| Interviewer Type| Emphasis|
+|------------------------------|---------------------------------|
+| Technical Panel| Spec stages + Interop|
+| Hiring Manager| Design system adoption strategy|
+| Bar Raiser| Baseline + Origin Trials|
+| Peer Engineer| @supports and CSS nesting|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Source | What It Tells You | Best For |
-|---|---|---|
-| Baseline (web.dev) | Safe / not-yet-safe signal | Quick adoption decision |
-| Can I Use | % global support + browser matrix | Share with PMs |
-| MDN Compat | Browser version details + notes | Debug browser issues |
-| Chrome Status | Chrome implementation timeline | Chrome ETA |
-| WebKit Status | Safari implementation status | Safari timeline |
-| Interop (wpt.fyi) | Cross-browser coordination | 6-12 month forecast |
-| CSS WG GitHub | Raw spec discussion | Deep feature design |
+| Source| What It Tells You| Best For|
+| Baseline (web.dev)| Safe / not-yet-safe signal| Quick adoption decision|
+| Can I Use| % global support + browser matrix| Share with PMs|
+| MDN Compat| Browser version details + notes| Debug browser issues|
+| Chrome Status| Chrome implementation timeline| Chrome ETA|
+| WebKit Status| Safari implementation status| Safari timeline|
+| Interop (wpt.fyi)| Cross-browser coordination| 6-12 month forecast|
+| CSS WG GitHub| Raw spec discussion| Deep feature design|
 
 ---
 

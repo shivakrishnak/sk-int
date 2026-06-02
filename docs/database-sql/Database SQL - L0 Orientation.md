@@ -106,7 +106,7 @@ Problem 4 - INTEGRITY
   Database: FOREIGN KEY constraint rejects it.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why Databases Exist example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **What a DBMS provides:**
 
@@ -147,7 +147,7 @@ COMMIT;
 -- Lock released. Next transaction sees updated value.
 ```
 
-> **Code walkthrough:** `SELECT ... FOR UPDATE` acquires an exclusive
+> **Code walkthrough:** `SELECT ... FOR UPDATE` acquires an exclusiveice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > row lock within the transaction. Any concurrent transaction trying to
 > modify this row must wait until this transaction commits or rolls back.
 > This serializes the two concurrent updates, preventing the lost update.
@@ -178,7 +178,7 @@ VALUES (9999, 150.00);
 -- Data stays clean. No application code needed.
 ```
 
-> **Code walkthrough:** The `REFERENCES customers(id)` clause adds a
+> **Code walkthrough:** The `REFERENCES customers(id)` clause adds aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > foreign key constraint. Every INSERT or UPDATE to `orders.customer_id`
 > is checked: does this customer ID exist in the customers table? If not:
 > the database rejects it with an error. `CHECK (amount > 0)` prevents
@@ -268,7 +268,7 @@ existing data for violations before adding the constraint.
 | 3-minute explanation | 30s-3m | Four problems + ACID |
 | Deep questions | 3m+ | Internals and trade-offs |
 
-**Q1: Why was the relational model a breakthrough over hierarchical DBs?**
+**[JUNIOR] Q1 - [MECHANISM] Why was the relational model a breakthrough over hierarchical DBs?**
 
 🗣️ "Hierarchical databases (IBM IMS, 1960s) modeled data as trees. To
 find all orders for a customer: navigate down the customer node. But
@@ -278,7 +278,7 @@ stored data in flat tables with no assumed navigation path. SQL lets you
 query any relationship. The optimizer finds the path. Query logic is
 separated from storage structure - that independence is the breakthrough."
 
-**Q2: What does ACID mean and why does each property matter?**
+**[JUNIOR] Q2 - [MECHANISM] What does ACID mean and why does each property matter?**
 
 🗣️ "Atomicity: a transaction is all-or-nothing. A payment debiting one
 account and crediting another either completes both or neither. No partial
@@ -288,7 +288,7 @@ see each other's partial writes. Durability: once committed, the data
 survives crashes - the write-ahead log is replayed on recovery. Each
 property addresses a specific real failure mode."
 
-**Q3: What is the difference between a database and a data warehouse?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between a database and a data warehouse?**
 
 🗣️ "OLTP (transactional database): optimized for many small, fast reads
 and writes by concurrent users. Row-oriented storage, normalized schema.
@@ -298,7 +298,7 @@ rows is faster), denormalized star schema, batch loads. OLTP: 'update this
 order'; OLAP: 'total revenue by region for 5 years.' Same SQL language,
 completely different physical architecture."
 
-**Q4: Why do databases use pages as the unit of storage?**
+**[MID] Q4 - [MECHANISM] Why do databases use pages as the unit of storage?**
 
 🗣️ "Disks read/write in blocks (typically 4-8KB). Reading a single byte
 reads the entire block. Database pages match disk block size - 8KB in
@@ -308,7 +308,7 @@ page load together on range scans. This alignment minimizes wasted I/O.
 Table and index physical organization matters because it determines how
 many rows fit per page read."
 
-**Q5: When would you choose a file over a database?**
+**[MID] Q5 - [SCENARIO] When would you choose a file over a database?**
 
 🗣️ "For data that: (1) is accessed only by one process (no concurrency),
 (2) needs no querying (read/write the entire thing at once), (3) is
@@ -318,7 +318,7 @@ log files, large binary objects (store the file, put the path in the DB).
 Rule of thumb: if you need to query, update, or share data between
 multiple processes: use a database."
 
-**Q6: What happens when a database crashes mid-transaction?**
+**[SENIOR] Q6 - [FAILURE] What happens when a database crashes mid-transaction?**
 
 🗣️ "The write-ahead log (WAL) records every change before writing to
 data files. On restart: committed transactions are replayed (redo),
@@ -327,7 +327,7 @@ is in a consistent state as of the last committed transaction. No committed
 data is lost. No partial transaction is visible. This is durability and
 atomicity in practice."
 
-**Q7: How does a foreign key constraint affect write performance?**
+**[SENIOR] Q7 - [MECHANISM] How does a foreign key constraint affect write performance?**
 
 🗣️ "Every INSERT or UPDATE on the child table triggers a lookup: does
 the referenced parent row exist? This is an index lookup on the parent's
@@ -486,7 +486,7 @@ CREATE TABLE order_items (
 );
 ```
 
-> **Code walkthrough:** `customers` uses a surrogate primary key
+> **Code walkthrough:** `customers` uses a surrogate primary keyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > (`GENERATED ALWAYS AS IDENTITY`). `orders` has a FK `customer_id`
 > with `ON DELETE RESTRICT`: cannot delete a customer who has orders.
 > The index on `orders(customer_id)` is essential - every JOIN and
@@ -560,7 +560,7 @@ AND NOT EXISTS (
     AND a.attnum = ANY(i.indkey));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Tables, Keys, and Relationships example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: `CREATE INDEX idx_{table}_{col} ON {table}({col})`.
 
@@ -568,7 +568,7 @@ Fix: `CREATE INDEX idx_{table}_{col} ON {table}({col})`.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Difference between primary key and unique constraint?**
+**[JUNIOR] Q1 - [TRADE-OFF] Difference between primary key and unique constraint?**
 
 🗣️ "A primary key is the designated row identifier: one per table, implies
 NOT NULL and UNIQUE, creates an index automatically. A unique constraint
@@ -577,7 +577,7 @@ NULLs are allowed in standard SQL since NULL != NULL). The primary key
 is the target for FK references. Unique constraints enforce business rules
 (email must be unique, but email is not the primary key since it can change)."
 
-**Q2: Composite primary key vs. surrogate key - when to use each?**
+**[JUNIOR] Q2 - [SCENARIO] Composite primary key vs. surrogate key - when to use each?**
 
 🗣️ "Composite primary keys in junction tables (order_items, user_roles)
 are natural: (order_id, product_id) is the natural identity. Adding a
@@ -587,7 +587,7 @@ the 'natural key changed' problem. Exception: short, stable natural keys
 (ISO country code 'US', 'GB') make data self-documenting and are simpler
 as primary keys."
 
-**Q3: What are update anomalies and how does normalization prevent them?**
+**[JUNIOR] Q3 - [MECHANISM] What are update anomalies and how does normalization prevent them?**
 
 🗣️ "An update anomaly: a fact stored in multiple places requires changing
 multiple rows. If customer city is stored in every orders row: a move
@@ -597,7 +597,7 @@ customers (depends on customer_id), not orders. Update it once:
 every reference sees the new value. Cost of normalization: JOINs needed
 to reassemble data for queries."
 
-**Q4: What is referential integrity and how is it enforced?**
+**[MID] Q4 - [MECHANISM] What is referential integrity and how is it enforced?**
 
 🗣️ "Referential integrity: every FK value in a child table must match
 an existing PK in the parent. On INSERT/UPDATE to the child: the database
@@ -607,7 +607,7 @@ and blocks, cascades, or nullifies per the constraint action. Violation
 means you have references to non-existent entities - queries return
 wrong results."
 
-**Q5: How does NULL affect primary key and unique constraint behavior?**
+**[MID] Q5 - [MECHANISM] How does NULL affect primary key and unique constraint behavior?**
 
 🗣️ "Primary keys cannot be NULL - an unknown identifier is meaningless.
 Unique constraints: in standard SQL (PostgreSQL), NULL != NULL, so
@@ -617,7 +617,7 @@ a unique index. When designing: if a column can be NULL, a unique
 constraint allows multiple NULL rows. Add NOT NULL if you need true
 uniqueness."
 
-**Q6: Why is storing comma-separated values in a column bad?**
+**[SENIOR] Q6 - [MECHANISM] Why is storing comma-separated values in a column bad?**
 
 🗣️ "Violates First Normal Form: multiple values in one column. Problems:
 (1) querying - 'find all rows with tag2' requires LIKE '%tag2%', full
@@ -627,7 +627,7 @@ manipulation; (4) aggregation - counting tag frequency requires string
 parsing. The relational solution: a tags table and a junction table.
 Any query uses indexes and set operations."
 
-**Q7: When does a surrogate key cause problems?**
+**[SENIOR] Q7 - [MECHANISM] When does a surrogate key cause problems?**
 
 🗣️ "Three cases: (1) UUID primary keys (random 128-bit) cause B-tree
 index fragmentation - new keys insert randomly, causing page splits.
@@ -739,7 +739,7 @@ TCL - Transaction Control Language:
   Manages transaction boundaries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The Declarative Query Language example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **SQL execution order:**
 
@@ -761,7 +761,7 @@ ORDER BY total DESC;
 -- 6. ORDER BY -> sort by total DESC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This The Declarative Query Language example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
@@ -786,7 +786,7 @@ GROUP BY customer_id
 HAVING SUM(amount) > 1000;        -- filters after group
 ```
 
-> **Code walkthrough:** The BAD query fails because `total_amount` is a
+> **Code walkthrough:** The BAD query fails because `total_amount` is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > SELECT alias - it does not exist when WHERE executes (step 2).
 > The GOOD query: `created_at >= ...` in WHERE filters rows before grouping
 > (efficient: fewer rows to aggregate). `HAVING SUM(amount) > 1000`
@@ -815,7 +815,7 @@ GROUP BY c.id, c.email;
 -- 1 query, 1 database round trip.
 ```
 
-> **Code walkthrough:** The BAD pattern is the N+1 problem: N customers =
+> **Code walkthrough:** The BAD pattern is the N+1 problem: N customers =ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > N+1 queries, each with network latency. For 1,000 customers: 1,001
 > round trips. The GOOD pattern: one JOIN collects all data in one query.
 > The database joins at the storage level using indexes - far faster than
@@ -880,7 +880,7 @@ WHERE created_at >= '2024-01-01'
   AND created_at <  '2025-01-01'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates index structure. **KEY MECHANISM:** B-tree indexes support equality and range queries; partial indexes reduce index size. **WHY IT MATTERS:** index on low-cardinality column (e.g., boolean) is often slower than sequential scan. **TAKEAWAY: add indexes based on EXPLAIN ANALYZE output, not guesses - unused indexes waste write I/O.**
 
 **Failure: GROUP BY on high-cardinality column exhausts memory**
 
@@ -893,7 +893,7 @@ an index covers the GROUP BY column.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the difference between WHERE and HAVING?**
+**[JUNIOR] Q1 - [TRADE-OFF] What is the difference between WHERE and HAVING?**
 
 🗣️ "WHERE filters individual rows before aggregation. HAVING filters
 groups after aggregation. Execution order: WHERE runs before GROUP BY,
@@ -901,7 +901,7 @@ HAVING runs after. Use WHERE whenever possible: filtering before
 aggregation reduces the rows the database must group. HAVING is only
 appropriate when filtering on an aggregate function result (SUM, COUNT, MAX)."
 
-**Q2: Why doesn't SQL guarantee row order without ORDER BY?**
+**[JUNIOR] Q2 - [MECHANISM] Why doesn't SQL guarantee row order without ORDER BY?**
 
 🗣️ "SQL tables are sets - unordered. The database returns rows in any
 order convenient for the execution plan: index order, hash join output
@@ -909,7 +909,7 @@ order, insertion order. This can change between runs based on buffer
 pool state or planner decisions. Applications relying on implicit order
 are brittle. Always add ORDER BY for any result requiring a specific order."
 
-**Q3: What does DISTINCT do and what is its cost?**
+**[JUNIOR] Q3 - [MECHANISM] What does DISTINCT do and what is its cost?**
 
 🗣️ "DISTINCT eliminates duplicate rows from the result. The database
 must sort or hash the entire result to identify duplicates. Cost: O(n log n)
@@ -918,7 +918,7 @@ is faster. If doing GROUP BY anyway: grouping already eliminates duplicates.
 Overuse of DISTINCT often signals a JOIN producing duplicates due to a
 missing GROUP BY."
 
-**Q4: When should you use a subquery vs. a JOIN?**
+**[MID] Q4 - [SCENARIO] When should you use a subquery vs. a JOIN?**
 
 🗣️ "JOINs and subqueries often produce identical results; modern optimizers
 frequently rewrite one to the other. Prefer JOIN for combining columns
@@ -927,7 +927,7 @@ short-circuits on the first match. Prefer NOT EXISTS for exclusion queries.
 Correlated subqueries execute once per outer row - often inefficient;
 rewrite as a JOIN or CTE for large tables."
 
-**Q5: What is a window function and how does it differ from GROUP BY?**
+**[MID] Q5 - [MECHANISM] What is a window function and how does it differ from GROUP BY?**
 
 🗣️ "GROUP BY collapses rows into one row per group. Window functions
 aggregate over rows related to the current row but keep all rows.
@@ -936,7 +936,7 @@ numbers each order per customer without collapsing the rows. Use cases:
 ranking (top N per group), running totals, moving averages, lag/lead
 comparisons. Window functions execute after GROUP BY, before ORDER BY."
 
-**Q6: What is the N+1 query problem?**
+**[SENIOR] Q6 - [MECHANISM] What is the N+1 query problem?**
 
 🗣️ "N+1: one query fetches N entities, then one additional query per
 entity fetches related data: 1 + N = N+1 queries. For 1,000 orders,
@@ -945,7 +945,7 @@ the related data in the original query, or batch-fetch with an IN clause.
 In Hibernate: `@ManyToOne(fetch=LAZY)` triggers N queries unless
 fetched with JOIN FETCH."
 
-**Q7: What is a correlated subquery and when should you avoid it?**
+**[SENIOR] Q7 - [SCENARIO] What is a correlated subquery and when should you avoid it?**
 
 🗣️ "A correlated subquery references a column from the outer query and
 executes once per outer row. For 1,000 outer rows: the subquery runs

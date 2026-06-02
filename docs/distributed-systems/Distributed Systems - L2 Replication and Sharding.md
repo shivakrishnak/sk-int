@@ -107,7 +107,7 @@ Client → Primary (accepts writes)
          Replica 3 (read-only)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Data Replication Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Write path: client → primary only.
 Read path: client → any replica.
@@ -121,7 +121,7 @@ Client B → Primary 2 (accepts writes)
           Primary 1 ↔ Primary 2 (sync bidirectional)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Data Replication Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Write path: any primary.
 Conflict: both primaries accept conflicting writes simultaneously.
@@ -136,7 +136,7 @@ Client → reads from R nodes (quorum read)
 W + R > N → guaranteed to see latest write
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Data Replication Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 N = total replicas, W = write quorum, R = read quorum.
 No primary/replica distinction.
@@ -155,7 +155,7 @@ Async: Client → Primary → ACK
        Cons: replica lag = potential data loss
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Data Replication Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Most production systems use semi-synchronous replication: at least
@@ -190,6 +190,12 @@ a trade-off on this axis."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // REPLICATION LAG: detecting and handling stale reads
@@ -241,7 +247,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The BAD example routes all reads to the replica
+> **Code walkthrough:** The BAD example routes all reads to the replicaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > without considering replication lag. Immediately after a write, the
 > replica may lag by 100-500ms (or more under load). The GOOD example
 > routes post-write reads to the primary (guaranteed to see the write)
@@ -340,10 +346,9 @@ Symptom: WAL (Write-Ahead Log) disk fills up, database performance degrades, eve
 
 #### Production Failures
 
-Q: Replication lag suddenly increases from 50ms to 30 seconds on a
-MySQL read replica. What happened and how do you diagnose?
+**[JUNIOR] Q1 - [DEBUGGING] Replication lag suddenly increases from 50ms to 30 seconds on a MySQL read replica. What happened and how do you diagnose?**
 
-A: Check the replica's lag metric: `SHOW SLAVE STATUS\G` → Seconds_Behind_Master.
+Check the replica's lag metric: `SHOW SLAVE STATUS\G` → Seconds_Behind_Master.
 A spike to 30s could be: (1) a large transaction on the primary
 (DDL or bulk update) blocking the replica's single-threaded apply
 worker, (2) high write load on the primary overwhelming the replica's
@@ -355,10 +360,9 @@ a long-running apply thread. Check primary binlog for large transactions:
 size on primary, (3) switch to statement-based row filtering if schema
 heavy.
 
-Q: After a primary failover, the new primary is missing the last 5
-writes that clients confirmed. Why?
+**[JUNIOR] Q2 - [MECHANISM] After a primary failover, the new primary is missing the last 5 writes that clients confirmed. Why?**
 
-A: Async replication: the old primary acknowledged writes before
+Async replication: the old primary acknowledged writes before
 replicating them. The replica that was promoted to primary had
 Seconds_Behind_Master > 0 at failover time. Those writes were
 in the old primary's binlog but not yet applied to the replica.
@@ -368,10 +372,9 @@ were lost. Fix for prevention: use semi-synchronous replication
 before the primary acknowledges. Or use AWS RDS Multi-AZ which
 provides synchronous replication to the standby.
 
-Q: Read replica is serving stale data 10 minutes after a write.
-Users are complaining.
+**[JUNIOR] Q3 - [MECHANISM] Read replica is serving stale data 10 minutes after a write. Users are complaining.**
 
-A: Replica lag: `SHOW SLAVE STATUS` shows Seconds_Behind_Master = 600.
+Replica lag: `SHOW SLAVE STATUS` shows Seconds_Behind_Master = 600.
 This is unusually high. Possible causes: a long-running transaction
 on the primary is blocking replication (single-threaded apply);
 a slow query on the replica is delaying the apply thread; the replica
@@ -383,7 +386,7 @@ parallel replication, or increase replica hardware.
 
 #### Candidate Mistakes
 
-Q: What is the difference between replication and backup?
+**[MID] Q4 - [MECHANISM] What is the difference between replication and backup?**
 
 **What NOT to say:** "They are basically the same - both protect your data."
 
@@ -397,7 +400,7 @@ database needs BOTH: replication for high availability (fast recovery
 from node failure) and backups for disaster recovery (restore after
 corruption or accidental deletion)."
 
-Q: In multi-primary replication, how do you resolve conflicts?
+**[MID] Q5 - [MECHANISM] In multi-primary replication, how do you resolve conflicts?**
 
 **What NOT to say:** "Last write wins - just use the latest timestamp."
 
@@ -413,12 +416,12 @@ possible, CRDTs or version-checking are safer than LWW."
 
 #### Questions to Ask the Interviewer
 
-Q: "What is the current replication lag SLA for the read replicas?"
+**[SENIOR] Q6 - [MECHANISM] "What is the current replication lag SLA for the read replicas?"**
 
 *Why:* This reveals operational maturity and whether read replicas are
 actually usable for the stated purpose.
 
-Q: "How is failover orchestrated - automatically or manually?"
+**[SENIOR] Q7 - [MECHANISM] "How is failover orchestrated - automatically or manually?"**
 
 *Why:* Shows understanding of MTTR and operational complexity.
 
@@ -547,7 +550,7 @@ shard_key range → shard
 1000000-1999999 → Shard 2
 2000000+        → Shard 3
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database Sharding example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pros: range queries on shard key are efficient.
 Cons: monotonically increasing keys (timestamps, auto-increment IDs)
@@ -558,7 +561,7 @@ create write hotspots on the latest shard.
 shard_id = hash(shard_key) % num_shards
 hash("user_42") % 4 = 2 → Shard 2
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database Sharding example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pros: even distribution.
 Cons: range queries require scatter-gather across all shards.
@@ -569,7 +572,7 @@ Ring with virtual nodes. Each physical shard covers
 multiple positions on the ring.
 Adding a shard: only adjacent virtual nodes migrate.
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database Sharding example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Pros: adding/removing shards requires minimal data movement.
 Cons: more complex to implement.
@@ -591,7 +594,7 @@ Solution: shard by user_id, not order_id.
 All of user 42's orders are on the same shard.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database Sharding example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The shard key must align with the most common query access pattern.
@@ -627,6 +630,17 @@ from this basic partitioning decision."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // SHARD ROUTER: routing writes and reads to correct shard
@@ -683,7 +697,7 @@ public class ShardRouter {
 }
 ```
 
-> **Code walkthrough:** The BAD example has no shard routing - it
+> **Code walkthrough:** The BAD example has no shard routing - itice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > queries all shards for every lookup, making every read O(n shards).
 > This is correct but does not provide any scalability benefit.
 > The GOOD example uses hash-based routing: given a userId, it computes
@@ -782,10 +796,9 @@ Symptom: application error when attempting to update a sharding key field (user 
 
 #### Production Failures
 
-Q: One shard is receiving 90% of all writes while others are idle.
-What is the cause and fix?
+**[JUNIOR] Q1 - [DEBUGGING] One shard is receiving 90% of all writes while others are idle. What is the cause and fix?**
 
-A: Hotspot caused by a poor shard key. Common causes: timestamp as
+Hotspot caused by a poor shard key. Common causes: timestamp as
 shard key (all new records go to the current time shard), sequential
 ID as shard key (all new records are high IDs, on the last shard),
 or low-cardinality shard key (only 5 values, with one very popular).
@@ -795,10 +808,9 @@ shard_key % num_shards`. Fix: re-shard with a better key (hash
 of user_id or UUID), or add a random prefix to the shard key to
 distribute writes artificially.
 
-Q: You need to add 2 new shards to a 4-shard cluster. How do you
-do it without downtime?
+**[JUNIOR] Q2 - [MECHANISM] You need to add 2 new shards to a 4-shard cluster. How do you do it without downtime?**
 
-A: With consistent hashing: (1) add the new shards to the ring
+With consistent hashing: (1) add the new shards to the ring
 (they take over responsibility for a portion of the key range from
 adjacent shards). (2) Migration: the existing shards stream their
 data for the newly-assigned key ranges to the new shards. (3) Once
@@ -812,7 +824,7 @@ write during transition, gradual cutover.
 
 #### Candidate Mistakes
 
-Q: How do you handle transactions that span multiple shards?
+**[JUNIOR] Q3 - [MECHANISM] How do you handle transactions that span multiple shards?**
 
 **What NOT to say:** "Just use a regular database transaction."
 
@@ -830,14 +842,12 @@ data model to avoid cross-shard transactions wherever possible."
 
 #### Questions to Ask the Interviewer
 
-Q: "What is the current write throughput and what is the projected
-growth that would necessitate sharding?"
+**[MID] Q4 - [MECHANISM] "What is the current write throughput and what is the projected growth that would necessitate sharding?"**
 
 *Why:* Establishes whether sharding is actually necessary now or a
 premature optimization.
 
-Q: "What is the primary access pattern - do most queries filter by
-the proposed shard key?"
+**[MID] Q5 - [MECHANISM] "What is the primary access pattern - do most queries filter by the proposed shard key?"**
 
 *Why:* The shard key must align with the primary query pattern, or
 every query becomes a scatter-gather.

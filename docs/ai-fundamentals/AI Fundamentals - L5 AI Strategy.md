@@ -188,7 +188,7 @@ Multi-provider  -> resilience, complexity
 Self-hosted     -> full control, operational burden
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This AI Model Selection and Governance Strategy example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -208,6 +208,11 @@ infrastructure reviews.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # Model selection decision framework as code
@@ -314,7 +319,7 @@ def select_model(
     return selected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Return cheapest candidate example demonstrates function definition using SQL. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **WHAT BREAKS: use None as default for mutable args and initialize inside the function body.**
 
 ```python
 # Model governance: version pinning and change management
@@ -349,7 +354,7 @@ def get_model_for_feature(feature_name: str) -> str:
 # 6. Monitor for 48h
 ```
 
-> **Code walkthrough:** The BAD version shows the
+> **Code walkthrough:** The BAD version shows theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > default anti-pattern: always use the most capable
 > model, which costs 15x more than needed for simple
 > tasks. The `select_model` function encodes the
@@ -512,7 +517,7 @@ Cost per call exceeded estimates.
 # Break-even: revenue_per_call > cost_per_call
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Break-even: revenue_per_call > cost_per_call example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 *Prevention:* Model cost per call at design time.
 Instrument actual token usage. Set cost budget per
@@ -573,7 +578,7 @@ Tier 3 (security + compliance review):
   any model not from Anthropic/OpenAI/Google/AWS
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Break-even: revenue_per_call > cost_per_call example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. Change management process. Model upgrades for
 production features go through:
@@ -676,7 +681,7 @@ Hosted API if:
   - Speed to production is critical
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Break-even: revenue_per_call > cost_per_call example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Hybrid: use hosted API for frontier tasks; self-
 hosted for high-volume, simple tasks where cost
@@ -781,7 +786,7 @@ class MultiProviderLLMClient:
             ].call(messages, system, **kwargs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition using error handling. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Provider selection for fallback: choose a provider
 with compatible API interface. OpenAI's API format
@@ -858,7 +863,7 @@ Cheapest model: $/call * calls/day * 30
 Mid-tier: $/call * calls/day * 30
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 5: select. Cheapest model that passes the
 quality bar at acceptable cost.
@@ -876,7 +881,7 @@ Date: 2025-01-15
 Next review: 2025-07-15
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 7: register in governance registry.
 
@@ -905,6 +910,11 @@ Model version pinning: explicitly specifying a dated
 model version identifier in production code rather
 than a floating alias.
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
 ```python
 # BAD: floating alias - provider can update anytime
 model = "claude-haiku"
@@ -914,7 +924,7 @@ model = "claude-3-5-haiku-latest"
 model = "claude-haiku-3-5-20241022"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This GOOD: pinned to specific dated version example demonstrates Python code pattern using SQL. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **WHAT BREAKS: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Why required for production:
 LLM providers update their models regularly. A "model
@@ -1052,7 +1062,7 @@ Decision: if Y < X AND quality >= current: adopt
           if Y > X: requires Z% quality justification
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GOOD: pinned to specific dated version example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Phase 4: security assessment. Run your OWASP LLM
 security checklist against the new model. Test
@@ -1338,7 +1348,7 @@ just listing the general trade-offs).
   -> [Governance Registry] (DPA, versions, deprecation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Flow:**
 

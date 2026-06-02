@@ -122,7 +122,7 @@ API GATEWAY PATTERN
   [Order Svc]  [User Svc]  [Product Svc]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Gateway Pattern example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Backend for Frontend (BFF) pattern:**
 
@@ -141,7 +141,7 @@ BFF PATTERN
                 [Internal Services]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This API Gateway Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **What should NOT be in the Gateway:**
 Business workflow orchestration, data aggregation with business
@@ -173,7 +173,7 @@ public class OrderGatewayFilter implements GatewayFilter {
 // Platform team is bottleneck for all product features.
 ```
 
-> **Code walkthrough:** Business aggregation in the Gateway filter
+> **Code walkthrough:** Business aggregation in the Gateway filterice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > makes it a smart pipe - the SOA ESB anti-pattern. The Gateway
 > calls two services and merges results with domain logic. Every
 > new product requirement that needs a different data combination
@@ -231,7 +231,7 @@ public class MobileOrderController {
 // API Gateway is unchanged. Platform team not blocked.
 ```
 
-> **Code walkthrough:** The API Gateway routes `/mobile/**` to the
+> **Code walkthrough:** The API Gateway routes `/mobile/**` to theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Mobile BFF instead of aggregating data. The Mobile BFF (owned
 > by the mobile product team) aggregates `Order` with `ProductImage`
 > data for mobile clients. When the mobile team needs a different
@@ -294,7 +294,7 @@ kubectl top pods -n gateway
 # CPU/memory spike or pod crash
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CPU/memory spike or pod crash example demonstrates HTTP request from shell using container. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 *Fix:* Multiple Gateway replicas across availability zones.
 Upstream load balancer with health checks routes around failed
@@ -313,7 +313,7 @@ grep "rate_limited=false" /var/log/gateway/access.log |
 # High-volume client with no rate limits applied
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High-volume client with no rate limits applied example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:* Rate limit keyed by JWT `sub` claim or API key, not IP
 address. Per-user limits prevent one client consuming all capacity.
@@ -480,7 +480,7 @@ filters:
       fallbackUri: forward:/fallback/orders
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This High-volume client with no rate limits applied example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Fallback options: cached response, degraded response (empty list
 with message), or 503 with `Retry-After` header.
@@ -581,7 +581,7 @@ Gateway routes version-prefixed paths to the appropriate service:
 - path(/api/v2/orders/**): order-service-v2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This v1 and v2 run simultaneously during migration example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Deprecation process: (1) announce deprecation date; (2) add
 `Deprecation` and `Sunset` response headers to v1 routes; (3)
@@ -865,7 +865,7 @@ InventorySvc:   subscribe, release, publish InventoryReleased
 OrderSvc:       subscribe, mark CANCELLED
 ```
 
-```
+```plaintext
 ORCHESTRATION SAGA (central coordinator)
 
 [OrderSaga Orchestrator]
@@ -881,7 +881,7 @@ FAILURE:
   5. --CancelOrder--------> OrderSvc (compensation)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Saga Pattern for Distributed Transactions example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Compensating transactions:**
 Each step has a corresponding compensation. `ReserveInventory`
@@ -922,7 +922,7 @@ public Order placeOrder(PlaceOrderCommand cmd) {
 }
 ```
 
-> **Code walkthrough:** `@Transactional` covers only the local
+> **Code walkthrough:** `@Transactional` covers only the localice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `orderRepo.save()`. The HTTP calls to `inventoryService` and
 > `paymentService` commit in their own databases. If `paymentService.charge()`
 > throws, Spring rolls back the local `Order`, but the inventory
@@ -1017,7 +1017,7 @@ public class PlaceOrderSaga {
 }
 ```
 
-> **Code walkthrough:** The Orchestration Saga persists its state
+> **Code walkthrough:** The Orchestration Saga persists its stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > before sending each command - if it crashes between the save and
 > the send, recovery reads the persisted state and resubmits the
 > command (Outbox pattern). `onPaymentFailed()` implements compensation:
@@ -1088,7 +1088,7 @@ WHERE status = 'RUNNING'
   AND started_at < NOW() - INTERVAL '5 minutes';
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Saga timeout monitor: a scheduled job finds stuck sagas
 and triggers compensation automatically. Or implement max-duration
@@ -1120,7 +1120,7 @@ public void refundPayment(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1273,7 +1273,7 @@ public void advanceSaga(UUID sagaId, SagaStep nextStep,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 Idempotent steps: recovery resubmits the last command. Receiving
 services must handle duplicates via (sagaId, stepId) idempotency key.
@@ -1395,7 +1395,7 @@ void placeOrderSaga_paymentFails_compensatesInventory() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Idempotency tests: replay the same reply event twice. Assert saga
 state and service states unchanged after second replay.
@@ -1482,28 +1482,28 @@ Great candidates define each with a use case, describe the time
 horizon distinction (Saga = seconds; Process Manager = days), and
 describe how they compose.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Compensation mechanics, isolation problem |
-| Hiring Manager | When Saga vs redesign service boundaries |
-| Bar Raiser | ACD vs ACID, semantic locks, testing strategy |
-| Peer Engineer | Choreography vs Orchestration, crash recovery |
+| Interviewer Type| Emphasis|
+|----------------|---------------------------------------------|
+| Technical Panel| Compensation mechanics, isolation problem|
+| Hiring Manager| When Saga vs redesign service boundaries|
+| Bar Raiser| ACD vs ACID, semantic locks, testing strategy|
+| Peer Engineer| Choreography vs Orchestration, crash recovery|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Property | Choreography Saga | Orchestration Saga | 2PC |
-|---|---|---|---|
-| Coordinator | None (event-driven) | Central orchestrator | Transaction coordinator |
-| Coupling | Low (events only) | Medium (orchestrator knows all) | High (all locked simultaneously) |
-| Isolation | None | None | Full (distributed locks) |
-| Scalability | High | Medium | Low |
-| Debugging | Hard (distributed traces) | Easy (one orchestrator log) | Hard (lock timeouts) |
-| Compensation | Per-service event handlers | Centralized in orchestrator | Coordinator-driven rollback |
-| Best for | Simple loose workflows (2-3 steps) | Complex workflows (5+ steps) | Single-database transactions |
-| Consistency | Eventual | Eventual | Immediate |
-| Technology | Kafka, RabbitMQ, Eventuate | Eventuate, Temporal, custom | JTA, XA transactions |
+| Property| Choreography Saga| Orchestration Saga| 2PC|
+|---|---------|-------------------------------|--------------------------------|
+| Coordinator| None (event-driven)| Central orchestrator| Transaction coordinato
+| Coupling| Low (events only)| Medium (orchestrator knows all)| High (all locked
+| Isolation| None| None| Full (distributed locks)|
+| Scalability| High| Medium| Low|
+| Debugging| Hard (distributed traces)| Easy (one orchestrator log)| Hard (lock 
+| Compensation| Per-service event handlers| Centralized in orchestrator| Coordin
+| Best for| Simple loose workflows (2-3 steps)| Complex workflows (5+ steps)| Si
+| Consistency| Eventual| Eventual| Immediate|
+| Technology| Kafka, RabbitMQ, Eventuate| Eventuate, Temporal, custom| JTA, XA t
 
 ---
 

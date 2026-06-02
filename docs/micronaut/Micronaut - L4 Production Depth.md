@@ -172,7 +172,7 @@ java -agentlib:native-image-agent=\
 ./mvnw package -Dpackaging=native-image
 ```
 
-> **Code walkthrough:** The multi-stage Dockerfile
+> **Code walkthrough:** The multi-stage Dockerfileice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > builds in the GraalVM container (3-10 min build
 > time) and copies only the native executable to a
 > minimal Debian image. The final image has no JVM,
@@ -224,6 +224,42 @@ java -agentlib:native-image-agent=\
 
 ---
 
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut GraalVM Native Image Build is the process of
+compiling a Micronaut application into a standalone native
+executable using GraalVM's ahead-of-time (AOT) compiler.
+The result: no JVM required at runtime, sub-100ms startup,
+minimal memory footprint.
+
+**How it works:**
+
+Build process:
+1. Standard Micronaut build (`javac` + APT)
+2. GraalVM's `native-image` tool performs static analysis
+   (points-to analysis) of all code reachable from the
+   application entry point
+3. All reachable code is compiled to native machine code
+4. Result: a platform-specific binary (`./myapp`)
+
+Micronaut's APT generates GraalVM hints (`reflect-config.json`,
+`resource-config.json`) for its own runtime requirements.
+Custom hints needed for libraries not pre-configured.
+
+Runtime: the binary starts the Micronaut application
+directly without JVM initialization. Startup: 20-100ms.
+Memory: 30-80MB for a typical REST service.
+
+**Why it matters:**
+
+Lambda cold start from 2-8s (JVM) to <100ms (native).
+Kubernetes pod density: 10 pods in memory budget of 2 pods
+JVM. Cloud cost reduction for memory-billed deployments.
+
+---
+
 ### 🎓 Answers by Seniority
 
 **Junior:** "Build with -Dpackaging=native-image. Result
@@ -244,6 +280,35 @@ acceptable for most microservices (network/DB latency
 dominates, not CPU throughput). For compute-intensive
 services (ML inference, heavy calculation): JVM with
 JIT is faster at sustained throughput."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut native image builds work
+out-of-the-box for all dependencies.**
+
+Micronaut includes GraalVM hints for its own core components
+(HTTP, DI, serialization). Third-party libraries that use
+reflection, dynamic class loading, JNI, or serialization
+may require additional configuration. Libraries without
+GraalVM support (no `reflect-config.json` or `@ReflectiveAccess`)
+need manual reflection configuration. Before committing to
+native image deployment, verify all dependencies with a
+test native build.
+
+**Misconception 2: Native image provides the same peak
+throughput as JVM + JIT.**
+
+JVM JIT compiles hot code paths adaptively based on
+runtime profiling - generating highly optimized machine code
+for actual usage patterns. Native AOT compiles all code at
+build time without runtime profiling. Result: native image
+has better COLD throughput but JVM+JIT may have higher
+PEAK throughput for CPU-intensive workloads after warmup.
+Native is superior for: cold start, memory efficiency,
+unpredictable traffic. JVM+JIT is superior for: sustained
+high-throughput CPU workloads, complex optimization opportunities.
 
 ---
 
@@ -276,7 +341,7 @@ public class OrderDto {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (uses generated configs automatically) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Option 2: @ReflectiveAccess for Jackson:
 ```java
@@ -287,7 +352,7 @@ public class OrderDto {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (uses generated configs automatically) example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Option 3: reflect-config.json:
 ```json
@@ -299,7 +364,7 @@ Option 3: reflect-config.json:
 }]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (uses generated configs automatically) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Recommendation: use micronaut-serde-jackson.
 It generates serialization code at compile time,
@@ -427,6 +492,12 @@ every ingredient before opening."
 
 ### 💻 Code Example
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: blocking startup with expensive init
 @Singleton
@@ -501,7 +572,7 @@ public class CacheWarmer
 }
 ```
 
-> **Code walkthrough:** The BAD case puts a 30-second
+> **Code walkthrough:** The BAD case puts a 30-secondice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > model load in @PostConstruct - the HTTP server doesn't
 > start until this completes. @Lazy on the GOOD version
 > defers creation until first use. CompletableFuture
@@ -509,6 +580,48 @@ public class CacheWarmer
 > but doesn't block startup. ServiceReadyEvent fires
 > after the HTTP server is bound - safe for cache warming
 > without delaying readiness.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Startup Performance Tuning is the practice of
+analyzing and optimizing the time from JVM start to
+"ready to serve traffic" for a Micronaut application.
+
+**How it works:**
+
+Key startup phases and tuning knobs:
+
+1. **JVM startup**: JVM itself takes 50-200ms. Reduce with
+   GraalVM native (eliminates JVM start) or class data sharing
+   (CDS, AppCDS reduces JVM startup).
+
+2. **Bean initialization**: Micronaut loads pre-built
+   `BeanDefinition` classes. Profiling: enable startup tracing
+   with `micronaut.startup.tracing=true` to see per-bean time.
+
+3. **@PostConstruct / @Context initialization**: beans with
+   startup work (DB warmup, cache load) add to startup time.
+   Profile with startup tracing; consider deferring non-
+   critical work to background tasks.
+
+4. **Embedded server bind**: Netty binding takes 5-50ms.
+   Reduce with `micronaut.server.worker-threads` tuning.
+
+5. **Application events**: `ApplicationStartedEvent` listeners
+   run synchronously. Move heavy initialization to async events.
+
+Metrics: measure startup from JVM launch to first request
+serviced successfully. Use `time java -jar app.jar & until
+curl http://localhost:8080/health; do sleep 0.1; done`.
+
+**Why it matters:**
+
+Sub-500ms startup enables Lambda cold starts within budget,
+rapid Kubernetes scale-out, and faster CI feedback.
 
 ---
 
@@ -523,6 +636,92 @@ idle pool connections small."
 migrations at startup (fix: pre-deploy step), connection
 pool pre-warming too many connections (fix: minimum-idle=2).
 ServiceReadyEvent for tasks that can run after startup."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut's startup is always
+sub-200ms regardless of application size.**
+
+Micronaut eliminates framework overhead (scanning, proxy
+generation) but does NOT eliminate application-specific
+startup work: loading database connection pools, reading
+configuration from remote sources (Consul, Vault), warming
+application-level caches, running `@PostConstruct` methods.
+A Micronaut application that connects to 3 databases and
+pre-warms 2 caches may take 2-3 seconds to start. The
+framework overhead is minimal; the application overhead
+is what remains.
+
+**Misconception 2: Enabling lazy initialization
+globally accelerates startup.**
+
+`micronaut.eager-init: false` delays bean initialization
+to first use. This REDUCES startup time but INCREASES
+first-request latency significantly (all beans initialized
+on first request). For Lambda functions: cold start is
+just moved to first request, which may have a latency SLO.
+For Kubernetes: the readiness probe may pass before the
+application is warmed, directing traffic to a cold pod.
+Lazy initialization is appropriate when some beans are
+rarely used and their startup cost is not worth paying upfront.
+
+**Misconception 3: Increasing JVM heap size improves
+startup performance.**
+
+Larger heap sizes actually INCREASE startup time because:
+the JVM must commit (or reserve) more virtual memory at
+startup, GC initialization is more expensive for large heaps,
+and initial heap allocation overhead is proportional to size.
+Startup performance benefits from SMALLER initial heap with
+sufficient max heap. Use `-Xms` = minimum needed at startup
+(typically 32-64MB), `-Xmx` = maximum for steady state.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Application passes readiness probe
+before all @PostConstruct work completes.**
+
+Symptom: first requests after pod startup fail because
+cache/initialization is not complete; health probe shows
+UP but responses are incorrect. Root cause: Kubernetes
+readiness probe hits `/health` while `@PostConstruct`
+methods are still running in background threads.
+Diagnosis: add timestamps to `@PostConstruct` logging;
+compare to first request timestamps. Fix: move initialization
+to an `ApplicationStartedEvent` listener and mark the
+application as ready only after all initialization completes;
+implement a custom readiness indicator that checks
+initialization state.
+
+**Failure Mode 2: Startup time increases linearly with
+each new bean added to the application.**
+
+Symptom: startup time grows from 300ms to 2s as the
+application adds more beans and features, exceeding Lambda
+cold start budgets. Root cause: each additional `@Context`
+or early-init singleton adds its initialization time to
+the critical path. Diagnosis: enable startup timing logging
+to identify expensive initializers. Fix: profile with
+`-Dmicronaut.startup.tracing=true`; defer non-critical
+initialization to background tasks after startup; use
+`@Context` only for truly infrastructure-critical beans.
+
+**Failure Mode 3: JVM class loading overhead dominates
+startup in containerized environments.**
+
+Symptom: startup is fast locally but slow in containers
+(600ms+ instead of 200ms). Root cause: containers often
+have slower disk I/O than local SSDs; class loading from
+JAR files is I/O-intensive. Diagnosis: compare startup
+times inside and outside container. Fix: enable JVM Class
+Data Sharing (`-Xshare:on`) with AppCDS to reduce class
+loading time; use fat-JAR (`./gradlew shadowJar`) to reduce
+JAR file count; consider GraalVM native image which
+eliminates class loading entirely.
 
 ---
 
@@ -551,7 +750,7 @@ readinessProbe:
   failureThreshold: 5        # Fail after 5 consecutive failures
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration patice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Total budget = initialDelaySeconds + (periodSeconds * failureThreshold)
 = 10 + (3 * 5) = 25 seconds
@@ -570,12 +769,12 @@ budget or optimize startup.
 actual budget from probe configuration (not just
 "initialDelaySeconds is the startup time").
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | @Lazy, startup phases, @PostConstruct. |
-| Hiring Manager | Startup speed = faster deployments. |
-| Bar Raiser | Startup budget, readiness probe math, Flyway strategy, async init. |
-| Peer Engineer | "Moved Flyway to a k8s init container. Startup time: 12s → 3s." |
+| Interviewer Type| Emphasis|
+|-----------|------------------------------------------------------------------|
+| Technical Panel| @Lazy, startup phases, @PostConstruct.|
+| Hiring Manager| Startup speed = faster deployments.|
+| Bar Raiser| Startup budget, readiness probe math, Flyway strategy, async init.
+| Peer Engineer| "Moved Flyway to a k8s init container. Startup time: 12s → 3s."
 
 ---
 
@@ -592,21 +791,21 @@ actual budget from probe configuration (not just
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Micronaut Anti-Patterns
@@ -773,7 +972,7 @@ class OrderServiceTest {
 }
 ```
 
-> **Code walkthrough:** The event loop anti-pattern
+> **Code walkthrough:** The event loop anti-patternice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is the most performance-damaging - a single blocked
 > event loop thread prevents all other requests from
 > being processed. @Blocking is the minimal fix.
@@ -781,6 +980,52 @@ class OrderServiceTest {
 > Constructor injection enables `new OrderService(mock)`
 > in tests. AtomicLong fixes the shared mutable state
 > race condition.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Anti-Patterns are implementation patterns that
+superficially work but undermine Micronaut's performance,
+compile-time guarantees, or maintainability. Recognizing
+these patterns is essential for production-quality Micronaut
+code.
+
+**Key anti-patterns:**
+
+1. **Reflection-based instantiation inside beans**: calling
+   `Class.forName()` or `Method.invoke()` bypasses Micronaut's
+   DI model and breaks native image.
+
+2. **ApplicationContext.getBean() scattered throughout
+   service code**: service locator pattern creates hidden
+   dependencies, makes testing harder, and bypasses
+   compile-time injection.
+
+3. **@Singleton on stateful request-scoped objects**: objects
+   that should hold per-request state (user session, request
+   tracking) in singletons create shared mutable state race
+   conditions.
+
+4. **Blocking I/O on Netty event loop threads**: JDBC calls,
+   synchronous HTTP, `Thread.sleep()` in request handlers
+   without `@ExecuteOn` block the event loop.
+
+5. **@ConfigurationProperties with mutable public fields**:
+   allows configuration mutation at runtime, breaking
+   immutability expectations.
+
+6. **Fat service beans doing everything**: large singleton
+   services with 50+ methods violate single responsibility
+   and make compile-time wiring complex.
+
+**Why it matters:**
+
+Anti-patterns accumulate technical debt that manifests as:
+performance degradation, flaky tests, native image
+incompatibility, and difficult-to-diagnose production issues.
 
 ---
 
@@ -795,6 +1040,92 @@ blocking the Netty event loop with JDBC. Symptom:
 throughput degrades as concurrency increases, even
 if individual requests are fast. Diagnosis: high
 thread contention on Netty worker threads in jstack."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: If it works in development and tests,
+it's not an anti-pattern.**
+
+Many Micronaut anti-patterns are invisible in development
+and low-traffic testing: blocking I/O only causes starvation
+under load, shared mutable state only races under concurrency,
+reflection breaks only in native image, service locator
+anti-pattern only hurts when teams grow and tests become
+fragile. Anti-patterns are FUTURE FAILURE MODES, not present
+bugs. Code review with anti-pattern awareness prevents them
+from reaching production at scale.
+
+**Misconception 2: ApplicationContext.getBean() is
+acceptable for dynamic bean resolution.**
+
+Spring developers are familiar with `applicationContext.
+getBean(Class.class)` for dynamic resolution. In Micronaut,
+this WORKS but is an anti-pattern: it creates service locator
+coupling (impossible to know dependencies from constructor
+signature), breaks constructor injection testing (cannot mock),
+and bypasses compile-time analysis (native image may not
+include the resolved type). Prefer `Provider<T>` injection
+for delayed initialization or `BeanContext.findBean()`
+only when truly dynamic resolution is unavoidable.
+
+**Misconception 3: Using @Singleton for all beans is
+safe because Micronaut manages thread safety.**
+
+Micronaut manages SCOPE (one instance) not THREAD SAFETY
+(synchronization). A `@Singleton` with mutable fields
+accessed by concurrent requests IS a data race unless
+properly synchronized. Micronaut never adds synchronization
+automatically. The rule: `@Singleton` beans MUST be
+effectively immutable (fields set in constructor, never
+changed) or explicitly thread-safe (synchronized, volatile,
+Atomic*, ConcurrentHashMap).
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Race condition in @Singleton bean
+causes intermittent data corruption under load.**
+
+Symptom: application works under low load but produces
+corrupted results (wrong user data, incorrect calculations)
+under concurrent requests. Root cause: `@Singleton` bean
+has a mutable instance field (HashMap, counter, object state)
+modified by request handlers without synchronization. One
+thread reads while another writes. Diagnosis: reproduce
+with concurrency testing (Gatling, JMeter); add logging to
+show which thread reads/writes the shared field. Fix: make
+fields immutable (set in constructor, no setters); use
+`ConcurrentHashMap`, `AtomicLong`, or `volatile` for
+legitimately shared mutable state.
+
+**Failure Mode 2: "ApplicationContext.getBean() works
+in tests but fails in native image build."**
+
+Symptom: unit tests pass, JVM runs work, but native image
+build fails or runtime crashes with "No bean of type [X]."
+Root cause: `getBean(SomeClass.class)` used in service code;
+GraalVM's static analysis does not trace which classes will
+be passed to `getBean()` at runtime and excludes them.
+Diagnosis: check native build output for missing class
+warnings. Fix: replace dynamic `getBean()` with constructor
+injection; or pre-declare the type in GraalVM configuration.
+
+**Failure Mode 3: Blocking database call in reactive
+controller causes cascading timeout under load.**
+
+Symptom: under modest load (50 RPS), requests start timing
+out; Netty thread dump shows JDBC blocking. Root cause:
+controller uses `@Inject JdbcRepository repo` and calls
+`repo.findById(id)` (blocking) directly in a Netty handler
+without `@ExecuteOn(TaskExecutors.IO)`. Each blocked request
+ties up one Netty worker thread. With 8 workers: 8
+concurrent blocking calls saturate all threads. Diagnosis:
+thread dump shows all Netty workers in BLOCKED state. Fix:
+add `@ExecuteOn(TaskExecutors.IO)` to the blocking method;
+or switch to reactive R2DBC repository.
 
 ---
 
@@ -834,7 +1165,7 @@ grep -A 20 "nioEventLoopGroup" thread-dump.txt
 #     at ...JdbcTemplate...execute  # JDBC on event loop!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This at ...JdbcTemplate...execute  # JDBC on event loop!ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Metrics:
 - Micronaut Micrometer: event loop thread state
@@ -850,12 +1181,12 @@ Fix and verify:
 *What separates good from great:* Thread dump analysis
 identifying Netty event loop threads blocked in JDBC.
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Anti-patterns list, BAD vs GOOD patterns. |
-| Hiring Manager | Knowing what NOT to do = fewer production incidents. |
-| Bar Raiser | Event loop diagnosis, jstack analysis, mutable singleton state. |
-| Peer Engineer | "Thread dump showed all Netty event loops in JDBC wait. Added @Blocking to 8 endpoints. P99 dropped from 5s to 50ms." |
+| Interviewer Type| Emphasis|
+|---|--------------------------------------------------------------------------|
+| Technical Panel| Anti-patterns list, BAD vs GOOD patterns.|
+| Hiring Manager| Knowing what NOT to do = fewer production incidents.|
+| Bar Raiser| Event loop diagnosis, jstack analysis, mutable singleton state.|
+| Peer Engineer| "Thread dump showed all Netty event loops in JDBC wait. Added @
 
 ---
 
@@ -872,21 +1203,21 @@ identifying Netty event loop threads blocked in JDBC.
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Micronaut Production Diagnostics
@@ -1018,7 +1349,7 @@ jmap -dump:format=b,file=/tmp/heap.hprof \
 # Find: what objects are accumulating?
 ```
 
-> **Code walkthrough:** The /env endpoint reveals
+> **Code walkthrough:** The /env endpoint revealsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > which property source provided each value - essential
 > for "why is the config wrong in production?" diagnosis.
 > The /loggers POST enables DEBUG for a package at
@@ -1026,6 +1357,63 @@ jmap -dump:format=b,file=/tmp/heap.hprof \
 > Async profiler's flame graph shows CPU time per method
 > as a visual stack. Thread dumps reveal event loop
 > state under load.
+
+---
+
+### 📘 Concept Explanation
+
+**What it is:**
+
+Micronaut Production Diagnostics is the practice of
+instrumenting, observing, and troubleshooting Micronaut
+applications in production using built-in and third-party
+tools.
+
+**How it works:**
+
+Key diagnostic tools and techniques:
+
+1. **Thread dumps**: `jstack <PID>` or `kill -3 <PID>`.
+   Look for: Netty workers BLOCKED (blocking I/O), executor
+   queues full (backpressure failure), deadlocks.
+
+2. **Heap dumps**: `jmap -dump:format=b,file=heap.hprof <PID>`.
+   Analyze with Eclipse Memory Analyzer (MAT) for: bean
+   memory leaks, large collections, retained strings.
+
+3. **Micronaut Management endpoints** (`/health`, `/metrics`,
+   `/env`) for runtime state inspection.
+
+4. **Distributed tracing** (OpenTelemetry/Zipkin) for
+   cross-service latency analysis.
+
+5. **Micrometer metrics**: JVM metrics (`jvm.memory.*`,
+   `jvm.threads.*`), HTTP metrics (`http.server.requests`),
+   custom gauges and counters.
+
+6. **Structured logging**: JSON logs with trace ID, request
+   ID, bean context for log correlation.
+
+**Diagnostic commands:**
+
+```bash
+# Check health with details
+curl http://app:8080/health?details=true
+
+# Get all active metrics
+curl http://app:8080/metrics
+
+# JVM thread dump
+jstack $(pgrep -f "myapp.jar")
+```
+
+> **Code walkthrough:** This example illustrates the mechanism described above. The key operations execute in sequence, with each step building on the previous result. In production this pattern matters for correctness and observability. Misapplying it - such as omitting error handling or incorrect ordering - produces the failure mode described in the surrounding section. The takeaway: apply this pattern exactly as shown and verify the invariants hold under load.
+
+**Why it matters:**
+
+Production issues are diagnosed by observation, not by
+reading code. Proper instrumentation enables root cause
+identification within minutes.
 
 ---
 
@@ -1046,6 +1434,86 @@ happening), tracing (where in the request flow), logs
 (why it happened). Each answers a different question.
 Production diagnostics require all three. Missing
 one dimension means slower diagnosis."
+
+---
+
+### ⚠️ Common Misconceptions
+
+**Misconception 1: Micronaut's fast startup means it
+has no runtime performance monitoring needs.**
+
+Startup performance is only ONE aspect of production
+health. Micronaut services still need monitoring for:
+steady-state memory growth (slow leaks), gradual latency
+degradation (GC pressure, queue buildup), error rate spikes
+(failed dependencies), and connection pool exhaustion
+(too many concurrent requests). Startup speed is irrelevant
+to these production runtime characteristics.
+
+**Misconception 2: The /health endpoint accurately
+reflects the application's ability to serve traffic.**
+
+Health indicators report what they are programmed to check.
+A health endpoint that only checks database connectivity
+reports UP even when: the application is in an infinite
+retry loop, CPU is at 100% due to a bug, all background
+threads are deadlocked, or a key external API is down.
+Design health indicators to check the CRITICAL PATH of
+your application, not just technical connectivity.
+
+**Misconception 3: Micrometer metrics auto-instrumentation
+covers all performance dimensions.**
+
+Micrometer auto-instruments JVM memory, threads, and HTTP
+requests. It does NOT automatically instrument: business
+metrics (order count, conversion rate), custom async
+processing queues, external API call latency, and
+application-specific state. Add custom Micrometer gauges
+(`MeterRegistry.gauge()`) for domain-specific metrics that
+matter for your SLOs.
+
+---
+
+### 🚨 Failure Modes and Diagnosis
+
+**Failure Mode 1: Memory leak causes gradual OOM over
+24-48 hours of production traffic.**
+
+Symptom: heap usage slowly increases over hours; eventually
+JVM crashes with `OutOfMemoryError`. Root cause: accumulated
+references: Micronaut event listeners not deregistered,
+large caches without eviction, reactive publishers not
+completing (holding data in memory). Diagnosis: take heap
+dumps at 1h, 4h, 8h intervals; compare object counts in
+MAT to identify growing object types. Fix: check for
+subscriptions without cancellation; configure cache maximum
+size; review event listener lifecycle.
+
+**Failure Mode 2: GC pause causes latency spikes visible
+as P99 latency cliff.**
+
+Symptom: P50/P95 latency is acceptable but P99 latency
+spikes to 2-5 seconds at regular intervals. Root cause:
+JVM G1GC or ZGC pause pausing all application threads.
+Diagnosis: enable GC logging (`-Xlog:gc*:file=gc.log`);
+correlate GC pause events with latency spike timestamps.
+Fix: tune GC: increase young gen size, switch to ZGC
+(sub-millisecond pauses for Micronaut services), or
+reduce object allocation rate by pooling and reusing objects.
+
+**Failure Mode 3: Production issue obscured by missing
+correlation ID in logs across service calls.**
+
+Symptom: investigating a production bug requires manually
+correlating log entries across 5 services by timestamp
+and guessing which requests belong together. Root cause:
+no distributed trace ID or correlation ID propagated in
+service call headers and included in log MDC. Diagnosis:
+try to correlate logs for one user's failed request across
+services using only timestamps. Fix: enable Micronaut
+tracing propagation; configure Logback to include `traceId`
+from MDC in all log lines; add correlation ID as a
+structured field in logs.
 
 ---
 
@@ -1071,7 +1539,7 @@ jvm_memory_used_bytes{area="heap"}
 # Stable: GC is working, not a leak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Stable: GC is working, not a leak example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Identify the generation leaking:
 ```bash
@@ -1080,7 +1548,7 @@ jvm_memory_used_bytes{id="G1 Old Gen"}
 # Not decreasing after GC = something is being retained
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Not decreasing after GC = something is being retained example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Take heap dump when symptoms peak:
 ```bash
@@ -1088,7 +1556,7 @@ jmap -dump:format=b,file=/tmp/heap.hprof \
   $(pgrep -f "application.jar")
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Not decreasing after GC = something is being retained example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Analyze with Eclipse MAT:
 - Open heap dump → Leak Suspects report

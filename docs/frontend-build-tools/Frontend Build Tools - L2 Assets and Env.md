@@ -100,7 +100,7 @@ Asset Processing:
     <Logo className="logo" />  /* SVG inlined in JSX */
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This CSS and Static Asset Processing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -166,7 +166,7 @@ export function Button({ variant, children }: ButtonProps) {
 //                              Button_button--primary_b4f1d3">
 ```
 
-> **Code walkthrough:** CSS Modules generate unique classnames per
+> **Code walkthrough:** CSS Modules generate unique classnames perice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > file, making class name collision impossible. The `styles.button`
 > reference becomes the hashed name at build time. TypeScript integration
 > (via `typed-css-modules`) generates `.d.ts` files for CSS modules,
@@ -202,7 +202,7 @@ import svgContent from './assets/icon.svg?raw';
 // { test: /\.svg$/, use: '@svgr/webpack' }  <- SVG as component
 ```
 
-> **Code walkthrough:** Vite's asset import returns a URL string with
+> **Code walkthrough:** Vite's asset import returns a URL string withice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a content-hashed filename. The URL changes only when the asset
 > content changes, enabling long-lived CDN caching. The query suffixes
 > (`?raw`, `?url`, `?inline`) are Vite-specific import modifiers that
@@ -426,7 +426,7 @@ Environment-specific configuration:
   Prod: VITE_API_URL=https://api.example.com
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Bundle: const url = "https://api.example.com"; example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -441,6 +441,11 @@ feature flags, analytics IDs).
 ### 💻 Code Example
 
 **Example 1: Vite environment variable setup**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // .env.development
@@ -482,7 +487,7 @@ VITE_DATABASE_PASSWORD=secretpassword  // visible to everyone!
 // GOOD: only on server (never in client bundle)
 ```
 
-> **Code walkthrough:** Vite reads `.env` files in priority order:
+> **Code walkthrough:** Vite reads `.env` files in priority order:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `.env.local` overrides `.env`, `.env.production` applies only in
 > production builds. The TypeScript `ImportMetaEnv` interface gives
 > autocomplete for `import.meta.env.VITE_*` and catches typos at
@@ -491,6 +496,7 @@ VITE_DATABASE_PASSWORD=secretpassword  // visible to everyone!
 
 **Example 2: Runtime configuration as an alternative**
 
+{% raw %}
 ```typescript
 // Alternative to build-time env injection:
 // Serve a runtime config file from the server
@@ -523,8 +529,9 @@ function getConfig(): AppConfig {
 // Usage:
 const { apiUrl } = getConfig();
 ```
+{% endraw %}
 
-> **Code walkthrough:** Runtime config avoids rebuilding for each
+> **Code walkthrough:** Runtime config avoids rebuilding for eachice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > environment. The same Docker image can be deployed to staging and
 > production with different `config.js` files injected by the
 > deployment system. This is superior for: containerized apps

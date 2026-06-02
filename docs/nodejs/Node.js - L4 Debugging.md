@@ -131,7 +131,7 @@ Debugging tools and their use cases:
      });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or with inspector API: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -193,7 +193,7 @@ setInterval(() => {
 }, 5 * 60 * 1000); // every 5 minutes
 ```
 
-> **Code walkthrough:** The metrics endpoint exposes Node.js internal
+> **Code walkthrough:** The metrics endpoint exposes Node.js internalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > metrics in Prometheus format. `histogram.percentile(99) / 1e6` converts
 > nanoseconds to milliseconds for event loop lag p99. The heap snapshot
 > endpoint is restricted to `127.0.0.1` - exposing it publicly leaks
@@ -271,7 +271,7 @@ lldb --core core.12345 $(which node)
 (lldb) bt  # backtrace shows crash location
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Analyze with lldb or gdb: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 ---
 

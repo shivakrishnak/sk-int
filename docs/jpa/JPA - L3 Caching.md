@@ -149,7 +149,7 @@ L1 CACHE IN BATCH OPERATIONS (memory management):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Caching example demonstrates a key concept in practice using @Transactional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -238,7 +238,7 @@ configured) provides cross-transaction caching. L1 cache is strictly per-transac
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: findById returns stale entity after @Modifying bulk update.**
-```
+```plaintext
 Symptom: service updates all product prices via @Modifying query,
   then reads a specific product. Price shows old value in the return object.
 
@@ -258,7 +258,7 @@ Fix:
   Or: em.clear() to clear all cached entities.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -450,7 +450,7 @@ L2 CACHE INVALIDATION:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This hibernate-jcache + caffeine-jcache example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 ---
 
@@ -458,6 +458,12 @@ L2 CACHE INVALIDATION:
 
 > **Code walkthrough:** The query cache is a common source of stale data bugs. The query result
 > cache stores the IDs, not the entities. Entity data comes from L1/L2 cache or DB.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // WRONG: caching a frequently-updated entity:
@@ -570,7 +576,7 @@ Fix:
     not sufficient for L2 cache. Must evict explicitly.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

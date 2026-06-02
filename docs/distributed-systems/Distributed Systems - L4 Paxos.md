@@ -130,7 +130,7 @@ Learner:
   - Clients are effectively Learners
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Paxos Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Phase 1 - Prepare/Promise:**
 
@@ -160,7 +160,7 @@ Proposer after receiving Promise from majority:
     value = proposer's own value
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Paxos Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Phase 2 - Accept/Accepted:**
 
@@ -189,7 +189,7 @@ The Proposer/Learner learns the chosen value:
   Acceptor broadcasts Accepted to all Learners
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Paxos Consensus Algorithm example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The critical invariant - why Paxos is safe:**
 
@@ -220,7 +220,7 @@ Proof:
     Therefore: ballot N' proposes and chooses V. QED
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Multi-Paxos - extending to a log:**
 
@@ -245,7 +245,7 @@ This is essentially Raft:
   Raft's contributors: "Raft is Multi-Paxos with more structure"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The liveness problem:**
 
@@ -266,7 +266,7 @@ Dueling Proposers (liveness failure):
   No competing Proposers → no livelock.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Paxos safety comes from quorum overlap: any two majorities share
@@ -299,6 +299,12 @@ overlap transmits knowledge of previous decisions."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PAXOS - SIMPLIFIED SINGLE-DECREE IMPLEMENTATION
@@ -380,7 +386,7 @@ public class Proposer {
 }
 ```
 
-> **Code walkthrough:** The `Acceptor` maintains three state
+> **Code walkthrough:** The `Acceptor` maintains three stateice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > variables - the highest ballot it has promised (`highestPrepare`),
 > and the ballot/value it has accepted (`acceptedBallot`,
 > `acceptedValue`). On `onPrepare`: it only promises if the new
@@ -502,7 +508,7 @@ Log replication:
   - Committed entries applied to state machine (file system tree)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Lock service operations:**
 
@@ -530,7 +536,7 @@ Sequencer:
   Prevents stale lock holders from writing after lock expires
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Fault tolerance:**
 
@@ -559,7 +565,7 @@ Network partition:
     Clients time out and reconnect to new master
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -653,7 +659,7 @@ Diagnosis:
 # N keeps increasing; no "value chosen" log
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This N keeps increasing; no "value chosen" log example dice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Elect a single distinguished Leader (Multi-Paxos approach).
 Only one Proposer active at a time. If the Leader fails: elect
@@ -706,23 +712,22 @@ seen). Either outcome is safe - Paxos commits exactly one value.
 
 ### 🎯 Interview Deep-Dive
 
-| Category | Count |
-|---|---|
-| Clarification | 1 |
-| Mechanism | 3 |
-| Failure / Debugging | 2 |
-| Trade-off | 2 |
-| System Design | 1 |
-| Code | 1 |
-| Behavioral | 1 |
-| Production | 1 |
+  | Category            | Count |  
+|-------------------|-----|
+  | Clarification       | 1     |  
+  | Mechanism           | 3     |  
+  | Failure / Debugging | 2     |  
+  | Trade-off           | 2     |  
+  | System Design       | 1     |  
+  | Code                | 1     |  
+  | Behavioral          | 1     |  
+  | Production          | 1     |  
 
 ---
 
-**Q1 (Clarification) - What is the difference between Single-Decree
-Paxos and Multi-Paxos?**
+**[JUNIOR] Q1 - [MECHANISM] What is the difference between Single-Decree Paxos and Multi-Paxos?**
 
-A: Single-Decree Paxos solves one specific problem: choose a single
+Single-Decree Paxos solves one specific problem: choose a single
 value from among potentially multiple proposed values. It runs one
 two-phase protocol and terminates. The result is one agreed-upon
 value. It cannot be used directly for a replicated log.
@@ -749,10 +754,9 @@ implementation decisions made explicit.
 
 ---
 
-**Q2 (Mechanism) - Walk through what happens when a new Proposer
-starts Phase 1 and discovers a previously accepted value.**
+**[JUNIOR] Q2 - [MECHANISM] Walk through what happens when a new Proposer starts Phase 1 and discovers a previously accepted value.**
 
-A: This is the critical scenario that ensures Paxos safety.
+This is the critical scenario that ensures Paxos safety.
 
 Scenario: Proposer 1 completed Phase 2 and got value V accepted
 by Acceptors A1 and A2 (2 of 3 = majority). V is CHOSEN. But
@@ -786,10 +790,9 @@ who understands this can explain why Paxos is correct.
 
 ---
 
-**Q3 (Mechanism) - Why can't an Acceptor accept two different values
-in two different ballots?**
+**[JUNIOR] Q3 - [MECHANISM] Why can't an Acceptor accept two different values in two different ballots?**
 
-A: An Acceptor CAN accept different values in different ballots
+An Acceptor CAN accept different values in different ballots
 - this is a normal part of the algorithm. For example:
 - Ballot 3: Acceptor accepts value V1 (Proposer 1's Phase 2)
 - Ballot 5: Acceptor accepts value V2 (Proposer 2's Phase 2)
@@ -816,10 +819,9 @@ is immutable. The distinction is subtle and frequently confused.
 
 ---
 
-**Q4 (Failure / Debugging) - Paxos requires two round-trips
-per write. How do real systems reduce this?**
+**[MID] Q4 - [DEBUGGING] Paxos requires two round-trips per write. How do real systems reduce this?**
 
-A: Single-Decree Paxos has two round-trips per value: Prepare/Promise
+Single-Decree Paxos has two round-trips per value: Prepare/Promise
 (Phase 1) and Accept/Accepted (Phase 2). For a log with many entries:
 this is 2 RTTs per log entry.
 
@@ -857,10 +859,9 @@ the high RTT.
 
 ---
 
-**Q5 (Failure / Debugging) - How does Paxos handle
-network partitions?**
+**[MID] Q5 - [DEBUGGING] How does Paxos handle network partitions?**
 
-A: Network partitions in Paxos split Acceptors into groups that
+Network partitions in Paxos split Acceptors into groups that
 cannot communicate with each other.
 
 Case 1: Leader (Proposer) in majority partition:
@@ -896,10 +897,9 @@ Acceptors reject its Phase 2.
 
 ---
 
-**Q6 (Trade-off) - Compare EPaxos (Egalitarian Paxos) to
-classic Paxos. When would you use it?**
+**[SENIOR] Q6 - [TRADE-OFF] Compare EPaxos (Egalitarian Paxos) to classic Paxos. When would you use it?**
 
-A: Classic Multi-Paxos has one Leader. All writes go through the
+Classic Multi-Paxos has one Leader. All writes go through the
 Leader. This creates a bottleneck in geo-distributed deployments:
 a write from a client in Asia to a Leader in the US has 2 RTT
 (client → Leader → majority → Leader → client).
@@ -944,10 +944,9 @@ worse than Multi-Paxos.
 
 ---
 
-**Q7 (Trade-off) - Why did Google use Paxos for Chubby and Spanner
-instead of a simpler approach?**
+**[SENIOR] Q7 - [TRADE-OFF] Why did Google use Paxos for Chubby and Spanner instead of a simpler approach?**
 
-A: Google's scale and reliability requirements drove the use
+Google's scale and reliability requirements drove the use
 of consensus-based replication.
 
 Chubby (2006): Google's distributed lock service used by GFS,
@@ -981,11 +980,10 @@ wait" is the mechanism for external consistency, not Paxos itself.
 
 ---
 
-**Q8 (System Design) - How would you implement a configuration
-service using Multi-Paxos?**
+**[SENIOR] Q8 - [DESIGN] How would you implement a configuration service using Multi-Paxos?**
 
 A:
-```
+```plaintext
 Config service requirements:
   - Strongly consistent reads and writes
   - Fault tolerance (2 of 5 nodes can fail)
@@ -1022,7 +1020,7 @@ Snapshot and recovery:
   - Snapshot prevents unbounded log growth
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Operational concerns: backup configuration to object storage
 (S3/GCS) every 5 minutes. Export config tree to JSON as a
@@ -1039,8 +1037,7 @@ once, and the client must re-register to continue watching.
 
 ---
 
-**Q9 (Code) - Implement a Paxos-based compare-and-swap using
-etcd (which is Raft-based, a Multi-Paxos variant).**
+**[SENIOR] Q9 - [SCENARIO] Implement a Paxos-based compare-and-swap using etcd (which is Raft-based, a Multi-Paxos variant).**
 
 A:
 ```java
@@ -1102,7 +1099,7 @@ public class ConsistentConfigStore {
 }
 ```
 
-> **Code walkthrough:** The `compareAndSet` method uses etcd's
+> **Code walkthrough:** The `compareAndSet` method uses etcd'sice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > transaction API, which provides atomicity backed by Multi-Paxos
 > consensus. The `IF` clause checks that the current value equals
 > the expected value. The `THEN` clause updates to the new value.
@@ -1117,10 +1114,9 @@ public class ConsistentConfigStore {
 
 ---
 
-**Q10 (Production) - How does Google Spanner use Paxos to achieve
-globally distributed consistency?**
+**[SENIOR] Q10 - [SCENARIO] How does Google Spanner use Paxos to achieve globally distributed consistency?**
 
-A: Spanner uses Multi-Paxos for per-shard replication and TrueTime
+Spanner uses Multi-Paxos for per-shard replication and TrueTime
 for globally consistent timestamps.
 
 Per-shard replication:
@@ -1163,10 +1159,9 @@ design decision in global distributed databases.
 
 ---
 
-**Q11 (Mechanism) - How does Paxos guarantee that a value
-once chosen cannot be unchosen?**
+**[SENIOR] Q11 - [MECHANISM] How does Paxos guarantee that a value once chosen cannot be unchosen?**
 
-A: The invariant "once chosen, always chosen" is maintained
+The invariant "once chosen, always chosen" is maintained
 by the combination of quorum overlap and the Phase 1 value
 adoption requirement.
 
@@ -1204,10 +1199,9 @@ knowledge of that value through their Phase 1 responses.
 
 ---
 
-**Q12 (Behavioral) - How would you explain Paxos to a junior
-engineer who has never seen it?**
+**[SENIOR] Q12 - [BEHAVIORAL] How would you explain Paxos to a junior engineer who has never seen it?**
 
-A: "Let me use an analogy. Imagine a committee that needs to
+"Let me use an analogy. Imagine a committee that needs to
 vote on a resolution. The committee members are distributed across
 multiple cities and sometimes lose communication.
 

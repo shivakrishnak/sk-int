@@ -140,7 +140,7 @@ Coverage exclusion strategy:
     - API client adapters
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Test Confidence vs Coverage Trade-off example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -191,7 +191,7 @@ test('createUser rejects invalid email format', () => {
 // Test C (expects ValidationError on invalid) DOES kill this mutation
 ```
 
-> **Code walkthrough:** Test A executes 100% of the code with zero
+> **Code walkthrough:** Test A executes 100% of the code with zeroice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > assertions - illustrating that coverage tells you nothing about
 > confidence. Test B is better but `toBeDefined()` doesn't verify any
 > behavioral contract. Test C and D are specific: they assert exact
@@ -428,7 +428,7 @@ Property-based testing model:
   input that still fails (reduces noise in bug report)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Property-Based Testing for Frontend example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -492,7 +492,7 @@ test('valid emails are always accepted', () => {
 // Not: "john.doe+tag@subdomain.example.co.uk" (generated input)
 ```
 
-> **Code walkthrough:** The roundtrip property `parse(format(x)) ≈ x`
+> **Code walkthrough:** The roundtrip property `parse(format(x)) ≈ x`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is a classic invariant for serialization code. `fc.float({ noNaN: true })`
 > generates valid floating point numbers (excluding NaN which might be
 > a separate error case). The sort property `sorted[i] <= sorted[i+1]`
@@ -627,7 +627,7 @@ fc.assert(fc.property(
 ));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Combining property tests for
 invariants with specific example tests for exact values:

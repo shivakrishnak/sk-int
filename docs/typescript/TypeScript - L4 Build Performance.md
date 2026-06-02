@@ -189,7 +189,7 @@ PROFILING COMMANDS:
   # Produces a Chrome DevTools trace for type-checking analysis
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Produces a Chrome DevTools trace for type-checking analysis example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -219,6 +219,11 @@ Stripe/Slack scale (1M+ TS lines), this difference is hours vs minutes.
 ### 💻 Code Example
 
 **Measuring and optimizing TypeScript build performance**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // STEP 1: MEASURE BASELINE
@@ -287,7 +292,7 @@ function transform<T>(items: T[], fn: Transformer<T>) { ... }
 // Reduction: 45s -> 6s for typical single-package change
 ```
 
-> **Code walkthrough:** The diagnostic output shows checkTime dominates
+> **Code walkthrough:** The diagnostic output shows checkTime dominatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > at 38.8 seconds out of 45.21 total. This is typical for type-heavy
 > codebases. `skipLibCheck` removes `.d.ts` validation - risky in
 > libraries (might miss type errors in dependencies) but standard in
@@ -378,7 +383,7 @@ DEVELOPER WORKFLOW:
     npx tsc --noEmit  # must pass before push
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Produces a Chrome DevTools trace for type-checking analysis example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -496,7 +501,7 @@ function process<T extends DataHolder>(x: T) { ... }
 // Confirm check time dropped
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using generic type. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -519,7 +524,7 @@ function process<T extends DataHolder>(x: T) { ... }
 
 ---
 
-**Q1: How would you design a TypeScript build pipeline for a 50-package
+**[JUNIOR] Q1 - [DESIGN] How would you design a TypeScript build pipeline for a 50-package**
 monorepo?** `[STAFF]` SYSTEM DESIGN
 
 > **Answer:**
@@ -571,7 +576,7 @@ monorepo?** `[STAFF]` SYSTEM DESIGN
 > same commit. The rule: L0 packages are always fast to build (no deps);
 > the build graph depth, not breadth, determines minimum build time.
 
-**Q2: What is the difference between incremental compilation and project
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between incremental compilation and project**
 references?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -616,8 +621,7 @@ references?** `[SENIOR]` MECHANISM
 > contract between packages means implementation details leak less -
 > consumers see only the declared types, not the implementation source.
 
-**Q3: When should you use esbuild/swc vs tsc for compilation?** `[SENIOR]`
-DECISION
+**[MID] Q3 - [TRADE-OFF] When should you use esbuild/swc vs tsc for compilation?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -661,8 +665,7 @@ DECISION
 > esbuild (object enum), the types disagree. This is one reason the
 > TypeScript team discourages `const enum` in published libraries.
 
-**Q4: How do you use --generateTrace to diagnose slow type checking?**
-`[STAFF]` DEBUGGING
+**[STAFF] Q4 - [DEBUGGING] How do you use --generateTrace to diagnose slow type checking?**
 
 > **Answer:**
 >
@@ -719,8 +722,7 @@ DECISION
 > how the TypeScript team and library authors (Prisma, TypeORM) diagnose
 > performance regressions in their type definitions.
 
-**Q5: What is isolatedModules and why is it important for build tools?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q5 - [MECHANISM] What is isolatedModules and why is it important for build tools?**
 
 > **Answer:**
 >

@@ -139,7 +139,7 @@ infrastructure/
       terraform.tfvars
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Infrastructure as Code in CI/CD example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **CI/CD integration pattern:**
 - On every PR to infrastructure branch: run `terraform validate`
@@ -208,7 +208,7 @@ terraform apply
 # - S3 bucket permissions changed - nobody remembers when or why
 ```
 
-> **Code walkthrough:** Manual Terraform workflow has the same
+> **Code walkthrough:** Manual Terraform workflow has the sameice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > problems as manual application deployment: no review, no audit,
 > inconsistent results, and concurrent modification hazards. The
 > state file becomes the source of truth only after the fact, with
@@ -262,7 +262,7 @@ resource "aws_eks_cluster" "main" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prevent accidental cluster deletion example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```hcl
 # environments/production/main.tf
@@ -286,8 +286,9 @@ module "eks" {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Environment-specific: references modules, sets production variables example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
+{% raw %}
 ```yaml
 # .github/workflows/terraform.yml
 name: Terraform CI/CD
@@ -389,8 +390,9 @@ jobs:
           terraform init
           terraform apply -auto-approve
 ```
+{% endraw %}
 
-> **Code walkthrough:** The workflow separates plan and apply into
+> **Code walkthrough:** The workflow separates plan and apply intoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > distinct jobs with different IAM roles - the plan job uses a
 > read-only role (cannot create or modify resources), the apply job
 > uses a write role. This implements least-privilege: the plan can
@@ -613,7 +615,7 @@ terraform {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 State locking via DynamoDB: when any Terraform operation begins
 (plan or apply), Terraform writes a lock entry to the DynamoDB table.
@@ -749,7 +751,7 @@ When it has acl
 Then it must not contain "public-read"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 HashiCorp Sentinel: enterprise Terraform feature for policy-as-code
 with a purpose-built language. Runs as part of Terraform Cloud's
@@ -772,7 +774,7 @@ Implementation in CI:
     check: "CKV_AWS_*"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fail on any HIGH or CRITICAL finding example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Common policies worth enforcing:
 - All S3 buckets have `block_public_acls = true`
@@ -815,7 +817,7 @@ aws s3api get-object \
   terraform.tfstate.backup
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find the version before corruption occurred example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Restore the state from the backup version:
 ```bash
@@ -823,7 +825,7 @@ aws s3 cp terraform.tfstate.backup \
   s3://mycompany-tf-state/production/eks/terraform.tfstate
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Find the version before corruption occurred example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: Run `terraform plan` against the restored state. Review
 the plan carefully - it should show only the changes that were
@@ -1119,7 +1121,7 @@ public class OrderController {
 // - No business events: no audit trail
 ```
 
-> **Code walkthrough:** System.out.println to stdout is an
+> **Code walkthrough:** System.out.println to stdout is anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > observability anti-pattern with multiple failures. The log messages
 > have no consistent fields (no timestamp format, no severity level,
 > no request ID, no correlation ID), making log aggregation useless.
@@ -1130,6 +1132,12 @@ public class OrderController {
 
 **GOOD: Full observability with Micrometer, structured logs, trace
 context**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Good: Prometheus metrics via Micrometer, structured logging,
@@ -1226,8 +1234,9 @@ public class OrderController {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
+{% raw %}
 ```yaml
 # Prometheus alerting rules for deployment health monitoring
 # alerts/order-service.yml
@@ -1259,8 +1268,9 @@ groups:
         annotations:
           summary: "P99 order latency {{ $value }}s"
 ```
+{% endraw %}
 
-> **Code walkthrough:** MDC (Mapped Diagnostic Context) automatically
+> **Code walkthrough:** MDC (Mapped Diagnostic Context) automaticallyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > attaches `requestId` and `customerId` to every log statement within
 > the request handler - no need to pass them explicitly. When an error
 > occurs, the log entry already contains the correlation ID needed
@@ -1469,7 +1479,7 @@ analysis:
   # and rolled back to the previous stable version
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This and rolled back to the previous stable version example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The analysis template queries Prometheus during the canary phase.
 If the query result falls below the failure condition threshold,
@@ -1502,7 +1512,7 @@ fi
 echo "Deployment healthy. Error rate: ${ERROR_RATE}"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This post-deploy-monitor.sh example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 The rollback trigger criteria should cover: error rate (primary
 gate), latency regression (p99 > baseline * 1.2), and business
@@ -1649,7 +1659,7 @@ The burn rate alert is the production implementation:
     # If current hourly rate would exhaust 30-day budget in 1 hour
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If current hourly rate would exhaust 30-day budget in 1 hour example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The deployment policy: any deployment that triggers the burn rate
 alert at critical level triggers an automatic rollback and a

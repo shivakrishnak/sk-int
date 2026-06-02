@@ -96,7 +96,7 @@ ManagedExecutorService task thread:
   TX = NEW (not propagated)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Managed Executor Service example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Configuration (WildFly standalone.xml):**
 
@@ -111,11 +111,17 @@ ManagedExecutorService task thread:
 </managed-executor-service>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Managed Executor Service example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: plain ExecutorService loses container context
@@ -216,7 +222,7 @@ public class OrderProcessingService {
 }
 ```
 
-> **Code walkthrough:** BadReportService creates a raw
+> **Code walkthrough:** BadReportService creates a rawice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > thread pool outside container management. The EntityManager
 > @PersistenceContext injection is a proxy that resolves
 > the real EntityManager via JNDI at runtime. In an
@@ -296,9 +302,15 @@ grep -r "Executors.new\|new ThreadPoolExecutor" src/
 :write-attribute(name=level,value=DEBUG)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: enable concurrency debug: example demonstrates shell script pattern using thread pool. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD:
 ExecutorService pool = Executors.newCachedThreadPool();
@@ -307,7 +319,7 @@ ExecutorService pool = Executors.newCachedThreadPool();
 @Resource ManagedExecutorService executor;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This WildFly: enable concurrency debug: example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **WHAT BREAKS: always name threads and bound queue size to detect saturation.**
 
 ---
 
@@ -420,7 +432,7 @@ private ManagedExecutorService executor;
 private ManagedExecutorService reportingExecutor;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: enable concurrency debug: example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 *What separates good from great:* "Always use @Resource
 injection, not programmatic JNDI lookup. @Resource lets
@@ -448,7 +460,7 @@ public CompletableFuture<List<Order>> loadAsync(Long uid) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: enable concurrency debug: example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* "Default thenApply()
 runs on whichever thread completed the previous stage.
@@ -476,7 +488,7 @@ executor.submit(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This WildFly: enable concurrency debug: example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "@RequestScoped CDI beans
 may have stale state in task threads since the HTTP request
@@ -534,7 +546,7 @@ CompletableFuture.supplyAsync(() -> loadOrders(), executor)
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* "Unchecked exceptions
 in Runnable tasks are silently captured in the Future.
@@ -558,7 +570,7 @@ WildFly CLI:
 :reload
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* "Separate thread pools
 for different workloads: long-running reports (small pool,
@@ -589,7 +601,7 @@ externalPool.execute(contextualTask);
 // Container context applied even on non-managed thread
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using container. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "ContextService is the
 escape hatch for legacy thread pools you can't replace.
@@ -613,7 +625,7 @@ thread pools?**
 :write-attribute(name=statistics-enabled,value=true)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This rejected-count, task-count example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Alert when:
 - `rejected-count` increasing: queue full, tasks dropped
@@ -623,6 +635,121 @@ Alert when:
 silently dropped by default. Monitor rejected-count and
 alert when non-zero. Consider bounded queue with explicit
 rejection handler for silent failure prevention."
+
+---
+
+**[SENIOR] Q10 - [DEBUGGING] ManagedExecutorService tasks are completing but results are lost. How do you diagnose?**
+
+Common causes:
+
+1. Fire-and-forget without handling CompletableFuture:
+   ```java
+   // BAD: no exception handling - failures are silently lost
+   mes.runAsync(() -> processOrder(order));
+   // GOOD: handle failures
+   mes.runAsync(() -> processOrder(order))
+      .exceptionally(ex -> {
+          log.error("Order processing failed", ex);
+          return null;
+      });
+   ```
+
+   > **Code walkthrough:** The BAD pattern submits a task whose exception is never observed - the CompletableFuture returned is discarded. KEY MECHANISM: `runAsync` returns a CompletableFuture; if nobody calls `get()` or chains `exceptionally()`, the exception is swallowed by the ForkJoinPool's uncaught exception handler with no application-level log. WHY IT MATTERS: order processing failures become invisible data loss. WHAT BREAKS: silent drops that only surface as missing records in the database. TAKEAWAY: always chain `exceptionally()` or `whenComplete()` on every fire-and-forget async call.
+   caller doesn't call `Future.get()`, exceptions
+   from the task are silently lost.
+
+3. Transaction context not propagated: ManagedExecutorService
+   propagates Jakarta EE context. But if the task modifies
+   an entity and expects the caller's transaction, it runs
+   in a separate transaction. EntityManager state from
+   the caller's persistence context is not visible.
+
+4. Check completed-task-count vs submitted-task-count.
+   If they match but no result: the task completed but
+   its side effect (DB write, event fire) was rolled back.
+   Check for silent exception in the task.
+
+*What separates good from great:* "Adding `.exceptionally()`
+to every fire-and-forget async call is the first defensive
+step. Silent async failures are production data loss events
+waiting to happen."
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] When should you use ManagedExecutorService vs a message queue (JMS/Kafka)?**
+
+ManagedExecutorService: use for:
+- In-process async work that completes quickly (< 30s)
+- Tasks that don't need durability (acceptable to lose
+  on server restart/crash)
+- Fan-out within the same request context (parallel HTTP
+  calls, parallel DB reads)
+- Work that benefits from the caller's transaction context
+
+Message queue: use for:
+- Work that must survive server restarts (durable)
+- Work that could take minutes or hours (background jobs)
+- Cross-service communication (decoupled producers/consumers)
+- Retry semantics required (message queue provides
+  automatic retry with dead letter queue)
+- Work that should not block the request thread at all
+
+The test: "What happens if the server crashes while
+this task is running?" If the answer is "we can safely
+lose it or retry idempotently," ManagedExecutorService
+is fine. If "we must guarantee completion," use a
+message queue.
+
+*What separates good from great:* "The durability
+boundary is the key distinction. ManagedExecutorService
+is in-process work. Message queue is at-least-once
+durable delivery. Mixing them up causes silent data
+loss on server crash."
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] Describe a production issue caused by incorrect use of concurrency in a Jakarta EE application.**
+
+> Structure: what was used, what went wrong, how diagnosed,
+> how fixed.
+
+Example answer:
+"We had a ReportGenerator service that used a static
+thread pool (plain Java ExecutorService) instead of
+ManagedExecutorService. The service generated PDF reports
+by querying the database in background threads.
+
+The problem: JNDI DataSource lookups inside the thread
+pool threads failed intermittently with NamingException.
+Under load, threads couldn't resolve the DataSource
+because Jakarta EE context was not propagated to the
+plain ExecutorService threads.
+
+Diagnosis: added logging around the JNDI lookup and
+confirmed it only failed in background threads, not
+in the main request thread. Traced the DataSource
+lookup to the thread pool workers.
+
+Fix: replaced `Executors.newFixedThreadPool(10)` with
+`@Resource ManagedExecutorService mes`. Context propagation
+is automatic. All JNDI lookups in MES tasks resolve
+correctly.
+
+Additional problem uncovered: the thread pool was
+unbounded (the original ExecutorService had no queue
+limit). Under burst load, thousands of report tasks
+queued up in memory, causing OutOfMemoryError.
+Added bounded queue with rejection handler to shed
+load gracefully.
+
+Root cause was two-fold: not using the Jakarta EE
+managed thread API, and not designing for backpressure."
+
+*What separates good from great:* "The second root
+cause (unbounded queue) is what interviewers listen for.
+Fixing the context propagation is textbook. Identifying
+and addressing the backpressure gap shows production
+systems thinking."
 
 ---
 
@@ -742,7 +869,7 @@ response.write(result) + asyncCtx.complete()
 Client receives HTTP response
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async Servlets and EJBs example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **@Asynchronous flow:**
 
@@ -757,11 +884,17 @@ EJB container thread:
   returns AsyncResult<>(value)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async Servlets and EJBs example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: blocking servlet
@@ -884,7 +1017,7 @@ public class OrderService {
 }
 ```
 
-> **Code walkthrough:** The sync vs async servlet contrast:
+> **Code walkthrough:** The sync vs async servlet contrast:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the blocking servlet holds the HTTP thread for the entire
 > report generation. With a 50-thread pool and 50 simultaneous
 > slow requests, new requests are rejected. The async servlet
@@ -966,7 +1099,7 @@ Exception in task without finally-block calling complete().
 # %D = time to complete in ms; very large = leaked
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This %D = time to complete in ms; very large = leaked example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *Fix:*
 ```java
@@ -985,7 +1118,7 @@ executor.submit(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This %D = time to complete in ms; very large = leaked example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -1106,7 +1239,7 @@ IllegalStateException.
 public class LoggingFilter implements Filter { ... }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This %D = time to complete in ms; very large = leaked example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "All Filters in the
 chain must have asyncSupported=true. One missing filter
@@ -1139,7 +1272,7 @@ if (future.isDone()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This %D = time to complete in ms; very large = leaked example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "future.cancel(true)
 does not interrupt the running EJB async task. The task
@@ -1170,7 +1303,7 @@ public void placeOrder(Order order) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: pass data as parameters:
 ```java
@@ -1179,7 +1312,7 @@ notifications.sendNotificationWithData(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "The data visibility issue
 is the most common @Asynchronous bug: async task reads data
@@ -1203,7 +1336,7 @@ Fix options:
 self.sendNotification(order); // through proxy = async
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 2. Extract to separate bean (better):
 ```java
@@ -1211,7 +1344,7 @@ self.sendNotification(order); // through proxy = async
 notifications.send(order); // separate bean, through proxy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Move async methods to
 separate beans. Separates concerns and solves the
@@ -1249,7 +1382,7 @@ executor.submit(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* "writer.flush() sends
 buffered data without closing connection. Client starts
@@ -1271,6 +1404,12 @@ accessible in the task thread.
 Risk: HttpServletRequest and HttpServletResponse may be
 recycled by the container after the HTTP thread returns.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: access request in task thread
 executor.submit(() -> {
@@ -1283,7 +1422,7 @@ AsyncContext ctx = req.startAsync();
 executor.submit(() -> process(ctx, id));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Capture all needed
 request data before startAsync(). Do not access
@@ -1316,7 +1455,7 @@ ctx.addListener(new AsyncListener() {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Set specific timeouts
 per endpoint: fast APIs (5-10s), reports (60-120s),
@@ -1339,7 +1478,7 @@ assertEquals(200, conn.getResponseCode());
 assertNotNull(conn.getInputStream().readAllBytes());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using HTTP client. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Unit test: verify complete() is called:
 ```java
@@ -1349,13 +1488,141 @@ servlet.doGet(req, resp);
 verify(ctx, timeout(5000)).complete();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* "Key assertion: verify
 complete() is called exactly once, even on exceptions.
 A missing complete() is a resource leak. Use
 verify(ctx, timeout(5000)).complete() to assert eventual
 completion."
+
+---
+
+**[SENIOR] Q10 - [DEBUGGING] An async servlet hangs - the client never receives a response. How do you diagnose?**
+
+Cause A: AsyncContext.complete() never called.
+The async thread threw an exception before calling
+complete(). The request hangs until the AsyncContext
+timeout fires. Check: is there an exception handler
+in the async runnable that calls complete() in finally?
+
+```java
+// BAD: complete() not guaranteed on exception
+asyncContext.start(() -> {
+    processAndWrite(asyncContext); // throws? complete() never called
+    asyncContext.complete();
+});
+// GOOD: always complete
+asyncContext.start(() -> {
+    try {
+        processAndWrite(asyncContext);
+    } catch (Exception e) {
+        sendError(asyncContext, 500, e.getMessage());
+    } finally {
+        asyncContext.complete(); // always
+    }
+});
+```
+
+> **Code walkthrough:** The BAD pattern places `complete()` after the processing call - if an exception is thrown, `complete()` is never reached and the request hangs until timeout. KEY MECHANISM: AsyncContext keeps the request open until `complete()` is called or the timeout fires; a missing `complete()` leaks a request slot. WHY IT MATTERS: under load, hanging requests accumulate, exhausting the connector thread pool. WHAT BREAKS: gradual memory and thread exhaustion visible as increasing active request count in monitoring. TAKEAWAY: `complete()` in `finally` is non-negotiable for async servlets.
+
+Cause B: AsyncContext timeout too long. Default is
+30 seconds. Under load, hanging requests accumulate.
+Check: server thread pool at capacity?
+
+Cause C: Thread pool exhausted. The Runnable passed
+to asyncContext.start() uses the servlet container
+thread pool. If the pool is full, the task queues
+and the client waits. Check thread pool statistics.
+
+Diagnosis: add logging at complete() call and at
+the start of the async Runnable. If the Runnable
+log appears but complete() log does not: exception
+is swallowing the complete().
+
+*What separates good from great:* "complete() in
+finally block is non-negotiable. Async servlets
+that don't guarantee complete() in the exception
+path create a slow resource leak that manifests
+as a gradual memory/thread exhaustion under load."
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] When should you use async servlets vs reactive frameworks (Project Reactor/Mutiny)?**
+
+Async servlets:
+- Standard Jakarta EE; works on any compliant container
+- Good for simple off-thread work (file generation,
+  external service calls)
+- Thread-per-task model under the hood
+- Limited composability for complex async pipelines
+
+Reactive frameworks (Reactor, Mutiny, RxJava):
+- Designed for complex async pipelines with
+  backpressure, error handling, retries, timeouts
+- Composable operators for map, flatMap, zip, merge
+- Better for: multiple concurrent async calls composed
+  together, streaming responses, event-driven architectures
+- Learning curve: reactive programming model
+
+When async servlets are sufficient:
+- One or two background calls per request
+- Team familiar with servlet model, not reactive
+- Must remain on Jakarta EE without additional dependencies
+
+When reactive is better:
+- Fan-out to 5+ concurrent services
+- Complex retry, timeout, fallback chains
+- High-throughput streaming use cases
+
+*What separates good from great:* "Jakarta EE 10+
+supports reactive paradigms via Mutiny (Quarkus) and
+SmallRye Mutiny. These bridge reactive and imperative
+worlds. Async servlets are the floor, not the ceiling."
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] You need to process 10,000 reports asynchronously and ensure no report is lost on server restart. How do you design this?**
+
+> This is an architectural trade-off question requiring
+> distributed systems thinking.
+
+Answer:
+"Async servlets and ManagedExecutorService are
+in-memory - reports would be lost on restart.
+
+The design: request -> persistence -> async processing.
+
+(1) When a report is requested: persist a ReportRequest
+    record to the database with status PENDING. Return
+    202 Accepted with the request ID to the client.
+
+(2) A scheduled job (Jakarta EE ManagedScheduledExecutorService)
+    polls for PENDING requests every 10 seconds. Picks up
+    batches of 20. Updates status to PROCESSING with
+    a lock (optimistic or pessimistic) to prevent
+    concurrent pickup.
+
+(3) For each request: generate the report. On success:
+    store the result (S3, database blob). Update status
+    to COMPLETE. On failure: increment retry count.
+    After 3 failures: mark FAILED.
+
+(4) Client polls `GET /reports/{id}/status` or receives
+    a push notification when COMPLETE.
+
+Alternative: use a message queue (JMS/Kafka). More
+scalable but adds infrastructure complexity.
+
+The key: the database is the durable queue. No report
+can be lost because persistence happens before processing
+starts."
+
+*What separates good from great:* "The optimistic
+lock on status update prevents two servers picking
+up the same request in a cluster. Candidates who
+describe the design without addressing concurrent
+pickup have not deployed this pattern in production."
 
 ---
 

@@ -108,7 +108,7 @@ Background: bgwriter/checkpoint
      not needed for recovery)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Crash Recovery Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **WAL record structure:**
 
@@ -128,7 +128,7 @@ Physical WAL files:
   Segment name encodes: timeline + LSN (hex)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Crash Recovery Internals example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -183,7 +183,7 @@ SELECT
 -- Per minute: compare two readings 60s apart.
 ```
 
-> **Code walkthrough:** `pg_current_wal_lsn()` returns the current write position
+> **Code walkthrough:** `pg_current_wal_lsn()` returns the current write positionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > in the WAL stream as an LSN. `pg_stat_replication` is the primary's view of
 > connected standbys: `sent_lsn` - latest WAL sent, `flush_lsn` - standby confirmed
 > durable, `replay_lsn` - standby actually applied. The lag `sent_lsn - replay_lsn`
@@ -192,6 +192,12 @@ SELECT
 > vs `checkpoints_timed`: requested checkpoints happen when WAL has filled
 > `max_wal_size`; this is bad (forced I/O spike). Increase `max_wal_size` or
 > the checkpoint interval to avoid forced checkpoints.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // WAL DURABILITY: fsync and commit behavior in Java
@@ -231,7 +237,7 @@ try (Connection conn = dataSource.getConnection()) {
 // At 1ms per fsync: 10,000 inserts = ~100ms (100x faster)
 ```
 
-> **Code walkthrough:** Each `COMMIT` causes PostgreSQL to fsync the WAL buffer
+> **Code walkthrough:** Each `COMMIT` causes PostgreSQL to fsync the WAL bufferice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > to disk before returning. This is non-negotiable for durability: the WAL record
 > must be durable before the application is told the commit succeeded. On a typical
 > SSD: one fsync costs 0.5-2ms. Auto-commit (one commit per statement): 10,000
@@ -275,7 +281,7 @@ SELECT pg_last_wal_replay_lsn();
 -- Returns the LSN of the last WAL record applied.
 ```
 
-> **Code walkthrough:** After a crash, PostgreSQL's startup process finds that
+> **Code walkthrough:** After a crash, PostgreSQL's startup process finds thatice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `pg_control` shows an unclean shutdown. It reads the `redo start LSN` from the
 > last valid checkpoint record. It opens the WAL segment containing that LSN and
 > replays all records from that point to the end of WAL. Each replay record
@@ -377,7 +383,7 @@ Recovery to a specific point in time:
   4. Review data, promote when satisfied
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Write throughput and WAL:**
 
@@ -406,7 +412,7 @@ Checkpoint configuration for write-heavy:
   wal_compression = on   (reduce WAL size)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -494,7 +500,7 @@ ls -lh /var/lib/postgresql/data/pg_wal/
 # Look for stale WAL segments not being removed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Look for stale WAL segments not being removed example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 ```bash
@@ -513,7 +519,7 @@ Fix:
 # pg_archivecleanup /pg_wal/ latest_archive_lsn
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pg_archivecleanup /pg_wal/ latest_archive_lsn example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Failure 2: Replication standby falls behind causing WAL retention**
 
@@ -532,7 +538,7 @@ FROM pg_stat_replication;
 -- Lag > 1GB = concern. Lag > 10GB = critical.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pg_archivecleanup /pg_wal/ latest_archive_lsn example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Fix: (1) Remove WAL retention slot if using slots (`DROP REPLICATION SLOT slot_name`).
 (2) Speed up standby (more CPU, faster disk). (3) Compress WAL (`wal_compression=on`).
@@ -557,13 +563,13 @@ SELECT pg_reload_conf();
 -- I/O spikes become I/O gradual increase.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This pg_archivecleanup /pg_wal/ latest_archive_lsn example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What is the relationship between WAL and ACID durability?**
+**[JUNIOR] Q1 - [MECHANISM] What is the relationship between WAL and ACID durability?**
 
 🗣️ "The D in ACID: Durability. Committed transactions survive crashes. WAL provides
 this guarantee through the write-ahead rule and fsync on commit. The write-ahead rule:
@@ -578,7 +584,7 @@ only. A power failure: OS cache is lost. WAL record is gone. The committed trans
 vanishes. That would violate Durability. `synchronous_commit = off` removes this
 fsync and is the explicit trade-off: performance at the cost of potential data loss."
 
-**Q2: How does WAL enable streaming replication?**
+**[JUNIOR] Q2 - [MECHANISM] How does WAL enable streaming replication?**
 
 🗣️ "Streaming replication: the standby connects to the primary and receives the WAL
 stream in real time. The process: (1) Primary generates WAL records for every change.
@@ -591,7 +597,7 @@ while applying WAL. Synchronous replication: on the primary, the commit only ret
 after the standby confirms it has flushed the WAL (`synchronous_standby_names`).
 This guarantees zero data loss on primary failure."
 
-**Q3: What is a replication slot and when would you use one?**
+**[JUNIOR] Q3 - [SCENARIO] What is a replication slot and when would you use one?**
 
 🗣️ "A replication slot: a mechanism for the primary to retain WAL segments until
 a standby has consumed them. Without slots: the primary deletes WAL segments after
@@ -606,7 +612,7 @@ If a slot is inactive and has fallen far behind: drop it to prevent disk fill.
 Logical replication slots (for CDC tools like Debezium): same mechanism but for
 logical changes."
 
-**Q4: What is synchronous_commit and what are the durability/performance trade-offs?**
+**[MID] Q4 - [TRADE-OFF] What is synchronous_commit and what are the durability/performance trade-offs?**
 
 🗣️ "`synchronous_commit` controls when PostgreSQL confirms a commit to the application.
 Values: `on` (default): commit returns only after WAL is flushed to local disk.
@@ -620,7 +626,7 @@ can be lost on crash. Not corruption: the database is consistent, just some rece
 are missing. Use `off` for: high-volume event logging, metrics ingestion, any system where
 a small window of data loss is acceptable."
 
-**Q5: What is full-page writes and why does PostgreSQL use it?**
+**[MID] Q5 - [MECHANISM] What is full-page writes and why does PostgreSQL use it?**
 
 🗣️ "Full-page writes: after a checkpoint, the first modification to any data page writes
 the entire page content into the WAL (not just the change). This is because: on crash
@@ -634,7 +640,7 @@ Cost: WAL volume increases after each checkpoint (more data written). Mitigation
 `wal_compression = on` (compresses full-page images, typically 40-70% reduction).
 PostgreSQL 16+: ICU-based WAL compression."
 
-**Q6: How does PITR (Point-in-Time Recovery) work?**
+**[SENIOR] Q6 - [MECHANISM] How does PITR (Point-in-Time Recovery) work?**
 
 🗣️ "PITR: restore the database to the state at any past point in time.
 Required: (1) A base backup: a consistent full copy of the data directory.
@@ -650,7 +656,7 @@ Use cases: (1) data corruption or accidental `DELETE` recovery; (2) disaster rec
 (3) testing: what was the database state at 3pm yesterday? All operational databases
 should have PITR configured."
 
-**Q7: How does WAL-level parameter wal_level affect replication and logical decoding?**
+**[SENIOR] Q7 - [MECHANISM] How does WAL-level parameter wal_level affect replication and logical decoding?**
 
 🗣️ "`wal_level`: controls what information is written to WAL. Values:
 `minimal`: minimum WAL. No replication. Not enough to replay from a base backup.
@@ -665,7 +671,7 @@ This is how Debezium reads the WAL and produces INSERT/UPDATE/DELETE events.
 Always set `wal_level = logical` if using CDC or logical replication.
 Cost: ~10-20% more WAL volume."
 
-**Q8: What happens during WAL recovery if a WAL segment is missing?**
+**[SENIOR] Q8 - [FAILURE] What happens during WAL recovery if a WAL segment is missing?**
 
 🗣️ "Recovery reads WAL segments in sequence. If a segment is missing: recovery fails
 with `FATAL: could not open file "pg_wal/000000010000000000000042": No such file`.
@@ -679,7 +685,7 @@ are permanently lost. Prevention: monitor WAL archiving: `archive_status/` shows
 segments are waiting to be archived (`.ready`) and which succeeded (`.done`).
 Alert if a segment stays in `.ready` for more than a few minutes."
 
-**Q9: How does crash recovery differ from backup-based restore?**
+**[SENIOR] Q9 - [MECHANISM] How does crash recovery differ from backup-based restore?**
 
 🗣️ "Crash recovery: the database was running and crashed (OS crash, power failure,
 `kill -9`). `pg_control` records the last valid checkpoint. On restart:
@@ -693,7 +699,7 @@ Takes hours. Best practice: take base backups frequently (daily or more) to mini
 WAL replay time for disaster recovery. RTO (Recovery Time Objective) = base backup age
 + WAL replay time + startup time."
 
-**Q10: How do you optimize WAL write performance for bulk data loads?**
+**[SENIOR] Q10 - [MECHANISM] How do you optimize WAL write performance for bulk data loads?**
 
 🗣️ "Several strategies: (1) COPY command: bulk data is loaded as a single WAL operation
 (minimal WAL record per row, not per-statement overhead). Always use COPY over INSERT
@@ -708,7 +714,7 @@ during the load; rebuild once in a single pass. (6) Disable autovacuum for the
 table during load: `ALTER TABLE load_staging SET (autovacuum_enabled = false)`.
 Re-enable after. Run ANALYZE manually post-load."
 
-**Q11: What is the write performance impact of synchronous standby replication?**
+**[SENIOR] Q11 - [MECHANISM] What is the write performance impact of synchronous standby replication?**
 
 🗣️ "With `synchronous_standby_names = 'standby1'` and `synchronous_commit = on`:
 every commit on the primary waits for the standby to flush the WAL before returning.
@@ -721,7 +727,7 @@ Solutions: (1) Co-locate synchronous standby (same AZ for <5ms RTT). (2) Use `re
 instead of `on` (standby writes WAL to disk but does not fsync; faster but not fully durable). (3) Use async standby for the remote DC and sync for local standby. (4) Batch multiple
 operations in one transaction to reduce commit count."
 
-**Q12: How do you implement PITR in a production environment at scale?**
+**[SENIOR] Q12 - [DESIGN] How do you implement PITR in a production environment at scale?**
 
 🗣️ "Production PITR setup: (1) Base backup tool: pgBackRest or Barman (not pg_basebackup
 directly for production - they add compression, encryption, parallel transfer).

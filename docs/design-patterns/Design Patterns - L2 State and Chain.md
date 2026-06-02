@@ -128,7 +128,7 @@ ctx.request();  // delegates to StateA.handle()
 ctx.request();  // now StateB.handle() (if A transitioned)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This State Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Two transition styles:**
 1. **State initiates transition**: State object calls `context.setState(newState)` -
@@ -197,7 +197,7 @@ public class VendingMachine {
 }
 ```
 
-> **Code walkthrough:** Every method duplicates the switch. Adding a
+> **Code walkthrough:** Every method duplicates the switch. Adding aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fourth state (OUT_OF_STOCK) requires adding a case to every switch in
 > every method. State logic is scattered across the class.
 
@@ -266,7 +266,7 @@ public class VendingMachineContext {
 }
 ```
 
-> **Code walkthrough:** Each state class contains the complete behavior
+> **Code walkthrough:** Each state class contains the complete behaviorice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for that state. `IdleState.insertCoin()` transitions to `HasMoneyState`.
 > `HasMoneyState.pressButton()` transitions to `DispensingState`.
 > `DispensingState.dispenseItem()` transitions back to `IdleState`.
@@ -314,7 +314,7 @@ public class PendingState extends AbstractOrderState {
 }
 ```
 
-> **Code walkthrough:** `AbstractOrderState` provides default rejection
+> **Code walkthrough:** `AbstractOrderState` provides default rejectionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for all transitions. Each concrete state overrides only the transitions
 > it supports. Calling `order.ship()` on a `PendingState` throws
 > `IllegalStateException` (via the default in `AbstractOrderState`).
@@ -656,7 +656,7 @@ handler = new AuthHandler()
 result = handler.handle(request);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Chain of Responsibility Pattern example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Two chain behaviors:**
 1. **Stop on match** - handler processes the request and does NOT call
@@ -711,7 +711,7 @@ public class ExpenseApprover {
 }
 ```
 
-> **Code walkthrough:** The routing logic is hardcoded. Adding a VP
+> **Code walkthrough:** The routing logic is hardcoded. Adding a VPice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > approval level between director and CFO requires modifying this class.
 > Each approver is directly referenced - tight coupling.
 
@@ -772,7 +772,7 @@ teamLead.handle(new ExpenseRequest(500));
 // passes through TeamLead (can't), handled by Manager
 ```
 
-> **Code walkthrough:** `setNext()` returns the next handler to enable
+> **Code walkthrough:** `setNext()` returns the next handler to enableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > fluent chaining. Each handler knows only whether it can approve and
 > its next handler. Adding VPHandler between director and CFO: change
 > only the chain assembly (one line). No existing handler class changes.

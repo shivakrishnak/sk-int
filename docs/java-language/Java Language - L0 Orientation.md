@@ -117,15 +117,26 @@ LTS CADENCE: Java 8 (2014), 11 (2018), 17 (2021), 21 (2023)
 RELEASE CADENCE: 6-month releases since Java 9 (2017)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L0 Orientation example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** This example shows how the same logic evolved across Java
+> **Code walkthrough:** This example shows how the same logic evolved across Javaice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > versions - demonstrating the language's progression toward conciseness and safety
 > without breaking the underlying semantics.
+
+
+```java
+// BAD: using for-loop where Stream API is cleaner
+List<String> results = new ArrayList<>();
+for (Item item : items) {
+    if (item.isActive()) {
+        results.add(item.getName().toUpperCase());
+    }
+}
+```
 
 ```java
 // HOW JAVA EVOLVED: same logic across versions
@@ -284,7 +295,7 @@ Fix:
     (use same major version in both stages)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -606,7 +617,7 @@ work anywhere). The security model is like GFCI outlets - prevents dangerous con
 ### 📘 Concept Explanation
 
 **Java's 5 design goals and how they manifest in the language:**
-```
+```plaintext
 JAVA DESIGN GOALS -> LANGUAGE FEATURES MAP:
 
 1. WORA (Write Once, Run Anywhere):
@@ -663,7 +674,7 @@ JAVA DESIGN GOALS -> LANGUAGE FEATURES MAP:
    - Integer overflow: deterministic (not undefined behavior as in C++)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java Design Goals: WORA Safety and OOP example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 ---
 
@@ -672,6 +683,48 @@ JAVA DESIGN GOALS -> LANGUAGE FEATURES MAP:
 > **Code walkthrough:** This example demonstrates Java's safety guarantees compared
 > to C/C++ by showing what simply cannot happen in Java, and then showing the
 > one remaining vulnerability (NullPointerException) and modern Java's mitigation.
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
+
+
+```java
+// BAD: calling get() without checking presence
+Optional<User> user = findUser(id);
+String name = user.get().getName(); // NoSuchElementException risk
+```
 
 ```java
 // JAVA SAFETY DEMONSTRATION
@@ -831,7 +884,7 @@ Rule: NEVER use an unbounded static Map for caching.
       Always: bounded, with eviction policy.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1173,10 +1226,10 @@ JLINK (Custom Runtime):
     --no-man-pages \
     --compress=2
   # Result: 45MB custom JRE vs 300MB full JDK
-  # Use in Dockerfile: FROM scratch; COPY --from=builder /opt/my-runtime /opt/runtime
+  # Use in Dockerfile: FROM scratch; COPY --from=builder /opt/my-runtime...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Use in Dockerfile: FROM scratch; COPY --from=builder /opt/my-runtime /opt/runtime example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1327,7 +1380,7 @@ Fix:
     Failure in CI is much cheaper than failure in production.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This more accurate than jdeps example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

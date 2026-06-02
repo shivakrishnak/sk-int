@@ -154,7 +154,7 @@ GENERATIONAL HYPOTHESIS:
     Young GC root set: stack + statics + remembered set (Old -> Young refs)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -164,6 +164,12 @@ GENERATIONAL HYPOTHESIS:
 > time the application writes an object reference, the JVM-generated code also executes
 > a write barrier to maintain the GC's invariants. This is the concrete mechanism
 > that makes concurrent GC possible - and its cost measurable.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // Illustrating the write barrier overhead (conceptual):
@@ -274,7 +280,7 @@ performs better than G1 for these workloads because it doesn't do generational b
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Excessive GC overhead causing application slowdown.**
-```
+```plaintext
 Symptom: application P99 latency spikes every few minutes
   GC log: frequent Minor GC (every 1-5 seconds)
   jvm.gc.overhead: 15% (should be < 5%)
@@ -307,7 +313,7 @@ Diagnosis:
       for performance-critical collections
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -603,12 +609,12 @@ stateDiagram-v2
     end note
 ```
 
-> **Diagram walkthrough:** The state diagram shows an object's complete lifecycle in
-> a generational JVM. Most objects take the short path: Allocated -> Eden -> Dead1
-> (freed at the first Minor GC, never promoted). The path through Survivor1/2 to OldGen
-> is taken only by long-lived objects. The critical insight: premature tenuring occurs
-> when objects are held by caches or static fields across multiple GC cycles, aging out
-> into OldGen even though they're eventually garbage. These objects contribute to Old Gen
+> **Diagram walkthrough:** The state diagram shows an object's complete lifecycl
+> a generational JVM. Most objects take the short path: Allocated -> Eden -> Dea
+> (freed at the first Minor GC, never promoted). The path through Survivor1/2 to
+> is taken only by long-lived objects. The critical insight: premature tenuring 
+> when objects are held by caches or static fields across multiple GC cycles, ag
+> into OldGen even though they're eventually garbage. These objects contribute t
 > growth and eventually trigger expensive Major GCs.
 
 ---
@@ -622,45 +628,45 @@ stateDiagram-v2
 ### 🎯 Model Answer
 
 **30 seconds:**
-> JIT (Just-In-Time) compilation: the JVM starts by interpreting bytecode (slow but
-> flexible). After a method reaches a threshold of invocations (10,000 by default), the
-> JIT compiles it to optimized native machine code. JIT advantage over pure AOT: it can
-> profile actual runtime behavior (inline virtual calls, eliminate dead branches) and
-> generate better-than-static-AOT code for hot paths. Trade-off: warmup time (peak
+> JIT (Just-In-Time) compilation: the JVM starts by interpreting bytecode (slow 
+> flexible). After a method reaches a threshold of invocations (10,000 by defaul
+> JIT compiles it to optimized native machine code. JIT advantage over pure AOT:
+> profile actual runtime behavior (inline virtual calls, eliminate dead branches
+> generate better-than-static-AOT code for hot paths. Trade-off: warmup time (pe
 > performance only after a few minutes of operation).
 
 **3 minutes (Senior):**
 > JIT compilation pipeline:
 >
-> 1. **Interpretation**: bytecode interpreted by the template interpreter. Profiling
+> 1. **Interpretation**: bytecode interpreted by the template interpreter. Profi
 >    data collected: invocation counts, branch frequencies, type profiles.
 >
-> 2. **C1 (client compiler)**: light compilation with limited optimization. Quick.
+> 2. **C1 (client compiler)**: light compilation with limited optimization. Quic
 >    Target: methods at tier 1 (simple, short). Generates debug-friendly code.
 >
-> 3. **C2 (server compiler)**: aggressive optimization. Slow compilation, excellent
->    output. Target: hot methods (threshold reached). Highly optimized native code.
+> 3. **C2 (server compiler)**: aggressive optimization. Slow compilation, excell
+> output. Target: hot methods (threshold reached). Highly optimized native code.
 >
 > 4. **Key C2 optimizations**:
->    - **Method inlining**: replace call site with method body (eliminates call overhead,
+>    - **Method inlining**: replace call site with method body (eliminates call 
 >      enables further optimization across the inlined code). Most impactful.
->    - **Escape analysis**: determine if object "escapes" the method. If not: allocate
+>    - **Escape analysis**: determine if object "escapes" the method. If not: al
 >      on stack (not heap), lock elimination, scalar replacement.
->    - **Loop unrolling**: execute loop body N times per iteration (reduces branch overhead).
->    - **Dead code elimination**: remove branches that never execute (profile-guided).
->    - **Vectorization (SIMD)**: compile array loops to use SSE/AVX instructions.
->    - **Speculative optimization**: assume a virtual call always dispatches to class X
->      (seen in 99.9% of profiling). Generate fast direct call with uncommon trap.
+>    - **Loop unrolling**: execute loop body N times per iteration (reduces bran
+>    - **Dead code elimination**: remove branches that never execute (profile-gu
+>  - **Vectorization (SIMD)**: compile array loops to use SSE/AVX instructions.
+>    - **Speculative optimization**: assume a virtual call always dispatches to 
+>  (seen in 99.9% of profiling). Generate fast direct call with uncommon trap.
 >      If X changes: deoptimize, re-compile without speculation.
 >
-> 5. **Deoptimization**: compiled code invalidated when speculation fails. Thread
->    restores interpreter state from deopt point. Re-compile if method stays hot.
+> 5. **Deoptimization**: compiled code invalidated when speculation fails. Threa
+>  restores interpreter state from deopt point. Re-compile if method stays hot.
 
 **Framework:** WHAT → WHY → HOW → TRADE-OFF → EXAMPLE
 
 **Blank Mind Recovery:**
 
-**(1) Restate:** "JIT = profile-guided native code compilation. Tiers: interpret ->
+**(1) Restate:** "JIT = profile-guided native code compilation. Tiers: interpret
 C1 (fast, basic) -> C2 (slow, aggressive). Key opts: inlining, escape analysis,
 speculative virtual dispatch. Deopt: when speculation fails, fall back to interpreter."
 
@@ -670,7 +676,7 @@ runtime behavior (which branches are hot, which types are used) and optimize spe
 for it."
 
 **(3) Bridge:** "JIT is like a chef learning a recipe. Day 1 (interpretation): follows
-recipe step-by-step slowly. After 100 meals (C1): learned the basics, faster. After
+recipe step-by-step slowly. After 100 meals (C1): learned the basics, faster. Af
 10,000 meals (C2): has it memorized, takes shortcuts (inlines prep steps), has a
 mise en place for common ingredients (speculative optimization)."
 
@@ -679,7 +685,7 @@ mise en place for common ingredients (speculative optimization)."
 ### 📘 Concept Explanation
 
 **JIT compilation tiers and optimization phases:**
-```
+```plaintext
 HOTSPOT TIERED COMPILATION PIPELINE:
 
 TIER 0: Interpreter
@@ -715,13 +721,13 @@ TIER 4: C2 Compilation (full optimization)
 
     3. Speculative virtual dispatch:
        - Virtual call type profile: "99.9% of time, interface is ArrayList"
-       - Generate: if (concrete_type == ArrayList) fast_direct_call(ArrayList.method)
+       - Generate: if (concrete_type == ArrayList) fast_direct_call(ArrayList.m...
                    else deopt (uncommon trap)
        - Result: virtual call behaves like a direct call (inlineable)
 
     4. Loop transformations:
        - Loop unrolling: 4 iterations per loop body execution (reduce branch overhead)
-       - Loop vectorization: int[] sum -> SSE/AVX add instructions (4 ints per cycle)
+       - Loop vectorization: int[] sum -> SSE/AVX add instructions (4 ints per...
        - Loop peeling: handle first/last iteration separately to simplify main loop
 
     5. Dead code elimination:
@@ -741,7 +747,7 @@ DEOPTIMIZATION:
   Monitor: -XX:+PrintDeoptimizations or JFR Deoptimization events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -751,6 +757,12 @@ DEOPTIMIZATION:
 > creates deeply-chained calls that exceed the inlining depth limit (C2 stops inlining
 > at ~9 levels by default). The GOOD pattern keeps hot paths shallow enough for full
 > inlining, enabling all downstream optimizations.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: deep call chain exceeds JIT inlining depth limit
@@ -906,7 +918,7 @@ Prevention patterns:
      JMH: same benchmark, ArrayList vs mixed -> measure throughput delta
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

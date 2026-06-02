@@ -145,10 +145,10 @@ INSTANCEOF PATTERN MATCHING (Java 16):
   
   // In conditions (scope rules):
   if (obj instanceof String s && s.length() > 5) { ... }  // s in scope
-  if (!(obj instanceof String s) || s.length() > 5) { ... } // compile error: s not in scope after !
+  if (!(obj instanceof String s) || s.length() > 5) { ... } // compile error:...
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Type System example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -269,6 +269,12 @@ Pattern matching doesn't eliminate `instanceof` chains; it makes exhaustive type
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Adding a new sealed subtype breaks production unexpectedly.**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 Symptom: After adding a new OrderEvent type, some handlers return wrong results.
   No compile error was raised. The new event type falls through to an unexpected case.
@@ -280,7 +286,7 @@ Root cause:
           case OrderEvent.Created e -> handleCreated(e);
           case OrderEvent.Shipped e -> handleShipped(e);
           // Forgot to add case for new OrderEvent.Returned
-          default -> log.warn("Unknown event: {}", event);  // silently ignored!
+          default -> log.warn("Unknown event: {}", event);  // silently...
       }
   }
   
@@ -306,7 +312,7 @@ Fix:
           case OrderEvent.Created e  -> handleCreated(e);
           case OrderEvent.Shipped e  -> handleShipped(e);
           // Default ONLY for defensive programming (not to suppress warnings):
-          default -> throw new IllegalStateException("Unhandled event: " + event);
+          default -> throw new IllegalStateException("Unhandled event: " +...
       }
       // Better: use switch expression to get compile-time exhaustiveness
   }
@@ -318,23 +324,23 @@ Prevention:
   If void return is needed: throw IllegalStateException in default.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key conice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| Sealed class purpose | 2 minutes |
-| permits clause rules | 1 minute |
-| Exhaustive switch | 2 minutes |
-| Guarded patterns | 2 minutes |
-| Deconstruction patterns | 2 minutes |
-| non-sealed use case | 1 minute |
-| vs Visitor pattern | 2 minutes |
-| Domain modeling use case | 2 minutes |
-| Pattern matching scope | 1 minute |
+| Question Category| Time to Answer|
+|------------------------|--------------------------------------|
+| Sealed class purpose| 2 minutes|
+| permits clause rules| 1 minute|
+| Exhaustive switch| 2 minutes|
+| Guarded patterns| 2 minutes|
+| Deconstruction patterns| 2 minutes|
+| non-sealed use case| 1 minute|
+| vs Visitor pattern| 2 minutes|
+| Domain modeling use case| 2 minutes|
+| Pattern matching scope| 1 minute|
 
 ---
 
@@ -343,11 +349,11 @@ Prevention:
 A: For a switch on a sealed type (or enum): the compiler collects all `permits` clauses (recursively).
 A switch without `default` must cover all permitted subtypes. If a case is missing: compile error.
 With a `default`: exhaustiveness check is disabled (the default handles all unhandled cases).
-For enums: same - switch without `default` must list all enum constants. The guarded pattern
-(`case Circle c when c.radius() > 0`): does NOT count as covering all Circles (the unguarded
+For enums: same - switch without `default` must list all enum constants. The gua
+(`case Circle c when c.radius() > 0`): does NOT count as covering all Circles (t
 case must also be present or a default added).
 
-*What separates good from great:* The exhaustiveness check is a compile-time guarantee. It means:
+*What separates good from great:* The exhaustiveness check is a compile-time gua
 when you add a new type to the sealed hierarchy, ALL switch expressions (without `default`) that
 match on the sealed type immediately give a compile error. This is the "change amplification"
 property: one change in the type hierarchy propagates to all switch sites that need updating.
@@ -360,7 +366,7 @@ through to `default` (or causes NPE if no default and no match).
 **Q2 (visitor vs sealed): How do sealed classes replace the Visitor pattern?**
 
 A: Visitor pattern: add new operations without modifying the type hierarchy (add a new Visitor).
-Trade-off: adding new types requires modifying ALL visitors. Sealed classes + pattern matching:
+Trade-off: adding new types requires modifying ALL visitors. Sealed classes + pa
 add new operations as new switch expressions (no modification to types). Adding new types: ALL
 switches need updating (compile error enforces this). The choice: if operations change more than
 types (add operations rarely, add types often): Visitor. If types change more than operations (add
@@ -372,7 +378,7 @@ code? In OOP: new types are easy (polymorphism), new operations are hard (must a
 classes). In FP (pattern match on ADTs): new operations are easy (new function), new types are
 hard (must update all pattern matches). Java sealed: aligns with the FP side (new operations easy,
 new types require updating all switches). The Visitor pattern is an OOP workaround to simulate
-the FP approach. Sealed + switch: the language-native solution. Choose based on which changes more:
+the FP approach. Sealed + switch: the language-native solution. Choose based on 
 types or operations.
 
 ---
@@ -380,46 +386,46 @@ types or operations.
 **Q3 (scope rules): What are the scoping rules for pattern variables?**
 
 A: Pattern variable `String s` in `if (obj instanceof String s)`: scoped to the `if` block (and
-the condition of `&&` after the instanceof check). In `switch`: `case X x -> ...`, `x` is scoped
-to the right-hand side of the arrow (single expression or block). `case X x: { ... }` (traditional
-colon syntax): `x` is scoped to all cases after the matching case until a `break` (fall-through
-applies). Guarded pattern: `case Circle c when c.radius() > 0 -> ...`, `c` is in scope for the
+the condition of `&&` after the instanceof check). In `switch`: `case X x -> ...
+to the right-hand side of the arrow (single expression or block). `case X x: { .
+colon syntax): `x` is scoped to all cases after the matching case until a `break
+applies). Guarded pattern: `case Circle c when c.radius() > 0 -> ...`, `c` is in
 `when` guard and the right-hand side.
 
-*What separates good from great:* The "definite assignment" rules: `if (obj instanceof String s && s.length() > 0)` - `s` is definitely assigned after the `instanceof` check, so it's in scope for
-the `&&` right side. `if (!(obj instanceof String s) || s.length() > 0)` - after `!()`, `s` is
+*What separates good from great:* The "definite assignment" rules: `if (obj inst
+ the `&&` right side. `if (!(obj instanceof String s)|| s.length() > 0)` - after
 NOT definitely assigned (the `!` negates the assignment). Compiler error. The rule: pattern
 variables are in scope only where the match is guaranteed to have succeeded. This mirrors the
-rules for definite assignment of regular variables (`int x; if (...) x = 5; System.out.println(x);` - compile error: `x` might not be assigned).
+rules for definite assignment of regular variables (`int x; if (...) x = 5; Syst
 
 ---
 
 **Q4 (non-sealed): When do you use non-sealed and what are the implications?**
 
-A: `non-sealed`: intentionally reopens the hierarchy. Use when: you control the sealed parent
-but want to allow extension of a specific subtype. Example: a framework provides `sealed interface Plugin permits CorePlugin, ExtensionPlugin`. `CorePlugin` is `final` (no extension). `ExtensionPlugin` is `non-sealed` (user-provided extensions extend it). The switch on `Plugin`: must have a `default` (because `ExtensionPlugin` subtypes are unknown).
+A: `non-sealed`: intentionally reopens the hierarchy. Use when: you control the 
+but want to allow extension of a specific subtype. Example: a framework provides
 
-*What separates good from great:* The `non-sealed` keyword prevents the "I forgot to add the
+*What separates good from great:* The `non-sealed` keyword prevents the "I forgo
 subtype to permits" mistake. Without it: trying to extend a sealed type you don't own = compile
-error. With `non-sealed` as the intended extension point: clean, explicit design. The implicit
-contract: `non-sealed` subtypes in a switch should always have a `default` case (or be caught
-via the `non-sealed` parent type). Framework design pattern: use `sealed` for the core set of
-types, `non-sealed` for the extension point (the "escape hatch" that library users extend).
+error. With `non-sealed` as the intended extension point: clean, explicit design
+contract: `non-sealed` subtypes in a switch should always have a `default` case 
+via the `non-sealed` parent type). Framework design pattern: use `sealed` for th
+types, `non-sealed` for the extension point (the "escape hatch" that library use
 
 ---
 
 **Q5 (guarded patterns): How do guarded patterns work and what pitfalls do they have?**
 
-A: `case Circle c when c.radius() > 0 -> "positive radius"`. The `when` clause: a boolean
+A: `case Circle c when c.radius() > 0 -> "positive radius"`. The `when` clause: 
 expression evaluated after the type check succeeds. If the type matches but the guard fails: falls
 through to the next case. Order matters: more specific (guarded) patterns must precede less specific
-(unguarded) patterns for the same type. `case Circle c when c.radius() > 0 -> ...; case Circle c -> "other circles"` - correct order. Reversed: compile error (unreachable guarded case).
+(unguarded) patterns for the same type. `case Circle c when c.radius() > 0 -> ..
 
 *What separates good from great:* Guarded patterns are evaluated in order, but the compiler
 detects dominance: if a case can never be reached (because a previous case is always true for the
 same type), it's a compile error ("this case is dominated by a preceding case"). This prevents
 dead code in switch expressions. The `when` guard can reference the bound variable AND other
-variables in scope. Example: `case Order o when o.status() == expectedStatus -> handle(o)` -
+variables in scope. Example: `case Order o when o.status() == expectedStatus -> 
 `expectedStatus` is from the outer scope. Guards can call methods, perform arithmetic, anything
 that returns a boolean.
 
@@ -427,44 +433,44 @@ that returns a boolean.
 
 **Q6 (switch expression): What is the difference between switch expression and switch statement?**
 
-A: Switch statement: traditional, void. Each case ends with `break` (or falls through). Side-effect
-based. Switch expression (Java 14+): returns a value. Each case uses `->` (no fall-through) or
-`yield` keyword (for multi-statement cases). `yield value;` = return value from the switch expression
+A: Switch statement: traditional, void. Each case ends with `break` (or falls th
+based. Switch expression (Java 14+): returns a value. Each case uses `->` (no fa
+`yield` keyword (for multi-statement cases). `yield value;` = return value from 
 block. Switch expression cannot fall through. Switch statement: can fall through (multiple labels
 for the same case: `case 1: case 2: sameAction(); break;`).
 
-*What separates good from great:* The `->` syntax in switch: both statement (void) and expression (value). The `->` prevents fall-through (each case is independent). The `:` syntax: traditional,
-fall-through by default. `yield`: used in a `:` case body to return a value from a switch expression.
-Example: `String s = switch(x) { case 1: { int calc = ...; yield calc + " items"; } default: yield "none"; }`.
-The mix of `->` and `:` syntax in the same switch: NOT allowed. Either all `->` or all `:`.
+*What separates good from great:* The `->` syntax in switch: both statement (voi
+fall-through by default. `yield`: used in a `:` case body to return a value from
+Example: `String s = switch(x) { case 1: { int calc = ...; yield calc + " items"
+The mix of `->` and `:` syntax in the same switch: NOT allowed. Either all `->` 
 
 ---
 
 **Q7 (modeling): How do sealed types improve domain modeling?**
 
-A: Domain events, states, and result types: finite sets of variants with type-specific data.
+A: Domain events, states, and result types: finite sets of variants with type-sp
 Sealed: models this exactly. Example: `PaymentStatus`: Pending (no data), Completed (transactionId),
 Failed (reason, timestamp). Each status is a record with its specific data. Switch on status:
-exhaustive. Adding a new status: compile-time failure at all unhandled switches. This makes the
+exhaustive. Adding a new status: compile-time failure at all unhandled switches.
 domain model resilient to change: the type system enforces completeness everywhere the status is used.
 
-*What separates good from great:* The alternative (enum with a data map): `PaymentStatus enum { PENDING, COMPLETED, FAILED }` with a separate `Map<PaymentStatus, Object>` for status-specific data. Problems: type-unsafe (you need to cast `(String) dataMap.get(COMPLETED)` for the transaction ID), not exhaustive (the map might not have data for a status), and harder to document (which statuses have which data). Sealed + records: type-safe, exhaustive, self-documenting. `case Completed(String txId)` is unambiguous about what data is available. This is the production reason to use sealed types over enums for domain states.
+*What separates good from great:* The alternative (enum with a data map): `Payme
 
 ---
 
 **Q8 (when to use): When should you choose sealed over a regular open hierarchy?**
 
 A: Use sealed when: (1) the set of subtypes is fixed and known at design time, (2) you want
-compile-time exhaustiveness checking in switches, (3) you want to prevent unauthorized subclassing
-from external code, (4) you're modeling ADTs (sum types) like Result<T>, Option<T>, AST nodes.
+compile-time exhaustiveness checking in switches, (3) you want to prevent unauth
+from external code, (4) you're modeling ADTs (sum types) like Result<T>, Option<
 Don't use sealed when: (1) the hierarchy is intended to be open for extension by library users
-(use interfaces + documentation), (2) the set of subtypes will grow frequently (sealed adds friction
+(use interfaces + documentation), (2) the set of subtypes will grow frequently (
 to adding types), (3) you need deep inheritance hierarchies (sealed is best for shallow, wide hierarchies).
 
-*What separates good from great:* The maintenance cost trade-off: sealed is easier to maintain when
+*What separates good from great:* The maintenance cost trade-off: sealed is easi
 OPERATIONS change (new switch on the type), but harder when TYPES change (must update all switches).
 For a library that ships an event type hierarchy to users: sealed means users can't add event types
-(too restrictive). For an internal domain model where the events are domain-owned: sealed is perfect.
+(too restrictive). For an internal domain model where the events are domain-owne
 The rule: if external users need to extend it, use an open interface. If you own all the variants:
 sealed. This is the open/closed principle applied to type hierarchies.
 
@@ -473,14 +479,14 @@ sealed. This is the open/closed principle applied to type hierarchies.
 **Q9 (sealed + generics): How do sealed types work with generics?**
 
 A: Sealed interfaces can be generic. Permits clause lists types (possibly generic):
-`sealed interface Result<T> permits Result.Ok<T>, Result.Err`. Permitted subtypes must be subtypes
-of the sealed type for ALL type parameters. `record Ok<T>(T value) implements Result<T> {}` -
-`Ok<T>` is a permitted subtype of `Result<T>`. Pattern matching with generic sealed types:
-`case Result.Ok<String> ok -> ok.value()` (Java may require explicit type or infer from context).
+`sealed interface Result<T> permits Result.Ok<T>, Result.Err`. Permitted subtype
+of the sealed type for ALL type parameters. `record Ok<T>(T value) implements Re
+`Ok<T>` is a permitted subtype of `Result<T>`. Pattern matching with generic sea
+`case Result.Ok<String> ok -> ok.value()` (Java may require explicit type or inf
 
 *What separates good from great:* The type inference in pattern matching for generic sealed types:
-the compiler infers the type from the switch target. If `result` is `Result<User>`, then `case Ok<User> ok -> ok.value()` is inferred. The explicit type annotation in the case is sometimes needed
-for clarity. Nested generic deconstruction: `case Ok<List<String>>(List<String> items)` - possible
+the compiler infers the type from the switch target. If `result` is `Result<User
+for clarity. Nested generic deconstruction: `case Ok<List<String>>(List<String> 
 but the type annotation becomes verbose. In practice: use `var` or rely on inference when the type
 is obvious from context. The sealed generic pattern is the foundation of monadic composition in
 Java (Optional, Stream, and custom Result types are all effectively sealed generic types).
@@ -489,16 +495,16 @@ Java (Optional, Stream, and custom Result types are all effectively sealed gener
 
 ### ⚖️ Comparison Table
 
-| Feature | Sealed + Switch | Visitor Pattern | Enum | Open Hierarchy |
-|---------|----------------|-----------------|------|----------------|
-| Add new type | Compile errors at switches | Compile errors in visitors | Compile errors in switches | No error |
-| Add new operation | New switch expression | New visitor class | New switch | Need polymorphism |
-| Type-specific data | Yes (records) | Separate classes | No (unit-typed) | Yes (subtype fields) |
-| Exhaustiveness | Compile-time | Compile-time | Compile-time | Runtime only |
-| External extension | Blocked | Can extend node + visitor | Blocked | Allowed |
-| Boilerplate | Low | High | Low | Low |
-| Pattern matching | Yes | Indirect | Yes | No |
-| Best for | Domain ADTs | Complex OOP hierarchies | State/constants | Framework extension |
+| Feature| Sealed + Switch| Visitor Pattern| Enum| Open Hierarchy|
+|---|---|----------------------|--------------------------|--------------------|
+| Add new type| Compile errors at switches| Compile errors in visitors| Compile 
+| Add new operation| New switch expression| New visitor class| New switch| Need 
+| Type-specific data| Yes (records)| Separate classes| No (unit-typed)| Yes (sub
+| Exhaustiveness| Compile-time| Compile-time| Compile-time| Runtime only|
+| External extension| Blocked| Can extend node + visitor| Blocked| Allowed|
+| Boilerplate| Low| High| Low| Low|
+| Pattern matching| Yes| Indirect| Yes| No|
+| Best for| Domain ADTs| Complex OOP hierarchies| State/constants| Framework ext
 
 ---
 
@@ -613,7 +619,7 @@ some Cat-or-supertype'. You can add Cats (it accepts at least Cats), but reading
 ### 📘 Concept Explanation
 
 **Wildcard rules with type variance:**
-```
+```plaintext
 INVARIANCE - THE PROBLEM:
 
   List<String> strings = new ArrayList<>();
@@ -685,7 +691,7 @@ MULTIPLE BOUNDS:
   // Class bounds must come first: <T extends MyClass & InterfaceA>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -806,7 +812,7 @@ compile. The rule: `?` for one occurrence (read-only parameter), `<T>` for two o
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: API using ? extends T rejects callers that should work.**
-```
+```plaintext
 Symptom: compile error "required List<? extends Animal> but got List<Cat>"
   when calling: processAnimals(new ArrayList<Cat>())
   and processAnimals takes List<? extends Animal>
@@ -843,31 +849,31 @@ Prevention:
   Static analysis: PMD rule "MethodParameterCouldBeWildcard" catches this.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key conice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Question Category | Time to Answer |
-|---|---|
-| PECS explained | 2 minutes |
-| Wildcard vs type parameter | 2 minutes |
-| Recursive bounds | 2 minutes |
-| Wildcard capture | 2 minutes |
-| Multiple bounds | 1 minute |
-| Array covariance vs generic invariance | 2 minutes |
-| ? extends vs ? super in practice | 2 minutes |
-| Intersection type | 1 minute |
-| Wildcard in return type | 1 minute |
+| Question Category| Time to Answer|
+|--------------------------------------|---------------------------|
+| PECS explained| 2 minutes|
+| Wildcard vs type parameter| 2 minutes|
+| Recursive bounds| 2 minutes|
+| Wildcard capture| 2 minutes|
+| Multiple bounds| 1 minute|
+| Array covariance vs generic invariance| 2 minutes|
+| ? extends vs ? super in practice| 2 minutes|
+| Intersection type| 1 minute|
+| Wildcard in return type| 1 minute|
 
 ---
 
 **Q1 (covariance): Why are Java generics invariant while arrays are covariant?**
 
 A: Arrays were covariant before generics (Java 1.0). `String[]` is a subtype of `Object[]`.
-The problem: `Object[] objs = new String[]{}; objs[0] = 42;` - compiles but throws `ArrayStoreException` at runtime (the JVM checks array element type at every store). Runtime check = overhead.
-Generics (Java 5): learned from this mistake. `List<String>` is NOT a subtype of `List<Object>`.
+The problem: `Object[] objs = new String[]{}; objs[0] = 42;` - compiles but thro
+Generics (Java 5): learned from this mistake. `List<String>` is NOT a subtype of
 Any type mismatch: caught at compile time (type erasure means no runtime check possible anyway).
 
 *What separates good from great:* The reason array covariance can't be fixed (backward compatibility)
@@ -881,12 +887,12 @@ for polymorphic container handling. The `T[] array` in generic code: always requ
 **Q2 (pecs deep): Why does ? extends prevent writes and ? super prevent typed reads?**
 
 A: `? extends Animal`: the list holds objects of some SPECIFIC unknown Animal subtype. It might
-be `List<Cat>` or `List<Dog>`. If you add a Cat to it: it might be `List<Dog>` -> type violation.
-If you add a Dog: it might be `List<Cat>`. The compiler can't know -> no writes allowed.
+be `List<Cat>` or `List<Dog>`. If you add a Cat to it: it might be `List<Dog>` -
+If you add a Dog: it might be `List<Cat>`. The compiler can't know -> no writes 
 You CAN read: whatever specific type it is, it IS at least an Animal. Read as Animal: safe.
-`? super Cat`: the list accepts at least Cat objects. It might be `List<Animal>` or `List<Object>`.
+`? super Cat`: the list accepts at least Cat objects. It might be `List<Animal>`
 You CAN add a Cat: it works for all supertypes (Animal accepts Cat, Object accepts Cat). You
-CAN'T read as Cat: might be `List<Object>` where other non-Cat objects were added. Read as Object: safe.
+CAN'T read as Cat: might be `List<Object>` where other non-Cat objects were adde
 
 *What separates good from great:* The fundamental insight: the "write" direction and "read" direction
 have opposite variance requirements. Writing is contravariant (a consumer of `Cat` can be anything
@@ -898,113 +904,113 @@ and wildcards add opt-in variance.
 
 ---
 
-**Q3 (recursive bounds): Why use `<T extends Comparable<? super T>>` instead of `<T extends Comparable<T>>`?**
+**Q3 (recursive bounds): Why use `<T extends Comparable<? super T>>` instead of 
 
-A: `<T extends Comparable<T>>`: T must implement `Comparable<T>` (compare itself to itself).
-`<T extends Comparable<? super T>>`: T must implement `Comparable<something that T IS>`. If `class Foo extends Bar implements Comparable<Bar>`: `Foo` compares to `Bar` (its supertype). `Comparable<T>` would reject Foo (Foo doesn't implement `Comparable<Foo>`). `Comparable<? super T>` accepts Foo (Foo implements `Comparable<Bar>` and Bar super Foo). JDK uses `<T extends Comparable<? super T>>` in `Collections.sort()`, `Collections.min()`, `TreeSet`, `TreeMap`.
+A: `<T extends Comparable<T>>`: T must implement `Comparable<T>` (compare itself
+`<T extends Comparable<? super T>>`: T must implement `Comparable<something that
 
-*What separates good from great:* In practice, most classes implement `Comparable<T>` for themselves
-directly (e.g., `String implements Comparable<String>`). The `? super T` is rarely triggered in
-user-defined code. BUT: framework classes that use `Comparable` for ordering should always use
-`Comparable<? super T>` to be maximally correct. If a library uses `Comparable<T>` and a user has
-a class that implements `Comparable<Parent>`: their class won't work with the library. This is a
-real user-facing restriction that the `? super T` form prevents. Always use the more general form
+*What separates good from great:* In practice, most classes implement `Comparabl
+directly (e.g., `String implements Comparable<String>`). The `? super T` is rare
+user-defined code. BUT: framework classes that use `Comparable` for ordering sho
+`Comparable<? super T>` to be maximally correct. If a library uses `Comparable<T
+a class that implements `Comparable<Parent>`: their class won't work with the li
+real user-facing restriction that the `? super T` form prevents. Always use the 
 in library APIs.
 
 ---
 
 **Q4 (type token): What is the type token pattern and when is it used?**
 
-A: Type token: passing `Class<T>` as a parameter to preserve generic type information at runtime.
-`<T> T getBean(Class<T> type)` - Spring's `getBean`. `type.cast(object)` - safe cast using the
+A: Type token: passing `Class<T>` as a parameter to preserve generic type inform
+`<T> T getBean(Class<T> type)` - Spring's `getBean`. `type.cast(object)` - safe 
 token. Used when: methods need to create or convert to a specific type that would otherwise be erased.
-`TypeReference<T>` pattern: anonymous subclass captures the generic type via `getGenericSuperclass()`.
+`TypeReference<T>` pattern: anonymous subclass captures the generic type via `ge
 
-*What separates good from great:* The super type token: `new TypeReference<List<String>>() {}`.
-The anonymous class's supertype is `TypeReference<List<String>>`. The generic type IS available at
+*What separates good from great:* The super type token: `new TypeReference<List<
+The anonymous class's supertype is `TypeReference<List<String>>`. The generic ty
 runtime via `((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]`.
 This returns `ParameterizedType{rawType=List, actualTypeArguments=[String]}`. Jackson uses this
-for `objectMapper.readValue(json, new TypeReference<List<User>>() {})`. Without the super type token:
-Jackson would see `List` (erased) and produce `List<Object>` instead of `List<User>`. This is
+for `objectMapper.readValue(json, new TypeReference<List<User>>() {})`. Without 
+Jackson would see `List` (erased) and produce `List<Object>` instead of `List<Us
 the most common workaround for type erasure in production code.
 
 ---
 
 **Q5 (design): How do you design a generic utility that works with both reading and writing?**
 
-A: If the utility both reads and writes to the same container: use a named type parameter `<T>`,
-not a wildcard. `<T> void sort(List<T> list)` - reads elements (Comparator compares T), writes
-sorted elements back. `<T> T findAndUpdate(List<T> list, Predicate<T> pred, UnaryOperator<T> f)` -
-reads T, writes modified T back. Wildcards: for one-directional operations (read-only source or
+A: If the utility both reads and writes to the same container: use a named type 
+not a wildcard. `<T> void sort(List<T> list)` - reads elements (Comparator compa
+sorted elements back. `<T> T findAndUpdate(List<T> list, Predicate<T> pred, Unar
+reads T, writes modified T back. Wildcards: for one-directional operations (read
 write-only destination).
 
-*What separates good from great:* The mixed producer/consumer case: `<T> void move(List<? super T> dst, List<? extends T> src)` - src is a producer (? extends), dst is a consumer (? super), but T appears in both. The named type parameter `<T>` connects them: whatever type comes from src, it must be acceptable to dst. If src and dst were both `<?>`: the types would be independent (could move Dog to List<Cat>). The named `<T>` creates the constraint: "whatever comes out of src, it fits into dst." This is the most important use of named type parameters over wildcards.
+*What separates good from great:* The mixed producer/consumer case: `<T> void mo
 
 ---
 
 **Q6 (inference): How does Java infer type parameters for generic methods?**
 
-A: Type inference: the compiler infers `<T>` from the argument types. `max(List<String> list)`:
+A: Type inference: the compiler infers `<T>` from the argument types. `max(List<
 T = String (inferred from list element type). `max(stringList)` vs `max(integerList)`: T inferred
-differently. When inference fails: provide explicit type argument: `Collections.<String>emptyList()`.
+differently. When inference fails: provide explicit type argument: `Collections.
 Inference flow: (1) from actual argument types, (2) from target type (if result is assigned to a typed variable), (3) from bounds. If multiple inferences conflict: the most specific common supertype.
 
-*What separates good from great:* The diamond operator `<>` uses the same inference: `new ArrayList<>()` infers the type from the variable declaration on the left. `List<String> list = new ArrayList<>()` - `ArrayList<String>` inferred. `var list = new ArrayList<>()` - cannot infer (no target type), compile error. The explicit type argument in diamond: not possible (`new ArrayList<String>()` is the fully explicit form). The common failure mode: using `var` with diamond operators creates unintended `ArrayList<Object>`. Always use an explicit target type when using `var` with generic constructors.
+*What separates good from great:* The diamond operator `<>` uses the same infere
 
 ---
 
 **Q7 (intersection): What are intersection types and how are they used in generics?**
 
-A: Intersection type in bounds: `<T extends A & B>` - T must be both A and B. Cast to intersection:
-`(Runnable & Serializable) lambda` - the lambda can be used as both Runnable and Serializable.
-Use case: a generic method that needs both capabilities: `<T extends Runnable & Serializable>`.
-Intersection type in lambda: `(Runnable & Serializable) () -> {...}` - creates a lambda that
+A: Intersection type in bounds: `<T extends A & B>` - T must be both A and B. Ca
+`(Runnable & Serializable) lambda` - the lambda can be used as both Runnable and
+Use case: a generic method that needs both capabilities: `<T extends Runnable & 
+Intersection type in lambda: `(Runnable & Serializable) () -> {...}` - creates a
 implements both interfaces.
 
 *What separates good from great:* The `(Runnable & Serializable)` lambda cast: the resulting
 lambda object IS a Serializable. This is one of the few ways to get a serializable lambda in Java.
-Use case: task submission to a distributed system that requires Serializable tasks. `(Runnable & Serializable) () -> processItem(id)` - this lambda can be serialized and sent to a remote node. The intersection
+Use case: task submission to a distributed system that requires Serializable tas
 type cast on lambdas: the only way to assign a lambda to a variable of intersection type. The declared
 variable type must be `Runnable` or `Serializable` (not the intersection itself as a variable type,
-since Java variable types can't be intersection types directly - only in casts and bounds).
+since Java variable types can't be intersection types directly - only in casts a
 
 ---
 
 **Q8 (wildcards in collections): What is the wildcard capture problem in collections APIs?**
 
-A: Using `?` in collections means you can't add to them: `List<?> list = ...; list.add("x")` - compile error. Real problem: you might have a method that reads a `List<?>` and wants to rearrange its elements. Without knowing the element type, you can't get and set safely. Solution: wildcard capture via a private generic helper method (as in the `swap` example).
+A: Using `?` in collections means you can't add to them: `List<?> list = ...; li
 
-*What separates good from great:* The reverse wildcard: `List<? extends T>` prevents adding,
+*What separates good from great:* The reverse wildcard: `List<? extends T>` prev
 but `Collections.unmodifiableList()` also prevents adding (at runtime). The difference: `? extends`
 prevents adding AT COMPILE TIME (type safety). `unmodifiableList()` throws at RUNTIME. The right
-defensive copy: `List.copyOf(source)` - immutable copy (UnsupportedOperationException on any modification). For API design: accept `Collection<? extends T>` for parameters you only read from (maximum flexibility), return `List<T>` or `List<? extends T>` from methods (or return `List.copyOf()` for immutability guarantee).
+defensive copy: `List.copyOf(source)` - immutable copy (UnsupportedOperationExce
 
 ---
 
 **Q9 (bounds in practice): What bounded type parameters appear most frequently in production code?**
 
-A: (1) `<T extends Comparable<? super T>>` - for sort/min/max utilities. (2) `<T extends Enum<T>>` - for enum-related utilities (the Enum class itself is generic: `class Enum<E extends Enum<E>>`). (3) `<T extends Throwable>` - for methods that throw or handle specific exceptions. (4) `<K, V>` - map utilities. (5) `<T extends Number>` - numeric utilities. (6) `<T>` with `Class<T>` type token - factory and DI methods.
+A: (1) `<T extends Comparable<? super T>>` - for sort/min/max utilities. (2) `<T
 
-*What separates good from great:* The `Enum<E extends Enum<E>>` recursive bound is the most
-confusing: every enum implicitly extends `Enum<Itself>`. `enum Color implements Enum<Color>`. The
-bound `E extends Enum<E>` means: E is an enum type. This restricts the parameter to only enum types.
-`<E extends Enum<E>> EnumSet<E> setOf(Class<E> enumType)` - creates an EnumSet of the given enum type,
-and the compiler knows E is an enum. The recursive self-referential bound is the Java idiom for
+*What separates good from great:* The `Enum<E extends Enum<E>>` recursive bound 
+confusing: every enum implicitly extends `Enum<Itself>`. `enum Color implements 
+bound `E extends Enum<E>` means: E is an enum type. This restricts the parameter
+`<E extends Enum<E>> EnumSet<E> setOf(Class<E> enumType)` - creates an EnumSet o
+and the compiler knows E is an enum. The recursive self-referential bound is the
 "this type parameter must be an enum." Not just for `Enum`: it's the pattern for any type that
-references itself (self-typed/F-bounded polymorphism in functional programming terminology).
+references itself (self-typed/F-bounded polymorphism in functional programming t
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Construct | Syntax | Can Read | Can Write | Use Case |
-|-----------|--------|----------|-----------|----------|
-| Type parameter | `<T>` | As T | As T | Consistent type across signature |
-| Upper bounded | `? extends T` | As T | No | Read-only/producer input |
-| Lower bounded | `? super T` | As Object | As T | Write-only/consumer input |
-| Unbounded | `<?>` | As Object | No | Type-agnostic read-only |
-| Multiple bounds | `<T extends A & B>` | As A and B | As T | Needs multiple capabilities |
-| Recursive bound | `<T extends Comparable<T>>` | As Comparable | As T | Self-comparable types |
+| Construct| Syntax| Can Read| Can Write| Use Case|
+|---|-----------------|-------------|---------|--------------------------------|
+| Type parameter| `<T>`| As T| As T| Consistent type across signature|
+| Upper bounded| `? extends T`| As T| No| Read-only/producer input|
+| Lower bounded| `? super T`| As Object| As T| Write-only/consumer input|
+| Unbounded| `<?>`| As Object| No| Type-agnostic read-only|
+| Multiple bounds| `<T extends A & B>`| As A and B| As T| Needs multiple capabil
+| Recursive bound| `<T extends Comparable<T>>`| As Comparable| As T| Self-compar
 
 ---
 

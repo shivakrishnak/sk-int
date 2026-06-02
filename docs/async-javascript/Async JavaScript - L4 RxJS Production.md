@@ -91,6 +91,7 @@ handlers that fire multiple times per event.
 
 **How it works:**
 
+{% raw %}
 ```javascript
 // UNDERSTANDING THE SUBSCRIPTION CHAIN
 
@@ -177,8 +178,9 @@ class MyService {
   }
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This RxJS Memory Leaks and Subscription Management example demonstrates async/await Promise resolution using React hook. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 The `async` pipe in Angular is the ideal subscription manager
@@ -215,6 +217,7 @@ that complete the Observable.
 
 ### 💻 Code Example
 
+{% raw %}
 ```javascript
 // BAD: Classic Angular subscription leak
 @Component({
@@ -239,8 +242,9 @@ class UserProfileComponent implements OnInit {
 }
 // After 10 navigations: 10 active subscriptions
 ```
+{% endraw %}
 
-> **Code walkthrough:** The `userService.user$` Subject maintains
+> **Code walkthrough:** The `userService.user$` Subject maintainsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > an `observers` array. Each component creation adds a new
 > observer (the subscribe callback). Without `ngOnDestroy`
 > cleanup, each observer holds a reference to the component
@@ -249,6 +253,7 @@ class UserProfileComponent implements OnInit {
 > none can be GCed because the Subject holds a reference to
 > each.
 
+{% raw %}
 ```javascript
 // GOOD: Proper subscription lifecycle management in Angular
 
@@ -330,8 +335,9 @@ function UserProfile() {
   return user ? <div>{user.name}</div> : null;
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** Option A (takeUntil) shows the standard
+> **Code walkthrough:** Option A (takeUntil) shows the standardice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Angular pattern: `destroy$` is a Subject that acts as a
 > completion trigger. Every subscription in the component uses
 > `pipe(takeUntil(this.destroy$))`. In `ngOnDestroy`, emitting
@@ -424,9 +430,14 @@ setInterval(() => {
 }, 30_000);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 **Failure 2: Nested subscription accumulation**
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
 ```javascript
 // BAD: inner subscription not cleaned up
 outer$.subscribe(outerValue => {
@@ -447,23 +458,22 @@ outer$.pipe(
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates arrow funice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Category | Count | Coverage |
-|---|---|---|
-| Conceptual | 3 | Subscription lifecycle, observer pattern, chain |
-| Trade-off | 2 | takeUntil vs async pipe, hot vs cold |
-| Failure Mode | 2 | Observer accumulation, nested subscriptions |
-| Debugging | 2 | Observer count, finalize operator |
-| Design | 2 | Reactive service architecture, Subject lifecycle |
-| Behavioral | 1 | Tracking down subscription leak in production |
+  | Category     | Count | Coverage                                         |  
+|------------|-----|------------------------------------------------|
+  | Conceptual   | 3     | Subscription lifecycle, observer pattern, chain  |  
+  | Trade-off    | 2     | takeUntil vs async pipe, hot vs cold             |  
+  | Failure Mode | 2     | Observer accumulation, nested subscriptions      |  
+  | Debugging    | 2     | Observer count, finalize operator                |  
+  | Design       | 2     | Reactive service architecture, Subject lifecycle |  
+  | Behavioral   | 1     | Tracking down subscription leak in production    |  
 
-**Q1. How does `takeUntil` work internally and why is
-`destroy$.complete()` also required?**
+**[JUNIOR] Q1 - [MECHANISM] How does `takeUntil` work internally and why is `destroy$.complete()` also required?**
 
 `takeUntil(notifier$)` creates a new Observable that subscribes
 to BOTH the source and the notifier. When the notifier emits
@@ -486,7 +496,7 @@ function takeUntil(notifier$) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The gotcha: if `destroy$.complete()` is called WITHOUT first
 calling `destroy$.next()`, the `takeUntil` operator sees
@@ -505,7 +515,7 @@ ngOnDestroy() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 Why `complete()` is also needed: without it, `destroy$` itself
 is a BehaviorSubject/Subject that holds references. Calling
@@ -517,8 +527,7 @@ but frequently misunderstood edge case that causes silent leaks.
 
 ---
 
-**Q2. What is the difference between `switchMap`, `mergeMap`,
-`concatMap`, and `exhaustMap` for subscription management?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `switchMap`, `mergeMap`, `concatMap`, and `exhaustMap` for subscription management?**
 
 All four map outer emissions to inner Observables. They differ
 in what happens to active inner subscriptions when a new
@@ -556,7 +565,7 @@ submitButton$.pipe(
 // While POST in flight: button clicks are ignored
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using HTTP client. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* Knowing that `switchMap`
 with an HTTP Observable automatically cancels the in-flight
@@ -566,7 +575,7 @@ ignoring the response.
 
 ---
 
-**Q3. How do you detect RxJS subscription leaks in production?**
+**[JUNIOR] Q3 - [MECHANISM] How do you detect RxJS subscription leaks in production?**
 
 Detection strategies:
 
@@ -586,7 +595,7 @@ class MonitoredSubjectService {
 // Expose via health endpoint: GET /health/subscriptions
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates ES6 class syntax. **KEY MECHANISM:** class syntax is syntactic sugar over prototype chains; methods go on Class.prototype. **WHY IT MATTERS:** instanceof fails across different window/realm boundaries in browser environments. **TAKEAWAY: classes are prototype-based; for plain data objects, use factory functions.**
 
 2. **`finalize` operator for subscription lifecycle logging**:
 ```javascript
@@ -597,7 +606,7 @@ const tracked$ = source$.pipe(
 // If "subscribed" count >> "unsubscribed" count: leak
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 3. **Memory growth correlation**: if adding `finalize` logging
    shows subscriptions never finalize, and heap grows with
@@ -613,8 +622,7 @@ count stays flat: the Observables are never completing.
 
 ---
 
-**Q4. How does `shareReplay` affect subscription management
-and memory?**
+**[MID] Q4 - [MECHANISM] How does `shareReplay` affect subscription management and memory?**
 
 `shareReplay(bufferSize)` multicasts an Observable and caches
 the last `bufferSize` emissions for new subscribers.
@@ -636,7 +644,7 @@ const shared$ = source$.pipe(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 The `refCount: true` option is critical for services that
 expose shared Observables. Without it, the source subscription
@@ -655,7 +663,7 @@ class DataService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates ES6 class syntax using HTTP client. **KEY MECHANISM:** class syntax is syntactic sugar over prototype chains; methods go on Class.prototype. **WHY IT MATTERS:** instanceof fails across different window/realm boundaries in browser environments. **TAKEAWAY: classes are prototype-based; for plain data objects, use factory functions.**
 
 *What separates good from great:* Knowing the `refCount` option
 and its implication. The default `shareReplay(1)` in older
@@ -665,8 +673,7 @@ even after all UI components are destroyed.
 
 ---
 
-**Q5. How do you implement a reactive store with proper
-cleanup in Angular?**
+**[MID] Q5 - [SCENARIO] How do you implement a reactive store with proper cleanup in Angular?**
 
 ```typescript
 interface AppState {
@@ -716,7 +723,7 @@ class UserListComponent {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates interface contract definition using SQL. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 *What separates good from great:* Calling `state.complete()` in
 the store's destroy method. A `BehaviorSubject` that is never
@@ -725,8 +732,7 @@ unsubscribe. Completing it clears internal state.
 
 ---
 
-**Q6. What is the danger of subscribing to a Subject from
-multiple components without proper cleanup?**
+**[SENIOR] Q6 - [MECHANISM] What is the danger of subscribing to a Subject from multiple components without proper cleanup?**
 
 A `Subject` is a hot Observable: it maintains an `observers`
 array. Every `subscribe()` call adds an entry. Every
@@ -756,7 +762,7 @@ class ChatComponent implements OnInit {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function using SQL. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 After 10 navigations to ChatComponent:
 - `chatService.messages$.observers.length === 10`
@@ -772,8 +778,7 @@ console.
 
 ---
 
-**Q7. How do `complete()` and `error()` affect subscriptions
-differently from `unsubscribe()`?**
+**[SENIOR] Q7 - [MECHANISM] How do `complete()` and `error()` affect subscriptions differently from `unsubscribe()`?**
 
 Three ways a subscription ends:
 
@@ -813,7 +818,7 @@ source$.pipe(
 ).subscribe();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* Using `finalize()` as a
 cleanup hook that fires regardless of how the subscription ends.
@@ -822,7 +827,7 @@ only, which miss the `unsubscribe()` and `error()` paths.
 
 ---
 
-**Q8. How do you test RxJS subscription cleanup in unit tests?**
+**[SENIOR] Q8 - [MECHANISM] How do you test RxJS subscription cleanup in unit tests?**
 
 ```javascript
 // Angular component subscription test
@@ -867,7 +872,7 @@ describe('UserProfileComponent', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using SQL. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 *What separates good from great:* The third test: directly
 checking `observers.length` after destroy. This is the
@@ -876,7 +881,7 @@ unsubscribed, not just that the callback stopped being called.
 
 ---
 
-**Q9. How does RxJS handle backpressure in async scenarios?**
+**[SENIOR] Q9 - [MECHANISM] How does RxJS handle backpressure in async scenarios?**
 
 RxJS does not have built-in backpressure (unlike Reactive Streams
 in Java). Fast producers can overwhelm slow consumers.
@@ -888,14 +893,14 @@ Common scenarios and operators:
    input$.pipe(debounceTime(300)) // only emit after 300ms of silence
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 2. **Throttling**: emit max once per time window
    ```javascript
    scroll$.pipe(throttleTime(16)) // max once per frame
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 3. **Buffer**: collect into arrays, process in batches
    ```javascript
@@ -906,7 +911,7 @@ Common scenarios and operators:
    )
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 4. **SwitchMap for latest-only**: drop intermediate values
    ```javascript
@@ -915,7 +920,7 @@ Common scenarios and operators:
    ) // drops pending processes when next value arrives
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 5. **ConcatMap with queue size limit**: bound queue length
    ```javascript
@@ -925,7 +930,7 @@ Common scenarios and operators:
    )
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates arrow function. **KEY MECHANISM:** arrow functions capture `this` lexically from the enclosing scope at definition time. **WHY IT MATTERS:** using arrow function as an object method loses `this` - it becomes the outer context. **TAKEAWAY: use arrow functions for callbacks; use regular functions for object methods.**
 
 *What separates good from great:* Knowing that RxJS has no
 built-in backpressure and that operator choice IS the
@@ -934,8 +939,7 @@ for batching, `throttleTime` for rate-limiting.
 
 ---
 
-**Q10. How do you integrate RxJS with promises and async/await
-in the same codebase?**
+**[SENIOR] Q10 - [SCENARIO] How do you integrate RxJS with promises and async/await in the same codebase?**
 
 ```typescript
 // Converting between Promise and Observable:
@@ -973,7 +977,7 @@ class MixedComponent {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 *What separates good from great:* Using `defer()` instead of
 `from()` for retryable operations. `from(promise)` runs the
@@ -983,8 +987,7 @@ operators to actually re-execute the async operation.
 
 ---
 
-**Q11. How do you handle memory-safe RxJS patterns in
-large-scale Angular applications?**
+**[SENIOR] Q11 - [DESIGN] How do you handle memory-safe RxJS patterns in large-scale Angular applications?**
 
 Architecture-level rules:
 
@@ -1009,7 +1012,7 @@ Architecture-level rules:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using Spring annotation. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 4. **Monitoring**: expose `observer.length` counts via health
    endpoint; alert on growth.
@@ -1024,8 +1027,7 @@ up when the component is destroyed.
 
 ---
 
-**Q12. Describe a production incident caused by RxJS
-subscription leaks and how you would diagnose it.**
+**[SENIOR] Q12 - [DEBUGGING] Describe a production incident caused by RxJS subscription leaks and how you would diagnose it.**
 
 **Scenario:** An Angular SPA was experiencing memory growth
 over long user sessions. After 30 minutes of use, tabs were
@@ -1064,7 +1066,7 @@ crashing with "Aw, Snap!"
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 5. **Prevention:** ESLint rule `@angular-eslint/no-lifecycle-call`
    + `@angular-eslint/use-lifecycle-interface`; mandatory
@@ -1132,7 +1134,7 @@ Lifecycle:
   Next navigate: new async pipe -> re-subscribes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Design decisions:
 - `shareReplay(1, refCount: true)` on derived streams: new

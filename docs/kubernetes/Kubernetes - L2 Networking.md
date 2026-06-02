@@ -98,7 +98,7 @@ Internet -> Cloud LB (one) -> Ingress Controller (Nginx/Traefik pod)
          (TLS terminated at Ingress Controller)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Ingress and Load Balancing example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The Ingress controller is a regular Deployment with a LoadBalancer Service.
 The LoadBalancer Service gives it one external IP. The controller configures
@@ -141,7 +141,7 @@ while app teams manage their own Ingress routing rules.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A complete Ingress setup with TLS, host/path routing,
+> **Code walkthrough:** A complete Ingress setup with TLS, host/path routing,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > rate limiting, and cert-manager auto-provisioning. Shows the Ingress resource
 > plus ClusterIssuer for TLS and the upstream Services it routes to.
 
@@ -218,7 +218,7 @@ spec:
               number: 80
 ```
 
-> **Code walkthrough:** The `ingressClassName: nginx` specifies which Ingress
+> **Code walkthrough:** The `ingressClassName: nginx` specifies which Ingressice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Controller processes this rule - multiple controllers can coexist (nginx for
 > public traffic, traefik for internal). cert-manager watches for Ingress objects
 > with the `cert-manager.io/cluster-issuer` annotation and automatically requests
@@ -485,7 +485,7 @@ spec:
               number: 80
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Canary Ingress receives 20% of traffic example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Gradually increase `canary-weight` from 0 to 100 as confidence builds. At 100%,
 delete stable Ingress and rename canary to stable.
@@ -532,7 +532,7 @@ backendRefs:
   weight: 20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Canary Ingress receives 20% of traffic example demoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 TCP/gRPC native support: first-class resources, not workarounds.
 
@@ -558,7 +558,7 @@ Nginx Ingress Controller:
 - Cost: one LB regardless of Ingress rule count
 - Best for: cloud-agnostic, on-premise, 50+ services cost optimization
 
-Decision: AWS-native features needed? -> ALB. Multiple clouds or on-prem? -> Nginx.
+Decision: AWS-native features needed? -> ALB. Multiple clouds or on-prem? -> Ngi
 Lowest cost for many services? -> Nginx (1 LB vs N ALBs).
 
 *What separates good from great:* AWS ALB Controller's `alb.ingress.kubernetes.io/group.name`
@@ -580,28 +580,28 @@ A: `pathType` controls how the path matches request URLs:
 Use when sub-paths should not be accessible via the same Ingress rule.
 
 `ImplementationSpecific`: behavior defined by the controller. For Nginx, treated
-as regex if the path contains regex characters. NOT portable - avoid in portable deployments.
+as regex if the path contains regex characters. NOT portable - avoid in portable
 
 In practice: use `Prefix` for most routes. Use `Exact` for endpoints that must not
 expose sub-paths. List more specific paths before less specific ones.
 
-*What separates good from great:* The path segment boundary rule - `/foo` matches
+*What separates good from great:* The path segment boundary rule - `/foo` matche
 `/foo` and `/foo/bar` but NOT `/foobar`. Intentional to prevent unintended routing collisions.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Dimension | Ingress | Gateway API | LoadBalancer Service |
-|---|---|---|---|
-| L7 routing | Host/path (basic) | Rich (typed headers, methods) | None (L4 only) |
-| TLS | Terminate at controller | Terminate at Gateway | Passthrough only |
-| TCP/gRPC | No (workarounds) | Native (TCPRoute, GRPCRoute) | Yes |
-| Role separation | None | Yes (GatewayClass/Gateway/Route) | N/A |
-| Extensions | Annotations (untyped) | Typed CRDs | N/A |
-| Cost model | 1 LB for all services | 1+ LB per GatewayClass | 1 LB per Service |
-| Maturity | Stable (aging) | GA (1.28+) | Stable |
-| Best for | HTTP routing (existing) | New deployments (complex) | Non-HTTP single svc |
+| Dimension| Ingress| Gateway API| LoadBalancer Service|
+|---|--------------------|--------------------------------|--------------------|
+| L7 routing| Host/path (basic)| Rich (typed headers, methods)| None (L4 only)|
+| TLS| Terminate at controller| Terminate at Gateway| Passthrough only|
+| TCP/gRPC| No (workarounds)| Native (TCPRoute, GRPCRoute)| Yes|
+| Role separation| None| Yes (GatewayClass/Gateway/Route)| N/A|
+| Extensions| Annotations (untyped)| Typed CRDs| N/A|
+| Cost model| 1 LB for all services| 1+ LB per GatewayClass| 1 LB per Service|
+| Maturity| Stable (aging)| GA (1.28+)| Stable|
+| Best for| HTTP routing (existing)| New deployments (complex)| Non-HTTP single 
 
 **Decision framework:**
 - HTTP/HTTPS routing for multiple services? -> Ingress or Gateway API
@@ -619,7 +619,7 @@ expose sub-paths. List more specific paths before less specific ones.
 
 ### 📊 Diagram
 
-```
+```plaintext
 Ingress Architecture:
 
 Internet
@@ -770,7 +770,7 @@ With NetworkPolicy on Pod B (whitelist):
 Pod C with no NetworkPolicy: still receives ALL traffic
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This NetworkPolicy and Service Types example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 CNI enforcement: NetworkPolicy objects are stored in etcd but enforced by the
 CNI plugin. The CNI translates policies into iptables rules, eBPF programs, or
@@ -801,7 +801,7 @@ pod-to-pod and pod-to-external communication - not whether a Service is accessib
 
 ### 💻 Code Example
 
-> **Code walkthrough:** Deny-all default policy followed by specific allow rules
+> **Code walkthrough:** Deny-all default policy followed by specific allow rulesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for a three-tier application (frontend -> backend -> database). The production
 > security pattern: start with deny-all, explicitly allow what's needed.
 
@@ -872,7 +872,7 @@ spec:
       port: 53
 ```
 
-> **Code walkthrough:** The deny-all policy is the foundation - empty podSelector
+> **Code walkthrough:** The deny-all policy is the foundation - empty podSelectorice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > selects all pods, both Ingress and Egress types, no rules = deny everything.
 > The allow policies add back only needed communication. The DNS egress rule is
 > critical and easy to forget: when you create an Egress NetworkPolicy, port 53
@@ -1094,7 +1094,7 @@ spec:
     - port: 9090
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 4. Allow monitoring to scrape metrics example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Result: payment-api only receives from order-service and Prometheus; only egresses
 to payment-db and DNS. Any pod not explicitly listed is blocked.
@@ -1135,7 +1135,7 @@ egress:
     port: 53
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 4. Allow monitoring to scrape metrics example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 No `to:` field = allow DNS to any destination. Acceptable since DNS traffic
 is low-risk and necessary for all service discovery.
@@ -1241,7 +1241,7 @@ spec:
     - port: 2112          # Go default metrics
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (via kustomize, namespace bootstrapping, or admission controller) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 The `kubernetes.io/metadata.name` label is auto-applied by K8s 1.21+ - always
 present, reliable for namespaceSelector.
@@ -1269,7 +1269,7 @@ ingress:
     podSelector:                          # same dash = same item = AND
       matchLabels: {app: frontend}
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (via kustomize, namespace bootstrapping, or admission controller) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Allows traffic only from pods labeled `app=frontend` IN `frontend-ns` namespace.
 Pods labeled `app=frontend` in OTHER namespaces: DENIED.
@@ -1283,7 +1283,7 @@ ingress:
   - podSelector:                          # separate dash = different item = OR
       matchLabels: {app: frontend}
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (via kustomize, namespace bootstrapping, or admission controller) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Allows: ANY pod in `frontend-ns` namespace OR any pod labeled `app=frontend`
 anywhere (including all other namespaces).
@@ -1315,7 +1315,7 @@ spec:
   # no rules
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This no rules example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Layer 2 - mTLS with Istio (cryptographic identity):
 ```yaml
@@ -1324,7 +1324,7 @@ spec:
   mtls:
     mode: STRICT    # all inter-pod traffic must be mTLS
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This no rules example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Every service gets a SPIFFE/X.509 certificate identity (SVID). Services verify
 "this is really the orders-service cert signed by our cluster CA."
@@ -1346,7 +1346,7 @@ spec:
         methods: ["POST"]
         paths: ["/v1/charge"]
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This only the specific SA of order-service (verified by ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Authorization is by service account identity (verified by certificate), not IP.
 A pod spoofing the orders-service IP cannot access payment-api without the cert.
@@ -1365,16 +1365,16 @@ by service. This identifies missing policies before enforcement breaks services.
 
 ### ⚖️ Comparison Table
 
-| Dimension | NetworkPolicy | Service Mesh mTLS | Cloud Firewall |
-|---|---|---|---|
-| Layer | L3/L4 (IP/port) | L7 (app-level) | L3/L4 (external) |
-| Authentication | None (IP-based) | Cryptographic cert | None (IP-based) |
-| Encryption | No | Yes (mTLS) | No |
-| Scope | Intra-cluster | Intra-cluster | External->cluster |
-| Overhead | Minimal (eBPF) | ~10-20ms sidecar | None |
-| Observability | Poor | Excellent | Good |
-| Complexity | Low | High | Low |
-| Best for | Blast radius isolation | Zero-trust, L7 auth | Perimeter security |
+| Dimension| NetworkPolicy| Service Mesh mTLS| Cloud Firewall|
+|--------------|----------------------|-------------------|------------------|
+| Layer| L3/L4 (IP/port)| L7 (app-level)| L3/L4 (external)|
+| Authentication| None (IP-based)| Cryptographic cert| None (IP-based)|
+| Encryption| No| Yes (mTLS)| No|
+| Scope| Intra-cluster| Intra-cluster| External->cluster|
+| Overhead| Minimal (eBPF)| ~10-20ms sidecar| None|
+| Observability| Poor| Excellent| Good|
+| Complexity| Low| High| Low|
+| Best for| Blast radius isolation| Zero-trust, L7 auth| Perimeter security|
 
 **Decision framework:**
 - Prevent lateral movement in cluster? -> NetworkPolicy (minimal overhead)

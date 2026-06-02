@@ -121,7 +121,7 @@ Category D: Concurrency correctness failures
   D3: Double subscribe creating duplicate side effects
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async Java Anti-Patterns and Dangerous Pitfalls example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Most dangerous by production impact:**
 
@@ -136,13 +136,37 @@ MEDIUM   | Wrong thread pool     | Starvation under load
 MEDIUM   | Missing timeout       | Resource leak + slowdown
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Async Java Anti-Patterns and Dangerous Pitfalls example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Anti-pattern demonstrations (BAD before GOOD):**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // ═══════════════════════════════════════════════════
@@ -254,7 +278,7 @@ List<String> concurrent = new CopyOnWriteArrayList<>();
 // safe for concurrent adds, but expensive on large collections
 ```
 
-> **Code walkthrough:** Anti-pattern A1 shows the most critical reactive
+> **Code walkthrough:** Anti-pattern A1 shows the most critical reactiveice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > mistake: calling `block()` inside a WebFlux handler. This occupies the
 > Netty event loop thread for the entire database call duration. Under high
 > concurrency, all event loop threads block and new requests queue without
@@ -309,6 +333,12 @@ exactly breaks and why?
 > rate limit).
 
 *Push deeper (Staff):* The "dual subscribe" anti-pattern in caching:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: if this mono is subscribed twice, side effects execute twice!
 Mono<Void> sendEmail = emailService.send(message); // cold Mono
@@ -323,7 +353,7 @@ sendOnce.subscribe(); // sends
 sendOnce.subscribe(); // no-op (replays cached Void)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -343,7 +373,7 @@ flux.subscribe(
     ex -> log.error("Background task failed: {}",
         ex.getMessage(), ex));
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Without this, exceptions thrown in `process()` vanish.
 
@@ -376,7 +406,7 @@ BlockHound.install(builder ->
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: move blocking operations off the event loop:
 ```java
@@ -395,7 +425,7 @@ public Flux<User> getUsers() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -405,7 +435,7 @@ public Flux<User> getUsers() {
 
 ---
 
-#### Q1 - What happens when you call Mono.block() in a WebFlux handler?
+**[JUNIOR] Q1 - [CONCEPTUAL] What happens when you call Mono.block() in a WebFlux handler?**
 
 WebFlux uses Netty's event loop model. Netty has a small thread pool
 (default: `2 * availableProcessors` event loop threads). Each event loop
@@ -430,7 +460,7 @@ With block():
   Under high load: all 8 ETs blocked -> server unresponsive
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Detection:
 ```java
@@ -441,7 +471,7 @@ BlockHound.install();
 //   at Mono.block() called from EventLoopThread
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Reactor team designed the "scheduler
 contract": event loop threads (Netty) MUST never block. Schedulers like
@@ -452,7 +482,7 @@ if configured as non-blocking) must never block; if they must, use
 
 ---
 
-#### Q2 - How does Schedulers.boundedElastic() differ from Schedulers.parallel()?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does Schedulers.boundedElastic() differ from Schedulers.parallel()?**
 
 `Schedulers.parallel()`:
 - Fixed thread count: `Runtime.getRuntime().availableProcessors()`
@@ -481,7 +511,7 @@ Flux.fromIterable(ids)
             .subscribeOn(Schedulers.boundedElastic()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `boundedElastic` is bounded to prevent
 unbounded thread growth (which would be equivalent to creating a new thread
@@ -492,7 +522,7 @@ than platform threads and don't have the fixed cap limitation.
 
 ---
 
-#### Q3 - What is the "hot subscription" anti-pattern?
+**[JUNIOR] Q3 - [ARCHITECTURE] What is the "hot subscription" anti-pattern?**
 
 A cold publisher creates a new data source per subscriber. A hot publisher
 shares a single source across subscribers. The anti-pattern: subscribing
@@ -521,7 +551,7 @@ Flux<Event> shared = eventFlux.share();
 // All subscribers receive the same events from a single source
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Side effect duplication is the production impact: notifications sent twice,
 metrics counted twice, database records inserted twice.
@@ -535,7 +565,7 @@ one-shot computation: `cache()`. For a live stream: `share()`.
 
 ---
 
-#### Q4 - How do you detect and prevent unbounded resource consumption?
+**[MID] Q4 - [CONCEPTUAL] How do you detect and prevent unbounded resource consumption?**
 
 Resources that can grow without bound in async Java:
 
@@ -554,7 +584,7 @@ ExecutorService bounded = new ThreadPoolExecutor(
     new ThreadPoolExecutor.CallerRunsPolicy()); // backpressure
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 **2. Reactor pipeline buffers:**
 ```java
@@ -566,7 +596,7 @@ flux.flatMap(fn, 16,    // max 16 concurrent
                  64);   // inner queue prefetch = 64
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This BlockHound diagnostic (staging) example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. CompletableFuture accumulation:**
 ```java
@@ -589,7 +619,7 @@ Lists.partition(millionItems, 1000).forEach(batch -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Monitoring resource consumption metrics:
 `executor.queue.size`, `jvm.memory.used.heap`, `reactor.buffer.size`
@@ -600,7 +630,7 @@ accumulation point.
 
 ---
 
-#### Q5 - What is the InterruptedException swallow anti-pattern?
+**[MID] Q5 - [ARCHITECTURE] What is the InterruptedException swallow anti-pattern?**
 
 `InterruptedException` signals that the current thread's execution should
 be stopped (interrupted). It is used by:
@@ -609,6 +639,18 @@ be stopped (interrupted). It is used by:
 - Virtual thread unmounting (indirectly)
 
 Anti-pattern: catching and ignoring it:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: ignores cancellation
 while (running) {
@@ -638,7 +680,7 @@ while (!Thread.currentThread().isInterrupted()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 In virtual thread context: swallowing `InterruptedException` prevents
 StructuredTaskScope from cancelling the task. The scope's `join()` will
@@ -653,7 +695,7 @@ Use `isInterrupted()` for non-destructive checks in loop conditions.
 
 ---
 
-#### Q6 - What is the "nested blocking" anti-pattern in reactive code?
+**[MID] Q6 - [ARCHITECTURE] What is the "nested blocking" anti-pattern in reactive code?**
 
 Nested blocking is calling `block()` inside a callback within a Reactor
 pipeline, often hidden inside utility methods:
@@ -681,7 +723,7 @@ class EnrichmentService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Why it is dangerous:
 1. The outer `map` lambda runs on the subscribing thread (possibly event loop)
@@ -701,7 +743,7 @@ Mono<Order> processOrder(OrderRequest req) {
 // enrichReactive() returns Mono, no hidden block()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The convention in Reactor teams: methods
 that return `Mono<T>` or `Flux<T>` are "reactive-pure" (no internal block).
@@ -711,7 +753,7 @@ returning-T method inside a reactive operator without
 
 ---
 
-#### Q7 - How does the "parallel flatMap without merge" anti-pattern work?
+**[SENIOR] Q7 - [ARCHITECTURE] How does the "parallel flatMap without merge" anti-pattern work?**
 
 `flatMap` is the correct operator for concurrent execution. But a subtle
 ordering issue arises when the merge behavior is not understood:
@@ -741,7 +783,7 @@ Flux.range(1, 5)
     // Output: 1, 2, 3, 4, 5 (ordered) - at 90ms total time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Anti-pattern: using `flatMap` when ordered output is required (e.g.,
 paginated results, audit logs). Result: random ordering depending on
@@ -757,7 +799,7 @@ over `flatMap + sort` - it's more efficient and correct by design.
 
 ---
 
-#### Q8 - What is the "missing cancellation propagation" anti-pattern?
+**[SENIOR] Q8 - [ARCHITECTURE] What is the "missing cancellation propagation" anti-pattern?**
 
 When a reactive pipeline is cancelled (by the subscriber), the cancellation
 signal travels upstream through all operators. If any operator does NOT
@@ -780,7 +822,7 @@ class BadSubscriber<T> implements Subscriber<T> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 Correct cancellation:
 ```java
@@ -804,7 +846,7 @@ class ResourceAwareSubscriber<T>
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates Java Stream pipeline using generic type. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 In practice: use `Disposable` (Reactor's resource handle):
 ```java
@@ -816,7 +858,7 @@ Disposable subscription = eventFlux.subscribe(
 subscription.dispose(); // cancels subscription, upstream notified
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Spring's `@PreDestroy` pattern for
 reactive subscriptions:
@@ -837,11 +879,11 @@ class EventProcessingService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q9 - How do you prevent OutOfMemoryError in a high-volume event stream?
+**[SENIOR] Q9 - [CONCEPTUAL] How do you prevent OutOfMemoryError in a high-volume event stream?**
 
 Five strategies to prevent OOM in high-volume Flux processing:
 
@@ -878,7 +920,7 @@ source
 // Source only sends 100 at a time; fetch next when ready
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Memory monitoring:
 ```java
@@ -889,7 +931,7 @@ Memory monitoring:
 // Look for: large Flux buffers, accumulated CFs, subscriber queues
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `limitRate(n)` is the key operator for
 controlling the flow rate at the source. Unlike `onBackpressureBuffer`
@@ -900,7 +942,7 @@ a push-pull balance that prevents memory accumulation.
 
 ---
 
-#### Q10 - What are the top code review checklist items for async Java code?
+**[STAFF] Q10 - [HANDS-ON] What are the top code review checklist items for async Java code?**
 
 **10-point async code review checklist:**
 
@@ -946,7 +988,7 @@ a push-pull balance that prevents memory accumulation.
     ✗ flux.subscribe(...); // returned Disposable discarded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Item 10 is often missed. When `subscribe()`
 returns a `Disposable` and it's not stored, there's no way to cancel the
@@ -957,7 +999,7 @@ is the reactive equivalent of storing a thread reference for interruption.
 
 ---
 
-#### Q11 - How does the "cold vs hot observable confusion" cause bugs?
+**[STAFF] Q11 - [CONCEPTUAL] How does the "cold vs hot observable confusion" cause bugs?**
 
 Most Reactor publishers are COLD: a new subscription starts a new independent
 execution of the pipeline. This causes bugs when developers assume reuse:
@@ -984,9 +1026,15 @@ hot.subscribe(subscriber2); // registers but not started
 hot.connect(); // starts the source once; both get the same events
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Common scenario: reactive pipeline used as a "service":
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: ReactiveCacheService re-executes on each get()
 class CacheService {
@@ -1004,7 +1052,7 @@ class CacheService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `Mono.cache(duration)` is time-bounded
 caching: the result is cached for the specified duration, then re-fetched
@@ -1014,7 +1062,7 @@ explicit cache invalidation logic.
 
 ---
 
-#### Q12 - What is the "eager error throwing in pipeline builder" anti-pattern?
+**[STAFF] Q12 - [ARCHITECTURE] What is the "eager error throwing in pipeline builder" anti-pattern?**
 
 Throwing exceptions in pipeline builder code (not in subscribers) throws
 immediately on the calling thread, not as a reactive error signal:
@@ -1051,7 +1099,7 @@ Mono<Response> buildPipeline(String userId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The principle: reactive code should
 propagate errors AS reactive signals, not as thrown exceptions. This
@@ -1104,7 +1152,7 @@ Layer 4: Production monitoring
           p99.latency > SLA
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

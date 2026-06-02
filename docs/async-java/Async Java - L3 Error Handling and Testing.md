@@ -122,7 +122,7 @@ With onErrorResume:
     subscriber.onError() is NOT called
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error Handling in Reactive Pipelines example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Error operator reference:**
 
@@ -168,7 +168,7 @@ mono.timeout(Duration.ofSeconds(5))
         ex -> Mono.just(fallbackValue));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error Handling in Reactive Pipelines example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Error propagation rules:**
 1. Once `onError` fires, no more `onNext` signals are emitted
@@ -199,7 +199,7 @@ Mono.fromCallable(() -> userService.getUser(id))
 // Error anywhere in flatMap chain -> onErrorResume intercepts
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error Handling in Reactive Pipelines example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -268,7 +268,7 @@ mono.onErrorResume(ex -> {
 });
 ```
 
-> **Code walkthrough:** Pattern 1 shows the layered error strategy: retry
+> **Code walkthrough:** Pattern 1 shows the layered error strategy: retryice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > first (for transient failures), then fallback to cache (for persistent
 > failures), with a hard timeout as the outer bound. `doOnError` fires on
 > EVERY failure including retry attempts, enabling visibility into the retry
@@ -342,6 +342,12 @@ Cause: retry with no jitter. When a service fails, all callers' `retryWhen`
 triggers at (almost) the same time with the same backoff delays. After
 `backoff * N` ms, ALL clients retry simultaneously = thundering herd.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: synchronized retries (all clients retry at same time)
 .retryWhen(Retry.fixedDelay(3, Duration.ofSeconds(1)));
@@ -358,7 +364,7 @@ triggers at (almost) the same time with the same backoff delays. After
 // Spread across time: service not overwhelmed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **WHAT BREAKS: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 ---
 
@@ -368,7 +374,7 @@ triggers at (almost) the same time with the same backoff delays. After
 
 ---
 
-#### Q1 - What is the difference between onErrorReturn, onErrorResume, and onErrorMap?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between onErrorReturn, onErrorResume, and onErrorMap?**
 
 All three intercept `onError` signals but differ in what they return:
 
@@ -404,7 +410,7 @@ mono.onErrorMap(
 // Caller sees UserServiceException, not DatabaseException
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The ordering matters when combining these.
 `onErrorMap` applied before `onErrorResume` allows `onErrorResume` to filter
@@ -417,11 +423,11 @@ mono.onErrorMap(ConnectionException.class,
     // Other exceptions pass through
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q2 - How does retryWhen differ from retry?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does retryWhen differ from retry?**
 
 `retry(n)` immediately re-subscribes to the upstream `n` times on any error.
 `retryWhen(retrySpec)` allows full control over retry timing, filtering,
@@ -442,7 +448,7 @@ flux.retryWhen(
                 "After 3 retries: " + retrySignal.failure())));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 The `Retry` spec determines:
 - `maxAttempts`: how many retries
@@ -461,7 +467,7 @@ non-idempotent (writes, notifications): retry is dangerous.
 
 ---
 
-#### Q3 - What is the difference between error handling placement in a chain?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between error handling placement in a chain?**
 
 Where you place error operators determines which errors they catch:
 
@@ -491,7 +497,7 @@ source()
         ex -> Mono.just(invalidItem)); // validation fallback
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Errors propagate only DOWNSTREAM. An error operator positioned BEFORE the
 failing operator does NOT catch that error.
@@ -505,7 +511,7 @@ validation fails, use placeholder."
 
 ---
 
-#### Q4 - How do you implement circuit breaker pattern in reactive code?
+**[MID] Q4 - [ARCHITECTURE] How do you implement circuit breaker pattern in reactive code?**
 
 Using Resilience4j reactive integration:
 
@@ -535,7 +541,7 @@ public Mono<PaymentResult> processPayment(Payment p) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using Spring annotation. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Circuit states and transitions:
 - CLOSED: normal operation, tracking failure rate
@@ -551,7 +557,7 @@ circuitBreaker.getEventPublisher()
             event.getStateTransition().getFromState(),
             event.getStateTransition().getToState()));
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The OPEN state is expected behavior under service failure - teams should
 not be surprised by it. Alert on the transition TO open (service degraded)
@@ -559,7 +565,7 @@ and BACK to closed (service recovered).
 
 ---
 
-#### Q5 - How do you handle errors in Flux streams that should continue after errors?
+**[MID] Q5 - [CONCEPTUAL] How do you handle errors in Flux streams that should continue after errors?**
 
 By default, a single error terminates the entire Flux. For streams where
 individual item failures should be skipped:
@@ -590,7 +596,7 @@ Flux.range(1, 5)
 // Output: 1, 2, 4, 5 (3 skipped, cleaner semantics)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `onErrorContinue` is experimental and can have surprising interactions with
 operators that buffer or aggregate. Prefer the `flatMap + onErrorResume(empty)`
@@ -605,7 +611,7 @@ preferred in production code.
 
 ---
 
-#### Q6 - How does timeout error handling work in reactive pipelines?
+**[MID] Q6 - [CONCEPTUAL] How does timeout error handling work in reactive pipelines?**
 
 `timeout(Duration)` completes with `TimeoutException` if no item arrives
 within the duration:
@@ -634,7 +640,7 @@ Flux<Event> smartTimeout =
             Duration.ofSeconds(1));  // subsequent element timeout
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 Timeout with fallback source:
 ```java
@@ -644,7 +650,7 @@ mono.timeout(
     // Cache is used immediately if main call times out
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `timeout()` uses `Schedulers.parallel()`
 by default for timing. This means the timeout fires on a parallel scheduler
@@ -658,11 +664,11 @@ mono.timeout(
         .subscribeOn(Schedulers.boundedElastic()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q7 - How do you test error scenarios in reactive pipelines?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you test error scenarios in reactive pipelines?**
 
 Using `StepVerifier` for error assertions:
 
@@ -719,7 +725,7 @@ void fetchRetries3TimesBeforeFailing() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using concurrency primitive. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `StepVerifier.withVirtualTime` is the
 key for testing time-dependent behavior (retry delays, timeouts) without
@@ -729,7 +735,7 @@ triggering delayed operators instantly. For production retry logic with
 
 ---
 
-#### Q8 - What is the error handling contract of flatMap?
+**[SENIOR] Q8 - [CONCEPTUAL] What is the error handling contract of flatMap?**
 
 `flatMap` creates an inner publisher per item. If the inner publisher fails,
 the error propagates to the outer Flux. The default behavior depends on
@@ -751,7 +757,7 @@ Flux.range(1, 5)
 // Item 4 and 5: NOT processed (stream terminated)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **Error inside flatMap with per-item recovery:**
 ```java
@@ -766,7 +772,7 @@ Flux.range(1, 5)
 // Output: 2, 4, -1, 8, 10 (item 3 returns -1; stream continues)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `flatMap` with `maxConcurrency` and inner
 error handling: when an inner publisher fails, `flatMap` cancels it and emits
@@ -777,7 +783,7 @@ difference between "fail-fast" (default flatMap) and "skip-and-continue"
 
 ---
 
-#### Q9 - How do you implement dead-letter queue pattern reactively?
+**[SENIOR] Q9 - [ARCHITECTURE] How do you implement dead-letter queue pattern reactively?**
 
 ```java
 Flux<Message> messages = kafkaConsumer.receive();
@@ -801,7 +807,7 @@ messages
         ex -> log.error("Fatal: {}", ex.getMessage()));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The pattern:
 1. `flatMap` with per-message error handling
@@ -823,7 +829,7 @@ it again - potentially creating a loop. Add a fallback for DLQ failure:
         .then(Mono.empty()))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -831,14 +837,14 @@ it again - potentially creating a loop. Add a fallback for DLQ failure:
 
 **Error recovery operators in Reactor:**
 
-| Operator | Error consumed? | Returns | Use case |
-|---|---|---|---|
-| `onErrorReturn(v)` | Yes | value `v` | Simple default |
-| `onErrorResume(fn)` | Yes | fn's publisher | Fallback source |
-| `onErrorMap(fn)` | No | new error | Exception type mapping |
-| `doOnError(fn)` | No | same error | Logging, metrics |
-| `onErrorComplete()` | Yes | empty complete | Ignore errors |
-| `retryWhen(spec)` | Yes (retried) | upstream result | Transient failures |
+| Operator| Error consumed?| Returns| Use case|
+|-------------------|---------------|---------------|----------------------|
+| `onErrorReturn(v)`| Yes| value `v`| Simple default|
+| `onErrorResume(fn)`| Yes| fn's publisher| Fallback source|
+| `onErrorMap(fn)`| No| new error| Exception type mapping|
+| `doOnError(fn)`| No| same error| Logging, metrics|
+| `onErrorComplete()`| Yes| empty complete| Ignore errors|
+| `retryWhen(spec)`| Yes (retried)| upstream result| Transient failures|
 
 ---
 
@@ -908,21 +914,21 @@ stateDiagram-v2
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Testing Reactive and Async Code in Java
@@ -944,7 +950,7 @@ version: 1
 **30 seconds:**
 > Testing reactive code requires `StepVerifier` (Reactor's testing tool)
 > instead of `assertEquals`. `StepVerifier.create(flux)` subscribes and
-> asserts signals: `expectNext`, `expectNextCount`, `expectError`, `verifyComplete`.
+> asserts signals: `expectNext`, `expectNextCount`, `expectError`, `verifyComple
 > For time-dependent tests (retry delays, Flux.interval), use
 > `StepVerifier.withVirtualTime` to advance time without waiting. For
 > CompletableFuture: `cf.get(timeout, unit)` or `assertThat(cf).succeedsWithin`.
@@ -1028,7 +1034,7 @@ StepVerifier.create(failingMono)
 // vs .verify(): no timeout = test hangs if publisher never completes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Testing Reactive and Async Code in Java example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Virtual time testing:**
 
@@ -1050,7 +1056,7 @@ StepVerifier.withVirtualTime(
 // ^ Completes in milliseconds
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Testing Reactive and Async Code in Java example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **CompletableFuture testing:**
 
@@ -1078,7 +1084,7 @@ void asyncTest() throws Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Testing Reactive and Async Code in Java example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1192,7 +1198,7 @@ class OrderControllerTest {
 }
 ```
 
-> **Code walkthrough:** Pattern 3 is the most important: virtual time testing
+> **Code walkthrough:** Pattern 3 is the most important: virtual time testingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for retry with backoff. `withVirtualTime` takes a Supplier that creates the
 > publisher - this is important because the publisher must be created lazily
 > so the virtual scheduler is installed before the pipeline starts. `thenAwait`
@@ -1259,6 +1265,12 @@ Symptom: async test passes locally (fast machine, quiet environment) but
 fails in CI with timeout or "expected item never arrived." Root cause:
 real-time test with tight timing assumptions.
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: relies on real timing, may be too tight in CI
 StepVerifier.create(
@@ -1276,7 +1288,7 @@ StepVerifier.withVirtualTime(
     .verify(Duration.ofSeconds(5)); // real timeout is generous
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 For integration tests that can't use virtual time: increase timeouts
 significantly (5-10x what you think is needed) and add retry logic in
@@ -1290,7 +1302,7 @@ the CI configuration for inherently flaky network tests.
 
 ---
 
-#### Q1 - Why must withVirtualTime take a Supplier instead of a publisher?
+**[JUNIOR] Q1 - [CONCEPTUAL] Why must withVirtualTime take a Supplier instead of a publisher?**
 
 The virtual time machinery replaces real schedulers (`Schedulers.parallel()`,
 `Schedulers.single()`) with a virtual scheduler BEFORE the publisher is created.
@@ -1316,7 +1328,7 @@ StepVerifier.withVirtualTime(
     .verify();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using async/await. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* `withVirtualTime` installs a virtual
 scheduler by calling `VirtualTimeScheduler.getOrSet()` which installs
@@ -1327,7 +1339,7 @@ Supplier use the virtual scheduler automatically.
 
 ---
 
-#### Q2 - How do you test CompletableFuture exception handling?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you test CompletableFuture exception handling?**
 
 ```java
 // Test that exception propagates correctly:
@@ -1365,7 +1377,7 @@ void recoversFromServiceException() throws Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* The difference between `ExecutionException`
 (from `get()`) and `CompletionException` (from `join()`): both wrap the
@@ -1375,7 +1387,7 @@ original exception, but different test assertions are needed. Choose
 
 ---
 
-#### Q3 - How do you mock reactive dependencies in tests?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you mock reactive dependencies in tests?**
 
 Using Mockito with Reactor return types:
 
@@ -1425,7 +1437,7 @@ class OrderServiceTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Mockito's `verify()` works correctly with
 reactive code because `StepVerifier.verify()` blocks until the pipeline
@@ -1436,7 +1448,7 @@ completes - a race condition in tests.
 
 ---
 
-#### Q4 - How do you test streaming Flux endpoints with WebTestClient?
+**[MID] Q4 - [CONCEPTUAL] How do you test streaming Flux endpoints with WebTestClient?**
 
 ```java
 @WebFluxTest(EventController.class)
@@ -1499,7 +1511,7 @@ class EventControllerTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using Stream. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* The cancellation propagation test verifies
 that when a WebTestClient disconnects, the cancellation signal reaches the
@@ -1510,7 +1522,7 @@ undetected until the service runs out of resources.
 
 ---
 
-#### Q5 - How do you use StepVerifier to test context propagation?
+**[MID] Q5 - [CONCEPTUAL] How do you use StepVerifier to test context propagation?**
 
 Reactor Context can be set up in tests using `StepVerifier.create()` with
 context modification:
@@ -1546,7 +1558,7 @@ void getProfileReturnsCurrentUserProfile() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Context is attached to the subscription,
 not the publisher. `contextWrite()` is applied to the Mono before passing
@@ -1556,9 +1568,15 @@ distributed tracing set context: at subscription time.
 
 ---
 
-#### Q6 - How do you handle test isolation for stateful reactive components?
+**[MID] Q6 - [CONCEPTUAL] How do you handle test isolation for stateful reactive components?**
 
 Reactive sinks and hot sources can retain state between tests:
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: shared sink state between tests
@@ -1600,7 +1618,7 @@ class EventServiceTest {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Hot sources (Sinks, ConnectableFlux)
 shared between tests are a common source of test flakiness. A previous
@@ -1611,7 +1629,7 @@ in `@BeforeEach`. For integration tests with Kafka or databases, use
 
 ---
 
-#### Q7 - What is the difference between then() and thenCancel() in StepVerifier?
+**[SENIOR] Q7 - [CONCEPTUAL] What is the difference between then() and thenCancel() in StepVerifier?**
 
 `verify()` / `verifyComplete()`: expects the publisher to complete normally.
 Test fails if publisher doesn't complete within timeout.
@@ -1635,7 +1653,7 @@ StepVerifier.create(infinite)
     .verify(Duration.ofSeconds(5)); // timeout for the 5 items
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 `thenCancel()` is also used to test cancellation behavior: does the
 upstream properly clean up when cancelled?
@@ -1657,11 +1675,11 @@ StepVerifier.create(resource)
 assertThat(released).isTrue(); // resource released on cancel
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q8 - How do you integrate StepVerifier with JUnit 5?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you integrate StepVerifier with JUnit 5?**
 
 `StepVerifier` is framework-agnostic but integrates well with JUnit 5:
 
@@ -1700,7 +1718,7 @@ void handlesMidStreamError() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* `TestPublisher` is a manually controlled
 publisher that allows programmatic control of signal emission during tests.
@@ -1710,7 +1728,7 @@ complete; or emit items from a specific thread. It's more expressive than
 
 ---
 
-#### Q9 - How do you test Structured Concurrency (StructuredTaskScope)?
+**[SENIOR] Q9 - [ARCHITECTURE] How do you test Structured Concurrency (StructuredTaskScope)?**
 
 StructuredTaskScope is a JDK 21 preview API. Testing patterns:
 
@@ -1767,7 +1785,7 @@ void firstSuccessWins() throws Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* Testing StructuredTaskScope cancellation:
 when one subtask fails, are other subtasks cancelled promptly? Use countdown
@@ -1793,7 +1811,7 @@ try (var scope =
 assertThat(task2Cancelled).isTrue();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1801,14 +1819,14 @@ assertThat(task2Cancelled).isTrue();
 
 **Async testing tools comparison:**
 
-| Tool | Use case | Timeout support | Virtual time |
-|---|---|---|---|
-| `StepVerifier` | Reactor Mono/Flux | `.verify(Duration)` | `withVirtualTime` |
-| `WebTestClient` | WebFlux endpoints | Configurable | No |
-| `cf.get(t, u)` | CompletableFuture | Explicit `get(t, u)` | No |
-| AssertJ `succeedsWithin` | CompletableFuture | Built-in | No |
-| `TestPublisher` | Custom signal control | Via StepVerifier | Via StepVerifier |
-| JUnit `@Timeout` | Any test method | Per-method | No |
+| Tool| Use case| Timeout support| Virtual time|
+|-----------------|---------------------|--------------------|-----------------|
+| `StepVerifier`| Reactor Mono/Flux| `.verify(Duration)`| `withVirtualTime`|
+| `WebTestClient`| WebFlux endpoints| Configurable| No|
+| `cf.get(t, u)`| CompletableFuture| Explicit `get(t, u)`| No|
+| AssertJ `succeedsWithin`| CompletableFuture| Built-in| No|
+| `TestPublisher`| Custom signal control| Via StepVerifier| Via StepVerifier|
+| JUnit `@Timeout`| Any test method| Per-method| No|
 
 ---
 

@@ -158,7 +158,7 @@ JAVA VERSION HISTORY:
               Record patterns (standard, JEP 440)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Modern Language Features example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -266,7 +266,7 @@ Type patterns match by TYPE, not by value. `case String s` matches any String. T
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: Switch expression non-exhaustive compile error after adding new enum constant.**
-```
+```plaintext
 Symptom: compile error "the switch expression does not cover all possible input values"
   After adding PENDING_REVIEW to a Status enum, every switch expression over Status fails.
 
@@ -304,7 +304,7 @@ Learning:
   Rule: prefer switch expressions over statements for this compile-time safety.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -481,6 +481,12 @@ A: Visitor problem: a fixed set of operations over an open set of types (can add
 ### 📘 Concept Explanation
 
 **Text block mechanics:**
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```
 TEXT BLOCK SYNTAX AND INDENTATION RULES:
 
@@ -576,7 +582,7 @@ USE CASES:
   // For full raw strings: Java 21+ StringTemplate (preview)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -759,7 +765,7 @@ Prevention:
     assertEquals(expected.strip(), actual.strip());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

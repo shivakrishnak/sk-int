@@ -109,16 +109,22 @@ OBSERVABILITY (mandatory for production):
   -XX:HeapDumpPath=/var/log/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L2 Tuning Basics example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The Dockerfile example shows correct JVM container
+> **Code walkthrough:** The Dockerfile example shows correct JVM containerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > configuration. Using `MaxRAMPercentage` lets Kubernetes change the container
 > memory limit without changing the Java command line. The GC log flags ensure
 > production observability without significant overhead (<1% CPU).
+
+
+```dockerfile
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
 
 ```dockerfile
 # BAD: hardcoded heap, ignores container limits
@@ -163,7 +169,7 @@ log.info("Heap max: {}MB, init: {}MB",
     heap.getInit() / 1_000_000);
 ```
 
-> **Code walkthrough:** The `JAVA_OPTS` approach in Dockerfiles allows
+> **Code walkthrough:** The `JAVA_OPTS` approach in Dockerfiles allowsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > operators to override flags without rebuilding the image. Setting
 > `MaxRAMPercentage` rather than a fixed `-Xmx` makes the application
 > "autoscalable" - the JVM adapts to whatever memory limit the orchestrator
@@ -241,7 +247,7 @@ Fix by category:
     Find allocators: jstack for ByteBuffer.allocateDirect call sites
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Checking applied JVM flags at runtime: example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -307,7 +313,7 @@ A: Java 11+ unified logging:
 ```
 -Xlog:gc*:file=gc.log:time,uptime,level,tags:filecount=5,filesize=20m
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Checking applied JVM flags at runtime: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 - `gc*`: all GC events (log level info)
 - `file=gc.log`: write to file (not stdout)
@@ -321,7 +327,7 @@ Additional observability:
 -XX:+PrintFlagsFinal  (startup only: print all effective JVM flags)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Checking applied JVM flags at runtime: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* `-XX:+PrintFlagsFinal` at startup outputs all
 3000+ JVM flags with their actual values. This is the definitive record of "what
@@ -371,7 +377,7 @@ jcmd <pid> VM.flags | grep -i MaxGCPauseMillis
 jcmd <pid> VM.flags -all | grep " :="  <- := means modified from default
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print only non-default flags (flags you changed): example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The ` :=` vs `=` distinction in `PrintFlagsFinal`
 output: `=` means using the default value, `:=` means modified (by ergonomics,
@@ -400,7 +406,7 @@ jcmd <pid> Compiler.codecache
 # Alert threshold: > 80% usage
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert threshold: > 80% usage example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: `-XX:ReservedCodeCacheSize=512m`. Also: `-XX:+UseCodeCacheFlushing` enables
 eviction of old compiled code (default varies by JVM version).
@@ -457,7 +463,7 @@ A: A baseline safe configuration:
 -Djava.security.egd=file:/dev/./urandom
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Alert threshold: > 80% usage example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The last flag: `/dev/./urandom` (note the extra `.`) avoids blocking on
 `/dev/random` for secure random number generation during SSL handshakes
@@ -493,11 +499,11 @@ uptime_ms=$(tail -1 gc.log | grep -oP '^\d+\.\d+' | awk '{print $1*1000}')
 echo "GC overhead: $(echo "scale=2; $total_gc_ms/$uptime_ms*100" | bc)%"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Extract GC overhead from log: example demonstrates ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* A/B testing GC configurations should be
-done under PRODUCTION-LIKE load (actual request patterns, not synthetic benchmarks).
-GC behavior is highly sensitive to allocation patterns - a benchmark that allocates
+done under PRODUCTION-LIKE load (actual request patterns, not synthetic benchmar
+GC behavior is highly sensitive to allocation patterns - a benchmark that alloca
 differently from production gives misleading results. The gold standard: canary
 deployment. Run new JVM flags on 5% of production traffic, compare metrics
 (latency P99, CPU utilization, GC overhead in JMX). Roll back if metrics worsen.
@@ -508,13 +514,13 @@ a concurrent marking cycle completes (typically 30-60 minutes at moderate load).
 
 ### ⚖️ Comparison Table
 
-| Flag | Purpose | Default | When to Change |
-|---|---|---|---|
-| `-Xmx` | Max heap | 25% RAM | Always set explicitly in production |
-| `-XX:MaxGCPauseMillis` | G1 pause target | 200ms | < 200ms for low-latency APIs |
-| `-XX:MaxMetaspaceSize` | Metaspace cap | Unlimited | Always set to detect leaks |
-| `-XX:ReservedCodeCacheSize` | JIT code storage | 240MB | 512m for large apps |
-| `-XX:InitiatingHeapOccupancyPercent` | Concurrent mark trigger | 45% | Lower (30%) if Full GCs occur |
+| Flag| Purpose| Default| When to Change|
+|--------|-----------------------|---------|-----------------------------------|
+| `-Xmx`| Max heap| 25% RAM| Always set explicitly in production|
+| `-XX:MaxGCPauseMillis`| G1 pause target| 200ms| < 200ms for low-latency APIs|
+| `-XX:MaxMetaspaceSize`| Metaspace cap| Unlimited| Always set to detect leaks|
+| `-XX:ReservedCodeCacheSize`| JIT code storage| 240MB| 512m for large apps|
+| `-XX:InitiatingHeapOccupancyPercent`| Concurrent mark trigger| 45%| Lower (30%
 
 ---
 
@@ -539,17 +545,17 @@ a concurrent marking cycle completes (typically 30-60 minutes at moderate load).
 ### 🎯 Model Answer
 
 **30 seconds:**
-> GC logs are the primary diagnostic tool for JVM performance issues. Enable with
-> `-Xlog:gc*:file=gc.log:time,uptime,level,tags` (Java 11+). Key metrics to watch:
-> pause duration (should be < 200ms for G1), frequency (how often GC runs = allocation
-> rate indicator), heap before/after each GC (growing "after" = memory pressure),
-> and GC type (Young = normal, Full = alarm). Ten minutes of GC log analysis often
+> GC logs are the primary diagnostic tool for JVM performance issues. Enable wit
+> `-Xlog:gc*:file=gc.log:time,uptime,level,tags` (Java 11+). Key metrics to watc
+> pause duration (should be < 200ms for G1), frequency (how often GC runs = allo
+> rate indicator), heap before/after each GC (growing "after" = memory pressure)
+> and GC type (Young = normal, Full = alarm). Ten minutes of GC log analysis oft
 > reveals root causes that take hours to find via heap dumps.
 
 **3 minutes (Senior):**
 > Reading G1 GC log:
 > ```
-> [time][gc] GC(N) Pause Young (Normal) (G1 Evacuation Pause) 100M->30M(512M) 8.5ms
+> [time][gc] GC(N) Pause Young (Normal) (G1 Evacuation Pause) 100M->30M(512M) 8.
 > ```
 > - `GC(N)`: GC sequence number (N) - sequential per JVM lifetime
 > - `Pause Young (Normal)`: Minor GC, normal reason
@@ -558,8 +564,8 @@ a concurrent marking cycle completes (typically 30-60 minutes at moderate load).
 > - `8.5ms`: stop-the-world pause duration
 >
 > Patterns that indicate problems:
-> - Increasing "after GC" heap values: live set growing (potential leak or more load)
-> - Frequent `Concurrent Start` with `G1 Humongous Allocation` reason: humongous objects
+> - Increasing "after GC" heap values: live set growing (potential leak or more 
+> - Frequent `Concurrent Start` with `G1 Humongous Allocation` reason: humongous
 > - `Pause Full` appearing: G1 fallback to Full GC (serious problem)
 > - Very short interval between Minor GCs (< 1 second): high allocation rate
 
@@ -570,7 +576,7 @@ a concurrent marking cycle completes (typically 30-60 minutes at moderate load).
 **(1) Restate:** "GC log key info: GC type, pause duration, heap before/after,
 reason. Patterns: growing heap = leak, frequent GC = allocation rate, Full GC = critical."
 
-**(2) First principles:** "GC logs provide a time-series record of every GC event:
+**(2) First principles:** "GC logs provide a time-series record of every GC even
 when it happened, how long it paused, how much memory it freed. This data directly
 answers: is GC the problem? Is there a memory leak? Is the heap sized correctly?"
 
@@ -584,7 +590,7 @@ stops too frequent (high allocation rate), fuel running low (heap pressure)."
 ### 📘 Concept Explanation
 
 **GC log anatomy:**
-```
+```plaintext
 Java 11+ unified logging format:
 [TIMESTAMP][UPTIME][LEVEL][TAGS] MESSAGE
 
@@ -613,13 +619,13 @@ Key indicators:
   "Concurrent Mark Cycle" -> G1 background marking (not STW)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Extract GC overhead from log: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** These shell commands analyze GC logs without specialized
+> **Code walkthrough:** These shell commands analyze GC logs without specializedice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > tools. The grep/awk pipeline is reproducible on any Linux/Mac server,
 > requires no GUI, and works on production hosts. These patterns catch the
 > most common GC issues in minutes.
@@ -714,7 +720,7 @@ before concluding GC is a problem.
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: GC log file not rotating - disk full from unbounded GC log.**
-```
+```plaintext
 Symptom: Server disk full, application crashes
   find / -name "gc.log" -size +1G -> found at /var/log/gc.log
 
@@ -740,7 +746,7 @@ Fix:
   Alerting: add disk usage alert at 70% -> investigate before full
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Many concurrent cycles = heap pressure (marking runs frequently) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -804,7 +810,7 @@ grep "Pause Young" gc.log | awk '
   }'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Extract before->after (50M->20M) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* High allocation rate (> 500MB/s) is not
 automatically a problem if the GC overhead is low. The question is whether
@@ -823,7 +829,7 @@ A: Look for events BEFORE the Full GC:
 ```bash
 grep -B20 "Pause Full" gc.log | head -30
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Extract before->after (50M->20M) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common patterns:
 - `"to-space exhausted"` before Full GC: Survivor or Old Gen overflow during Minor GC
@@ -861,7 +867,7 @@ jcmd <pid> JFR.start duration=60s settings=profile \
 # Shows: GC view, Memory view, CPU hot methods, allocations by stack trace
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows: GC view, Memory view, CPU hot methods, allocations by stack trace example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* JFR's "Object Allocation" profiling is the most
 valuable GC diagnosis tool that doesn't require a heap dump. It shows: which call
@@ -900,7 +906,7 @@ grep -oP 'Pause.*\K(\d+\.\d+)ms' gc.log | \
     NR==p95{print "P95=" $1 "ms"} NR==p99{print "P99=" $1 "ms"}'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This P95, P99 pauses: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* GC pause P99 is the correct metric for latency
 SLAs, not average. A web API with P99 latency SLA of 100ms: GC pause P99 must be
@@ -941,7 +947,7 @@ A: G1 concurrent marking phases appear as info events (not pause events):
 [5.600s][info][gc] GC(15) Pause Cleanup 200M->190M(512M) 0.23ms
 [5.612s][info][gc] GC(15) Concurrent Mark Cycle 489ms  <- total concurrent time
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This P95, P99 pauses: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The "Concurrent Mark Cycle" spans several seconds. "Pause Remark" and "Pause Cleanup"
 are the brief STW phases within. If concurrent marking completes and is followed
@@ -976,7 +982,7 @@ grep "10:23:4[0-9]" gc.log
 awk '/^\[3[5-9][0-9][0-9]\.[0-9]+s\]/' gc.log
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR by uptime: latency spike at ~3600s JVM uptime: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The definitive correlation tool is JFR: it
 records both JVM GC events and application thread activity in the same timeline.
@@ -990,7 +996,7 @@ GC->latency causality unambiguous, without manual log correlation.
 **Q9 (automatic analysis): What does a healthy GC log look like vs an unhealthy one?**
 
 A:
-```
+```plaintext
 HEALTHY patterns:
   - Minor GC every 5-60s (depends on allocation rate)
   - Minor GC pauses: < 50ms
@@ -1009,7 +1015,7 @@ UNHEALTHY patterns (alarm):
   - "to-space exhausted" or "evacuation failure": Survivor/Old Gen overflow
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR by uptime: latency spike at ~3600s JVM uptime: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* A subtle "healthy" indicator: the ratio of
 (heap before GC - heap after GC) / (heap before GC - heap after last GC).

@@ -174,7 +174,7 @@ const { promise: p, resolve: res, reject: rej } =
 // Cleaner deferred pattern
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Advanced Promise Combinators example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 Promise cancellation is the most commonly needed feature
@@ -228,7 +228,7 @@ async function fetchUserBad(id) {
 }
 ```
 
-> **Code walkthrough:** The first BAD pattern starts 10,000
+> **Code walkthrough:** The first BAD pattern starts 10,000 concurrent Promise.all() calls simultaneously. **KEY MECHANISM:** Promise.all() fires all promises at once; if the server cannot handle 10,000 concurrent requests it rejects with network errors or rate-limit failures. **WHY IT MATTERS:** unbounded concurrency causes cascading failures and connection pool exhaustion. **WHAT BREAKS:** rate-limiting, connection pool saturation, memory spikes under burst load. **TAKEAWAY:** limit concurrency with p-limit or a semaphore when batching promises - never fire unbounded Promise.all() on large collections.
 > concurrent requests, likely triggering rate limiting or
 > overwhelming the API. The second BAD pattern fails immediately
 > on any transient error (503 Service Unavailable, network hiccup)
@@ -276,7 +276,7 @@ async function syncAllUsers(userIds) {
 }
 ```
 
-> **Code walkthrough:** `p-limit(10)` ensures at most 10
+> **Code walkthrough:** `p-limit(10)` ensures at most 10ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > concurrent requests at any time. `withRetry` wraps each
 > fetch with 3 attempts and exponential backoff. Using
 > `Promise.allSettled` instead of `Promise.all` means one
@@ -345,6 +345,15 @@ Sequential loops process items one at a time (1 concurrent).
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure 1: Thundering herd from synchronized retry**
+
+```javascript
+// BAD: not awaiting async operations
+function saveUser(user) {
+    db.save(user); // async call not awaited
+    return { success: true }; // returns before save completes
+}
+```
+
 ```javascript
 // BAD: All clients retry at same time after backoff
 async function badRetry(fn) {
@@ -360,7 +369,7 @@ const delay = 1000 + Math.random() * 1000; // 1-2s jitter
 await new Promise(r => setTimeout(r, delay));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **WHAT BREAKS: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Failure 2: AbortController signal not checked by all operations**
 ```javascript
@@ -370,7 +379,7 @@ const controller = new AbortController();
 // Only fetch, some Node.js APIs, and explicit checks work
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -385,8 +394,7 @@ const controller = new AbortController();
 | Design | 2 | Building custom combinators |
 | Behavioral | 1 | Production incident with async |
 
-**Q1. How does `AbortController` enable Promise cancellation
-and what are its limitations?**
+**[JUNIOR] Q1 - [MECHANISM] How does `AbortController` enable Promise cancellation and what are its limitations?**
 
 `AbortController` provides a `signal` property that can be
 passed to supported APIs (fetch, WebSocket, some Node.js
@@ -414,7 +422,7 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using async/await. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Limitations:
 - Only works with APIs that accept a signal; arbitrary Promises
@@ -429,8 +437,7 @@ check `signal.aborted` in custom async loops.
 
 ---
 
-**Q2. Design a Promise retry function that handles transient
-vs permanent failures differently.**
+**[JUNIOR] Q2 - [TRADE-OFF] Design a Promise retry function that handles transient vs permanent failures differently.**
 
 ```javascript
 class PermanentError extends Error {
@@ -475,7 +482,7 @@ await smartRetry(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* The `shouldRetry` predicate
 makes the retry condition explicit and flexible. Without it,
@@ -485,8 +492,7 @@ downstream issues.
 
 ---
 
-**Q3. What is `Promise.withResolvers` and how does it improve
-the deferred pattern?**
+**[JUNIOR] Q3 - [MECHANISM] What is `Promise.withResolvers` and how does it improve the deferred pattern?**
 
 `Promise.withResolvers()` (ES2024) returns `{promise, resolve, reject}`.
 It removes the awkward variable hoisting needed with the
@@ -502,7 +508,7 @@ const promise = new Promise((res, rej) => {
 // Complex, rely on closure assignment
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 New pattern:
 ```javascript
@@ -510,7 +516,7 @@ const { promise, resolve, reject } = Promise.withResolvers();
 // Clean destructuring, no hoisting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 Use cases: bridging event-driven APIs with Promise-based code,
 implementing message buses, request/response correlation in
@@ -536,7 +542,7 @@ class RequestResponseBus {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Promise chain construction using Promise. **KEY MECHANISM:** Promise.then() registers a microtask; all microtasks drain before the next macrotask. **WHY IT MATTERS:** Promise.all() fails fast on first rejection; use Promise.allSettled() to collect all results. **TAKEAWAY: prefer Promise.allSettled() over Promise.all() when partial success is acceptable.**
 
 *What separates good from great:* Using `Promise.withResolvers`
 for the request/response WebSocket pattern - a common real-world
@@ -544,8 +550,7 @@ case where the deferred pattern is genuinely needed.
 
 ---
 
-**Q4. How do you implement a circuit breaker for async
-operations?**
+**[MID] Q4 - [SCENARIO] How do you implement a circuit breaker for async operations?**
 
 A circuit breaker has three states: Closed (normal), Open
 (failing fast), Half-Open (testing recovery).
@@ -587,7 +592,7 @@ class CircuitBreaker {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Understanding the three-state
 model and the HALF-OPEN state for recovery testing. A circuit
@@ -596,8 +601,7 @@ too aggressively after failure.
 
 ---
 
-**Q5. What is the difference between Promise-based and
-callback-based concurrency control?**
+**[MID] Q5 - [TRADE-OFF] What is the difference between Promise-based and callback-based concurrency control?**
 
 Callback-based concurrency (async.eachLimit, async.queue):
 older approach, uses callback convention, harder to compose
@@ -626,7 +630,7 @@ const results = await Promise.all(
 // Natural integration with async/await
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing both exist and
 understanding that callback-based libraries are still common
@@ -635,7 +639,7 @@ integrate better with modern code.
 
 ---
 
-**Q6. How do you implement a "first N succeed" combinator?**
+**[SENIOR] Q6 - [SCENARIO] How do you implement a "first N succeed" combinator?**
 
 ```javascript
 async function firstN(promises, n) {
@@ -669,7 +673,7 @@ async function firstN(promises, n) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using Promise. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing when this pattern
 is useful: quorum-based decisions, majority-vote systems,
@@ -677,8 +681,7 @@ k-of-n redundancy in distributed systems.
 
 ---
 
-**Q7. Describe a production incident where incorrect async
-orchestration caused a failure. How would you diagnose it?**
+**[SENIOR] Q7 - [DEBUGGING] Describe a production incident where incorrect async orchestration caused a failure. How would you diagnose it?**
 
 Common pattern: search-as-you-type where requests arrive
 in different orders:
@@ -696,7 +699,7 @@ async function search(query) {
 // If "j" is slowest: last result is "j", not "jav"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 Diagnosis: network tab showing multiple in-flight requests;
 results jumping back and forth as requests resolve out of order.
@@ -724,7 +727,7 @@ async function search(query) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise reice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Knowing this is the most
 common async race condition in UI code and having the specific
@@ -735,13 +738,13 @@ think through it at the interview.
 
 ### ⚖️ Comparison Table
 
-| Pattern | Use Case | Native Support | Library |
-|---|---|---|---|
-| Concurrency limit | Fan-out rate control | No | p-limit |
-| Retry + backoff | Transient failure | No | async-retry |
-| AbortController | Cancel on supersede | Yes (fetch) | Built-in |
-| Circuit breaker | Prevent cascade failure | No | opossum |
-| Promise.withResolvers | Deferred pattern | ES2024 | Built-in |
+| Pattern| Use Case| Native Support| Library|
+|---------------------|-----------------------|--------------|-----------|
+| Concurrency limit| Fan-out rate control| No| p-limit|
+| Retry + backoff| Transient failure| No| async-retry|
+| AbortController| Cancel on supersede| Yes (fetch)| Built-in|
+| Circuit breaker| Prevent cascade failure| No| opossum|
+| Promise.withResolvers| Deferred pattern| ES2024| Built-in|
 
 **The deciding factor:**
 Use native APIs first. For concurrency limiting and retry,
@@ -760,7 +763,7 @@ with monitoring integration.
 
 ### 📊 Diagram
 
-```
+```plaintext
 PROMISE ORCHESTRATION PATTERNS
 ================================
 
@@ -944,7 +947,7 @@ class EventSource {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Generator Functions and Async Iteration example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **The key insight:**
 `for await...of` processes items sequentially by default.
@@ -1010,7 +1013,7 @@ async function processOrdersNested() {
 }
 ```
 
-> **Code walkthrough:** The first BAD pattern loads all data
+> **Code walkthrough:** The first BAD pattern loads all dataice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > before processing - fatal for large datasets. The second
 > is functionally correct but mixes pagination logic with
 > processing logic, making both harder to test and reuse.
@@ -1070,7 +1073,7 @@ async function processWithConcurrency(
 }
 ```
 
-> **Code walkthrough:** `streamOrders` encapsulates all
+> **Code walkthrough:** `streamOrders` encapsulates allice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > pagination logic: cursor management, batch size, termination.
 > `processAllOrders` only knows how to process individual
 > orders. The separation enables testing each independently.
@@ -1150,7 +1153,7 @@ async function* withResource() {
 // return() is NOT called - use try/finally in consumer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 **Failure 2: Memory leak from unfinished generator**
 ```javascript
@@ -1162,7 +1165,7 @@ gen.return();
 // Or: always consume with for await (handles cleanup)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration using async/await. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 ---
 
@@ -1177,8 +1180,7 @@ gen.return();
 | Design | 2 | Streaming pagination, concurrency |
 | Behavioral | 1 | When to choose generators vs streams |
 
-**Q1. What is the iterator protocol and how do generators
-implement it?**
+**[JUNIOR] Q1 - [SCENARIO] What is the iterator protocol and how do generators implement it?**
 
 The iterator protocol: an object with a `next()` method
 that returns `{value, done}`. An iterable is an object with
@@ -1207,7 +1209,7 @@ for (const v of gen()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 The `return` value appears in the `{done: true}` object
 but is skipped by `for...of` - it is only accessible via
@@ -1219,7 +1221,7 @@ receives it as the value of the delegation expression.
 
 ---
 
-**Q2. How does `yield*` work and when is it useful?**
+**[JUNIOR] Q2 - [MECHANISM] How does `yield*` work and when is it useful?**
 
 `yield*` delegates iteration to another iterable, yielding
 all its values before continuing.
@@ -1247,7 +1249,7 @@ function* flatten(arr) {
 [...flatten([1,[2,[3,4]],5])]; // [1,2,3,4,5]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates variable declaration. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **TAKEAWAY: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 With async generators: `yield*` can delegate to another
 async iterable, awaiting each value.
@@ -1258,8 +1260,7 @@ is the way generators communicate results back to their callers.
 
 ---
 
-**Q3. What is the difference between async generators and
-Node.js Readable streams for streaming data?**
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between async generators and Node.js Readable streams for streaming data?**
 
 Async generators:
 - Pull-based: consumer controls pace via `next()` calls
@@ -1294,7 +1295,7 @@ async function processLines(filename) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Choosing based on the
 use case: streams for high-throughput I/O where backpressure
@@ -1303,8 +1304,7 @@ pull model is simpler.
 
 ---
 
-**Q4. How do you implement a rate-limited async iterator
-from an API with pagination?**
+**[MID] Q4 - [SCENARIO] How do you implement a rate-limited async iterator from an API with pagination?**
 
 ```javascript
 async function* paginatedApi(endpoint, {
@@ -1335,7 +1335,7 @@ for await (const item of paginatedApi('/api/items')) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Including rate limiting
 as a first-class concern in the generator itself, rather than
@@ -1345,8 +1345,7 @@ with what backoff.
 
 ---
 
-**Q5. What happens when an async generator throws vs when
-the consumer throws?**
+**[MID] Q5 - [TRADE-OFF] What happens when an async generator throws vs when the consumer throws?**
 
 Generator throws: if the generator's async code throws an
 uncaught error, the generator terminates. `for await...of`
@@ -1377,7 +1376,7 @@ for await (const item of withCleanup()) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Using `try/finally` in
 generators for resource cleanup. This is the correct pattern
@@ -1386,8 +1385,7 @@ regardless of how the iteration ends.
 
 ---
 
-**Q6. How do you combine multiple async generators into
-one merged stream?**
+**[SENIOR] Q6 - [MECHANISM] How do you combine multiple async generators into one merged stream?**
 
 ```javascript
 // Merge multiple async iterables into one
@@ -1425,7 +1423,7 @@ for await (const event of merge(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async/await Promise resolution using async/await. **KEY MECHANISM:** async functions return Promises; await suspends the microtask until the Promise settles. **WHY IT MATTERS:** unhandled Promise rejections crash the Node process in v15+ or fire unhandledRejection event. **TAKEAWAY: always await or .catch() every Promise - silent rejections are production defects.**
 
 *What separates good from great:* Knowing this is a complex
 pattern and that RxJS `merge` handles it more cleanly with
@@ -1435,8 +1433,7 @@ reactive library.
 
 ---
 
-**Q7. When would you choose async generators over RxJS
-Observables for streaming data?**
+**[SENIOR] Q7 - [SCENARIO] When would you choose async generators over RxJS Observables for streaming data?**
 
 Choose async generators when:
 - The data source is naturally pull-based (pagination, cursor-based queries)

@@ -68,7 +68,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Performance engineering process and org-level practices:**
-```
+```plaintext
 PERFORMANCE ENGINEERING FRAMEWORK:
 
   Phase 1: Define (what does "good" look like?)
@@ -163,9 +163,9 @@ CAPACITY PLANNING AND SCALING:
     
     Example: service with p50 latency = 100ms, receiving 1,000 RPS.
     L = 1,000 * 0.1 = 100 concurrent requests in flight.
-    If thread pool = 100 threads: utilization = 100%. Any increase -> queue builds.
+    If thread pool = 100 threads: utilization = 100%. Any increase -> queue...
     
-    Headroom rule: provision for 50% headroom. 100 max concurrent -> set pool to 50, reject at 100.
+    Headroom rule: provision for 50% headroom. 100 max concurrent -> set pool...
     This ensures: at 100 concurrent, the service still responds (pool not exhausted).
   
   Amdahl's Law:
@@ -208,7 +208,7 @@ PERFORMANCE TESTING HIERARCHY:
     Key metrics: memory-after-gc trend (leak detection), GC overhead trend.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L5 Performance Strategy example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -367,7 +367,7 @@ Diagnosis:
 Fix:
   1. Implement a performance regression gate in CI:
      Load test on EVERY PR. Compare to main branch SLO.
-     Gate: if p99 regresses > 5%: require explicit "perf accepted" label to merge.
+  Gate: if p99 regresses > 5%: require explicit "perf accepted" label to merge.
   
   2. Establish a performance charter:
      Document current SLOs. Review quarterly.
@@ -379,7 +379,7 @@ Fix:
      Catches regressions within 1-2 weeks instead of 6 months.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -171,7 +171,7 @@ test:
     # Unit test failure blocked by waiting for integration tests
 ```
 
-> **Code walkthrough:** The monolithic test stage hides all loop
+> **Code walkthrough:** The monolithic test stage hides all loopice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > information. A unit test failure takes 45 minutes to discover
 > because unit tests run in the same job as 40-minute integration
 > tests. There is no way to prioritize faster feedback for higher-
@@ -222,7 +222,7 @@ post:
         --data-binary @-
 ```
 
-> **Code walkthrough:** The stratified pipeline makes each feedback
+> **Code walkthrough:** The stratified pipeline makes each feedbackice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > loop visible and measurable. Unit tests run first and in parallel -
 > the developer gets quality feedback within 5 minutes. Integration
 > tests only run on merge requests (not on every push), preventing
@@ -414,7 +414,7 @@ integration-tests 30 min  integration (medium)
 security-scan     5 min   compliance (parallel)
 deploy-staging    4 min   deployment
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The problem is immediately visible: integration tests are 75% of
 the total time and are running serially.
@@ -781,7 +781,7 @@ the CI/CD tooling?"
 # No postmortem, no learning, no improvement.
 ```
 
-> **Code walkthrough:** The missing postmortem is the missing
+> **Code walkthrough:** The missing postmortem is the missingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > learning mechanism. Without a structured retrospective, each
 > incident is a cost (downtime, engineer time) without a benefit
 > (learning that prevents future incidents).
@@ -832,7 +832,7 @@ This pattern (autoscaling × connection pool) is a common failure
 mode. Posted to #incident-learnings for all teams to review.
 ```
 
-> **Code walkthrough:** The blameless postmortem template separates
+> **Code walkthrough:** The blameless postmortem template separatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the incident facts (timeline, root cause) from the learning output
 > (contributing factors, action items). Contributing factors are
 > systemic (missing alert, inadequate load testing) not personal
@@ -1367,7 +1367,7 @@ Example: weekly deployment report
   1 time/week × 2 hours × 52 weeks × $200 = $20,800/year
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Toil and Automation Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Estimate the automation cost.
 ```
@@ -1380,7 +1380,7 @@ Example: automate weekly deployment report
   Annual maintenance: 5 hours × $200 = $1,000/year
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Toil and Automation Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4: Calculate ROI and payback period.
 ```
@@ -1394,7 +1394,7 @@ Year 1 ROI = (annual savings - build cost) / build cost
           = ($19,800 - $4,000) / $4,000 = 395%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Toil and Automation Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 5: Assess feasibility and risk.
 Not all automatable things should be automated. Automation adds
@@ -1440,7 +1440,7 @@ and improving reliability), creating a downward spiral.
 # = TOIL
 ```
 
-> **Code walkthrough:** Manual report generation has all six toil
+> **Code walkthrough:** Manual report generation has all six toilice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > properties. It is manual (human copies data), repetitive (every
 > Monday), automatable (data comes from APIs), tactical (reactive
 > to management request), grows with scale (more teams = more data
@@ -1518,7 +1518,7 @@ P1 incidents: {sum(1 for i in incidents['incidents'] if i['urgency'] == 'high')}
 # schedule: "0 9 * * 1"  # Every Monday at 9AM
 ```
 
-> **Code walkthrough:** The automated report eliminates the toil
+> **Code walkthrough:** The automated report eliminates the toilice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > permanently. The 16-hour build investment pays back in 2 months
 > (at 2 hours saved per week). The ongoing maintenance (updating
 > the API calls when endpoints change) is estimated at 2 hours per
@@ -1703,7 +1703,7 @@ Total team toil: 416 hours/year = $83,200/year
 Team toil percentage: 416 / (4 engineers × 2000 hours/year) = 5.2%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Example team with 4 SREs: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 3: Prioritize by ROI.
 ```
@@ -1722,7 +1722,7 @@ Capacity planning automation:
 Prioritize service restart automation first (highest ROI).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Example team with 4 SREs: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Step 4: Present to leadership as investment, not infrastructure.
 Frame: "40 engineering hours invested to save $62,400/year
@@ -1897,7 +1897,7 @@ Weekly capacity planning report          2h/week   $20,800
   Total                                          $85,600
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Prioritization: namespace creation had the highest annual cost
 and highest feasibility (stable, well-defined API).

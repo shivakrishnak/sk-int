@@ -84,7 +84,7 @@ After order ships, state changes:
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This HATEOAS and Hypermedia APIs example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The absence of a link IS information. A client renders a Cancel button only when the cancel link is present. When it's gone, the button disappears. The server encodes the order's state machine in the presence/absence of links. This moves state machine logic from clients to the server - a single source of truth.
@@ -211,45 +211,74 @@ Fix: Configure Spring HATEOAS's `ForwardedHeaderFilter` to use the X-Forwarded-H
 | Design | 3 min | 1 |
 | Behavioral | 2 min | 1 |
 
-#### Q1 - "What is the Richardson Maturity Model and where does HATEOAS fit?"
+**[JUNIOR] Q1 - [CONCEPTUAL] "What is the Richardson Maturity Model and where does HATEOAS fit?"**
 > "Richardson Maturity Model: four levels of REST API design maturity. Level 0: one endpoint, one method. RPC-style: `POST /api/command` with action in the body. Level 1: resources. Separate endpoints per resource: `/orders`, `/users`. Level 2: HTTP verbs. Use HTTP methods correctly: GET to read, POST to create, PUT to update, DELETE to delete. HTTP status codes carry meaning (200, 201, 404, 409). Most commercial APIs are at Level 2. Level 3: HATEOAS. Responses include hypermedia links for available next actions. The API is self-describing. The level that matters most for interviews: Level 2. Almost all 'RESTful' APIs in practice are Level 2. Level 3 is aspirational. The model's value: it gives vocabulary for discussing API design quality. A Level 2 API is RESTful in the practical sense. A Level 0 API is HTTP transport for RPC calls. The common mistake: calling your API 'REST' when it's Level 0 or 1. Richardson's model makes the distinction precise."
 
 *What separates good from great:* "Knowing that 'most commercial APIs are Level 2' and that Level 3/HATEOAS is aspirational shows realistic industry perspective. Candidates who confidently explain why Level 2 is the practical standard over Level 3 show production experience over theory."
 
 ---
 
-#### Q2 - "Compare HATEOAS to GraphQL for resource discovery."
+**[JUNIOR] Q2 - [TRADE-OFF] "Compare HATEOAS to GraphQL for resource discovery."**
 > "HATEOAS and GraphQL solve different discovery problems. HATEOAS: runtime link discovery. The client follows server-provided links to find available actions. Decouples client from URL structure. Dynamic state representation (links change with state). GraphQL: schema-based type discovery. The client queries the schema to find all types, fields, and mutations. Introspection allows tools to auto-generate clients, documentation, and type-safe queries. Static discovery (the schema changes between deployments, not per-resource). The client experience: HATEOAS client reads response links, makes follow-on requests to linked resources. GraphQL client queries exactly the fields it needs in one request. For complex related data: GraphQL avoids the N+1 request problem that HATEOAS link-following creates (follow order link -> follow customer link -> follow address link = 3 requests). GraphQL can fetch all in one query. For state machines: HATEOAS has no GraphQL equivalent for dynamic action availability. GraphQL mutations are static (always defined). HATEOAS links are dynamic (present only for valid state transitions). For most modern APIs: GraphQL is adopted for its query flexibility and type system. HATEOAS is adopted for its state machine representation. They're not direct competitors."
 
 *What separates good from great:* "The N+1 request problem with HATEOAS link-following (multiple round trips to traverse the link graph) vs GraphQL single-query fetching shows you've implemented both and understand the operational difference."
 
 ---
 
-#### Q3 - "A team member proposes adding HATEOAS to your existing REST API. How do you evaluate the proposal?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "A team member proposes adding HATEOAS to your existing REST API. How do you evaluate the proposal?"**
 > "Evaluation framework: (1) What problem are they solving? If clients are hardcoding URLs that change: HATEOAS addresses URL coupling. But evaluate: are the URLs actually changing? Stable, versioned URL structures don't need HATEOAS. (2) What are the clients? If all clients are JavaScript SPAs or mobile apps you control: you can update them when URLs change. HATEOAS benefit is marginal. If the API is public (third-party integrations, partners): stable URLs are more valuable than HATEOAS links. (3) Does the resource have a complex state machine? Pending -> processing -> shipped -> delivered with different allowed actions per state? HATEOAS links map naturally to this. If CRUD only: HATEOAS is overhead. (4) What's the cost? Response size increases (links add payload). Server complexity increases (link generation logic). Client complexity increases (link following instead of URL construction). Documentation complexity increases (clients must understand link relation semantics). (5) Incremental adoption: you can add HATEOAS to one resource (orders) without changing others. Start small and measure client adoption. If no clients use the links after 3 months: remove them. My recommendation: if the team is building a new API with complex state machines for third-party clients - evaluate HAL format. For an existing API with internal clients: the migration cost likely exceeds the benefit."
 
 *What separates good from great:* "The incremental adoption suggestion (one resource first, measure client adoption) and the time-boxed evaluation (3 months) shows pragmatic staff engineer thinking over theoretical idealism."
 
 ---
 
-#### Q4 - "What is HAL and how does it relate to HATEOAS?"
+**[MID] Q4 - [CONCEPTUAL] "What is HAL and how does it relate to HATEOAS?"**
 > "HAL (Hypertext Application Language) is a media type that specifies a standard JSON format for HATEOAS links. Without HAL, different APIs put links in different places: `links: [...]`, `_href: ...`, `related: {...}`. With HAL: always `_links` property, always `href` property inside each link, standard structure for embedded resources (`_embedded`). HAL example: `{data: {...}, _links: {self: {href: '/orders/123'}, cancel: {href: '/orders/123/cancel', title: 'Cancel Order'}}}`. The title field in HAL links is a human-readable label. Spring HATEOAS defaults to HAL for responses with `application/hal+json` media type. HAL Browser: a generic web interface that can browse any HAL API by following `_links`. This is the 'promise' of HATEOAS - a client that works with any HAL API without custom integration. The reality: HAL Browser is useful for exploring APIs, not for building production clients. Production clients need specific link relations (cancel, track) with known semantics. A generic link follower can't know that cancel is a destructive action. Other hypermedia formats: JSON:API (different envelope format), Siren (form-based actions with types and fields), Collection+JSON (for collections). HAL is the most widely adopted for Spring/Java ecosystems."
 
 *What separates good from great:* "Knowing HAL Browser as the generic HATEOAS API explorer and why it's limited (can't know the semantics of link relations) shows you've actually used HATEOAS tooling."
 
 ---
 
-#### Q5 - "When would you NOT implement HATEOAS despite it being theoretically better?"
+**[MID] Q5 - [TRADE-OFF] "When would you NOT implement HATEOAS despite it being theoretically better?"**
 > "Cases where HATEOAS is not worth the cost: (1) Internal microservices with contract testing: teams using Pact for consumer-driven contracts can safely change URLs with all affected consumers verified. HATEOAS provides no additional decoupling when contracts are tested. (2) High-throughput APIs: each response carries link payload. At 10,000 requests/second with 5 links per response averaging 200 bytes per link block: 1MB/s of extra bandwidth for links that no client uses. (3) Simple CRUD APIs: a user settings API with GET/PUT on a few fields has no state machine, no transitions, and no discovery value. Links would be a documentation exercise with no runtime value. (4) Mobile APIs: mobile apps are long-lived and cache aggressively. A mobile client that followed a cached HATEOAS link pointing to an old URL would be broken anyway. Mobile clients hardcode the stable versioned base URL. (5) Teams without discipline for link following: if the client team will read the id from the response and construct `/orders/{id}/cancel` anyway (ignoring the link), HATEOAS links become dead weight. Measuring this is simple: log whether the cancel link is ever actually used in a request by clients. If it's consistently ignored: remove it."
 
 *What separates good from great:* "The bandwidth calculation (5 links × 200 bytes × 10K req/s = 1MB/s) and the logging-to-measure-adoption approach show staff-level pragmatism. Most candidates either advocate for or against HATEOAS theoretically; this answer shows empirical measurement thinking."
 
 ---
 
-#### Q6 - "Describe the state machine design for an e-commerce order and how HATEOAS would represent it."
+**[MID] Q6 - [ARCHITECTURE] "Describe the state machine design for an e-commerce order and how HATEOAS would represent it."**
 > "Order state machine: PENDING (just created) -> CONFIRMED (payment verified) -> PROCESSING (warehouse picking) -> SHIPPED (with tracking) -> DELIVERED (confirmed receipt). Also: PENDING -> CANCELLED, CONFIRMED -> CANCELLED (before processing starts). The HATEOAS link map: PENDING: self, cancel, update, confirm (add payment). CONFIRMED: self, cancel, track (no yet - not shipped). PROCESSING: self, track (for warehouse status). SHIPPED: self, track (public carrier tracking). DELIVERED: self, invoice, review. CANCELLED: self, refundStatus. Client behavior: render only the action buttons corresponding to present links. A mobile app shows 'Cancel Order' only when the cancel link is present. The button disappears automatically when the order moves to PROCESSING (server stops including the cancel link). No client-side state machine needed - the server drives the UI. Implementation: the Order domain object has `getAllowedLinks()` method that examines the current status and returns a list of allowed link relations. The HATEOAS controller calls this method to generate the `_links` section. State machine transitions in the domain: `order.confirm()` throws `InvalidStateException` if not in PENDING/CONFIRMED status. The domain enforces transitions; HATEOAS reflects them."
 
 *What separates good from great:* "The implementation detail of `getAllowedLinks()` on the domain object (keeping state machine logic in the domain, not the controller) and the mobile UI behavior driven by link presence/absence shows how HATEOAS actually integrates into a real system."
+
+---
+
+**[SENIOR] Q7 - [TRADE-OFF] "What are the practical reasons most teams
+implement Level 2 (HTTP verbs + status codes) but stop short of HATEOAS
+(Level 3)?"**
+> "Level 2 gives you 80-90% of REST's benefits: uniform interface, proper
+> HTTP semantics, stateless requests, and caching. HATEOAS (Level 3) adds
+> dynamic discoverability but requires significant investment: clients must
+> follow links rather than constructing URLs, which means a fundamentally
+> different client architecture. For most internal APIs and mobile apps,
+> the client already knows the resource structure - it was designed together
+> with the server. The discoverability benefit of HATEOAS materializes only
+> for truly hypermedia clients (browsers following links, generic API
+> explorers) or highly dynamic APIs where resource URLs cannot be known
+> in advance. The cost: implementing `getAllowedLinks()` on every resource,
+> maintaining link relation documentation, client libraries that follow links
+> instead of constructing URLs, and testing the link graph. Most teams make
+> a pragmatic decision: Level 2 with consistent error handling, pagination,
+> and versioning is maintainable and understood by all developers. HATEOAS
+> is reserved for public APIs that need to evolve without breaking clients
+> (GitHub API uses it selectively). The trade-off framing: HATEOAS couples
+> clients loosely to server URL structure but tightly to link relation
+> semantics. You trade one form of coupling for another."
+
+*What separates good from great:* "Knowing that Richardson Level 2 is
+not 'bad REST' but a deliberate architectural choice. The ability to
+explain when Level 3 is worth the investment (truly evolvable APIs with
+unknown clients) vs when it isn't (internal APIs with co-developed clients)."
 
 ---
 
@@ -356,7 +385,7 @@ Content-Type: application/problem+json
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error Handling and Problem Details example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The error `type` URI is a machine-readable identifier that clients can use for conditional error handling without string parsing. Different error types for the same HTTP status code enable specific handling: `insufficient-balance` shows a top-up dialog. `account-locked` redirects to the support page. Both are 422 but need completely different client behavior.
@@ -533,49 +562,49 @@ Fix: Catch-all exception handler must NOT use `exception.getMessage()` in the re
 | Trade-off | 2 min | 1 |
 | Behavioral | 2 min | 1 |
 
-#### Q1 - "What HTTP status code would you use for a business rule violation?"
+**[JUNIOR] Q1 - [HANDS-ON] "What HTTP status code would you use for a business rule violation?"**
 > "422 Unprocessable Entity. The request was technically valid (correct JSON structure, correct field types) but violated a business rule (insufficient balance, duplicate email, invalid state transition). 400 Bad Request: use for technically malformed requests (invalid JSON, wrong data type, missing required field at input validation layer). 422 Unprocessable Entity: use for semantically invalid requests (technically valid but business logic rejects it). Why the distinction matters: clients can handle 400 errors by fixing the request format (validate fields, add missing data). Clients handle 422 errors differently based on the specific business rule (show top-up dialog for insufficient funds, show 'email taken' error for duplicates). The differentiation requires different client logic. 409 Conflict: use when the request is valid but conflicts with the current state (trying to create a resource that already exists, or an optimistic locking conflict). 404 Not Found: resource doesn't exist. Don't return 404 for a user that exists but the current user can't access - that's 403 Forbidden (to avoid information disclosure). 403 vs 401: 401 means not authenticated (no credentials). 403 means authenticated but not authorized (credentials valid, but no permission)."
 
 *What separates good from great:* "The 422 vs 400 distinction (technical vs semantic error) and the 403 vs 404 security consideration (returning 403 for inaccessible resources vs 404 to prevent information disclosure) are the nuanced status code decisions."
 
 ---
 
-#### Q2 - "How do you design error responses for validation failures with multiple errors?"
+**[JUNIOR] Q2 - [ARCHITECTURE] "How do you design error responses for validation failures with multiple errors?"**
 > "Return all validation errors in one response - never make clients round-trip multiple times to discover all validation issues. Format: `HTTP 400 Bad Request` with an errors array in the Problem Details body: `{type: 'validation-failed', errors: [{field: 'email', code: 'INVALID_FORMAT', message: 'Must be valid email'}, {field: 'age', code: 'MIN_VALUE', message: 'Must be 18+'}]}`. The `field` identifies which field failed. `code` is a machine-readable error code (not a human message). `message` is the human-readable message safe to display. Why `code` AND `message`: the code lets clients apply their own locale-specific message. The message is a fallback. In Spring: `MethodArgumentNotValidException` collects all `@Valid` failures before throwing. `getBindingResult().getFieldErrors()` returns all field errors. Without `@Valid`: manual validation that throws on the first error creates a frustrating client experience. Use Spring's validation framework or Bean Validation (JSR-380). For nested objects: use the full path as the field name: `address.postalCode`. For array items: `items[2].quantity`. For cross-field validation errors (passwords don't match): use `null` or the class name as the field, or a separate `globalErrors` array."
 
 *What separates good from great:* "The `code` + `message` separation (machine-readable code for programmatic handling, human message as fallback) and the full path for nested field names (`address.postalCode`, `items[2].quantity`) show production validation error design experience."
 
 ---
 
-#### Q3 - "How do you handle errors in a microservices environment where one service's error propagates to the client?"
+**[JUNIOR] Q3 - [CONCEPTUAL] "How do you handle errors in a microservices environment where one service's error propagates to the client?"**
 > "Error propagation in microservices requires a translation layer. Service A calls Service B, which returns an error. Service A should not blindly forward Service B's error to the client. Translation rules: (1) Technical infrastructure errors from downstream should become 503 Service Unavailable or 500 Internal Server Error at the API boundary. The client doesn't need to know that Order Service is down - they need to know 'orders are temporarily unavailable.' (2) Business errors from downstream may propagate with transformation. If Payment Service returns `insufficient-balance`, Order Service propagates this as a payment-specific error to the client - but translated to the Order Service's error vocabulary. (3) Internal details must never leak. Service B's internal error IDs, stack traces, and system names should not appear in the response to the external client. Use correlation IDs to link external error reports to internal log traces: the client gets `errorId: 'f8a3d2b1'`. Operations searches logs for that ID to find the complete internal error chain. Implementation: circuit breakers (Resilience4j) return fallback responses when downstream services fail. The fallback response must follow the Problem Details format with an appropriate 503 status."
 
 *What separates good from great:* "The translation layer requirement (never blindly forward downstream errors) and the correlation ID pattern (client gets a safe ID, ops can find the full trace) are the production microservices error handling patterns."
 
 ---
 
-#### Q4 - "You're getting reports that your API is returning 500 errors but you can't find them in the logs. How do you investigate?"
+**[MID] Q4 - [DEBUGGING] "You're getting reports that your API is returning 500 errors but you can't find them in the logs. How do you investigate?"**
 > "Missing 500s in logs despite client reports: (1) Load balancer or CDN is returning the 500, not your application. The CDN times out waiting for the application and returns 504 to the client (client may see it as 500). The application never processes the request, so no logs. Diagnosis: compare client-reported error times with load balancer access logs and application logs. If load balancer shows 500 but application shows nothing: the request never reached the application. (2) Application crashed and is restarting. JVM OOM, segfault, or uncaught exception on startup. The application returns nothing (connection refused) or incomplete response. Diagnosis: check container/process restart events. (3) Log level filtering. The 500 handler logs at ERROR level, but the log configuration is set to INFO. ERROR logs are dropped. Check the log level configuration for the exception handler package. (4) Log aggregation lag. The 500 happened, was logged, but the log aggregator hasn't ingested it yet (Logstash/Fluentd ingestion lag). Wait a few minutes and search again. (5) Wrong correlation between client reports and logs. Client reports are delayed (user noticed error 10 minutes after it occurred). The log timestamp doesn't match the client's reported time. Search a wider time window."
 
 *What separates good from great:* "The load balancer 504 appearing as 500 to the client is the production debugging insight. The request never reaching the application but clients seeing an error is a common on-call investigation scenario."
 
 ---
 
-#### Q5 - "What is the difference between error type URI and error code in API error design?"
+**[MID] Q5 - [ARCHITECTURE] "What is the difference between error type URI and error code in API error design?"**
 > "Two different identifier styles for error types. Error code (string enum): `{'code': 'INSUFFICIENT_BALANCE'}`. Simple, consistent, version-safe. Does not resolve to documentation. Error type URI: `{'type': 'https://api.myapp.com/errors/insufficient-balance'}`. Resolvable: the URL can serve HTML documentation about this error type. Globally unique: `type` URIs are unique across all APIs (unlike error codes that may collide between systems). Self-describing: the URI path communicates the error taxonomy. RFC 9457 recommends type URIs for these reasons. The pragmatic reality: type URIs that actually resolve to documentation are valuable. URIs that return 404 or an empty page are type URIs in name only - they add payload without adding value. Recommendation: if you commit to type URIs, host actual documentation at each URI. An error documentation page: error title, when it occurs, extension fields description, how to resolve. This is the RFC 9457 intent. If documentation hosting is not feasible: use stable string error codes. Error codes are better than type URIs that don't resolve - they're simpler and equally machine-readable."
 
 *What separates good from great:* "The pragmatic recommendation (type URIs only if documentation is hosted there; otherwise error codes are fine) shows RFC 9457 RFC awareness combined with operational realism."
 
 ---
 
-#### Q6 - "How do you implement a global error ID / correlation ID system for API errors?"
+**[MID] Q6 - [ARCHITECTURE] "How do you implement a global error ID / correlation ID system for API errors?"**
 > "Error ID: a unique identifier for a specific error occurrence. Returned to the client in the error response. Used by operations to find the full error context in logs. Implementation: generate a UUID in the error handler: `String errorId = UUID.randomUUID().toString()`. Include in the Problem Detail: `problem.setProperty('errorId', errorId)`. Include in the log: `log.error('Error {} processing {} {}: {}', errorId, request.getMethod(), request.getRequestURI(), ex.getMessage(), ex)`. The client can then contact support with the errorId and support can find the exact log entry, stack trace, and context. The correlation ID (X-Request-Id or traceparent) is different from the error ID: the correlation ID is set at request entry and propagated through the system. The error ID is generated when the error occurs. For a failed request: use the correlation ID to find all log entries (across microservices) for that request. The error ID specifically identifies the error handler's log entry. Best practice: use the correlation ID as the primary lookup in distributed systems. Use the error ID for single-service error lookup. Return both to the client in error responses: `{errorId: 'err-123', correlationId: 'req-456', ...}`."
 
 *What separates good from great:* "The distinction between correlation ID (follows the full request through microservices) and error ID (identifies the specific error occurrence in one service) and returning both to the client is the complete production observability pattern."
 
 ---
 
-#### Q7 - "How does error response design relate to API security?"
+**[SENIOR] Q7 - [ARCHITECTURE] "How does error response design relate to API security?"**
 > "Three security principles in error response design: (1) Never leak internal details. Exception messages, stack traces, SQL queries, column names, internal service names, infrastructure details. All of these are attack reconnaissance. A stack trace tells an attacker what framework version you use (look up known vulnerabilities). A SQL error message tells them your table and column names (facilitates SQL injection). The rule: log everything internally, return nothing sensitive externally. Use generic messages for 500 errors. Use error IDs to link client reports to internal logs without exposing the logs themselves. (2) Consistent error responses for security-sensitive operations. `GET /users/123` for a non-existent user: return 404. `GET /users/123` for a user that exists but the current user can't access: also return 404 (not 403). Why: 403 confirms the resource exists. An attacker enumerating user IDs can distinguish 'user exists but I can't access it' (403) from 'user doesn't exist' (404). Information disclosure. Exception: authenticated admin endpoints where the user can be expected to know whether the resource exists. (3) Rate limit errors must not include sensitive data. The 429 response shouldn't include other users' rate limit state. Only the current client's remaining quota."
 
 *What separates good from great:* "The 404 vs 403 information disclosure prevention (returning 404 for both 'not found' AND 'found but unauthorized' to prevent resource enumeration) is the OWASP security design pattern. Most candidates know 'don't leak stack traces' but miss the enumeration vulnerability."

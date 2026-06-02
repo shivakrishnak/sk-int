@@ -137,7 +137,7 @@ or network partitions.
    observe -> compare -> act
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Desired State and Reconciliation Loops Theory example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The informer pattern provides:
 - Cache: controller reads from cache (fast, no API call) not from API server
@@ -176,7 +176,7 @@ func (r *MyReconciler) Reconcile(key types.NamespacedName) error {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Desired State and Reconciliation Loops Theory example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Idempotency means: creating a resource that already exists is a no-op (use
 `kubectl apply` semantics: create if not exists, update if exists but different).
@@ -355,7 +355,7 @@ kubectl get <object> -o yaml | grep resourceVersion
 # Run twice 5s apart: if resourceVersion changes each time = controller loop
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run twice 5s apart: if resourceVersion changes each time = controller loop example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: fix reconcile logic to be idempotent. Before updating an annotation: check if the
 annotation already has the desired value. If already correct: return nil without any API call.
@@ -375,7 +375,7 @@ controller_runtime_reconcile_time_seconds_bucket
 controller_runtime_queue_length
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Controller metrics (controller-runtime exposes these) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: increase number of concurrent reconciler workers in controller setup:
 `ctrl.Options{MaxConcurrentReconciles: 10}`. Add timeouts to external API calls.
@@ -480,13 +480,13 @@ A: The work queue decouples event receipt from reconciliation processing. It pro
 critical properties: deduplication, rate limiting, and backoff for failed items.
 
 Deduplication:
-```
-Events arriving:     Pod-A updated -> Pod-A updated -> Pod-A updated -> Pod-A deleted
+```plaintext
+Events arriving:     Pod-A updated -> Pod-A updated -> Pod-A updated -> Pod-A...
 Work queue:          [Pod-A]        [Pod-A - still there]       (already in queue: skip)
 Reconcile calls:     reconcile(Pod-A)       reconcile(Pod-A)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Controller metrics (controller-runtime exposes these) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 If Pod-A changes 5 times while a reconcile is in progress: only one additional reconcile
 runs after the current one completes. Each reconcile processes CURRENT state, so
@@ -508,7 +508,7 @@ ctrl.NewControllerManagedBy(mgr).
     })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Controller metrics (controller-runtime exposes these) example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Parallel processing: the work queue allows N worker goroutines to drain it concurrently.
 Each worker calls `reconcile(key)`. Different keys can be processed in parallel. The
@@ -564,7 +564,7 @@ GOOD: Validating webhook rejects non-compliant pods at creation time
       (synchronous: pod never starts if policy is violated)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Controller metrics (controller-runtime exposes these) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The `failurePolicy: Fail` vs `failurePolicy: Ignore`
 decision for admission webhooks is an availability trade-off. `Fail`: any webhook error
@@ -588,7 +588,7 @@ kubectl logs <controller-pod> | grep "Reconciling\|reconcile"
 # If rapid reconcile logs: possible reconcile loop (check Step 3)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If rapid reconcile logs: possible reconcile loop (check Step 3) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: Check informer/cache health.
 ```bash
@@ -598,7 +598,7 @@ controller_runtime_reconcile_total{controller="mycontroller"}
 # Possible: watch is broken, labelSelector mismatch, RBAC issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Possible: watch is broken, labelSelector mismatch, RBAC issue example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Check RBAC: controller ServiceAccount must have Get/List/Watch on watched resources:
 ```bash
@@ -606,7 +606,7 @@ kubectl auth can-i list pods \
   --as=system:serviceaccount:default:my-controller
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Possible: watch is broken, labelSelector mismatch, RBAC issue example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: Check reconcile output (add strategic logging).
 ```go
@@ -620,7 +620,7 @@ log.Info("Starting reconcile",
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Possible: watch is broken, labelSelector mismatch, RBAC issue example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Step 4: Check error handling.
 If reconcile returns an error: the object is re-queued. If it returns nil but doesn't
@@ -633,7 +633,7 @@ kubectl apply --dry-run=server -f resource.yaml
 # Server-side dry-run: runs admission webhooks, returns what WOULD happen
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Server-side dry-run: runs admission webhooks, returns what WOULD happen example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* The `ObservedGeneration` status field is the most
 powerful debugging tool for controllers. It means: "this controller has processed the
@@ -679,7 +679,7 @@ if errors.IsConflict(err) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Server-side dry-run: runs admission webhooks, returns what WOULD happen example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 *What separates good from great:* The optimistic concurrency model in Kubernetes is
 implicit in the resourceVersion. When you `Get` an object: the response includes
@@ -750,7 +750,7 @@ if !containsFinalizer(db, "postgres-operator/pvc-cleanup") {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Server-side dry-run: runs admission webhooks, returns what WOULD happen example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 2. Idempotency for creates:
 ```go
@@ -765,7 +765,7 @@ if errors.IsNotFound(err) {
 // If already exists: use existing (don't overwrite with new random password)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Server-side dry-run: runs admission webhooks, returns what WOULD happen example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 3. Status-driven state machine:
 Use `status.phase` to track the operator's progress across reconcile calls:
@@ -784,7 +784,7 @@ case "running":
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Server-side dry-run: runs admission webhooks, returns what WOULD happen example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 4. Idempotent configuration:
 Generating PostgreSQL configuration: pg_hba.conf must be idempotent (same input produces
@@ -804,7 +804,7 @@ if !db.DeletionTimestamp.IsZero() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Server-side dry-run: runs admission webhooks, returns what WOULD happen example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 *What separates good from great:* The "assume nothing" principle for production database
 operators: every reconcile starts with a fresh observation. Don't assume the StatefulSet
@@ -844,13 +844,13 @@ spec:
     canaryWeight: 10          # % to send to canary subset
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration patice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Controller design (controller-runtime):
-- Watches: AppDeployment (primary), Deployment/HPA/PDB/VirtualService (secondary owned resources)
-- Owner references: all 7 created resources have owner reference to the AppDeployment
+- Watches: AppDeployment (primary), Deployment/HPA/PDB/VirtualService (secondary
+- Owner references: all 7 created resources have owner reference to the AppDeplo
   (enables automatic garbage collection when AppDeployment is deleted)
-- Status: `status.conditions` with: `DeploymentReady`, `HPAConfigured`, `PDBConfigured`,
+- Status: `status.conditions` with: `DeploymentReady`, `HPAConfigured`, `PDBConf
   `TrafficConfigured`
 
 Reconcile logic:
@@ -865,7 +865,7 @@ Results:
 - 200 services migrated from raw manifests to AppDeployment CRDs over 3 months
 - PDB coverage: 0% -> 100% (controller enforces PDB for all AppDeployments)
 - HPA misconfiguration incidents: 30/year -> 2/year
-- New service onboarding: was 2 hours of writing manifests -> 10 minutes writing AppDeployment spec
+- New service onboarding: was 2 hours of writing manifests -> 10 minutes writing
 - Controller has reconciled ~2M times in 18 months with zero data corruption
 
 *What separates good from great:* The owner reference and garbage collection was the most
@@ -880,18 +880,18 @@ a class of resource leak bugs.
 
 ### ⚖️ Comparison Table
 
-| | Level-triggered control | Edge-triggered control |
-|---|---|---|
-| Recovery from missed events | Automatic (next observation catches it) | Manual (event must be replayed) |
-| Reconciliation latency | Bound by observation period (+ watch events) | Immediate on event |
-| Resilience to controller restart | High (re-reads state on start) | Low (missed events during downtime) |
-| Idempotency requirement | Mandatory | Optional (deduplicate events) |
-| Resource usage | Periodic observation overhead | Low (only on events) |
-| Common in | Kubernetes controllers | Traditional event-driven systems |
+|| Level-triggered control| Edge-triggered control|
+|---|--------------------------------------|-----------------------------------|
+| Recovery from missed events| Automatic (next observation catches it)| Manual (
+| Reconciliation latency| Bound by observation period (+ watch events)| Immediat
+| Resilience to controller restart| High (re-reads state on start)| Low (missed 
+| Idempotency requirement| Mandatory| Optional (deduplicate events)|
+| Resource usage| Periodic observation overhead| Low (only on events)|
+| Common in| Kubernetes controllers| Traditional event-driven systems|
 
 ---
 
-*(Omit: 🏛️ System Design - this is a ★★☆ keyword; System Design section is required for ★★★ only)*
+*(Omit: 🏛️ System Design - this is a ★★☆ keyword; System Design section is requi
 
 ---
 
@@ -1104,7 +1104,7 @@ spec:
       jsonPath: .status.conditions[?(@.type=='Ready')].status
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kubernetes API Machinery and Operator Pattern example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Key CRD features:
 - Schema validation: OpenAPI v3 schema validates objects at creation/update time
@@ -1124,7 +1124,7 @@ kubebuilder create api --group db --version v1 --kind DatabaseCluster
 #            config/crd/bases/*.yaml (CRD manifests)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This config/crd/bases/*.yaml (CRD manifests) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 The generated reconciler structure:
 ```go
@@ -1151,7 +1151,7 @@ func (r *DatabaseClusterReconciler) Reconcile(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This config/crd/bases/*.yaml (CRD manifests) example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 **Webhook Implementation:**
 
@@ -1185,7 +1185,7 @@ func (r *DatabaseCluster) Default() {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This config/crd/bases/*.yaml (CRD manifests) example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 **Status Conditions:**
 
@@ -1209,7 +1209,7 @@ meta.SetStatusCondition(&db.Status.Conditions, metav1.Condition{
 r.Status().Update(ctx, db)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This config/crd/bases/*.yaml (CRD manifests) example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 `kubectl get databasecluster my-db -o yaml` shows the conditions:
 ```yaml
@@ -1222,7 +1222,7 @@ status:
     message: "All replicas running and healthy"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This config/crd/bases/*.yaml (CRD manifests) example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 ---
 
@@ -1402,7 +1402,7 @@ kubectl apply -f resource.yaml --validate=false
 # If --validate=false succeeds: it's a schema validation issue, not an auth issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If --validate=false succeeds: it's a schema validation issue, not an auth issue example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: update the CRD schema to allow the valid value. Use `x-kubernetes-int-or-string: true`
 for fields that accept both types. Use CEL validation for complex cross-field rules.
@@ -1423,7 +1423,7 @@ kubectl describe pod <operator-pod> -n <operator-namespace>
 # Check events: ImagePullBackOff, OOMKilled
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: if panic: fix the nil pointer dereference or unhandled error in Reconcile.
 If cert not ready: cert-manager not issuing the webhook cert; check cert-manager logs.
@@ -1503,7 +1503,7 @@ spec:
   required: [replicas, name]  # both fields required
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 2. CEL validation (K8s 1.25+ GA): complex cross-field validation that OpenAPI can't express:
 ```yaml
@@ -1515,7 +1515,7 @@ x-kubernetes-validations:
   message: "Cannot change version while database is not ready"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 CEL can reference `self` (new value) and `oldSelf` (previous value for updates).
 This enables immutability constraints: "storage size cannot be decreased":
@@ -1525,7 +1525,7 @@ x-kubernetes-validations:
   message: "storage cannot be decreased"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Structural schema requirement: CRD schemas MUST be "structural" (every field has a type).
 Non-structural schemas are deprecated. Structural schemas enable server-side pruning
@@ -1561,7 +1561,7 @@ spec:
     replicationFactor: 3
     minInsyncReplicas: 2
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates YAML configuration pattern using Kafka messaging. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 NOT: "create pod X, assign it broker ID 2, wait for it to join, then..."
 
@@ -1585,7 +1585,7 @@ for i := 0; i < replicas; i++ {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 4. Topic management via CRD:
 ```yaml
@@ -1596,7 +1596,7 @@ spec:
   config:
     retentionMs: 604800000  # 7 days
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check events: ImagePullBackOff, OOMKilled example demonstrates YAML configuration pattern using Kafka messaging. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Topic operator creates/updates topics via Kafka Admin API.
 
@@ -1649,7 +1649,7 @@ spec:
   minAvailable: 2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Certificate management: webhook TLS certificate must be valid and trusted by the API server.
 Use cert-manager:
@@ -1666,7 +1666,7 @@ issuerRef:
   name: selfsigned-issuer  # or: cluster-level issuer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Webhook configuration references the secret:
 ```yaml
@@ -1686,7 +1686,7 @@ webhooks:
     operations: [CREATE, UPDATE]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* The webhook timeout is the most commonly under-configured
 parameter. Default is 10 seconds. But: the API server's overall request timeout is 60 seconds.
@@ -1753,7 +1753,7 @@ kubectl logs <operator-pod> | grep "AlreadyExists\|already exists"
 # If no such logs: operator isn't handling AlreadyExists error correctly
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no such logs: operator isn't handling AlreadyExists error correctly example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Common cause: operator calls `r.Create()` without first checking `r.Get()`.
 On retry (after error or re-sync): tries to create the same resource again.
@@ -1779,7 +1779,7 @@ func ensureService(ctx context.Context, r client.Client,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no such logs: operator isn't handling AlreadyExists error correctly example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Alternative: use `controller-runtime`'s `CreateOrUpdate`:
 ```go
@@ -1790,7 +1790,7 @@ mutateFn := func() error {
 _, err = controllerutil.CreateOrUpdate(ctx, r.Client, existing, mutateFn)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no such logs: operator isn't handling AlreadyExists error correctly example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 *What separates good from great:* The owner reference is the long-term fix for duplicate
 resources. When you set `controllerutil.SetControllerReference(parent, child, scheme)`:
@@ -1814,7 +1814,7 @@ v1alpha1 -> v1beta1 -> v1
 (experimental)  (mostly stable)  (GA, no breaking changes)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no such logs: operator isn't handling AlreadyExists error correctly example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Supporting multiple versions (with conversion):
 ```yaml
@@ -1829,7 +1829,7 @@ versions:
   deprecationWarning: "v1beta1 is deprecated. Use v1."
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no such logs: operator isn't handling AlreadyExists error correctly example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Conversion webhook (required when schemas differ between versions):
 ```go
@@ -1849,7 +1849,7 @@ func (src *DatabaseClusterV1beta1) ConvertTo(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If no such logs: operator isn't handling AlreadyExists error correctly example demonstrates Go pattern. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Migration procedure:
 1. Release new operator version with v1 served and v1beta1 still served
@@ -1895,7 +1895,7 @@ spec:
     name: customer-abc
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database-level: created by customer within their tenant example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Operator architecture:
 
@@ -1926,10 +1926,10 @@ func (r *DatabaseCluster) ValidateCreate() error {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Database-level: created by customer within their teice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Isolation guarantees:
-- Network: NetworkPolicy + namespace isolation (no pod can reach another tenant's pod)
+- Network: NetworkPolicy + namespace isolation (no pod can reach another tenant'
 - Storage: separate PVCs per database (no shared volumes)
 - RBAC: customers manage only resources in their namespace
 - Resource limits: ResourceQuota per namespace prevents noisy neighbor
@@ -1940,8 +1940,8 @@ scale event, or deletion. This external API call in the reconcile loop is danger
 if the billing API is slow or unavailable, reconcile is blocked. Solution: the controller
 enqueues billing events to a separate queue (Kafka or Redis); a billing worker processes
 the queue and calls the billing API asynchronously. The controller never waits for billing.
-The billing queue is durable (at-least-once delivery). If a billing event is missed:
-the billing worker queries current state from the cluster (re-sync strategy) to reconcile
+The billing queue is durable (at-least-once delivery). If a billing event is mis
+the billing worker queries current state from the cluster (re-sync strategy) to 
 billing state. Same level-triggered pattern applied to billing.
 
 ---
@@ -1960,13 +1960,13 @@ and manual operation risk.
 
 Action:
 
-Phase 1 - Evaluation (Month 1): evaluated Zalando Postgres Operator, CloudNativePG, and
+Phase 1 - Evaluation (Month 1): evaluated Zalando Postgres Operator, CloudNative
 CrunchyData PGO. CloudNativePG was selected for: active maintenance, clean CRD API,
-good documentation, and native support for our version requirements (Postgres 15+).
+good documentation, and native support for our version requirements (Postgres 15
 
-Phase 2 - Lab testing (Month 2-3): installed in staging cluster. Created 5 test databases
+Phase 2 - Lab testing (Month 2-3): installed in staging cluster. Created 5 test 
 with CloudNativePG's `Cluster` CRD. Tested: initial provision, minor version upgrade
-(15.3 -> 15.4), major version upgrade (14 -> 15 via pg_upgrade), failover (deleted primary
+(15.3 -> 15.4), major version upgrade (14 -> 15 via pg_upgrade), failover (delet
 pod), backup to S3, restore from backup. Documented all procedures, identified gaps.
 
 Phase 3 - Migration tooling (Month 4): wrote a migration script that:
@@ -1976,7 +1976,7 @@ Phase 3 - Migration tooling (Month 4): wrote a migration script that:
 - Validated data integrity (pg_dump comparison)
 
 Phase 4 - Production migration (Month 5-6):
-Migrated 80 databases in batches of 10 per week. Per database: 2-hour maintenance window.
+Migrated 80 databases in batches of 10 per week. Per database: 2-hour maintenanc
 pg_dump from old, restore to new CloudNativePG cluster, application connection string
 update (new Service name), old database decommission after 1 week verification.
 
@@ -1984,15 +1984,15 @@ Results:
 - Backup coverage: 30% -> 100% (CloudNativePG enforces backup policy)
 - Upgrade incidents: 3/2 years -> 0/18 months
 - Time to provision new database: 4 hours (manual) -> 15 minutes (kubectl apply)
-- Connection pooling: added PgBouncer to all 80 databases via CloudNativePG's built-in
+- Connection pooling: added PgBouncer to all 80 databases via CloudNativePG's bu
   PgBouncer CRD (would have been weeks of manual work)
 
 *What separates good from great:* The parallel validation before decommissioning was the
 risk mitigation that made the migration safe. Running both old and new PostgreSQL instances
 for 1 week after migration, with automated comparison queries running hourly, gave us high
 confidence before disconnecting the old instance. The automated comparison caught 2 minor
-data inconsistencies (from in-flight transactions during the cutover) that we resolved
-before decommission. The week-long parallel run was "expensive" in compute cost ($200 extra
+data inconsistencies (from in-flight transactions during the cutover) that we re
+before decommission. The week-long parallel run was "expensive" in compute cost 
 per database for 1 week) but eliminated the risk of data loss entirely. The cost was worth
 the confidence.
 
@@ -2000,18 +2000,18 @@ the confidence.
 
 ### ⚖️ Comparison Table
 
-| | Raw CRD + Helm | kubebuilder Operator | Operator SDK | Metacontroller |
-|---|---|---|---|---|
-| Complexity | Low | High | High | Medium |
-| Language | N/A (YAML) | Go (primary) | Go / Ansible / Helm | Any (JSON/YAML webhooks) |
-| Framework provided | None | Full (client, cache, webhooks) | Full (similar to kubebuilder) | JSON diff callback |
-| Production readiness | Medium (no controllers) | High | High | Medium |
-| Webhook scaffolding | Manual | Automatic | Automatic | N/A |
-| Best for | Simple config storage | Complex stateful operators | Same as kubebuilder | Quick prototypes |
+|| Raw CRD + Helm| kubebuilder Operator| Operator SDK| Metacontroller|
+|---|---|---------------|-----------------------------|------------------------|
+| Complexity| Low| High| High| Medium|
+| Language| N/A (YAML)| Go (primary)| Go / Ansible / Helm| Any (JSON/YAML webhoo
+| Framework provided| None| Full (client, cache, webhooks)| Full (similar to kub
+| Production readiness| Medium (no controllers)| High| High| Medium|
+| Webhook scaffolding| Manual| Automatic| Automatic| N/A|
+| Best for| Simple config storage| Complex stateful operators| Same as kubebuild
 
 ---
 
-*(Omit: 🏛️ System Design - this is a ★★☆ keyword; System Design section is required for ★★★ only)*
+*(Omit: 🏛️ System Design - this is a ★★☆ keyword; System Design section is requi
 
 ---
 

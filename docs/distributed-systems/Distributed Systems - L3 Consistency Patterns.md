@@ -114,7 +114,7 @@ nodetool repair (Cassandra CLI trigger):
 nodetool repair keyspace table
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency and Convergence example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Gossip protocol:**
 ```
@@ -132,7 +132,7 @@ Round 3: All nodes have v_new.
 Convergence: O(log N) rounds for N nodes.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency and Convergence example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Read-repair:**
 ```
@@ -143,7 +143,7 @@ Coordinator writes v_new back to B (read-repair).
 Next read from B: returns v_new.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency and Convergence example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Hinted handoff:**
 ```
@@ -155,7 +155,7 @@ When B rejoins: A delivers the hinted write.
 B catches up without full anti-entropy.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency and Convergence example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Eventual consistency is a promise about liveness (convergence WILL
@@ -171,7 +171,7 @@ Eventual < Monotonic Read < Monotonic Write
 < Linearizable (Strongest)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Eventual Consistency and Convergence example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use it:**
 - Social media feeds (stale feed is acceptable)
@@ -201,6 +201,12 @@ consistency trade-off."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CASSANDRA EVENTUAL CONSISTENCY READS
@@ -276,7 +282,7 @@ public class ProductRepository {
 }
 ```
 
-> **Code walkthrough:** The BAD pattern reads every product at
+> **Code walkthrough:** The BAD pattern reads every product atice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > QUORUM consistency - this serializes reads to wait for majority
 > replica agreement, negating the availability benefit of Cassandra.
 > The GOOD pattern differentiates by business need: product display
@@ -354,15 +360,85 @@ If no: monotonic reads. Need global order? Sequential/linearizable.
 
 ---
 
+### 🚨 Failure Modes and Diagnosis
+
+---
+
+**Failure Mode 1 - Stale reads causing incorrect business decisions**
+
+**Symptom:** After a successful write, the same client reads old data.
+A user updates their profile and immediately sees the old value.
+A price update is visible on some nodes but not others within seconds.
+
+**Root cause:** Reads are served from replicas with replication lag.
+Cassandra read with `ONE` consistency, DynamoDB eventually consistent
+read, or MySQL replica read - all can return stale data.
+
+**Diagnosis:**
+```bash
+# Check Cassandra replication lag per node
+nodetool tpstats | grep -A3 'Mutations'
+# High 'Pending' = replication backlog
+
+# Check DynamoDB read consistency in application code
+grep -r 'ConsistentRead' src/ | grep -v 'true'
+# Missing ConsistentRead=true on critical reads = stale data risk
+
+# For MySQL replica lag:
+SHOW SLAVE STATUS\G
+# Look at 'Seconds_Behind_Master' - anything > 0 = stale read risk
+```
+
+> **Code walkthrough:** These diagnostics reveal where eventual consistency is silently producing wrong reads. KEY MECHANISM: Cassandra with `ONE` returns data from whichever replica responds first; if replication is lagging, that replica has old data. DynamoDB eventually consistent reads bypass the leader, trading freshness for lower latency. WHY IT MATTERS: financial balance reads, inventory counts, and session data must be strongly consistent - an eventually consistent read in these paths causes incorrect business logic. WHAT BREAKS: order placement sees stale inventory, double-booking, balance overdraft. TAKEAWAY: audit every read that feeds a write decision - those require strong consistency.
+
+**Fix:** Use `QUORUM` consistency for Cassandra reads that feed
+write decisions. For DynamoDB, set `ConsistentRead: true` on
+critical reads. For MySQL, route critical reads to primary.
+
+---
+
+**Failure Mode 2 - Convergence never completes due to anti-entropy failure**
+
+**Symptom:** Data across replicas diverges indefinitely. Running
+consistency repairs shows increasing divergence over time.
+Deleted records reappear (zombie reads). Cassandra `nodetool repair`
+has not run in weeks.
+
+**Root cause:** Anti-entropy repair is disabled or failing. Without
+periodic repair, Cassandra tombstones expire (gc_grace_seconds)
+before all replicas receive the delete, causing zombie reads.
+
+**Diagnosis:**
+```bash
+# Check when last repair ran
+nodetool compactionstats
+# Check system.repairs table for last completion
+
+# Check for dropped mutations (failed replication)
+nodetool tpstats | grep 'Dropped'
+# Non-zero MUTATION drops = replication failures
+
+# Verify gc_grace_seconds vs repair frequency
+SELECT gc_grace_seconds FROM system_schema.tables
+WHERE keyspace_name='myapp' AND table_name='orders';
+# If > 10 days, repair must run within gc_grace_seconds or zombie reads occur
+```
+
+> **Code walkthrough:** The `nodetool tpstats` mutation drop count is the key signal for replication failure. KEY MECHANISM: Cassandra uses hinted handoff for short failures and anti-entropy repair for long-term consistency; if both fail, replicas permanently diverge. WHY IT MATTERS: Cassandra's eventual consistency guarantee depends on repair running within `gc_grace_seconds` - violating this causes zombie reads (deleted data reappearing) which are nearly impossible to debug in production. WHAT BREAKS: GDPR delete requests fail to propagate, causing compliance violations; inventory deletes reappear causing overselling. TAKEAWAY: automate Cassandra repair on a schedule shorter than gc_grace_seconds (default 10 days) - use `nodetool repair` or Cassandra Reaper.
+
+**Fix:** Schedule `nodetool repair` weekly; use Cassandra Reaper
+for automated repair management. Monitor dropped mutations and
+alert on any non-zero value.
+
+---
+
 ### 🎯 Interview Deep-Dive
 
 #### Production Failures
 
-Q: A Cassandra cluster is showing inconsistent reads for the same
-key across different application instances. Users see different
-product prices. What is happening and how do you fix it?
+**[JUNIOR] Q1 - [DEBUGGING] A Cassandra cluster is showing inconsistent reads for the same key across different application instances. Users see different product prices. What is happening and how do you fix it?**
 
-A: This is read-your-writes inconsistency in an eventually consistent
+This is read-your-writes inconsistency in an eventually consistent
 cluster. If the application writes to replica A and reads from
 replica B before the write propagates, the read returns stale data.
 Diagnosis: check the replication lag metric in Cassandra. Check
@@ -377,7 +453,7 @@ QUORUM.
 
 #### Candidate Mistakes
 
-Q: Why is eventual consistency acceptable for a shopping cart?
+**[JUNIOR] Q2 - [MECHANISM] Why is eventual consistency acceptable for a shopping cart?**
 
 **What NOT to say:** "It is not acceptable - carts must be consistent."
 
@@ -522,7 +598,7 @@ final value.
 Used by: Cassandra (default), Riak LWW bucket
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict Resolution Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Strategy 2 - Multi-value / vector clock divergence:**
 ```
@@ -543,7 +619,7 @@ Client must merge: choose A, B, or custom merge
 Used by: DynamoDB, original Riak, CouchDB
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict Resolution Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Strategy 3 - CRDTs (Conflict-free Replicated Data Types):**
 ```
@@ -567,7 +643,7 @@ Used by: Riak data types, Redis CRDT extensions,
 Cassandra counters (approximate)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict Resolution Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Strategy 4 - Application-level merge function:**
 ```java
@@ -585,7 +661,7 @@ Cart merge(Cart a, Cart b) {
 // the removed item reappears (add wins).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conflict Resolution Strategies example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **The key insight:**
 There is no universally correct conflict resolution strategy. LWW
@@ -620,6 +696,12 @@ Every distributed store with multiple write paths has this problem."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CONFLICT RESOLUTION STRATEGIES IN PRACTICE
@@ -773,11 +855,9 @@ no conflicts possible).
 
 #### Production Failures
 
-Q: Users are reporting that items they added to their shopping
-cart are disappearing. The system uses Cassandra with eventual
-consistency. What is happening?
+**[JUNIOR] Q1 - [MECHANISM] Users are reporting that items they added to their shopping cart are disappearing. The system uses Cassandra with eventual consistency. What is happening?**
 
-A: This is LWW data loss. When two concurrent writes (add item A
+This is LWW data loss. When two concurrent writes (add item A
 from device X, add item B from device Y) happen, Cassandra uses
 LWW by default on non-CRDT columns. The write with the higher
 timestamp wins. The other write is silently discarded. If item A's
@@ -795,7 +875,7 @@ UDTs. Or move to DynamoDB with application-level merge.
 
 #### Candidate Mistakes
 
-Q: How do you handle write conflicts in an AP distributed system?
+**[JUNIOR] Q2 - [MECHANISM] How do you handle write conflicts in an AP distributed system?**
 
 **What NOT to say:** "Use transactions to prevent conflicts."
 
@@ -900,8 +980,7 @@ file under "Consistency Models".)*
 
 ---
 
-**Q1 (Conceptual): Explain the difference between eventual
-consistency and strong consistency. What does each guarantee?**
+**[JUNIOR] Q1 - [MECHANISM] Explain the difference between eventual consistency and strong consistency. What does each guarantee?**
 
 Strong consistency (linearizability): every read returns the
 value of the most recent write. As if the distributed system
@@ -932,8 +1011,7 @@ or causal consistency.
 
 ---
 
-**Q2 (Conceptual): What is "read-your-writes" consistency and
-how do you implement it in an eventually consistent system?**
+**[JUNIOR] Q2 - [MECHANISM] What is "read-your-writes" consistency and how do you implement it in an eventually consistent system?**
 
 Read-your-writes (RYW) consistency guarantees that after a client
 writes a value, that same client's subsequent reads will see the
@@ -969,8 +1047,7 @@ cheaper to implement than full strong consistency.
 
 ---
 
-**Q3 (Conceptual): Explain the three main properties of a CRDT
-(Conflict-free Replicated Data Type) and give an example.**
+**[JUNIOR] Q3 - [MECHANISM] Explain the three main properties of a CRDT (Conflict-free Replicated Data Type) and give an example.**
 
 CRDTs have three mathematical properties that make them
 conflict-free:
@@ -1001,8 +1078,7 @@ regardless of network ordering or partitions.
 
 ---
 
-**Q4 (Trade-off): Compare LWW, multi-value, and CRDT conflict
-resolution. When is each the right choice?**
+**[MID] Q4 - [TRADE-OFF] Compare LWW, multi-value, and CRDT conflict resolution. When is each the right choice?**
 
 **LWW:** Simplest. Best when: data loss is acceptable (cache,
 metrics, logs), the semantics of "last write wins" match the
@@ -1030,8 +1106,7 @@ acceptable. For user permissions: multi-value with explicit merge
 
 ---
 
-**Q5 (Trade-off): How does eventual consistency interact with
-indexing and secondary indexes in distributed databases?**
+**[MID] Q5 - [TRADE-OFF] How does eventual consistency interact with indexing and secondary indexes in distributed databases?**
 
 Secondary indexes in eventually consistent databases are
 asynchronously updated. When a write completes at the primary
@@ -1064,8 +1139,7 @@ predictable."
 
 ---
 
-**Q6 (Debugging): How would you detect and measure the
-replication lag in an eventually consistent Cassandra cluster?**
+**[SENIOR] Q6 - [DEBUGGING] How would you detect and measure the replication lag in an eventually consistent Cassandra cluster?**
 
 Cassandra does not expose replication lag directly as a metric,
 but it can be inferred:
@@ -1098,10 +1172,7 @@ approach (write + poll) is the most accurate.
 
 ---
 
-**Q7 (Debugging): A Cassandra cluster is showing high
-read latency only for queries that read across multiple partitions
-(scatter-gather queries). The cluster has normal latency for
-single-partition reads. What is happening?**
+**[SENIOR] Q7 - [DEBUGGING] A Cassandra cluster is showing high read latency only for queries that read across multiple partitions (scatter-gather queries). The cluster has normal latency for single-partition reads. What is happening?**
 
 Multi-partition queries (IN queries, range scans, non-partitioned
 secondary index queries) must fan out to multiple nodes and wait
@@ -1133,9 +1204,7 @@ an anti-pattern."
 
 ---
 
-**Q8 (Behavioral): Describe a time you had to choose between
-strong and eventual consistency for a feature. What was your
-decision and why?**
+**[SENIOR] Q8 - [BEHAVIORAL] Describe a time you had to choose between strong and eventual consistency for a feature. What was your decision and why?**
 
 *(Personalize from experience.)*
 
@@ -1156,8 +1225,7 @@ attributes based on their business requirements.
 
 ---
 
-**Q9 (Scale): How does the challenge of conflict resolution
-change at global scale (multiple geographic regions)?**
+**[SENIOR] Q9 - [TRADE-OFF] How does the challenge of conflict resolution change at global scale (multiple geographic regions)?**
 
 At single-datacenter scale: replication lag is milliseconds.
 LWW conflicts are rare. Anti-entropy catches up quickly.
@@ -1274,8 +1342,7 @@ is in the L4 Vector Clocks file.)*
 
 ---
 
-**Q1 (Conceptual): What is "add wins" semantics in conflict
-resolution and when is it the right choice?**
+**[JUNIOR] Q1 - [MECHANISM] What is "add wins" semantics in conflict resolution and when is it the right choice?**
 
 In a multi-value conflict (two concurrent writes to the same set
 or map), "add wins" semantics means: if one version adds an element
@@ -1303,8 +1370,7 @@ is safer than losing it).
 
 ---
 
-**Q2 (Conceptual): How do vector clocks enable multi-value
-conflict detection vs. simple timestamps?**
+**[JUNIOR] Q2 - [MECHANISM] How do vector clocks enable multi-value conflict detection vs. simple timestamps?**
 
 A timestamp is a single number (wall clock time). When comparing
 two writes, if they have different timestamps, the higher one
@@ -1323,7 +1389,7 @@ V1[A]=3 > V2[A]=2, but V1[B]=2 < V2[B]=3
 Neither dominates → concurrent writes → conflict!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 With timestamps:
 ```
@@ -1333,7 +1399,7 @@ LWW picks V1 and discards V2, even though they are concurrent.
 V2 is silently lost.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Great candidates articulate the
 key insight: "Vector clocks detect concurrency. Timestamps assume
@@ -1344,8 +1410,7 @@ writes are concurrent (conflict, we need a merge strategy)."
 
 ---
 
-**Q3 (Conceptual): What is a tombstone in a distributed database
-and how does it relate to conflict resolution?**
+**[JUNIOR] Q3 - [MECHANISM] What is a tombstone in a distributed database and how does it relate to conflict resolution?**
 
 A tombstone is a delete marker. In an eventually consistent
 database (Cassandra, CouchDB), deleting a record does not
@@ -1378,8 +1443,7 @@ when it rejoins. This is why repair must run within
 
 ---
 
-**Q4 (Trade-off): When is event sourcing a better choice than
-CRDT-based conflict resolution?**
+**[MID] Q4 - [TRADE-OFF] When is event sourcing a better choice than CRDT-based conflict resolution?**
 
 CRDTs are appropriate for: high-frequency updates to counters,
 sets, or flags where the merge semantics are simple (max, union,
@@ -1413,8 +1477,7 @@ page view metrics and event sourcing for financial transactions.
 
 ---
 
-**Q5 (Trade-off): Describe the trade-off between "last write
-wins by logical clock" vs "last write wins by physical clock."**
+**[MID] Q5 - [TRADE-OFF] Describe the trade-off between "last write wins by logical clock" vs "last write wins by physical clock."**
 
 Physical clock (wall clock timestamp):
 - Simple: just use System.currentTimeMillis()
@@ -1446,9 +1509,7 @@ clocks for LWW semantics. This is expert-level knowledge.
 
 ---
 
-**Q6 (Debugging): After a multi-day network partition between
-two data centers, you need to merge their diverged states.
-How do you approach this?**
+**[SENIOR] Q6 - [DEBUGGING] After a multi-day network partition between two data centers, you need to merge their diverged states. How do you approach this?**
 
 This is a large-scale conflict resolution scenario. Approach:
 
@@ -1484,9 +1545,7 @@ questions.
 
 ---
 
-**Q7 (Debugging): A CRDT counter in your system is producing
-incorrect totals. The counter is implemented as a G-Counter.
-How do you diagnose this?**
+**[SENIOR] Q7 - [DEBUGGING] A CRDT counter in your system is producing incorrect totals. The counter is implemented as a G-Counter. How do you diagnose this?**
 
 A G-Counter maintains per-node counts: `{node1: X, node2: Y, ...}`.
 Total = sum. This is correct if every increment is applied to
@@ -1523,8 +1582,7 @@ collisions if the IP is reassigned."
 
 ---
 
-**Q8 (Behavioral): Tell me about a time you had to design
-a conflict resolution strategy for a complex domain object.**
+**[SENIOR] Q8 - [BEHAVIORAL] Tell me about a time you had to design a conflict resolution strategy for a complex domain object.**
 
 *(Personalize from experience.)*
 
@@ -1548,8 +1606,7 @@ from add-wins) and explaining why OR-Set solves it correctly.
 
 ---
 
-**Q9 (Scale): How do conflict rates scale with the number of
-write replicas and replication lag?**
+**[SENIOR] Q9 - [TRADE-OFF] How do conflict rates scale with the number of write replicas and replication lag?**
 
 Conflict rate = probability that two concurrent writes occur to
 the same key within the replication window.

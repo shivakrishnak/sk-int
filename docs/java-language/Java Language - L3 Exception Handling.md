@@ -67,7 +67,13 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Exception hierarchy and mechanics:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 EXCEPTION HIERARCHY:
 
   Throwable
@@ -157,7 +163,7 @@ CHECKED EXCEPTION CONTROVERSY:
   less useful for application-level code. Most modern Java APIs use unchecked.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This L3 Exception Handling example demonstrates a key concept in practice using error handling. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -166,6 +172,12 @@ CHECKED EXCEPTION CONTROVERSY:
 > **Code walkthrough:** The `DataProcessor` shows the correct try-with-resources pattern
 > with exception chaining. The custom exception hierarchy shows how to structure domain
 > exceptions that preserve context while wrapping low-level causes.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CORRECT EXCEPTION HANDLING:
@@ -365,7 +377,7 @@ Prevention: NEVER swallow InterruptedException.
   Respect it or at least restore the flag.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
@@ -432,7 +444,7 @@ String value() {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 The `return` in `finally` causes the RuntimeException to be silently swallowed. The method
 returns "default" instead of propagating the exception. This is one of the most subtle Java bugs.
@@ -558,7 +570,31 @@ was on fire' but not what started it."
 ### 📘 Concept Explanation
 
 **Exception anti-patterns and their corrections:**
+
 ```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+```plaintext
 ANTI-PATTERN 1: SWALLOWING EXCEPTIONS
 
   // BAD:
@@ -662,7 +698,7 @@ ANTI-PATTERN 5: USING EXCEPTION MESSAGE FOR PARSING
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using Optional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -822,7 +858,7 @@ Fix:
   }
   
   Log output: "Constraint violation on entity 42 (constraint: uk_email) with data: User{...}"
-  Caused by: DataIntegrityViolationException -> ConstraintViolationException -> SQL error
+  Caused by: DataIntegrityViolationException -> ConstraintViolationException ...
 
 Checklist for useful exception messages:
   1. WHAT failed (operation name)
@@ -832,7 +868,7 @@ Checklist for useful exception messages:
   5. Do NOT parse exception messages (brittle, use the exception hierarchy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice using Optional. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ---
 

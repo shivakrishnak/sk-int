@@ -130,7 +130,7 @@ Set<User> users;              on Role class
 Set<Role> roles;              on User class
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Associations: OneToMany and ManyToMany example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The owning side is the one Hibernate reads when deciding what to
@@ -183,7 +183,7 @@ public class Role {
 // Hibernate creates user_roles AND role_users - not intended
 ```
 
-> **Code walkthrough:** Without `mappedBy`, both sides think they
+> **Code walkthrough:** Without `mappedBy`, both sides think theyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > own the relationship and Hibernate creates two join tables. This is
 > always wrong. One side must use `mappedBy` to declare it is the
 > non-owning side.
@@ -228,12 +228,18 @@ public class Role {
 }
 ```
 
-> **Code walkthrough:** `mappedBy = "roles"` on the Role side tells
+> **Code walkthrough:** `mappedBy = "roles"` on the Role side tellsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Hibernate "the User.roles field owns this relationship." Only adding
 > to `user.getRoles()` actually writes to the join table. The helper
 > methods `addRole` and `removeRole` keep both sides in sync in memory
 > (important for within-session consistency). `cascade = {PERSIST, MERGE}`
 > explicitly excludes REMOVE - deleting a User does not delete the Roles.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Intermediate entity when join table needs attributes
@@ -265,7 +271,7 @@ public class UserRoleId implements Serializable {
 }
 ```
 
-> **Code walkthrough:** The intermediate entity pattern gives the join
+> **Code walkthrough:** The intermediate entity pattern gives the joinice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > table a full entity with its own lifecycle. When requirements inevitably
 > add columns (who granted the role, when it expires), this model
 > handles them naturally. Use this pattern from the start for any
@@ -351,13 +357,13 @@ SELECT * FROM user_roles WHERE role_id = :roleId;
 -- Returns 0 rows despite role.getUsers() showing the user
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 *Fix:* Always add on the owning side:
 ```java
 user.addRole(role); // addRole updates user.roles (owning)
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Or use the helper method that updates both sides.
 
@@ -373,6 +379,12 @@ includes REMOVE, which deletes the Role entities themselves
 when the User is deleted.
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: CascadeType.ALL includes REMOVE
 @ManyToMany(cascade = CascadeType.ALL)
@@ -383,7 +395,7 @@ Set<Role> roles;
 Set<Role> roles;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -409,7 +421,7 @@ private Set<OrderItem> items;
 // OrderItem.order is @ManyToOne with FK in order_items
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -425,8 +437,7 @@ private Set<OrderItem> items;
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is `mappedBy` in a Hibernate association?
+**[JUNIOR] Q1 - [MECHANISM] What is `mappedBy` in a Hibernate association?**
 
 *Why they ask:* `mappedBy` is in every bidirectional mapping and
 candidates must understand its purpose.
@@ -451,7 +462,7 @@ Set<OrderItem> items;
 Order order; // this field has the FK column
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `mappedBy = "order"` means "the relationship is owned by the
 `order` field on OrderItem." The `order_id` FK column is in the
@@ -469,10 +480,7 @@ join table rows.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-Walk me through what happens when you call
-`order.getItems().add(item)` with a properly mapped
-bidirectional OneToMany.
+**[MID] Q2 - [MECHANISM] Walk me through what happens when you call `order.getItems().add(item)` with a properly mapped bidirectional OneToMany.**
 
 *Why they ask:* Tests whether you understand the in-memory vs
 persistence distinction.
@@ -502,7 +510,7 @@ public void addItem(OrderItem item) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 At flush time, Hibernate sees `item.order = thisOrder` and
 generates:
@@ -521,9 +529,7 @@ failure, not a framework error.
 
 ---
 
-**Q3 [SENIOR] - TRADE-OFF**
-When would you use an explicit intermediate entity instead
-of `@ManyToMany`?
+**[SENIOR] Q3 - [TRADE-OFF] When would you use an explicit intermediate entity instead of `@ManyToMany`?**
 
 *Why they ask:* Tests production experience - `@ManyToMany` has
 well-known limitations.
@@ -566,10 +572,7 @@ justifies the intermediate entity pattern from the start.
 
 ---
 
-**Q4 [SENIOR] - DEBUGGING**
-A `ConcurrentModificationException` is thrown inside a
-Hibernate event listener when modifying a collection. What
-causes this and how do you fix it?
+**[SENIOR] Q4 - [DEBUGGING] A `ConcurrentModificationException` is thrown inside a Hibernate event listener when modifying a collection. What causes this and how do you fix it?**
 
 *Why they ask:* Tests knowledge of Hibernate collection
 internals.
@@ -610,7 +613,7 @@ public void onUpdate() {
     // Record what needs to change, apply after flush
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. For cascade scenarios: check that cascade types are not
    creating circular update chains.
@@ -621,9 +624,7 @@ that tracks dirtiness and implements fail-fast iteration.
 
 ---
 
-**Q5 [MID] - COMPARISON**
-What is the difference between `Set` and `List` for a
-OneToMany collection in Hibernate?
+**[MID] Q5 - [TRADE-OFF] What is the difference between `Set` and `List` for a OneToMany collection in Hibernate?**
 
 *Why they ask:* The List vs Set choice has a significant
 performance implication that many developers do not know.
@@ -658,7 +659,7 @@ INSERT INTO order_items VALUES (42, ...)
 INSERT INTO order_items VALUES (42, ...) -- just the new one
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern using SQL. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 When to use `List`: when the ORDER of elements needs to be
 persisted in the database - for example, steps in a workflow
@@ -675,8 +676,7 @@ less efficient."
 
 ---
 
-**Q6 [JUNIOR] - DEFINITION**
-What does `@JoinColumn` do and when do you need it?
+**[JUNIOR] Q6 - [MECHANISM] What does `@JoinColumn` do and when do you need it?**
 
 *Why they ask:* Tests understanding of the FK column configuration.
 
@@ -700,7 +700,7 @@ public class OrderItem {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 `name = "order_id"` sets the FK column name. Without `@JoinColumn`,
 Hibernate defaults to `{field_name}_{referenced_column_name}`,
@@ -722,7 +722,7 @@ actual column name:
 private Order order;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Without `@JoinColumn` on a `@ManyToOne`: Hibernate uses the
 convention-based name. This works for most cases. Add
@@ -736,10 +736,7 @@ constraint errors readable in logs.
 
 ---
 
-**Q7 [STAFF] - ARCHITECTURE**
-How would you design the associations for a permission system
-where users have roles, roles have permissions, and permissions
-can also be assigned directly to users?
+**[STAFF] Q7 - [DESIGN] How would you design the associations for a permission system where users have roles, roles have permissions, and permissions can also be assigned directly to users?**
 
 *Why they ask:* Tests ability to translate a real domain model
 into Hibernate associations.
@@ -789,7 +786,7 @@ public class Permission {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 For querying all permissions for user X:
 ```java
@@ -805,7 +802,7 @@ Set<Permission> findAllPermissionsForUser(
     @Param("userId") Long userId);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Alternatively, a native SQL query with UNION is more readable:
 ```sql
@@ -819,7 +816,7 @@ SELECT DISTINCT p.id, p.code FROM permissions p
   WHERE up.user_id = :userId
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 I use native SQL for this query - it is a reporting-style query
 that combines two result sets, which is awkward in JPQL and
@@ -995,7 +992,7 @@ EAGER Single Value (@ManyToOne default):
      → orderItem.order populated immediately
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fetch Types: Lazy vs Eager Loading example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Fetch type is a default behavior, not a hard rule. JOIN FETCH in
@@ -1047,7 +1044,7 @@ public class User {
 }
 ```
 
-> **Code walkthrough:** `EAGER` on a collection means every time you
+> **Code walkthrough:** `EAGER` on a collection means every time youice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > load a User, Hibernate loads all Orders. For a user with 1,000 orders
 > and a service that loads 100 users for an admin dashboard, that is
 > 100,000 order rows loaded for a page that shows only the user count.
@@ -1096,12 +1093,18 @@ public interface OrderRepository
 }
 ```
 
-> **Code walkthrough:** `FetchType.LAZY` on `customer` overrides
+> **Code walkthrough:** `FetchType.LAZY` on `customer` overridesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the ManyToOne default (EAGER) for cases where customer details
 > are not needed in most order queries. `findByStatus()` returns
 > Order stubs without loading items. `findWithItems()` uses JOIN FETCH
 > for the detail view that genuinely needs items. The query is explicit
 > about what it loads - not relying on class-level fetch defaults.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: @BatchSize for N+1 prevention without JOIN FETCH
@@ -1119,7 +1122,7 @@ public class User {
 // This is the middle ground: avoids N+1 without JOIN FETCH
 ```
 
-> **Code walkthrough:** `@BatchSize(size = 25)` is a Hibernate-specific
+> **Code walkthrough:** `@BatchSize(size = 25)` is a Hibernate-specificice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > annotation that groups lazy loads into batches. When Hibernate needs
 > to initialize `orders` for multiple users, it loads 25 at a time
 > with `WHERE user_id IN (?, ?, ... 25 params)` instead of one query
@@ -1204,7 +1207,7 @@ logging.level.org.hibernate.SQL=DEBUG
 # Count queries per request - more than 2-3 = N+1 or EAGER
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This more than 2-3 = N+1 or EAGER example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Change to `FetchType.LAZY` (default). Use JOIN FETCH
 in specific queries that need the collection. Add a dedicated
@@ -1244,6 +1247,12 @@ The session closed when Transaction A committed. The async event
 handler runs on Thread 2 with no session.
 
 *Fix:*
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: Publish entity with LAZY associations
 applicationEventPublisher.publishEvent(new OrderCreated(order));
@@ -1258,7 +1267,7 @@ applicationEventPublisher.publishEvent(
     new OrderCreated(order.getId())); // ID only
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This more than 2-3 = N+1 or EAGER example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -1274,9 +1283,7 @@ applicationEventPublisher.publishEvent(
 
 ---
 
-**Q1 [JUNIOR] - DEFINITION**
-What is the default fetch type for `@OneToMany` and `@ManyToOne`
-in JPA?
+**[JUNIOR] Q1 - [MECHANISM] What is the default fetch type for `@OneToMany` and `@ManyToOne` in JPA?**
 
 *Why they ask:* Tests whether you know the defaults - which is
 the prerequisite for understanding N+1 problems.
@@ -1318,9 +1325,7 @@ than just stating the defaults.
 
 ---
 
-**Q2 [MID] - MECHANISM**
-What exactly happens when Hibernate loads a LAZY association -
-specifically the proxy mechanism?
+**[MID] Q2 - [MECHANISM] What exactly happens when Hibernate loads a LAZY association - specifically the proxy mechanism?**
 
 *Why they ask:* Tests whether you understand the proxy mechanism
 that implements lazy loading, which is essential for debugging.
@@ -1359,16 +1364,14 @@ Checking if a collection is initialized without triggering load:
 Hibernate.isInitialized(order.getItems()) // false if not loaded
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This more than 2-3 = N+1 or EAGER example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Knowing `Hibernate.isInitialized()`
 for checking lazy status without triggering initialization.
 
 ---
 
-**Q3 [SENIOR] - DEBUGGING**
-Hibernate is executing 500 SQL queries for a request that should
-be 2-3. How do you diagnose and fix N+1 systematically?
+**[SENIOR] Q3 - [DEBUGGING] Hibernate is executing 500 SQL queries for a request that should be 2-3. How do you diagnose and fix N+1 systematically?**
 
 *Why they ask:* N+1 is the most common Hibernate production
 performance problem.
@@ -1383,7 +1386,7 @@ Step 1: Enable SQL logging to count queries per request:
 ```properties
 logging.level.org.hibernate.SQL=DEBUG
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This more than 2-3 = N+1 or EAGER example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Count the queries manually, or better: use `Datasource Proxy`
 to intercept JDBC and count/log:
@@ -1398,7 +1401,7 @@ DataSource datasource(DataSourceProperties props) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This more than 2-3 = N+1 or EAGER example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 2: Identify the pattern. N+1 always looks like: 1 query
 to load parents + N queries for the same child type (one per parent).
@@ -1413,7 +1416,7 @@ Step 3: Fix with JOIN FETCH for one-time loads:
 List<User> findActiveUsersWithOrders();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 4: For iteration patterns where JOIN FETCH causes cartesian
 products, use `@BatchSize`:
@@ -1423,7 +1426,7 @@ products, use `@BatchSize`:
 Set<Order> orders;
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Step 5: Add a production monitoring alarm:
 Use Datasource Proxy's query count or Spring Boot Actuator metrics
@@ -1436,7 +1439,7 @@ Prevention: add an N+1 detection rule to integration tests:
 assertSelectCount(2, () -> userService.findAllActive());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The monitoring alarm (query count
 per request threshold) and the integration test assertion for
@@ -1445,9 +1448,7 @@ prevent it systematically.
 
 ---
 
-**Q4 [SENIOR] - TRADE-OFF**
-Compare JOIN FETCH, @BatchSize, and @Fetch(FetchMode.SUBSELECT)
-for solving N+1. When would you use each?
+**[SENIOR] Q4 - [TRADE-OFF] Compare JOIN FETCH, @BatchSize, and @Fetch(FetchMode.SUBSELECT) for solving N+1. When would you use each?**
 
 *Why they ask:* Tests depth beyond "use JOIN FETCH" - the three
 solutions have different trade-offs.
@@ -1497,9 +1498,7 @@ tool to use in which scenario, not just listing the three tools.
 
 ---
 
-**Q5 [JUNIOR] - DEBUGGING**
-Your code works in tests but throws
-`LazyInitializationException` in production. What is different?
+**[JUNIOR] Q5 - [DEBUGGING] Your code works in tests but throws `LazyInitializationException` in production. What is different?**
 
 *Why they ask:* Tests understanding of why the same code works
 in one context and fails in another.
@@ -1546,9 +1545,7 @@ production failure in tests (remove @Transactional from the test).
 
 ---
 
-**Q6 [MID] - MECHANISM**
-What does `hibernate.default_batch_fetch_size` do and when
-should you set it globally?
+**[MID] Q6 - [MECHANISM] What does `hibernate.default_batch_fetch_size` do and when should you set it globally?**
 
 *Why they ask:* Tests knowledge of global Hibernate performance
 tuning, not just per-collection settings.
@@ -1588,7 +1585,7 @@ regressions that slip through code review.
 spring.jpa.properties.hibernate.default_batch_fetch_size=25
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Framing this as a safety net
 (defensive baseline) rather than the primary N+1 fix - it complements
@@ -1596,9 +1593,7 @@ JOIN FETCH rather than replacing it.
 
 ---
 
-**Q7 [STAFF] - BEHAVIORAL**
-Tell me about a time you had to design a fetch strategy for
-a complex domain with deep object graphs.
+**[STAFF] Q7 - [BEHAVIORAL] Tell me about a time you had to design a fetch strategy for a complex domain with deep object graphs.**
 
 *Why they ask:* Tests real-world experience with a practical
 design challenge.
@@ -1639,7 +1634,7 @@ with a single query:
     "AND p.category.id = :catId")
 List<ProductSummary> findSummariesForCategory(Long catId);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 1 query for the entire category page.
 
@@ -1651,7 +1646,7 @@ declaring exactly which subgraph to fetch:
     "images", "attributes"})
 Optional<Product> findBySlug(String slug);
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 2-3 queries (one per independent collection).
 

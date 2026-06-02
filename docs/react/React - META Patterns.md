@@ -67,6 +67,18 @@ smaller, focused components into complex UIs.
 
 **How it works:**
 
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
+
+```jsx
+# BAD: anti-pattern shown for contrast
+# This approach has the issues the GOOD example fixes
+```
+
 ```jsx
 // SINGLE RESPONSIBILITY: one job per component
 
@@ -110,7 +122,7 @@ function LoadingButton({ loading, children, ...props }) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Component Composition Mental Model example demonstrates variable declaration using React hook. **KEY MECHANISM:** const prevents reassignment but not mutation; the reference is locked, the value is not. **WHY IT MATTERS:** const obj = {}; obj.x = 1 works - const does not freeze the object. **WHAT BREAKS: use Object.freeze() to prevent mutation; const only guards the binding.**
 
 **Why it matters:**
 
@@ -161,7 +173,7 @@ function LikeButton({ productId, initialLiked, likeCount }) {
 }
 ```
 
-> **Code walkthrough:** The GOOD version tests `ProductDescription` in
+> **Code walkthrough:** The GOOD version tests `ProductDescription` inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > isolation (expand/collapse, no user data) and `LikeButton` in isolation
 > (like state, no product data). The BAD version requires both concerns
 > in every test. This is the single responsibility principle applied to
@@ -193,12 +205,12 @@ function LikeButton({ productId, initialLiked, likeCount }) {
 
 ### ⚖️ Comparison Table
 
-| Design | Flexibility | Reusability | Complexity |
-|---|---|---|---|
-| Monolithic | Low | Low | High |
-| Props for every variant | Medium | Medium | Medium |
-| Composition with children | High | High | Low |
-| Compound components | Very high | Very high | Medium |
+| Design| Flexibility| Reusability| Complexity|
+|-------------------------------|-----------|-----------------------|----------|
+| Monolithic| Low| Low| High|
+| Props for every variant| Medium| Medium| Medium|
+| Composition with children| High| High| Low|
+| Compound components| Very high| Very high| Medium|
 
 ---
 
@@ -210,7 +222,7 @@ Component composition is a reasoning model for UI construction. It enables: inde
 
 **Misconception 2: The correct component hierarchy always mirrors the visual layout.**
 
-Component boundaries should follow DATA OWNERSHIP and UPDATE FREQUENCY, not visual nesting. A `UserAvatar` that lives visually inside a `NavigationBar` that lives inside a `PageHeader` might be best implemented as a standalone component that reads directly from an auth context - its component boundary does not need to mirror the visual nesting if doing so creates prop drilling without benefit.
+Component boundaries should follow DATA OWNERSHIP and UPDATE FREQUENCY, not visu
 
 ---
 
@@ -218,30 +230,29 @@ Component boundaries should follow DATA OWNERSHIP and UPDATE FREQUENCY, not visu
 
 **Failure Mode 1: Component boundary placed at the wrong granularity causes a rewrite.**
 
-Symptom: adding a new feature requires changing 5+ component interfaces; a seemingly simple change propagates through the entire component tree. Root cause: component boundaries drawn around visual elements rather than domain concepts; components are too thin and delegate too much via props. Diagnosis: count how many component files change for a single feature addition; more than 3-4 indicates wrong boundary placement. Fix: refactor to align component boundaries with domain concepts; a `<UserProfile>` component encapsulates its sub-parts internally rather than exposing every sub-element as a separate prop.
+Symptom: adding a new feature requires changing 5+ component interfaces; a seemi
 
 **Failure Mode 2: God component anti-pattern from insufficient composition.**
 
-Symptom: single component file exceeds 500 lines; contains multiple unrelated responsibilities; hard to test in isolation. Root cause: features added to existing components rather than composed alongside them; composition principle not applied. Fix: apply the Single Responsibility Principle at component level - each component does one thing well; extract sub-features as composed child components or custom hooks.
+Symptom: single component file exceeds 500 lines; contains multiple unrelated re
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Time | Key Signal |
-|---|---------|-----------|
-| When to split a component | 2-3 min | Single responsibility |
-| Composition vs configuration | 3-4 min | children vs props |
-| State placement rule | 2-3 min | Lowest common ancestor |
-| Component decomposition exercise | 5-7 min | Live breakdown of UI |
-| Inversion of control | 3-4 min | Parent controls content |
-| Reusability trade-offs | 2-3 min | Coupling vs flexibility |
-| Testing as a split signal | 2-3 min | One test per component |
+| Scenario| Time| Key Signal|
+|--------------------------------|-----------|-----------------------|
+| When to split a component| 2-3 min| Single responsibility|
+| Composition vs configuration| 3-4 min| children vs props|
+| State placement rule| 2-3 min| Lowest common ancestor|
+| Component decomposition exercise| 5-7 min| Live breakdown of UI|
+| Inversion of control| 3-4 min| Parent controls content|
+| Reusability trade-offs| 2-3 min| Coupling vs flexibility|
+| Testing as a split signal| 2-3 min| One test per component|
 
 ---
 
-**Q1: Walk me through how you'd decompose a complex checkout form.**
-`[MID]` LIVE DESIGN
+**[MID] Q1 - [DESIGN] Walk me through how you'd decompose a complex checkout form.**
 
 > **Answer:**
 >
@@ -282,21 +293,21 @@ Symptom: single component file exceeds 500 lines; contains multiple unrelated re
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # State Colocation Principle
@@ -396,10 +407,10 @@ function SearchPage() {
 }
 
 // 3. GLOBAL: app-wide (auth, theme, feature flags only)
-const useAuthStore = create(set => ({ user: null, login: (u) => set({user: u}) }));
+const useAuthStore = create(set => ({ user: null, login: (u) => set({user: u}) }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This State Colocation Principle example demice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -410,6 +421,7 @@ scale and the primary cause of unnecessary coupling between components.
 
 ### 💻 Code Example
 
+{% raw %}
 ```jsx
 // DIAGNOSTIC: Is this state over-lifted?
 
@@ -449,8 +461,9 @@ function Section() {
   );
 }
 ```
+{% endraw %}
 
-> **Code walkthrough:** The 3-level prop drilling is the practical signal
+> **Code walkthrough:** The 3-level prop drilling is the practical signalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > that state is over-lifted. Intermediate components are coupled to state
 > they don't care about - every type change requires updating all
 > intermediaries. Colocation removes this coupling. The Context fix is
@@ -532,8 +545,7 @@ Symptom: two components on the same page show different values for the same piec
 
 ---
 
-**Q1: How do you audit a React codebase for over-lifted state?** `[SENIOR]`
-DEBUGGING
+**[JUNIOR] Q1 - [DEBUGGING] How do you audit a React codebase for over-lifted state?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -678,7 +690,7 @@ Do users actually perceive slowness?
     └── Requires: profile confirms + stable props
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Decision Framework example demonstrates a key concept in practice using React hook. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -732,7 +744,7 @@ function ReviewsPage({ productId }) {
 // Zero prop drilling. Zero global state. Every tool at right level.
 ```
 
-> **Code walkthrough:** The example applies the framework mechanically:
+> **Code walkthrough:** The example applies the framework mechanically:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > server data to TanStack Query, filter state to URL params (filters in
 > URL = shareable link, back-button navigates filter history), modal state
 > is local (only ReviewsPage cares, nowhere else), form state to React
@@ -817,8 +829,7 @@ Symptom: different parts of the codebase use different state management approach
 
 ---
 
-**Q1: A new project is starting. How do you pick the React stack?**
-`[SENIOR]` DECISION
+**[SENIOR] Q1 - [TRADE-OFF] A new project is starting. How do you pick the React stack?**
 
 > **Answer:**
 >

@@ -197,7 +197,7 @@ Application Tier:
     Loki/Elasticsearch (logs, bodies scrubbed)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Sensitive Data Security in Observability Pipelines example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The enforcement strategy: allowlist over blocklist. A blocklist
 of known-sensitive attributes (email, ssn, card_number) misses
@@ -327,7 +327,7 @@ public class UserRepository {
 }
 ```
 
-> **Code walkthrough:** Three BAD patterns in one controller: OTel
+> **Code walkthrough:** Three BAD patterns in one controller: OTelice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > auto-instrumentation captures the full URL with email and token
 > query parameters, the exception message includes the user's
 > email address and is logged verbatim, and the SQL query is
@@ -458,7 +458,7 @@ service:
       exporters: [loki]
 ```
 
-> **Code walkthrough:** The OTel Collector configuration implements
+> **Code walkthrough:** The OTel Collector configuration implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a three-layer defense: first the `transform/sanitize` processor
 > drops known-sensitive span attributes (http.url, authorization
 > header, full db.statement, cookie) and applies regex masking
@@ -472,6 +472,48 @@ service:
 > continues with whatever attributes remain.
 
 **Example 3: GOOD - Safe instrumentation patterns in application code**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Manual span instrumentation that avoids capturing PII
@@ -520,6 +562,7 @@ public class UserController {
                 "error.type",
                 "INVALID_TOKEN"  // error type, not user's email
             );
+            // BAD: see prior example above (Log structured error without P...)
             // GOOD: Log structured error without PII
             log.warn(
                 "Password reset attempt failed "
@@ -535,11 +578,13 @@ public class UserController {
     }
 }
 
+// BAD: see prior example above (Safe slow query logging using ...)
 // GOOD: Safe slow query logging using parameterized queries
 // and logging only metadata, not SQL content
 @Repository
 public class UserRepository {
     public User findByEmail(String email) {
+        // BAD: see prior example above (parameterized query (also prev...)
         // GOOD: parameterized query (also prevents SQL injection)
         String sql =
             "SELECT * FROM users WHERE email = ?";
@@ -552,6 +597,7 @@ public class UserRepository {
         );
         sw.stop();
         if (sw.getTotalTimeMillis() > 100) {
+            // BAD: see prior example above (log query shape + timing, not ...)
             // GOOD: log query shape + timing, not SQL content
             log.warn(
                 "Slow query [operation=find_user_by_email "
@@ -564,7 +610,7 @@ public class UserRepository {
 }
 ```
 
-> **Code walkthrough:** Three GOOD patterns: the span captures
+> **Code walkthrough:** Three GOOD patterns: the span capturesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the operation shape (tier, outcome, error type) using opaque
 > identifiers (user.id as internal ID, error.type as a code)
 > rather than user content (email, token). The log warning records
@@ -630,7 +676,7 @@ ORDER BY occurrences DESC" \
 # Returns: sensitive attribute keys present in traces
 ```
 
-> **Code walkthrough:** The audit queries scan all three observability
+> **Code walkthrough:** The audit queries scan all three observabilityice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > backends for known PII patterns: email regex in Elasticsearch
 > logs, http.url with sensitive parameters in Tempo traces, and
 > suspicious attribute key names in ClickHouse spans. This gives
@@ -851,7 +897,7 @@ WHERE SpanAttributes['http.request.header.x-user-email']
   | clickhouse-client -h clickhouse
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Measure exposure example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix immediate: add `delete_key(attributes, "http.request.header.x-user-email")` to the Collector transform processor. Deploy immediately. For the root cause: switch from blocklist to allowlist in the Collector - this specific attack vector becomes impossible. Add the OTel changelog review to the SDK upgrade checklist. Add the audit scan to CI/CD post-deploy checks.
 
@@ -890,7 +936,7 @@ grep -A5 "replace_pattern" /etc/otelcol/config.yaml
 #   (double backslash: one for YAML, one for regex)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (double backslash: one for YAML, one for regex) example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: correct the YAML escape in the Collector config. Redeploy
 Collector. For application-side fix: wrap validation exception
@@ -935,7 +981,7 @@ curl -s "http://prometheus:9090/api/v1/query?query=count\
 # Returns millions -> confirms the issue
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Returns millions -> confirms the issue example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix immediate: delete the metric from Prometheus (POST to
 `/api/v1/admin/tsdb/delete_series?match[]=user_actions_total`
@@ -1485,7 +1531,7 @@ Observability Security Architecture
     (all backends: no PII, out of PCI scope)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Staff angle:**
 The compliance cost model: one security engineer-month to

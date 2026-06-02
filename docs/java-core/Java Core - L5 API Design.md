@@ -75,7 +75,7 @@ in decades. Good API designers think: what will callers need in 10 years?"
 
 **The 5 core API design decisions:**
 
-```
+```plaintext
 1. CONSTRUCTION: constructor vs static factory vs builder
    - Constructor: fine for simple objects (1-3 params, type clear)
    - Static factory: named, can return subtypes, can cache
@@ -102,18 +102,24 @@ in decades. Good API designers think: what will callers need in 10 years?"
    - Builder methods: noun phrases (name("Alice"), age(30))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L5 API Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The `Money` value object shows multiple design
+> **Code walkthrough:** The `Money` value object shows multiple designice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > principles working together: static factory (readable named creation),
 > immutability (final fields, defensive copy not needed for primitives),
 > validation in factory (fail fast), and a builder for complex construction.
 > The `Email` type demonstrates "parse, don't validate": instead of
 > `isValidEmail(string)` everywhere, create a validated type at the boundary.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: mutable, public fields, no validation, confusing construction
@@ -214,7 +220,7 @@ Email email = Email.of(request.getParameter("email")); // validates here
 userService.register(email, name); // Email is guaranteed valid
 ```
 
-> **Code walkthrough:** The "parse, don't validate" principle eliminates
+> **Code walkthrough:** The "parse, don't validate" principle eliminatesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > defensive validation throughout the codebase. Instead of checking
 > `isValidEmail(str)` in the service, controller, and repository: parse
 > `Email.of(str)` at the input boundary (throws on invalid), then use
@@ -296,7 +302,7 @@ public List<User> getUsers() {
 // Choose based on: do you want callers to see live updates (FIX 1)
 // or a snapshot (FIX 2/3)?
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 Diagnosis: unexpected state changes, ConcurrentModificationException,
 test isolation failures (one test modifies list, next test sees changes).
@@ -360,7 +366,7 @@ HttpClient.getInstance()    // getInstance: may be cached
 // cannot be subclassed (breaks inheritance hierarchy)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using thread pool. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* `List.of()` (Java 9) internally returns
 different implementation classes based on the number of elements:
@@ -414,7 +420,7 @@ record Point(double x, double y) {}
 new Point(1.0, 2.0); // clear enough for 2 fields
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* The Builder pattern vs. record: for Java 16+,
 records with all required parameters often eliminate the need for builders.
@@ -483,7 +489,7 @@ public final class ImmutableRange {
 // -> No defensive copies needed: immutable types are self-protecting
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Immutable types have a multiplicative
 advantage in concurrent systems. You never need `synchronized` blocks to read
@@ -539,7 +545,7 @@ public Optional<User> findById(Long id) { ... }
 // Return type alternatives: Optional, Result<T, E>, CompletableFuture
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* The real world shows checked exceptions
 falling out of favor. Java's original API (JDBC, IO) used checked exceptions
@@ -601,7 +607,7 @@ public void oldMethod() { ... }
 // Proper deprecation: announce in release notes, give 1+ version notice
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline using interface. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Java's JEP process for JDK APIs is the
 gold standard for compatibility management. JEPs (JDK Enhancement Proposals)
@@ -618,6 +624,18 @@ Spring Framework follows this rigorously: Spring 5 -> Spring 6 = MAJOR
 **Q6 (Interface design): What are the principles of good Java interface design?**
 
 A:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // Principle 1: Single responsibility (small, focused interfaces)
 // BAD: "God interface"
@@ -666,7 +684,7 @@ sealed interface HttpResponse permits OkResponse, ErrorResponse, RedirectRespons
 // All callers can exhaustively handle via switch expression
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates null-safe value wrapping using SQL. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **WHAT BREAKS: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* Interface segregation matters most in
 libraries that are implemented by users (plugin systems, callback APIs).
@@ -731,7 +749,7 @@ class KeyStore {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The TOCTOU (Time of Check, Time of Use)
 attack on the `Period` constructor is a real security vulnerability. Without
@@ -792,7 +810,7 @@ public void login(String user, char[] password) { ... } // v2 secure version
 // }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates null-safe value wrapping using interface. **KEY MECHANISM:** Optional.of() throws NPE on null; Optional.ofNullable() wraps null safely. **WHY IT MATTERS:** calling get() without isPresent() check produces NoSuchElementException. **TAKEAWAY: prefer orElseThrow() with a meaningful message over bare get().**
 
 *What separates good from great:* The `@Deprecated(forRemoval=true)` pattern
 gives library users a structured migration path. Version N: method available,
@@ -857,7 +875,7 @@ class Validator<T> {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Fluent APIs must be careful about type
 safety with generics. The type parameter tracks what you're building:
@@ -918,7 +936,7 @@ record Email(String value) {
 // 4. IDE auto-complete shows you need an Email, not any String
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* "Parse, don't validate" is a Haskell/functional
 programming concept translated to Java. The type system becomes your validation
@@ -935,6 +953,12 @@ enforcement. Modern Java with records makes this cheap to create:
 **Q11 (Minimal surface area): Why is minimal API surface area important?**
 
 A:
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // Every public method is a commitment: never break it, always maintain it
 
@@ -968,7 +992,7 @@ class Cache<K, V> {
 // public:    full commitment (never break this)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The Java platform failed this principle
 with `sun.misc.Unsafe` - it was internal but effectively became a public
@@ -1005,7 +1029,7 @@ module com.example.library {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The module system changes API design
 from a convention (Javadoc @internal, package naming) to an enforcement

@@ -174,7 +174,7 @@ WHAT TYPESCRIPT DOES NOT CATCH:
   // Use: Zod, Yup, io-ts for runtime validation of external data
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why TypeScript Exists example demonstrates a key concept in practice using interface. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -206,6 +206,16 @@ prevented and refactoring confidence.
 ### 💻 Code Example
 
 **JavaScript bug that TypeScript prevents**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // JAVASCRIPT: runtime bug (production)
@@ -257,7 +267,7 @@ const data = await fetchUserData(1);
 // Caught at compile time, not runtime
 ```
 
-> **Code walkthrough:** The JavaScript version's `user.email` access
+> **Code walkthrough:** The JavaScript version's `user.email` accessice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > throws at runtime when `users.find()` returns `undefined` (no user
 > with that ID). This is a production bug - it only happens with
 > certain inputs. TypeScript forces the engineer to acknowledge that
@@ -371,7 +381,7 @@ function processData(rawData: unknown): string {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -389,8 +399,7 @@ function processData(rawData: unknown): string {
 
 ---
 
-**Q1: What are the main benefits of using TypeScript over JavaScript?**
-`[JUNIOR]` DECISION
+**[JUNIOR] Q1 - [TRADE-OFF] What are the main benefits of using TypeScript over JavaScript?**
 
 > **Answer:**
 >
@@ -425,7 +434,7 @@ function processData(rawData: unknown): string {
 > things creates "fossilized code" - unmaintainable code that no one
 > touches because the cost of changing it is unpredictable.
 
-**Q2: What does TypeScript NOT protect you from?** `[SENIOR]` MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] What does TypeScript NOT protect you from?** `[SENIOR]` MECHANISM**
 
 > **Answer:**
 >
@@ -474,7 +483,7 @@ function processData(rawData: unknown): string {
 > TypeScript type safety + runtime validation in one call. This is
 > the production pattern for safe external data handling.
 
-**Q3: How do you incrementally adopt TypeScript in an existing
+**[JUNIOR] Q3 - [MECHANISM] How do you incrementally adopt TypeScript in an existing**
 JavaScript codebase?** `[SENIOR]` SYSTEM-DESIGN
 
 > **Answer:**
@@ -523,8 +532,7 @@ JavaScript codebase?** `[SENIOR]` SYSTEM-DESIGN
 > annotations everywhere, creating a compilable baseline to improve
 > incrementally.
 
-**Q4: What is the difference between 'any' and 'unknown'?** `[MID]`
-MECHANISM
+**[MID] Q4 - [MECHANISM] What is the difference between 'any' and 'unknown'?** `[MID]`**
 
 > **Answer:**
 >
@@ -573,7 +581,7 @@ MECHANISM
 > made `catch` variables type `unknown` instead of `any` in strict mode
 > - this forced correct error handling patterns across the ecosystem.
 
-**Q5: How does TypeScript compile to JavaScript and what's the
+**[MID] Q5 - [MECHANISM] How does TypeScript compile to JavaScript and what's the**
 performance impact?** `[MID]` MECHANISM
 
 > **Answer:**
@@ -622,8 +630,7 @@ performance impact?** `[MID]` MECHANISM
 > transpiler for local development and running tests, use tsc for CI
 > type-checking (can be parallelized across packages).
 
-**Q6: What is TypeScript's relationship with JSDoc?** `[SENIOR]`
-DECISION
+**[SENIOR] Q6 - [TRADE-OFF] What is TypeScript's relationship with JSDoc?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -669,7 +676,7 @@ DECISION
 > from DefinitelyTyped. Newer libraries are TypeScript-native and
 > bundle their own `.d.ts` files.
 
-**Q7: What is 'strict' mode in TypeScript and which checks does it
+**[SENIOR] Q7 - [MECHANISM] What is 'strict' mode in TypeScript and which checks does it**
 enable?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -857,7 +864,7 @@ ECOSYSTEM ALIGNMENT:
     Rare in modern ecosystem (most have community @types/)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript vs JavaScript Trade-off example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -938,7 +945,7 @@ console.log(user.profle.email);
 // Caught at compile time, not in production
 ```
 
-> **Code walkthrough:** The JavaScript version returns untyped data
+> **Code walkthrough:** The JavaScript version returns untyped dataice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from the API. The `user.profle` typo only surfaces at runtime, when
 > real users hit the code. The TypeScript version uses generics
 > (`get<T>(path: string): Promise<GetResponse<T>>`) to make the API
@@ -1038,7 +1045,7 @@ async function getUser(id: string): Promise<User> {
 // Not: undefined.name crash 10 lines later
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates type alias definition using async/await. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **WHAT BREAKS: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -1056,7 +1063,7 @@ async function getUser(id: string): Promise<User> {
 
 ---
 
-**Q1: Should every project use TypeScript?** `[SENIOR]` DECISION
+**[JUNIOR] Q1 - [MECHANISM] Should every project use TypeScript?** `[SENIOR]` DECISION**
 
 > **Answer:**
 >
@@ -1082,7 +1089,7 @@ async function getUser(id: string): Promise<User> {
 > learn TypeScript separately from delivery pressure; once learned,
 > use it by default for production projects.
 
-**Q2: What are the hidden costs of NOT using TypeScript in a growing
+**[JUNIOR] Q2 - [MECHANISM] What are the hidden costs of NOT using TypeScript in a growing**
 codebase?** `[STAFF]` DECISION
 
 > **Answer:**
@@ -1283,7 +1290,7 @@ MONOREPO TYPESCRIPT:
         { "composite": true }  // required for referenced packages
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TypeScript Tooling Ecosystem example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -1358,7 +1365,7 @@ application build (1-5s), tsc --noEmit for type checking (run in parallel).
 }
 ```
 
-> **Code walkthrough:** `tsconfig.base.json` centralizes shared compiler
+> **Code walkthrough:** `tsconfig.base.json` centralizes shared compilerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > options so all packages benefit from `strict: true` and consistent
 > settings without duplication. The React app uses `noEmit: true` because
 > Vite handles the transpilation (tsc is only for type checking). The
@@ -1452,7 +1459,7 @@ console.log(val.toUpperCase());  // Runtime crash if getValue() returns null
 // it creates a gap between compile-time and runtime behavior
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -1470,8 +1477,7 @@ console.log(val.toUpperCase());  // Runtime crash if getValue() returns null
 
 ---
 
-**Q1: What is the TypeScript Language Server and how does it work?**
-`[MID]` MECHANISM
+**[MID] Q1 - [MECHANISM] What is the TypeScript Language Server and how does it work?**
 
 > **Answer:**
 >
@@ -1520,7 +1526,7 @@ console.log(val.toUpperCase());  // Runtime crash if getValue() returns null
 > (`Cmd+Shift+P -> TypeScript: Restart TS Server`) fixes most stale
 > state issues without reloading VS Code.
 
-**Q2: What are TypeScript declaration files (.d.ts) and when do you
+**[JUNIOR] Q2 - [MECHANISM] What are TypeScript declaration files (.d.ts) and when do you**
 create them?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -1576,7 +1582,7 @@ create them?** `[SENIOR]` MECHANISM
 > `@types/foo` describes an older version of `foo`) causes subtle
 > bugs that are hard to diagnose.
 
-**Q3: How do you configure TypeScript for different environments
+**[JUNIOR] Q3 - [MECHANISM] How do you configure TypeScript for different environments**
 (browser vs Node.js vs Deno)?** `[SENIOR]` SYSTEM-DESIGN
 
 > **Answer:**

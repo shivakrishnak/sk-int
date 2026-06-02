@@ -122,13 +122,18 @@ Query semantics by role:
        aria-labelledby, placeholder
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This React Testing Library Philosophy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - RTL vs implementation detail testing:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: Enzyme-style - tests implementation details
@@ -169,7 +174,7 @@ test('LoginForm updates email field when user types', async () => {
 });
 ```
 
-> **Code walkthrough:** The Enzyme approach queries by CSS class and
+> **Code walkthrough:** The Enzyme approach queries by CSS class andice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > accesses internal state - both are implementation details. If the
 > class is renamed or the component is refactored to use hooks instead
 > of class state, the tests break even though the user-visible behavior
@@ -278,7 +283,7 @@ const { container } = render(<MyComponent />);
 logRoles(container); // prints all accessible elements and their roles
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using container. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 ---
 
@@ -384,7 +389,7 @@ jest-dom matchers (from @testing-library/jest-dom):
   toBeRequired()        // form control is required
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Querying and Asserting DOM Elements example demonstrates a key concept in practice using async/await. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -437,7 +442,7 @@ test('tooltip shows on hover', async () => {
 });
 ```
 
-> **Code walkthrough:** `getByRole` is the preferred query for
+> **Code walkthrough:** `getByRole` is the preferred query forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > interactive elements because it verifies accessible semantics.
 > `queryByText` returns null (instead of throwing) making it correct
 > for asserting element absence. `toBeInTheDocument` vs `toBeVisible`:
@@ -507,7 +512,7 @@ logRoles(container); // shows all accessible elements
 screen.debug(); // prints the current DOM state
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Querying and Asserting DOM Elements example demonstrates TypeScript pattern using container. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Fix: Add `aria-label` to icon buttons: `<button aria-label="Submit">`.
 
@@ -545,7 +550,7 @@ test('error appears after submission, not on load', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Key: use `queryBy` for "should not be there" + use `findBy` for
 "should appear after async operation."
@@ -674,13 +679,18 @@ Pointer events check:
   Configure: userEvent.setup({ pointerEventsCheck: 0 }) to disable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This User Interaction and Event Testing example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - userEvent vs fireEvent:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: fireEvent misses validation-on-blur behavior
@@ -745,7 +755,7 @@ test('submits form with valid data', async () => {
 });
 ```
 
-> **Code walkthrough:** `userEvent.type()` dispatches individual
+> **Code walkthrough:** `userEvent.type()` dispatches individualice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `keydown/keypress/input/keyup` events for each character, plus
 > handles the input's `value` update and cursor position. `user.tab()`
 > triggers the full focus change sequence including blur on the current
@@ -852,7 +862,7 @@ test('dropdown closes on Escape', async () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates TypeScript pattern using async/await. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **TAKEAWAY: prefer type guards over type assertions for safe narrowing of union types.**
 
 Key details:
 - `user.keyboard('{Escape}')` fires the full keyboard event sequence

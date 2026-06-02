@@ -121,7 +121,7 @@ Jest file isolation:
   --runInBand: runs files sequentially in same process (debugging)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jest Test Structure and Lifecycle example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Key options:**
 
@@ -135,13 +135,18 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jest Test Structure and Lifecycle example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Test isolation:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: shared mutable state causes test interdependence
@@ -184,7 +189,7 @@ describe('UserService', () => {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Jest Test Structure and Lifecycle example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **WHAT BREAKS: prefer type guards over type assertions for safe narrowing of union types.**
 
 **Example (Production) - beforeAll for expensive setup:**
 
@@ -222,7 +227,7 @@ describe('OrderRepository', () => {
 });
 ```
 
-> **Code walkthrough:** The BAD example uses a single shared `service`
+> **Code walkthrough:** The BAD example uses a single shared `service`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > instance - tests that create users affect subsequent tests that
 > expect an empty service. `beforeEach` creates a fresh instance for
 > each test, ensuring independence. The production database example
@@ -292,7 +297,7 @@ jest --randomize
 # If order-dependent tests exist, they will fail differently
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This If order-dependent tests exist, they will fail differently example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Use `beforeEach` to reset all mutable state. Configure
 `clearMocks: true` in jest.config.js.
@@ -457,13 +462,23 @@ Asymmetric matchers (use inside other matchers):
   expect.stringMatching(/pattern/) // string matching regex
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jest Assertions and Matchers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Using correct matchers:**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: wrong matcher for the value type
@@ -512,7 +527,7 @@ expect(mockFn).toHaveBeenCalledWith(
 );
 ```
 
-> **Code walkthrough:** `toBe` uses strict equality (`===`) - it fails
+> **Code walkthrough:** `toBe` uses strict equality (`===`) - it failsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > for objects because two object literals are never the same reference
 > even if their contents match. `toEqual` performs deep recursive
 > equality, comparing each property. `toMatchObject` is the flexible
@@ -603,6 +618,11 @@ want the test to be resilient to future additions.
 
 Example: An API response contains many fields but the test only cares
 about specific ones:
+
+```typescript
+// BAD: using any defeats type safety
+```
+
 ```typescript
 // BAD: toEqual asserts ALL properties - fails when new fields added
 expect(apiResponse).toEqual({
@@ -619,7 +639,7 @@ expect(apiResponse).toMatchObject({
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates TypeScript pattern. **KEY MECHANISM:** TypeScript compiles to JavaScript; type information is erased at runtime. **WHY IT MATTERS:** type assertions bypass the type checker - a runtime error can still occur. **WHAT BREAKS: prefer type guards over type assertions for safe narrowing of union types.**
 
 Use `toEqual` when exact shape matters (no extra properties allowed),
 such as testing a transformation function's output format.
@@ -737,13 +757,20 @@ Excluded from coverage (configure explicitly):
   - Type declarations (.d.ts files)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Code Coverage Strategy example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
 **Example (Wrong vs Right) - Coverage without assertions:**
+
+
+```typescript
+// BAD: type assertion without runtime check
+const user = getUser() as AdminUser; // may throw at runtime
+user.adminAction(); // ClassCastException equivalent
+```
 
 ```typescript
 // BAD: achieves 100% coverage with zero useful assertions
@@ -779,7 +806,7 @@ test('returns chargeUser result for valid inputs', () => {
 // Coverage is 100% AND every assertion is meaningful
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Code Coverage Strategy example demonstrates type assertion. **KEY MECHANISM:** as tells TypeScript to treat the value as a specific type without runtime check. **WHY IT MATTERS:** asserting an incompatible type causes runtime errors that TypeScript cannot catch. **WHAT BREAKS: use type guards (typeof, instanceof, is) instead of as for safe narrowing.**
 
 **Example (Production) - jest.config.js with coverage:**
 
@@ -812,7 +839,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** The BAD example shows the fundamental limitation
+> **Code walkthrough:** The BAD example shows the fundamental limitationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of coverage as a quality metric: calls without assertions execute
 > code paths (giving coverage) without verifying correctness. Jest
 > does not require `expect()` calls in a test - a test with zero

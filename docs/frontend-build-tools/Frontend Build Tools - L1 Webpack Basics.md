@@ -100,7 +100,7 @@ Loaders: Transform files before adding to bundle
   },
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Webpack Entry, Output, and Loaders example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -182,7 +182,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** The config switches behavior based on
+> **Code walkthrough:** The config switches behavior based onice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > `NODE_ENV`. In development, `style-loader` injects CSS into
 > `<style>` tags for HMR (CSS updates without page reload).
 > In production, `MiniCssExtractPlugin` extracts CSS to a separate
@@ -192,6 +192,11 @@ module.exports = {
 > stale files accumulating.
 
 **Example 2: Custom loader chain order trap**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: loader order is wrong
@@ -231,7 +236,7 @@ module: {
 }
 ```
 
-> **Code walkthrough:** The right-to-left loader chain is the most
+> **Code walkthrough:** The right-to-left loader chain is the mostice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common source of webpack configuration errors. Think of it as a
 > pipeline: the rightmost loader receives the raw file, processes it,
 > and passes the result to the next loader. For SCSS: sass-loader
@@ -436,7 +441,7 @@ Essential plugins:
     in a separate process (parallel to webpack build)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Webpack Plugins example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -494,7 +499,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** HtmlWebpackPlugin eliminates manually editing
+> **Code walkthrough:** HtmlWebpackPlugin eliminates manually editingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > HTML to update hashed filenames - it generates the HTML and injects
 > the correct `<script>` and `<link>` tags automatically. DefinePlugin
 > enables dead code elimination: `if (process.env.NODE_ENV === 'production')`
@@ -504,6 +509,11 @@ module.exports = {
 > disruptive in CI.
 
 **Example 2: DefinePlugin for environment injection**
+
+
+```javascript
+// BAD: anti-pattern - see GOOD example below
+```
 
 ```javascript
 // BAD: Accessing process.env at runtime in browser
@@ -531,7 +541,7 @@ const url = process.env.REACT_APP_API_URL;
 // vite.config.ts: define: { 'import.meta.env.VITE_X': '"val"' }
 ```
 
-> **Code walkthrough:** DefinePlugin is a text substitution at build
+> **Code walkthrough:** DefinePlugin is a text substitution at buildice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > time - it literally replaces the string `process.env.API_URL`
 > everywhere in the source with the value. This is not runtime variable
 > injection; the variable does not exist in the bundle. The `JSON.stringify`
@@ -739,7 +749,7 @@ devServer configuration:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This webpack-dev-server and Hot Module Replacement example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -799,7 +809,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** The proxy configuration is the most valuable
+> **Code walkthrough:** The proxy configuration is the most valuableice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > real-world feature: it forwards `/api/*` requests from the dev server
 > (localhost:3000) to the backend (localhost:8080). This eliminates
 > CORS issues during development without changing the backend. `changeOrigin`
@@ -838,7 +848,7 @@ if (module.hot) {
 }
 ```
 
-> **Code walkthrough:** `module.hot` is the HMR API. Without a custom
+> **Code walkthrough:** `module.hot` is the HMR API. Without a customice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > accept handler, webpack falls back to a full page reload when a module
 > changes. React Fast Refresh implements a sophisticated HMR handler
 > that: replaces the component function, re-renders it, and preserves

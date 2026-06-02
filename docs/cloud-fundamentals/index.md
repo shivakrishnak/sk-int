@@ -1,6 +1,6 @@
 ---
 title: "Cloud Fundamentals"
-nav_order: 30
+nav_order: 72
 has_children: true
 ---
 

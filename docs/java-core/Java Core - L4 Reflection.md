@@ -99,7 +99,7 @@ ctor.setAccessible(true); // if private
 Object obj = ctor.newInstance("hello");
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Reflection example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Invocation:**
 ```java
@@ -111,7 +111,7 @@ Method staticM = Math.class.getMethod("max", int.class, int.class);
 int max = (int) staticM.invoke(null, 3, 7); // 7
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Reflection example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Dynamic proxy:**
 ```java
@@ -128,18 +128,24 @@ UserService proxy = (UserService) Proxy.newProxyInstance(
 );
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L4 Reflection example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** The generic object mapper demonstrates the core
+> **Code walkthrough:** The generic object mapper demonstrates the coreice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > reflective use case: convert between two objects of different types by
 > matching field names. This is exactly how BeanUtils.copyProperties()
 > (Spring/Apache Commons) works internally. The caching layer (static
 > Map of field arrays) is critical: `getDeclaredFields()` is expensive;
 > frameworks like Spring cache all reflection lookups at startup.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // BAD: re-read fields on every copy (expensive, not cached)
@@ -238,7 +244,7 @@ OrderService service = LoggingProxy.wrap(
 service.createOrder(request); // logs timing automatically
 ```
 
-> **Code walkthrough:** `InvocationTargetException` is the wrapper exception
+> **Code walkthrough:** `InvocationTargetException` is the wrapper exceptionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > thrown by `method.invoke()` when the invoked method throws. The `.getCause()`
 > is the real exception. Callers of the proxy expect the declared checked
 > exceptions from the interface, not `InvocationTargetException`. Unwrapping
@@ -315,7 +321,7 @@ try {
     throw new RuntimeException("Unexpected checked exception", cause);
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Diagnosis: check stack traces for `InvocationTargetException` with a
 null message. Real cause is always in `e.getCause()`.
@@ -374,7 +380,7 @@ if (type instanceof ParameterizedType pt) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using generic type. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* Generic type inspection via `getGenericType()`
 is what allows frameworks like Gson, Jackson, and Hibernate to understand
@@ -440,7 +446,7 @@ while (c != null && c != Object.class) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Walking the class hierarchy with
 `getSuperclass()` is required for frameworks that serialize/deserialize
@@ -485,7 +491,7 @@ boolean isOpen = module.isOpen("com.example.internal",
     MyReflectionTool.class.getModule());
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The module system breaking reflection
 was intentional - it was the key mechanism for "encapsulate JDK internals"
@@ -547,7 +553,7 @@ System.out.println(Proxy.isProxyClass(proxyClass)); // true
 System.out.println(Proxy.getInvocationHandler(proxy)); // the handler
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates contract definition using interface. **KEY MECHANISM:** the JVM uses dynamic dispatch for all interface method calls. **WHY IT MATTERS:** interfaces with default methods can conflict at compile time via diamond problem. **TAKEAWAY: interfaces define contracts; prefer them over abstract classes for unrelated types.**
 
 *What separates good from great:* The generated proxy class is cached:
 calling `Proxy.newProxyInstance` with the same interfaces and classloader
@@ -606,7 +612,7 @@ class ProblemService {
 // @Autowired UserService service;  // works with both proxy types
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* Spring Boot's switch to CGLIB by default
 (version 2.0) resolved a long-standing friction: `@Autowired UserServiceImpl`
@@ -661,7 +667,7 @@ public Object invoke(Object proxy, Method method, Object[] args)
 // any exception type including checked exceptions from the target
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* In `InvocationHandler.invoke()`, the
 `throws Throwable` declaration allows re-throwing `e.getCause()` directly,
@@ -717,7 +723,7 @@ vh.compareAndSet(counter, 42, 100); // atomic CAS
 // Compare with: Field.get()/set() - untyped, slower
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The JDK itself uses `invokedynamic` and
 `MethodHandle` internally for lambda expressions (since Java 8). The
@@ -772,7 +778,7 @@ class ReflectionCache {
 // Benchmark: 10x+ speedup on repeated serialization of same type
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates metadata declaration using generic type. **KEY MECHANISM:** annotations are processed at compile-time or runtime via reflection. **WHY IT MATTERS:** annotation processing adds compile time; runtime reflection disables JIT optimizations. **TAKEAWAY: prefer compile-time annotation processors (APT) over runtime reflection for performance.**
 
 *What separates good from great:* `ClassValue<T>` is the JVM-provided
 per-class cache, available since Java 7. Unlike `WeakHashMap<Class<?>, T>`
@@ -828,7 +834,7 @@ ois.setObjectInputFilter(FilterInfo fi -> {
 Object obj = ois.readObject();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 *What separates good from great:* Java deserialization is one of the most
 critical security issues in enterprise Java. Deserializing untrusted data
@@ -868,7 +874,7 @@ a standalone native executable from Java code. The trade-off: dynamic features
 // Any undeclared reflection at runtime: NullPointerException or ClassNotFoundException
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Spring Boot 3 + GraalVM Native Image is
 the production scenario. Spring's `@RegisterReflectionForBinding` and
@@ -928,7 +934,7 @@ class OrderService {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* Spring AOP's proxy model has a well-known
 limitation: it only intercepts calls that go THROUGH the proxy. Any internal
@@ -975,7 +981,7 @@ Class<?> clazz = Class.forName(className); // now safe
 // Modern defense: input validation + class whitelist + SecurityManager replacement
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates Java API ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Log4Shell (CVE-2021-44228) was the most
 severe Java vulnerability in years: Log4j2 used `Class.forName()` with
@@ -991,15 +997,15 @@ processes attacker-controlled data. The fix: whitelist, input validation,
 
 ### ⚖️ Comparison Table
 
-| Mechanism | Type Safety | Performance | Dynamic | Use Case |
-|---|---|---|---|---|
-| Direct call | Compile-time | Native (1x) | No | Normal code |
-| `Method.invoke()` | Runtime | 20-50x slower | Yes | General reflection |
-| `MethodHandle.invokeExact()` | Checked at creation | 2-5x (JIT) | Yes | Performance-sensitive |
-| `VarHandle` | Typed | Near-native | Yes | Atomic field access |
-| JDK Dynamic Proxy | Interface | Moderate | Yes | Interface interception |
-| CGLIB Proxy | Class | Moderate | Yes | Class interception |
-| Byte Buddy | Both | Near-native | Yes | Framework bytecode gen |
+| Mechanism| Type Safety| Performance| Dynamic| Use Case|
+|-------------|-------------------|-------------|-------|----------------------|
+| Direct call| Compile-time| Native (1x)| No| Normal code|
+| `Method.invoke()`| Runtime| 20-50x slower| Yes| General reflection|
+| `MethodHandle.invokeExact()`| Checked at creation| 2-5x (JIT)| Yes| Performanc
+| `VarHandle`| Typed| Near-native| Yes| Atomic field access|
+| JDK Dynamic Proxy| Interface| Moderate| Yes| Interface interception|
+| CGLIB Proxy| Class| Moderate| Yes| Class interception|
+| Byte Buddy| Both| Near-native| Yes| Framework bytecode gen|
 
 ---
 
@@ -1066,7 +1072,7 @@ sequenceDiagram
 
 > **Diagram walkthrough:** The sequence shows Spring's startup flow: classpath
 > scanning uses `Class.forName()` to load classes, reflection reads annotations,
-> the bean factory resolves dependencies and detects cycles via topological sort,
+> the bean factory resolves dependencies and detects cycles via topological sort
 > then proxies are created for AOP-annotated beans. At runtime, every method
 > call goes through the interceptor chain before reaching the real target.
 > The key insight: all the expensive reflection happens once at startup,

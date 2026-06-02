@@ -7,6 +7,17 @@ permalink: /platform-engineering/l3-security-and-compliance/
 render_with_liquid: false
 ---
 
+## Keywords in This File
+{: .no_toc }
+
+| # | Keyword | Weight |
+|---|---|---|
+| 1 | [Policy as Code and Compliance Automation](#policy-as-code-and-compliance-automation) | |
+| 2 | [Platform Security Model and Supply Chain](#platform-security-model-and-supply-chain) | |
+
+---
+
+
 # Policy as Code and Compliance Automation
 
 ---
@@ -155,7 +166,7 @@ POLICY AS CODE ARCHITECTURE
    SOC2 evidence packet --> assembled automatically
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Policy as Code and Compliance Automation example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Compliance evidence that is collected automatically by the system is
@@ -239,7 +250,7 @@ spec:
               runAsNonRoot: true
 ```
 
-> **Code walkthrough:** The BAD pattern is a PDF policy that engineers
+> **Code walkthrough:** The BAD pattern is a PDF policy that engineersice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are supposed to read and follow. In practice, it is not read before
 > deployments, is interpreted differently by different engineers, and
 > violations are discovered in security audits or production incidents.
@@ -297,7 +308,7 @@ spec:
         environment: production
 ```
 
-> **Code walkthrough:** The OPA Gatekeeper ConstraintTemplate defines
+> **Code walkthrough:** The OPA Gatekeeper ConstraintTemplate definesice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the Rego logic for checking image registries: for each container,
 > check if its image starts with any of the approved registry prefixes.
 > If none match, generate a violation with an actionable error message.
@@ -399,7 +410,7 @@ kubectl describe validatingwebhookconfiguration gatekeeper-validating-webhook-co
 # And: check webhook endpoint is reachable
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This And: check webhook endpoint is reachable example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: scale policy controller to >= 3 replicas with PodDisruptionBudget;
 set `failurePolicy: Ignore` for non-critical policies (production
@@ -421,7 +432,7 @@ kubectl describe pod <pod-name> -n <namespace>
 kyverno apply policy.yaml --resource manifest.yaml
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or test a policy against a manifest without applying example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: update the policy to allow the legitimate case. Follow the PR
 review process: policy change requires review from both platform team
@@ -435,7 +446,7 @@ review process: policy change requires review from both platform team
 
 ---
 
-#### Q1 - How do you roll out new admission policies without breaking existing deployments?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you roll out new admission policies without breaking existing deployments?**
 
 The failure mode: deploy a new policy with `enforcementAction: deny`
 and immediately break existing deployments in the cluster that violate
@@ -456,7 +467,7 @@ kubectl get constraintpodstatuses -A | grep violation
 kubectl get policyreports -A
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check Kyverno audit results example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Phase 2 - Notify violators: communicate the policy to teams with
 existing violations. Provide the fix and a migration deadline.
@@ -479,7 +490,7 @@ enforced a new policy and 30 teams had CI failures" incident.
 
 ---
 
-#### Q2 - How do you test admission policies before deploying to production?
+**[JUNIOR] Q2 - [MECHANISM] How do you test admission policies before deploying to production?**
 
 Policy testing is not optional - incorrect policies break production
 deployments and require immediate rollback.
@@ -500,7 +511,7 @@ kyverno test policies/ --test-cases test-cases/
 # And: violation message should contain "non-root"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This And: violation message should contain "non-root" example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Integration tests (in staging cluster):
 - Deploy policy to staging with `audit` mode
@@ -524,7 +535,7 @@ cheaper to fix.
 
 ---
 
-#### Q3 - How do you manage policy exceptions?
+**[MID] Q3 - [MECHANISM] How do you manage policy exceptions?**
 
 Some legitimate deployments will violate security policies. An exception
 process is necessary to handle these cases without eroding the policy.
@@ -564,7 +575,7 @@ spec:
         names: [prometheus-*]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Namespace-level exception (for system namespaces) example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Step 4 - Exception inventory: maintain a registry of all active
 exceptions with owner, justification, expiry date, and compensating
@@ -579,7 +590,7 @@ use cases without exceptions.
 
 ---
 
-#### Q4 - How do you generate compliance evidence from policy as code?
+**[MID] Q4 - [MECHANISM] How do you generate compliance evidence from policy as code?**
 
 Compliance evidence from policy as code is one of the most powerful
 ROI arguments for the platform team. The evidence generation flow:
@@ -604,7 +615,7 @@ kubectl get policyreports -A -o json | \
   --output compliance-evidence-$(date +%Y%m%d).pdf
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Generate compliance evidence report example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Evidence categories for common frameworks:**
 
@@ -632,7 +643,7 @@ pressing "generate report" in the platform dashboard.
 
 ---
 
-#### Q5 - How do you handle policy drift between clusters?
+**[SENIOR] Q5 - [MECHANISM] How do you handle policy drift between clusters?**
 
 In a multi-cluster environment, policy drift occurs when policies are
 applied inconsistently across clusters - one cluster has a stricter
@@ -646,6 +657,7 @@ GitOps repository and are applied to all clusters by ArgoCD's
 ApplicationSet. Adding a new policy to the repository automatically
 deploys it to all clusters.
 
+{% raw %}
 ```yaml
 # ArgoCD ApplicationSet - deploy policies to all clusters
 apiVersion: argoproj.io/v1alpha1
@@ -664,8 +676,9 @@ spec:
         server: "{{server}}"
         namespace: kyverno
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This deploy policies to all clusters example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Detecting policy drift:**
 ```bash
@@ -678,7 +691,7 @@ done
 # Automated: policy reconciliation job that alerts on drift
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Automated: policy reconciliation job that alerts on drift example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 *What separates good from great:* Policy drift is the platform security
 failure mode that is hardest to detect. A cluster that was not included
@@ -689,7 +702,7 @@ show cluster-by-cluster compliance status.
 
 ---
 
-#### Q6 - What is the difference between preventive and detective controls in policy as code?
+**[SENIOR] Q6 - [TRADE-OFF] What is the difference between preventive and detective controls in policy as code?**
 
 Preventive controls (admission enforcement) block violations before they
 occur. Detective controls (continuous compliance monitoring) detect
@@ -725,7 +738,7 @@ are discovered, not just enforce policies on new deployments.
 
 ---
 
-#### Q7 - How do you design policies for a multi-tenant platform with different compliance requirements?
+**[SENIOR] Q7 - [DESIGN] How do you design policies for a multi-tenant platform with different compliance requirements?**
 
 Multi-tenant platforms have tenants with different compliance requirements:
 a team handling PCI card data needs stricter policies than a team building
@@ -733,6 +746,7 @@ internal dashboards.
 
 **Approach: policy tiers with namespace labels**
 
+{% raw %}
 ```yaml
 # Namespace tiers
 # Standard: base security policies
@@ -770,8 +784,9 @@ spec:
             operator: GreaterThan
             value: "0"
 ```
+{% endraw %}
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Kyverno policy: apply stricter policies to restricted tier example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 **Policy inheritance pattern:**
 - Base policies: applied to all namespaces (all tenants)
@@ -790,7 +805,7 @@ for PCI compliance specifically.
 
 ---
 
-#### Q8 - How do you integrate policy as code with shift-left security?
+**[STAFF] Q8 - [MECHANISM] How do you integrate policy as code with shift-left security?**
 
 Shift-left security means detecting policy violations as early in the
 development lifecycle as possible - at code review time, not at deployment
@@ -817,7 +832,7 @@ repos:
     # Fails commit if policy violations found
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Fails commit if policy violations found example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 CI/CD integration (PR-time validation):
 ```yaml
@@ -831,7 +846,7 @@ CI/CD integration (PR-time validation):
     fail: true  # fail the CI job on policy violations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This GitHub Actions workflow example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 GitOps PR review:
 When a product team PRs a change to their application manifests in the
@@ -848,7 +863,7 @@ team must actively set these up, not leave them as optional.
 
 ---
 
-#### Q9 - What is Open Policy Agent (OPA) and how does it fit in platform engineering?
+**[STAFF] Q9 - [MECHANISM] What is Open Policy Agent (OPA) and how does it fit in platform engineering?**
 
 OPA is a general-purpose policy engine - it evaluates policies written
 in Rego (a declarative query language) against arbitrary JSON/YAML data
@@ -886,7 +901,7 @@ deny[msg] {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Prevents provisioning unencrypted S3 buckets example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The platform engineering value of OPA:**
 OPA can enforce policies across all infrastructure layers - not just
@@ -1125,7 +1140,7 @@ SUPPLY CHAIN SECURITY:
    --> Alert: container writing to /etc
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Platform Security Model and Supply Chain example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Supply chain security is a chain - it is only as strong as its weakest
@@ -1216,7 +1231,7 @@ spec:
               issuer: "https://token.actions.githubusercontent.com"
 ```
 
-> **Code walkthrough:** The BAD pattern relies on access controls to the
+> **Code walkthrough:** The BAD pattern relies on access controls to theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > registry as the only security mechanism - if the registry is compromised
 > or a credential is leaked, an attacker can push arbitrary images. The
 > GOOD pattern uses Cosign keyless signing: the CI/CD pipeline signs the
@@ -1328,7 +1343,7 @@ cosign verify \
 # FAIL if signature is missing or invalid -> image was tampered
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This FAIL if signature is missing or invalid -> image was tampered example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Prevention: Kyverno admission policy that verifies Cosign signature
 before scheduling any production pod. If the policy is in place,
@@ -1359,7 +1374,7 @@ credentials for human users.
 
 ---
 
-#### Q1 - What is SLSA and how does it apply to platform engineering?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is SLSA and how does it apply to platform engineering?**
 
 SLSA (Supply-chain Levels for Software Artifacts, pronounced "salsa") is
 a security framework developed by Google for classifying and improving
@@ -1396,7 +1411,7 @@ treat this as aspirational and operate at Level 2.
 
 ---
 
-#### Q2 - How do you implement least privilege for CI/CD service accounts?
+**[JUNIOR] Q2 - [HANDS-ON] How do you implement least privilege for CI/CD service accounts?**
 
 CI/CD service accounts are high-value targets because they have deployment
 access. Implementing least privilege:
@@ -1429,7 +1444,7 @@ rules:
 #                 or any cluster-wide resources
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or any cluster-wide resources example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 For pipelines that require Kubernetes access (not pure GitOps):
 - Use Workload Identity (GKE) or IRSA (EKS) instead of stored secrets
@@ -1445,7 +1460,7 @@ credential compromise: only the git repository, not Kubernetes.
 
 ---
 
-#### Q3 - How do you secure the platform control plane?
+**[MID] Q3 - [MECHANISM] How do you secure the platform control plane?**
 
 The platform control plane includes: Kubernetes API server, etcd,
 admission controllers (Gatekeeper, Kyverno), ArgoCD, Vault/secret
@@ -1482,7 +1497,7 @@ attack class.
 
 ---
 
-#### Q4 - How do you handle secrets management in a platform security model?
+**[MID] Q4 - [MECHANISM] How do you handle secrets management in a platform security model?**
 
 Secrets management in a platform security model must answer: how are
 secrets stored, how do workloads access them, and how are they rotated?
@@ -1521,7 +1536,7 @@ spec:
       property: password
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This sync from Vault to namespace example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Rotation: Vault supports automatic rotation for database credentials
 (Vault Dynamic Secrets). Each time a pod starts, it gets a new temporary
@@ -1539,7 +1554,7 @@ blast radius.
 
 ---
 
-#### Q5 - What is Falco and how does it fit in the platform security model?
+**[SENIOR] Q5 - [MECHANISM] What is Falco and how does it fit in the platform security model?**
 
 Falco is a cloud-native runtime security tool that monitors Linux syscalls
 and Kubernetes audit events to detect anomalous behavior in running
@@ -1575,7 +1590,7 @@ but doing something unexpected.
   priority: WARNING
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Falco rule: unexpected outbound network connection example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Falco alerts can be sent to: Slack, PagerDuty, Elasticsearch (SIEM),
 or a custom webhook for the platform team's incident response.
@@ -1595,7 +1610,7 @@ alert fatigue = ignored alerts.
 
 ---
 
-#### Q6 - How do you respond to a detected supply chain attack?
+**[SENIOR] Q6 - [MECHANISM] How do you respond to a detected supply chain attack?**
 
 A supply chain attack in progress: Falco detects that a container is
 making unexpected outbound connections to an external IP. Investigation
@@ -1614,7 +1629,7 @@ kubectl apply -f block-all-egress-networkpolicy.yaml \
   -n team-payments
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Block all network egress from the affected namespace example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2 - Preserve forensics:
 ```bash
@@ -1629,7 +1644,7 @@ kubectl get events -n team-payments \
   --sort-by=.lastTimestamp > events-at-incident.txt
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Preserve Kubernetes audit logs example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3 - Verify image integrity:
 ```bash
@@ -1641,7 +1656,7 @@ cosign verify \
 # Confirms: image was tampered after CI build
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Confirms: image was tampered after CI build example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4 - Root cause analysis:
 - When was the malicious image pushed to the registry?
@@ -1662,7 +1677,7 @@ hours for teams without.
 
 ---
 
-#### Q7 - What is SBOM and why does it matter for platform security?
+**[SENIOR] Q7 - [MECHANISM] What is SBOM and why does it matter for platform security?**
 
 SBOM (Software Bill of Materials) is a structured list of all components
 (packages, libraries, dependencies) included in a software artifact,
@@ -1685,7 +1700,7 @@ cosign verify-attestation \
   jq '.components[] | select(.name == "log4j-core")'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Using grype to query from cosign-attached SBOM example demonstrates shell script pattern using SQL. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Compliance evidence:** SOC2, PCI DSS, and emerging regulations (US
 Executive Order 14028) require software bills of materials for software
@@ -1707,7 +1722,7 @@ with and without SBOMs is the experience that makes the value visceral.
 
 ---
 
-#### Q8 - How do you establish a security baseline for a new Kubernetes cluster?
+**[STAFF] Q8 - [MECHANISM] How do you establish a security baseline for a new Kubernetes cluster?**
 
 A security baseline for a new cluster establishes the minimum security
 posture before any workloads are deployed.
@@ -1749,7 +1764,7 @@ that will be manually hardened inconsistently.
 
 ---
 
-#### Q9 - Describe a platform security incident you have experienced or observed.
+**[STAFF] Q9 - [MECHANISM] Describe a platform security incident you have experienced or observed.**
 
 *Open question probing real-world experience. A strong answer:*
 

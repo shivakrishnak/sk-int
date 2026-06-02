@@ -124,7 +124,7 @@ CONTAINER ESCAPE ATTACK VECTORS:
   docker run --net=host myapp   # use host network (no isolation)
   docker run --ipc=host myapp   # share host IPC (can read /dev/shm)
   # RULE: never share host namespaces in production.
-  # Exception: --net=host for specific high-performance needs (with risk acceptance).
+  # Exception: --net=host for specific high-performance needs (with risk...
 
 USER NAMESPACES (ROOTLESS CONTAINER ISOLATION):
 
@@ -280,15 +280,16 @@ OPA GATEKEEPER ADMISSION CONTROL:
       namespaces: [production, staging]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Constraint: apply the policy: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
 
-> **Code walkthrough:** A complete security hardening verification
+> **Code walkthrough:** A complete security hardening verificationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > script that checks a running container for common escape risks.
 
+{% raw %}
 ```bash
 # Security audit script for a running Docker container:
 
@@ -341,8 +342,9 @@ MEM=$(docker inspect "$CONTAINER" \
 echo "Results: $PASS passed, $FAIL failed"
 [ "$FAIL" -gt 0 ] && exit 1 || exit 0
 ```
+{% endraw %}
 
-> **Code walkthrough:** This audit script checks the five most critical
+> **Code walkthrough:** This audit script checks the five most criticalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > security properties of a running container. `docker inspect` in
 > format mode extracts specific fields without parsing raw JSON. Each
 > check maps to a specific attack vector: non-root user (privilege
@@ -389,7 +391,7 @@ install). PSA provides three profiles: `privileged` (no restrictions),
 `baseline` (blocks the worst defaults: no privileged, no hostPath,
 no host namespaces), `restricted` (enforces best practices: non-root,
 no capabilities, read-only filesystem, seccomp). Apply with:
-`kubectl label namespace production pod-security.kubernetes.io/enforce=restricted`.
+`kubectl label namespace production pod-security.kubernetes.io/enforce=restricte
 For more granular control: OPA Gatekeeper or Kyverno (Rego or YAML
 policies). Teams migrating from PSP to PSA: audit current PSP rules,
 map to equivalent PSA profiles. Use `--dry-run` mode first: `kubectl
@@ -401,14 +403,14 @@ switching from `warn` to `enforce`.
 
 ### ⚖️ Comparison Table
 
-| Escape Vector | How It Works | Prevention | Detection |
-|---|---|---|---|
-| --privileged | Full capabilities, mount any device | Never allow privileged | Falco: privileged container start |
-| docker.sock mount | Docker API = root | No socket in user pods | Falco: socket access |
-| CAP_SYS_ADMIN | Mount, ptrace, many escapes | cap-drop ALL | Falco: sensitive syscall |
-| Host PID namespace | See and kill host processes | No hostPID: true | Policy enforcement |
-| Kernel CVE | Direct kernel exploit | Minimal attack surface, kernel updates | Falco: anomalous syscall |
-| Writable overlay | Write attack scripts | readOnlyRootFilesystem | Falco: write outside volume |
+| Escape Vector| How It Works| Prevention| Detection|
+|---|---|------------------------------------|---------------------------------|
+| --privileged| Full capabilities, mount any device| Never allow privileged| Fal
+| docker.sock mount| Docker API = root| No socket in user pods| Falco: socket ac
+| CAP_SYS_ADMIN| Mount, ptrace, many escapes| cap-drop ALL| Falco: sensitive sys
+| Host PID namespace| See and kill host processes| No hostPID: true| Policy enfo
+| Kernel CVE| Direct kernel exploit| Minimal attack surface, kernel updates| Fal
+| Writable overlay| Write attack scripts| readOnlyRootFilesystem| Falco: write o
 
 ---
 
@@ -550,7 +552,7 @@ Step 5: Policy improvement:
   # Was the container running with unnecessary privileges? Fix Dockerfile.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Was the container running with unnecessary privileges? Fix Dockerfile. example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -195,7 +195,7 @@ KRAFT OPERATIONAL DIFFERENCES:
      kafka-configs.sh works the same. Internally: metadata log instead of ZK.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This NOT for production: controller + broker competing for resources. example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -321,7 +321,7 @@ nodes (for 2-fault tolerance in Raft), many broker nodes (for data storage and t
   Broker nodes: add/remove without affecting quorum.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This NOT for production: controller + broker competing fice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -386,7 +386,7 @@ Root cause: quorum has no active leader.
   If all 3 controllers fail: cluster metadata frozen.
 
 Diagnosis:
-  kafka-metadata-quorum.sh --bootstrap-controller c1:9093,c2:9093,c3:9093 describe
+  kafka-metadata-quorum.sh --bootstrap-controller c1:9093,c2:9093,c3:9093...
     Shows: leader, observer, fetch offset, last fetch time.
     If all show "no leader" or timeout: quorum loss.
   
@@ -416,7 +416,7 @@ Fix:
     Trade-off: more controller nodes to manage.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

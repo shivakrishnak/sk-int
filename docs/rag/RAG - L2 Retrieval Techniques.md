@@ -117,7 +117,7 @@ SPARSE (BM25) search:
         "bag of words" - no semantic understanding
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hybrid Search example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Reciprocal Rank Fusion (RRF):**
 
@@ -142,7 +142,7 @@ Example:
   Doc1 > Doc2 because it appeared in both lists
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hybrid Search example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When hybrid is most valuable:**
 
@@ -158,11 +158,16 @@ QUERY TYPE             BEST SEARCH
 "rate limiting in API" Hybrid (concept + terms)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Hybrid Search example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 from dataclasses import dataclass
@@ -283,7 +288,7 @@ class SimpleBM25:
         return scored[:top_k]
 ```
 
-> **Code walkthrough:** `reciprocal_rank_fusion`
+> **Code walkthrough:** `reciprocal_rank_fusion`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > implements the standard RRF merge: for each document,
 > accumulate `1/(k + rank)` from each list it appears
 > in. Documents appearing in both lists get contributions
@@ -446,7 +451,7 @@ RRF (Reciprocal Rank Fusion):
 score(d) = sum over lists: 1 / (k + rank(d, list))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jaccard-like overlap as score stub example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 k=60: the constant that reduces the influence of
 rank position. Without k: rank 1 vs. rank 2 difference
@@ -468,7 +473,7 @@ score(d) = alpha * dense_score(d) +
            (1-alpha) * sparse_score(d)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Jaccard-like overlap as score stub example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Problem with linear combination: dense scores
 (cosine similarity: 0.0 to 1.0) and sparse scores
@@ -531,7 +536,7 @@ hybrid_score = alpha * dense_score +
                (1 - alpha) * sparse_score
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 (Note: for RRF, there is no alpha - both lists
 are given equal weight by default. Alpha tuning
@@ -711,7 +716,7 @@ def technical_tokenizer(text: str) -> list[str]:
     return [t.lower() for t in tokens if len(t) > 1]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Preserve: XYZ-PRO-v2, CVE-2024-1234, AWS-S3 example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* "Custom tokenizer
 that preserves compound technical tokens" as the
@@ -806,7 +811,7 @@ def route_retrieval(query: str, ...):
     return dense_retrieve(query, ...)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Preserve: XYZ-PRO-v2, CVE-2024-1234, AWS-S3 example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Result: segmented approach outperformed always-hybrid
 or always-dense.
@@ -1008,7 +1013,7 @@ Multiple AND    region == "uk" AND status == "active"
 OR              type == "policy" OR type == "procedure"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Metadata Filtering and Structured Retrieval example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Pre-filter vs. Post-filter:**
 
@@ -1035,7 +1040,7 @@ POST-FILTER:
            < K results even with large multiplier
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Metadata Filtering and Structured Retrieval example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Metadata design for filterability:**
 
@@ -1053,11 +1058,16 @@ BAD metadata (high-cardinality, not filterable):
   full_url: "https://..." (too specific to be useful)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Metadata Filtering and Structured Retrieval example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 from dataclasses import dataclass, field
@@ -1196,7 +1206,7 @@ filters = build_filters_from_context(user_context)
 # AND status!=archived
 ```
 
-> **Code walkthrough:** `MetadataFilter` implements
+> **Code walkthrough:** `MetadataFilter` implementsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a single predicate (field, operator, value) with
 > a `matches` method that evaluates against document
 > metadata. `CompoundFilter` composes multiple filters
@@ -1311,7 +1321,7 @@ def debug_filter(
         print("Sample metadata:", unfiltered[0].metadata)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print metadata of first unfiltered result example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *Fix:*
 - Normalize metadata at index time (all lowercase,
@@ -1398,7 +1408,7 @@ Design principles:
     year: 2022|2023|2024 (or ISO date for range)
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print metadata of first unfiltered result example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 (5) Avoid: storing the full text as metadata,
     embedding vectors as metadata, or computed
@@ -1460,7 +1470,7 @@ def relaxing_filtered_retrieve(
     return vector_store.search(query, top_k=10), []
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print metadata of first unfiltered result example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 *What separates good from great:* "Inform the user
 that filters were relaxed" - transparency about
@@ -1490,7 +1500,7 @@ Implementation:
     )
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Print metadata of first unfiltered result example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 (3) Make the tenant filter non-overridable: the
     application layer ALWAYS applies the tenant
@@ -1506,7 +1516,7 @@ Implementation:
     )
     ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This User has "internal" access: can see public + internal example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Security requirement: the `tenant_id` filter must
 be derived from the server-side authenticated user
@@ -1543,7 +1553,7 @@ Options:
         doc.metadata["department"] = dept
         vector_store.update(doc.id, metadata=doc.metadata)
     ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This One-time backfill example demonstrates Python code pattern using SQL. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
     Pros: clean metadata for all documents.
     Cons: LLM inference errors, significant one-
@@ -1586,7 +1596,7 @@ Three temporal strategies:
     ```python
     MetadataFilter("indexed_date", "gte", "2024-01-01")
     ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This One-time backfill example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
     Simple. Misses valid older documents that
     haven't changed (timeless policies, foundational
@@ -1599,7 +1609,7 @@ Three temporal strategies:
     freshness = max(0.5, 1.0 - 0.001 * days_old)
     final_score = similarity * 0.8 + freshness * 0.2
     ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This One-time backfill example demonstrates Python code pattern. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
     Old but highly relevant documents are still
     retrieved but ranked lower than fresh equivalents.
@@ -1699,7 +1709,7 @@ Action:
    }
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This One-time backfill example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. At query time: build mandatory filters from
    authenticated user session:
@@ -1712,7 +1722,7 @@ Action:
        ], logic="OR")
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR client docs for their client example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 3. Mandatory filter applied at the retrieval layer,
    never in the application layer (to prevent
@@ -1778,7 +1788,7 @@ def self_query_filter(
         return {}  # no filter if extraction fails
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This OR client docs for their client example demonstrates function definition using authentication. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Benefit: users don't need to understand the metadata
 schema. They ask natural questions and the system

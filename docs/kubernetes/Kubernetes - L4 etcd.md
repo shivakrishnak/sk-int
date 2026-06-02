@@ -92,7 +92,7 @@ Example keys:
 /registry/deployments/team-a/frontend
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This etcd Architecture and Consistency example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Raft consensus:**
 
@@ -119,7 +119,7 @@ Leader -> Client: success
 Leader -> Followers: commit notification
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This etcd Architecture and Consistency example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Write latency = leader disk write + network round-trip to quorum followers + follower
 disk write. This is why etcd requires low-latency SSDs and same-datacenter deployment.
@@ -150,7 +150,7 @@ for event := range watchChan {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This etcd Architecture and Consistency example demonstrates Go pattern using SQL. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Watch events have a revision number (monotonically increasing). If a watcher
 disconnects, it can re-establish with the last seen revision to receive all missed events.
@@ -169,7 +169,7 @@ Compaction (prevents disk exhaustion):
 ETCDCTL_API=3 etcdctl --endpoints=<> compact $(etcdctl endpoint status --write-out=json | jq -r '.[0].header.revision - 5000')
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5000 example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Defragmentation (reclaims space after compaction):
 ```bash
@@ -178,7 +178,7 @@ Defragmentation (reclaims space after compaction):
 ETCDCTL_API=3 etcdctl --endpoints=<> defrag
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Run during maintenance: causes brief unavailability example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Backup (critical for disaster recovery):
 ```bash
@@ -187,7 +187,7 @@ ETCDCTL_API=3 etcdctl --endpoints=<> snapshot save snapshot.db
 ETCDCTL_API=3 etcdctl snapshot status snapshot.db
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Restore:
 ```bash
@@ -197,7 +197,7 @@ ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \
   --initial-cluster="etcd-1=https://etcd1:2380"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Encryption at rest:**
 Secrets are stored base64-encoded (NOT encrypted) by default. Enable encryption:
@@ -213,7 +213,7 @@ resources:
         secret: <base64-encoded-32-byte-key>
   - identity: {}  # fallback for existing unencrypted
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This /etc/kubernetes/encryption-config.yaml example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Pass `--encryption-provider-config` to kube-apiserver. All new Secrets encrypted;
 rotate existing with `kubectl get secrets -A -o json | kubectl replace -f -`.
@@ -222,7 +222,7 @@ rotate existing with `kubectl get secrets -A -o json | kubectl replace -f -`.
 
 ### 💻 Code Example
 
-> **Code walkthrough:** etcd health check commands, performance monitoring,
+> **Code walkthrough:** etcd health check commands, performance monitoring,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > backup/restore procedure, and leader election verification.
 
 ```bash
@@ -288,6 +288,11 @@ aws s3 cp /backup/etcd-snapshot-*.db s3://my-etcd-backups/
 
 # Automate as CronJob in kube-system:
 # - runs hourly, retains 24 snapshots, alerts on failure
+```
+
+
+```bash
+# BAD: unsafe shell scripting pattern
 ```
 
 ```bash
@@ -569,7 +574,7 @@ watchChan := etcd.Watch(ctx, "/registry/pods/default/",
   clientv3.WithRevision(lastRev)) // start from a specific revision
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Go pattern using goroutine. **KEY MECHANISM:** the Go runtime uses a work-stealing scheduler across GOMAXPROCS OS threads. **WHY IT MATTERS:** data races crash with -race flag; concurrent map access panics without sync.Map or mutex. **TAKEAWAY: run go test -race on all packages; use sync primitives for any shared mutable state.**
 
 Server side: etcd maintains a "watcher hub" that maps key prefixes to active client
 streams. When any key under the watched prefix changes (PUT/DELETE), etcd sends a
@@ -632,7 +637,7 @@ etcdctl endpoint status --write-out=json | \
   jq '.[0].dbSize'
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This alert if > 1.5GB (approaching 2GB quota) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Defrag best practice: run on one member at a time. Defrag causes the member to be
 briefly unavailable (it flushes and rebuilds the database file). Other members maintain
@@ -792,7 +797,7 @@ Step 1: stop kube-apiserver on all control plane nodes.
 mv /etc/kubernetes/manifests/kube-apiserver.yaml /tmp/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Move manifests out of static pod directory to stop API server example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 2: stop etcd on all members.
 ```bash
@@ -800,7 +805,7 @@ systemctl stop etcd
 # or: move etcd manifest: mv /etc/kubernetes/manifests/etcd.yaml /tmp/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or: move etcd manifest: mv /etc/kubernetes/manifests/etcd.yaml /tmp/ example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 3: restore the snapshot on EACH member (different --name and peer URLs per member):
 ```bash
@@ -820,7 +825,7 @@ ETCDCTL_API=3 etcdctl snapshot restore /backup/snapshot.db \
   --initial-advertise-peer-urls=https://etcd2:2380
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This On etcd-2 (same snapshot, different --name and --initial-advertise-peer-urls): example demonstrates shell script pattern using authentication. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 4: start etcd on all members (restore creates a new cluster with the snapshot state).
 ```bash
@@ -828,7 +833,7 @@ systemctl start etcd
 # or: mv /tmp/etcd.yaml /etc/kubernetes/manifests/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or: mv /tmp/etcd.yaml /etc/kubernetes/manifests/ example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 5: verify etcd is healthy.
 `etcdctl endpoint health` - all members should be healthy.
@@ -838,7 +843,7 @@ Step 6: start kube-apiserver.
 mv /tmp/kube-apiserver.yaml /etc/kubernetes/manifests/
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This or: mv /tmp/etcd.yaml /etc/kubernetes/manifests/ example demonstrates shell script pattern using container. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Step 7: verify cluster state.
 `kubectl get nodes` - should show pre-backup state.
@@ -882,7 +887,7 @@ resources:
   - identity: {}  # fallback: read unencrypted existing secrets
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This /etc/kubernetes/encryption-config.yaml example demonstrates YAML configuration pattern using container. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 kube-apiserver flag: `--encryption-provider-config=/etc/kubernetes/encryption-config.yaml`
 
@@ -919,7 +924,7 @@ key=/registry/pods/default/nginx, revision=100, value=<pod v1>
 key=/registry/pods/default/nginx, revision=105, value=<pod v2>  <- current
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This /etc/kubernetes/encryption-config.yaml example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Benefits of MVCC:
 1. Reads don't block writes (no read lock needed): a reader can snapshot at revision 100
@@ -1106,13 +1111,13 @@ Architecture:
                     (single endpoint for kubectl)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 etcd member specification per node:
 - 8 vCPUs, 32GB RAM, dedicated NVMe 500GB
 - etcd data: /var/lib/etcd on NVMe (separate from OS disk)
-- etcd WAL: /var/lib/etcd/wal on NVMe (same disk, but could separate for higher throughput)
-- Network: dedicated 10Gbps for etcd peer traffic (prevents contention with application traffic)
+- etcd WAL: /var/lib/etcd/wal on NVMe (same disk, but could separate for higher 
+- Network: dedicated 10Gbps for etcd peer traffic (prevents contention with appl
 
 Data protection:
 - Automated hourly snapshots via CronJob in kube-system:
@@ -1122,15 +1127,15 @@ Data protection:
 - Encryption at rest: `EncryptionConfiguration` for Secrets resource
 
 Monitoring:
-- Prometheus alerts: WAL fsync P99 > 20ms, backend commit P99 > 50ms, DB size > 1.5GB
+- Prometheus alerts: WAL fsync P99 > 20ms, backend commit P99 > 50ms, DB size > 
 - Leader election events: alert on leader change > 3 times/hour
 - Member health: alert if any member unhealthy for > 2 minutes
 
 Maintenance schedule:
-- Compaction: automated with `--auto-compaction-mode=periodic --auto-compaction-retention=1h`
+- Compaction: automated with `--auto-compaction-mode=periodic --auto-compaction-
 - Defrag: monthly, one member at a time
 - Certificate rotation: annual (or 90-day with automation)
-- Disaster recovery drill: quarterly (restore from snapshot in staging environment)
+- Disaster recovery drill: quarterly (restore from snapshot in staging environme
 
 Scaling for 2000+ nodes:
 - Event storage: move events to separate etcd cluster
@@ -1140,13 +1145,13 @@ Scaling for 2000+ nodes:
 
 RPO: 1 hour (automated hourly snapshots). RTO: 10 minutes (restored snapshot procedure
 is documented, automated where possible). AZ failure: automatic recovery (quorum maintained
-with 2 remaining members). Full cluster failure: restore from snapshot (RTO: 10-30 minutes
+with 2 remaining members). Full cluster failure: restore from snapshot (RTO: 10-
 depending on cluster size).
 
 *What separates good from great:* Quarterly disaster recovery drills are the most
 important operational practice. A documented restore procedure that's never been tested
 is a false safety net. The drill should: use a real snapshot, restore to a staging cluster,
-verify Kubernetes objects are present and controllers reconcile, and time the end-to-end
+verify Kubernetes objects are present and controllers reconcile, and time the en
 process. This catches procedure gaps (expired certificates, wrong flags, missing tools)
 before the real incident.
 

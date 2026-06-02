@@ -1,6 +1,6 @@
 ---
 title: "Observability"
-nav_order: 28
+nav_order: 81
 has_children: true
 ---
 

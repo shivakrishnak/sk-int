@@ -209,7 +209,7 @@ GOVERNANCE:
 +-----------------------------------+
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Observability Platform Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The observability platform is a product, not infrastructure.
@@ -334,7 +334,7 @@ spec:
 # - MTTR for cross-service incidents: 4-8 hours
 ```
 
-> **Code walkthrough:** The BAD pattern shows what happens without
+> **Code walkthrough:** The BAD pattern shows what happens withoutice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > a platform team enforcing standards. Service A uses Datadog APM
 > and Service B uses Zipkin with different service names and no
 > common resource attributes. A trace that spans both services
@@ -347,6 +347,12 @@ spec:
 
 **Example 2: GOOD - Internal OTel SDK wrapper enforcing platform
 standards**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: Internal OTel SDK wrapper that platform team distributes
@@ -468,7 +474,7 @@ public class CompanyObservability {
 }
 ```
 
-> **Code walkthrough:** The internal SDK wrapper has one job:
+> **Code walkthrough:** The internal SDK wrapper has one job:ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > ensure that every service in the organization emits telemetry
 > with the same mandatory resource attributes (service.name, team,
 > version, environment, region) without requiring developers to
@@ -590,7 +596,7 @@ service:
       exporters: [loki]
 ```
 
-> **Code walkthrough:** The Collector configuration shows the
+> **Code walkthrough:** The Collector configuration shows theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > platform's signal routing logic. Traces go to both Tempo
 > (for individual trace inspection in Grafana) and ClickHouse
 > (for high-cardinality aggregate queries) with tail sampling
@@ -821,7 +827,7 @@ spec:
 # (separate from analytics Prometheus that has all metrics)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This (separate from analytics Prometheus that has all metrics) example demonstrates YAML configuration pattern using SQL. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Fix: isolate the alerting pipeline on dedicated nodes with
 guaranteed compute. Run two Prometheus instances: `prometheus-
@@ -881,7 +887,7 @@ ORDER BY span_count DESC
 LIMIT 20
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ClickHouse: trace volume by team (spans per day) example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: build a cost attribution dashboard in Grafana showing each
 team's observability footprint: log volume (GB/day), metric series
@@ -936,7 +942,7 @@ tempo-cli query traces \
 # -> Confirms: payment starts new trace for each request
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This -> Confirms: payment starts new trace for each request example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: migrate payment service to OTel SDK with W3C TraceContext
 propagation. If immediate migration is not possible, configure
@@ -1404,7 +1410,7 @@ attributes:
     added: 2024-03
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 Enforcement: the OTel Collector's transform processor validates
 span attributes against the registry (attribute keys not in the
@@ -1692,7 +1698,7 @@ Observability Platform - Component View
   | isolated from analytics cluster
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Staff angle:**
 The ROI of the platform: $80K/month current spend reduced to

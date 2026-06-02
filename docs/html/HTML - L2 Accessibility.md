@@ -205,7 +205,7 @@ ARIA LIVE REGIONS (dynamic content announcements):
   </div>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ARIA Roles and Attributes example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -261,7 +261,7 @@ definition. ARIA provides that explicit definition layer.
 <!-- Screen reader: "group (2 items)" - no tab context -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **WHAT BREAKS: understand the execution model before using this pattern in production code.**
 
 ```html
 <!-- GOOD: tabs with full ARIA pattern (APG) -->
@@ -297,7 +297,7 @@ definition. ARIA provides that explicit definition layer.
 </div>
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** GOOD pattern: This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```javascript
 // Arrow key navigation (REQUIRED by APG for tablist)
@@ -325,7 +325,7 @@ tabs.forEach((tab, index) => {
 });
 ```
 
-> **Code walkthrough:** The ARIA pattern for a tablist requires
+> **Code walkthrough:** The ARIA pattern for a tablist requiresice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > three interlocking elements: `role="tablist"` container,
 > `role="tab"` buttons with `aria-selected` state and `aria-controls`
 > linking to panels, and `role="tabpanel"` with `aria-labelledby`
@@ -426,31 +426,30 @@ Fix:
   triggerButton.focus();  // return focus to trigger
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| First rule of ARIA | 2 min | Native HTML priority |
-| Role vs property vs state | 2-3 min | Three categories |
-| aria-label vs aria-labelledby | 2-3 min | Naming methods |
-| aria-live regions | 3-4 min | Dynamic announcements |
-| Modal focus management | 4-5 min | Focus trap pattern |
-| Tab interface ARIA pattern | 3-4 min | APG patterns |
-| aria-hidden misuse | 2-3 min | Focusable + hidden |
-| ARIA expanded/controls | 2 min | Disclosure pattern |
-| Landmark roles | 2-3 min | Page navigation |
-| aria-live assertive vs polite | 2 min | Urgency level |
-| combobox pattern | 3 min | Complex widget |
-| Testing ARIA | 2-3 min | Screen reader testing |
+| Scenario| Recommended Time| Key Signal|
+|----------------|------------------------------------|------------------------|
+| First rule of ARIA| 2 min| Native HTML priority|
+| Role vs property vs state| 2-3 min| Three categories|
+| aria-label vs aria-labelledby| 2-3 min| Naming methods|
+| aria-live regions| 3-4 min| Dynamic announcements|
+| Modal focus management| 4-5 min| Focus trap pattern|
+| Tab interface ARIA pattern| 3-4 min| APG patterns|
+| aria-hidden misuse| 2-3 min| Focusable + hidden|
+| ARIA expanded/controls| 2 min| Disclosure pattern|
+| Landmark roles| 2-3 min| Page navigation|
+| aria-live assertive vs polite| 2 min| Urgency level|
+| combobox pattern| 3 min| Complex widget|
+| Testing ARIA| 2-3 min| Screen reader testing|
 
 ---
 
-**Q1: What is the first rule of ARIA?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] What is the first rule of ARIA?** `[JUNIOR]`**
 
 *Why they ask:* Accessibility philosophy test.
 
@@ -498,7 +497,7 @@ DEFINITION
 
 ---
 
-**Q2: What is the difference between `aria-label` and
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between `aria-label` and**
 `aria-labelledby`?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Common ARIA attribute confusion.
@@ -558,7 +557,7 @@ DEFINITION
 
 ---
 
-**Q3: How do ARIA live regions work?** `[SENIOR]` MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] How do ARIA live regions work?** `[SENIOR]` MECHANISM**
 
 *Why they ask:* Dynamic content announcements are frequently needed.
 
@@ -625,7 +624,7 @@ DEFINITION
 
 ---
 
-**Q4: What is the difference between `aria-hidden` and `hidden`
+**[MID] Q4 - [TRADE-OFF] What is the difference between `aria-hidden` and `hidden`**
 attribute?** `[JUNIOR]` COMPARISON
 
 *Why they ask:* Attribute distinction in accessibility context.
@@ -689,8 +688,7 @@ attribute?** `[JUNIOR]` COMPARISON
 
 ---
 
-**Q5: How do landmark roles help screen reader users?** `[JUNIOR]`
-MECHANISM
+**[MID] Q5 - [MECHANISM] How do landmark roles help screen reader users?** `[JUNIOR]`**
 
 *Why they ask:* Foundation accessibility benefit.
 
@@ -745,7 +743,7 @@ MECHANISM
 
 ---
 
-**Q6: What ARIA is required for a disclosure (expand/collapse)
+**[SENIOR] Q6 - [MECHANISM] What ARIA is required for a disclosure (expand/collapse)**
 pattern?** `[SENIOR]` SCENARIO
 
 *Why they ask:* Common interactive pattern with specific ARIA.
@@ -814,7 +812,7 @@ pattern?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q7: What is the roving tabindex pattern?** `[SENIOR]` MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is the roving tabindex pattern?** `[SENIOR]` MECHANISM**
 
 *Why they ask:* Advanced keyboard management for composite widgets.
 
@@ -880,7 +878,7 @@ pattern?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q8: How do you test ARIA implementation?** `[SENIOR]` SCENARIO
+**[SENIOR] Q8 - [MECHANISM] How do you test ARIA implementation?** `[SENIOR]` SCENARIO**
 
 *Why they ask:* Tests whether knowledge is practical.
 
@@ -935,8 +933,7 @@ pattern?** `[SENIOR]` SCENARIO
 
 ---
 
-**Q9: How does the `aria-describedby` attribute work?** `[JUNIOR]`
-MECHANISM
+**[SENIOR] Q9 - [MECHANISM] How does the `aria-describedby` attribute work?** `[JUNIOR]`**
 
 *Why they ask:* Common accessible description pattern.
 
@@ -999,8 +996,7 @@ MECHANISM
 
 ---
 
-**Q10: What is `aria-haspopup` and when do you use it?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q10 - [MECHANISM] What is `aria-haspopup` and when do you use it?** `[SENIOR]`**
 
 *Why they ask:* Nuanced ARIA attribute for popup patterns.
 
@@ -1061,8 +1057,7 @@ MECHANISM
 
 ---
 
-**Q11: What keyboard pattern does a menu require?** `[SENIOR]`
-SCENARIO
+**[STAFF] Q11 - [SCENARIO] What keyboard pattern does a menu require?** `[SENIOR]`**
 
 *Why they ask:* Keyboard pattern knowledge for menus.
 
@@ -1122,8 +1117,7 @@ SCENARIO
 
 ---
 
-**Q12: What is the complete required ARIA for a modal dialog?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q12 - [SCENARIO] What is the complete required ARIA for a modal dialog?**
 
 *Why they ask:* Modal is one of the most common custom widgets.
 
@@ -1210,25 +1204,24 @@ SCENARIO
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | ARIA pattern completeness |
-| Hiring Manager | Accessibility compliance + liability |
-| Bar Raiser | Modal + live regions + testing |
-| Peer Engineer | Practical disclosure + first rule |
+| Interviewer Type| Emphasis|
+|-----------------------------|------------------------------------|
+| Technical Panel| ARIA pattern completeness|
+| Hiring Manager| Accessibility compliance + liability|
+| Bar Raiser| Modal + live regions + testing|
+| Peer Engineer| Practical disclosure + first rule|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| | Native HTML | ARIA Supplement |
-|---|---|---|
-| Keyboard behavior | Built-in | Manual JS required |
-| Browser support | Universal | Varies by AT |
-| Maintenance | Zero ARIA | ARIA must match JS state |
-| Custom UI | Limited | Full control |
-| Screen reader support | Optimized | Implementation-dependent |
-| Recommended | Yes (always try first) | Only when necessary |
+|| Native HTML| ARIA Supplement|
+| Keyboard behavior| Built-in| Manual JS required|
+| Browser support| Universal| Varies by AT|
+| Maintenance| Zero ARIA| ARIA must match JS state|
+| Custom UI| Limited| Full control|
+| Screen reader support| Optimized| Implementation-dependent|
+| Recommended| Yes (always try first)| Only when necessary|
 
 ---
 
@@ -1289,21 +1282,21 @@ flowchart TD
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # Keyboard Accessibility and Focus Management
@@ -1482,7 +1475,7 @@ INERT ATTRIBUTE (modern approach to background):
   <!-- No manual focus trap needed with inert! -->
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Keyboard Accessibility and Focus Management exampleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1562,7 +1555,7 @@ linear sequence is active at any moment.
 }
 ```
 
-> **Code walkthrough:** The `:focus-visible` pseudo-class shows
+> **Code walkthrough:** The `:focus-visible` pseudo-class showsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > focus indicators ONLY when the browser determines the element
 > was focused by keyboard (not mouse click). This solves the
 > UX tension between designers (who dislike visible focus rings
@@ -1631,7 +1624,7 @@ class AccessibleModal {
 }
 ```
 
-> **Code walkthrough:** This modal implementation stores the
+> **Code walkthrough:** This modal implementation stores theice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > previously focused element before opening, moves focus to the
 > first focusable element in the modal on open, traps focus
 > within the modal during Tab/Shift+Tab navigation, handles
@@ -1710,28 +1703,27 @@ Tools: Browser: Tab until stuck
   axe DevTools: catches some focus management issues
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| What is keyboard accessibility? | 1-2 min | Tab+Enter basics |
-| focus-visible pattern | 2-3 min | Keyboard vs mouse focus |
-| Modal focus management | 4-5 min | All three steps |
-| inert attribute | 2-3 min | Modern focus trap |
-| Skip navigation purpose | 2 min | Bypass block |
-| SPA route change focus | 3 min | Dynamic page titles |
-| roving tabindex | 3 min | Composite widgets |
-| Which elements are focusable | 2 min | tabindex knowledge |
-| focus trap implementation | 3-4 min | Code the pattern |
+| Scenario| Recommended Time| Key Signal|
+|-------------------|----------------------------------|-----------------------|
+| What is keyboard accessibility?| 1-2 min| Tab+Enter basics|
+| focus-visible pattern| 2-3 min| Keyboard vs mouse focus|
+| Modal focus management| 4-5 min| All three steps|
+| inert attribute| 2-3 min| Modern focus trap|
+| Skip navigation purpose| 2 min| Bypass block|
+| SPA route change focus| 3 min| Dynamic page titles|
+| roving tabindex| 3 min| Composite widgets|
+| Which elements are focusable| 2 min| tabindex knowledge|
+| focus trap implementation| 3-4 min| Code the pattern|
 
 ---
 
-**Q1: Which HTML elements are natively focusable?** `[JUNIOR]`
-DEFINITION
+**[JUNIOR] Q1 - [MECHANISM] Which HTML elements are natively focusable?** `[JUNIOR]`**
 
 *Why they ask:* Foundation of keyboard accessibility knowledge.
 
@@ -1777,8 +1769,7 @@ DEFINITION
 
 ---
 
-**Q2: How should focus be managed when a modal opens and closes?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q2 - [SCENARIO] How should focus be managed when a modal opens and closes?**
 
 *Why they ask:* Most common focus management pattern in interviews.
 
@@ -1834,8 +1825,7 @@ DEFINITION
 
 ---
 
-**Q3: What is `:focus-visible` and why was it added?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] What is `:focus-visible` and why was it added?** `[JUNIOR]`**
 
 *Why they ask:* Modern CSS keyboard accessibility pattern.
 
@@ -1891,7 +1881,7 @@ MECHANISM
 
 ---
 
-**Q4: What is the `inert` attribute and how does it help
+**[MID] Q4 - [MECHANISM] What is the `inert` attribute and how does it help**
 with modals?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Modern accessibility attribute.
@@ -1955,8 +1945,7 @@ with modals?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q5: How should focus be handled when an SPA navigates?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q5 - [SCENARIO] How should focus be handled when an SPA navigates?**
 
 *Why they ask:* SPA-specific keyboard accessibility challenge.
 
@@ -2024,8 +2013,7 @@ with modals?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q6: What CSS properties affect keyboard focus?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q6 - [MECHANISM] What CSS properties affect keyboard focus?** `[SENIOR]`**
 
 *Why they ask:* CSS knowledge that overlaps with accessibility.
 
@@ -2052,12 +2040,12 @@ MECHANISM
 >
 > Summary:
 >
-> | CSS | Layout | Accessibility | Keyboard |
-> |---|---|---|---|
-> | `display:none` | Removed | Removed | Not focusable |
-> | `visibility:hidden` | Space kept | Removed | Not focusable |
-> | `opacity:0` | In layout | Present | Focusable! |
-> | `pointer-events:none` | In layout | Present | Focusable |
+ >| CSS| Layout| Accessibility| Keyboard|
+ >| ---| ---| ---| ---|
+ >| `display:none`| Removed| Removed| Not focusable|
+ >| `visibility:hidden`| Space kept| Removed| Not focusable|
+ >| `opacity:0`| In layout| Present| Focusable!|
+ >| `pointer-events:none`| In layout| Present| Focusable|
 >
 > The `opacity:0` danger is real:
 > ```html
@@ -2079,8 +2067,7 @@ MECHANISM
 
 ---
 
-**Q7: What is a skip link and why is it required?** `[JUNIOR]`
-MECHANISM
+**[SENIOR] Q7 - [MECHANISM] What is a skip link and why is it required?** `[JUNIOR]`**
 
 *Why they ask:* WCAG bypass blocks requirement.
 
@@ -2144,8 +2131,7 @@ MECHANISM
 
 ---
 
-**Q8: What is a focus sentinel and when do you need it?** `[SENIOR]`
-MECHANISM
+**[SENIOR] Q8 - [MECHANISM] What is a focus sentinel and when do you need it?** `[SENIOR]`**
 
 *Why they ask:* Advanced focus trap pattern.
 
@@ -2213,8 +2199,7 @@ MECHANISM
 
 ---
 
-**Q9: How do you handle focus for toast/notification messages?**
-`[SENIOR]` SCENARIO
+**[SENIOR] Q9 - [SCENARIO] How do you handle focus for toast/notification messages?**
 
 *Why they ask:* Dynamic content accessibility pattern.
 
@@ -2285,25 +2270,25 @@ MECHANISM
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | Focus management + inert attribute |
-| Hiring Manager | WCAG compliance awareness |
-| Bar Raiser | SPA navigation + roving tabindex |
-| Peer Engineer | focus-visible + modal pattern |
+| Interviewer Type| Emphasis|
+|-------------------------------|----------------------------------|
+| Technical Panel| Focus management + inert attribute|
+| Hiring Manager| WCAG compliance awareness|
+| Bar Raiser| SPA navigation + roving tabindex|
+| Peer Engineer| focus-visible + modal pattern|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Approach | Keyboard Focus | AT Visibility | Use For |
-|---|---|---|---|
-| `display:none` | Not reachable | Not visible | Truly hidden content |
-| `visibility:hidden` | Not reachable | Not visible | Hidden with space |
-| `opacity:0` | Still reachable | Still visible | Animations only |
-| `aria-hidden="true"` | Still reachable | Not visible | Decorative elements |
-| `inert` attribute | Not reachable | Not visible | Modal backgrounds |
-| `tabindex="-1"` | Only via JS | Visible to AT | Programmatic targets |
+| Approach| Keyboard Focus| AT Visibility| Use For|
+|---|-----------------------------|-----------------------|--------------------|
+| `display:none`| Not reachable| Not visible| Truly hidden content|
+| `visibility:hidden`| Not reachable| Not visible| Hidden with space|
+| `opacity:0`| Still reachable| Still visible| Animations only|
+| `aria-hidden="true"`| Still reachable| Not visible| Decorative elements|
+| `inert` attribute| Not reachable| Not visible| Modal backgrounds|
+| `tabindex="-1"`| Only via JS| Visible to AT| Programmatic targets|
 
 ---
 

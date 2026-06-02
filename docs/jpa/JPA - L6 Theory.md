@@ -65,7 +65,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **JPA spec boundaries and Hibernate extensions:**
-```
+```plaintext
 JPA SPEC (JAKARTA PERSISTENCE 3.1):
 
   Standard annotations (portable across implementations):
@@ -133,13 +133,13 @@ JPA SPEC VERSIONS AND FEATURES:
   JPA 2.1 (2013): StoredProcedureQuery, entity graphs, on-update triggers.
   JPA 2.2 (2017): Java 8 date/time types (@Convert to LocalDate, etc.), Stream result.
   
-  Jakarta Persistence 3.0 (2020): javax -> jakarta namespace (same features as JPA 2.2).
+  Jakarta Persistence 3.0 (2020): javax -> jakarta namespace (same features as...
   Jakarta Persistence 3.1 (2022): UUID as standard @Id type, EXTRACT() in JPQL,
     Math functions in JPQL, improved casting.
   
   Application perspective:
     Spring Boot 2.x -> JPA 2.x (javax namespace)
-    Spring Boot 3.x -> Jakarta Persistence 3.x (jakarta namespace, minimum Java 17)
+    Spring Boot 3.x -> Jakarta Persistence 3.x (jakarta namespace, minimum...
 
 WHEN PORTABILITY MATTERS (RARE):
 
@@ -159,7 +159,7 @@ WHEN PORTABILITY MATTERS (RARE):
   but not a real portability guarantee in performance-sensitive applications.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L6 Theory example demonstrates Java Stream pipeline using SQL. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 ---
 
@@ -373,7 +373,7 @@ Prevention:
   Do not assume portability. Test with the target provider before committing.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -529,11 +529,11 @@ Hibernate 6: expanded built-in support for PostgreSQL types, reducing the need f
   
   Trap: setting only the inverse side:
     customer.getOrders().add(order);  // sets inverse side
-    // Does NOT set the FK column: orderRepo.save(order) -> order.customer_id = NULL
+    // Does NOT set the FK column: orderRepo.save(order) -> order.customer_id...
     
     Fix: always set the owner side too:
     order.setCustomer(customer);      // owner side -> sets FK
-    customer.getOrders().add(order);  // inverse side -> for in-memory consistency
+    customer.getOrders().add(order);  // inverse side -> for in-memory...
 
 3. TYPE MISMATCH:
 
@@ -559,7 +559,7 @@ Hibernate 6: expanded built-in support for PostgreSQL types, reducing the need f
     customer: id, name, street, city, country_code (flat)
   
   JPA: @Embeddable bridges:
-    @Embedded Address address -> columns: street, city, country_code (in customer table)
+    @Embedded Address address -> columns: street, city, country_code (in...
   
   Mismatch: Java wants "address.city". SQL has "customers.city".
   JPA makes this work transparently.
@@ -592,7 +592,7 @@ Hibernate 6: expanded built-in support for PostgreSQL types, reducing the need f
     Cannot use SEQUENCE generator (each table has own range).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -654,10 +654,10 @@ public class OrderItem {
 }
 ```
 
-> **Code walkthrough:** The correct solution encapsulates the bidirectional sync inside the `Order`
-> aggregate root methods (`addItem`, `removeItem`). The `OrderItem` constructor always sets the
-> owner side (`this.order = order`). The `Order.addItem` method always adds to the inverse side
-> (`items.add(item)`). Both sides stay in sync. External code cannot call `order.getItems().add(item)`
+> **Code walkthrough:** The correct solution encapsulates the bidirectional syncice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> aggregate root methods (`addItem`, `removeItem`). The `OrderItem` constructor 
+> owner side (`this.order = order`). The `Order.addItem` method always adds to t
+> (`items.add(item)`). Both sides stay in sync. External code cannot call `order
 > directly (the collection is not exposed with a setter), enforcing correct use.
 
 ---
@@ -665,21 +665,21 @@ public class OrderItem {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> ORM impedance mismatch: objects and relational data are different. Key mismatches: identity
-> (object ref vs PK), associations (bidirectional Java vs FK one-direction), types (Java richness
-> vs SQL types), inheritance (class hierarchy vs flat tables). JPA features map to each mismatch:
-> `@Embedded` for granularity, `@Enumerated` for types, inheritance strategies for hierarchies.
+> ORM impedance mismatch: objects and relational data are different. Key mismatc
+> (object ref vs PK), associations (bidirectional Java vs FK one-direction), typ
+> vs SQL types), inheritance (class hierarchy vs flat tables). JPA features map 
+> `@Embedded` for granularity, `@Enumerated` for types, inheritance strategies f
 
 ---
 
 **Senior / Staff (5+ years):**
-> The identity mismatch is the most insidious for `equals`/`hashCode`. Rule for entities: use
-> a natural business key for `equals` whenever possible (immutable, unique, available before
-> persist). If no business key exists: use UUID assigned in the constructor (before persist) as
-> the stable identity. Using DB-generated Long ID for `equals`: entities in a `Set` before persist
-> all have null ID, so they're all "equal". Hibernate's identity guarantee within a session: valuable
-> for avoiding duplicate loads, but breaks when entities are serialized (e.g., placed in HTTP session)
-> and then deserialized - they become detached new objects with no L1 cache identity.
+> The identity mismatch is the most insidious for `equals`/`hashCode`. Rule for 
+> a natural business key for `equals` whenever possible (immutable, unique, avai
+> persist). If no business key exists: use UUID assigned in the constructor (bef
+> the stable identity. Using DB-generated Long ID for `equals`: entities in a `S
+> all have null ID, so they're all "equal". Hibernate's identity guarantee withi
+> for avoiding duplicate loads, but breaks when entities are serialized (e.g., p
+> and then deserialized - they become detached new objects with no L1 cache iden
 
 ---
 
@@ -687,7 +687,7 @@ public class OrderItem {
 
 **Misconception: "ORM eliminates the need to understand SQL."**
 ORM (JPA/Hibernate) reduces the amount of SQL you write. It does NOT eliminate the need to understand
-SQL. Every JPA operation maps to SQL. N+1, cartesian products, missing indexes, lock contention: all
+SQL. Every JPA operation maps to SQL. N+1, cartesian products, missing indexes, 
 are SQL problems that manifest in JPA applications. Understanding `EXPLAIN ANALYZE`, join semantics,
 index usage, and transaction isolation: required for any JPA developer above junior level. The ORM
 hides SQL from casual reading but the SQL must still be correct and efficient. "ORM generates the
@@ -699,20 +699,20 @@ invisible until something breaks.
 
 ### ⚖️ Comparison Table
 
-| Mismatch | Object Model | Relational Model | JPA Bridge |
-|---|---|---|---|
-| Identity | Object reference | Primary key | L1 cache identity guarantee |
-| Association | Bidirectional references | FK (one direction) | `mappedBy`, owner/inverse sides |
-| Data types | Rich Java types | SQL primitives | `@Convert`, `@Type`, `@Enumerated` |
-| Granularity | Nested object hierarchy | Flat row | `@Embeddable`, `@Embedded` |
-| Inheritance | Class hierarchy | No native inheritance | `SINGLE_TABLE`, `JOINED`, `TABLE_PER_CLASS` |
-| Collections | Ordered lists, sets | Unordered sets of tuples | `@OrderColumn`, `@OrderBy` |
+| Mismatch| Object Model| Relational Model| JPA Bridge|
+|---|-----|------------------------|-------------------------------------------|
+| Identity| Object reference| Primary key| L1 cache identity guarantee|
+| Association| Bidirectional references| FK (one direction)| `mappedBy`, owner/i
+| Data types| Rich Java types| SQL primitives| `@Convert`, `@Type`, `@Enumerated
+| Granularity| Nested object hierarchy| Flat row| `@Embeddable`, `@Embedded`|
+| Inheritance| Class hierarchy| No native inheritance| `SINGLE_TABLE`, `JOINED`,
+| Collections| Ordered lists, sets| Unordered sets of tuples| `@OrderColumn`, `@
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: L6 Theory keyword - fundamental theory analysis. No system design applicable.)*
+*(Omit: L6 Theory keyword - fundamental theory analysis. No system design applic
 
 ---
 
@@ -827,7 +827,7 @@ Fix:
   // Stable: same productId = same logical item regardless of proxy/reference.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 

@@ -120,7 +120,7 @@ Virtual thread model:
               continue execution (continuation passing)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual Threads and Project Loom example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Memory model:**
 Virtual thread stacks start at 0 bytes (not pre-allocated). They grow
@@ -153,15 +153,15 @@ try {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual Threads and Project Loom example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 **JFR monitoring for pinning:**
-```
+```plaintext
 -Djdk.tracePinnedThreads=full
 or JFR event: jdk.VirtualThreadPinned
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual Threads and Project Loom example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use virtual threads:**
 - Thread-per-request I/O servers (HTTP, gRPC, database)
@@ -244,7 +244,7 @@ List<String> results = IntStream.range(0, 100)
 // Look for: synchronized blocks in hot I/O paths
 ```
 
-> **Code walkthrough:** Pattern 1 shows the `Thread.ofVirtual()` builder API
+> **Code walkthrough:** Pattern 1 shows the `Thread.ofVirtual()` builder APIice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > - virtual threads are created via the same Thread API, just with a builder.
 > Pattern 2 is the most common migration pattern: replace
 > `Executors.newFixedThreadPool(n)` with `newVirtualThreadPerTaskExecutor()`.
@@ -341,7 +341,7 @@ public synchronized Connection getConnection() {
 // }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates mutex locking using concurrency primitive. **KEY MECHANISM:** the JVM acquires the intrinsic lock on the object monitor before entering the block. **WHY IT MATTERS:** a thread holding the lock blocks all other threads - a bottleneck at scale. **TAKEAWAY: prefer ReentrantLock or ConcurrentHashMap over synchronized for hot paths.**
 
 Mitigation:
 1. Replace `synchronized` with `ReentrantLock` in I/O-adjacent code
@@ -359,7 +359,7 @@ Mitigation:
 
 ---
 
-#### Q1 - How do virtual threads differ from platform threads internally?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do virtual threads differ from platform threads internally?**
 
 **Platform threads:**
 - Wrapper around an OS thread: 1:1 mapping
@@ -375,7 +375,7 @@ Mitigation:
   the JVM part; I/O completion is still OS-managed)
 
 Internal mechanism:
-```
+```plaintext
 Virtual thread state machine:
   NEW -> STARTED -> RUNNING -> PARKING -> PARKED -> RUNNING
   RUNNING: mounted on carrier, executing
@@ -384,7 +384,7 @@ Virtual thread state machine:
   RUNNING again: carrier picks up continuation when I/O completes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The continuation: when a virtual thread
 parks, its execution state (stack, program counter, local variables) is
@@ -396,7 +396,7 @@ and the JVM converts it to continuations automatically.
 
 ---
 
-#### Q2 - What is a carrier thread and what limits their count?
+**[JUNIOR] Q2 - [CONCEPTUAL] What is a carrier thread and what limits their count?**
 
 Carrier threads are the OS-backed platform threads that execute virtual
 threads. They form a ForkJoinPool with a fixed size.
@@ -414,7 +414,7 @@ Override: `-Djdk.virtualThreadScheduler.parallelism=N` or
   Virtual Thread 5: READY - queued for Carrier 1 or 2
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Carrier thread limits determine CPU-bound concurrency: 2 carrier threads
 = 2 CPU-bound tasks running simultaneously. For I/O-bound tasks: thousands
@@ -428,7 +428,7 @@ pure CPU work; slightly higher may help mixed workloads.
 
 ---
 
-#### Q3 - How does virtual thread scheduling work?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does virtual thread scheduling work?**
 
 Virtual threads use a work-stealing ForkJoinPool as their scheduler.
 The pool size equals carrier thread count.
@@ -456,7 +456,7 @@ for (long i = 0; i < Long.MAX_VALUE; i++) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The ForkJoinPool used for virtual thread
 scheduling is separate from `ForkJoinPool.commonPool()`. Never submit
@@ -466,7 +466,7 @@ virtual thread scheduler.
 
 ---
 
-#### Q4 - How do you migrate a Spring Boot application to virtual threads?
+**[MID] Q4 - [CONCEPTUAL] How do you migrate a Spring Boot application to virtual threads?**
 
 Spring Boot 3.2+ migration:
 
@@ -481,7 +481,7 @@ spring:
 # Configures: Spring MVC request handling to use virtual threads
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Configures: Spring MVC request handling to use virtual threads example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 For lower Spring Boot versions:
 ```java
@@ -502,7 +502,7 @@ public class VirtualThreadConfig {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Configures: Spring MVC request handling to use virtual threads example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 JDBC considerations:
 - HikariCP 5.1+: set `connection-timeout` conservatively (virtual threads
@@ -520,7 +520,7 @@ value (e.g., 10 seconds) and monitor connection pool wait time.
 
 ---
 
-#### Q5 - What is thread-local contamination with virtual threads?
+**[SENIOR] Q5 - [MECHANISM] What is thread-local contamination with virtual threads?**
 
 `ThreadLocal` is designed for long-lived platform threads where one
 context is set and used throughout the thread's lifetime. With virtual
@@ -554,7 +554,7 @@ ScopedValue.where(REQUEST_ID, req.id())
 // Automatically cleaned up; no explicit remove needed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Configures: Spring MVC request handling to use virtual threads example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `ScopedValue` (Java 21 preview, targeting
 GA in Java 23+) is the structured replacement for ThreadLocal in virtual
@@ -564,7 +564,7 @@ available, prefer ScopedValue over ThreadLocal for per-request context.
 
 ---
 
-#### Q6 - How do virtual threads interact with reactive frameworks?
+**[SENIOR] Q6 - [MECHANISM] How do virtual threads interact with reactive frameworks?**
 
 Three interaction models:
 
@@ -585,7 +585,7 @@ User getUser(@PathVariable String id) {
 // Tomcat with virtual thread executor handles the rest
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Configures: Spring MVC request handling to use virtual threads example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Model 2: Use virtual threads as Reactor Scheduler**
 ```java
@@ -599,7 +599,7 @@ Mono.fromCallable(() -> jdbcCall())
     .map(r -> transform(r));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Configures: Spring MVC request handling to use virtual threads example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 **Model 3: Keep reactive for backpressure use cases**
 Virtual threads don't provide backpressure. For streaming, fan-out with
@@ -614,7 +614,7 @@ The decision is per use case, not per framework.
 
 ---
 
-#### Q7 - What are the limitations of virtual threads?
+**[SENIOR] Q7 - [MECHANISM] What are the limitations of virtual threads?**
 
 1. **CPU-bound work**: virtual threads don't accelerate CPU-intensive
    computation. The carrier thread count limits CPU parallelism.
@@ -648,7 +648,7 @@ events. This gives precise visibility into virtual thread lifecycle.
 
 ---
 
-#### Q8 - How does structured concurrency relate to virtual threads?
+**[STAFF] Q8 - [MECHANISM] How does structured concurrency relate to virtual threads?**
 
 Structured Concurrency (Java 21 preview, `java.util.concurrent.StructuredTaskScope`)
 pairs with virtual threads to provide lifecycle-managed concurrent tasks:
@@ -673,7 +673,7 @@ String fetchData(String userId) throws Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Configures: Spring MVC request handling to use virtual threads example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Benefits over raw virtual threads + CompletableFuture:
 - Automatic cancellation: if one subtask fails, scope cancels others
@@ -691,26 +691,26 @@ try (var scope = new StructuredTaskScope.ShutdownOnSuccess<String>()) {
 }
 // Cancels the other task when one succeeds
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 This is the "redundant request" pattern for latency reduction: send to
 two services, use the first response, cancel the other.
 
 ---
 
-#### Q9 - How do you benchmark and verify virtual thread benefit?
+**[STAFF] Q9 - [MECHANISM] How do you benchmark and verify virtual thread benefit?**
 
 Three verification approaches:
 
 1. **Thread count under load (JConsole/JMX):**
-```
+```plaintext
 # Platform threads: threads = concurrent requests (high)
 # Virtual threads: platform threads ≈ CPU count (low)
 # Check with:
 jcmd <pid> Thread.print | grep "platform\|carrier" | wc -l
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check with: example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 2. **Throughput test with k6/wrk:**
 ```
@@ -723,7 +723,7 @@ $ wrk -t4 -c1000 -d30s http://localhost:8080/blocking
 Requests/sec: 8,500 (no thread pool exhaustion)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual thread server (same hardware): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 3. **JFR profiling:**
 ```java
@@ -732,7 +732,7 @@ Requests/sec: 8,500 (no thread pool exhaustion)
 // Analyze with: jfr print --events VirtualThreadPinned vt.jfr
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual thread server (same hardware): example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Microbenchmark (JMH comparison):
 ```java
@@ -751,7 +751,7 @@ public void virtualThreadFanOut() throws Exception {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Virtual thread server (same hardware): example demoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Microbenchmarks often don't capture
 production benefits because they don't include real I/O wait times. The
@@ -765,15 +765,15 @@ pool sizes that match production configuration.
 
 **Virtual threads vs alternatives:**
 
-| Aspect | Platform Thread Pool | Virtual Threads | Reactive (Reactor) |
-|---|---|---|---|
-| Blocking I/O | One thread per | Carrier free during I/O | Non-blocking (NIO) |
-| Code style | Blocking (simple) | Blocking (simple) | Reactive (complex) |
-| Throughput at scale | Limited by pool | Near-unlimited | Very high |
-| Backpressure | None | None | Native |
-| Debugging | Easy | Easy (mostly) | Complex (stack traces) |
-| Library compat | Universal | Needs ReentrantLock | Reactive APIs only |
-| CPU-bound work | Full parallel | Same as platform | Same |
+| Aspect| Platform Thread Pool| Virtual Threads| Reactive (Reactor)|
+|----------|--------------------|-----------------------|----------------------|
+| Blocking I/O| One thread per| Carrier free during I/O| Non-blocking (NIO)|
+| Code style| Blocking (simple)| Blocking (simple)| Reactive (complex)|
+| Throughput at scale| Limited by pool| Near-unlimited| Very high|
+| Backpressure| None| None| Native|
+| Debugging| Easy| Easy (mostly)| Complex (stack traces)|
+| Library compat| Universal| Needs ReentrantLock| Reactive APIs only|
+| CPU-bound work| Full parallel| Same as platform| Same|
 
 ---
 
@@ -954,7 +954,7 @@ ShutdownOnSuccess<T> policy:
   - Racing/hedging pattern
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structured Concurrency example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Comparison with CompletableFuture.allOf:**
 
@@ -972,7 +972,7 @@ StructuredTaskScope.ShutdownOnFailure:
   - Subtask result: subtask.get() or subtask.resultNow()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structured Concurrency example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use each Scope policy:**
 
@@ -992,7 +992,7 @@ Custom scope (extend StructuredTaskScope):
   Example: quorum-based reads from replicas
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Structured Concurrency example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **First-principles derivation:**
 Structured programming replaced goto with structured control flow
@@ -1083,7 +1083,7 @@ Response buildWithTimeout(String userId) throws Exception {
 }
 ```
 
-> **Code walkthrough:** Pattern 1 is the canonical fan-out use case: three
+> **Code walkthrough:** Pattern 1 is the canonical fan-out use case: threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > service calls in parallel, all required. `scope.join().throwIfFailed()` is
 > the completion idiom - `join` waits for all tasks per the policy, and
 > `throwIfFailed` propagates the first exception (unwrapped from
@@ -1145,7 +1145,7 @@ class QuorumScope<T> extends StructuredTaskScope<T> {
 }
 // Shuts down when quorum results collected; remaining tasks cancelled
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using generic type. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 This enables quorum reads from distributed replicas with automatic
 cancellation when enough results arrive.
@@ -1212,7 +1212,7 @@ scope.fork(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 For long-running tasks that cannot be interrupted: use timeouts and
 check `scope.isShutdown()` periodically as an alternative exit condition.
@@ -1225,7 +1225,7 @@ check `scope.isShutdown()` periodically as an alternative exit condition.
 
 ---
 
-#### Q1 - What is the "structured" in Structured Concurrency?
+**[JUNIOR] Q1 - [ARCHITECTURE] What is the "structured" in Structured Concurrency?**
 
 "Structured" comes from "structured programming": the principle that
 control flow should be organized hierarchically, with clear entry and
@@ -1255,7 +1255,7 @@ try (var scope = ...) {
 // no tasks running here - guaranteed
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The "nursery" metaphor (from Trio Python):
 a scope is a nursery where tasks are born and must complete before leaving.
@@ -1265,7 +1265,7 @@ in structured concurrency theory.
 
 ---
 
-#### Q2 - How does ShutdownOnFailure differ from ShutdownOnSuccess?
+**[JUNIOR] Q2 - [PRODUCTION] How does ShutdownOnFailure differ from ShutdownOnSuccess?**
 
 **ShutdownOnFailure:**
 - Policy: cancel and shut down scope when any task FAILS
@@ -1302,7 +1302,7 @@ try (var s =
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* `ShutdownOnSuccess` with fallback for
 all failures:
@@ -1318,14 +1318,14 @@ try {
     return defaultValue();
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 `s.result()` throws `ExecutionException` if all subtasks failed. The outer
 catch provides a final fallback.
 
 ---
 
-#### Q3 - How do you handle partial results (not all-or-nothing)?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you handle partial results (not all-or-nothing)?**
 
 Custom scope by extending `StructuredTaskScope`:
 
@@ -1367,7 +1367,7 @@ try (var scope = new AtLeastN<Data>(3)) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using generic type. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The `handleComplete` method is called from
 subtask threads - it must be thread-safe. `CopyOnWriteArrayList` ensures
@@ -1377,7 +1377,7 @@ arbitrary completion strategies beyond the two built-in ones.
 
 ---
 
-#### Q4 - How does task cancellation work in StructuredTaskScope?
+**[MID] Q4 - [ARCHITECTURE] How does task cancellation work in StructuredTaskScope?**
 
 Cancellation flow:
 1. `scope.shutdown()` is called (either by policy or by user)
@@ -1406,7 +1406,7 @@ scope.fork(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* The difference between `Thread.interrupted()`
 (clears the flag) and `Thread.currentThread().isInterrupted()` (does not
@@ -1416,7 +1416,7 @@ interrupted state.
 
 ---
 
-#### Q5 - How do you combine Structured Concurrency with virtual threads?
+**[MID] Q5 - [ARCHITECTURE] How do you combine Structured Concurrency with virtual threads?**
 
 `StructuredTaskScope.fork()` always creates a virtual thread for the subtask
 (as of Java 21 preview). The two features are complementary:
@@ -1441,7 +1441,7 @@ try (var scope =
 // Simple blocking code with virtual thread scalability
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Performance characteristics:
 - 3 JDBC calls in parallel: scope overhead is minimal (~microseconds)
@@ -1459,7 +1459,7 @@ This gives: virtual thread per HTTP request + structured fan-out per handler
 
 ---
 
-#### Q6 - How does error handling compare to CompletableFuture?
+**[MID] Q6 - [TRADE-OFF] How does error handling compare to CompletableFuture?**
 
 **CompletableFuture error handling:**
 ```java
@@ -1474,7 +1474,7 @@ CompletableFuture.allOf(f1, f2, f3)
 // f2 and f3 still running after f1 failed!
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 **StructuredTaskScope error handling:**
 ```java
@@ -1497,7 +1497,7 @@ try (var scope =
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Exception type preservation is the key advantage: `throwIfFailed()` throws
 the ORIGINAL exception type (via `Throwable#addSuppressed` or direct
@@ -1515,13 +1515,13 @@ try {
     }
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 This gives visibility into ALL failures, not just the first.
 
 ---
 
-#### Q7 - How do you add a timeout to a structured concurrency scope?
+**[SENIOR] Q7 - [ARCHITECTURE] How do you add a timeout to a structured concurrency scope?**
 
 `joinUntil(Instant deadline)` adds a deadline to the scope:
 
@@ -1547,7 +1547,7 @@ try (var scope =
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 On timeout: `joinUntil` returns, tasks that haven't completed are
 still running. They are NOT automatically cancelled unless the scope
@@ -1565,7 +1565,7 @@ Handle each state explicitly rather than assuming all completed.
 
 ---
 
-#### Q8 - How does Structured Concurrency compare to reactive Reactor?
+**[SENIOR] Q8 - [TRADE-OFF] How does Structured Concurrency compare to reactive Reactor?**
 
 | Aspect | StructuredTaskScope | Reactor (Flux/Mono.zip) |
 |---|---|---|
@@ -1601,11 +1601,11 @@ Mono<Response> pipeline = Mono.fromCallable(() -> {
 // Structured lookup inside a reactive pipeline
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 ---
 
-#### Q9 - What are the observability benefits of Structured Concurrency?
+**[SENIOR] Q9 - [ARCHITECTURE] What are the observability benefits of Structured Concurrency?**
 
 1. **JFR task hierarchy:**
    JFR captures the parent-child relationship between scopes and subtasks.
@@ -1623,7 +1623,7 @@ Mono<Response> pipeline = Mono.fromCallable(() -> {
    // Custom ThreadFactory support in future versions
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **Shutdown visibility:**
    `scope.isShutdown()` is true when the scope has been shut down.
@@ -1640,7 +1640,7 @@ Mono<Response> pipeline = Mono.fromCallable(() -> {
        metrics.record(t.state().name(), timer));
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Distributed tracing with Structured
 Concurrency: trace context (traceId, spanId) must be propagated into
@@ -1656,7 +1656,7 @@ scope.fork(() -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling usiice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1664,12 +1664,12 @@ scope.fork(() -> {
 
 **Structured Concurrency scope policies:**
 
-| Policy | Shuts down on | Returns | Use case |
-|---|---|---|---|
-| `ShutdownOnFailure` | First failure | Void (check throwIfFailed) | All-or-nothing fan-out |
-| `ShutdownOnSuccess<T>` | First success | T (first result) | Hedging, racing |
-| Custom scope | Custom condition | Custom | Quorum, partial results |
-| No shutdown policy | Manual only | Void | Fully custom control |
+| Policy| Shuts down on| Returns| Use case|
+|----------|----------------|--------------------------|-----------------------|
+| `ShutdownOnFailure`| First failure| Void (check throwIfFailed)| All-or-nothing
+| `ShutdownOnSuccess<T>`| First success| T (first result)| Hedging, racing|
+| Custom scope| Custom condition| Custom| Quorum, partial results|
+| No shutdown policy| Manual only| Void| Fully custom control|
 
 ---
 

@@ -69,7 +69,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **JVM memory layout and sizing:**
-```
+```plaintext
 JVM MEMORY AREAS (simplified):
 
   [ Heap (GC-managed) ]
@@ -119,7 +119,7 @@ GENERATIONAL HEAP IN DETAIL (G1 GC):
   Fix: reuse large objects, use ByteBuffer.allocateDirect() for large IO buffers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 JVM Basics example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -129,6 +129,12 @@ GENERATIONAL HEAP IN DETAIL (G1 GC):
 > in a running JVM. The flag configuration example shows the correct JVM sizing for a
 > container deployment - setting Metaspace and Code Cache limits to avoid unexpected
 > container OOMKill.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // DIAGNOSTIC COMMANDS FOR EACH MEMORY AREA:
@@ -243,7 +249,7 @@ Fix:
   5. Use -XX:MaxRAMPercentage=70 to keep heap below 70% of container RAM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -416,7 +422,7 @@ GC OVERHEAD METRIC:
   Parse: GCEasy.io for GC log analysis
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -426,6 +432,18 @@ GC OVERHEAD METRIC:
 > objects (collected cheaply) vs long-lived objects (promoted to old gen, causing major GC pressure).
 > The large object allocation and the static collection anti-pattern are the most common sources
 > of old gen pressure in real applications.
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // GOOD: short-lived objects (die in young gen):
@@ -539,7 +557,7 @@ Fix for System.gc() anti-pattern:
   (Warning: some libraries rely on System.gc() for cleanup - audit first.)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -659,7 +677,7 @@ stop-the-world full GC.
 ### 📘 Concept Explanation
 
 **JIT tiers and key optimizations:**
-```
+```plaintext
 TIERED COMPILATION LEVELS:
 
   Level 0: Interpreted (always starts here)
@@ -725,7 +743,7 @@ WARMUP IMPLICATIONS:
   warmup period (first 30-60s after deployment).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -865,7 +883,7 @@ Mitigation options:
      Kubernetes readinessProbe: /internal/warmup must return 200 first.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

@@ -65,7 +65,7 @@ right postal branch (broker leader). Acknowledgment: the branch confirms receipt
 ### 📘 Concept Explanation
 
 **Producer internals and configuration:**
-```
+```plaintext
 PRODUCER LIFECYCLE:
 
   Properties props = new Properties();
@@ -115,7 +115,7 @@ BATCHING AND THROUGHPUT:
     Snappy: good compression ratio + fast. Lz4: faster. Zstd: better ratio.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L1 Producers and Consumers example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -155,10 +155,10 @@ void sendRight(Order order) {
 }
 ```
 
-> **Code walkthrough:** The wrong version uses default `acks=1` and no callback - a message
-> silently lost on broker failover goes undetected. The right version sets `acks=all` at
-> construction, enables idempotence (deduplicates retries), and logs errors via a callback.
-> The callback runs on the Sender thread (not the calling thread), so it must be thread-safe
+> **Code walkthrough:** The wrong version uses default `acks=1` and no callback ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> silently lost on broker failover goes undetected. The right version sets `acks
+> construction, enables idempotence (deduplicates retries), and logs errors via 
+> The callback runs on the Sender thread (not the calling thread), so it must be
 > and must not call `producer.send()` (deadlock risk).
 
 ---
@@ -166,32 +166,32 @@ void sendRight(Order order) {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Producer: client that writes records to Kafka. Key config: `bootstrap.servers` (entry points),
-> `key.serializer`/`value.serializer`, `acks`. Send is async (`send()` returns a Future). Callback
-> handles success/failure. Key determines partition (same key -> same partition, ordering preserved
+> Producer: client that writes records to Kafka. Key config: `bootstrap.servers`
+> `key.serializer`/`value.serializer`, `acks`. Send is async (`send()` returns a
+> handles success/failure. Key determines partition (same key -> same partition,
 > within partition).
 
 ---
 
 **Senior / Staff (5+ years):**
-> The `acks=all` + `enable.idempotence=true` combination is the default in Kafka 3.0+ (both
-> enabled by default). On older clusters: must be set explicitly. `enable.idempotence` implicitly
-> sets `acks=all` and `max.in.flight.requests=5` (allows 5 in-flight, still idempotent due to
-> sequence numbers). Production checklist: (1) `enable.idempotence=true`. (2) `acks=all`. (3)
-> `min.insync.replicas=2` on broker. (4) `compression.type=snappy` for throughput. (5) `linger.ms`
-> 5-20ms for batch fill on moderate-to-high traffic. (6) Monitor: `record-error-rate`,
+> The `acks=all` + `enable.idempotence=true` combination is the default in Kafka
+> enabled by default). On older clusters: must be set explicitly. `enable.idempo
+> sets `acks=all` and `max.in.flight.requests=5` (allows 5 in-flight, still idem
+> sequence numbers). Production checklist: (1) `enable.idempotence=true`. (2) `a
+> `min.insync.replicas=2` on broker. (4) `compression.type=snappy` for throughpu
+> 5-20ms for batch fill on moderate-to-high traffic. (6) Monitor: `record-error-
 > `record-retry-rate`, `batch-size-avg`, `buffer-available-bytes`.
 
 ---
 
 ### ⚠️ Common Misconceptions
 
-**Misconception: "producer.send() is synchronous - the record is on Kafka when the method returns."**
-`producer.send()` is asynchronous. It adds the record to an in-memory `RecordAccumulator` (the
+**Misconception: "producer.send() is synchronous - the record is on Kafka when t
+`producer.send()` is asynchronous. It adds the record to an in-memory `RecordAcc
 buffer) and returns immediately. The actual network send happens on a background Sender thread.
 The record is NOT on Kafka when `send()` returns. To wait for the broker acknowledgment: call
 `send().get()` (blocks the calling thread until ack). Caution: blocking kills throughput. Pattern:
-use async callback for non-critical flows, `send().get()` only when you must ensure delivery before
+use async callback for non-critical flows, `send().get()` only when you must ens
 proceeding. Another implication: if `close()` is called or the process crashes before the Sender
 flushes, buffered records are lost. Always call `producer.flush()` before `close()` in shutdown hooks.
 
@@ -199,19 +199,19 @@ flushes, buffered records are lost. Always call `producer.flush()` before `close
 
 ### ⚖️ Comparison Table
 
-| Setting | acks=0 | acks=1 | acks=all |
-|---|---|---|---|
-| Durability | None | Leader only | Full ISR |
-| Latency | Lowest | Low | Higher |
-| Throughput | Highest | High | Lower |
-| Loss risk | High | Medium (leader crash) | Minimal |
-| Use case | Metrics, logs | Low-risk events | Financial, orders |
+  | Setting    | acks=0        | acks=1                | acks=all          |  
+|----------|-------------|---------------------|-----------------|
+  | Durability | None          | Leader only           | Full ISR          |  
+  | Latency    | Lowest        | Low                   | Higher            |  
+  | Throughput | Highest       | High                  | Lower             |  
+  | Loss risk  | High          | Medium (leader crash) | Minimal           |  
+  | Use case   | Metrics, logs | Low-risk events       | Financial, orders |  
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: L1 foundational keyword - producer internals. No architecture design applicable.)*
+*(Omit: L1 foundational keyword - producer internals. No architecture design app
 
 ---
 
@@ -287,7 +287,7 @@ Fix:
   4. Add backpressure in application: if buffer low, pause producing.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -377,7 +377,7 @@ from page 43. No commit: re-read from page 1 of that edition on restart."
 ### 📘 Concept Explanation
 
 **Consumer lifecycle, offset management, and delivery semantics:**
-```
+```plaintext
 CONSUMER CONFIGURATION:
 
   Properties props = new Properties();
@@ -453,7 +453,7 @@ AUTO.OFFSET.RESET:
     Typical for new services that only need live data.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -515,31 +515,31 @@ public class OrderConsumer implements Runnable {
 }
 ```
 
-> **Code walkthrough:** The shutdown flow uses `consumer.wakeup()` to safely interrupt `poll()`
-> (it throws `WakeupException` which is the designated shutdown signal). The `finally` block calls
-> `commitSync()` (blocking) to ensure the last processed offset is committed before `close()`. The
-> main loop uses `commitAsync()` for speed during normal processing. The combination - async in
-> the loop, sync on shutdown - is the canonical production Kafka consumer pattern.
+> **Code walkthrough:** The shutdown flow uses `consumer.wakeup()` to safely intice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> (it throws `WakeupException` which is the designated shutdown signal). The `fi
+> `commitSync()` (blocking) to ensure the last processed offset is committed bef
+> main loop uses `commitAsync()` for speed during normal processing. The combina
+> the loop, sync on shutdown - is the canonical production Kafka consumer patter
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Consumer: subscribe to a topic, poll in a loop, process records, commit offsets. `group.id`:
-> identifies the consumer group. `enable.auto.commit=false` + manual `commitSync()`: at-least-once
-> semantics (process then commit). `auto.offset.reset=earliest`: start from beginning for a new group.
+> Consumer: subscribe to a topic, poll in a loop, process records, commit offset
+> identifies the consumer group. `enable.auto.commit=false` + manual `commitSync
+> semantics (process then commit). `auto.offset.reset=earliest`: start from begi
 
 ---
 
 **Senior / Staff (5+ years):**
-> `max.poll.interval.ms` (default 5 minutes): the maximum time between `poll()` calls. If processing
-> a batch takes longer than 5 minutes: the consumer is considered dead. Broker removes it from the
-> group. Rebalance triggered. All its partitions re-assigned. The batch is re-delivered. Fix options:
-> (1) Reduce `max.poll.records` (fewer records per batch, faster processing). (2) Increase
-> `max.poll.interval.ms` (for known-slow processing). (3) Offload heavy work async (poll -> submit
-> to thread pool -> continue polling for liveness, commit only when async work completes). Pattern 3
-> breaks the simple offset model: must track in-flight work per partition and commit only the lowest
+> `max.poll.interval.ms` (default 5 minutes): the maximum time between `poll()` 
+> a batch takes longer than 5 minutes: the consumer is considered dead. Broker r
+> group. Rebalance triggered. All its partitions re-assigned. The batch is re-de
+> (1) Reduce `max.poll.records` (fewer records per batch, faster processing). (2
+> `max.poll.interval.ms` (for known-slow processing). (3) Offload heavy work asy
+> to thread pool -> continue polling for liveness, commit only when async work c
+> breaks the simple offset model: must track in-flight work per partition and co
 > unconfirmed offset.
 
 ---
@@ -547,32 +547,32 @@ public class OrderConsumer implements Runnable {
 ### ⚠️ Common Misconceptions
 
 **Misconception: "auto.commit is at-least-once delivery."**
-`enable.auto.commit=true` is ambiguously between at-least-once and at-most-once depending on the
-crash timing. The auto-commit is triggered at the start of the next `poll()` (committing offsets
-returned by the previous `poll()`). Scenario: (1) `poll()` returns records 0-9. (2) You process
-records 0-4. (3) Application crashes. (4) No auto-commit happened yet (next `poll()` not reached).
-On restart: records 0-9 re-delivered (at-least-once, which is good). But: (1) `poll()` returns
-records 0-9. (2) Auto-commit triggers (committing 0-9 as processed). (3) You process 0-4. (4)
-Application crashes. On restart: records 10+ (skipped 5-9 -> at-most-once = data loss). Both can
-happen with auto-commit. Manual commit after processing is the only way to guarantee at-least-once.
+`enable.auto.commit=true` is ambiguously between at-least-once and at-most-once 
+crash timing. The auto-commit is triggered at the start of the next `poll()` (co
+returned by the previous `poll()`). Scenario: (1) `poll()` returns records 0-9. 
+records 0-4. (3) Application crashes. (4) No auto-commit happened yet (next `pol
+On restart: records 0-9 re-delivered (at-least-once, which is good). But: (1) `p
+records 0-9. (2) Auto-commit triggers (committing 0-9 as processed). (3) You pro
+Application crashes. On restart: records 10+ (skipped 5-9 -> at-most-once = data
+happen with auto-commit. Manual commit after processing is the only way to guara
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Commit Mode | Semantics | Latency | Risk |
-|---|---|---|---|
-| Auto-commit | At-least-once or at-most-once | None | Duplicate or loss depending on crash timing |
-| commitSync() after batch | At-least-once | High (blocks) | None (correct) |
-| commitAsync() | At-least-once (careful) | None | Out-of-order commits if not careful |
-| Per-record commitSync() | At-least-once | Very high | None |
-| Transactional (EOS) | Exactly-once | Highest | Requires transactional producer |
+| Commit Mode| Semantics| Latency| Risk|
+|---|----------------|-------------|-------------------------------------------|
+| Auto-commit| At-least-once or at-most-once| None| Duplicate or loss depending 
+| commitSync() after batch| At-least-once| High (blocks)| None (correct)|
+| commitAsync()| At-least-once (careful)| None| Out-of-order commits if not care
+| Per-record commitSync()| At-least-once| Very high| None|
+| Transactional (EOS)| Exactly-once| Highest| Requires transactional producer|
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: L1 foundational keyword - consumer mechanics. No architecture design applicable.)*
+*(Omit: L1 foundational keyword - consumer mechanics. No architecture design app
 
 ---
 
@@ -613,14 +613,14 @@ sequenceDiagram
     end
 
     Note over App: Crash here: restart reads from offset 50
-    Note over App: Crash during processRecords: restart reads from offset 40 (re-delivery)
+    Note over App: Crash during processRecords: restart reads from offset 40 (re
 ```
 
-> **Diagram walkthrough:** The sequence shows the poll-process-commit loop. Kafka assigns partitions
-> to the consumer on subscribe. Each poll returns records from the current committed offset forward.
-> The commit writes the "next to read" offset (current + 1) to the `__consumer_offsets` internal
-> topic. If the consumer crashes after commit: restarts from the committed offset (no re-delivery).
-> If the consumer crashes before commit: restarts from the last committed offset (re-delivery,
+> **Diagram walkthrough:** The sequence shows the poll-process-commit loop. Kafk
+> to the consumer on subscribe. Each poll returns records from the current commi
+> The commit writes the "next to read" offset (current + 1) to the `__consumer_o
+> topic. If the consumer crashes after commit: restarts from the committed offse
+> If the consumer crashes before commit: restarts from the last committed offset
 > at-least-once). The crash timing determines the delivery semantics.
 
 ---
@@ -628,7 +628,7 @@ sequenceDiagram
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: max.poll.interval.ms exceeded - consumer leaves group repeatedly.**
-```
+```plaintext
 Symptom: logs show repeated rebalances:
   "Consumer group 'order-processor' completed rebalance"
   Records processed 2-3 times (same records from different assignments).
@@ -655,7 +655,7 @@ Fix option 2: increase max.poll.interval.ms:
 Fix option 3: async processing with pause/resume (best for heavy work):
   ExecutorService pool = Executors.newFixedThreadPool(8);
   while (running) {
-      ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
+      ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(
       for (TopicPartition partition : records.partitions()) {
           consumer.pause(Collections.singleton(partition));
           pool.submit(() -> {
@@ -668,7 +668,7 @@ Fix option 3: async processing with pause/resume (best for heavy work):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using thread pool. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -844,7 +844,7 @@ INDEPENDENT CONSUMER GROUPS (FAN-OUT):
       --reset-offsets --to-earliest --execute
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -891,32 +891,32 @@ consumer.subscribe(List.of("orders"),
     });
 ```
 
-> **Code walkthrough:** `ConsumerRebalanceListener.onPartitionsRevoked` is called before the
-> partition is taken away from this consumer. Calling `commitSync()` here commits the latest
-> processed offset before the partition is re-assigned. The next consumer (or this consumer after
-> rebalance) starts from the committed offset, avoiding re-delivery of already-processed records.
-> This is the canonical pattern for at-least-once semantics with minimal duplicates during rebalances.
+> **Code walkthrough:** `ConsumerRebalanceListener.onPartitionsRevoked` is calleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> partition is taken away from this consumer. Calling `commitSync()` here commit
+> processed offset before the partition is re-assigned. The next consumer (or th
+> rebalance) starts from the committed offset, avoiding re-delivery of already-p
+> This is the canonical pattern for at-least-once semantics with minimal duplica
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Consumer group: multiple consumers sharing `group.id`. Kafka assigns partitions across the group.
-> Each partition -> 1 consumer. Max parallelism = partition count. Multiple groups: each group reads
-> all messages independently. Rebalance: happens when consumers join or leave; brief downtime.
+> Consumer group: multiple consumers sharing `group.id`. Kafka assigns partition
+> Each partition -> 1 consumer. Max parallelism = partition count. Multiple grou
+> all messages independently. Rebalance: happens when consumers join or leave; b
 
 ---
 
 **Senior / Staff (5+ years):**
-> The "partition count caps parallelism" constraint has architecture implications. Before deploying a
-> new consumer group for a high-throughput topic: increase partition count FIRST (if needed). Can
-> only increase safely, never decrease (would move offsets). Rule: provision partitions generously
-> at topic creation (32, 64 for high-throughput). The overhead per partition: ~1MB memory on broker,
-> small but significant at thousands of topics/partitions. With KRaft (no ZooKeeper): higher partition
+> The "partition count caps parallelism" constraint has architecture implication
+> new consumer group for a high-throughput topic: increase partition count FIRST
+> only increase safely, never decrease (would move offsets). Rule: provision par
+> at topic creation (32, 64 for high-throughput). The overhead per partition: ~1
+> small but significant at thousands of topics/partitions. With KRaft (no ZooKee
 > counts supported. For cooperative rebalance: `partition.assignment.strategy=
-> org.apache.kafka.clients.consumer.CooperativeStickyAssignor`. For Spring Kafka: configure via
-> `ConcurrentKafkaListenerContainerFactory.getContainerProperties().setAssignmentCommitOption()`.
+> org.apache.kafka.clients.consumer.CooperativeStickyAssignor`. For Spring Kafka
+> `ConcurrentKafkaListenerContainerFactory.getContainerProperties().setAssignmen
 
 ---
 
@@ -928,29 +928,29 @@ partitions and 6 consumers: 4 consumers active, 2 idle. The 2 idle consumers con
 This is intentional: Kafka guarantees that each partition is processed by at most one consumer in
 the group (ordering guarantee within partitions). More consumers than partitions: the extras are
 standby consumers that activate only when an active consumer fails (useful for fault tolerance).
-The correct approach: first increase partition count (plan ahead - you cannot decrease), then add
-consumers. Partition count change: `kafka-topics.sh --alter --topic orders --partitions 8`.
-Caution: changing partition count re-hashes key-to-partition mapping. Records with the same key
+The correct approach: first increase partition count (plan ahead - you cannot de
+consumers. Partition count change: `kafka-topics.sh --alter --topic orders --par
+Caution: changing partition count re-hashes key-to-partition mapping. Records wi
 may land in a different partition after the change. For keyed topics where ordering matters: this
-may break ordering guarantees for existing keys. Re-evaluate the topology when changing partitions.
+may break ordering guarantees for existing keys. Re-evaluate the topology when c
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Scenario | Consumers | Partitions | Active | Idle | Behavior |
-|---|---|---|---|---|---|
-| Single consumer | 1 | 4 | 1 | 0 | All 4 partitions on 1 consumer |
-| Balanced | 4 | 4 | 4 | 0 | 1 partition per consumer |
-| Over-provisioned | 6 | 4 | 4 | 2 | 2 consumers idle (standby) |
-| Under-provisioned | 2 | 4 | 2 | 0 | 2 partitions per consumer |
-| Multiple groups | 2 groups x 4 | 4 | 4+4 | 0 | Each group processes all messages |
+| Scenario| Consumers| Partitions| Active| Idle| Behavior|
+|--------|------------|----------|------|----|---------------------------------|
+| Single consumer| 1| 4| 1| 0| All 4 partitions on 1 consumer|
+| Balanced| 4| 4| 4| 0| 1 partition per consumer|
+| Over-provisioned| 6| 4| 4| 2| 2 consumers idle (standby)|
+| Under-provisioned| 2| 4| 2| 0| 2 partitions per consumer|
+| Multiple groups| 2 groups x 4| 4| 4+4| 0| Each group processes all messages|
 
 ---
 
 ### 🏛️ System Design
 
-*(Omit: L1 foundational keyword - consumer group mechanics. No architecture design applicable.)*
+*(Omit: L1 foundational keyword - consumer group mechanics. No architecture desi
 
 ---
 
@@ -1049,7 +1049,7 @@ Fix:
   4. Scale consumer group: Kubernetes HPA on consumer lag metric.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

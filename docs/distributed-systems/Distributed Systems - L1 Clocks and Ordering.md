@@ -108,7 +108,7 @@ Process P2:                   L=3 (receive m1, max(1,2)+1)
 Process P1:  L=5 (receive m2, max(2,4)+1)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Logical Clocks and Lamport Timestamps example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 If A happened-before B, then Lamport(A) < Lamport(B). But
@@ -197,7 +197,7 @@ public class DistributedNode {
 }
 ```
 
-> **Code walkthrough:** The LamportClock class implements the three
+> **Code walkthrough:** The LamportClock class implements the threeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Lamport rules as atomic operations (thread-safe for concurrent
 > events within a single process). `send()` increments before the
 > message is sent - the timestamp attached to the message reflects
@@ -256,7 +256,7 @@ timestamps or distributed tracing (OpenTelemetry) for event ordering.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What problem do Lamport timestamps solve?**
+**[JUNIOR] Q1 - [MECHANISM] What problem do Lamport timestamps solve?**
 
 🗣️ "Physical clocks on distributed servers drift apart - even with NTP,
 clocks can differ by milliseconds. If two events happen within
@@ -269,7 +269,7 @@ to B, A's send event happened before B's receive event - by definition.
 Lamport clocks capture this causality: if A happened-before B
 (in the Lamport sense), A's timestamp is strictly less than B's."
 
-**Q2: What is the limitation of Lamport timestamps compared to
+**[JUNIOR] Q2 - [TRADE-OFF] What is the limitation of Lamport timestamps compared to**
 vector clocks?**
 
 🗣️ "Lamport timestamps give a one-way implication: if A happened-before
@@ -283,7 +283,7 @@ implication is critical for distributed database conflict resolution:
 when two writers update the same key concurrently, you need to detect
 that they are concurrent to know a conflict exists."
 
-**Q3: How are Lamport timestamps used in Kafka's message ordering?**
+**[JUNIOR] Q3 - [MECHANISM] How are Lamport timestamps used in Kafka's message ordering?**
 
 🗣️ "Kafka uses partition offset numbers rather than Lamport timestamps,
 but the concept is analogous. A partition offset is a monotonically
@@ -297,7 +297,7 @@ use event timestamps or explicit causal metadata in the message body.
 The Lamport insight applies: embed a logical timestamp in the message
 payload if you need cross-partition causal ordering."
 
-**Q4: What are Hybrid Logical Clocks (HLC) and when are they
+**[MID] Q4 - [MECHANISM] What are Hybrid Logical Clocks (HLC) and when are they**
 used?**
 
 🗣️ "Hybrid Logical Clocks combine physical time (NTP-synchronized wall
@@ -313,7 +313,7 @@ to real time (useful for expiry, TTL, audit logs) while still
 being causally correct. Pure Lamport timestamps are unbounded
 integers with no relation to real time."
 
-**Q5: In what real scenario does clock skew cause production
+**[MID] Q5 - [MECHANISM] In what real scenario does clock skew cause production**
 bugs?**
 
 🗣️ "Cache invalidation with wall-clock timestamps. A cache entry is
@@ -328,7 +328,7 @@ same record within the clock skew window, both may think their
 write is the latest. The fix: use monotonic counters (sequence
 numbers) for versioning instead of wall-clock timestamps."
 
-**Q6: What is Leslie Lamport's 'happened-before' relation?**
+**[SENIOR] Q6 - [MECHANISM] What is Leslie Lamport's 'happened-before' relation?**
 
 🗣️ "The happened-before relation (denoted ->) defines a strict partial
 order on events in a distributed system. Event A -> B if: (1) A and
@@ -343,7 +343,7 @@ systems clocks (Lamport, vector, HLC) and consistency models
 1978 paper introducing this relation is the most cited paper in
 distributed systems."
 
-**Q7: How does Lamport's insight apply to distributed databases
+**[SENIOR] Q7 - [MECHANISM] How does Lamport's insight apply to distributed databases**
 today?**
 
 🗣️ "Several ways. First: write sequencing. CockroachDB and Spanner
@@ -464,7 +464,7 @@ expiry) are vulnerable to incorrect behavior from clock drift.
 
 **Physical clock properties:**
 
-```
+```plaintext
 Pros:
   Human-readable (2026-05-28T10:00:00Z)
   Maps to real-world time (useful for TTL, expiry)
@@ -478,7 +478,7 @@ Cons:
                (Java: System.currentTimeMillis() can go back)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Physical vs Logical Time in Distributed Systems example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Logical clock properties:**
 
@@ -495,7 +495,7 @@ Cons:
   Size: vector clocks grow with number of processes
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Physical vs Logical Time in Distributed Systems example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **When to use each:**
 
@@ -542,6 +542,12 @@ did this happen in the real world?', logical time cannot)."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // PHYSICAL VS LOGICAL TIME: the right tool for each job
@@ -602,7 +608,7 @@ public class Latency {
 }
 ```
 
-> **Code walkthrough:** The BAD example uses `System.currentTimeMillis()`
+> **Code walkthrough:** The BAD example uses `System.currentTimeMillis()`ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as the ordering key. This creates a time-bomb: NTP corrections can
 > cause the clock to go backward, making `ORDER BY timestamp` return
 > events in the wrong causal order. The GOOD example separates concerns:
@@ -674,7 +680,7 @@ to reject operations from locks that have been superseded.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Why can System.currentTimeMillis() return a smaller value
+**[JUNIOR] Q1 - [MECHANISM] Why can System.currentTimeMillis() return a smaller value**
 in the next call than in a previous call?**
 
 🗣️ "NTP (Network Time Protocol) synchronizes system clocks to a
@@ -690,7 +696,7 @@ on systems where NTP corrections happen. The fix in Java:
 hardware counter), but it cannot be used for wall-clock time or
 cross-JVM comparisons."
 
-**Q2: What is clock skew and how much skew is typical in
+**[JUNIOR] Q2 - [MECHANISM] What is clock skew and how much skew is typical in**
 cloud environments?**
 
 🗣️ "Clock skew is the difference in current time between two clocks
@@ -707,7 +713,7 @@ do not trust timestamps from different servers to be accurate
 within less than the maximum skew of your environment. 1ms events
 across data centers cannot be reliably ordered by timestamp."
 
-**Q3: What is a Snowflake ID and why was it invented?**
+**[JUNIOR] Q3 - [MECHANISM] What is a Snowflake ID and why was it invented?**
 
 🗣️ "Snowflake ID was invented by Twitter as a globally unique,
 roughly time-ordered 64-bit ID generator. Structure: 41 bits of
@@ -725,7 +731,7 @@ a machine. It does NOT guarantee global strict ordering if two
 machines have clock skew - IDs from different machines at the same
 millisecond may have incorrect relative order."
 
-**Q4: How does Google Spanner use TrueTime for transaction
+**[MID] Q4 - [MECHANISM] How does Google Spanner use TrueTime for transaction**
 ordering?**
 
 🗣️ "Spanner uses GPS receivers and atomic clocks in every data center
@@ -743,7 +749,7 @@ timestamp oracle. The cost: all transactions have a minimum
 latency equal to the TrueTime uncertainty (several milliseconds),
 even for local writes."
 
-**Q5: What is a monotonic clock and when should you use it?**
+**[MID] Q5 - [SCENARIO] What is a monotonic clock and when should you use it?**
 
 🗣️ "A monotonic clock is a clock that is guaranteed to never go
 backward. It is distinct from a wall-clock (calendar time) which
@@ -757,7 +763,7 @@ in logs (humans cannot read them), TTL calculations based on
 calendar time, comparisons across different machines or processes
 (monotonic clocks have no shared epoch)."
 
-**Q6: How would you design a distributed event log with correct
+**[SENIOR] Q6 - [DESIGN] How would you design a distributed event log with correct**
 ordering?**
 
 🗣️ "I would use two timestamps per event: a wall-clock timestamp for
@@ -776,7 +782,7 @@ same millisecond. Events are correctly ordered without a centralized
 generator. My choice for most systems: per-partition sequences with
 explicit causality propagation - simple, scalable, and correct."
 
-**Q7: What are the debugging implications of physical vs logical
+**[SENIOR] Q7 - [DEBUGGING] What are the debugging implications of physical vs logical**
 time?**
 
 🗣️ "Physical time is used in logs. When debugging a production issue
@@ -911,7 +917,7 @@ anomalies.
    A and B are concurrent (no causal relationship)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Causality and Happens-Before Relation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Causal consistency definition:**
 If A -> B, then ALL nodes observe A before B (in their local view).
@@ -919,14 +925,14 @@ Concurrent operations may be observed in any order.
 
 **Example anomaly (causal violation):**
 
-```
+```plaintext
 User 1 posts: "Hello" (event A)
 User 1 posts: "How are you?" (event B, A -> B)
 User 2 sees: "How are you?" (B) before "Hello" (A)
 This is a causal violation: B was seen before its cause A.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Causality and Happens-Before Relation example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Causality is the minimum correctness requirement for a system where
@@ -962,6 +968,12 @@ systems where actions have visible consequences."
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // CAUSAL CONSISTENCY: read-your-writes as special case
@@ -1009,7 +1021,7 @@ public class CartService {
 // to ensure the read reflects the write.
 ```
 
-> **Code walkthrough:** The BAD example writes to a primary but reads
+> **Code walkthrough:** The BAD example writes to a primary but readsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > from a replica. In an eventually consistent system, the replica may
 > not have synced the write yet. The user added an item to their cart
 > but the immediate read shows the old cart - an obvious user-facing
@@ -1071,7 +1083,7 @@ predecessors have not been applied yet.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: Define the happens-before relation and give an example.**
+**[JUNIOR] Q1 - [MECHANISM] Define the happens-before relation and give an example.**
 
 🗣️ "The happens-before relation (A -> B) holds if: A and B are in
 the same process and A ran before B in program order - e.g., two
@@ -1085,7 +1097,7 @@ receives). B -> C (message: P2 sends notification, P3 receives).
 By transitivity: A -> C. Any observer who processes C must have
 already processed A."
 
-**Q2: What is the difference between causal consistency and
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between causal consistency and**
 sequential consistency?**
 
 🗣️ "Causal consistency: if A happened-before B, all observers see A
@@ -1104,7 +1116,7 @@ databases implement causal consistency rather than sequential
 consistency because sequential consistency has the same latency
 cost as linearizability in most implementations."
 
-**Q3: How does MongoDB implement causal consistency?**
+**[JUNIOR] Q3 - [MECHANISM] How does MongoDB implement causal consistency?**
 
 🗣️ "MongoDB causal sessions use a cluster time (a Lamport-like
 timestamp) that is attached to every operation. When a write
@@ -1120,7 +1132,7 @@ session token pattern. This gives read-your-writes and 'monotonic
 reads' (you never see a state older than the most recent state
 you have seen) within a session."
 
-**Q4: What is a causality violation and what are its real-world
+**[MID] Q4 - [MECHANISM] What is a causality violation and what are its real-world**
 consequences?**
 
 🗣️ "A causality violation occurs when an observer sees an effect
@@ -1139,7 +1151,7 @@ implementing causal consistency in human-facing systems is confusion,
 data integrity errors, and bugs that only appear under high
 replication lag."
 
-**Q5: How do you propagate causal context in a microservices
+**[MID] Q5 - [MECHANISM] How do you propagate causal context in a microservices**
 architecture?**
 
 🗣️ "Through distributed trace IDs and causal metadata in message
@@ -1158,7 +1170,7 @@ silently violate causality - a service processing an event may
 read stale state that does not reflect the causal predecessors
 of that event."
 
-**Q6: What is the Two Generals Problem and how does it relate to
+**[SENIOR] Q6 - [MECHANISM] What is the Two Generals Problem and how does it relate to**
 causality?**
 
 🗣️ "The Two Generals Problem: two generals must coordinate an attack
@@ -1176,7 +1188,7 @@ systems, you design for 'at least once' delivery and idempotency,
 not 'exactly once' delivery, because you can never achieve 100%
 reliable exactly-once communication over an unreliable channel."
 
-**Q7: How does causality relate to distributed database conflict
+**[SENIOR] Q7 - [MECHANISM] How does causality relate to distributed database conflict**
 resolution?**
 
 🗣️ "In distributed databases, two writes to the same key may be

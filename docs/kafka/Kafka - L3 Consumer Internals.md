@@ -73,15 +73,15 @@ Cooperative: only vacate the seats for the new guest, everyone else stays seated
 ### 📘 Concept Explanation
 
 **Rebalance protocols and configuration:**
-```
+```plaintext
 REBALANCE TRIGGER SOURCES:
 
   1. New consumer: consumer.subscribe() -> JoinGroup -> rebalance
   2. Consumer leaves: consumer.close() -> LeaveGroup -> rebalance
   3. Consumer crash: session.timeout.ms expires without heartbeat -> rebalance
-  4. Consumer too slow: max.poll.interval.ms exceeded -> consumer leaves group -> rebalance
-  5. Topic partition count changes: subscription topic re-evaluated -> rebalance
-  6. Admin changes consumer group: kafka-consumer-groups.sh --reset-offsets -> may trigger
+  4. Consumer too slow: max.poll.interval.ms exceeded -> consumer leaves group...
+  5. Topic partition count changes: subscription topic re-evaluated ->...
+  6. Admin changes consumer group: kafka-consumer-groups.sh --reset-offsets ->...
 
 EAGER REBALANCE TIMELINE:
 
@@ -155,7 +155,7 @@ STATIC MEMBERSHIP (group.instance.id):
     Tune session.timeout.ms to be longer than typical pod restart time.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 Consumer Internals example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -219,11 +219,11 @@ consumer.subscribe(List.of("orders"), new ConsumerRebalanceListener() {
 });
 ```
 
-> **Code walkthrough:** Three improvements over the basic loop: (1) `CooperativeStickyAssignor`
-> minimizes partition movement - only truly moved partitions are revoked. (2) `group.instance.id`
-> prevents rebalances on pod restarts within `session.timeout.ms`. (3) `ConsumerRebalanceListener`
-> commits offsets only for the revoked partitions before they are handed off - no duplicate
-> processing for the partitions that stay. `onPartitionsLost` handles the edge case where a
+> **Code walkthrough:** Three improvements over the basic loop: (1) `Cooperativeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> minimizes partition movement - only truly moved partitions are revoked. (2) `g
+> prevents rebalances on pod restarts within `session.timeout.ms`. (3) `Consumer
+> commits offsets only for the revoked partitions before they are handed off - n
+> processing for the partitions that stay. `onPartitionsLost` handles the edge c
 > cooperative rebalance results in unexpected partition loss (fencing scenario).
 
 ---
@@ -231,20 +231,20 @@ consumer.subscribe(List.of("orders"), new ConsumerRebalanceListener() {
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> Rebalance: happens when consumers join or leave the group. Eager: all consumers pause.
-> Cooperative: only moved partitions pause. `ConsumerRebalanceListener.onPartitionsRevoked`:
-> commit offsets before handoff. `group.instance.id`: prevents rebalances on brief restarts.
+> Rebalance: happens when consumers join or leave the group. Eager: all consumer
+> Cooperative: only moved partitions pause. `ConsumerRebalanceListener.onPartiti
+> commit offsets before handoff. `group.instance.id`: prevents rebalances on bri
 > Use `CooperativeStickyAssignor` for production.
 
 ---
 
 **Senior / Staff (5+ years):**
-> The `session.timeout.ms` vs `heartbeat.interval.ms` trade-off: `heartbeat.interval.ms` should
-> be 1/3 of `session.timeout.ms` (rule of thumb). Default: 3s heartbeat, 45s session. For
-> Kubernetes with frequent pod restarts: raise `session.timeout.ms` to 60-120s and use static
-> membership. But: slower crash detection (a truly dead consumer takes 60-120s to be removed).
-> Balance based on your RTO (recovery time objective) vs rebalance sensitivity. Also: Kafka 3.1+
-> introduces incremental cooperative assignment natively for `KStream` (Kafka Streams). For
+> The `session.timeout.ms` vs `heartbeat.interval.ms` trade-off: `heartbeat.inte
+> be 1/3 of `session.timeout.ms` (rule of thumb). Default: 3s heartbeat, 45s ses
+> Kubernetes with frequent pod restarts: raise `session.timeout.ms` to 60-120s a
+> membership. But: slower crash detection (a truly dead consumer takes 60-120s t
+> Balance based on your RTO (recovery time objective) vs rebalance sensitivity. 
+> introduces incremental cooperative assignment natively for `KStream` (Kafka St
 > custom consumers: still manual configuration.
 
 ---
@@ -259,18 +259,18 @@ identify partitions to move, Phase 2: assign moved partitions). Existing consume
 give up partitions: continue consuming during the cooperative rebalance (only revoke during
 Phase 1 JoinGroup when they send their current assignment). The improvement from cooperative:
 the pause is limited to the consumer receiving new partitions and the consumer giving up
-partitions. Not zero-impact for those consumers, but zero-impact for everyone else.
+partitions. Not zero-impact for those consumers, but zero-impact for everyone el
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Assignor | Rebalance Type | Partition Movement | Downtime | Use Case |
-|---|---|---|---|---|
-| RangeAssignor | Eager | All partitions | Full group pause | Simple single-topic |
-| RoundRobinAssignor | Eager | All partitions | Full group pause | Even distribution |
-| StickyAssignor | Eager | Minimized | Full group pause | Sticky + minimal movement |
-| CooperativeStickyAssignor | Cooperative | Only moved | Moved partitions only | Production default |
+| Assignor| Rebalance Type| Partition Movement| Downtime| Use Case|
+|---|-------|------------------|---------------------|-------------------------|
+| RangeAssignor| Eager| All partitions| Full group pause| Simple single-topic|
+| RoundRobinAssignor| Eager| All partitions| Full group pause| Even distribution
+| StickyAssignor| Eager| Minimized| Full group pause| Sticky + minimal movement|
+| CooperativeStickyAssignor| Cooperative| Only moved| Moved partitions only| Pro
 
 ---
 
@@ -367,7 +367,7 @@ Diagnosis command:
   Watch: if consumer members change every few seconds -> rebalance storm.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -466,7 +466,7 @@ and treats. Main ER: keeps running at full speed."
 ### 📘 Concept Explanation
 
 **DLQ patterns, retry strategies, and monitoring:**
-```
+```plaintext
 POISON PILL PROBLEM:
 
   Topic "orders": P0 contains: [valid, valid, INVALID, valid, valid]
@@ -583,7 +583,7 @@ DLQ CONSUMER (REPLAY):
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Spring annotation. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -628,32 +628,32 @@ public DefaultErrorHandler errorHandlerRight(KafkaTemplate<String, String> t) {
 }
 ```
 
-> **Code walkthrough:** The right handler distinguishes retriable (network, transient) from
-> non-retriable (data/schema/business logic) exceptions. Non-retriable exceptions skip the
-> retry loop and go directly to the DLT. This means: a record with invalid JSON goes to the DLT
-> in milliseconds (not after 7+ seconds of retries). The partition is unblocked faster.
-> Subsequent valid records are not delayed by the retries of a permanently bad record.
+> **Code walkthrough:** The right handler distinguishes retriable (network, tranice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
+> non-retriable (data/schema/business logic) exceptions. Non-retriable exception
+> retry loop and go directly to the DLT. This means: a record with invalid JSON 
+> in milliseconds (not after 7+ seconds of retries). The partition is unblocked 
+> Subsequent valid records are not delayed by the retries of a permanently bad r
 
 ---
 
 ### 🎓 Answers by Seniority
 
 **Junior / Mid (0-5 years):**
-> DLQ: a topic for messages that failed processing. Consumer: catches exceptions, publishes failed
-> record to DLQ with error headers, commits the main offset. Main partition: unblocked. DLQ:
-> investigated later. Spring Kafka: `DeadLetterPublishingRecoverer` handles this automatically.
+> DLQ: a topic for messages that failed processing. Consumer: catches exceptions
+> record to DLQ with error headers, commits the main offset. Main partition: unb
+> investigated later. Spring Kafka: `DeadLetterPublishingRecoverer` handles this
 
 ---
 
 **Senior / Staff (5+ years):**
-> DLQ topic design: same partition count as the source topic (enables partition-preserving DLQ:
-> same partition in DLT = same partition as source). Useful for: ordered DLQ investigation (DLT
-> partition 0 = source partition 0). DLT retention: 30-90 days minimum. Monitor: DLQ record count
-> per hour as a quality metric. Alert: if DLQ rate > 0.1% of throughput. DLQ replay automation:
-> for known-fixable errors, after fixing the service, replay from DLQ to original topic. Track
-> replay: use a separate consumer group on the DLT topic. Caution: replaying a DLQ record back
-> to the original topic sends it at the tail of the partition (new offset), not the original
-> position. If ordering matters between the replayed record and subsequent records: replay order
+> DLQ topic design: same partition count as the source topic (enables partition-
+> same partition in DLT = same partition as source). Useful for: ordered DLQ inv
+> partition 0 = source partition 0). DLT retention: 30-90 days minimum. Monitor:
+> per hour as a quality metric. Alert: if DLQ rate > 0.1% of throughput. DLQ rep
+> for known-fixable errors, after fixing the service, replay from DLQ to origina
+> replay: use a separate consumer group on the DLT topic. Caution: replaying a D
+> to the original topic sends it at the tail of the partition (new offset), not 
+> position. If ordering matters between the replayed record and subsequent recor
 > must be verified.
 
 ---
@@ -668,20 +668,20 @@ Resolution (fix the code, fix the data, or acknowledge the failure). (4) Replay 
 valid and the processing bug was fixed). Ignoring the DLQ: good records may be permanently lost.
 A growing DLQ is a reliability alarm, not normal background noise. Production SLA: DLQ records
 must be resolved within 24 hours (or per data loss policy). Implement: DLQ monitoring dashboard,
-per-exception alerting, and replay procedures. Treat the DLQ the same as a production incident
+per-exception alerting, and replay procedures. Treat the DLQ the same as a produ
 queue.
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Strategy | Records skipped? | Processing continues? | Investigation | When |
-|---|---|---|---|---|
-| Ignore (log + commit) | Yes | Yes | No | Acceptable loss (telemetry) |
-| Retry indefinitely | No | No (blocked) | Later | Transient errors only |
-| DLQ (3 retries + DLT) | No | Yes | Required | Production default |
-| Circuit breaker + pause | No | No (paused) | No | Downstream outage |
-| Crash (let it restart) | No | No | After recovery | Infrastructure failures |
+| Strategy| Records skipped?| Processing continues?| Investigation| When|
+|---|---------|---------------------|--------------|---------------------------|
+| Ignore (log + commit)| Yes| Yes| No| Acceptable loss (telemetry)|
+| Retry indefinitely| No| No (blocked)| Later| Transient errors only|
+| DLQ (3 retries + DLT)| No| Yes| Required| Production default|
+| Circuit breaker + pause| No| No (paused)| No| Downstream outage|
+| Crash (let it restart)| No| No| After recovery| Infrastructure failures|
 
 ---
 
@@ -752,7 +752,7 @@ flowchart TD
 ### 🚨 Failure Modes and Diagnosis
 
 **Failure: DLQ write fails - consumer is stuck on the poison pill.**
-```
+```plaintext
 Symptom: consumer stuck at one offset. DLQ write also failing.
   Both the original processing AND the DLQ write are failing.
   Consumer: infinite retry loop.
@@ -787,7 +787,7 @@ Fix:
     // WARNING: records are lost if DLQ unavailable. Only use with monitoring.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

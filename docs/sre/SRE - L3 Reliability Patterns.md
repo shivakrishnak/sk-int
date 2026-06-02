@@ -202,7 +202,7 @@ THE SIX CRITICAL SRE ANTI-PATTERNS
      Postmortems include service developers as authors
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This What Breaks Reliability Programs example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Every anti-pattern is a predictable consequence of adopting the form
@@ -218,6 +218,7 @@ time for toil reduction, and shared reliability ownership with developers.
 
 **Example 1: Detecting aspirational SLO anti-pattern**
 
+{% raw %}
 ```python
 # Script to detect aspirational SLOs by comparing
 # SLO targets to historical SLI performance
@@ -296,8 +297,9 @@ print(result)
 #   "recommendation": "SLO is aspirational..."
 # }
 ```
+{% endraw %}
 
-> **Code walkthrough:** This script detects the most common SRE
+> **Code walkthrough:** This script detects the most common SREice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > anti-pattern by comparing the SLO target against the actual 90-day
 > historical SLI. A gap of 0.27% (SLO target 99.99%, actual 99.72%)
 > confirms the aspirational SLO: the error budget is exhausted in the
@@ -375,7 +377,7 @@ Three questions that reveal cargo-cult SRE:
 One "never" or "I don't know" = cargo-cult signal.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This } example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Executive reset: identify the one anti-pattern with the
 highest organizational cost (usually aspirational SLOs or unenforced
@@ -712,7 +714,7 @@ STEP 5: VALIDATE WITH STAKEHOLDERS
   Both must answer "yes" before the SLO is finalized.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SLO Decision Framework example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 The SLO is a contract between the reliability team and the business.
@@ -753,6 +755,11 @@ and window selection answers "over what period should we measure?"
 ### 💻 Code Example
 
 **Example 1: SLI selection by service type**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: SLI based on infrastructure metrics
@@ -803,7 +810,7 @@ SLI_COMPLETION = """
 # Target: 99.5% of submitted records are processed
 ```
 
-> **Code walkthrough:** The BAD SLI (CPU utilization) is an
+> **Code walkthrough:** The BAD SLI (CPU utilization) is anice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > infrastructure metric - it does not measure what users experience.
 > The GOOD examples show SLI selection by service type. The request
 > availability SLI measures user-visible success rate directly. The
@@ -815,6 +822,7 @@ SLI_COMPLETION = """
 
 **Example 2: SLO target from historical data**
 
+{% raw %}
 ```python
 #!/usr/bin/env python3
 # SLO target calculation from historical SLI data
@@ -888,8 +896,9 @@ result = calculate_slo_target(
 )
 print(result)
 ```
+{% endraw %}
 
-> **Code walkthrough:** This script automates the SLO target calculation
+> **Code walkthrough:** This script automates the SLO target calculationice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > by querying 90 days of historical SLI data from Prometheus. The
 > recommended SLO is the historical average plus a 0.1% improvement
 > delta - this ensures the SLO is achievable (based on historical
@@ -972,7 +981,7 @@ Ask product managers and business owners:
 If all "no": SLOs were set without stakeholders.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Error budget at recommended SLO example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Fix:* Conduct SLO review sessions with product owners for all
 Tier 1 services. Present: current SLO, historical performance,

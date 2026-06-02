@@ -174,7 +174,7 @@ SASS/SCSS FEATURES:
    // Can cause output bloat - prefer mixins
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This SASS and SCSS example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -240,7 +240,7 @@ standard CSS - Sass is purely a development tool.
    Specificity becomes unpredictable. */
 ```
 
-> **Code walkthrough:** `@extend` combines selectors into
+> **Code walkthrough:** `@extend` combines selectors intoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > comma-separated groups. Every `.button` extension adds
 > to a growing selector list. With 50 extending classes,
 > the compiled output has a 50-item selector list. This
@@ -277,7 +277,7 @@ standard CSS - Sass is purely a development tool.
 /* .button-secondary { display: inline-flex; ... } */
 ```
 
-> **Code walkthrough:** Each `@include button-base` inlines
+> **Code walkthrough:** Each `@include button-base` inlines the full mixin CSS at every call site. **KEY MECHANISM:** Sass/LESS mixins copy-paste rules at compile time; there is no runtime deduplication, so the same CSS rules appear in the output once per include. **WHY IT MATTERS:** overusing mixins inflates CSS bundle size significantly. **WHAT BREAKS:** identical selectors in output create specificity conflicts and inflate file size; gzip helps but does not eliminate the overhead. **TAKEAWAY:** use `@extend` for shared styles that can share a single selector; use mixins only when customizable parameters are required.
 > the mixin's rules into that class. Two separate, complete
 > CSS rules in the output. More output bytes than `@extend`
 > but predictable, readable, and debuggable in DevTools.
@@ -314,7 +314,7 @@ $breakpoints: (
 }
 ```
 
-> **Code walkthrough:** The `$breakpoints` map is the single
+> **Code walkthrough:** The `$breakpoints` map is the singleice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > source of truth for all breakpoints. `@include respond('md')`
 > generates the media query with the correct pixel value.
 > Change `md` from 768px to 800px in one place, and all
@@ -384,7 +384,7 @@ output.
 # DevTools: Settings > Sources > Enable CSS source maps
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This DevTools: Settings > Sources > Enable CSS source maice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -401,22 +401,21 @@ and prefix usages with `c.$color-primary`.
 
 ### 🎯 Interview Deep-Dive
 
-| Scenario | Recommended Time | Key Signal |
-|---|---|---|
-| SCSS vs CSS variables | 3 min | Compile vs runtime |
-| Why @extend is problematic | 3 min | Selector bloat |
-| @mixin best practices | 3 min | @content, parameters |
-| @use vs @import | 3 min | Namespacing |
-| When to use Sass in 2024 | 3-4 min | Justified cases |
-| Sass maps and loops | 3 min | Utility generation |
-| Source maps setup | 2-3 min | DevTools debugging |
-| Native CSS vs Sass features | 4 min | What Sass still adds |
-| Sass color functions | 3 min | lighten/darken, deprecated |
+| Scenario| Recommended Time| Key Signal|
+|-----------|---------------------------------------|--------------------------|
+| SCSS vs CSS variables| 3 min| Compile vs runtime|
+| Why @extend is problematic| 3 min| Selector bloat|
+| @mixin best practices| 3 min| @content, parameters|
+| @use vs @import| 3 min| Namespacing|
+| When to use Sass in 2024| 3-4 min| Justified cases|
+| Sass maps and loops| 3 min| Utility generation|
+| Source maps setup| 2-3 min| DevTools debugging|
+| Native CSS vs Sass features| 4 min| What Sass still adds|
+| Sass color functions| 3 min| lighten/darken, deprecated|
 
 ---
 
-**Q1: What does SCSS add over plain CSS?** `[JUNIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What does SCSS add over plain CSS?** `[JUNIOR]`**
 
 *Why they ask:* Foundation question for any Sass codebase.
 
@@ -467,8 +466,7 @@ now provide?"
 
 ---
 
-**Q2: Why is @extend considered harmful?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q2 - [MECHANISM] Why is @extend considered harmful?** `[SENIOR]`**
 
 *Why they ask:* @extend is a classic Sass anti-pattern.
 
@@ -534,7 +532,7 @@ MECHANISM
 
 ---
 
-**Q3: What is the difference between @use and @import
+**[JUNIOR] Q3 - [TRADE-OFF] What is the difference between @use and @import**
 in Sass?** `[SENIOR]` MECHANISM
 
 *Why they ask:* `@import` is deprecated; modern Sass uses
@@ -596,7 +594,7 @@ in Sass?** `[SENIOR]` MECHANISM
 
 ---
 
-**Q4: When would you use Sass in a new project in 2024?**
+**[MID] Q4 - [SCENARIO] When would you use Sass in a new project in 2024?**
 `[SENIOR]` TRADE-OFF
 
 *Why they ask:* Tests awareness of modern CSS vs Sass.
@@ -651,8 +649,7 @@ instead?"
 
 ---
 
-**Q5: How do Sass maps and loops generate utility classes?**
-`[MID]` MECHANISM
+**[MID] Q5 - [MECHANISM] How do Sass maps and loops generate utility classes?**
 
 *Why they ask:* Practical Sass feature for design systems.
 
@@ -722,7 +719,7 @@ instead?"
 
 ---
 
-**Q6: What are Sass color functions and why is
+**[SENIOR] Q6 - [MECHANISM] What are Sass color functions and why is**
 `lighten`/`darken` deprecated?** `[SENIOR]` MECHANISM
 
 *Why they ask:* Real change in Sass API that trips up
@@ -780,7 +777,7 @@ developers.
 
 ---
 
-**Q7: Describe a responsive breakpoint mixin system.**
+**[SENIOR] Q7 - [MECHANISM] Describe a responsive breakpoint mixin system.**
 `[MID]` HANDS-ON
 
 *Why they ask:* Common real-world Sass use case.
@@ -861,7 +858,7 @@ queries?"
 
 ---
 
-**Q8: What is the Sass module system and how does it
+**[SENIOR] Q8 - [MECHANISM] What is the Sass module system and how does it**
 improve large codebases?** `[SENIOR]` ARCHITECTURE
 
 *Why they ask:* Module system is the modern Sass feature
@@ -926,8 +923,7 @@ that distinguishes senior usage.
 
 ---
 
-**Q9: How do you debug Sass compilation errors?**
-`[JUNIOR]` DEBUGGING
+**[JUNIOR] Q9 - [DEBUGGING] How do you debug Sass compilation errors?**
 
 *Why they ask:* Basic but practical operational knowledge.
 
@@ -984,25 +980,25 @@ that distinguishes senior usage.
 
 ---
 
-| Interviewer Type | Emphasis |
-|---|---|
-| Technical Panel | @use/@forward module system |
-| Hiring Manager | When Sass is worth the build complexity |
-| Bar Raiser | Sass vs PostCSS vs native CSS strategy |
-| Peer Engineer | Mixin system for responsive breakpoints |
+| Interviewer Type| Emphasis|
+|---------------------------|---------------------------------------|
+| Technical Panel| @use/@forward module system|
+| Hiring Manager| When Sass is worth the build complexity|
+| Bar Raiser| Sass vs PostCSS vs native CSS strategy|
+| Peer Engineer| Mixin system for responsive breakpoints|
 
 ---
 
 ### ⚖️ Comparison Table
 
-| Feature | Sass Variable | CSS Custom Property | CSS calc() |
-|---|---|---|---|
-| When processed | Compile-time | Runtime | Runtime |
-| JS readable | No | Yes | No |
-| Cascades | No | Yes | N/A |
-| Dynamic | No | Yes | Partial |
-| Browser required | No | Yes | Yes |
-| Use case | Build-time const | Runtime token | Math |
+| Feature| Sass Variable| CSS Custom Property| CSS calc()|
+|---|------------------------------------|--------------------------|----------|
+| When processed| Compile-time| Runtime| Runtime|
+| JS readable| No| Yes| No|
+| Cascades| No| Yes| N/A|
+| Dynamic| No| Yes| Partial|
+| Browser required| No| Yes| Yes|
+| Use case| Build-time const| Runtime token| Math|
 
 ---
 
@@ -1032,21 +1028,21 @@ text and code examples)*
 
 ### 🏛️ System Design
 
-*(Omit: system design diagram not applicable for this concept - see ★★★ keywords for full system design coverage.)*
+*(Omit: system design diagram not applicable for this concept - see ★★★ keywords
 
 
 ---
 
 ### ⚖️ Comparison Table
 
-*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compare - see higher-difficulty keywords for trade-off analysis.)*
+*(Omit: this is a ★☆☆ foundational concept with no direct alternatives to compar
 
 
 ---
 
 ### 📊 Diagram
 
-*(Omit: no standalone visual diagram required for this concept - the explanations and code examples above provide sufficient clarity.)*
+*(Omit: no standalone visual diagram required for this concept - the explanation
 
 
 # PostCSS and Autoprefixer
@@ -1197,7 +1193,7 @@ POSTCSS-PRESET-ENV (polyfills future CSS):
     .nested .child { }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This PostCSS and Autoprefixer example demonstrates a keyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -1315,7 +1311,7 @@ module.exports = {
 };
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ```json
 // package.json browserslist
@@ -1394,7 +1390,7 @@ plugins run on `.scss` files without Sass compilation first.
 
 **Symptom: vendor prefixes not being added**
 
-```
+```plaintext
 # Check:
 npx autoprefixer --info
 # Shows current browserslist + which prefixes are needed
@@ -1406,7 +1402,7 @@ npx browserslist
 # Shows list of targeted browsers
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows list of targeted browsers example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -1426,7 +1422,7 @@ require('cssnano')({ preset: ['default', {
 }] })
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Shows list of targeted browsers example demonstrates JavaScript pattern. **KEY MECHANISM:** V8 JIT-compiles hot functions to machine code; polymorphic call sites deoptimize the function. **WHY IT MATTERS:** closure captures the reference not the value - loop variables captured in closures retain last value. **TAKEAWAY: use block-scoped let/const in loops and closures to prevent stale reference bugs.**
 
 ---
 
@@ -1446,8 +1442,7 @@ require('cssnano')({ preset: ['default', {
 
 ---
 
-**Q1: What is PostCSS and how does it differ from Sass?**
-`[MID]` CONCEPTUAL
+**[MID] Q1 - [CONCEPTUAL] What is PostCSS and how does it differ from Sass?**
 
 *Why they ask:* Both are CSS tools; the distinction is not
 always clear.
@@ -1497,8 +1492,7 @@ always clear.
 
 ---
 
-**Q2: How does Autoprefixer know which prefixes to add?**
-`[MID]` MECHANISM
+**[MID] Q2 - [MECHANISM] How does Autoprefixer know which prefixes to add?**
 
 *Why they ask:* Understanding browserslist is practical
 knowledge.
@@ -1552,8 +1546,7 @@ knowledge.
 
 ---
 
-**Q3: What is `postcss-preset-env` and why is it valuable?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q3 - [MECHANISM] What is `postcss-preset-env` and why is it valuable?**
 
 *Why they ask:* This is the most strategically important
 PostCSS plugin for modern CSS development.
@@ -1619,8 +1612,7 @@ PostCSS plugin for modern CSS development.
 
 ---
 
-**Q4: What does the plugin order in PostCSS matter?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] What does the plugin order in PostCSS matter?**
 
 *Why they ask:* Plugin order is a common bug source.
 
@@ -1674,8 +1666,7 @@ before postcss-preset-env?"
 
 ---
 
-**Q5: When is vendor prefixing still necessary in 2024?**
-`[SENIOR]` PRODUCTION
+**[SENIOR] Q5 - [DEBUGGING] When is vendor prefixing still necessary in 2024?**
 
 *Why they ask:* Shows up-to-date browser knowledge.
 
@@ -1724,7 +1715,7 @@ before postcss-preset-env?"
 
 ---
 
-**Q6: What is Lightning CSS and how does it compare to
+**[SENIOR] Q6 - [MECHANISM] What is Lightning CSS and how does it compare to**
 PostCSS?** `[SENIOR]` COMPARISON
 
 *Why they ask:* Shows awareness of modern tooling evolution.
@@ -1782,8 +1773,7 @@ PostCSS?** `[SENIOR]` COMPARISON
 
 ---
 
-**Q7: What is `cssnano` and what are its risks?** `[SENIOR]`
-PRODUCTION
+**[SENIOR] Q7 - [DEBUGGING] What is `cssnano` and what are its risks?** `[SENIOR]`**
 
 *Why they ask:* Minification failures are real production bugs.
 
@@ -1844,7 +1834,7 @@ PRODUCTION
 
 ---
 
-**Q8: How would you add a custom PostCSS plugin?** `[SENIOR]`
+**[SENIOR] Q8 - [MECHANISM] How would you add a custom PostCSS plugin?** `[SENIOR]`**
 HANDS-ON
 
 *Why they ask:* Custom plugins show deep PostCSS understanding.
@@ -1917,8 +1907,7 @@ HANDS-ON
 
 ---
 
-**Q9: How does CSS Modules use PostCSS internally?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q9 - [MECHANISM] How does CSS Modules use PostCSS internally?**
 
 *Why they ask:* Shows depth of understanding of the CSS toolchain.
 

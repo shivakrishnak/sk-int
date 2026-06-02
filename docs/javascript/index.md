@@ -1,6 +1,6 @@
 ---
 title: "JavaScript"
-nav_order: 52
+nav_order: 15
 has_children: true
 ---
 

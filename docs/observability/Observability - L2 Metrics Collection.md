@@ -208,7 +208,7 @@ data:
 # Service pushes to pushgateway - WRONG for a live service
 ```
 
-> **Code walkthrough:** The BAD pattern uses Prometheus Pushgateway
+> **Code walkthrough:** The BAD pattern uses Prometheus Pushgatewayice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > as a target for service metrics push. Pushgateway is designed for
 > batch jobs that do not have a persistent process. For a live service,
 > Pushgateway creates a false health signal: if the service crashes,
@@ -262,7 +262,7 @@ spec:
       - production
 ```
 
-> **Code walkthrough:** The GOOD setup defines the Prometheus
+> **Code walkthrough:** The GOOD setup defines the Prometheusice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > pull model correctly. The service exposes a dedicated metrics
 > port (8081) separate from the application port to prevent
 > accidental public exposure of metrics. The ServiceMonitor CRD
@@ -314,7 +314,7 @@ spec:
 # Instant query against pre-computed data
 ```
 
-> **Code walkthrough:** Recording rules pre-compute expensive PromQL
+> **Code walkthrough:** Recording rules pre-compute expensive PromQLice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > expressions into new metric series every minute. The histogram_quantile
 > computation over rate() is expensive to run at query time across
 > millions of samples. Pre-computing it produces a simple scalar
@@ -408,7 +408,7 @@ curl -s http://prometheus:9090/api/v1/status/tsdb |
 # Any metric > 100K series is a cardinality risk
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Any metric > 100K series is a cardinality risk example demonstrates HTTP request from shell using HTTP client. **KEY MECHANISM:** curl by default follows redirects and suppresses errors; -f flag makes it return non-zero on HTTP errors. **WHY IT MATTERS:** piping curl output to shell without verification runs untrusted code - a supply-chain attack vector. **TAKEAWAY: always use curl -f --retry and verify checksums before piping to bash.**
 
 Fix: Drop the high-cardinality metric via relabeling rule in
 the ServiceMonitor or via Prometheus `metric_relabel_configs`.
@@ -438,7 +438,7 @@ kubectl logs -n monitoring prometheus-0 | \
 # duration=3m42s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This duration=3m42s example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: Deploy Prometheus in HA mode: two replicas scraping
 the same targets. When one restarts, the other continues.
@@ -584,7 +584,7 @@ checkout_duration_seconds_bucket{le="+Inf"} 10000
 checkout_duration_seconds_sum 1245.7
 checkout_duration_seconds_count 10000
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This TYPE checkout_duration_seconds histogram example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 In Java, the Prometheus client library (simpleclient or the
 OpenTelemetry Prometheus exporter) generates this format
@@ -895,7 +895,7 @@ situational awareness.
 **How it works:**
 The dashboard design hierarchy:
 
-```
+```plaintext
 LAYER 1 - HEALTH STATUS (top of dashboard)
   Stat panels: current SLO status (GREEN/RED)
     - Error rate: current vs threshold
@@ -917,7 +917,7 @@ LAYER 3 - DEBUGGING AIDS (bottom or second tab)
   Trace panel: recent trace links (Tempo)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Grafana Dashboard Design example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Template variables make one dashboard serve all services.
@@ -995,7 +995,7 @@ incidents, map each to a panel type, and arrange by priority
 }
 ```
 
-> **Code walkthrough:** The BAD dashboard is a flat list of
+> **Code walkthrough:** The BAD dashboard is a flat list ofice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > technical metrics with no organization by priority. During an
 > incident, the on-call engineer must read all 12 panels and
 > mentally aggregate to determine health status. There is no
@@ -1095,7 +1095,7 @@ incidents, map each to a panel type, and arrange by priority
 }
 ```
 
-> **Code walkthrough:** The GOOD dashboard has three rows
+> **Code walkthrough:** The GOOD dashboard has three rowsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > organized by use case. Row 1 (SLO health) has two stat panels
 > that show current error rate and p99 latency with color thresholds.
 > Green means healthy; red means degraded. An on-call engineer
@@ -1199,7 +1199,7 @@ max by (payment_method) (
 # avg across payment methods is 0.7%
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This avg across payment methods is 0.7% example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Fix: Add per-dimension breakdown panels to the dashboard.
 Replace average-based panels with max-over-dimensions or

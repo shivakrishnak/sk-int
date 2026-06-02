@@ -112,7 +112,7 @@ Thread 1: (later) <-[callback: result ready]-[Resume]-[Done]
            (Thread does OTHER work while DB call is in-flight)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Why Async Programming in Java example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Async does not reduce latency for a single request. It increases
@@ -170,7 +170,7 @@ public Order processOrder(String userId, String itemId) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Why Async Programming in Java example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **GOOD: Async CompletableFuture - parallel I/O, non-blocking**
 
@@ -197,7 +197,7 @@ public CompletableFuture<Order> processOrder(
 // Calling thread returns immediately to handle next request
 ```
 
-> **Code walkthrough:** The BAD version makes sequential blocking calls -
+> **Code walkthrough:** The BAD version makes sequential blocking calls -ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > each waits for the previous, and the calling thread is held for the full
 > combined latency. The GOOD version uses `supplyAsync` to submit both I/O
 > calls to a dedicated executor, then `thenCombine` to join results when
@@ -302,7 +302,7 @@ jstack <pid> | grep -A 5 "WAITING\|BLOCKED"
 jcmd <pid> Thread.dump_to_file -format=json /tmp/threads.json
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java 21+ virtual thread diagnostics: example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: (1) Increase executor pool size for I/O-bound work. (2) Switch to
 non-blocking I/O libraries. (3) Offload blocking calls to a separate
@@ -316,7 +316,7 @@ bounded executor pool - never to the reactive event loop thread.
 
 ---
 
-#### Q1 - What problem does async programming solve in Java?
+**[JUNIOR] Q1 - [CONCEPTUAL] What problem does async programming solve in Java?**
 
 Async programming solves thread waste during I/O. Threads are expensive:
 each costs roughly 1 MB of stack and triggers a kernel context switch
@@ -341,7 +341,7 @@ latency" for individual requests misunderstand the model.
 
 ---
 
-#### Q2 - When would you NOT use async programming in Java?
+**[JUNIOR] Q2 - [CONCEPTUAL] When would you NOT use async programming in Java?**
 
 Three clear cases to avoid async:
 
@@ -366,7 +366,7 @@ I/O-bound operations for CompletableFuture, 1,000+ for reactive streams.
 
 ---
 
-#### Q3 - What is the difference between async and parallel programming?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the difference between async and parallel programming?**
 
 Parallel: run multiple operations at the same time using multiple CPU
 cores. Goal: reduce wall-clock time for CPU-intensive work by dividing
@@ -390,7 +390,7 @@ the same pool causes both to starve - a common production bug.
 
 ---
 
-#### Q4 - How does Java async compare to Node.js?
+**[MID] Q4 - [TRADE-OFF] How does Java async compare to Node.js?**
 
 Node.js: single-threaded event loop. All JavaScript runs on one thread.
 Async I/O handled by libuv. CPU-bound work blocks the event loop for
@@ -417,7 +417,7 @@ a Node.js request handler.
 
 ---
 
-#### Q5 - What is the role of the executor in async Java?
+**[MID] Q5 - [CONCEPTUAL] What is the role of the executor in async Java?**
 
 The executor separates "who submits the work" from "who runs it."
 `CompletableFuture.supplyAsync(() -> work, executor)` runs the lambda
@@ -446,7 +446,7 @@ prevents unbounded thread creation.
 
 ---
 
-#### Q6 - How does async affect exception handling?
+**[MID] Q6 - [CONCEPTUAL] How does async affect exception handling?**
 
 In sync code, exceptions propagate up the call stack via try/catch. In
 async code, exceptions happen in a different thread context after the
@@ -475,7 +475,7 @@ fut.exceptionally(ex -> {
 });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java 21+ virtual thread diagnostics: example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Common mistake: not attaching error handlers to CompletableFutures.
 The exception is stored in the future but silently lost if nothing
@@ -488,7 +488,7 @@ wraps exceptions in `ExecutionException` - the real exception is
 
 ---
 
-#### Q7 - What are the key Java async milestones worth knowing?
+**[SENIOR] Q7 - [CONCEPTUAL] What are the key Java async milestones worth knowing?**
 
 Java async evolution timeline:
 
@@ -683,7 +683,7 @@ Java 21: Virtual Threads (sync style + async throughput)
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Java Async Evolution: Threads to Virtual Threads example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Virtual Threads do not eliminate reactive programming. They provide an
@@ -752,7 +752,7 @@ try (var scope =
 }
 ```
 
-> **Code walkthrough:** All three versions run the service calls in
+> **Code walkthrough:** All three versions run the service calls inice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > parallel. The Future version blocks the calling thread on each `get()`
 > call - the caller waits sequentially after submitting in parallel.
 > The CompletableFuture version is fully non-blocking: the calling thread
@@ -843,7 +843,7 @@ Diagnosis:
 #   com.mysql.jdbc.ConnectionImpl.createNewIO  <-- pinned here
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This com.mysql.jdbc.ConnectionImpl.createNewIO  <-- pinned here example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix: replace `synchronized` with `ReentrantLock` in affected code.
 Verify JDBC driver version is virtual-thread-compatible before migrating
@@ -857,7 +857,7 @@ production services to Virtual Threads.
 
 ---
 
-#### Q1 - What are the main stages of Java async evolution?
+**[JUNIOR] Q1 - [CONCEPTUAL] What are the main stages of Java async evolution?**
 
 Five main stages:
 
@@ -883,7 +883,7 @@ each milestone and the exact limitation that each stage addressed.
 
 ---
 
-#### Q2 - What limitation did CompletableFuture solve over Future?
+**[JUNIOR] Q2 - [CONCEPTUAL] What limitation did CompletableFuture solve over Future?**
 
 `Future.get()` (Java 5) blocks the calling thread until the result is
 ready. To run A and B in parallel then process the combined result:
@@ -896,7 +896,7 @@ B b = fb.get(); // blocks again
 combine(a, b);  // calling thread was blocked the whole time
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This com.mysql.jdbc.ConnectionImpl.createNewIO  <-- pinned here example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 CompletableFuture eliminated the blocking with callback registration:
 
@@ -908,7 +908,7 @@ cfa.thenCombine(cfb, (a, b) -> combine(a, b))
 // Calling thread returns immediately
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This com.mysql.jdbc.ConnectionImpl.createNewIO  <-- pinned here example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Noting that `CompletableFuture.join()`
 still blocks (like get() without checked exceptions) - and that async
@@ -917,7 +917,7 @@ at the top-level handler boundary.
 
 ---
 
-#### Q3 - What does backpressure mean and why does CompletableFuture not provide it?
+**[JUNIOR] Q3 - [CONCEPTUAL] What does backpressure mean and why does CompletableFuture not provide it?**
 
 Backpressure: the consumer of a data stream signals to the producer how
 fast it can process data. Without backpressure, a fast producer + slow
@@ -944,7 +944,7 @@ and excessive round trips.
 
 ---
 
-#### Q4 - What are Virtual Threads and how do they differ from platform threads?
+**[MID] Q4 - [CONCEPTUAL] What are Virtual Threads and how do they differ from platform threads?**
 
 Platform threads: 1:1 mapping to OS kernel threads. Each JDK thread
 corresponds to one OS thread. Creation cost: ~1 MB stack, kernel object
@@ -970,7 +970,7 @@ focuses on the virtual thread count per task, not pool sizing.
 
 ---
 
-#### Q5 - When would you use CompletableFuture vs Virtual Threads on Java 21?
+**[MID] Q5 - [CONCEPTUAL] When would you use CompletableFuture vs Virtual Threads on Java 21?**
 
 CompletableFuture:
 - Targeting Java 8-17 (Virtual Threads require Java 21+)
@@ -995,7 +995,7 @@ default: Virtual Threads unless backpressure is needed.
 
 ---
 
-#### Q6 - What is Structured Concurrency and what problem does it solve?
+**[MID] Q6 - [ARCHITECTURE] What is Structured Concurrency and what problem does it solve?**
 
 Structured Concurrency (Java 21 preview, finalized in 24) is a scope-
 based model for managing multiple concurrent subtasks with shared
@@ -1017,7 +1017,7 @@ try (var scope =
 } // scope closes; all tasks guaranteed complete
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This com.mysql.jdbc.ConnectionImpl.createNewIO  <-- pinned here example demonstrates exception handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 Guarantees: (1) all forked tasks complete before scope closes,
 (2) if one fails, others are cancelled, (3) parent thread owns subtask
@@ -1034,7 +1034,7 @@ tools as sequential code.
 
 ---
 
-#### Q7 - How did library design change with each async evolution?
+**[SENIOR] Q7 - [ARCHITECTURE] How did library design change with each async evolution?**
 
 Each Java async evolution forced library redesign:
 
@@ -1215,7 +1215,7 @@ Parallel (CPU-bound, multiple cores):
   Both CPUs active. No I/O wait involved.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Concurrency vs Async Programming in Java example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 True async requires non-blocking I/O at the OS level (Java NIO, OS
@@ -1278,7 +1278,7 @@ int sum = data.parallelStream()
 // Appropriate for CPU work, NOT for I/O.
 ```
 
-> **Code walkthrough:** Example 1 achieves concurrency but is NOT truly
+> **Code walkthrough:** Example 1 achieves concurrency but is NOT trulyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > async - each pool thread blocks on the HTTP call. Pool saturates at 50
 > concurrent I/O operations. Example 2 uses Java's NIO-backed HttpClient -
 > no thread is blocked during HTTP wait; the NIO selector fires callbacks
@@ -1367,7 +1367,7 @@ for (ThreadInfo info : infos) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Fix: separate pools for CPU-bound and I/O-bound work.
 ```java
@@ -1380,7 +1380,7 @@ ExecutorService ioPool =
     Executors.newFixedThreadPool(200);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates thread pool management using thread pool. **KEY MECHANISM:** the pool maintains a work queue; submitted tasks block until a thread is free. **WHY IT MATTERS:** unconfigured pool sizes exhaust threads under load or waste memory at rest. **TAKEAWAY: always name threads and bound queue size to detect saturation.**
 
 ---
 
@@ -1390,7 +1390,7 @@ ExecutorService ioPool =
 
 ---
 
-#### Q1 - What is the difference between concurrency and parallelism?
+**[JUNIOR] Q1 - [CONCEPTUAL] What is the difference between concurrency and parallelism?**
 
 Concurrency: multiple tasks make progress in overlapping time windows.
 Does not require simultaneous physical execution. A single-threaded event
@@ -1416,7 +1416,7 @@ loop threads (parallelism) only helps if CPU is the bottleneck.
 
 ---
 
-#### Q2 - What does non-blocking mean at the OS level?
+**[JUNIOR] Q2 - [CONCEPTUAL] What does non-blocking mean at the OS level?**
 
 Non-blocking I/O means the OS syscall for reading from a socket returns
 immediately even if no data is available, instead of suspending the
@@ -1442,7 +1442,7 @@ the latter eliminates it.
 
 ---
 
-#### Q3 - How does async relate to the Java Memory Model?
+**[JUNIOR] Q3 - [CONCEPTUAL] How does async relate to the Java Memory Model?**
 
 The Java Memory Model (JMM) defines happens-before relationships: when
 one thread's writes are visible to another thread's reads. Async code
@@ -1462,7 +1462,7 @@ CompletableFuture.runAsync(() -> counter[0]++); // chain 2
 // counter[0] may be 1 or 2 - data race
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 Fix: use AtomicInteger for shared counters across async chains. Within
 a single chain, JMM guarantees sequential visibility.
@@ -1474,7 +1474,7 @@ across multiple subscriptions to the same source.
 
 ---
 
-#### Q4 - Why is the term async overloaded in Java?
+**[MID] Q4 - [SYSTEM DESIGN] Why is the term async overloaded in Java?**
 
 "Async" in Java documentation and interviews can mean any of:
 
@@ -1503,7 +1503,7 @@ signals production experience and careful system design.
 
 ---
 
-#### Q5 - Can a program be concurrent without being async?
+**[MID] Q5 - [SYSTEM DESIGN] Can a program be concurrent without being async?**
 
 Yes. Multiple blocking threads running simultaneously is concurrent but
 not async.
@@ -1523,7 +1523,7 @@ t1.start(); t2.start(); // concurrent: overlap in time
 t1.join(); t2.join();
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Both file reads proceed concurrently. Neither is async: each blocks
 its thread for the full read duration. This is the traditional Java
@@ -1541,7 +1541,7 @@ async throughput without the async programming model.
 
 ---
 
-#### Q6 - How does this distinction affect architecture decisions?
+**[MID] Q6 - [ARCHITECTURE] How does this distinction affect architecture decisions?**
 
 The concurrency vs. async distinction drives three architectural choices:
 
@@ -1571,7 +1571,7 @@ to change the deployment architecture.
 
 ---
 
-#### Q7 - How would you explain the difference to a junior engineer?
+**[SENIOR] Q7 - [CONCEPTUAL] How would you explain the difference to a junior engineer?**
 
 Two-part explanation for a junior:
 

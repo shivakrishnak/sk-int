@@ -86,7 +86,7 @@ Partial:  A,B -> C but A -> C alone
 Transitive: A -> B -> C  (A determines C through B)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 1NF through BCNF example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Normal form definitions:**
 
@@ -108,7 +108,7 @@ BCNF: In 3NF AND every determinant is a candidate key.
      that 3NF misses.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 1NF through BCNF example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -180,7 +180,7 @@ CREATE TABLE order_items (
 -- This is 3NF (and also BCNF).
 ```
 
-> **Code walkthrough:** The original unnormalized table mixes customer data,
+> **Code walkthrough:** The original unnormalized table mixes customer data,ice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > phone data, and order item data in one place. Moving to 3NF: (1) `customers`
 > stores customer facts (name, email) - each depends only on `id`.
 > (2) `customer_phones` stores phone numbers - each depends on `(customer_id, phone)`.
@@ -221,7 +221,7 @@ CREATE TABLE course_rooms (
 -- Every determinant (room) is a candidate key. BCNF.
 ```
 
-> **Code walkthrough:** The BCNF violation: `room -> instructor_id` is a
+> **Code walkthrough:** The BCNF violation: `room -> instructor_id` is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > functional dependency where `room` is not a candidate key for the original
 > table (the key is `(course_id, instructor_id)`). This means the same
 > instructor for a room is stored in every row where that room appears -
@@ -311,7 +311,7 @@ All other tables reference `customer_id`. One UPDATE, one row.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What are the three data anomalies that normalization prevents?**
+**[JUNIOR] Q1 - [MECHANISM] What are the three data anomalies that normalization prevents?**
 
 🗣️ "Insert anomaly: cannot insert a new fact without inserting other facts.
 Example: in an unnormalized orders table with customer data embedded:
@@ -324,7 +324,7 @@ Delete anomaly: deleting one entity accidentally removes another. Delete the
 last order for a customer: customer's information is lost. Normalization:
 customer data in its own table, persists independently of orders."
 
-**Q2: How do you identify a 2NF violation?**
+**[JUNIOR] Q2 - [MECHANISM] How do you identify a 2NF violation?**
 
 🗣️ "2NF: applies only when the primary key is composite. A 2NF violation exists
 when a non-key attribute depends on only PART of the composite key.
@@ -337,7 +337,7 @@ as PK. `order_items` references `products` via FK. `order_items` now only
 has `quantity` as a non-key attribute - it depends on both `order_id` (which order)
 and `product_id` (what was ordered)."
 
-**Q3: How do functional dependencies guide schema design?**
+**[JUNIOR] Q3 - [DESIGN] How do functional dependencies guide schema design?**
 
 🗣️ "Every schema design decision is based on functional dependencies.
 A functional dependency A -> B means: knowing A uniquely determines B.
@@ -351,7 +351,7 @@ Order item facts determined by (order_id, product_id): `order_items(order_id, pr
 This process is formalized as functional dependency normalization theory.
 In practice: good domain modeling produces 3NF schemas naturally."
 
-**Q4: When would you intentionally violate 3NF?**
+**[MID] Q4 - [SCENARIO] When would you intentionally violate 3NF?**
 
 🗣️ "Intentional denormalization: (1) Performance: a report query that JOINs 5 tables
 10 million rows each is slow. Denormalize by materializing the joined result
@@ -365,7 +365,7 @@ it's correct: historical price is an attribute of the order item, not the produc
 (4) Caching: JSONB column with pre-computed view model for fast API reads.
 Always document intentional denormalization and enforce consistency in application code."
 
-**Q5: What is the difference between 3NF and BCNF?**
+**[MID] Q5 - [TRADE-OFF] What is the difference between 3NF and BCNF?**
 
 🗣️ "3NF: every non-prime attribute depends only on candidate keys (no transitive
 dependencies involving non-prime attributes). BCNF: every determinant is a
@@ -380,7 +380,7 @@ BCNF decomposition: `room_teacher(room, teacher)` and `course_rooms(course, room
 Practical impact: BCNF violations are less common than 3NF violations in typical
 schemas. Fix: identify non-trivial FDs where the LHS is not a candidate key."
 
-**Q6: How do you apply normalization to a legacy schema with no documentation?**
+**[SENIOR] Q6 - [MECHANISM] How do you apply normalization to a legacy schema with no documentation?**
 
 🗣️ "Reverse-engineering normalization: (1) Extract data samples. Look for repeated
 values in columns: repeated customer name in orders = 2NF/3NF violation.
@@ -395,7 +395,57 @@ write a trigger or application code to keep both in sync. Validate.
 Drop old columns after full migration."
 
 ---
+**[SENIOR] Q7 - [FAILURE] A customer reports their email is correct on their profile but wrong on old invoices - what is the root cause and how do you fix it?**
 
+*Why they ask:* Tests whether candidates can diagnose update anomalies in production.
+
+*Likely follow-up:* "How do you prevent this from happening in a new schema design?"
+
+> **Answer:**
+>
+> This is the classic update anomaly - proof that 2NF-violating data
+> has caused real data corruption in production.
+>
+> **Root cause - diagnose:**
+> ```sql
+> -- Check if email is duplicated across tables:
+> SELECT 'customers' src, email FROM customers WHERE id = :id
+> UNION ALL
+> SELECT 'invoices' src, customer_email
+> FROM invoices WHERE customer_id = :id
+> ORDER BY src;
+> -- If values differ: invoices.customer_email is a stale copy.
+> ```
+>
+> The schema stores `invoices.customer_email` as a denormalized copy.
+> When the customer updated their email in `customers`, old invoices
+> were not updated - a textbook update anomaly.
+>
+> **Immediate fix - backfill:**
+> ```sql
+> UPDATE invoices i
+> SET customer_email = c.email
+> FROM customers c
+> WHERE i.customer_id = c.id
+>   AND i.customer_email != c.email;
+> ```
+> CAUTION: invoices may be legal records. Backfilling changes the
+> historical email. Verify with legal/compliance before running.
+>
+> **Proper fix - normalize:**
+> Remove `invoices.customer_email` entirely. Add a JOIN to `customers`
+> when rendering invoice views. One source of truth, no drift.
+>
+> **Or - if historical snapshot is intentional:**
+> Rename to `customer_email_at_invoice_time`. Document it clearly.
+> This is then correct behavior, not a bug.
+>
+> *What separates good from great:* The key question is: "Should
+> this field reflect the current state or the state at a specific
+> point in time?" Current state belongs on the entity table.
+> Point-in-time snapshots are valid denormalization - but they must
+> be named and documented to prevent future confusion and spurious
+> "bug" reports.
 ---
 
 ### 💻 Code Example
@@ -496,7 +546,7 @@ Signal 4: A query returns the same JOIN result for the same
           parent entity on every call (cache miss is frequent).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When and Why to Break Normal Forms example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Common denormalization patterns:**
 
@@ -524,7 +574,7 @@ Pattern 4: JSONB embedding
     for filtering; large JSONB bloats the parent row
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When and Why to Break Normal Forms example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -583,7 +633,7 @@ LIMIT 20;
 -- No JOIN. item_count is always current (trigger-maintained).
 ```
 
-> **Code walkthrough:** The BAD pattern executes a JOIN + GROUP BY for every
+> **Code walkthrough:** The BAD pattern executes a JOIN + GROUP BY for everyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > order listing query. At high request rates: the GROUP BY scans all order_items
 > for the filtered orders - expensive. The GOOD pattern pre-computes `item_count`
 > as a column in `orders`, maintained by a trigger. The trigger fires on every
@@ -628,7 +678,7 @@ FROM products p WHERE p.id = :product_id;
 -- No JOIN to products needed for historical reports.
 ```
 
-> **Code walkthrough:** Capturing `unit_price` and `product_name` at order time
+> **Code walkthrough:** Capturing `unit_price` and `product_name` at order timeice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > is both correct and a form of denormalization. It is correct because an order's
 > total is based on the price at the time of purchase - not today's price.
 > It is denormalized because the product name and price exist in the products table.
@@ -731,7 +781,7 @@ SET item_count = (
 WHERE id IN (-- ids from above query--);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates query execution using SQL. **KEY MECHANISM:** the query planner builds an execution plan based on table statistics and indexes. **WHY IT MATTERS:** SELECT * reads all columns even if only 2 are needed - widens rows, increases I/O. **TAKEAWAY: always SELECT only the columns you need; index the columns in WHERE and JOIN clauses.**
 
 Prevention: never bypass triggers. If bulk loads are needed: run the
 repair query afterward in a maintenance window.
@@ -740,7 +790,7 @@ repair query afterward in a maintenance window.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How do you maintain consistency of a denormalized counter column?**
+**[JUNIOR] Q1 - [MECHANISM] How do you maintain consistency of a denormalized counter column?**
 
 🗣️ "Two approaches: (1) Application-layer maintenance: every code path that
 inserts or deletes an order_item must also update `orders.item_count`
@@ -753,7 +803,7 @@ Both: add a periodic reconciliation job that compares the counter to the actual
 count and alerts (or repairs) discrepancies. Treat the counter as a cache:
 verify its accuracy, repair if needed, monitor for drift."
 
-**Q2: When is a summary table better than a counter column?**
+**[JUNIOR] Q2 - [MECHANISM] When is a summary table better than a counter column?**
 
 🗣️ "Counter columns: appropriate for simple counts or sums on parent-child
 relationships. Updated atomically on every write. Always current.
@@ -767,7 +817,7 @@ and accepts 5-minute staleness (fine for dashboards). Summary tables can be
 implemented as PostgreSQL materialized views: `CREATE MATERIALIZED VIEW daily_revenue AS ...;
 REFRESH MATERIALIZED VIEW CONCURRENTLY daily_revenue;`"
 
-**Q3: How do you handle denormalization in a distributed microservices architecture?**
+**[JUNIOR] Q3 - [DESIGN] How do you handle denormalization in a distributed microservices architecture?**
 
 🗣️ "In microservices: each service owns its data. Service A cannot JOIN to Service B's
 database. Denormalization is often necessary to avoid cross-service API calls
@@ -781,7 +831,7 @@ of the shared data (not recommended - creates coupling at the data layer).
 The event-driven approach: most correct for microservices. The local copy
 is eventually consistent; tolerable for most use cases."
 
-**Q4: What is the difference between CQRS and simple denormalization?**
+**[MID] Q4 - [TRADE-OFF] What is the difference between CQRS and simple denormalization?**
 
 🗣️ "Simple denormalization: add a redundant column to an existing normalized table.
 Maintain it in the same transaction. The write and read models use the same tables.
@@ -795,13 +845,13 @@ balance - all precomputed from normalized tables. CQRS: more complexity (two dat
 stores, event processing) but allows independent optimization of reads and writes.
 Denormalization within one schema: simpler, sufficient for most OLTP systems."
 
-**Q5: How do you decide when to denormalize vs. when to add an index?**
+**[MID] Q5 - [SCENARIO] How do you decide when to denormalize vs. when to add an index?**
 
 🗣️ "Denormalize when: the cost is in the JOIN itself (combining large result sets from
 multiple tables) or in computing an aggregation. An index makes lookup faster but
 does not eliminate the JOIN step. For `SELECT orders.id, COUNT(items) FROM orders JOIN order_items GROUP BY orders.id`: adding an index on `order_items.order_id` speeds the JOIN. But the GROUP BY still aggregates. A counter column eliminates both the JOIN and the GROUP BY. Add an index when: the query scans too many rows to find the right ones (WHERE clause selectivity). Denormalize when: the query selects the right rows efficiently (index helps) but the projection or aggregation is the expensive part. Diagnose with EXPLAIN ANALYZE: if 'Sort', 'Hash Aggregate', 'Nested Loop' are the expensive nodes: consider denormalization. If 'Seq Scan' or 'Bitmap Heap Scan' is expensive: add an index."
 
-**Q6: How do you implement a safe schema migration to add a denormalized column?**
+**[SENIOR] Q6 - [MECHANISM] How do you implement a safe schema migration to add a denormalized column?**
 
 🗣️ "Step 1: add the column as nullable: `ALTER TABLE orders ADD COLUMN item_count INTEGER`.
 No default computation (avoids a full table lock and scan).
@@ -814,6 +864,79 @@ Step 5: add NOT NULL constraint (after backfill is complete):
 `ALTER TABLE orders ALTER COLUMN item_count SET NOT NULL`.
 Step 6: deploy application code that reads from the new column.
 This is the expand-contract migration pattern: safe, zero-downtime."
+
+---
+
+**[SENIOR] Q7 - [DEBUGGING] Your denormalized summary counter is showing stale values under high write load - how do you diagnose and fix this?**
+
+*Why they ask:* Tests real-world knowledge of denormalization maintenance failure modes.
+
+*Likely follow-up:* "Would you switch to a real-time aggregation approach instead?"
+
+> **Answer:**
+>
+> Stale denormalized counters are one of the most common production bugs
+> after introducing denormalization. Diagnosis and fix:
+>
+> **Step 1 - Identify the lag source:**
+> ```sql
+> -- Compare live count vs stored counter:
+> SELECT
+>   o.id,
+>   o.item_count AS stored_count,
+>   COUNT(oi.id) AS live_count,
+>   o.item_count - COUNT(oi.id) AS drift
+> FROM orders o
+> LEFT JOIN order_items oi ON oi.order_id = o.id
+> GROUP BY o.id, o.item_count
+> HAVING o.item_count != COUNT(oi.id);
+> ```
+> If this returns rows: the trigger or application code that updates
+> `item_count` is missing some write paths.
+>
+> **Step 2 - Check trigger coverage:**
+> Some applications bypass ORM and use bulk INSERT/DELETE which skips
+> row-level triggers. Check for batch operations:
+> ```sql
+> -- PostgreSQL: list triggers on order_items
+> SELECT trigger_name, event_manipulation, action_statement
+> FROM information_schema.triggers
+> WHERE event_object_table = 'order_items';
+> ```
+> Missing: INSERT trigger fires, but DELETE trigger is absent.
+> Fix: add the missing trigger for the missing operation.
+>
+> **Step 3 - Fix accumulated drift with a reconciliation job:**
+> ```sql
+> -- Safe batch reconciliation:
+> UPDATE orders o SET
+>   item_count = (
+>     SELECT COUNT(*) FROM order_items
+>     WHERE order_id = o.id
+>   )
+> WHERE id IN (
+>   -- Only fix rows with confirmed drift:
+>   SELECT o2.id FROM orders o2
+>   JOIN order_items oi ON oi.order_id = o2.id
+>   GROUP BY o2.id
+>   HAVING o2.item_count != COUNT(oi.id)
+>   LIMIT 10000  -- batch to avoid lock escalation
+> );
+> ```
+>
+> **Step 4 - Under sustained high write load:**
+> Triggers add latency to every write. If the trigger is too slow under
+> load, switch to event-driven async update: emit an event on item
+> change, consumer updates the counter. Tradeoff: eventual consistency
+> (counter is slightly behind). For dashboards this is acceptable;
+> for order totals that affect billing it is not.
+>
+> *What separates good from great:* Always build a reconciliation
+> query at the time you introduce denormalization - before it ever
+> fails. Schedule it as a daily job. This way, when drift occurs
+> (and it will), you have both the diagnostic and the repair tool
+> ready. Treating reconciliation as an afterthought leads to
+> discovering drift months later with thousands of wrong rows.
 
 ---
 

@@ -70,7 +70,7 @@ render_with_liquid: false
 ### 📘 Concept Explanation
 
 **Cache architecture patterns and Caffeine internals:**
-```
+```plaintext
 CAFFEINE INTERNALS: W-TinyLFU ALGORITHM:
 
   Traditional LRU: evict Least Recently Used when full.
@@ -137,7 +137,7 @@ CAFFEINE CONFIGURATION PATTERNS:
     AsyncLoadingCache<String, UserProfile> cache = Caffeine.newBuilder()
         .maximumSize(10_000)
         .expireAfterWrite(10, TimeUnit.MINUTES)
-        .buildAsync(key -> userService.loadUserAsync(key));  // returns CompletableFuture
+        .buildAsync(key -> userService.loadUserAsync(key));  // returns...
     
     CompletableFuture<UserProfile> future = cache.get(userId);
     // Non-blocking: caller gets a future.
@@ -149,7 +149,7 @@ CACHE STAMPEDE PREVENTION:
   Cache stampede: many threads simultaneously miss the same key.
   Scenario:
     t=0: key expires. 500 threads receive requests needing this key.
-    t=0 to t=50ms: all 500 threads: cache miss -> DB query (500 concurrent DB queries!)
+    t=0 to t=50ms: all 500 threads: cache miss -> DB query (500 concurrent DB...
     t=50ms: DB overwhelmed, queries slow/timeout.
     t=100ms: all 500 DB queries return, all 500 threads write to cache.
     t=100ms+: cache is warm again, but DB was briefly overwhelmed.
@@ -161,8 +161,8 @@ CACHE STAMPEDE PREVENTION:
     Caffeine refreshAfterWrite implements this.
   
   Solution 2: External lock (Redis SETNX):
-    Thread 1: cache miss -> SETNX lock key -> got lock -> DB query -> update cache -> release lock.
-    Threads 2-499: cache miss -> SETNX lock key -> did NOT get lock -> wait OR serve stale.
+    Thread 1: cache miss -> SETNX lock key -> got lock -> DB query -> update...
+    Threads 2-499: cache miss -> SETNX lock key -> did NOT get lock -> wait OR...
     After Thread 1: all threads get fresh value from cache.
     Only 1 DB query instead of 500.
     
@@ -187,17 +187,17 @@ TWO-LEVEL CACHE ARCHITECTURE (L1 + L2):
     - Size: large (GB scale)
     - Invalidation: Redis keyspace notifications or explicit delete
   
-  Read path: check L1 -> hit: return. Miss: check L2 -> hit: populate L1, return.
+  Read path: check L1 -> hit: return. Miss: check L2 -> hit: populate L1,...
              L2 miss: DB query -> populate L2, populate L1, return.
   
-  Write path: write DB -> invalidate L1 (current pod) -> delete/update L2 (Redis).
+  Write path: write DB -> invalidate L1 (current pod) -> delete/update L2...
               Other pods: their L1 serves stale until TTL or explicit invalidation.
   
   Invalidation consistency:
     L1 inconsistency: acceptable if TTL < acceptable staleness (e.g., 30 seconds).
     L2 invalidation: on every write to ensure cross-pod consistency.
-    Publish-subscribe: Redis keyspace notifications -> all pods subscribe to invalidation events.
-      -> when L2 entry is deleted: all pods invalidate their L1 entry for that key.
+    Publish-subscribe: Redis keyspace notifications -> all pods subscribe to...
+      -> when L2 entry is deleted: all pods invalidate their L1 entry for that...
       -> provides strong consistency within a few milliseconds.
 
 CACHE ANTI-PATTERNS:
@@ -209,7 +209,7 @@ CACHE ANTI-PATTERNS:
      
      Fix: include version or last-modified timestamp in cache key.
      Or: shorter TTL for frequently-mutated entities.
-     Or: event-driven invalidation (order-updated event -> cache.invalidate(orderId)).
+     Or: event-driven invalidation (order-updated event -> cache.invalidate(ord...
   
   2. CACHING AT THE WRONG LAYER (premature caching):
      // Slow query: SELECT * FROM orders WHERE customer_id = ? ORDER BY created_at DESC
@@ -222,13 +222,13 @@ CACHE ANTI-PATTERNS:
      Cache is a band-aid for an unavoidable expense.
   
   3. UNBOUNDED CACHE:
-     Map<String, Object> cache = new HashMap<>();  // no eviction, no size limit
+     Map<String, Object> cache = new HashMap<>();  // no eviction, no size...
      // Grows without bound. OOM at some point.
      
      Fix: Caffeine with maximumSize. Always.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -447,7 +447,7 @@ Fix:
      // Keys now expire spread over 2 minutes, not all at once.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

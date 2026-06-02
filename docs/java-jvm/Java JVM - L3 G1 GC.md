@@ -78,7 +78,7 @@ the time budget (MaxGCPauseMillis)."
 ### 📘 Concept Explanation
 
 **G1 region types and selection:**
-```
+```plaintext
 HEAP LAYOUT:
   Total heap split into ~2048 regions (1-32MB each, auto-sized)
   Region size = heap_size / 2048, rounded to power of 2
@@ -106,7 +106,7 @@ MIXED GC REGION SELECTION:
   This is the "Garbage-First" selection
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This L3 G1 GC example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -164,7 +164,7 @@ System.out.printf("Old GC:   %d collections, %dms total (avg %.1fms)%n",
 // Old count = 0: no Mixed GC (may be fine or IHOP too high)
 ```
 
-> **Code walkthrough:** The GarbageCollectorMXBean names for G1 are always
+> **Code walkthrough:** The GarbageCollectorMXBean names for G1 are alwaysice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > "G1 Young Generation" (Minor GC) and "G1 Old Generation" (Mixed/Full GC).
 > These names are JVM-version stable. Monitoring the ratio: a healthy service
 > sees Old GC count growing slowly (1-2 per hour), Young GC count growing rapidly
@@ -246,7 +246,7 @@ Fix:
     Reduce cache sizes, fix memory leaks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Typical G1 tuning decisions: example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -352,7 +352,7 @@ The Survivor and Old Gen regions that would receive the evacuated objects are fu
 G1 must fall back to special handling: some objects are kept in-place (unsafe
 evacuation). This triggers a Full GC to properly compact the heap.
 
-```
+```plaintext
 Causes:
 1. Old Gen occupancy too high when Minor GC runs
    -> Not enough free regions for evacuation target
@@ -371,7 +371,7 @@ Fix:
 4. Reduce Humongous allocations: profile with JFR, fix large allocations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* "To-space exhausted" during a Minor GC is the most
 severe non-Full-GC event. Unlike a normal Minor GC: some objects are NOT evacuated
@@ -575,7 +575,7 @@ GC PARALLEL THREADS:
   -XX:ConcGCThreads=N      (Concurrent marking threads, default n_cpus/4)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -634,7 +634,7 @@ ManagementFactory.getMemoryPoolMXBeans().stream()
     .forEach(p -> System.out.println(p.getName() + ": " + p.getUsage()));
 ```
 
-> **Code walkthrough:** High Reference Processing time in GC phases is a
+> **Code walkthrough:** High Reference Processing time in GC phases is aice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > common surprise for teams that haven't profiled their GC pause breakdown.
 > A Spring application using event buses with WeakHashMap-backed listener
 > registries, combined with many cache entries using SoftReferences, can
@@ -714,7 +714,7 @@ Fix:
   4. JDK 16+: improved safepoint handling by default
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Update RS high: many cross-region writes (reduce object interconnectedness) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

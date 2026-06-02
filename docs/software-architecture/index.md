@@ -1,6 +1,6 @@
 ---
 title: "Software Architecture"
-nav_order: 26
+nav_order: 60
 has_children: true
 ---
 

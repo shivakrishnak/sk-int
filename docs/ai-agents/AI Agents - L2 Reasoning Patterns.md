@@ -120,7 +120,7 @@ REACT LOOP:
   (Full reasoning trail. Debugging: exactly what it thought.)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This ReAct Pattern example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The Scratchpad effect:**
 
@@ -143,6 +143,11 @@ that reason well internally.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 # BAD: pure action chain, no visible reasoning
@@ -233,7 +238,7 @@ def run_with_react(
     return "Failed", thought_traces
 ```
 
-> **Code walkthrough:** The BAD version is a pure action
+> **Code walkthrough:** The BAD version is a pure actionice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > loop - it works but produces no reasoning trail.
 > When it fails, you only see the final wrong output.
 > The GOOD version uses a ReAct system prompt that
@@ -472,7 +477,7 @@ BAD Observation:
 {"data": [{"id": 1, "v": "0.3.1"}, ...], "err": null}
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 GOOD Observation:
 ```
@@ -480,7 +485,7 @@ Found 3 results: package "requests" v0.3.1 (outdated),
 "urllib3" v1.26.9 (current), "certifi" v2023.7.22 (current).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The Observation's quality directly affects the next
 Thought's quality. If the Observation is unreadable,
@@ -549,7 +554,7 @@ Thought: I have the current price. I can answer.
 Answer: Apple stock (AAPL) is currently $185.23.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Common issues: LLMs may skip Thought steps when
 confident (they know the answer immediately). If
@@ -633,6 +638,127 @@ Alert on degradation after prompt changes.
 from uncertainty markers in Thought traces - using
 reasoning quality as a leading indicator of failure
 rate.
+
+---
+
+**[SENIOR] Q10 - [DEBUGGING] An agent using ReAct
+is looping - repeating the same Thought and Action
+indefinitely. How do you diagnose and fix it?**
+
+Root causes and diagnosis:
+
+(1) Observation not informative: the tool returns
+    an empty or unhelpful response. The agent
+    re-tries the same action hoping for a different
+    result.
+    Diagnose: check tool response content.
+    Fix: improve tool error messages to include
+    actionable hints ("no results found for X,
+    try Y instead").
+
+(2) Thought not updating: the model ignores the
+    Observation and repeats the original plan.
+    Diagnose: check if Observation appears in
+    the prompt for the next step. Common cause:
+    prompt truncation (context window full).
+    Fix: summarize earlier Observations to free
+    context window.
+
+(3) Goal not well-defined: the model doesn't
+    know what "done" looks like.
+    Diagnose: does the system prompt define a
+    completion condition?
+    Fix: add explicit stop condition.
+
+Prevention: max-step limit (hard cap at 10-15
+steps), loop detection (if last 3 actions are
+identical, force a different strategy), context
+summarization.
+
+*What separates good from great:* Loop detection
+is a safety net. The root cause is almost always
+one of: unhelpful tool responses, context truncation,
+or unclear stop conditions. Fix the root cause; the
+hard cap is only the last resort.
+
+---
+
+**[SENIOR] Q11 - [TRADE-OFF] When would you NOT
+use ReAct and prefer a simpler tool-call loop?**
+
+ReAct adds explicit Thought steps that cost tokens
+and latency. Use a simple action loop when:
+
+(1) The task is deterministic: the sequence of
+    tool calls is fixed or rule-based. No mid-flight
+    reasoning needed. Example: "fetch X, transform
+    it, write to Y". A pipeline works.
+
+(2) The task is single-step: one tool call answers
+    the query. ReAct overhead is pure waste.
+
+(3) Low latency required: streaming responses
+    to users. Each Thought step adds 100-300ms.
+    For real-time UX, minimize reasoning steps.
+
+(4) The model is weak: smaller models produce
+    poor Thoughts that mislead the execution.
+    Better to use structured workflow.
+
+Use ReAct when:
+- The path to the answer is unknown in advance
+- The agent must adapt based on what tools return
+- Debugging requires readable reasoning traces
+- The task has 3+ steps with conditional branching
+
+*What separates good from great:* The heuristic
+is: "do I need the model to decide the NEXT step
+based on the result of the CURRENT step?" If yes,
+ReAct. If the sequence is predetermined, use a
+pipeline with explicit orchestration code.
+
+---
+
+**[STAFF] Q12 - [BEHAVIORAL] Describe a production
+incident where an agent's reasoning traces helped
+you diagnose a failure that metrics alone couldn't
+reveal.**
+
+Structure: situation, how traces helped, outcome.
+
+Example: "Our customer support agent was returning
+incorrect refund amounts. Metrics showed: 95% task
+completion rate, no tool errors, normal latency.
+No signal.
+
+I sampled 20 traces from failed cases. The Thought
+step consistently said 'I'll check the order total'
+and called the order API - but then in the next
+Thought: 'The order total includes tax. I'll subtract
+tax to get the refundable amount.' The model was
+applying a tax subtraction that wasn't in the
+refund policy.
+
+Root cause: the system prompt said 'help customers
+with refunds' but didn't specify that the full order
+total is refundable. The model was hallucinating a
+business rule (tax subtraction) because it seemed
+reasonable.
+
+Fix: added explicit rule to system prompt. Checked
+500 historical traces for the same pattern. Found 3
+other incorrect business rules the model had invented.
+
+Without reasoning traces, I would have been looking
+at tool outputs and API calls - the bug was invisible
+there. The Thought content was the only place the
+incorrect business logic was visible."
+
+*What separates good from great:* Logging reasoning
+traces is not optional in production agents. They are
+the equivalent of application logs for traditional
+software. Without them, debugging agent misbehavior
+is guesswork.
 
 ---
 
@@ -837,7 +963,7 @@ EXTENDED THINKING (Anthropic):
   Reasoning separate from response (not in messages).
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Chain of Thought in Agents example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **CoT and agent decision quality:**
 
@@ -858,7 +984,7 @@ WITH CoT:
   -> LLM calls query_customer with correct intent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Chain of Thought in Agents example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 
@@ -872,6 +998,11 @@ self-verification step.
 ---
 
 ### 💻 Code Example
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 import anthropic
@@ -1143,7 +1274,7 @@ resp = client.messages.create(
 )
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Omitting them causes API errors. example demonstrates Python code pattern using authentication. **KEY MECHANISM:** Python evaluates expressions at runtime; objects are reference-counted for garbage collection. **WHY IT MATTERS:** mutable shared state between threads requires explicit locking - the GIL only protects CPython internals. **TAKEAWAY: use threading.Lock for shared mutable state; prefer multiprocessing for CPU-bound parallelism.**
 
 Key constraints:
 - `model` must be Claude 3.5+ (Haiku doesn't support)
@@ -1339,7 +1470,7 @@ Else:
   of extended thinking.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Continuous monitoring: measure CoT accuracy over
 time as task distribution changes. CoT impact
@@ -1373,7 +1504,7 @@ Thought: I have the email. I can now proceed.
 Action: [flags discrepancy to user]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Without CoT, the agent might: find a customer,
 not notice the email mismatch, proceed with the
@@ -1424,7 +1555,7 @@ def get_thinking_budget(task_type: str) -> int:
     return budgets.get(task_type, 5000)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates function definition. **KEY MECHANISM:** Python compiles the function body to bytecode; default args are evaluated once at definition time. **WHY IT MATTERS:** mutable default arguments (def f(x=[])) share state across calls - a classic bug. **TAKEAWAY: use None as default for mutable args and initialize inside the function body.**
 
 Monitoring: log actual thinking token usage per run.
 Alert if the P90 regularly exceeds the budget (the

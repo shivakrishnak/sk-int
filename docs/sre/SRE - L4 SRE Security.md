@@ -193,7 +193,7 @@ DOMAIN 3: SUPPLY CHAIN SECURITY
       which services are affected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Attack Surface, Incident Detection, Supply Chain example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **The key insight:**
 Security incidents are reliability incidents when they cause user-visible
@@ -219,6 +219,12 @@ have SRE absorb security operations.
 
 **Example 1: Credential stuffing detection via Prometheus metrics**
 
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
+
+{% raw %}
 ```python
 #!/usr/bin/env python3
 # BAD: No authentication anomaly detection.
@@ -343,8 +349,9 @@ CREDENTIAL_STUFFING_ALERT = """
     runbook_url: https://runbooks/security/credential-stuffing
 """
 ```
+{% endraw %}
 
-> **Code walkthrough:** The BAD approach has no authentication anomaly
+> **Code walkthrough:** The BAD approach has no authentication anomalyice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > monitoring - attacks run undetected for days. The GOOD approach uses
 > Prometheus counters to track authentication attempts with the critical
 > design decision of using /24 IP prefix (not the full IP) as a label
@@ -355,6 +362,11 @@ CREDENTIAL_STUFFING_ALERT = """
 > protecting the service before the Prometheus alert fires.
 
 **Example 2: Supply chain CVE response automation**
+
+
+```python
+# BAD: anti-pattern - see GOOD example below
+```
 
 ```python
 #!/usr/bin/env python3
@@ -500,7 +512,7 @@ def cve_impact_report(
     }
 ```
 
-> **Code walkthrough:** The BAD approach requires manually asking
+> **Code walkthrough:** The BAD approach requires manually askingice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > engineers which services use a vulnerable library - taking 6 hours
 > for Log4Shell while the clock was ticking. The GOOD approach uses
 > Grype (a container image SBOM scanner) to automatically identify
@@ -1158,7 +1170,7 @@ SECURITY OBSERVABILITY INTEGRATION
   SRE stack: 30 days operational retention
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 

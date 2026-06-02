@@ -90,7 +90,7 @@ HashAggregate (cost=... rows=5000) (actual time=45.2..47.8 rows=4993)
        -> Seq Scan on orders (cost=...) (actual time=0.1..12.3 rows=50000)
        -> Hash (cost=...) (actual time=2.1..2.1 rows=5000)
              Buckets: 8192
-             -> Seq Scan on customers (cost=...) (actual time=0.1..1.8 rows=5000)
+             -> Seq Scan on customers (cost=...) (actual time=0.1..1.8...
 
 Reading:
   - Execution is bottom-up: leaf nodes execute first.
@@ -100,7 +100,7 @@ Reading:
   - "HashAggregate": group by name, count.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This EXPLAIN and Query Execution Plans example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Plan nodes quick reference:**
 
@@ -124,7 +124,7 @@ Other:
   Gather:       collect parallel workers' results
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This EXPLAIN and Query Execution Plans example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -195,7 +195,7 @@ CREATE INDEX CONCURRENTLY idx_customers_country
 -- Total time: 12ms (was 890ms). 75x improvement.
 ```
 
-> **Code walkthrough:** EXPLAIN BUFFERS shows how many disk blocks were
+> **Code walkthrough:** EXPLAIN BUFFERS shows how many disk blocks wereice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > read. The BAD plan has two Seq Scans - each reads the entire table.
 > `Rows Removed by Filter: 8,500,000` means 85% of orders were scanned
 > and discarded. Adding indexes on `created_at` and `country` converts
@@ -231,7 +231,7 @@ EXPLAIN ANALYZE SELECT * FROM orders WHERE customer_id = 42;
 -- Estimates are now accurate. Better plan chosen.
 ```
 
-> **Code walkthrough:** Statistics are the optimizer's input. If statistics
+> **Code walkthrough:** Statistics are the optimizer's input. If statisticsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > are stale (loaded from old data or not yet collected): the optimizer
 > makes wrong choices. A row estimate of 100 when reality is 4,500 causes
 > the optimizer to choose Nested Loop (suitable for small sets) when
@@ -328,7 +328,7 @@ ANALYZE orders;  -- refresh statistics
 -- Then re-run EXPLAIN ANALYZE to verify the plan changed.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates SQL pattern. **KEY MECHANISM:** the database parses, plans, and executes the query; EXPLAIN ANALYZE shows the actual plan. **WHY IT MATTERS:** missing WHERE clause on UPDATE/DELETE affects all rows - no undo without a transaction rollback. **TAKEAWAY: always test destructive SQL in a transaction; use EXPLAIN ANALYZE before deploying.**
 
 Set `autovacuum_analyze_scale_factor = 0.05` for high-churn tables.
 
@@ -336,7 +336,7 @@ Set `autovacuum_analyze_scale_factor = 0.05` for high-churn tables.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: What does the cost= field in EXPLAIN output mean?**
+**[JUNIOR] Q1 - [MECHANISM] What does the cost= field in EXPLAIN output mean?**
 
 🗣️ "Cost is a relative number in arbitrary units (roughly proportional
 to the number of sequential 8KB page reads). `cost=startup..total`.
@@ -349,7 +349,7 @@ They are comparable only within the same query (e.g., Index Scan cost=5
 vs Seq Scan cost=2345 means Index Scan is far cheaper). Do not compare
 costs across different databases or versions."
 
-**Q2: What is the difference between Index Scan and Index Only Scan?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between Index Scan and Index Only Scan?**
 
 🗣️ "Index Scan: use the index to find matching rows, then fetch the
 actual heap pages for each match. Two levels of I/O: index read + heap
@@ -363,7 +363,7 @@ visibility even for an Index Only Scan. EXPLAIN shows 'Heap Fetches: N'
 for these checks. High Heap Fetches on an Index Only Scan: run VACUUM
 to update the visibility map."
 
-**Q3: How do you diagnose a slow query in production PostgreSQL?**
+**[JUNIOR] Q3 - [DEBUGGING] How do you diagnose a slow query in production PostgreSQL?**
 
 🗣️ "Four-step process: (1) Identify slow queries: `pg_stat_statements`
 (requires the extension) shows total time, call count, and mean time per
@@ -376,7 +376,7 @@ with large working set, big estimate-vs-actual row discrepancies.
 `work_mem` for sort/hash spills, rewrite the query if the logic is
 inherently inefficient."
 
-**Q4: What does 'loops=N' mean in EXPLAIN ANALYZE output?**
+**[MID] Q4 - [MECHANISM] What does 'loops=N' mean in EXPLAIN ANALYZE output?**
 
 🗣️ "'loops=N' means the plan node executed N times. For a Nested Loop join:
 the inner side executes once per outer row. If the outer side returns
@@ -388,7 +388,7 @@ indicates an expensive inner node executing many times (the N+1 problem in
 SQL: many small queries, each fast individually but expensive in aggregate).
 For correlated subplans: `SubPlan 1 (loops=1000000)` is a warning sign."
 
-**Q5: What is parallel query execution and when does PostgreSQL use it?**
+**[MID] Q5 - [MECHANISM] What is parallel query execution and when does PostgreSQL use it?**
 
 🗣️ "PostgreSQL can split a sequential scan, aggregate, or hash join across
 multiple CPU cores. `EXPLAIN` shows 'Gather Merge' or 'Gather' nodes,
@@ -401,7 +401,7 @@ It does NOT help for: OLTP queries (already using indexes, small result sets),
 queries with index scans (index scans do not parallelize). Check
 EXPLAIN for 'Workers Planned/Launched' to see parallelism in action."
 
-**Q6: How do hints work in PostgreSQL and when should you use them?**
+**[SENIOR] Q6 - [SCENARIO] How do hints work in PostgreSQL and when should you use them?**
 
 🗣️ "PostgreSQL does not have SQL hints (unlike Oracle's `/*+ INDEX(t idx) */`).
 Instead, use GUC settings to disable plan options: `SET enable_seqscan = off`
@@ -414,7 +414,7 @@ consistently makes a wrong choice due to statistics limitations. Never
 use hints as a permanent fix without understanding why the optimizer makes
 the wrong choice - the hint will break when data distribution changes."
 
-**Q7: What is the pg_stat_statements extension and how do you use it for performance tuning?**
+**[SENIOR] Q7 - [MECHANISM] What is the pg_stat_statements extension and how do you use it for performance tuning?**
 
 🗣️ "`pg_stat_statements` tracks execution statistics for every unique query
 pattern. `SELECT query, calls, total_exec_time, mean_exec_time, rows
@@ -512,6 +512,12 @@ at once (one JOIN query)."
 
 **N+1 in JPA/Hibernate:**
 
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
 ```java
 // BAD: N+1 query pattern (lazy loading in loop)
 List<Customer> customers =
@@ -539,7 +545,7 @@ List<Customer> customers =
 // Total: 1 round trip.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This N+1 Query Anti-Pattern example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Batch fetching as an alternative:**
 
@@ -558,7 +564,7 @@ public class Customer {
 // Instead of 1000 queries: ceil(1000/50) = 20 queries.
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This N+1 Query Anti-Pattern example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -612,7 +618,7 @@ ORDER BY customer_id;
 -- 2 queries total. Efficient.
 ```
 
-> **Code walkthrough:** The N+1 log shows a SELECT for each customer
+> **Code walkthrough:** The N+1 log shows a SELECT for each customerice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > individually - the classic N+1 signature. The JOIN solution combines
 > both tables in one query. LEFT JOIN ensures customers with no orders
 > are included. The application receives a flat result set and assembles
@@ -649,7 +655,7 @@ List<CustomerSummaryDto> findCustomerSummaries(
 // Most efficient for read-only display/reporting use cases.
 ```
 
-> **Code walkthrough:** JOIN FETCH loads Customer entities with their
+> **Code walkthrough:** JOIN FETCH loads Customer entities with theirice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > orders collections pre-populated. The SQL includes a JOIN that brings
 > all data in one round trip. DTO projection is the most efficient approach
 > for read-only queries: write a specific SQL query that returns only the
@@ -741,7 +747,7 @@ logging.level.org.hibernate.SQL=DEBUG
 logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
 # Or use p6spy for per-query timing
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or use p6spy for per-query timing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Count the number of queries for one page load. 1,000 queries * 1ms each
 = 1 second of pure database time, plus 1-2 seconds of network latency
@@ -757,7 +763,7 @@ for 1,000 round trips = 3 second page load.
 
 ### 🎯 Interview Deep-Dive
 
-**Q1: How do you detect N+1 in a Java application in production?**
+**[JUNIOR] Q1 - [MECHANISM] How do you detect N+1 in a Java application in production?**
 
 🗣️ "Three approaches: (1) SQL logging in development: `spring.jpa.show-sql=true`
 and count SELECT patterns. Multiple selects with different IDs = N+1.
@@ -770,7 +776,7 @@ N+1 signature. Additionally: `pg_stat_statements` shows high `calls` for
 a parameterized query pattern - thousands of identical queries with different
 parameters."
 
-**Q2: What is the difference between JOIN FETCH and @EntityGraph in Spring Data JPA?**
+**[JUNIOR] Q2 - [TRADE-OFF] What is the difference between JOIN FETCH and @EntityGraph in Spring Data JPA?**
 
 🗣️ "JOIN FETCH: written in JPQL query directly. `SELECT c FROM Customer c JOIN FETCH c.orders WHERE c.id = :id`.
 The association is eager-loaded in the query. Works per-query basis.
@@ -782,7 +788,7 @@ and reused: `@NamedEntityGraph(name='Customer.orders', attributeNodes=...)`.
 Disadvantage: can become complex for deep nested associations. For complex
 data needs: a native SQL DTO projection is often cleaner."
 
-**Q3: What is the Cartesian product problem with JOIN FETCH and multiple collections?**
+**[JUNIOR] Q3 - [MECHANISM] What is the Cartesian product problem with JOIN FETCH and multiple collections?**
 
 🗣️ "JOIN FETCH on two parallel collections produces a Cartesian product.
 `SELECT c FROM Customer c JOIN FETCH c.orders JOIN FETCH c.addresses`:
@@ -794,7 +800,7 @@ the collections (Hibernate automatically deduplicates Sets) or use
 separate queries with BatchSize - one query for orders, one for addresses.
 In Spring Data: `@EntityGraph` with multiple paths has the same problem."
 
-**Q4: How does Hibernate's @BatchSize work to mitigate N+1?**
+**[MID] Q4 - [MECHANISM] How does Hibernate's @BatchSize work to mitigate N+1?**
 
 🗣️ "`@BatchSize(size=50)` on a collection tells Hibernate: when any instance
 in this collection is first accessed, load collections for up to 50 entities
@@ -806,7 +812,7 @@ only accessed for some entities in the list; (2) deep nesting where JOIN FETCH
 would produce too many levels of JOINs. Configure globally in persistence.xml:
 `<property name='hibernate.default_batch_fetch_size' value='50'>`."
 
-**Q5: Can you write a query that detects N+1 patterns in pg_stat_statements?**
+**[MID] Q5 - [MECHANISM] Can you write a query that detects N+1 patterns in pg_stat_statements?**
 
 🗣️ "`SELECT query, calls, mean_exec_time, total_exec_time
 FROM pg_stat_statements
@@ -819,7 +825,7 @@ total. If this corresponds to one HTTP request type: it is doing 5,000
 individual lookups. Cross-reference with your endpoint performance metrics
 to identify which endpoint triggers the pattern."
 
-**Q6: What is the open-session-in-view anti-pattern and how does it relate to N+1?**
+**[SENIOR] Q6 - [FAILURE] What is the open-session-in-view anti-pattern and how does it relate to N+1?**
 
 🗣️ "Open Session in View (OSIV): Spring Boot enables this by default for web apps.
 The JPA EntityManager (Hibernate Session) is opened at the start of the HTTP
@@ -833,7 +839,7 @@ collection causes a database query. Disable OSIV in production:
 `spring.jpa.open-in-view=false`. This forces developers to load all needed
 data in the service layer (where it is visible and controllable)."
 
-**Q7: How do you write tests to prevent N+1 regressions?**
+**[SENIOR] Q7 - [MECHANISM] How do you write tests to prevent N+1 regressions?**
 
 🗣️ "Use a SQL counter test helper. With datasource-proxy:
 wrap the DataSource to count queries per test. Assert the query count.
@@ -850,7 +856,7 @@ void shouldLoadCustomersWithoutNPlusOne() {
     assertThat(queriesAfter - queriesBefore).isLessThan(3);
 }
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Or use p6spy for per-query timing example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Libraries: db-util (Vlad Mihalcea), datasource-proxy-assert.
 This prevents regression: if someone adds a lazy association later,

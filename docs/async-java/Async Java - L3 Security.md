@@ -113,7 +113,7 @@ Async CompletableFuture (BREAKS):
   });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secure Async Patterns in Java example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Thread-based security context mechanisms:**
 
@@ -138,7 +138,7 @@ Reactive: ReactiveSecurityContextHolder
   - Integrated with Spring Security 5+ WebFlux
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secure Async Patterns in Java example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **TOCTOU (Time-of-Check vs Time-of-Use) vulnerability:**
 
@@ -158,7 +158,7 @@ SECURE PATTERN:
   -> If token expired: operation rejected
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Secure Async Patterns in Java example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Sensitive data in async contexts:**
 
@@ -174,6 +174,18 @@ SECURE PATTERN:
 ### 💻 Code Example
 
 **Secure async patterns in Spring:**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // 1. DelegatingSecurityContextExecutor for CF
@@ -274,7 +286,7 @@ log.debug("Fetching data for user: {}",
         .getAuthentication().getName());
 ```
 
-> **Code walkthrough:** Pattern 1 shows the core problem and fix for
+> **Code walkthrough:** Pattern 1 shows the core problem and fix forice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > Spring `@Async` methods: the default executor does not propagate
 > `SecurityContext`, so the callback thread has an empty security context.
 > `DelegatingSecurityContextExecutor` wraps the executor and captures the
@@ -367,7 +379,7 @@ log.debug("Thread: {}", Thread.currentThread().getName());
 // vs "http-nio-8080-exec-1" (request thread) - has security context
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates shell script pattern using thread pool. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Fix:
 ```java
@@ -385,7 +397,7 @@ class AsyncConfig implements AsyncConfigurer {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates Java API usage using thread pool. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
@@ -395,7 +407,7 @@ class AsyncConfig implements AsyncConfigurer {
 
 ---
 
-#### Q1 - How does Spring Security propagate SecurityContext in async code?
+**[JUNIOR] Q1 - [HANDS-ON] How does Spring Security propagate SecurityContext in async code?**
 
 Spring Security's `SecurityContextHolder` uses a `SecurityContextHolderStrategy`
 to store context. Three strategies:
@@ -435,7 +447,7 @@ SecurityContextHolder.setStrategyName(
     SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* `DelegatingSecurityContextExecutor` uses
 a `Supplier<SecurityContext>` - by default it captures the context from
@@ -450,11 +462,11 @@ CompletableFuture.runAsync(
         () -> systemLevelJob(), systemContext));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 ---
 
-#### Q2 - How does Spring Security WebFlux propagate authentication?
+**[JUNIOR] Q2 - [CONCEPTUAL] How does Spring Security WebFlux propagate authentication?**
 
 WebFlux cannot use ThreadLocal because reactive pipelines switch threads.
 Spring Security WebFlux uses Reactor Context:
@@ -474,7 +486,7 @@ Set by Spring Security WebFlux:
   -> context propagates to all downstream operators
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates a key concept in practice using authentication. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ```java
 // Read authentication in reactive service:
@@ -498,7 +510,7 @@ public Mono<ServerResponse> getProfile(ServerRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Context propagation through subscriber
 chain: when `contextWrite(Context.of("key", "value"))` is used, the context
@@ -509,7 +521,7 @@ available to all operators in the chain via `deferContextual` or
 
 ---
 
-#### Q3 - What is the TOCTOU vulnerability in async authorization?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is the TOCTOU vulnerability in async authorization?**
 
 TOCTOU = Time-of-Check vs Time-of-Use. In authorization:
 - CHECK: verify user has permission (at request time)
@@ -542,7 +554,7 @@ Code pattern:
   }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates a key concept in practice using CompletableFuture. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Mitigations:
 
@@ -558,7 +570,7 @@ Mitigations:
    });
    ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Verify by checking thread name in @Async method: example demonstrates Java API usage using authentication. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 3. **Token-based authorization**: issue a short-lived capability token
    at check time; verify the token hasn't been revoked at use time.
@@ -571,12 +583,28 @@ or event sourcing with audit trail showing who was authorized when.
 
 ---
 
-#### Q4 - How do you prevent sensitive data leaks in async exception handling?
+**[MID] Q4 - [CONCEPTUAL] How do you prevent sensitive data leaks in async exception handling?**
 
 Sensitive data sources in async exceptions:
 1. Exception messages containing PII (user names, account numbers)
 2. Stack traces exposing internal implementation (schema names, SQL)
 3. Error response bodies echoing request data
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
 
 ```java
 // BAD: exception message with PII
@@ -612,7 +640,7 @@ public ResponseEntity<ApiError> handleException(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **WHAT BREAKS: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Structured logging fields vs log messages
 for PII: structured logging allows field-level redaction:
@@ -625,14 +653,30 @@ log.info("User action",
 // vs: log.info("User {} logged in", userId) <- embedded in string
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q5 - How do you secure CompletableFuture-based APIs against injection attacks?
+**[MID] Q5 - [CONCEPTUAL] How do you secure CompletableFuture-based APIs against injection attacks?**
 
 Async APIs are vulnerable to the same injection risks as synchronous ones,
 with the additional risk that async validation may be bypassed:
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
 
 ```java
 // BAD: user input directly in async operation without validation
@@ -675,7 +719,7 @@ public CompletableFuture<Report> generateReport(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **WHAT BREAKS: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Async validation: never perform validation
 ONLY in the async callback thread. If the callback thread validates but the
@@ -687,7 +731,7 @@ Validate at submission time (synchronously) AND optionally at execution time
 
 ---
 
-#### Q6 - How do virtual threads affect security context propagation?
+**[MID] Q6 - [CONCEPTUAL] How do virtual threads affect security context propagation?**
 
 Virtual threads do NOT inherit the parent thread's ThreadLocal by default:
 
@@ -714,7 +758,7 @@ Thread vt = Thread.ofVirtual().start(() -> {
 // NOT by the request thread -> no inheritance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Spring Security with virtual threads (Spring Boot 3.2+):
 ```yaml
@@ -724,7 +768,7 @@ spring:
       enabled: true
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 With `spring.threads.virtual.enabled=true`, Tomcat uses virtual threads for
 HTTP request handling. Each request gets its own virtual thread. ThreadLocal
@@ -744,7 +788,7 @@ correct bridge.
 
 ---
 
-#### Q7 - How do you audit async operations for security compliance?
+**[SENIOR] Q7 - [CONCEPTUAL] How do you audit async operations for security compliance?**
 
 Audit requirements: who performed which operation, when, with what data.
 Async operations make this harder because the identity at execution time
@@ -790,7 +834,7 @@ public CompletableFuture<Void> deleteRecord(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **TAKEAWAY: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* Audit logs for async operations should
 include BOTH the submission time and the execution time. For compliance
@@ -801,10 +845,20 @@ there's a gap between authorization and execution.
 
 ---
 
-#### Q8 - How do you prevent SSRF in reactive WebClient calls?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you prevent SSRF in reactive WebClient calls?**
 
 Server-Side Request Forgery (SSRF): an attacker controls a URL that is
 fetched by the server, potentially reaching internal services.
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: user-controlled URL fetched directly
@@ -849,7 +903,7 @@ public Mono<String> fetchUrl(String userProvidedUrl) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates exception handling using error handling. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **WHAT BREAKS: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The allowlist must check the RESOLVED
 IP, not just the hostname, to prevent DNS rebinding attacks. After DNS
@@ -860,9 +914,25 @@ use non-obvious private IPs.
 
 ---
 
-#### Q9 - How do you securely handle secrets in async Java code?
+**[SENIOR] Q9 - [HANDS-ON] How do you securely handle secrets in async Java code?**
 
 Secrets (API keys, DB passwords, tokens) in async code:
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
+
+
+```java
+// BAD: blocking the calling thread defeats async purpose
+CompletableFuture<String> future = fetchDataAsync();
+String result = future.get(); // blocks caller thread
+process(result); // sequential, not async
+```
 
 ```java
 // BAD: secret in exception message (logged and visible)
@@ -913,7 +983,7 @@ public CompletableFuture<Response> callSecurely(
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This Unknown example demonstrates async pipeline construction using CompletableFuture. **KEY MECHANISM:** the JVM schedules continuations via ForkJoinPool when each stage completes. **WHY IT MATTERS:** callback chains execute on wrong threads causing ClassCastException in Spring context. **WHAT BREAKS: always specify executor on thenApplyAsync to control thread context.**
 
 *What separates good from great:* `char[]` for secret storage: Java's
 `String` is immutable and interned in the string pool. A `String` containing

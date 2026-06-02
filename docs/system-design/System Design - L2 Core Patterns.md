@@ -122,7 +122,7 @@ Random:
   -> Better distribution than random or round-robin
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Load Balancing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **L4 vs L7 comparison:**
 
@@ -149,7 +149,7 @@ Layer 7 (Application):
   Examples: AWS ALB, nginx, HAProxy in HTTP mode, Envoy
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Load Balancing example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
@@ -262,7 +262,7 @@ public class OrderClient {
 }
 ```
 
-> **Code walkthrough:** Client-side load balancing moves the LB logic into
+> **Code walkthrough:** Client-side load balancing moves the LB logic intoice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > the client. The client holds an instance list (from Eureka/Kubernetes API),
 > picks one per request, and calls it directly. No separate LB process. Pros:
 > lower latency (no extra hop), richer algorithms possible (consistent hashing,
@@ -324,11 +324,11 @@ Any server handles any user. Load balancer can freely remove/add servers.
 
 ---
 
-#### Q1 - How do health checks work in load balancers?
+**[JUNIOR] Q1 - [SYSTEM DESIGN] How do health checks work in load balancers?**
 
 Load balancers use health checks to detect and remove unhealthy servers:
 
-```
+```plaintext
 Health check types:
   TCP check: open port 8080, close immediately
     -> verifies process is listening
@@ -363,7 +363,7 @@ Sequence:
   In that 90s: ~33% of requests to that server fail
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Canary routing (5% to v2): example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The health check endpoint must be designed
 carefully. Too shallow (/ping always returns 200): doesn't detect real failures.
@@ -375,7 +375,7 @@ my downstream dependencies healthy? Downstream health is those services' concern
 
 ---
 
-#### Q2 - How do you prevent a thundering herd when a server is added back?
+**[JUNIOR] Q2 - [CONCEPTUAL] How do you prevent a thundering herd when a server is added back?**
 
 When a server returns from failure, adding it back can create a spike:
 
@@ -407,7 +407,7 @@ Kubernetes readiness probe:
     -> Then readiness probe starts passing
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "cache warming" pattern reduces cold-start
 issues. During application startup (before readiness probe passes):
@@ -419,11 +419,11 @@ Netflix and other high-traffic sites use this approach routinely.
 
 ---
 
-#### Q3 - What is geographic load balancing and how does it work?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is geographic load balancing and how does it work?**
 
 Geographic LB routes users to the nearest datacenter:
 
-```
+```plaintext
 DNS-based geographic load balancing:
   User in US -> DNS query -> myapp.com
   DNS server (Route 53, Cloudflare):
@@ -455,7 +455,7 @@ Active-active multi-region:
   Conflict resolution: vector clocks, last-write-wins, CRDTs
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Multi-region active-active introduces
 cross-region data consistency challenges. If a user in US writes data and
@@ -468,7 +468,7 @@ trade-offs. This is why many companies are single-region with HA within the regi
 
 ---
 
-#### Q4 - How does a load balancer handle WebSocket connections?
+**[MID] Q4 - [CONCEPTUAL] How does a load balancer handle WebSocket connections?**
 
 WebSocket upgrade requires special handling:
 
@@ -513,7 +513,7 @@ Problem: WebSocket connections are long-lived (stateful)
   Application: must handle reconnection gracefully
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This same client -> same websocket server example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* WebSocket at scale is harder than HTTP.
 Each active connection holds a file descriptor and memory on the server.
@@ -527,11 +527,11 @@ application servers via Redis pub/sub or message queue.
 
 ---
 
-#### Q5 - What is SSL termination and why is it done at the load balancer?
+**[SENIOR] Q5 - [MECHANISM] What is SSL termination and why is it done at the load balancer?**
 
 SSL termination: decrypt HTTPS at the LB, pass HTTP to application servers.
 
-```
+```plaintext
 Without SSL termination:
   Client -> HTTPS -> App Server 1 (has cert + private key)
   Client -> HTTPS -> App Server 2 (has cert + private key)
@@ -566,7 +566,7 @@ mTLS (Mutual TLS):
   Used in: service mesh (Istio), zero-trust networks
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This same client -> same websocket server example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Certificate management at scale is an
 operational challenge. Let's Encrypt automated cert renewal (certbot) solves
@@ -579,7 +579,7 @@ Automate cert renewal; treat a cert expiry as a P1 incident.
 
 ---
 
-#### Q6 - How does load balancing work in Kubernetes?
+**[SENIOR] Q6 - [MECHANISM] How does load balancing work in Kubernetes?**
 
 Kubernetes has multiple load balancing layers:
 
@@ -613,7 +613,7 @@ Example Ingress for URL routing:
   Handled by: nginx Ingress Controller
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This same client -> same websocket server example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Kubernetes networking stack is
 layered and each layer has different failure modes. If pods are healthy
@@ -627,10 +627,10 @@ Ingress through Service Mesh through service to database.
 
 ---
 
-#### Q7 - What is the difference between active-passive and active-active load balancer setups?
+**[SENIOR] Q7 - [TRADE-OFF] What is the difference between active-passive and active-active load balancer setups?**
 
 **Active-Passive (HA pair):**
-```
+```plaintext
 Active LB: handles all traffic
 Passive LB: standby, monitors active
 
@@ -647,7 +647,7 @@ Advantage: simple, no split-brain risk
 Disadvantage: 50% of capacity idle (passive is standby)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This same client -> same websocket server example demonstrates a key concept in practice using concurrency primitive. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Active-Active:**
 ```
@@ -660,7 +660,7 @@ Advantage: full capacity utilized, faster failover with anycast
 Disadvantage: more complex (need shared state or session affinity)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This same client -> same websocket server example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cloud-managed load balancers (AWS ALB, GCP
 HTTPS LB) are inherently multi-AZ active-active. You don't design their HA -
@@ -673,11 +673,11 @@ that handle it transparently.
 
 ---
 
-#### Q8 - How does a load balancer enable canary deployments?
+**[STAFF] Q8 - [MECHANISM] How does a load balancer enable canary deployments?**
 
 Canary deployment: route small % of traffic to new version, monitor, expand.
 
-```
+```plaintext
 Nginx weight-based canary:
   upstream myapp {
       server app-v1:8080 weight=95;  # 95% to v1
@@ -710,7 +710,7 @@ Sticky canary (same user always gets same version):
   Nginx: consistent hashing on $cookie_user_id
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5% to app-v2, 95% to app-v1 example demonstrates a key concept in practice using container. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Canary deployments require observability
 before they're useful. Without proper metrics (error rate by version, latency
@@ -723,7 +723,7 @@ caught at 1% traffic before full rollout.
 
 ---
 
-#### Q9 - How do you load balance between microservices in a service mesh?
+**[STAFF] Q9 - [MECHANISM] How do you load balance between microservices in a service mesh?**
 
 Service mesh (Istio/Linkerd) handles service-to-service load balancing:
 
@@ -766,7 +766,7 @@ Load balancing in Istio:
         baseEjectionTime: 30s
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This 5% to app-v2, 95% to app-v1 example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The outlierDetection in Istio DestinationRule
 is passive health checking (circuit breaking at the mesh level). When a pod
@@ -868,7 +868,7 @@ DB sees only 20% of original traffic."
 
 **Caching strategies:**
 
-```
+```plaintext
 Cache-Aside (Lazy Loading):
   Read:
     1. Check cache for key
@@ -921,7 +921,7 @@ Refresh-Ahead:
   Cons: may pre-fetch unused data (wasted resources)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Caching Strategies example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Cache hierarchy:**
 
@@ -952,11 +952,21 @@ Full caching:
   Each layer reduces load on the next
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Caching Strategies example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 ---
 
 ### 💻 Code Example
+
+
+```java
+// BAD: null check without Optional
+User user = findUser(id);
+if (user != null) {
+    return user.getName();
+}
+return null; // callers must null-check return value
+```
 
 ```java
 // BAD: no caching (every request hits DB)
@@ -1110,7 +1120,7 @@ public class ProductService {
 }
 ```
 
-> **Code walkthrough:** Cache stampede: when a popular key expires, thousands
+> **Code walkthrough:** Cache stampede: when a popular key expires, thousandsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > of concurrent requests all miss the cache simultaneously and hit the DB.
 > The mutex pattern: one thread acquires a distributed lock (SET NX = set if
 > not exists, atomic operation in Redis). Only one thread fetches from DB;
@@ -1176,7 +1186,7 @@ Fix: add TTL to all keys, review maxmemory-policy (allkeys-lru for cache),
 
 ---
 
-#### Q1 - What cache eviction policies exist and when do you use each?
+**[JUNIOR] Q1 - [CONCEPTUAL] What cache eviction policies exist and when do you use each?**
 
 When cache is full, eviction removes entries to make room:
 
@@ -1216,7 +1226,7 @@ Redis maxmemory-policy options:
   allkeys-random: random eviction
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The eviction policy should match the data
 access pattern. For a product catalog (popular products are always popular):
@@ -1229,7 +1239,7 @@ triggers). The goal: evictions should be near zero in normal operation.
 
 ---
 
-#### Q2 - How do you implement a distributed lock with Redis?
+**[JUNIOR] Q2 - [HANDS-ON] How do you implement a distributed lock with Redis?**
 
 Distributed lock: ensures only one process executes a critical section.
 
@@ -1276,7 +1286,7 @@ if (acquireLock("payment:order-123", lockValue,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates exception handling using SQL. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 *What separates good from great:* The Redlock algorithm (multiple Redis instances)
 provides stronger lock guarantees in a distributed setting. Single-node Redis lock:
@@ -1290,7 +1300,7 @@ with Redlock.
 
 ---
 
-#### Q3 - What is cache warming and when is it necessary?
+**[JUNIOR] Q3 - [CONCEPTUAL] What is cache warming and when is it necessary?**
 
 Cache warming: pre-populating cache before serving traffic.
 
@@ -1332,7 +1342,7 @@ Warming approaches:
    Used for: planned traffic spikes (product launches)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Cache warming is most critical for systems
 with high cold-start DB load. If a single DB can handle 10x normal load for
@@ -1345,7 +1355,7 @@ pod startup time; optimize it (parallel warmup, incremental) to not slow deploym
 
 ---
 
-#### Q4 - How do you prevent stale reads in a read-through cache?
+**[MID] Q4 - [CONCEPTUAL] How do you prevent stale reads in a read-through cache?**
 
 Stale read: reading from cache after the underlying data changed.
 
@@ -1394,7 +1404,7 @@ Strategy 5: Versioning
   Very accurate but adds read latency (version fetch)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The business requirement determines the
 staleness budget. Banking: zero staleness (write-through or no cache for
@@ -1406,7 +1416,7 @@ the strategy that achieves it at acceptable cost.
 
 ---
 
-#### Q5 - How does Redis handle persistence and what are the trade-offs?
+**[MID] Q5 - [TRADE-OFF] How does Redis handle persistence and what are the trade-offs?**
 
 Redis persistence options:
 
@@ -1446,7 +1456,7 @@ RDB + AOF (best of both):
   Recommended for: using Redis as primary store
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* For Redis as a cache: no persistence or RDB
 is appropriate (data loss = cold cache, acceptable). For Redis as a primary
@@ -1459,7 +1469,7 @@ session instance: AOF everysec).
 
 ---
 
-#### Q6 - How do you cache search results and handle cache invalidation for complex queries?
+**[MID] Q6 - [CONCEPTUAL] How do you cache search results and handle cache invalidation for complex queries?**
 
 Caching complex queries is harder than single-entity caching:
 
@@ -1504,7 +1514,7 @@ Approaches:
   Invalidation: only product entities expire (not search results)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using SQL. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* Tag-based invalidation is elegant but
 requires a cache that supports it (Caffeine, Ehcache, some Redis patterns).
@@ -1517,7 +1527,7 @@ dynamic per-user results should not be.
 
 ---
 
-#### Q7 - How does a CDN cache work differently from an application cache?
+**[SENIOR] Q7 - [CONCEPTUAL] How does a CDN cache work differently from an application cache?**
 
 CDN cache is HTTP-cache semantics, not application cache:
 
@@ -1562,7 +1572,7 @@ CDN vs Application cache:
        Can cache non-HTTP artifacts (DB results, computations)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most powerful CDN optimization is
 response caching for APIs (not just static files). If your product listing API
@@ -1576,7 +1586,7 @@ dramatically reduces origin load.
 
 ---
 
-#### Q8 - How do you use Redis for rate limiting?
+**[SENIOR] Q8 - [CONCEPTUAL] How do you use Redis for rate limiting?**
 
 Redis atomic operations enable accurate rate limiting:
 
@@ -1641,7 +1651,7 @@ public boolean isAllowedSlidingWindow(String userId,
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Rate limiting has two correctness concerns:
 (1) accurate counting under concurrent requests (use Redis atomic ops or Lua scripts),
@@ -1655,7 +1665,7 @@ use fixed window or token bucket with approximation.
 
 ---
 
-#### Q9 - How do you handle cache failures gracefully?
+**[SENIOR] Q9 - [PRODUCTION] How do you handle cache failures gracefully?**
 
 Cache can fail: connection timeout, Redis OOM, Redis crash.
 
@@ -1701,7 +1711,7 @@ resilience4j:
         # When Redis is down: fail fast to DB
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This When Redis is down: fail fast to DB example demonstrates YAML configuration pattern. **KEY MECHANISM:** YAML parsers are whitespace-sensitive; indentation errors cause silent value misinterpretation. **WHY IT MATTERS:** unquoted strings starting with special chars (*, &, ?, |) trigger YAML parser errors. **TAKEAWAY: quote strings containing YAML special chars; validate YAML before deploying to production.**
 
 *What separates good from great:* The circuit breaker protects against the
 "Redis is slow" scenario. Without it: if Redis takes 5 seconds per call

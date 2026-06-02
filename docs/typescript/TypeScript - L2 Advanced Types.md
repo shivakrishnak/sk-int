@@ -147,7 +147,7 @@ PRACTICAL CONDITIONAL TYPES:
   type Resolved = UnpackPromise<Promise<User>>;  // User
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Conditional Types and infer Keyword example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -175,6 +175,14 @@ library types with hundreds of overloads.
 ### 💻 Code Example
 
 **Conditional types in practice**
+
+
+```typescript
+// BAD: any disables type checking
+function processData(data: any): any {
+    return data.transform(); // no compile-time checks
+}
+```
 
 ```typescript
 // BAD: manually duplicating type transformations
@@ -220,7 +228,7 @@ type PartialConfig = DeepPartial<NestedConfig>;
 // { db?: { host?: string; port?: number }; cache?: { ttl?: number } }
 ```
 
-> **Code walkthrough:** The `FlipFunction<T>` type infers three positions
+> **Code walkthrough:** The `FlipFunction<T>` type infers three positionsice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > simultaneously: A (first param), B (second param), and R (return type).
 > It creates a new function type with A and B swapped. This demonstrates
 > that `infer` can appear multiple times in one conditional type, and
@@ -314,7 +322,7 @@ type E = IsString<string | number>;    // string (filtered)
 // FIX: either intentional distribution or [T] extends [U]
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates type alias definition using generic type. **KEY MECHANISM:** type aliases are erased at compile time; they create no runtime overhead. **WHY IT MATTERS:** circular type aliases cause infinite recursion during type checking. **TAKEAWAY: prefer type aliases for union types and mapped types; interfaces for object shapes.**
 
 ---
 
@@ -334,8 +342,7 @@ type E = IsString<string | number>;    // string (filtered)
 
 ---
 
-**Q1: What is the 'infer' keyword and what can it capture?** `[SENIOR]`
-MECHANISM
+**[JUNIOR] Q1 - [MECHANISM] What is the 'infer' keyword and what can it capture?** `[SENIOR]`**
 
 > **Answer:**
 >
@@ -372,7 +379,7 @@ MECHANISM
 > through a chain of operations. `infer` is the primitive operation
 > that makes "type-level structural decomposition" possible.
 
-**Q2: How does conditional type distribution work and when do you
+**[JUNIOR] Q2 - [MECHANISM] How does conditional type distribution work and when do you**
 disable it?** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -405,8 +412,7 @@ disable it?** `[SENIOR]` MECHANISM
 > Suppressing distribution is needed when you want to check if an
 > ENTIRE union satisfies a constraint, not just filter matching members.
 
-**Q3: Implement DeepReadonly using recursive conditional types.** `[STAFF]`
-MECHANISM
+**[JUNIOR] Q3 - [MECHANISM] Implement DeepReadonly using recursive conditional types.** `[STAFF]`**
 
 > **Answer:**
 >
@@ -441,8 +447,7 @@ MECHANISM
 > production `DeepReadonly` implementations use additional guards to
 > handle circular references and very deep nesting.
 
-**Q4: How is Awaited<T> implemented and what problem does it solve?**
-`[SENIOR]` MECHANISM
+**[SENIOR] Q4 - [MECHANISM] How is Awaited<T> implemented and what problem does it solve?**
 
 > **Answer:**
 >
@@ -483,7 +488,7 @@ MECHANISM
 > is the standard pattern for extracting the resolved type of async
 > functions without running them.
 
-**Q5: Implement a type that makes certain keys required and leaves
+**[MID] Q5 - [MECHANISM] Implement a type that makes certain keys required and leaves**
 others optional.** `[SENIOR]` MECHANISM
 
 > **Answer:**
@@ -529,7 +534,7 @@ others optional.** `[SENIOR]` MECHANISM
 > React component props (some required when another prop is set), and
 > form validation types.
 
-**Q6: What happens when infer is used with string template literal
+**[SENIOR] Q6 - [FAILURE] What happens when infer is used with string template literal**
 types?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -727,7 +732,7 @@ COMBINING MAPPED + CONDITIONAL:
   // { name?: string; email?: string; id: string }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Mapped Types example demonstrates a key concept in practice using generic type. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Why it matters:**
 
@@ -755,6 +760,11 @@ a property to `User` automatically updates `Partial<User>`,
 ### 💻 Code Example
 
 **Custom mapped types for real-world scenarios**
+
+
+```typescript
+// BAD: using any defeats type safety
+```
 
 ```typescript
 // BAD: manually maintained synchronized versions of a type
@@ -813,7 +823,7 @@ type ServiceMethods = FunctionProperties<Service>;
 // { getUser: ...; saveUser: ... } (name, count filtered out)
 ```
 
-> **Code walkthrough:** The `FormFields<T>` mapped type wraps each
+> **Code walkthrough:** The `FormFields<T>` mapped type wraps eachice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > property in a form field state object. Adding a new field to the
 > form data type automatically creates a corresponding entry in
 > `UserForm`. The `EventHandlers<T>` type remaps keys using
@@ -901,7 +911,7 @@ type EventHandlers<T> = {
 // (More verbose but better IDE experience)
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates interface contract definition using interface. **KEY MECHANISM:** TypeScript erases interfaces at compile time; they exist only for type checking. **WHY IT MATTERS:** structural typing means any object with matching shape satisfies the interface. **TAKEAWAY: use interfaces for public API contracts; type aliases for unions and computed types.**
 
 ---
 
@@ -921,8 +931,7 @@ type EventHandlers<T> = {
 
 ---
 
-**Q1: What is a homomorphic mapped type and why does it matter?**
-`[STAFF]` MECHANISM
+**[STAFF] Q1 - [MECHANISM] What is a homomorphic mapped type and why does it matter?**
 
 > **Answer:**
 >
@@ -953,7 +962,7 @@ type EventHandlers<T> = {
 > was. Non-homomorphic types like `Record` create fresh types with no
 > structural debt to any source type.
 
-**Q2: How do you implement RequireAtLeastOne (at least one of the keys
+**[JUNIOR] Q2 - [MECHANISM] How do you implement RequireAtLeastOne (at least one of the keys**
 must be present)?** `[STAFF]` MECHANISM
 
 > **Answer:**
@@ -993,8 +1002,7 @@ must be present)?** `[STAFF]` MECHANISM
 > means "at least one is required." This is a common pattern in form
 > validation types and API option objects.
 
-**Q3: How do you make a type where exactly one key is required (XOR)?**
-`[STAFF]` MECHANISM
+**[STAFF] Q3 - [MECHANISM] How do you make a type where exactly one key is required (XOR)?**
 
 > **Answer:**
 >

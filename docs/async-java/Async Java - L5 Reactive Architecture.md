@@ -121,7 +121,7 @@ Virtual threads (Java 21):
   Similar throughput to reactive, imperative code style
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive vs Imperative Architecture Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Performance regimes:**
 
@@ -154,7 +154,7 @@ CPU-bound work:
   Winner: imperative with parallel streams or Fork/Join
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Reactive vs Imperative Architecture Decision Framework example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Decision matrix:**
 
@@ -174,6 +174,12 @@ CPU-bound work:
 ### 💻 Code Example
 
 **Architecture trade-off patterns:**
+
+
+```java
+// BAD: anti-pattern - see GOOD example below for the correct approach
+// This naive implementation ignores thread safety and error handling
+```
 
 ```java
 // SCENARIO: user profile service - fetch user + 3 related resources
@@ -258,7 +264,7 @@ public List<ProcessedData> processLargeBatch(
 }
 ```
 
-> **Code walkthrough:** The profile fetch patterns show the fundamental
+> **Code walkthrough:** The profile fetch patterns show the fundamentalice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 > comparison: Reactor's `Mono.zip` composes parallel async operations
 > reactively, while StructuredTaskScope composes the same parallel calls
 > imperatively. Both execute 3 calls concurrently and wait for all to
@@ -370,7 +376,7 @@ grep -r "jdbc\|JdbcTemplate\|EntityManager" \
     src/main/java --include="*.java"
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for: blocking JDBC in reactive chain (common mistake) example demonstrates shell script pattern. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 Root causes in order of frequency:
 1. Blocking JDBC in reactive chain (use R2DBC or `boundedElastic`)
@@ -386,7 +392,7 @@ Root causes in order of frequency:
 
 ---
 
-#### Q1 - How do you decide between Spring WebFlux and Spring MVC for a new service?
+**[JUNIOR] Q1 - [CONCEPTUAL] How do you decide between Spring WebFlux and Spring MVC for a new service?**
 
 Decision criteria in priority order:
 
@@ -403,7 +409,7 @@ Decision criteria in priority order:
 4. **Simpler debugging**: linear stack traces, no reactor-specific tooling
 
 **Neither is universally better:**
-```
+```plaintext
 Service A: 50k concurrent WebSocket connections, streaming market data
 -> WebFlux: purpose-built for this, backpressure essential
 
@@ -414,7 +420,7 @@ Service C: Java 17, 5k concurrent users, existing MVC codebase
 -> Depends on bottleneck: benchmark first; maybe just tune thread pool
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for: blocking JDBC in reactive chain (common mistake) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The organizational cost matters as much
 as the technical cost. WebFlux requires: different testing approach
@@ -426,7 +432,7 @@ productivity.
 
 ---
 
-#### Q2 - What is the Reactive Manifesto and how does it guide architecture decisions?
+**[JUNIOR] Q2 - [ARCHITECTURE] What is the Reactive Manifesto and how does it guide architecture decisions?**
 
 The Reactive Manifesto (2014, reactivemanifesto.org) defines four traits:
 
@@ -454,7 +460,7 @@ Non-reactive system with reactive code:
   -> Reactive CODE but not a Reactive SYSTEM
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Check for: blocking JDBC in reactive chain (common mistake) example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The Manifesto is often misunderstood as
 "use Reactor." Actually, a Kafka-mediated architecture with Spring MVC
@@ -466,7 +472,7 @@ at the CODE level.
 
 ---
 
-#### Q3 - How do you migrate a blocking Spring MVC service to WebFlux?
+**[JUNIOR] Q3 - [CONCEPTUAL] How do you migrate a blocking Spring MVC service to WebFlux?**
 
 Migration is a significant undertaking. Phased approach:
 
@@ -482,7 +488,7 @@ grep -r "JdbcTemplate\|EntityManager\|RestTemplate\|@Transactional" \
 # @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates shell script pattern using @Transactional. **KEY MECHANISM:** the shell executes commands sequentially; pipes pass stdout of one command to stdin of the next. **WHY IT MATTERS:** unquoted variables with spaces cause word splitting - IFS splits the value into multiple arguments. **TAKEAWAY: always double-quote variables: "$VAR"; use [[ ]] instead of [ ] for safer conditionals.**
 
 **Phase 2: Strangler Fig pattern**
 ```java
@@ -513,7 +519,7 @@ class UserRepository {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** BAD pattern: This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **WHAT BREAKS: document thread-safety guarantees on every shared mutable class.**
 
 **Phase 3: Full reactive pipeline**
 After all dependencies are non-blocking: remove `subscribeOn(boundedElastic)`
@@ -527,7 +533,7 @@ full WebFlux migration may cost more than the performance gain.
 
 ---
 
-#### Q4 - How does virtual thread scaling compare to reactive scaling?
+**[MID] Q4 - [MECHANISM] How does virtual thread scaling compare to reactive scaling?**
 
 Benchmark comparison (approximate, workload-dependent):
 
@@ -554,7 +560,7 @@ MVC + VThreads: Full stack trace; familiar debugging
 WebFlux:        Reactor operator chain; requires checkpoint()
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 The performance gap between virtual threads and WebFlux is < 5% for
 I/O-bound workloads at 10k+ concurrency. The primary difference becomes
@@ -564,17 +570,17 @@ developer experience and streaming capability.
 risk: if virtual threads get pinned to OS threads (via `synchronized` or
 JNI), concurrency degrades to OS-thread-count. Virtual thread performance
 requires non-pinning code. Monitor with:
-```
+```plaintext
 java -Djdk.tracePinnedThreads=full -jar service.jar
 ```
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 Reactive (WebFlux/Netty) doesn't have pinning risk: Netty is designed
 for event-loop use and avoids synchronized.
 
 ---
 
-#### Q5 - How do you design backpressure in a system architecture?
+**[SENIOR] Q5 - [DESIGN] How do you design backpressure in a system architecture?**
 
 System-level backpressure prevents fast producers from overwhelming slow
 consumers. Three levels:
@@ -602,7 +608,7 @@ events.subscribe(
     });
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates Java API usage using Kafka messaging. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Level 2: Service-to-service (HTTP + rate limiting)**
 ```java
@@ -615,10 +621,10 @@ response.headers().set(
 // Back off and retry after the specified delay
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates exception handling using Kafka messaging. **KEY MECHANISM:** the JVM checks catch clauses in order; finally always executes for cleanup. **WHY IT MATTERS:** swallowing exceptions silently hides failures that corrupt downstream state. **TAKEAWAY: log or rethrow every exception; empty catch blocks are defects.**
 
 **Level 3: System-wide (message queues)**
-```
+```plaintext
 Producer -> Kafka topic -> Consumer group
   Kafka partition: fixed-size log (disk)
   Consumer: pulls at its own rate
@@ -626,7 +632,7 @@ Producer -> Kafka topic -> Consumer group
   Alert on consumer lag > threshold -> scale consumer
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The "let it fail" vs "buffer and slow
 down" decision for backpressure overflow:
@@ -639,7 +645,7 @@ Choose based on the cost of data loss vs cost of OOM vs acceptable client error 
 
 ---
 
-#### Q6 - How do you architect reactive systems for resilience?
+**[SENIOR] Q6 - [DESIGN] How do you architect reactive systems for resilience?**
 
 Resilience in reactive architecture requires: circuit breakers, bulkheads,
 timeouts at every service boundary, and fallback strategies.
@@ -668,7 +674,7 @@ public Mono<PaymentResult> processPayment(Payment p) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This @Transactional -> @Transactional(Propagation.SUPPORTS) + R2DBC example demonstrates Java API usage using Spring annotation. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **Resilience pattern application order:**
 1. `timeout`: outermost guard - prevents indefinite waits
@@ -685,7 +691,7 @@ The circuit breaker is designed to STOP load; retry actively fights it.
 
 ---
 
-#### Q7 - How do you handle data consistency in reactive distributed systems?
+**[SENIOR] Q7 - [MECHANISM] How do you handle data consistency in reactive distributed systems?**
 
 Reactive systems with async message passing face distributed consistency challenges:
 
@@ -706,7 +712,7 @@ public Mono<OrderResult> createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 The compensation pattern: if payment fails after inventory reserved,
 release the inventory reservation. This is the reactive saga.
@@ -730,7 +736,7 @@ public Mono<Void> handleEvent(OrderEvent event) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* Reactive systems' async nature makes
 distributed consistency harder, not easier. Sync systems have transactions.
@@ -741,7 +747,7 @@ scenarios that never appeared in integration tests.
 
 ---
 
-#### Q8 - How do you choose between Reactor and RxJava in a new project?
+**[STAFF] Q8 - [SCENARIO] How do you choose between Reactor and RxJava in a new project?**
 
 For Java backend in 2024-2025:
 
@@ -773,7 +779,7 @@ make RxJava a poor fit for Spring projects.
 
 ---
 
-#### Q9 - What are the failure patterns to watch for in reactive architecture?
+**[STAFF] Q9 - [DESIGN] What are the failure patterns to watch for in reactive architecture?**
 
 Top failure patterns in production reactive systems:
 
@@ -784,7 +790,7 @@ Top failure patterns in production reactive systems:
 // Fix: use Reactor Context + MDC integration library
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **2. Unbounded concurrency in flatMap**
 ```java
@@ -796,7 +802,7 @@ Flux.from(ids)
     .flatMap(id -> dbClient.find(id), 100) // max 100 concurrent
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **3. No timeout on external calls**
 ```java
@@ -806,7 +812,7 @@ Flux.from(ids)
 externalService.call().timeout(Duration.ofSeconds(5))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java Stream pipeline. **KEY MECHANISM:** the stream is lazy - intermediate ops build a pipeline, terminal op drives it. **WHY IT MATTERS:** calling terminal op twice throws IllegalStateException; parallel() on small data adds overhead. **TAKEAWAY: collect() or findFirst() triggers the pipeline; reuse by wrapping in Supplier.**
 
 **4. Missing error handling in subscribe**
 ```java
@@ -816,7 +822,7 @@ flux.subscribe(item -> process(item),
     ex -> alerting.raise(ex));
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 **5. Reactor scheduler misconfiguration**
 ```java
@@ -828,7 +834,7 @@ flux.flatMap(item ->
         .subscribeOn(Schedulers.boundedElastic()))
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 *What separates good from great:* These failures are not hypothetical -
 they appear in real production systems within 3-6 months of WebFlux adoption
@@ -837,7 +843,7 @@ services should verify all 5 patterns before launch.
 
 ---
 
-#### Q10 - How do you monitor and observe reactive services in production?
+**[STAFF] Q10 - [MECHANISM] How do you monitor and observe reactive services in production?**
 
 Key observability dimensions for reactive services:
 
@@ -875,7 +881,7 @@ public class ReactiveDbHealthIndicator
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage using SQL. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 Critical metrics to track:
 - **Operator duration histogram**: P50/P95/P99 latency per pipeline stage
@@ -895,11 +901,11 @@ flux.checkpoint("order-validation")
     // Stack trace now includes checkpoint labels
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Java API usage. **KEY MECHANISM:** the JVM compiles to bytecode that runs on the JVM; JIT compiles hot paths to native. **WHY IT MATTERS:** unchecked assumptions about thread safety cause data races under concurrent load. **TAKEAWAY: document thread-safety guarantees on every shared mutable class.**
 
 ---
 
-#### Q11 - How does reactive architecture interact with database transactions?
+**[STAFF] Q11 - [DESIGN] How does reactive architecture interact with database transactions?**
 
 Reactive and database transactions have fundamental tension:
 
@@ -940,7 +946,7 @@ public Mono<Order> createOrder(OrderRequest req) {
 }
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates Spring declarative transaction using @Transactional. **KEY MECHANISM:** Spring wraps the method in a proxy that begins/commits a DB transaction. **WHY IT MATTERS:** calling @Transactional from the same class bypasses the proxy - no transaction. **TAKEAWAY: never self-invoke @Transactional methods; inject the bean instead.**
 
 *What separates good from great:* R2DBC transactions vs Kafka-based sagas:
 R2DBC transactions work within a single database. For multi-database or
@@ -951,7 +957,7 @@ architecture decision that must be made per use case.
 
 ---
 
-#### Q12 - When would you recommend AGAINST adopting reactive for a Java system?
+**[STAFF] Q12 - [SCENARIO] When would you recommend AGAINST adopting reactive for a Java system?**
 
 Cases where reactive is the wrong choice:
 
@@ -966,7 +972,7 @@ Recommendation: Upgrade to Java 21, add virtual threads to Spring MVC
   - Zero migration cost; comparable performance
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **2. CPU-bound workloads**
 ```
@@ -976,7 +982,7 @@ Non-blocking I/O doesn't help when work is compute-bound
 Better: parallel streams, Fork/Join, virtual threads for I/O boundaries
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **3. Small team, reactive inexperience**
 ```
@@ -986,7 +992,7 @@ Concurrency target: 500 users (easily handled by 50 threads)
 Recommendation: Spring MVC, standard Java, focus on product development
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **4. Regulatory/compliance requiring transaction guarantees**
 ```
@@ -996,7 +1002,7 @@ Recommendation: Blocking Spring MVC, Hibernate/JPA, @Transactional
   Correctness > throughput for financial operations
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *What separates good from great:* The most common mistake I see: teams
 choose reactive because "it's more scalable" without measuring their actual
@@ -1012,20 +1018,20 @@ that trades simplicity for performance.
 
 **Reactive vs imperative architecture dimensions:**
 
-| Dimension | Spring WebFlux (Reactive) | Spring MVC + VThreads |
-|---|---|---|
-| Java version | Any (Java 8+) | Java 21+ |
-| Throughput (I/O bound) | Very high | Very high |
-| Throughput (CPU bound) | No advantage | No advantage |
-| Thread count | Very low (event loop) | Low (VThreads) |
-| Memory per connection | Very low | ~1KB (VThread) |
-| Stack trace quality | Poor without debug | Excellent |
-| Testing complexity | High (StepVerifier) | Standard JUnit |
-| Blocking I/O support | Workaround needed | Native |
-| Streaming / backpressure | First-class | No equivalent |
-| Context propagation | Reactor Context | ThreadLocal works |
-| Learning curve | Steep | Gentle |
-| Ecosystem | Reactor | All Java |
+| Dimension| Spring WebFlux (Reactive)| Spring MVC + VThreads|
+|------------------------|-------------------------|---------------------|
+| Java version| Any (Java 8+)| Java 21+|
+| Throughput (I/O bound)| Very high| Very high|
+| Throughput (CPU bound)| No advantage| No advantage|
+| Thread count| Very low (event loop)| Low (VThreads)|
+| Memory per connection| Very low| ~1KB (VThread)|
+| Stack trace quality| Poor without debug| Excellent|
+| Testing complexity| High (StepVerifier)| Standard JUnit|
+| Blocking I/O support| Workaround needed| Native|
+| Streaming / backpressure| First-class| No equivalent|
+| Context propagation| Reactor Context| ThreadLocal works|
+| Learning curve| Steep| Gentle|
+| Ecosystem| Reactor| All Java|
 
 ---
 
@@ -1069,7 +1075,7 @@ System Architecture:
               └───────────────────┘   └───────────────────────┘
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 **Design rationale:**
 - Order API: Spring MVC + virtual threads (Java 21). Simple CRUD with
@@ -1099,7 +1105,7 @@ Component details:
     - WebClient: non-blocking HTTP to notification service
 ```
 
-> **Code walkthrough:** This example demonstrates the core pattern in action. The key mechanism shows how the concept works in practice. Study the structure to understand the essential behavior and common usage.
+> **Code walkthrough:** This Unknown example demonstrates a key concept in practice using Kafka messaging. **KEY MECHANISM:** the runtime executes these instructions in sequence with specific memory and execution semantics. **WHY IT MATTERS:** misapplying this pattern causes subtle bugs that only manifest under production load. **TAKEAWAY: understand the execution model before using this pattern in production code.**
 
 *Design trade-offs:*
 - Order API could be WebFlux: no benefit (low concurrency, JDBC)
