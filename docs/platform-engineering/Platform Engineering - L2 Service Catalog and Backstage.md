@@ -2213,6 +2213,7 @@ workflows that use `${{ }}` syntax for their own
 expressions would conflict with Nunjucks), and
 static files that require no customization.
 
+{% raw %}
 Common error: using `fetch:template` for a GitHub
 Actions workflow file that contains `${{ github.sha }}`.
 Nunjucks tries to substitute `github.sha` as a
@@ -2227,6 +2228,7 @@ workflow conflict and the `{% raw %}` escape
 mechanism. This is a common real-world pitfall
 that candidates who have built Backstage templates
 in production will have encountered.
+{% endraw %}
 
 ---
 
