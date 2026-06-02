@@ -1669,6 +1669,7 @@ knowledge for dynamic styling.
 > style use cases:
 >
 > **Simple prop-based styles:**
+{% raw %}
 > ```javascript
 > // CSS-in-JS approach (runtime cost):
 > const Card = styled.div`
@@ -1699,8 +1700,10 @@ knowledge for dynamic styling.
 >   width: var(--card-width);
 > }
 > ```
+{% endraw %}
 >
 > **Variants (fixed set of options):**
+> {% raw %}
 > ```javascript
 > // Use data attributes or class names
 > <Button data-variant="primary">Click</Button>
@@ -1714,6 +1717,7 @@ knowledge for dynamic styling.
 >   border: 1px solid var(--color-primary);
 > }
 > ```
+> {% endraw %}
 >
 > Limits:
 > - CSS can't compute arbitrary JavaScript values
