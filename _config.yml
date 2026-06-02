@@ -13,6 +13,7 @@ exclude:
   - scripts/
   - tmp/
   - site/
+  - memories/
   - Gemfile
   - Gemfile.lock
   - README.md
