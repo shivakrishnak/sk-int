@@ -1758,6 +1758,7 @@ to Nunjucks.
 with incorrect content (wrong service name in
 generated files)**
 
+{% raw %}
 *Symptom:* Developer creates a service named
 `payments-webhook`. The repository is created
 successfully, but the Dockerfile still references
@@ -1771,6 +1772,7 @@ Nunjucks syntax for the service name substitution.
 Likely: `{{ values.name }}` instead of `${{ values.name }}`
 (Backstage uses `${{` not `{{` to avoid conflicts
 with GitHub Actions syntax).
+{% endraw %}
 
 *Diagnosis:*
 
