@@ -1,8 +1,10 @@
 # SK Interview
 
-Interview-focused technical reference with deep Q&A for every concept. Complete knowledge per topic - zero to mastery - without needing other sources.
+Interview-focused technical reference with deep Q&A for every concept. Complete knowledge per topic - zero to mastery - without needing other sources. 
 
 Built with [Just the Docs](https://just-the-docs.com/) (Jekyll) following the **Interview Mastery Dictionary v1.0** spec (8 sections per keyword, keyword-batch generation, BAD-before-GOOD code examples, masterclass-level depth).
+
+FINALIZED AND LOCKED FOR V1.0 - no breaking changes to spec or content until v2.0. Focus on content generation, quality, and coverage expansion.
 
 ## Quick start
 
