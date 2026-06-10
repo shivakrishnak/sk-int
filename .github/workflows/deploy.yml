@@ -19,6 +19,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      JEKYLL_ENV: production
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -33,16 +36,25 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
+      # ==================================================
+      # Clean previous build artifacts
+      # ==================================================
       - name: Clean Site
         run: |
-          rm -rf _site
+          rm -rf _site .jekyll-cache .sass-cache
           bundle exec jekyll clean
 
+      # ==================================================
+      # Build
+      # ==================================================
       - name: Build site with Jekyll
         run: |
           bundle exec jekyll build \
             --baseurl "${{ steps.pages.outputs.base_path }}"
 
+      # ==================================================
+      # Remove junk files
+      # ==================================================
       - name: Remove junk files
         run: |
           find _site -name "*.map" -delete || true
@@ -50,17 +62,39 @@ jobs:
           find _site -name ".DS_Store" -delete || true
           find _site -type l -delete || true
 
-      - name: Show generated site size
+      # ==================================================
+      # Diagnostics
+      # ==================================================
+      - name: Analyze generated site
         run: |
           echo "=== SITE SIZE ==="
           du -sh _site
 
-          echo "===== Top folders ====="
+          echo ""
+          echo "===== TOP FOLDERS ====="
           du -h -d 2 _site | sort -hr | head -50
 
           echo ""
-          echo "===== Largest files ====="
-          find _site -type f -exec du -h {} + | sort -hr | head -50
+          echo "===== LARGEST FILES ====="
+          find _site -type f -exec du -h {} + \
+            | sort -hr \
+            | head -50
+
+          echo ""
+          echo "===== JS FILES ====="
+          du -h _site/assets/js/* || true
+
+          echo ""
+          echo "===== SEARCH FILE ====="
+          ls -lh _site/assets/js/search-data.json || echo "search disabled"
+
+      # ==================================================
+      # Upload artifact (IMPORTANT)
+      # ==================================================
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
   deploy:
     environment:
