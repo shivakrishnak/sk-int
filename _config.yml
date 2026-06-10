@@ -1,13 +1,17 @@
 title: SK Interview
+
 description: >-
   Interview-focused technical reference with deep Q&A
   for every concept across Java and related topics.
+
 url: https://shivakrishnak.github.io
 baseurl: /sk-int
 source: docs
 permalink: pretty
 
-# Exclude non-content files and folders from the Jekyll build
+# ============================================================
+# Exclude non-content files and folders from Jekyll build
+# ============================================================
 exclude:
   - spec/
   - scripts/
@@ -26,69 +30,92 @@ exclude:
   - .editorconfig
   - .markdownlint.json
 
+# ============================================================
 # Theme
+# ============================================================
 remote_theme: just-the-docs/just-the-docs@v0.10.0
 
-# Plugins — jekyll-seo-tag and jekyll-include-cache are required by just-the-docs
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
   - jekyll-include-cache
 
-# Search
+# ============================================================
+# Search (optimized for large sites)
+# ============================================================
 search_enabled: true
+
 search:
   heading_level: 2
-  previews: 3
-  preview_words_before: 5
-  preview_words_after: 10
+  previews: 2
+  preview_words_before: 2
+  preview_words_after: 5
   tokenizer_separator: /[\s/]+/
   rel_url: true
   button: true
   focus_shortcut_key: "k"
 
-# Navigation
-heading_anchors: true
-nav_sort: case_insensitive
-nav_fold: true
+search_tokenizer_separator: /[\s/]+/
 
+# ============================================================
+# Navigation
+# ============================================================
+heading_anchors: true
+nav_fold: true
+nav_sort: false
+
+# ============================================================
 # Links
+# ============================================================
 aux_links:
   GitHub: https://github.com/shivakrishnak/sk-int
+
 aux_links_new_tab: true
 
+# ============================================================
 # Appearance
+# ============================================================
 color_scheme: light
 callouts_level: quiet
+
 back_to_top: true
 back_to_top_text: "Back to top"
 
-# ── Copy button on every code block ────────────────────────
+# ============================================================
+# Code blocks
+# ============================================================
 enable_copy_code_button: true
 
-# ── Mermaid diagrams (renders ```mermaid fenced blocks) ────
-mermaid:
-  version: "10.9.0"
+# ============================================================
+# IMPORTANT:
+# Mermaid is intentionally NOT loaded globally.
+#
+# To enable Mermaid on specific pages:
+#
+# ---
+# has_mermaid: true
+# ---
+#
+# This significantly improves performance.
+# ============================================================
 
-# ── Disable Liquid processing in page content ──────────────
-# Code examples contain {{ }} and {% %} syntax (GitHub Actions,
-# Docker inspect, Prometheus, JSX/React, Angular templates, etc.)
-# that Jekyll would otherwise try to parse as Liquid templates.
-# render_with_liquid: false prevents this for all docs pages.
-# Layouts and frontmatter are unaffected by this setting.
-# IMPORTANT: assets/ is excluded - just-the-docs SCSS files use
-# Liquid {% include %} tags to generate CSS and must stay enabled.
+# ============================================================
+# Prevent Liquid parsing in content pages
+# ============================================================
 defaults:
   - scope:
       path: ""
     values:
       render_with_liquid: false
+
   - scope:
       path: "assets/"
     values:
       render_with_liquid: true
 
-# ── Markdown renderer: GitHub Flavored Markdown ────────────
+# ============================================================
+# Markdown renderer
+# ============================================================
 kramdown:
   input: GFM
   syntax_highlighter: rouge
@@ -97,18 +124,24 @@ kramdown:
     block:
       line_numbers: false
 
-# ── Resilient builds — warn on Liquid errors, don't fail ───
+# ============================================================
+# Liquid resilience
+# ============================================================
 liquid:
   error_mode: warn
   strict_filters: false
 
-# ── Compress HTML output ────────────────────────────────────
+# ============================================================
+# HTML compression
+# ============================================================
 compress_html:
   clippings: all
   comments: all
   endings: all
   blanklines: false
 
-# ── Compress CSS ────────────────────────────────────────────
+# ============================================================
+# CSS compression
+# ============================================================
 sass:
   style: compressed
