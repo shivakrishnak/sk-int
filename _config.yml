@@ -10,7 +10,7 @@ source: docs
 permalink: pretty
 
 # ============================================================
-# Exclude non-content files and folders from Jekyll build
+# Exclude non-content files and folders
 # ============================================================
 exclude:
   - spec/
@@ -41,7 +41,7 @@ plugins:
   - jekyll-include-cache
 
 # ============================================================
-# Search (optimized for large sites)
+# Search (performance optimized)
 # ============================================================
 search_enabled: true
 
@@ -61,7 +61,13 @@ search_tokenizer_separator: /[\s/]+/
 # Navigation
 # ============================================================
 heading_anchors: true
+
+# collapse tree by default
 nav_fold: true
+
+# IMPORTANT:
+# Disable dynamic sorting for performance.
+# Use nav_order instead.
 nav_sort: false
 
 # ============================================================
@@ -87,20 +93,14 @@ back_to_top_text: "Back to top"
 enable_copy_code_button: true
 
 # ============================================================
-# IMPORTANT:
-# Mermaid is intentionally NOT loaded globally.
-#
-# To enable Mermaid on specific pages:
-#
-# ---
-# has_mermaid: true
-# ---
-#
-# This significantly improves performance.
+# Mermaid (GLOBAL)
+# Keep enabled because almost all pages use it
 # ============================================================
+mermaid:
+  version: "10.9.0"
 
 # ============================================================
-# Prevent Liquid parsing in content pages
+# Prevent Liquid processing in content pages
 # ============================================================
 defaults:
   - scope:

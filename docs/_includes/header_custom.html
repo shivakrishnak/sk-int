@@ -1,29 +1,29 @@
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
 
-  const searchInput = document.querySelector(".js-search-input");
+    const searchInput =
+      document.querySelector(".js-search-input");
 
-  // Better placeholder text
-  if (searchInput) {
-    searchInput.placeholder =
-      "Search concepts, interview questions, technologies...";
-  }
-
-  // "/" shortcut to focus search
-  document.addEventListener("keydown", function (e) {
-
-    const activeTag =
-      document.activeElement?.tagName;
-
-    const isTyping =
-      activeTag === "INPUT" ||
-      activeTag === "TEXTAREA";
-
-    if (e.key === "/" && !isTyping) {
-      e.preventDefault();
-      searchInput?.focus();
+    if (searchInput) {
+      searchInput.placeholder =
+        "Search concepts, interview Q&A, technologies...";
     }
-  });
 
-});
+    // "/" shortcut
+    document.addEventListener("keydown", function (e) {
+
+      const tag =
+        document.activeElement?.tagName;
+
+      const typing =
+        tag === "INPUT" ||
+        tag === "TEXTAREA";
+
+      if (e.key === "/" && !typing) {
+        e.preventDefault();
+        searchInput?.focus();
+      }
+    });
+
+  });
 </script>
