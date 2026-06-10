@@ -1,0 +1,16 @@
+<!-- Improve DNS + connection reuse -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://fonts.googleapis.com">
+
+<!-- Load Mermaid ONLY when page requests it -->
+{% if page.has_mermaid %}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "loose",
+    theme: "default"
+  });
+</script>
+{% endif %}
