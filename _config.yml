@@ -41,22 +41,22 @@ plugins:
   - jekyll-include-cache
 
 # ============================================================
-# Search (performance optimized)
-# Disabled for performance
+# SEARCH (HARD DISABLED)
+# Prevent huge search-data.json generation
 # ============================================================
 search_enabled: false
+search: false
 
 # ============================================================
 # Navigation
 # ============================================================
 heading_anchors: true
 
-# collapse tree by default
+# Collapse navigation by default
 nav_fold: true
 
-# IMPORTANT:
-# Disable dynamic sorting for performance.
-# Use nav_order instead.
+# Faster rendering
+# Use nav_order in frontmatter instead
 nav_sort: false
 
 # ============================================================
@@ -82,14 +82,15 @@ back_to_top_text: "Back to top"
 enable_copy_code_button: true
 
 # ============================================================
-# Mermaid (GLOBAL)
-# Keep enabled because almost all pages use it
+# Mermaid (GLOBAL ENABLED)
+# Since almost all pages use Mermaid
 # ============================================================
 mermaid:
   version: "10.9.0"
 
 # ============================================================
-# Prevent Liquid processing in content pages
+# Prevent Liquid parsing in docs content
+# Keeps code examples safe
 # ============================================================
 defaults:
   - scope:
