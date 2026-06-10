@@ -1,0 +1,29 @@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  const searchInput = document.querySelector(".js-search-input");
+
+  // Better placeholder text
+  if (searchInput) {
+    searchInput.placeholder =
+      "Search concepts, interview questions, technologies...";
+  }
+
+  // "/" shortcut to focus search
+  document.addEventListener("keydown", function (e) {
+
+    const activeTag =
+      document.activeElement?.tagName;
+
+    const isTyping =
+      activeTag === "INPUT" ||
+      activeTag === "TEXTAREA";
+
+    if (e.key === "/" && !isTyping) {
+      e.preventDefault();
+      searchInput?.focus();
+    }
+  });
+
+});
+</script>
