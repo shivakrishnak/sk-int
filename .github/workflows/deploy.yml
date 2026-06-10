@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v4
 
       # ==================================================
-      # Ruby
+      # Setup Ruby
       # ==================================================
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -39,14 +39,14 @@ jobs:
           bundler-cache: true
 
       # ==================================================
-      # GitHub Pages
+      # Configure Pages
       # ==================================================
       - name: Setup GitHub Pages
         id: pages
         uses: actions/configure-pages@v5
 
       # ==================================================
-      # Clean previous build
+      # Clean build
       # ==================================================
       - name: Clean Site
         run: |
@@ -57,7 +57,7 @@ jobs:
           bundle exec jekyll clean
 
       # ==================================================
-      # Build Jekyll site
+      # Build site
       # ==================================================
       - name: Build site with Jekyll
         run: |
@@ -65,8 +65,7 @@ jobs:
             --baseurl "${{ steps.pages.outputs.base_path }}"
 
       # ==================================================
-      # HARD REMOVE SEARCH
-      # Guarantees no 47MB search-data.json
+      # Hard remove search assets
       # ==================================================
       - name: Remove Search Assets
         run: |
@@ -110,7 +109,7 @@ jobs:
             || echo "search disabled"
 
       # ==================================================
-      # Upload Pages artifact
+      # Upload artifact
       # ==================================================
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3

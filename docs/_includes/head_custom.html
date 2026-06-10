@@ -2,15 +2,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="dns-prefetch" href="https://fonts.googleapis.com">
 
-<!-- Load Mermaid ONLY when page requests it -->
-{% if page.has_mermaid %}
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+<!-- Improve CDN connection reuse -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
-  mermaid.initialize({
-    startOnLoad: true,
-    securityLevel: "loose",
-    theme: "default"
-  });
-</script>
-{% endif %}
+<!-- Preload Just The Docs CSS -->
+<link rel="preload"
+      href="{{ '/assets/css/just-the-docs-default.css' | relative_url }}"
+      as="style">
