@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -33,18 +33,34 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
 
+      - name: Clean Site
+        run: |
+          rm -rf _site
+          bundle exec jekyll clean
+
       - name: Build site with Jekyll
         run: |
           bundle exec jekyll build \
             --baseurl "${{ steps.pages.outputs.base_path }}"
-        env:
-          JEKYLL_ENV: production
+
+      - name: Remove junk files
+        run: |
+          find _site -name "*.map" -delete || true
+          find _site -name "*.log" -delete || true
+          find _site -name ".DS_Store" -delete || true
+          find _site -type l -delete || true
 
       - name: Show generated site size
-        run: du -sh _site
+        run: |
+          echo "=== SITE SIZE ==="
+          du -sh _site
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+          echo "===== Top folders ====="
+          du -h -d 2 _site | sort -hr | head -50
+
+          echo ""
+          echo "===== Largest files ====="
+          find _site -type f -exec du -h {} + | sort -hr | head -50
 
   deploy:
     environment:
