@@ -7,6 +7,12 @@ permalink: /java-core/l1-oop-basics/
 render_with_liquid: false
 ---
 
+## Table of contents
+{: .no_toc }
+
+1. TOC
+{:toc}
+
 ## Keywords in This File
 {: .no_toc }
 
